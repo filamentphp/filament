@@ -47,8 +47,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Too many registration attempts',
-            'body' => 'Please try again in :seconds seconds.',
+            'title' => 'شما بیش از حد مجاز درخواست ثبت‌نام داشته‌اید.',
+            'body' => 'لطفاً :seconds ثانیه دیگر تلاش کنید.',
         ],
 
     ],

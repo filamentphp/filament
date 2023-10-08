@@ -133,8 +133,8 @@
                                             },
                                             match ($color) {
                                                 null => 'text-gray-950 dark:text-white',
-                                                'gray' => 'text-gray-500 dark:text-gray-400',
-                                                default => 'text-custom-600 dark:text-custom-400',
+                                                'gray' => 'fi-color-gray text-gray-500 dark:text-gray-400',
+                                                default => 'fi-color-custom text-custom-600 dark:text-custom-400',
                                             },
                                             match ($weight) {
                                                 FontWeight::Thin, 'thin' => 'font-thin',

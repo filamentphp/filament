@@ -312,6 +312,10 @@ trait HasBulkActions
                 $column->applyRelationshipAggregates($query);
             }
 
+            if ($table->shouldDeselectAllRecordsWhenFiltered()) {
+                $this->filterTableQuery($query);
+            }
+
             return $this->cachedSelectedTableRecords = $query->get();
         }
 

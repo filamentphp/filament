@@ -79,7 +79,7 @@ The `money()` method allows you to easily format monetary values, in any currenc
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('price')
-    ->money('eur')
+    ->money('EUR')
 ```
 
 ## Limiting text length

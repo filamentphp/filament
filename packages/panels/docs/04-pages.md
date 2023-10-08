@@ -138,7 +138,7 @@ This pairs well with [responsive widget widths](dashboard#responsive-widget-widt
 You may pass data to widgets from the page using the `getWidgetsData()` method:
 
 ```php
-protected function getWidgetsData(): array
+public function getWidgetData(): array
 {
     return [
         'stats' => [

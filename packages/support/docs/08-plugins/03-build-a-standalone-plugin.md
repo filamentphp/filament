@@ -195,7 +195,7 @@ class Heading extends Component
 
 Next, we'll need to create the view for our component. Create a new file at `resources/views/heading.blade.php` and add the following code.
 
-We are using x-load to asynchronously load stylesheet, so it's only loaded when necessary. You can learn more about this in the [Core Concepts](docs/3.x/support/assets#lazy-loading-css) section of the docs.
+We are using x-load to asynchronously load stylesheet, so it's only loaded when necessary. You can learn more about this in the [Core Concepts](/docs/3.x/support/assets#lazy-loading-css) section of the docs.
 
 ```blade
 @php

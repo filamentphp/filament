@@ -211,8 +211,8 @@
                                         @class([
                                             'rounded-full',
                                             match ($iconColor) {
-                                                'gray' => 'bg-gray-100 dark:bg-gray-500/20',
-                                                default => 'bg-custom-100 dark:bg-custom-500/20',
+                                                'gray' => 'fi-color-gray bg-gray-100 dark:bg-gray-500/20',
+                                                default => 'fi-color-custom bg-custom-100 dark:bg-custom-500/20',
                                             },
                                             match ($alignment) {
                                                 Alignment::Left, Alignment::Start, 'left', 'start' => 'p-2',

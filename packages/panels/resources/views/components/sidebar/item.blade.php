@@ -14,6 +14,7 @@
 <li
     @class([
         'fi-sidebar-item',
+        // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
         'fi-active fi-sidebar-item-active' => $active,
     ])
 >

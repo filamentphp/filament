@@ -195,7 +195,7 @@ new FilamentNotification()
 
 ## Setting body text
 
-Additional notification text can be shown in the body. Similar to the title, it supports Markdown:
+Additional notification text can be shown in the `body()`:
 
 ```php
 use Filament\Notifications\Notification;
