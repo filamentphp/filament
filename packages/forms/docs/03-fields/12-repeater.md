@@ -462,9 +462,11 @@ You can use `../` to go up a level in the data structure, so `$get('../client_id
 
 ## Distinct selection in a Repeater
 
-Fields which provide selection of predefined options like Select, Radio, etc. provide a `distinct()` method, which enforces only allowing each option to be selected in one instance of a Repeater.
+Fields which provide selection of predefined options like Select, Radio, etc. provide a `distinctOptions()` method, which enforces only allowing each option to be selected in one instance of a Repeater.
 
 This functionality is documented in [Select](03-select.md#distinct-selection-in-a-repeater), [Checkbox](04-checkbox.md#distinct-selection-in-a-repeater), [CheckboxList](06-checkbox-list.md#distinct-selection-in-a-repeater), [Toggle](05-toggle.md#distinct-selection-in-a-repeater) and [Radio](07-radio.md#distinct-selection-in-a-repeater). 
+
+Additionally, there is a `distinct()` [validation](../05-validation.md#distinct), which is automatically applied when using `distinctOptions()` but may be applied independently.
 
 ## Repeater validation
 
