@@ -13,7 +13,7 @@ class AlpineComponent extends Asset
     {
          $path = config('filament.assets_path', '');
 
-         return str("{$path}/js/{$this->getPackage()}/components/{$this->getId()}.js")->start('/');
+         return (string) str("{$path}/js/{$this->getPackage()}/components/{$this->getId()}.js")->start('/');
     }
 
     public function getSrc(): string
