@@ -329,6 +329,14 @@ CustomerResource::getUrl('edit', ['record' => $customer]); // /admin/customers/e
 
 In this example, `$customer` can be an Eloquent model object, or an ID.
 
+If you have multiple panels in your app, `getUrl()` will generate a URL within the current panel. You can also indicate which panel the resource is associated with, by passing the panel ID to the `panel` argument:
+
+```php
+use App\Filament\Resources\CustomerResource;
+
+CustomerResource::getUrl(panel: 'marketing');
+```
+
 ## Customizing the resource Eloquent query
 
 Within Filament, every query to your resource model will start with the `getEloquentQuery()` method.

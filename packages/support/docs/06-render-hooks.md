@@ -38,6 +38,8 @@ FilamentView::registerRenderHook(
 
 - `panels::auth.login.form.before` - Before login form
 - `panels::auth.login.form.after` - After login form
+- `panels::auth.register.form.before` - Before register form
+- `panels::auth.register.form.after` - After register form
 - `panels::body.start` - After `<body>`
 - `panels::body.end` - Before `</body>`
 - `panels::content.end` - After page content, inside `<main>`
@@ -52,6 +54,8 @@ FilamentView::registerRenderHook(
 - `panels::page.end` - End of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.footer-widgets.after` - After the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.footer-widgets.before` - Before the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `panels::page.header.actions.after` - After the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `panels::page.header.actions.before` - Before the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.header-widgets.after` - After the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.header-widgets.before` - Before the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.start` - Start of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
