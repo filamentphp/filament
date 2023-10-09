@@ -31,7 +31,7 @@
         @endif
     </div>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.header', scopes: $this->getRenderHookScopes()) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.header.actions.before', scopes: $this->getRenderHookScopes()) }}
 
     @if ($actions)
         <x-filament-actions::actions
@@ -42,4 +42,6 @@
             ])
         />
     @endif
+
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.header.actions.after', scopes: $this->getRenderHookScopes()) }}
 </header>
