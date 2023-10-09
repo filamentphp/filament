@@ -303,20 +303,12 @@ public static function getNavigationGroup(): ?string
 
 Filament provides `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
 
-The `getUrl()` method, without any arguments, will generate a URL to the resource's using the "admin" panel [List page](listing-records):
+The `getUrl()` method, without any arguments, will generate a URL to the [List page](listing-records):
 
 ```php
 use App\Filament\Resources\CustomerResource;
 
 CustomerResource::getUrl(); // /admin/customers
-```
-
-You can also indicate which panel the resource is associated with.
-
-```php
-use App\Filament\Resources\CustomerResource;
-
-CustomerResource::getUrl(panel: 'marketing'); // /marketing/customers
 ```
 
 You may also generate URLs to specific pages within the resource. The name of each page is the array key in the `getPages()` array of the resource. For example, to generate a URL to the [Create page](creating-records):
@@ -336,6 +328,14 @@ CustomerResource::getUrl('edit', ['record' => $customer]); // /admin/customers/e
 ```
 
 In this example, `$customer` can be an Eloquent model object, or an ID.
+
+If you have multiple panels in your app, `getUrl()` will generate a URL within the current panel. You can also indicate which panel the resource is associated with, by passing the panel ID to the `panel` argument:
+
+```php
+use App\Filament\Resources\CustomerResource;
+
+CustomerResource::getUrl(panel: 'marketing');
+```
 
 ## Customizing the resource Eloquent query
 
