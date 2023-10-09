@@ -35,11 +35,17 @@ class Dashboard extends Page
 
     public static function routes(Panel $panel): void
     {
-        Route::get('/', static::class)
+        Route::get(static::getRoutePath(), static::class)
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->name(static::getSlug());
     }
+
+    public static function getRoutePath(): string
+    {
+        return '/';
+    }
+
 
     /**
      * @return array<class-string<Widget> | WidgetConfiguration>
