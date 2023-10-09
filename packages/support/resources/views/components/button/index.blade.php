@@ -94,7 +94,6 @@
         \Filament\Support\get_color_css_variables(
             $color,
             shades: [400, 500, 600],
-            alias: 'button',
         ) => $color !== 'gray',
     ]);
 
