@@ -69,17 +69,19 @@
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
+
+    $hasTooltip = filled($tooltip);
 @endphp
 
 @if ($tag === 'button')
     <button
-        @if ($keyBindings || $tooltip)
+        @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,
@@ -129,13 +131,13 @@
 @elseif ($tag === 'a')
     <a
         {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
-        @if ($keyBindings || $tooltip)
+        @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,
