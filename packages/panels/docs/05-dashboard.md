@@ -159,7 +159,7 @@ If you want to create multiple dashboards, you can do so by repeating [the proce
 You will also need to define the URL path to the extra dashboard, otherwise it will be at `/`:
 
 ```php
-protected static string $routePath = '/finance';
+protected static string $routePath = 'finance';
 ```
 
 You may also customize the title of the dashboard by overriding the `$title` property:
