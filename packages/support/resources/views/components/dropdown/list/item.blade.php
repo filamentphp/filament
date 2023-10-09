@@ -15,6 +15,7 @@
     'keyBindings' => null,
     'tag' => 'button',
     'target' => null,
+    'tooltip' => null,
 ])
 
 @php
@@ -71,13 +72,23 @@
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
     }
+
+    $hasTooltip = filled($tooltip);
 @endphp
 
 @if ($tag === 'button')
     <button
-        @if ($keyBindings)
+        @if ($keyBindings || $hasTooltip)
             x-data="{}"
+        @endif
+        @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+        @endif
+        @if ($hasTooltip)
+            x-tooltip="{
+                content: @js($tooltip),
+                theme: $store.theme,
+            }"
         @endif
         {{
             $attributes
@@ -129,9 +140,17 @@
 @elseif ($tag === 'a')
     <a
         {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
-        @if ($keyBindings)
+        @if ($keyBindings || $hasTooltip)
             x-data="{}"
+        @endif
+        @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+        @endif
+        @if ($hasTooltip)
+            x-tooltip="{
+                content: @js($tooltip),
+                theme: $store.theme,
+            }"
         @endif
         {{
             $attributes
@@ -171,9 +190,17 @@
         @csrf
 
         <button
-            @if ($keyBindings)
+            @if ($keyBindings || $hasTooltip)
                 x-data="{}"
+            @endif
+            @if ($keyBindings)
                 x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+            @endif
+            @if ($hasTooltip)
+                x-tooltip="{
+                    content: @js($tooltip),
+                    theme: $store.theme,
+                }"
             @endif
             type="submit"
             {{

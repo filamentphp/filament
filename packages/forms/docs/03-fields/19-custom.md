@@ -24,7 +24,7 @@ This assumes that you have a `resources/views/filament/forms/components/range-sl
 
 ### Passing data to view fields
 
-You can pass a simple array of data to to the view using `viewData()`:
+You can pass a simple array of data to the view using `viewData()`:
 
 ```php
 use Filament\Forms\Components\ViewField;
