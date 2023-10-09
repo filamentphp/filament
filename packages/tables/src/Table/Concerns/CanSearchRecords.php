@@ -62,7 +62,7 @@ trait CanSearchRecords
         return (bool) $this->evaluate($this->persistsColumnSearchesInSession);
     }
 
-    public function searchPlaceholder(string | Closure | null $searchPlaceholder = null): static
+    public function searchPlaceholder(string | Closure | null $searchPlaceholder): static
     {
         $this->searchPlaceholder = $searchPlaceholder;
 
