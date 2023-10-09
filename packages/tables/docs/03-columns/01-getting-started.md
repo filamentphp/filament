@@ -175,7 +175,9 @@ TextColumn::make('full_name')
     })
 ```
 
-You may customize the placeholder in the global searchbox, by either change the `filament-tables::table.fields.search.placeholder` translation (globally) or you can use the table method `searchPlaceholder`:
+#### Customizing the table search field placeholder
+
+You may customize the placeholder in the search field using the `searchPlaceholder()` method on the `$table`:
 
 ```php
 use Filament\Tables\Table;
@@ -186,7 +188,7 @@ public static function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->searchPlaceholder("Search (ID, Name)");
+        ->searchPlaceholder('Search (ID, Name)');
 }
 ```
 
