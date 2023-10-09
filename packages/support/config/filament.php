@@ -49,11 +49,11 @@ return [
     |
     | This is the directory where Filament's assets will be published to. It
     | is relative to the `public` directory of your Laravel application.
-    | 
+    |
     | After changing the path, you should run `php artisan filament:assets`.
     |
     */
 
     'assets_path' => null,
-    
+
 ];
