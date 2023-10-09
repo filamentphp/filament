@@ -240,7 +240,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $diskNameFromRegisteredConversions = $model
             ->getRegisteredMediaCollections()
             ->filter(fn (MediaCollection $collection): bool => $collection->name === $this->getCollection())
-            ->value('diskName');
+            ->first()
+            ?->diskName;
 
         return $diskNameFromRegisteredConversions ?? config('filament.default_filesystem_disk');
     }
