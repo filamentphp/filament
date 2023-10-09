@@ -9,6 +9,7 @@ use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
+use Spatie\MediaLibrary\MediaCollections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
@@ -228,6 +229,25 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             ->getMedia($this->getCollection())
             ->whereNotIn('uuid', array_keys($this->getState() ?? []))
             ->each(fn (Media $media) => $media->delete());
+    }
+
+    public function getDiskName(): string
+    {
+        if ($diskName = $this->evaluate($this->diskName)) {
+            return $diskName;
+        }
+
+        /** @var Model&HasMedia $model */
+        $model = $this->getModelInstance();
+
+        /** @phpstan-ignore-next-line */
+        $diskNameFromRegisteredConversions = $model
+            ->getRegisteredMediaCollections()
+            ->filter(fn (MediaCollection $collection): bool => $collection->name === $this->getCollection())
+            ->first()
+            ?->diskName;
+
+        return $diskNameFromRegisteredConversions ?? config('filament.default_filesystem_disk');
     }
 
     public function getCollection(): string
