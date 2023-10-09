@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
@@ -1175,14 +1177,16 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         };
     }
 
-    public function getDefaultState(): mixed
+    public function hydrateDefaultState(?array &$hydratedDefaultState): void
     {
-        $state = parent::getDefaultState();
+        parent::hydrateDefaultState($hydratedDefaultState);
 
-        if (is_bool($state)) {
-            return $state ? 1 : 0;
+        if (is_bool($state = $this->getState())) {
+            $state = $state ? 1 : 0;
+            
+            $this->state($state);
+
+            Arr::set($hydratedDefaultState, $this->getStatePath(), $state);
         }
-
-        return $state;
     }
 }
