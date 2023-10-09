@@ -29,11 +29,13 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
-            foreach ($name as $actionNestingIndex => $actionName) {
+            foreach ($name as $actionName) {
                 $this->call(
                     'mountAction',
                     $actionName,
-                    (count($name) === $actionNestingIndex + 1) ? $arguments : [],
+                    count($name) > 1
+                        ? $arguments[$actionName] ?? []
+                        : $arguments,
                 );
             }
 
