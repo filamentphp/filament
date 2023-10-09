@@ -237,7 +237,7 @@ class AttachAction extends Action
                     ),
                 );
 
-            if (filled($titleAttribute)) {
+            if (filled($titleAttribute) && empty($this->recordTitle)) {
                 if (empty($relationshipQuery->getQuery()->orders)) {
                     $relationshipQuery->orderBy($titleAttribute);
                 }
