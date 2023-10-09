@@ -10,8 +10,6 @@
 @endphp
 
 <x-dynamic-component
-    :badge="$action->getBadge()"
-    :badge-color="$action->getBadgeColor()"
     :component="$dynamicComponent"
     :form="$action->getFormToSubmit()"
     :tag="$url ? 'a' : 'button'"

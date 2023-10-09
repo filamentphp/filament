@@ -1,4 +1,6 @@
 <x-filament-actions::group
+    :badge="$getBadge()"
+    :badge-color="$getBadgeColor()"
     dynamic-component="filament::button"
     :group="$group"
     :icon-position="$getIconPosition()"
