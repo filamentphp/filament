@@ -303,7 +303,7 @@ public static function getNavigationGroup(): ?string
 
 Filament provides `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
 
-The `getUrl()` method, without any arguments, will generate a URL to the [List page](listing-records):
+The `getUrl()` method, without any arguments, will generate a URL to the resource's [List page](listing-records):
 
 ```php
 use App\Filament\Resources\CustomerResource;
