@@ -1,7 +1,8 @@
 <x-filament-actions::group
-    :group="$group"
     dynamic-component="filament::badge"
+    :group="$group"
     :icon-position="$getIconPosition()"
+    :size="$getSize()"
     class="fi-ac-badge-group"
 >
     {{ $getLabel() }}

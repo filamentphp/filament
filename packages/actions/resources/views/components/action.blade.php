@@ -24,6 +24,7 @@
     :tooltip="$action->getTooltip()"
     :disabled="$isDisabled"
     :icon="$icon ?? $action->getIcon()"
+    :icon-size="$action->getIconSize()"
     :label-sr-only="$action->isLabelHidden()"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes(), escape: false)"
 >

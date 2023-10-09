@@ -4,7 +4,6 @@
     :badge-color="$getBadgeColor()"
     dynamic-component="filament::button"
     :icon-position="$getIconPosition()"
-    :icon-size="$getIconSize()"
     :labeled-from="$getLabeledFromBreakpoint()"
     :outlined="$isOutlined()"
     :size="$getSize()"

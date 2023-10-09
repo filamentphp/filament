@@ -2,6 +2,7 @@
     :action="$action"
     dynamic-component="filament::badge"
     :icon-position="$getIconPosition()"
+    :size="$getSize()"
     class="fi-ac-badge-action"
 >
     {{ $getLabel() }}
