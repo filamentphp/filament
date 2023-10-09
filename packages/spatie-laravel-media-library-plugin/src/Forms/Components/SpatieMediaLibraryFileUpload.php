@@ -83,12 +83,12 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $url = null;
 
             if ($component->getVisibility() === 'private') {
+                $conversion = $component->getConversion();
+                
                 try {
                     $url = $media?->getTemporaryUrl(
                         now()->addMinutes(5),
-                        $component->getConversion() && $media->hasGeneratedConversion($component->getConversion())
-                            ? $component->getConversion()
-                            : ''
+                        (filled($conversion) && $media->hasGeneratedConversion($conversion)) ? $conversion : '',
                     );
                 } catch (Throwable $exception) {
                     // This driver does not support creating temporary URLs.
