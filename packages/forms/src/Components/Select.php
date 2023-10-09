@@ -1243,10 +1243,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     {
         parent::hydrateDefaultState($hydratedDefaultState);
 
-        $state = $this->getState();
+        if (is_bool($state = $this->getState())) {
+            $state = $state ? 1 : 0;
+            
+            $this->state($state);
 
-        if (is_bool($state)) {
-            $this->state($state ? 1 : 0);
+            Arr::set($hydratedDefaultState, $this->getStatePath(), $state);
         }
     }
 }
