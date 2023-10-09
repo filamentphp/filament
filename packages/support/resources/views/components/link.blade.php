@@ -173,11 +173,16 @@
         @if (in_array($iconPosition, [IconPosition::Before, 'before']))
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $iconAlias,
+                                'icon' => $icon,
+                                'wire:loading.remove.delay.' . config('filament.wire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
@@ -200,11 +205,16 @@
         @if (in_array($iconPosition, [IconPosition::After, 'after']))
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $iconAlias,
+                                'icon' => $icon,
+                                'wire:loading.remove.delay.' . config('filament.wire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )->class([$iconClasses])
+                    "
                     :style="$iconStyles"
                 />
             @endif

@@ -11,10 +11,16 @@
         </h4>
 
         <x-filament::link
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes(
+                    new \Illuminate\View\ComponentAttributeBag([
+                        'wire:loading.remove.delay.' . config('filament.wire_loading_delay', 'default') => '',
+                    ])
+                )
+            "
             color="danger"
             tag="button"
             wire:click="resetTableFiltersForm"
-            wire:loading.remove.delay=""
             wire:target="tableFilters,resetTableFiltersForm"
         >
             {{ __('filament-tables::table.filters.actions.reset.label') }}

@@ -107,11 +107,16 @@
 
             @if ($prefixIcon)
                 <x-filament::icon
-                    :alias="$prefixIconAlias"
-                    :icon="$prefixIcon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $prefixIconAlias,
+                                'icon' => $prefixIcon,
+                                'wire:loading.remove.delay.' . config('filament.wire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
@@ -139,7 +144,7 @@
     <div
         @if ($hasLoadingIndicator && (! $hasPrefix))
             @if ($inlinePrefix)
-                wire:loading.delay.class.remove="ps-3"
+                wire:loading.delay.{{ config('filament.wire_loading_delay', 'default') }}.class.remove="ps-3"
             @endif
 
             wire:target="{{ $loadingIndicatorTarget }}"
