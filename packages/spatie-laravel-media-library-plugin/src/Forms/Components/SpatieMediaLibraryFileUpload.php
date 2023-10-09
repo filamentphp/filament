@@ -238,6 +238,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $model = $this->getModelInstance();
 
         $diskNameFromRegisteredConversions = $model
+            /** @phpstan-ignore-next-line */
             ->getRegisteredMediaCollections()
             ->filter(fn (MediaCollection $collection): bool => $collection->name === $this->getCollection())
             ->first()
