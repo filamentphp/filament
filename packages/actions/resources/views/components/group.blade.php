@@ -4,7 +4,9 @@
     'badgeColor' => null,
     'button' => false,
     'color' => null,
+    'dropdownMaxHeight' => null,
     'dropdownPlacement' => null,
+    'dropdownWidth' => null,
     'dynamicComponent' => null,
     'group' => null,
     'icon' => null,
@@ -21,10 +23,11 @@
 @if (! ($dynamicComponent && $group))
     @php
         $group = \Filament\Actions\ActionGroup::make($actions)
-            ->badge($badge)
             ->badgeColor($badgeColor)
             ->color($color)
+            ->dropdownMaxHeight($dropdownMaxHeight)
             ->dropdownPlacement($dropdownPlacement)
+            ->dropdownWidth($dropdownWidth)
             ->icon($icon)
             ->iconPosition($iconPosition)
             ->iconSize($iconSize)
@@ -32,6 +35,10 @@
             ->size($size)
             ->tooltip($tooltip)
             ->view($view);
+
+        $badge === true
+            ? $group->badge()
+            : $group->badge($badge);
 
         if ($button) {
             $group->button();
@@ -91,11 +98,10 @@
     >
         <x-slot name="trigger">
             <x-dynamic-component
-                :badge="$group->getBadge()"
-                :badge-color="$group->getBadgeColor()"
                 :color="$group->getColor()"
                 :component="$dynamicComponent"
                 :icon="$group->getIcon()"
+                :icon-size="$group->getIconSize()"
                 :label-sr-only="$group->isLabelHidden()"
                 :tooltip="$group->getTooltip()"
                 :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($group->getExtraAttributes(), escape: false)"
