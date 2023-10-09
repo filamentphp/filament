@@ -88,7 +88,8 @@ class MakeUserCommand extends Command
     public function handle(): int
     {
         $this->options = $this->options();
-        if (Filament::getCurrentPanel() === null) { 
+        if (Filament::getCurrentPanel() === null)
+        { 
             $this->error('The panel does not exist. Please run: php artisan filament:install --panels');
             return static::INVALID;
         }
