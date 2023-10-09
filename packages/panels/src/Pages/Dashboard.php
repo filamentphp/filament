@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 
 class Dashboard extends Page
 {
+    protected static string $routePath = '/';
+
     protected static ?int $navigationSort = -2;
 
     /**
@@ -43,7 +45,7 @@ class Dashboard extends Page
 
     public static function getRoutePath(): string
     {
-        return '/';
+        return static::$routePath;
     }
 
     /**
