@@ -87,7 +87,6 @@ class MakeUserCommand extends Command
 
     public function handle(): int
     {
-        
         $this->options = $this->options();
         if (Filament::getCurrentPanel() === null) { 
             $this->error('The panel does not exist. Please run: php artisan filament:install --panels');
@@ -95,7 +94,6 @@ class MakeUserCommand extends Command
         }
         $user = $this->createUser();
         $this->sendSuccessMessage($user);
-        
         return static::SUCCESS;
     }
 }
