@@ -46,7 +46,6 @@ class Dashboard extends Page
         return '/';
     }
 
-
     /**
      * @return array<class-string<Widget> | WidgetConfiguration>
      */
