@@ -9,6 +9,7 @@
     'group' => null,
     'icon' => null,
     'iconButton' => false,
+    'iconSize' => null,
     'label' => null,
     'link' => false,
     'size' => null,
@@ -24,6 +25,7 @@
             ->color($color)
             ->dropdownPlacement($dropdownPlacement)
             ->icon($icon)
+            ->iconSize($iconSize)
             ->label($label)
             ->size($size)
             ->tooltip($tooltip)
@@ -93,6 +95,7 @@
                 :color="$group->getColor()"
                 :tooltip="$group->getTooltip()"
                 :icon="$group->getIcon()"
+                :icon-size="$group->getIconSize()"
                 :size="$group->getSize()"
                 :label-sr-only="$group->isLabelHidden()"
                 :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($group->getExtraAttributes(), escape: false)"
