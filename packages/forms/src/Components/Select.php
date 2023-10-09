@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -1183,7 +1182,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
         if (is_bool($state = $this->getState())) {
             $state = $state ? 1 : 0;
-            
+
             $this->state($state);
 
             Arr::set($hydratedDefaultState, $this->getStatePath(), $state);

@@ -84,7 +84,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             if ($component->getVisibility() === 'private') {
                 $conversion = $component->getConversion();
-                
+
                 try {
                     $url = $media?->getTemporaryUrl(
                         now()->addMinutes(5),
