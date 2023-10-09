@@ -47,10 +47,11 @@ return [
     | Assets Path
     |--------------------------------------------------------------------------
     |
-    | This is the path where Filament's published assets are placed. This path
-    | is relative to the `public` directory of your Laravel application.
+    | This is the directory where Filament's assets are published to. It is
+    | relative to the `public` directory of your Laravel application.
     |
     */
 
     'assets_path' => null,
+    
 ];
