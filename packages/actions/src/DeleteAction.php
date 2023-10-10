@@ -45,15 +45,20 @@ class DeleteAction extends Action
         });
 
         $this->action(function (): void {
-            $result = $this->process(static fn (Model $record) => $record->delete());
+            try {
+                $result = $this->process(static fn (Model $record) => $record->delete());
 
-            if (! $result) {
+                if (! $result) {
+                    $this->failure();
+
+                    return;
+                }
+
+                $this->success();
+            } catch (\Illuminate\Database\QueryException $exception) {
+
                 $this->failure();
-
-                return;
             }
-
-            $this->success();
         });
     }
 }

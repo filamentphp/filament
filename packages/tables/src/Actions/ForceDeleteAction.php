@@ -35,15 +35,20 @@ class ForceDeleteAction extends Action
         $this->modalIcon('heroicon-o-trash');
 
         $this->action(function (): void {
-            $result = $this->process(static fn (Model $record) => $record->forceDelete());
+            try {
+                $result = $this->process(static fn (Model $record) => $record->forceDelete());
 
-            if (! $result) {
+                if (! $result) {
+                    $this->failure();
+
+                    return;
+                }
+
+                $this->success();
+            } catch (\Illuminate\Database\QueryException $exception) {
+
                 $this->failure();
-
-                return;
             }
-
-            $this->success();
         });
 
         $this->visible(static function (Model $record): bool {

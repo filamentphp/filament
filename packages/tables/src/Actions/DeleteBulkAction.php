@@ -38,9 +38,15 @@ class DeleteBulkAction extends BulkAction
         $this->modalIcon('heroicon-o-trash');
 
         $this->action(function (): void {
-            $this->process(static fn (Collection $records) => $records->each(fn (Model $record) => $record->delete()));
+            try {
+                $this->process(static fn (Collection $records) => $records->each(fn (Model $record) => $record->delete()));
 
-            $this->success();
+                $this->success();
+
+            } catch (\Illuminate\Database\QueryException $exception) {
+
+                $this->failure();
+            }
         });
 
         $this->deselectRecordsAfterCompletion();
