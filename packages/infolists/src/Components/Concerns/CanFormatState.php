@@ -84,16 +84,16 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0, bool $omitSymbol = false): static
     {
-        $this->formatStateUsing(static function (TextEntry $component, $state) use ($currency, $divideBy): ?string {
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($currency, $divideBy, $omitSymbol): ?string {
             if (blank($state)) {
                 return null;
             }
 
             $currency = $component->evaluate($currency) ?? Infolist::$defaultCurrency;
 
-            return format_money($state, $currency, $divideBy);
+            return format_money($state, $currency, $divideBy, $omitSymbol);
         });
 
         return $this;
