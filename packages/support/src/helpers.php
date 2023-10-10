@@ -12,12 +12,21 @@ use Illuminate\View\ComponentAttributeBag;
 use NumberFormatter;
 
 if (! function_exists('Filament\Support\format_money')) {
-    function format_money(float | int $money, string $currency, int $divideBy = 0): string
+    function format_money(float | int $money, string $currency, int $divideBy = 0, bool $omitSymbol = false): string
     {
         $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::CURRENCY);
 
         if ($divideBy) {
             $money = bcdiv((string) $money, (string) $divideBy);
+        }
+
+        if ($omitSymbol) {
+            $formatter->setSymbol(NumberFormatter::CURRENCY_SYMBOL, '');
+            return preg_replace(
+                '/[[:^ascii:]]/',
+                '',
+                $formatter->format($money)
+            );
         }
 
         return $formatter->formatCurrency($money, $currency);
