@@ -82,6 +82,15 @@ TextEntry::make('price')
     ->money('EUR')
 ```
 
+You may wish to display formatted monetary values, but without the currency symbol. You can achieve this by setting the `omitSymbol` parameter in the `money()` method:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('price')
+    ->money('EUR', omitSymbol: true)
+```
+
 ## Limiting text length
 
 You may `limit()` the length of the entry's value:
