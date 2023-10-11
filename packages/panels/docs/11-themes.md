@@ -195,21 +195,18 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->brandLogo(
-            new HtmlString(
-                <<<'HTML'
-                <svg
-                    fill="currentColor"
-                    viewBox="0 0 128 26"
-                    xmlns="http://www.w3.org/2000/svg"
-                    class="h-full text-gray-500 dark:text-gray-400"
-                >
-                    <path d="..." />
-                </svg>
-                HTML
-            ),
-        );
+        ->brandLogo(view('filament.panels.admin.logo'));
 }
+```
+
+```blade
+<svg
+    viewBox="0 0 128 26"
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-full fill-gray-500 dark:fill-gray-400"
+>
+    <!-- ... -->
+</svg>
 ```
 
 If you need a different logo to be used when the application is in dark mode, you can pass it to `darkModeBrandLogo()` in the same way.
