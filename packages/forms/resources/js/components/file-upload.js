@@ -40,6 +40,7 @@ export default function fileUploadFormComponent({
     isDeletable,
     isDisabled,
     isDownloadable,
+    isMultiple,
     isOpenable,
     isPreviewable,
     isReorderable,
@@ -500,15 +501,18 @@ export default function fileUploadFormComponent({
                     width: imageResizeTargetWidth,
                 })
                 .toBlob((croppedImage) => {
-                    this.pond.removeFile(
-                        this.pond
+
+                    if (isMultiple) {
+                        const fileToRemove = this.pond
                             .getFiles()
                             .find(
                                 (uploadedFile) =>
                                     uploadedFile.filename ===
-                                    this.editingFile.name,
-                            ),
-                    )
+                                    this.editingFile.name
+                            )
+
+                        this.pond.removeFile(fileToRemove?.id, { revert: true })
+                    }
 
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
@@ -517,7 +521,7 @@ export default function fileUploadFormComponent({
                             .addFile(
                                 new File(
                                     [croppedImage],
-                                    this.editingFile.name,
+                                    (+new Date).toString(36),
                                     {
                                         type:
                                             this.editingFile.type ===
