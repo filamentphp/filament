@@ -1,7 +1,7 @@
 @php
     $brandName = filament()->getBrandName();
     $brandLogo = filament()->getBrandLogo();
-    $brandLogoHeight = filament()->getBrandLogoHeight() ?? '1.25rem';
+    $brandLogoHeight = filament()->getBrandLogoHeight() ?? '1.5rem';
 @endphp
 
 @if ($brandLogo instanceof \Illuminate\Contracts\Support\Htmlable)
