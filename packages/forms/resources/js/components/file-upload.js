@@ -501,14 +501,13 @@ export default function fileUploadFormComponent({
                     width: imageResizeTargetWidth,
                 })
                 .toBlob((croppedImage) => {
-
                     if (isMultiple) {
                         const fileToRemove = this.pond
                             .getFiles()
                             .find(
                                 (uploadedFile) =>
                                     uploadedFile.filename ===
-                                    this.editingFile.name
+                                    this.editingFile.name,
                             )
 
                         this.pond.removeFile(fileToRemove?.id, { revert: true })
@@ -521,7 +520,7 @@ export default function fileUploadFormComponent({
                             .addFile(
                                 new File(
                                     [croppedImage],
-                                    (+new Date).toString(36),
+                                    (+new Date()).toString(36),
                                     {
                                         type:
                                             this.editingFile.type ===
