@@ -97,7 +97,7 @@ class SupportServiceProvider extends PackageServiceProvider
             return "<?php echo \Filament\Support\Facades\FilamentAsset::renderStyles({$expression}) ?>";
         });
 
-        Blade::extend(function($view) {
+        Blade::extend(function ($view) {
             return preg_replace('/\s*@trim\s*/m', '', $view);
         });
 
