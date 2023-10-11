@@ -104,6 +104,11 @@ class FilamentManager
         return $this->currentPanel ?? null;
     }
 
+    public function getDarkModeBrandLogo(): string | Htmlable | null
+    {
+        return $this->getCurrentPanel()->getDarkModeBrandLogo();
+    }
+
     public function getDatabaseNotificationsPollingInterval(): ?string
     {
         return $this->getCurrentPanel()->getDatabaseNotificationsPollingInterval();
