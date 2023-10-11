@@ -124,8 +124,8 @@ php artisan make:filament-theme admin
 The command will create a CSS file and Tailwind Configuration file in the `/resources/css/filament` directory. You can then customize the theme by editing these files. It will also give you instructions on how to compile the theme and register it in Filament. **Please follow the instructions in the command to complete the setup process:**
 
 ```
-⇂ First, add a new item to the `input` array of `vite.config.js`: `resources/css/filament/admin/theme.css`  
-⇂ Next, register the theme in the admin panel provider using `->viteTheme('resources/css/filament/admin/theme.css')`  
+⇂ First, add a new item to the `input` array of `vite.config.js`: `resources/css/filament/admin/theme.css`
+⇂ Next, register the theme in the admin panel provider using `->viteTheme('resources/css/filament/admin/theme.css')`
 ⇂ Finally, run `npm run build` to compile the theme
 ```
 
@@ -186,15 +186,59 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Alternatively, you may create a `resources/views/vendor/filament-panels/components/logo.blade.php` file to provide completely custom HTML:
+Alternatively, you may directly pass HTML to the `brandLogo()` method to render an inline SVG element for example:
 
-```blade
-<img
-    src="{{ asset('images/logo.svg') }}"
-    alt="Logo"
-    class="h-10"
-/>
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->brandLogo(
+            new HtmlString(
+                <<<'BLADE'
+                <svg
+                    fill="currentColor"
+                    viewBox="0 0 128 26"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-full text-gray-500 dark:text-gray-400"
+                >
+                    <path d="..." />
+                </svg>
+                BLADE
+            ),
+        );
+}
 ```
+
+The logo height defaults to a sensible value, but it's impossible to account for all possible aspect ratios. Therefore, you may customize the height of the rendered logo using the `brandLogoHeight()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->brandLogo(
+            new HtmlString(
+                <<<'BLADE'
+                <svg
+                    fill="currentColor"
+                    viewBox="0 0 128 26"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-full text-gray-500 dark:text-gray-400"
+                >
+                    <path d="..." />
+                </svg>
+                BLADE
+            ),
+        )
+        ->brandLogoHeight('2rem');
+}
+```
+
 
 ## Adding a favicon
 
