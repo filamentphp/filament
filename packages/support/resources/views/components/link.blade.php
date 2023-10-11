@@ -144,6 +144,7 @@
             </div>
         @endif
     </a>
+    @trim
 @elseif ($tag === 'button')
     <button
         @if ($keyBindings || $hasTooltip)
@@ -222,4 +223,5 @@
             </div>
         @endif
     </button>
+    @trim
 @endif

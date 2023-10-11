@@ -1,14 +1,33 @@
 @php
     $brandName = filament()->getBrandName();
-    $brandLogo = filament()->getBrandLogo()
+    $brandLogo = filament()->getBrandLogo();
+    $brandLogoHeight = filament()->getBrandLogoHeight() ?? '1.5rem';
 @endphp
 
-@if (filled($brandLogo))
+@if ($brandLogo instanceof \Illuminate\Contracts\Support\Htmlable)
+    <div
+        {{
+            $attributes
+                ->class(['fi-logo'])
+                ->style([
+                    "height: {$brandLogoHeight}",
+                ])
+        }}
+    >
+        {{ $brandLogo }}
+    </div>
+@elseif (filled($brandLogo))
     <img
-        src="{{ $brandLogo }}"
-        loading="lazy"
         alt="{{ $brandName }}"
-        {{ $attributes->class(['fi-logo h-10']) }}
+        loading="lazy"
+        src="{{ $brandLogo }}"
+        {{
+            $attributes
+                ->class(['fi-logo'])
+                ->style([
+                    "height: {$brandLogoHeight}",
+                ])
+        }}
     />
 @else
     <div
