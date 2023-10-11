@@ -89,7 +89,7 @@ class FilamentManager
         return $this->getCurrentPanel()->getBrandLogo();
     }
 
-    public function getBrandLogoHeight(): string | int | null
+    public function getBrandLogoHeight(): ?string
     {
         return $this->getCurrentPanel()->getBrandLogoHeight();
     }
