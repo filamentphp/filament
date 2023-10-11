@@ -195,7 +195,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->brandLogo(new HtmlString(view('filament.admin.logo')));
+        ->brandLogo(fn () => view('filament.admin.logo'));
 }
 ```
 
@@ -220,7 +220,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->brandLogo(new HtmlString(view('filament.admin.logo')))
+        ->brandLogo(fn () => view('filament.admin.logo'))
         ->brandLogoHeight('2rem');
 }
 ```
