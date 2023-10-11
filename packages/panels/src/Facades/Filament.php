@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getAuthPasswordBroker()
  * @method static string | Htmlable getBrandName()
  * @method static string | Htmlable | null getBrandLogo()
- * @method static string | int | null getBrandLogoHeight()
+ * @method static string | null getBrandLogoHeight()
  * @method static string getCollapsedSidebarWidth()
  * @method static Panel | null getCurrentPanel()
  * @method static string | null getDatabaseNotificationsPollingInterval()
