@@ -32,6 +32,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getBrandLogoHeight()
  * @method static string getCollapsedSidebarWidth()
  * @method static Panel | null getCurrentPanel()
+ * @method static string | Htmlable | null getDarkModeBrandLogo()
  * @method static string | null getDatabaseNotificationsPollingInterval()
  * @method static string getDefaultAvatarProvider()
  * @method static Panel getDefaultPanel()

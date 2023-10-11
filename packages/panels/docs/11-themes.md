@@ -212,6 +212,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+If you need a different logo to be used when the application is in dark mode, you can pass it to `darkModeBrandLogo()` in the same way.
+
 The logo height defaults to a sensible value, but it's impossible to account for all possible aspect ratios. Therefore, you may customize the height of the rendered logo using the `brandLogoHeight()` method:
 
 ```php

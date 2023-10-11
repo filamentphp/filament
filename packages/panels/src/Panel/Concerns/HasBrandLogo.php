@@ -12,9 +12,11 @@ trait HasBrandLogo
 
     protected string | Closure | null $brandLogoHeight = null;
 
-    public function brandLogo(string | Htmlable | Closure | null $url): static
+    protected string | HtmlString | Closure | null $darkModeBrandLogo = null;
+
+    public function brandLogo(string | Htmlable | Closure | null $logo): static
     {
-        $this->brandLogo = $url;
+        $this->brandLogo = $logo;
 
         return $this;
     }
@@ -22,6 +24,13 @@ trait HasBrandLogo
     public function brandLogoHeight(string | Closure | null $height): static
     {
         $this->brandLogoHeight = $height;
+
+        return $this;
+    }
+
+    public function darkModeBrandLogo(string | Htmlable | Closure | null $logo): static
+    {
+        $this->darkModeBrandLogo = $logo;
 
         return $this;
     }
@@ -34,5 +43,10 @@ trait HasBrandLogo
     public function getBrandLogoHeight(): ?string
     {
         return $this->evaluate($this->brandLogoHeight);
+    }
+
+    public function getDarkModeBrandLogo(): string | Htmlable | null
+    {
+        return $this->evaluate($this->darkModeBrandLogo);
     }
 }

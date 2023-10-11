@@ -2,37 +2,56 @@
     $brandName = filament()->getBrandName();
     $brandLogo = filament()->getBrandLogo();
     $brandLogoHeight = filament()->getBrandLogoHeight() ?? '1.25rem';
+    $darkModeBrandLogo = filament()->getDarkModeBrandLogo();
+    $hasDarkModeBrandLogo = filled($darkModeBrandLogo);
+
+    $getLogoClasses = fn (bool $isDarkMode): string => \Illuminate\Support\Arr::toCssClasses([
+        'fi-logo',
+        'flex dark:hidden' => $hasDarkModeBrandLogo && (! $isDarkMode),
+        'hidden dark:flex' => $hasDarkModeBrandLogo && $isDarkMode,
+    ]);
+
+    $logoStyles = "height: {$brandLogoHeight}";
 @endphp
 
-@if ($brandLogo instanceof \Illuminate\Contracts\Support\Htmlable)
-    <div
-        {{
-            $attributes
-                ->class(['fi-logo'])
-                ->style([
-                    "height: {$brandLogoHeight}",
+@capture($content, $logo, $isDarkMode = false)
+    @if ($logo instanceof \Illuminate\Contracts\Support\Htmlable)
+        <div
+            {{
+                $attributes
+                    ->class([$getLogoClasses($isDarkMode)])
+                    ->style([$logoStyles])
+            }}
+        >
+            {{ $logo }}
+        </div>
+    @elseif (filled($logo))
+        <img
+            alt="{{ $brandName }}"
+            loading="lazy"
+            src="{{ $logo }}"
+            {{
+                $attributes
+                    ->class([$getLogoClasses($isDarkMode)])
+                    ->style([$logoStyles])
+            }}
+        />
+    @else
+        <div
+            {{
+                $attributes->class([
+                    $getLogoClasses($isDarkMode),
+                    'text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white',
                 ])
-        }}
-    >
-        {{ $brandLogo }}
-    </div>
-@elseif (filled($brandLogo))
-    <img
-        alt="{{ $brandName }}"
-        loading="lazy"
-        src="{{ $brandLogo }}"
-        {{
-            $attributes
-                ->class(['fi-logo'])
-                ->style([
-                    "height: {$brandLogoHeight}",
-                ])
-        }}
-    />
-@else
-    <div
-        {{ $attributes->class(['fi-logo text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white']) }}
-    >
-        {{ $brandName }}
-    </div>
+            }}
+        >
+            {{ $brandName }}
+        </div>
+    @endif
+@endcapture
+
+{{ $content($brandLogo) }}
+
+@if ($hasDarkModeBrandLogo)
+    {{ $content($darkModeBrandLogo, isDarkMode: true) }}
 @endif
