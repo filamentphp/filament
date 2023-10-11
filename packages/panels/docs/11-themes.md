@@ -197,7 +197,7 @@ public function panel(Panel $panel): Panel
         // ...
         ->brandLogo(
             new HtmlString(
-                <<<'BLADE'
+                <<<'HTML'
                 <svg
                     fill="currentColor"
                     viewBox="0 0 128 26"
@@ -206,7 +206,7 @@ public function panel(Panel $panel): Panel
                 >
                     <path d="..." />
                 </svg>
-                BLADE
+                HTML
             ),
         );
 }
@@ -225,7 +225,7 @@ public function panel(Panel $panel): Panel
         // ...
         ->brandLogo(
             new HtmlString(
-                <<<'BLADE'
+                <<<'HTML'
                 <svg
                     fill="currentColor"
                     viewBox="0 0 128 26"
@@ -234,7 +234,7 @@ public function panel(Panel $panel): Panel
                 >
                     <path d="..." />
                 </svg>
-                BLADE
+                HTML
             ),
         )
         ->brandLogoHeight('2rem');
