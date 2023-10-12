@@ -187,6 +187,11 @@ return [
 
             ],
 
+            'svg' => [
+                'confirm_edit' => 'Redigering av SVG-filer rekommenderas inte eftersom det förstör bildens kvalitet.\n Är du säker på att du vill fortsätta?',
+                'disabled_alert' => 'Redigering av SVG-filer är inaktiverat eftersom det förstör bildens kvalitet.',
+            ],
+
         ],
 
     ],

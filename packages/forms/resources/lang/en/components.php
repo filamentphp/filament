@@ -187,6 +187,11 @@ return [
 
             ],
 
+            'svg' => [
+                'confirm_edit' => 'Editing SVG files is not recommended as it destroys the image quality.\n Are you sure you want to continue?',
+                'disabled_alert' => 'Editing SVG files is disabled as it destroys the image quality.',
+            ],
+
         ],
 
     ],

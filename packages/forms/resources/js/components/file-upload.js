@@ -45,6 +45,9 @@ export default function fileUploadFormComponent({
     isPreviewable,
     isReorderable,
     hasImageEditor,
+    allowSvgEditing,
+    svgConfirmText,
+    svgAlertText,
     loadingIndicatorPosition,
     locale,
     panelAspectRatio,
@@ -469,7 +472,18 @@ export default function fileUploadFormComponent({
                 return
             }
 
+            if(!allowSvgEditing && file.type === 'image/svg+xml') {
+                alert(svgAlertText)
+                return
+            }
+
             this.editingFile = file
+
+            if (this.editingFile.type === 'image/svg+xml') {
+                if (!confirm(svgConfirmText)) {
+                    return
+                }
+            }
 
             this.initEditor()
 
@@ -517,54 +531,42 @@ export default function fileUploadFormComponent({
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
 
-                        let editingFileName = this.editingFile.name.slice(
-                            0,
-                            this.editingFile.name.lastIndexOf('.'),
-                        )
-                        let editingFileExtension = this.editingFile.name.slice(
-                            this.editingFile.name.lastIndexOf('.') + 1,
-                        )
+                        let editingFileName = this.editingFile.name.slice(0, this.editingFile.name.lastIndexOf('.'))
+                        let editingFileExtension = this.editingFile.name.split('.').pop()
 
-                        let editingFileNameNumber = null
-
-                        if (editingFileName.includes('-')) {
-                            editingFileNameNumber = +editingFileName.slice(
-                                editingFileName.lastIndexOf('-') + 1,
-                            )
+                        if (editingFileExtension === 'svg') {
+                            editingFileExtension = 'png'
                         }
 
-                        let newEditingFileName
+                        const regex = /-crop-(\d+)/
 
-                        if (
-                            editingFileNameNumber !== null &&
-                            !isNaN(editingFileNameNumber)
-                        ) {
-                            newEditingFileName = `${editingFileName
-                                .slice(0, editingFileName.lastIndexOf('-'))
-                                .substring(0, 64)}-${Math.floor(
-                                Math.random() * 100000,
-                            )}.${editingFileExtension}`
+                        if (regex.test(editingFileName)) {
+                            editingFileName = editingFileName.replace(regex, (match, number) => {
+                                const newNumber = Number(number) + 1
+                                return `-crop-${newNumber}`
+                            })
+                        } else {
+                            editingFileName += '-crop-0'
                         }
-
-                        newEditingFileName ??= `${editingFileName.substring(
-                            0,
-                            64,
-                        )}-${Math.floor(
-                            Math.random() * 100000,
-                        )}.${editingFileExtension}`
 
                         this.pond
                             .addFile(
-                                new File([croppedImage], newEditingFileName, {
-                                    type:
-                                        this.editingFile.type ===
-                                        'image/svg+xml'
-                                            ? 'image/png'
-                                            : this.editingFile.type,
-                                    lastModified: new Date().getTime(),
+                                new File([croppedImage],
+                                    `${editingFileName}.${editingFileExtension}`,
+                                    {
+                                        type:
+                                            this.editingFile.type ===
+                                            'image/svg+xml'
+                                                ? 'image/png'
+                                                : this.editingFile.type,
+                                        lastModified: new Date().getTime(),
                                 }),
                             )
                             .then(() => {
+                                this.closeEditor()
+                            })
+                            .catch((e) => {
+                                alert(e.error?.main + '\n' + e.error?.sub)
                                 this.closeEditor()
                             })
                     })
