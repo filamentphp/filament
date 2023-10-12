@@ -200,6 +200,8 @@ class AssociateAction extends Action
 
                 $relationshipQuery->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
                     foreach ($searchColumns as $searchColumn) {
+                        $searchColumn = $query->qualifyColumn($searchColumn);
+
                         $caseAwareSearchColumn = $isForcedCaseInsensitive ?
                             new Expression("lower({$searchColumn})") :
                             $searchColumn;
@@ -239,7 +241,11 @@ class AssociateAction extends Action
                     );
                 });
 
-            if (filled($titleAttribute)) {
+            if (
+                filled($titleAttribute) &&
+                (! $this->hasCustomRecordTitle()) &&
+                ($this->hasCustomRecordTitleAttribute() || (! $this->getTable()->hasCustomRecordTitle()))
+            ) {
                 if (empty($relationshipQuery->getQuery()->orders)) {
                     $relationshipQuery->orderBy($titleAttribute);
                 }

@@ -20,7 +20,7 @@
     'labeledFrom' => null,
     'labelSrOnly' => false,
     'outlined' => false,
-    'size' => 'md',
+    'size' => ActionSize::Medium,
     'tag' => 'button',
     'target' => null,
     'tooltip' => null,
@@ -28,28 +28,32 @@
 ])
 
 @php
-    $stringSize = match ($size) {
-        ActionSize::ExtraSmall => 'xs',
-        ActionSize::Small => 'sm',
-        ActionSize::Medium => 'md',
-        ActionSize::Large => 'lg',
-        ActionSize::ExtraLarge => 'xl',
-        default => $size,
-    };
+    if (! $size instanceof ActionSize) {
+        $size = ActionSize::tryFrom($size) ?? $size;
+    }
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            "fi-btn fi-btn-size-{$stringSize} relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2",
+            'fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2',
             'pointer-events-none opacity-70' => $disabled,
             'flex-1' => $grouped,
             'rounded-lg' => ! $grouped,
+            match ($color) {
+                'gray' => 'fi-color-gray',
+                default => 'fi-color-custom',
+            },
+            // @deprecated `fi-btn-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
             is_string($color) ? "fi-btn-color-{$color}" : null,
+            "fi-size-{$size->value}" => $size instanceof ActionSize,
+            // @deprecated `fi-btn-size-*` has been replaced by `fi-size-*`.
+            "fi-btn-size-{$size->value}" => $size instanceof ActionSize,
             match ($size) {
-                ActionSize::ExtraSmall, 'xs' => 'gap-1 px-2 py-1.5 text-xs',
-                ActionSize::Small, 'sm' => 'gap-1 px-2.5 py-1.5 text-sm',
-                ActionSize::Medium, 'md' => 'gap-1.5 px-3 py-2 text-sm',
-                ActionSize::Large, 'lg' => 'gap-1.5 px-3.5 py-2.5 text-sm',
-                ActionSize::ExtraLarge, 'xl' => 'gap-1.5 px-4 py-3 text-sm',
+                ActionSize::ExtraSmall => 'gap-1 px-2 py-1.5 text-xs',
+                ActionSize::Small => 'gap-1 px-2.5 py-1.5 text-sm',
+                ActionSize::Medium => 'gap-1.5 px-3 py-2 text-sm',
+                ActionSize::Large => 'gap-1.5 px-3.5 py-2.5 text-sm',
+                ActionSize::ExtraLarge => 'gap-1.5 px-4 py-3 text-sm',
+                default => $size,
             },
             'hidden' => $labeledFrom,
             match ($labeledFrom) {
@@ -87,7 +91,11 @@
     ]);
 
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [400, 500, 600],
+            alias: 'button',
+        ) => $color !== 'gray',
     ]);
 
     $iconSize ??= match ($size) {
@@ -124,6 +132,8 @@
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
+
+    $hasTooltip = filled($tooltip);
 @endphp
 
 @if ($labeledFrom)
@@ -158,13 +168,13 @@
 
 @if ($tag === 'button')
     <button
-        @if (($keyBindings || $tooltip) && (! $hasFileUploadLoadingIndicator))
+        @if (($keyBindings || $hasTooltip) && (! $hasFileUploadLoadingIndicator))
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,
@@ -283,13 +293,13 @@
 @elseif ($tag === 'a')
     <a
         {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
-        @if ($keyBindings || $tooltip)
+        @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,

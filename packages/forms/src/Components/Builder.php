@@ -128,6 +128,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $component->getChildComponentContainers()[$newUuid]->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
+
+                $component->callAfterStateUpdated();
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
@@ -181,6 +183,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $component->getChildComponentContainers()[$newUuid]->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
+
+                $component->callAfterStateUpdated();
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
@@ -223,6 +227,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -260,6 +266,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 unset($items[$arguments['item']]);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -296,6 +304,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $items = array_move_after($component->getState(), $arguments['item']);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -332,6 +342,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $items = array_move_before($component->getState(), $arguments['item']);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -371,6 +383,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 ];
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()

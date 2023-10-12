@@ -119,11 +119,11 @@ There are additionally convenient helper methods to set the first day of the wee
 use Filament\Forms\Components\DateTimePicker;
 
 DateTimePicker::make('published_at')
-    ->native()
+    ->native(false)
     ->weekStartsOnMonday()
 
 DateTimePicker::make('published_at')
-    ->native()
+    ->native(false)
     ->weekStartsOnSunday()
 ```
 
@@ -213,6 +213,7 @@ You may restrict the minimum and maximum date that can be selected with the pick
 use Filament\Forms\Components\DatePicker;
 
 DatePicker::make('date_of_birth')
+    ->native(false)
     ->minDate(now()->subYears(150))
     ->maxDate(now())
 ```

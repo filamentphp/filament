@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Görüntüle',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Görüntüle',

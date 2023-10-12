@@ -12,6 +12,7 @@ class Panel extends Component
 {
     use Panel\Concerns\HasAuth;
     use Panel\Concerns\HasAvatars;
+    use Panel\Concerns\HasBrandLogo;
     use Panel\Concerns\HasBrandName;
     use Panel\Concerns\HasBreadcrumbs;
     use Panel\Concerns\HasColors;
@@ -55,6 +56,12 @@ class Panel extends Component
         return $this;
     }
 
+    public function register(): void
+    {
+        $this->registerLivewireComponents();
+        $this->registerLivewirePersistentMiddleware();
+    }
+
     public function boot(): void
     {
         FilamentColor::register($this->colors);
@@ -64,9 +71,6 @@ class Panel extends Component
         FilamentView::spa($this->hasSpaMode());
 
         $this->registerRenderHooks();
-
-        $this->registerLivewireComponents();
-        $this->registerLivewirePersistentMiddleware();
 
         foreach ($this->plugins as $plugin) {
             $plugin->boot($this);

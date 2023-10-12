@@ -97,6 +97,10 @@ class SupportServiceProvider extends PackageServiceProvider
             return "<?php echo \Filament\Support\Facades\FilamentAsset::renderStyles({$expression}) ?>";
         });
 
+        Blade::extend(function ($view) {
+            return preg_replace('/\s*@trim\s*/m', '', $view);
+        });
+
         Str::macro('sanitizeHtml', function (string $html): string {
             return app(HtmlSanitizerInterface::class)->sanitize($html);
         });

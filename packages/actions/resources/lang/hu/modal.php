@@ -2,12 +2,12 @@
 
 return [
 
-    'confirmation' => 'Biztos, hogy végre akarja hajtani?',
+    'confirmation' => 'Biztos, hogy végre akarod hajtani?',
 
     'actions' => [
 
         'cancel' => [
-            'label' => 'Mégse',
+            'label' => 'Mégsem',
         ],
 
         'confirm' => [

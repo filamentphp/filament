@@ -33,6 +33,20 @@ public function table(Table $table): Table
 }
 ```
 
+### Customizing the default pagination page option
+
+To customize the default number of records shown use the `defaultPaginationPageOption()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->defaultPaginationPageOption(25);
+}
+```
+
 ### Preventing query string conflicts with the pagination page
 
 By default, Livewire stores the pagination state in a `page` parameter of the URL query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.

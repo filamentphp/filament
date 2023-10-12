@@ -76,7 +76,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
-    protected bool $hasHydratedSimpleState = false;
+    /**
+     * @var array<string, mixed> | null
+     */
+    protected ?array $hydratedDefaultState = null;
 
     protected function setUp(): void
     {
@@ -85,22 +88,23 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->defaultItems(1);
 
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
+            if (is_array($component->hydratedDefaultState)) {
+                $component->mergeHydratedDefaultStateWithChildComponentContainerState();
+
+                return;
+            }
+
             $items = [];
 
-            $shouldHydrateSimpleState = (
-                (! $component->hasHydratedSimpleState) &&
-                ($simpleField = $component->getSimpleField())
-            );
+            $simpleField = $component->getSimpleField();
 
             foreach ($state ?? [] as $itemData) {
-                $items[(string) Str::uuid()] = $shouldHydrateSimpleState ?
+                $items[(string) Str::uuid()] = $simpleField ?
                     [$simpleField->getName() => $itemData] :
                     $itemData;
             }
 
             $component->state($items);
-
-            $component->hasHydratedSimpleState = true;
         });
 
         $this->registerActions([
@@ -144,6 +148,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->getChildComponentContainers()[$newUuid]->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
+
+                $component->callAfterStateUpdated();
             })
             ->button()
             ->size(ActionSize::Small)
@@ -185,6 +191,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -222,6 +230,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 unset($items[$arguments['item']]);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -258,6 +268,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $items = array_move_after($component->getState(), $arguments['item']);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -294,6 +306,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $items = array_move_before($component->getState(), $arguments['item']);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -333,6 +347,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 ];
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -509,14 +525,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             }
 
             return array_fill(0, $count, $component->isSimple() ? null : []);
-        });
+        }, shouldPreserveChildState: false);
 
         return $this;
     }
 
-    public function default(mixed $state): static
+    public function default(mixed $state, bool $shouldPreserveChildState = true): static
     {
-        parent::default(function (Repeater $component) use ($state) {
+        parent::default(function (Repeater $component) use ($shouldPreserveChildState, $state) {
             $state = $component->evaluate($state);
 
             $simpleField = $component->getSimpleField();
@@ -529,7 +545,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                     $itemData;
             }
 
-            $component->hasHydratedSimpleState = true;
+            if ($shouldPreserveChildState) {
+                $component->hydratedDefaultState = $items;
+            }
 
             return $items;
         });
@@ -713,7 +731,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
-        $this->afterStateHydrated(null);
+        $this->afterStateHydrated(function (Repeater $component) {
+            if (! is_array($component->hydratedDefaultState)) {
+                return;
+            }
+
+            $component->mergeHydratedDefaultStateWithChildComponentContainerState();
+        });
 
         $this->loadStateFromRelationshipsUsing(static function (Repeater $component) {
             $component->clearCachedExistingRecords();
@@ -800,6 +824,28 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->disableItemMovement();
 
         return $this;
+    }
+
+    /**
+     * After hydrating the state of child component containers, the default state
+     * of fields inside the repeater can be lost, if it was defined on the repeater
+     * itself. This method merges the hydrated default state with the state of the
+     * child component containers, so that the default state of the fields inside
+     * the repeater is preserved.
+     */
+    protected function mergeHydratedDefaultStateWithChildComponentContainerState(): void
+    {
+        $state = $this->getState();
+        $items = $this->hydratedDefaultState;
+
+        foreach ($items as $itemKey => $itemData) {
+            $items[$itemKey] = [
+                ...$state[$itemKey] ?? [],
+                ...$itemData,
+            ];
+        }
+
+        $this->state($items);
     }
 
     public function itemLabel(string | Closure | null $label): static
@@ -1029,7 +1075,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this->isCollapsible();
     }
 
-    public function getView(): string
+    /**
+     * @return view-string
+     */
+    public function getDefaultView(): string
     {
         if ($this->isSimple()) {
             return 'filament-forms::components.simple-repeater';

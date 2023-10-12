@@ -74,6 +74,7 @@ class MakeWidgetCommand extends Command
 
             if (! $panel) {
                 $panels = Filament::getPanels();
+                $namespace = config('livewire.class_namespace');
 
                 /** @var ?Panel $panel */
                 $panel = $panels[select(
@@ -83,8 +84,8 @@ class MakeWidgetCommand extends Command
                             fn (Panel $panel): string => "The [{$panel->getId()}] panel",
                             $panels,
                         ),
-                        '' => '[App\\Livewire] alongside other Livewire components',
-                    ]),
+                        $namespace => "[{$namespace}] alongside other Livewire components",
+                    ])
                 )] ?? null;
             }
         }
@@ -95,8 +96,8 @@ class MakeWidgetCommand extends Command
         $resourceNamespace = null;
 
         if (! $panel) {
-            $path = app_path('Livewire/');
-            $namespace = 'App\\Livewire';
+            $namespace = config('livewire.class_namespace');
+            $path = app_path((string) str($namespace)->after('App\\')->replace('\\', '/'));
         } elseif ($resource === null) {
             $widgetDirectories = $panel->getWidgetDirectories();
             $widgetNamespaces = $panel->getWidgetNamespaces();
@@ -204,7 +205,7 @@ class MakeWidgetCommand extends Command
             $this->copyStubToApp('WidgetView', $viewPath);
         }
 
-        $this->components->info("Successfully created {$widget}!");
+        $this->components->info("Filament widget [{$path}] created successfully.");
 
         if ($resource !== null) {
             $this->components->info("Make sure to register the widget in `{$resourceClass}::getWidgets()`, and then again in `getHeaderWidgets()` or `getFooterWidgets()` of any `{$resourceClass}` page.");

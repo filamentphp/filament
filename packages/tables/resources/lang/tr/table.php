@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Sütunlar',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -12,9 +18,50 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Toplu işlemler için tüm öğeleri seç/seçimi kaldır.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Toplu işlemler için :key öğesini seç/seçimi kaldır.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Toplu işlemler için :title grubunu seç/seçimi kaldır.',
+        ],
+
         'search' => [
             'label' => 'Ara',
             'placeholder' => 'Ara',
+            'indicator' => 'Ara',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Özet',
+
+        'subheadings' => [
+            'all' => 'Tüm :label',
+            'group' => ':group özeti',
+            'page' => 'Bu sayfa',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Ortalama',
+            ],
+
+            'count' => [
+                'label' => 'Sayı',
+            ],
+
+            'sum' => [
+                'label' => 'Toplam',
+            ],
+
         ],
 
     ],
@@ -22,19 +69,23 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Sıralamayı kapat',
+            'label' => 'Sıralamayı bitir',
         ],
 
         'enable_reordering' => [
-            'label' => 'Sıralamayı aç',
+            'label' => 'Kayıtları sırala',
         ],
 
         'filter' => [
             'label' => 'Filtrele',
         ],
 
+        'group' => [
+            'label' => 'Grupla',
+        ],
+
         'open_bulk_actions' => [
-            'label' => 'Eylemleri aç',
+            'label' => 'Toplu işlemler',
         ],
 
         'toggle_columns' => [
@@ -44,7 +95,11 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Kayıt bulunamadı',
+
+        'heading' => ':model Yok',
+
+        'description' => 'Başlamak için bir :model oluşturun.',
+
     ],
 
     'filters' => [
@@ -61,10 +116,12 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Filtreleri sıfırla',
+                'label' => 'Sıfırla',
             ],
 
         ],
+
+        'heading' => 'Filtreler',
 
         'indicator' => 'Aktif filtreler',
 
@@ -78,19 +135,43 @@ return [
 
         'trashed' => [
 
-            'label' => 'Silinen kayıtlar',
+            'label' => 'Silinmiş kayıtlar',
 
-            'only_trashed' => 'Sadece silinen kayıtlar',
+            'only_trashed' => 'Yalnızca silinmiş kayıtlar',
 
-            'with_trashed' => 'Silinen kayıtlar ile',
+            'with_trashed' => 'Silinmiş kayıtlarla birlikte',
 
-            'without_trashed' => 'Silinen kayıtlar olmadan',
+            'without_trashed' => 'Silinmiş kayıtlar olmadan',
 
         ],
 
     ],
 
-    'reorder_indicator' => 'Sıralamayı değiştirmek için sürükleyin.',
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Grupla',
+                'placeholder' => 'Grupla',
+            ],
+
+            'direction' => [
+
+                'label' => 'Grup yönü',
+
+                'options' => [
+                    'asc' => 'Artan',
+                    'desc' => 'Azalan',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
+    'reorder_indicator' => 'Kayıtları sıralamak için sürükleyip bırakın.',
 
     'selection_indicator' => [
 
@@ -99,7 +180,7 @@ return [
         'actions' => [
 
             'select_all' => [
-                'label' => 'Tüm :count kaydı seç',
+                'label' => 'Tüm :count kaydı seç ',
             ],
 
             'deselect_all' => [
@@ -115,12 +196,12 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'Sırala',
+                'label' => 'Şuna göre sırala',
             ],
 
             'direction' => [
 
-                'label' => 'Sıralama türü',
+                'label' => 'Sıralama yönü',
 
                 'options' => [
                     'asc' => 'Artan',

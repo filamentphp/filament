@@ -342,7 +342,7 @@ public function panel(Panel $panel): Panel
         ->tenantMenuItems([
             MenuItem::make()
                 ->label('Settings')
-                ->url(fn (): string => Settings::getUrl()),
+                ->url(fn (): string => Settings::getUrl())
                 ->icon('heroicon-m-cog-8-tooth'),
             // ...
         ]);
@@ -363,6 +363,25 @@ public function panel(Panel $panel): Panel
         // ...
         ->tenantMenuItems([
             'register' => MenuItem::make()->label('Register new team'),
+            // ...
+        ]);
+}
+```
+
+### Customizing the profile link
+
+To customize the profile link on the tenant menu, register a new item with the `profile` array key:
+
+```php
+use Filament\Navigation\MenuItem;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMenuItems([
+            'profile' => MenuItem::make()->label('Edit team profile'),
             // ...
         ]);
 }
@@ -555,6 +574,7 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasTenants;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -562,7 +582,7 @@ class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
 {
     // ...
     
-    public function getDefaultTenant(): ?Model
+    public function getDefaultTenant(Panel $panel): ?Model
     {
         return $this->latestTeam;
     }
