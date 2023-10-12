@@ -57,6 +57,7 @@ it('can validate input', function () {
         ->fillForm([
             'title' => null,
         ])
+        ->call('save')
         ->assertHasFormErrors(['title' => 'required']);
 });
 ```
