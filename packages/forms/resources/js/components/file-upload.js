@@ -472,7 +472,7 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            if(!allowSvgEditing && file.type === 'image/svg+xml') {
+            if (!allowSvgEditing && file.type === 'image/svg+xml') {
                 alert(svgAlertText)
                 return
             }
@@ -531,8 +531,13 @@ export default function fileUploadFormComponent({
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
 
-                        let editingFileName = this.editingFile.name.slice(0, this.editingFile.name.lastIndexOf('.'))
-                        let editingFileExtension = this.editingFile.name.split('.').pop()
+                        let editingFileName = this.editingFile.name.slice(
+                            0,
+                            this.editingFile.name.lastIndexOf('.'),
+                        )
+                        let editingFileExtension = this.editingFile.name
+                            .split('.')
+                            .pop()
 
                         if (editingFileExtension === 'svg') {
                             editingFileExtension = 'png'
@@ -541,17 +546,21 @@ export default function fileUploadFormComponent({
                         const regex = /-crop-(\d+)/
 
                         if (regex.test(editingFileName)) {
-                            editingFileName = editingFileName.replace(regex, (match, number) => {
-                                const newNumber = Number(number) + 1
-                                return `-crop-${newNumber}`
-                            })
+                            editingFileName = editingFileName.replace(
+                                regex,
+                                (match, number) => {
+                                    const newNumber = Number(number) + 1
+                                    return `-crop-${newNumber}`
+                                },
+                            )
                         } else {
                             editingFileName += '-crop-0'
                         }
 
                         this.pond
                             .addFile(
-                                new File([croppedImage],
+                                new File(
+                                    [croppedImage],
                                     `${editingFileName}.${editingFileExtension}`,
                                     {
                                         type:
@@ -560,7 +569,8 @@ export default function fileUploadFormComponent({
                                                 ? 'image/png'
                                                 : this.editingFile.type,
                                         lastModified: new Date().getTime(),
-                                }),
+                                    },
+                                ),
                             )
                             .then(() => {
                                 this.closeEditor()

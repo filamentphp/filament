@@ -31,8 +31,10 @@
                     },
                     hasImageEditor: @js($hasImageEditor),
                     allowSvgEditing: @js($getAllowSvgEditing()),
-                    svgConfirmText: '{{ __('filament-forms::components.file_upload.editor.svg.confirm_edit') }}',
-                    svgAlertText: '{{ __('filament-forms::components.file_upload.editor.svg.disabled_alert') }}',
+                    svgConfirmText:
+                        '{{ __('filament-forms::components.file_upload.editor.svg.confirm_edit') }}',
+                    svgAlertText:
+                        '{{ __('filament-forms::components.file_upload.editor.svg.disabled_alert') }}',
                     imageCropAspectRatio: @js($imageCropAspectRatio),
                     imagePreviewHeight: @js($getImagePreviewHeight()),
                     imageResizeMode: @js($getImageResizeMode()),
