@@ -517,13 +517,28 @@ export default function fileUploadFormComponent({
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
 
+                        let editingFileName = this.editingFile.name.slice(0, this.editingFile.name.lastIndexOf('.'))
+                        let editingFileExtension = this.editingFile.name.slice(this.editingFile.name.lastIndexOf('.') + 1)
+
+                        let editingFileNameNumber = null
+
+                        if (editingFileName.includes('-')) {
+                            editingFileNameNumber = +editingFileName.slice(editingFileName.lastIndexOf('-') + 1)
+                        }
+
+                        let newEditingFileName;
+
+                        if ((editingFileNameNumber !== null) && (! isNaN(editingFileNameNumber))) {
+                            newEditingFileName = `${editingFileName.slice(0, editingFileName.lastIndexOf('-')).substring(0, 64)}-${Math.floor(Math.random() * 100000)}.${editingFileExtension}`
+                        }
+
+                        newEditingFileName ??= `${editingFileName.substring(0, 64)}-${Math.floor(Math.random() * 100000)}.${editingFileExtension}`
+
                         this.pond
                             .addFile(
                                 new File(
                                     [croppedImage],
-                                    `${
-                                        this.editingFile.name
-                                    }-${(+new Date()).toString(36)}`,
+                                    newEditingFileName,
                                     {
                                         type:
                                             this.editingFile.type ===
