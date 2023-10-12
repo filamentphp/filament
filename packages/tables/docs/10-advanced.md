@@ -132,6 +132,18 @@ public function table(Table $table): Table
 }
 ```
 
+The `reorderable()` method also accepts, as a second parameter, a boolean condition to control whether the reorderable feature will be enabled:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->reorderable('sort', auth()->user()->isAdmin());
+}
+```
+
 ### Enabling pagination while reordering
 
 Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally bad UX to re-enable pagination while reordering, but if you are sure then you can use `$table->paginatedWhileReordering()`:
