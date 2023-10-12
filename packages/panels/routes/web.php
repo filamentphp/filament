@@ -23,10 +23,6 @@ Route::name('filament.')
                     ->name("{$panelId}.")
                     ->prefix($panel->getPath())
                     ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute) {
-                        if ($routes = $panel->getRoutes()) {
-                            $routes($panel);
-                        }
-
                         Route::name('auth.')->group(function () use ($panel) {
                             if ($panel->hasLogin()) {
                                 Route::get('/login', $panel->getLoginRouteAction())->name('login');
@@ -128,6 +124,10 @@ Route::name('filament.')
                                         $routes($panel);
                                     }
                                 });
+                        }
+
+                        if ($routes = $panel->getRoutes()) {
+                            $routes($panel);
                         }
                     });
             }
