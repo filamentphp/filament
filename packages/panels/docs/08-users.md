@@ -262,7 +262,7 @@ public function panel(Panel $panel): Panel
 
 ### Queuing email notifications
 
-By default, Filament will send email notifications for email verification and password reset in sync. However, if you wish to queue these notifications, you can set the `queue` parameter to `true` like so:
+By default, Filament will send email notifications for email verification and password reset in sync. However, if you wish to queue these notifications, you can set the `shouldQueue` parameter to `true` like so:
 
 ```php
 use Filament\Panel;
@@ -271,7 +271,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->passwordReset(queue: true)
-        ->emailVerification(queue: true);
+        ->passwordReset(shouldQueue: true)
+        ->emailVerification(shouldQueue: true);
 }
 ```

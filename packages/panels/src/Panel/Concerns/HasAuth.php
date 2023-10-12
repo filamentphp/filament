@@ -27,7 +27,7 @@ trait HasAuth
 
     protected bool $isEmailVerificationRequired = false;
 
-    protected bool $queueEmailVerification = false;
+    protected bool $shouldQueueEmailVerification = false;
 
     /**
      * @var string | Closure | array<class-string, string> | null
@@ -49,7 +49,7 @@ trait HasAuth
      */
     protected string | Closure | array | null $resetPasswordRouteAction = null;
 
-    protected bool $queuePasswordReset = false;
+    protected bool $shouldQueuePasswordReset = false;
 
     protected ?string $profilePage = null;
 
@@ -60,11 +60,11 @@ trait HasAuth
     /**
      * @param  string | Closure | array<class-string, string> | null  $promptAction
      */
-    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true, bool $queue = false): static
+    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true, bool $shouldQueue = false): static
     {
         $this->emailVerificationRouteAction = $promptAction;
         $this->requiresEmailVerification($isRequired);
-        $this->queueEmailVerification = $queue;
+        $this->shouldQueueEmailVerification = $shouldQueue;
 
         return $this;
     }
@@ -97,11 +97,11 @@ trait HasAuth
      * @param  string | Closure | array<class-string, string> | null  $requestAction
      * @param  string | Closure | array<class-string, string> | null  $resetAction
      */
-    public function passwordReset(string | Closure | array | null $requestAction = RequestPasswordReset::class, string | Closure | array | null $resetAction = ResetPassword::class, bool $queue = false): static
+    public function passwordReset(string | Closure | array | null $requestAction = RequestPasswordReset::class, string | Closure | array | null $resetAction = ResetPassword::class, bool $shouldQueue = false): static
     {
         $this->requestPasswordResetRouteAction = $requestAction;
         $this->resetPasswordRouteAction = $resetAction;
-        $this->queuePasswordReset = $queue;
+        $this->shouldQueuePasswordReset = $shouldQueue;
 
         return $this;
     }
@@ -149,12 +149,12 @@ trait HasAuth
 
     public function shouldQueueEmailVerification(): bool
     {
-        return $this->queueEmailVerification;
+        return $this->shouldQueueEmailVerification;
     }
 
     public function shouldQueuePasswordReset(): bool
     {
-        return $this->queuePasswordReset;
+        return $this->shouldQueuePasswordReset;
     }
 
     public function hasProfile(): bool
