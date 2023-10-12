@@ -34,10 +34,6 @@
     @apply mb-0.5;
 }
 
-.filepond--root[data-style-panel-layout='compact'] .filepond--drop-label {
-    min-height: 2.625em;
-}
-
 .filepond--root[data-style-panel-layout='compact'] .filepond--file {
     padding-top: 0.5em;
     padding-bottom: 0.5em;
