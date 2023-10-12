@@ -521,7 +521,9 @@ export default function fileUploadFormComponent({
                             .addFile(
                                 new File(
                                     [croppedImage],
-                                    `${this.editingFile.name}-${(+new Date()).toString(36)}`,
+                                    `${
+                                        this.editingFile.name
+                                    }-${(+new Date()).toString(36)}`,
                                     {
                                         type:
                                             this.editingFile.type ===
