@@ -4,9 +4,11 @@
 @import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
 @import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css';
 
+/*
 .filepond--root {
     @apply mb-0 overflow-hidden;
 }
+*/
 
 .filepond--panel-root {
     @apply rounded-lg border border-gray-300 bg-white shadow-sm;

@@ -85,9 +85,9 @@ class FileUpload extends BaseFileUpload
         $this->imageResizeTargetWidth('500');
         $this->loadingIndicatorPosition('center bottom');
         $this->panelLayout('compact circle');
-        $this->removeUploadedFileButtonPosition('center bottom');
-        $this->uploadButtonPosition('center bottom');
-        $this->uploadProgressIndicatorPosition('center bottom');
+        $this->removeUploadedFileButtonPosition('left bottom');
+        $this->uploadButtonPosition('right bottom');
+        $this->uploadProgressIndicatorPosition('right bottom');
 
         return $this;
     }
