@@ -502,15 +502,16 @@ export default function fileUploadFormComponent({
                 })
                 .toBlob((croppedImage) => {
                     if (isMultiple) {
-                        const fileToRemove = this.pond
-                            .getFiles()
-                            .find(
-                                (uploadedFile) =>
-                                    uploadedFile.filename ===
-                                    this.editingFile.name,
-                            )
-
-                        this.pond.removeFile(fileToRemove?.id, { revert: true })
+                        this.pond.removeFile(
+                            this.pond
+                                .getFiles()
+                                .find(
+                                    (uploadedFile) =>
+                                        uploadedFile.filename ===
+                                        this.editingFile.name,
+                                )?.id,
+                            { revert: true },
+                        )
                     }
 
                     this.$nextTick(() => {
@@ -520,7 +521,7 @@ export default function fileUploadFormComponent({
                             .addFile(
                                 new File(
                                     [croppedImage],
-                                    (+new Date()).toString(36),
+                                    `${this.editingFile.name}-${(+new Date()).toString(36)}`,
                                     {
                                         type:
                                             this.editingFile.type ===
