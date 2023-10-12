@@ -8,6 +8,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
+use Filament\Notifications\Auth\QueuedVerifyEmail;
 use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
@@ -68,7 +69,9 @@ class EmailVerificationPrompt extends SimplePage
                     throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
                 }
 
-                $notification = new VerifyEmail();
+                $shouldQueueEmailVerification = Filament::shouldQueueEmailVerification();
+
+                $notification = $shouldQueueEmailVerification ? new QueuedVerifyEmail() : new VerifyEmail();
                 $notification->url = Filament::getVerifyEmailUrl($user);
 
                 $user->notify($notification);
