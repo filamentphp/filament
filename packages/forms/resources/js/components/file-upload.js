@@ -543,18 +543,18 @@ export default function fileUploadFormComponent({
                             editingFileExtension = 'png'
                         }
 
-                        const regex = /-crop-(\d+)/
+                        const regex = /-edit-(\d+)/
 
                         if (regex.test(editingFileName)) {
                             editingFileName = editingFileName.replace(
                                 regex,
                                 (match, number) => {
                                     const newNumber = Number(number) + 1
-                                    return `-crop-${newNumber}`
+                                    return `-edit-${newNumber}`
                                 },
                             )
                         } else {
-                            editingFileName += '-crop-0'
+                            editingFileName += '-edit-1'
                         }
 
                         this.pond
