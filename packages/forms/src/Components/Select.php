@@ -1185,7 +1185,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $this->state($state);
 
-            Arr::set($hydratedDefaultState, $this->getStatePath(), $state);
+            if (is_array($hydratedDefaultState)) {
+                Arr::set($hydratedDefaultState, $this->getStatePath(), $state);
+            }
         }
     }
 }
