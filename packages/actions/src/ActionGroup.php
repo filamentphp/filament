@@ -29,6 +29,8 @@ class ActionGroup extends ViewComponent implements HasLivewire
         getIcon as getBaseIcon;
     }
 
+    public const BADGE_VIEW = 'filament-actions::badge-group';
+
     public const BUTTON_VIEW = 'filament-actions::button-group';
 
     public const GROUPED_VIEW = 'filament-actions::grouped-group';
@@ -101,6 +103,11 @@ class ActionGroup extends ViewComponent implements HasLivewire
         }
 
         return $this;
+    }
+
+    public function isBadge(): bool
+    {
+        return $this->getView() === static::BADGE_VIEW;
     }
 
     public function button(): static

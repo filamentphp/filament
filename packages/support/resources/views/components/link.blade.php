@@ -24,6 +24,10 @@
 ])
 
 @php
+    if (! $iconPosition instanceof IconPosition) {
+        $iconPosition = $iconPosition ? IconPosition::tryFrom($iconPosition) : null;
+    }
+
     if (! $size instanceof ActionSize) {
         $size = ActionSize::tryFrom($size) ?? $size;
     }
@@ -116,7 +120,7 @@
                 ->style([$linkStyles])
         }}
     >
-        @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($icon && $iconPosition === IconPosition::Before)
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -127,7 +131,7 @@
 
         {{ $slot }}
 
-        @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($icon && $iconPosition === IconPosition::After)
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -171,7 +175,7 @@
                 ->style([$linkStyles])
         }}
     >
-        @if (in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($iconPosition === IconPosition::Before)
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
@@ -193,7 +197,7 @@
 
         {{ $slot }}
 
-        @if (in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($iconPosition === IconPosition::After)
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
