@@ -69,27 +69,29 @@
                         x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:expand-concealing-component.window="
-                            error = $el.querySelector('[data-validation-error]')
+                            $nextTick(() => {
+                                error = $el.querySelector('[data-validation-error]')
 
-                            if (! error) {
-                                return
-                            }
+                                if (! error) {
+                                    return
+                                }
 
-                            isCollapsed = false
+                                isCollapsed = false
 
-                            if (document.body.querySelector('[data-validation-error]') !== error) {
-                                return
-                            }
+                                if (document.body.querySelector('[data-validation-error]') !== error) {
+                                    return
+                                }
 
-                            setTimeout(
-                                () =>
-                                    $el.scrollIntoView({
-                                        behavior: 'smooth',
-                                        block: 'start',
-                                        inline: 'start',
-                                    }),
-                                200,
-                            )
+                                setTimeout(
+                                    () =>
+                                        $el.scrollIntoView({
+                                            behavior: 'smooth',
+                                            block: 'start',
+                                            inline: 'start',
+                                        }),
+                                    200,
+                                )
+                            })
                         "
                         x-sortable-item="{{ $uuid }}"
                         x-bind:class="isCollapsed && 'fi-collapsed'"
