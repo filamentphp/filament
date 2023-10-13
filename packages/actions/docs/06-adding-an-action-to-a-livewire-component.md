@@ -65,7 +65,7 @@ class ManagePost extends Component implements HasForms, HasActions
     
     public function deleteAction(): Action
     {
-        return Action::make('delete')
+        return Action::make('deleteAction')
             ->requiresConfirmation()
             ->action(fn () => $this->post->delete());
     }
@@ -73,6 +73,8 @@ class ManagePost extends Component implements HasForms, HasActions
     // ...
 }
 ```
+
+> Note that the function name and the action name need to be the same (`deleteAction`)
 
 Finally, you need to render the action in your view. To do this, you can use `{{ $this->deleteAction }}`, where you replace `deleteAction` with the name of your action method:
 
