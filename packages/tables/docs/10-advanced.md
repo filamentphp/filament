@@ -132,7 +132,7 @@ public function table(Table $table): Table
 }
 ```
 
-The `reorderable()` method also accepts, as a second parameter, a boolean condition to control whether the reorderable feature will be enabled:
+The `reorderable()` method also accepts a boolean condition as its second parameter, allowing you to conditionally enable reordering:
 
 ```php
 use Filament\Tables\Table;
