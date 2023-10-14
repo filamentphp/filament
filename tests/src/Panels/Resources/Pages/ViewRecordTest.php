@@ -19,10 +19,10 @@ it('can retrieve data', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ViewPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->assertFormSet([
-            'author_id' => $post->author->getKey(),
+            'author_id' => $post->author->getRouteKey(),
             'content' => $post->content,
             'tags' => $post->tags,
             'title' => $post->title,
@@ -33,7 +33,7 @@ it('can refresh data', function () {
     $post = Post::factory()->create();
 
     $page = livewire(PostResource\Pages\ViewPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ]);
 
     $originalPostTitle = $post->title;

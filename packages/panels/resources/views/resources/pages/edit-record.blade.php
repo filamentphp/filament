@@ -2,7 +2,7 @@
     @class([
         'fi-resource-edit-record-page',
         'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
-        'fi-resource-record-' . $record->getKey(),
+        'fi-resource-record-' . $record->getRouteKey(),
     ])
 >
     @capture($form)

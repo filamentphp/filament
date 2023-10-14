@@ -26,8 +26,8 @@ it('can filter records by relationship', function () {
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts)
         ->filterTable('author', $author)
-        ->assertCanSeeTableRecords($posts->where('author_id', $author->getKey()))
-        ->assertCanNotSeeTableRecords($posts->where('author_id', '!=', $author->getKey()));
+        ->assertCanSeeTableRecords($posts->where('author_id', $author->getRouteKey()))
+        ->assertCanNotSeeTableRecords($posts->where('author_id', '!=', $author->getRouteKey()));
 });
 
 it('can persist filters in the user\'s session', function () {

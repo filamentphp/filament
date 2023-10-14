@@ -260,7 +260,7 @@ class Notification extends ViewComponent implements Arrayable
     {
         /** @phpstan-ignore-next-line */
         $static = static::fromArray($notification->data);
-        $static->id($notification->getKey());
+        $static->id($notification->getRouteKey());
 
         return $static;
     }

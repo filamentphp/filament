@@ -322,7 +322,7 @@ it('can remove all table filters', function () {
 
     $unpublishedPosts = $posts
         ->where('is_published', false)
-        ->where('author_id', $posts->first()->author->getKey());
+        ->where('author_id', $posts->first()->author->getRouteKey());
 
     livewire(PostsTable::class)
         ->filterTable('is_published')
@@ -518,7 +518,6 @@ it('can not publish, but can delete posts', function () {
         ->assertTableBulkActionEnabled('delete');
 });
 ```
-
 
 To ensure that an action or bulk action is visible or hidden for a user, you can use the `assertTableActionVisible()` / `assertTableActionHidden()` or `assertTableBulkActionVisible()` / `assertTableBulkActionHidden()` methods:
 

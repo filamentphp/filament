@@ -38,11 +38,11 @@ class TestsFilters
             } elseif ($filter instanceof SelectFilter) {
                 if ($filter->isMultiple()) {
                     $data = ['values' => array_map(
-                        fn ($record) => $record instanceof Model ? $record->getKey() : $record,
+                        fn ($record) => $record instanceof Model ? $record->getRouteKey() : $record,
                         Arr::wrap($data ?? []),
                     )];
                 } else {
-                    $data = ['value' => $data instanceof Model ? $data->getKey() : $data];
+                    $data = ['value' => $data instanceof Model ? $data->getRouteKey() : $data];
                 }
             } elseif (! is_array($data)) {
                 $data = ['isActive' => $data === true || $data === null];

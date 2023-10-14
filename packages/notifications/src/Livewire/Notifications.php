@@ -101,7 +101,7 @@ class Notifications extends Component
 
         $userClass = str_replace('\\', '.', $user::class);
 
-        return "{$userClass}.{$user->getKey()}";
+        return "{$userClass}.{$user->getRouteKey()}";
     }
 
     public static function alignment(Alignment $alignment): void

@@ -88,7 +88,7 @@ class CreateAction extends Action
             $this->record($record);
             $form->model($record)->saveRelationships();
 
-            $livewire->mountedTableActionRecord($record->getKey());
+            $livewire->mountedTableActionRecord($record->getRouteKey());
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();

@@ -231,13 +231,13 @@ class AssociateAction extends Action
                             )
                             ->where(
                                 $relationship->getQualifiedForeignKeyName(),
-                                $relationship->getParent()->getKey(),
+                                $relationship->getParent()->getRouteKey(),
                             );
                     }
 
                     return $query->where(
                         $relationship->getParent()->getQualifiedKeyName(),
-                        $relationship->getParent()->getKey(),
+                        $relationship->getParent()->getRouteKey(),
                     );
                 });
 
@@ -257,7 +257,7 @@ class AssociateAction extends Action
 
             return $relationshipQuery
                 ->get()
-                ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
+                ->mapWithKeys(fn (Model $record): array => [$record->getRouteKey() => $this->getRecordTitle($record)])
                 ->all();
         };
 

@@ -78,7 +78,7 @@ it('can create', function () {
 
     livewire(PostResource\Pages\CreatePost::class)
         ->fillForm([
-            'author_id' => $newData->author->getKey(),
+            'author_id' => $newData->author->getRouteKey(),
             'content' => $newData->content,
             'tags' => $newData->tags,
             'title' => $newData->title,
@@ -87,7 +87,7 @@ it('can create', function () {
         ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Post::class, [
-        'author_id' => $newData->author->getKey(),
+        'author_id' => $newData->author->getRouteKey(),
         'content' => $newData->content,
         'tags' => json_encode($newData->tags),
         'title' => $newData->title,
@@ -142,7 +142,7 @@ it('can retrieve data', function () {
         'record' => $post->getRouteKey(),
     ])
         ->assertFormSet([
-            'author_id' => $post->author->getKey(),
+            'author_id' => $post->author->getRouteKey(),
             'content' => $post->content,
             'tags' => $post->tags,
             'title' => $post->title,
@@ -165,7 +165,7 @@ it('can save', function () {
         'record' => $post->getRouteKey(),
     ])
         ->fillForm([
-            'author_id' => $newData->author->getKey(),
+            'author_id' => $newData->author->getRouteKey(),
             'content' => $newData->content,
             'tags' => $newData->tags,
             'title' => $newData->title,
@@ -174,7 +174,7 @@ it('can save', function () {
         ->assertHasNoFormErrors();
 
     expect($post->refresh())
-        ->author_id->toBe($newData->author->getKey())
+        ->author_id->toBe($newData->author->getRouteKey())
         ->content->toBe($newData->content)
         ->tags->toBe($newData->tags)
         ->title->toBe($newData->title);
@@ -267,7 +267,7 @@ it('can retrieve data', function () {
         'record' => $post->getRouteKey(),
     ])
         ->assertFormSet([
-            'author_id' => $post->author->getKey(),
+            'author_id' => $post->author->getRouteKey(),
             'content' => $post->content,
             'tags' => $post->tags,
             'title' => $post->title,

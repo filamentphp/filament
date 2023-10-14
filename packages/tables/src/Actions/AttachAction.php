@@ -232,7 +232,7 @@ class AttachAction extends Action
                         $table->getInverseRelationship(),
                         fn (Builder $query): Builder => $query->where(
                             $table->getRelationship()->getParent()->getQualifiedKeyName(),
-                            $table->getRelationship()->getParent()->getKey(),
+                            $table->getRelationship()->getParent()->getRouteKey(),
                         ),
                     ),
                 );

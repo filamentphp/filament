@@ -27,7 +27,7 @@ class SparkBillingProvider implements Contracts\Provider
             $tenant = Filament::getTenant();
 
             return redirect()->route('spark.portal', [
-                'id' => $tenant->getKey(),
+                'id' => $tenant->getRouteKey(),
                 'type' => (fn (): string => $this->type)->call(Spark::billable($tenant::class)),
             ]);
         };

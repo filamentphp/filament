@@ -332,7 +332,7 @@ abstract class Resource
             ),
             default => $query->whereHas(
                 $tenantOwnershipRelationshipName,
-                fn (Builder $query) => $query->whereKey($tenant->getKey()),
+                fn (Builder $query) => $query->whereKey($tenant->getRouteKey()),
             ),
         };
     }

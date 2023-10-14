@@ -21,10 +21,10 @@ it('can retrieve data', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->assertFormSet([
-            'author_id' => $post->author->getKey(),
+            'author_id' => $post->author->getRouteKey(),
             'content' => $post->content,
             'tags' => $post->tags,
             'title' => $post->title,
@@ -37,10 +37,10 @@ it('can save', function () {
     $newData = Post::factory()->make();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->fillForm([
-            'author_id' => $newData->author->getKey(),
+            'author_id' => $newData->author->getRouteKey(),
             'content' => $newData->content,
             'tags' => $newData->tags,
             'title' => $newData->title,
@@ -60,7 +60,7 @@ it('can validate input', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->fillForm([
             'title' => null,
@@ -73,7 +73,7 @@ it('can delete', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->callAction(DeleteAction::class);
 
@@ -84,7 +84,7 @@ it('can refresh data', function () {
     $post = Post::factory()->create();
 
     $page = livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ]);
 
     $originalPostTitle = $post->title;

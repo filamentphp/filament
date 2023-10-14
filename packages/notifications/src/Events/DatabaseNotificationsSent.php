@@ -31,7 +31,7 @@ class DatabaseNotificationsSent implements ShouldBroadcast
 
         $userClass = str_replace('\\', '.', $this->user::class);
 
-        return new PrivateChannel("{$userClass}.{$this->user->getKey()}");
+        return new PrivateChannel("{$userClass}.{$this->user->getRouteKey()}");
     }
 
     public function broadcastAs(): string

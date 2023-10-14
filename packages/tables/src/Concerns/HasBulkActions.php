@@ -219,7 +219,7 @@ trait HasBulkActions
                     return $carry;
                 }
 
-                $carry[] = (string) $record->getKey();
+                $carry[] = (string) $record->getRouteKey();
 
                 return $carry;
             },
@@ -263,7 +263,7 @@ trait HasBulkActions
                     return $carry;
                 }
 
-                $carry[] = (string) $record->getKey();
+                $carry[] = (string) $record->getRouteKey();
 
                 return $carry;
             },

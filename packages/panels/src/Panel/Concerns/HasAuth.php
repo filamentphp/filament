@@ -218,7 +218,7 @@ trait HasAuth
             "filament.{$this->getId()}.auth.email-verification.verify",
             now()->addMinutes(config('auth.verification.expire', 60)),
             [
-                'id' => $user->getKey(),
+                'id' => $user->getRouteKey(),
                 'hash' => sha1($user->getEmailForVerification()),
                 ...$parameters,
             ],

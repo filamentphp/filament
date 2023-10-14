@@ -18,7 +18,7 @@ it('can create', function () {
 
     livewire(PostResource\Pages\CreatePost::class)
         ->fillForm([
-            'author_id' => $newData->author->getKey(),
+            'author_id' => $newData->author->getRouteKey(),
             'content' => $newData->content,
             'tags' => $newData->tags,
             'title' => $newData->title,
@@ -28,7 +28,7 @@ it('can create', function () {
         ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Post::class, [
-        'author_id' => $newData->author->getKey(),
+        'author_id' => $newData->author->getRouteKey(),
         'content' => $newData->content,
         'tags' => json_encode($newData->tags),
         'title' => $newData->title,

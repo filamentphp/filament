@@ -993,7 +993,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $form->model($record)->saveRelationships();
 
-            return $record->getKey();
+            return $record->getRouteKey();
         });
 
         $this->fillEditOptionActionFormUsing(static function (Select $component): ?array {
