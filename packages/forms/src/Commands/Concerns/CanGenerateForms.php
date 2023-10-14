@@ -29,13 +29,11 @@ trait CanGenerateForms
                 continue;
             }
 
-            if ($column->getName() === 'id' && $column->getLength() === 36) {
-                continue;
-            }
-
             $columnName = $column->getName();
 
             if (str($columnName)->is([
+                'id',
+                'uuid',
                 'created_at',
                 'deleted_at',
                 'updated_at',
