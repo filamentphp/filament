@@ -16,8 +16,8 @@
 ])
 
 @php
-    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
-    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
+    $hasPrefix = collect($prefixActions)->reject(fn ($action) => $action->isHidden())->count() || $prefixIcon || filled($prefix);
+    $hasSuffix = collect($suffixActions)->reject(fn ($action) => $action->isHidden())->count() || $suffixIcon || filled($suffix);
 
     $hasAlpineDisabledClasses = filled($alpineDisabled);
     $hasAlpineValidClasses = filled($alpineValid);
