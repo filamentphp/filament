@@ -17,9 +17,8 @@ trait HasFavicon
         return $this;
     }
 
-    public function getFavicon():  string | Htmlable | null
+    public function getFavicon(): string | Htmlable | null
     {
         return $this->evaluate($this->favicon);
     }
 }
-
