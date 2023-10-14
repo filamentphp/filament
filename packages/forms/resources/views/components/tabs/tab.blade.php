@@ -13,27 +13,29 @@
 <div
     x-bind:class="tab === @js($id) ? @js($visibleTabClasses) : @js($invisibleTabClasses)"
     x-on:expand-concealing-component.window="
-        error = $el.querySelector('[data-validation-error]')
+        $nextTick(() => {
+            error = $el.querySelector('[data-validation-error]')
 
-        if (! error) {
-            return
-        }
+            if (! error) {
+                return
+            }
 
-        tab = @js($id)
+            tab = @js($id)
 
-        if (document.body.querySelector('[data-validation-error]') !== error) {
-            return
-        }
+            if (document.body.querySelector('[data-validation-error]') !== error) {
+                return
+            }
 
-        setTimeout(
-            () =>
-                $el.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start',
-                    inline: 'start',
-                }),
-            200,
-        )
+            setTimeout(
+                () =>
+                    $el.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                        inline: 'start',
+                    }),
+                200,
+            )
+        })
     "
     {{
         $attributes
