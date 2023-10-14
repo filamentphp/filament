@@ -16,8 +16,18 @@
 ])
 
 @php
-    $hasPrefix = collect($prefixActions)->reject(fn ($action) => $action->isHidden())->count() || $prefixIcon || filled($prefix);
-    $hasSuffix = collect($suffixActions)->reject(fn ($action) => $action->isHidden())->count() || $suffixIcon || filled($suffix);
+    $prefixActions = array_filter(
+        $prefixActions,
+        fn (\Filament\Forms\Components\Actions\Action $prefixAction): bool => $prefixAction->isVisible(),
+    );
+
+    $suffixActions = array_filter(
+        $suffixActions,
+        fn (\Filament\Forms\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
+    );
+
+    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
+    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
 
     $hasAlpineDisabledClasses = filled($alpineDisabled);
     $hasAlpineValidClasses = filled($alpineValid);
@@ -34,16 +44,6 @@
     $actionsClasses = '-mx-1.5 flex items-center';
     $iconClasses = 'fi-input-wrp-icon h-5 w-5 text-gray-400 dark:text-gray-500';
     $labelClasses = 'fi-input-wrp-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
-
-    $prefixActions = array_filter(
-        $prefixActions,
-        fn (\Filament\Forms\Components\Actions\Action $prefixAction): bool => $prefixAction->isVisible(),
-    );
-
-    $suffixActions = array_filter(
-        $suffixActions,
-        fn (\Filament\Forms\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
-    );
 
     $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
 
