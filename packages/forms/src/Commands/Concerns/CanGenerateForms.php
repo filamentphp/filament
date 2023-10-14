@@ -32,8 +32,7 @@ trait CanGenerateForms
             $columnName = $column->getName();
 
             if (str($columnName)->is([
-                'id',
-                'uuid',
+                app($model)->getKeyName(),
                 'created_at',
                 'deleted_at',
                 'updated_at',
