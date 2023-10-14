@@ -36,7 +36,9 @@
                                 }
 
                                 this.checkboxListOptions = Array.from(
-                                    $root.querySelectorAll('.fi-fo-checkbox-list-option-label'),
+                                    $root.querySelectorAll(
+                                        '.fi-fo-checkbox-list-option-label',
+                                    ),
                                 )
 
                                 this.updateVisibleCheckboxListOptions()
@@ -90,7 +92,7 @@
                             .querySelector('.fi-fo-checkbox-list-option-description')
                             ?.innerText.toLowerCase()
                             .includes(this.search.toLowerCase())
-                    }
+                    },
                 )
             },
         }"
