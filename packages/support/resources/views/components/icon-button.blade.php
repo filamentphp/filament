@@ -105,18 +105,28 @@
         @endif
 
         <x-filament::icon
-            :alias="$iconAlias"
-            :icon="$icon"
-            :wire:loading.remove.delay="$hasLoadingIndicator"
-            :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-            :class="$iconClasses"
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes(
+                    new \Illuminate\View\ComponentAttributeBag([
+                        'alias' => $iconAlias,
+                        'icon' => $icon,
+                        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                    ])
+                )->class([$iconClasses])
+            "
         />
 
         @if ($hasLoadingIndicator)
             <x-filament::loading-indicator
-                wire:loading.delay=""
-                :wire:target="$loadingIndicatorTarget"
-                :class="$iconClasses"
+                :attributes="
+                    \Filament\Support\prepare_inherited_attributes(
+                        new \Illuminate\View\ComponentAttributeBag([
+                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                            'wire:target' => $loadingIndicatorTarget,
+                        ])
+                    )->class([$iconClasses])
+                "
             />
         @endif
 

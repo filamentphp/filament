@@ -56,4 +56,19 @@ return [
 
     'assets_path' => null,
 
+   /*
+    |--------------------------------------------------------------------------
+    | Livewire Loading Delay
+    |--------------------------------------------------------------------------
+    |
+    | This sets the delay before loading indicators appear.
+    |
+    | Setting this to 'none' makes indicators appear immediately, which can be
+    | desirable for high-latency connections. Setting it to 'default' applies
+    | Livewire's standard 200ms delay.
+    |
+    */
+
+    'livewire_loading_delay' => 'default',
+
 ];
