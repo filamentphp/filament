@@ -11,7 +11,6 @@ use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
-use Filament\Notifications\Auth\QueuedResetPassword;
 use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -78,9 +77,7 @@ class RequestPasswordReset extends SimplePage
                     throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
                 }
 
-                $shouldQueuePasswordReset = Filament::shouldQueuePasswordReset();
-
-                $notification = $shouldQueuePasswordReset ? new QueuedResetPassword($token) : new ResetPasswordNotification($token);
+                $notification = new ResetPasswordNotification($token);
                 $notification->url = Filament::getResetPasswordUrl($token, $user);
 
                 $user->notify($notification);

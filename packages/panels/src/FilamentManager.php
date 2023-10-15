@@ -139,11 +139,6 @@ class FilamentManager
         return $this->getCurrentPanel()->getEmailVerificationPromptUrl($parameters);
     }
 
-    public function shouldQueueEmailVerification(): bool
-    {
-        return $this->getCurrentPanel()->shouldQueueEmailVerification();
-    }
-
     public function getEmailVerifiedMiddleware(): string
     {
         return $this->getCurrentPanel()->getEmailVerifiedMiddleware();
@@ -307,11 +302,6 @@ class FilamentManager
     public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = []): string
     {
         return $this->getCurrentPanel()->getResetPasswordUrl($token, $user, $parameters);
-    }
-
-    public function shouldQueuePasswordReset(): bool
-    {
-        return $this->getCurrentPanel()->shouldQueuePasswordReset();
     }
 
     /**

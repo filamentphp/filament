@@ -4,7 +4,6 @@ namespace Filament\Listeners\Auth;
 
 use Exception;
 use Filament\Facades\Filament;
-use Filament\Notifications\Auth\QueuedVerifyEmail;
 use Filament\Notifications\Auth\VerifyEmail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification as BaseListener;
@@ -28,9 +27,7 @@ class SendEmailVerificationNotification extends BaseListener
             throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
         }
 
-        $shouldQueueEmailVerification = Filament::shouldQueueEmailVerification();
-
-        $notification = $shouldQueueEmailVerification ? new QueuedVerifyEmail() : new VerifyEmail();
+        $notification = new VerifyEmail();
         $notification->url = Filament::getVerifyEmailUrl($event->user);
 
         $event->user->notify($notification);

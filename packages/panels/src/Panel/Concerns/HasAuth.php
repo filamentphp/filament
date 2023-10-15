@@ -27,8 +27,6 @@ trait HasAuth
 
     protected bool $isEmailVerificationRequired = false;
 
-    protected bool $shouldQueueEmailVerification = false;
-
     /**
      * @var string | Closure | array<class-string, string> | null
      */
@@ -49,8 +47,6 @@ trait HasAuth
      */
     protected string | Closure | array | null $resetPasswordRouteAction = null;
 
-    protected bool $shouldQueuePasswordReset = false;
-
     protected ?string $profilePage = null;
 
     protected string $authGuard = 'web';
@@ -60,11 +56,10 @@ trait HasAuth
     /**
      * @param  string | Closure | array<class-string, string> | null  $promptAction
      */
-    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true, bool $shouldQueue = false): static
+    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true): static
     {
         $this->emailVerificationRouteAction = $promptAction;
         $this->requiresEmailVerification($isRequired);
-        $this->shouldQueueEmailVerification = $shouldQueue;
 
         return $this;
     }
@@ -97,11 +92,10 @@ trait HasAuth
      * @param  string | Closure | array<class-string, string> | null  $requestAction
      * @param  string | Closure | array<class-string, string> | null  $resetAction
      */
-    public function passwordReset(string | Closure | array | null $requestAction = RequestPasswordReset::class, string | Closure | array | null $resetAction = ResetPassword::class, bool $shouldQueue = false): static
+    public function passwordReset(string | Closure | array | null $requestAction = RequestPasswordReset::class, string | Closure | array | null $resetAction = ResetPassword::class): static
     {
         $this->requestPasswordResetRouteAction = $requestAction;
         $this->resetPasswordRouteAction = $resetAction;
-        $this->shouldQueuePasswordReset = $shouldQueue;
 
         return $this;
     }
@@ -145,16 +139,6 @@ trait HasAuth
     public function isEmailVerificationRequired(): bool
     {
         return $this->isEmailVerificationRequired;
-    }
-
-    public function shouldQueueEmailVerification(): bool
-    {
-        return $this->shouldQueueEmailVerification;
-    }
-
-    public function shouldQueuePasswordReset(): bool
-    {
-        return $this->shouldQueuePasswordReset;
     }
 
     public function hasProfile(): bool
