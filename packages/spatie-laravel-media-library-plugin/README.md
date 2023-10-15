@@ -80,6 +80,18 @@ SpatieMediaLibraryFileUpload::make('attachments')
 
 You may now drag and drop files into order.
 
+### Adding custom headers
+
+You may pass in custom headers when uploading files using the `addCustomHeaders()` method:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('attachments')
+    ->multiple()
+    ->addCustomHeaders(['ACL' => 'public-read'])
+```
+
 ### Adding custom properties
 
 You may pass in [custom properties](https://spatie.be/docs/laravel-medialibrary/advanced-usage/using-custom-properties) when uploading files using the `customProperties()` method:
