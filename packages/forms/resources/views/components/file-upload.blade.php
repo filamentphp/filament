@@ -201,7 +201,7 @@
 
                                                         <input
                                                             @class([
-                                                                'block w-full border-none text-sm transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
+                                                                'block w-full border-none text-sm transition duration-75 focus-visible:border-primary-500 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus-visible:border-primary-500',
                                                             ])
                                                             x-on:keyup.enter.stop.prevent="{{ $input['alpineSaveHandler'] }}"
                                                             x-on:blur="{{ $input['alpineSaveHandler'] }}"

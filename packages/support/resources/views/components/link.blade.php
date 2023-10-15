@@ -33,7 +33,7 @@
     }
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-link relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline',
+        'fi-link relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus-visible:underline',
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         "fi-size-{$size->value}" => $size instanceof ActionSize,
