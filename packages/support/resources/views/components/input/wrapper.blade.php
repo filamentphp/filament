@@ -84,7 +84,7 @@
     @if ($hasPrefix || $hasLoadingIndicator)
         <div
             @if (! $hasPrefix)
-                wire:loading.delay.{{ config('filament.wire_loading_delay', 'default') }}.flex
+                wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.flex
                 wire:target="{{ $loadingIndicatorTarget }}"
                 wire:key="{{ \Illuminate\Support\Str::random() }}" {{-- Makes sure the loading indicator gets hidden again. --}}
             @endif
@@ -112,7 +112,7 @@
                             new \Illuminate\View\ComponentAttributeBag([
                                 'alias' => $prefixIconAlias,
                                 'icon' => $prefixIcon,
-                                'wire:loading.remove.delay.' . config('filament.wire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                             ])
                         )->class([$iconClasses])
@@ -125,7 +125,7 @@
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => $hasPrefix ? '' : false,
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix ? '' : false,
                                 'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                             ])
                         )->class([$iconClasses])
@@ -144,7 +144,7 @@
     <div
         @if ($hasLoadingIndicator && (! $hasPrefix))
             @if ($inlinePrefix)
-                wire:loading.delay.{{ config('filament.wire_loading_delay', 'default') }}.class.remove="ps-3"
+                wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="ps-3"
             @endif
 
             wire:target="{{ $loadingIndicatorTarget }}"

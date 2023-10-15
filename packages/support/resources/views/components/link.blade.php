@@ -183,7 +183,7 @@
                             new \Illuminate\View\ComponentAttributeBag([
                                 'alias' => $iconAlias,
                                 'icon' => $icon,
-                                'wire:loading.remove.delay.' . config('filament.wire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                             ])
                         )->class([$iconClasses])
@@ -196,7 +196,7 @@
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => '',
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                                 'wire:target' => $loadingIndicatorTarget,
                             ])
                         )->class([$iconClasses])
@@ -215,7 +215,7 @@
                             new \Illuminate\View\ComponentAttributeBag([
                                 'alias' => $iconAlias,
                                 'icon' => $icon,
-                                'wire:loading.remove.delay.' . config('filament.wire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                             ])
                         )->class([$iconClasses])
@@ -229,7 +229,7 @@
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => '',
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                                 'wire:target' => $loadingIndicatorTarget,
                             ])
                         )->class([$iconClasses])
