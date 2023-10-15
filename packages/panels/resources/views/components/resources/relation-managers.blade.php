@@ -60,7 +60,6 @@
         </x-filament::tabs>
     @endif
 
-
     @if (filled($activeManager) && isset($managers[$activeManager]))
         <div
             @if (count($managers) > 1)
