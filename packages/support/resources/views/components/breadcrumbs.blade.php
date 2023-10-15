@@ -33,7 +33,7 @@
 
                 <a
                     {{ \Filament\Support\generate_href_html(is_int($url) ? '#' : $url) }}
-                    class="text-sm font-medium text-gray-500 outline-none transition duration-75 hover:text-gray-700 focus:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-gray-200"
+                    class="text-sm font-medium text-gray-500 outline-none transition duration-75 hover:text-gray-700 focus-visible:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 dark:focus-visible:text-gray-200"
                 >
                     {{ $label }}
                 </a>

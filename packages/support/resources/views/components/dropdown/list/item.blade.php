@@ -29,8 +29,8 @@
         // @deprecated `fi-dropdown-list-item-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
         is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
         match ($color) {
-            'gray' => 'hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
-            default => 'hover:bg-custom-50 focus:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus:bg-custom-400/10',
+            'gray' => 'hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
+            default => 'hover:bg-custom-50 focus-visible:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus-visible:bg-custom-400/10',
         },
     ]);
 
