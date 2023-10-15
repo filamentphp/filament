@@ -89,7 +89,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
-    ->customHeaders(['ACL' => 'public-read'])
+    ->customHeaders(['CacheControl' => 'max-age=86400'])
 ```
 
 ### Adding custom properties
