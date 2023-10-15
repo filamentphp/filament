@@ -82,14 +82,14 @@ You may now drag and drop files into order.
 
 ### Adding custom headers
 
-You may pass in custom headers when uploading files using the `addCustomHeaders()` method:
+You may pass in custom headers when uploading files using the `customHeaders()` method:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
-    ->addCustomHeaders(['ACL' => 'public-read'])
+    ->customHeaders(['ACL' => 'public-read'])
 ```
 
 ### Adding custom properties
