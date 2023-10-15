@@ -1,11 +1,9 @@
 <x-filament-actions::action
     :action="$action"
-    :badge="$getBadge()"
-    :badge-color="$getBadgeColor()"
-    dynamic-component="filament::link"
+    dynamic-component="filament::badge"
     :icon-position="$getIconPosition()"
     :size="$getSize()"
-    class="fi-ac-link-action"
+    class="fi-ac-badge-action"
 >
     {{ $getLabel() }}
 </x-filament-actions::action>

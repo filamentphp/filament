@@ -17,6 +17,10 @@
 ])
 
 @php
+    if (! $iconPosition instanceof IconPosition) {
+        $iconPosition = $iconPosition ? IconPosition::tryFrom($iconPosition) : null;
+    }
+
     $hasAlpineActiveClasses = filled($alpineActive);
 
     $inactiveItemClasses = 'hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5';
@@ -60,7 +64,7 @@
             ])
     }}
 >
-    @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
+    @if ($icon && $iconPosition === IconPosition::Before)
         <x-filament::icon
             :icon="$icon"
             :x-bind:class="$hasAlpineActiveClasses ? '{ ' . \Illuminate\Support\Js::from($inactiveIconClasses) . ': ! (' . $alpineActive . '), ' . \Illuminate\Support\Js::from($activeIconClasses) . ': ' . $alpineActive . ' }' : null"
@@ -88,7 +92,7 @@
         {{ $slot }}
     </span>
 
-    @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+    @if ($icon && $iconPosition === IconPosition::After)
         <x-filament::icon
             :icon="$icon"
             :x-bind:class="$hasAlpineActiveClasses ? '{ ' . \Illuminate\Support\Js::from($inactiveIconClasses) . ': ! (' . $alpineActive . '), ' . \Illuminate\Support\Js::from($activeIconClasses) . ': ' . $alpineActive . ' }' : null"

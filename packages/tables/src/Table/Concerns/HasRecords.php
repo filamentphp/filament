@@ -120,6 +120,11 @@ trait HasRecords
         return $record->getAttributeValue($titleAttribute) ?? $this->getModelLabel();
     }
 
+    public function hasCustomRecordTitle(): bool
+    {
+        return $this->recordTitle !== null;
+    }
+
     public function getRecordTitleAttribute(): ?string
     {
         return $this->evaluate($this->recordTitleAttribute);

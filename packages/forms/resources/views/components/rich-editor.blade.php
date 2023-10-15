@@ -65,7 +65,7 @@
                 <trix-toolbar
                     id="trix-toolbar-{{ $id }}"
                     @class([
-                        'relative flex flex-col gap-x-3 border-b border-gray-100 px-2.5 py-2 dark:border-white/10',
+                        'fi-fo-rich-editor-toolbar relative flex flex-col gap-x-3 border-b border-gray-100 px-2.5 py-2 dark:border-white/10',
                         'hidden' => ! count($getToolbarButtons()),
                     ])
                 >

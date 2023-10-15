@@ -11,7 +11,7 @@ This page is about customizing the look of that trigger button.
 
 ## Choosing a trigger style
 
-Out of the box, action triggers have 3 styles - "button", "link", and "icon button".
+Out of the box, action triggers have 4 styles - "button", "link", "icon button", and "badge".
 
 "Button" triggers have a background color, label, and optionally an [icon](#setting-an-icon). Usually, this is the default button style, but you can use it manually with the `button()` method:
 
@@ -40,6 +40,15 @@ Action::make('edit')
 ```
 
 <AutoScreenshot name="actions/trigger-button/icon-button" alt="Icon button trigger" version="3.x" />
+
+"Badge" triggers have a background color, label, and optionally an [icon](#setting-an-icon). You can use a badge as trigger using the `badge()` method:
+
+```php
+Action::make('edit')
+    ->badge()
+```
+
+<AutoScreenshot name="actions/trigger-button/badge" alt="Badge trigger" version="3.x" />
 
 ### Using an icon button on mobile devices only
 
@@ -176,7 +185,7 @@ Action::make('filter')
     ->badge(5)
 ```
 
-<AutoScreenshot name="actions/trigger-button/badge" alt="Trigger with badge" version="3.x" />
+<AutoScreenshot name="actions/trigger-button/badged" alt="Trigger with badge" version="3.x" />
 
 You can also pass a color to be used for the badge, which can be either `danger`, `gray`, `info`, `primary`, `success` and `warning`:
 
@@ -190,7 +199,7 @@ Action::make('filter')
     ->badgeColor('success')
 ```
 
-<AutoScreenshot name="actions/trigger-button/success-badge" alt="Trigger with green badge" version="3.x" />
+<AutoScreenshot name="actions/trigger-button/success-badged" alt="Trigger with green badge" version="3.x" />
 
 ## Outlined button style
 

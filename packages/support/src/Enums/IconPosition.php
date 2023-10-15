@@ -2,9 +2,9 @@
 
 namespace Filament\Support\Enums;
 
-enum IconPosition
+enum IconPosition: string
 {
-    case Before;
+    case Before = 'before';
 
-    case After;
+    case After = 'after';
 }

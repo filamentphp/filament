@@ -1085,13 +1085,26 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     public function getRelationship(): BelongsTo | BelongsToMany | \Znck\Eloquent\Relations\BelongsToThrough | null
     {
-        $name = $this->getRelationshipName();
-
-        if (blank($name)) {
+        if (blank($this->getRelationshipName())) {
             return null;
         }
 
-        return $this->getModelInstance()->{$name}();
+        $record = $this->getModelInstance();
+
+        $relationship = null;
+
+        foreach (explode('.', $this->getRelationshipName()) as $nestedRelationshipName) {
+            if (! $record->isRelation($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
+            $relationship = $record->{$nestedRelationshipName}();
+            $record = $relationship->getRelated();
+        }
+
+        return $relationship;
     }
 
     public function getRelationshipName(): ?string
@@ -1185,7 +1198,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $this->state($state);
 
-            Arr::set($hydratedDefaultState, $this->getStatePath(), $state);
+            if (is_array($hydratedDefaultState)) {
+                Arr::set($hydratedDefaultState, $this->getStatePath(), $state);
+            }
         }
     }
 }
