@@ -18,14 +18,6 @@
 
             return $manager;
         };
-
-        //when previously active manager is hidden, reset tabs
-        //but not when hasCombinedRelationManagerTabsWithContent and active tab is the form
-        if ($activeManager !== "" && !isset($managers[$activeManager])){
-            $activeManager = strval(array_key_first($managers));
-            $this->activeRelationManager = strval(array_key_first($managers));
-        }
-
     @endphp
 
     @if ((count($managers) > 1) || $content)
@@ -70,13 +62,14 @@
 
 
     @if (filled($activeManager) && isset($managers[$activeManager]))
-        <div wire:key="{{$this->getId().'.relationManager.panel'}}"
-             @if (count($managers) > 1)
-                 id="relationManager{{ ucfirst($activeManager) }}"
-                 role="tabpanel"
-                 tabindex="0"
-             @endif
-             class="flex flex-col gap-y-4"
+        <div
+            @if (count($managers) > 1)
+                id="relationManager{{ ucfirst($activeManager) }}"
+                role="tabpanel"
+                tabindex="0"
+            @endif
+            wire:key="{{ $this->getId() }}.relation-managers.active"
+            class="flex flex-col gap-y-4"
         >
             @php
                 $managerLivewireProperties = ['lazy' => true, 'ownerRecord' => $ownerRecord, 'pageClass' => $pageClass];
