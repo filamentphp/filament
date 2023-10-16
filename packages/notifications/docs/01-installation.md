@@ -141,6 +141,7 @@ Create a new `resources/views/components/layouts/app.blade.php` layout file for 
         {{ $slot }}
 
         @filamentScripts
+        @livewire('notifications')
         @vite('resources/js/app.js')
     </body>
 </html>
