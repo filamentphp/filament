@@ -12,12 +12,12 @@ use Illuminate\View\ComponentAttributeBag;
 use NumberFormatter;
 
 if (! function_exists('Filament\Support\format_money')) {
-    function format_money(float | int $money, string $currency, int $divideBy = 0): string
+    function format_money(float | int $money, string $currency, int $divideBy = 0, int $scale = 2): string
     {
         $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::CURRENCY);
 
         if ($divideBy) {
-            $money = bcdiv((string) $money, (string) $divideBy);
+            $money = bcdiv((string) $money, (string) $divideBy, $scale);
         }
 
         return $formatter->formatCurrency($money, $currency);
