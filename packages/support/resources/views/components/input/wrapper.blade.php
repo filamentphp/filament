@@ -112,7 +112,7 @@
                             new \Illuminate\View\ComponentAttributeBag([
                                 'alias' => $prefixIconAlias,
                                 'icon' => $prefixIcon,
-                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator ? '' : false,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                             ])
                         )->class([$iconClasses])
@@ -125,7 +125,7 @@
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix ? '' : false,
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
                                 'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                             ])
                         )->class([$iconClasses])
