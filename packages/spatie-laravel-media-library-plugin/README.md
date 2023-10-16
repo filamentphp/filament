@@ -92,6 +92,18 @@ SpatieMediaLibraryFileUpload::make('attachments')
     ->customProperties(['zip_filename_prefix' => 'folder/subfolder/'])
 ```
 
+### Adding custom headers
+
+You may pass in custom headers when uploading files using the `customHeaders()` method:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('attachments')
+    ->multiple()
+    ->customHeaders(['CacheControl' => 'max-age=86400'])
+```
+
 ### Generating responsive images
 
 You may [generate responsive images](https://spatie.be/docs/laravel-medialibrary/responsive-images/getting-started-with-responsive-images) when the files are uploaded using the `responsiveImages()` method:
