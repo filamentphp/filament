@@ -16,6 +16,7 @@
     'iconPosition' => IconPosition::Before,
     'iconSize' => null,
     'keyBindings' => null,
+    'loadingIndicator' => true,
     'size' => ActionSize::Medium,
     'tag' => 'a',
     'target' => null,
@@ -88,7 +89,7 @@
 
     $badgeContainerClasses = 'fi-link-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
+    $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
     $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
 

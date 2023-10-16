@@ -13,6 +13,7 @@
     'iconSize' => IconSize::Medium,
     'image' => null,
     'keyBindings' => null,
+    'loadingIndicator' => true,
     'tag' => 'button',
     'target' => null,
     'tooltip' => null,
@@ -65,7 +66,7 @@
         },
     ]);
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
+    $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
     $hasLoadingIndicator = filled($wireTarget);
 

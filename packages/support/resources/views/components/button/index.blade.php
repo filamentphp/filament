@@ -19,6 +19,7 @@
     'keyBindings' => null,
     'labeledFrom' => null,
     'labelSrOnly' => false,
+    'loadingIndicator' => true,
     'outlined' => false,
     'size' => ActionSize::Medium,
     'tag' => 'button',
@@ -128,7 +129,7 @@
         'sr-only' => $labelSrOnly,
     ]);
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
+    $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
     $hasFileUploadLoadingIndicator = $type === 'submit' && filled($form);
     $hasLoadingIndicator = filled($wireTarget) || $hasFileUploadLoadingIndicator;
