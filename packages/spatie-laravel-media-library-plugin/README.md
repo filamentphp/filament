@@ -80,18 +80,6 @@ SpatieMediaLibraryFileUpload::make('attachments')
 
 You may now drag and drop files into order.
 
-### Adding custom headers
-
-You may pass in custom headers when uploading files using the `customHeaders()` method:
-
-```php
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-
-SpatieMediaLibraryFileUpload::make('attachments')
-    ->multiple()
-    ->customHeaders(['CacheControl' => 'max-age=86400'])
-```
-
 ### Adding custom properties
 
 You may pass in [custom properties](https://spatie.be/docs/laravel-medialibrary/advanced-usage/using-custom-properties) when uploading files using the `customProperties()` method:
@@ -102,6 +90,18 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
     ->customProperties(['zip_filename_prefix' => 'folder/subfolder/'])
+```
+
+### Adding custom headers
+
+You may pass in custom headers when uploading files using the `customHeaders()` method:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('attachments')
+    ->multiple()
+    ->customHeaders(['CacheControl' => 'max-age=86400'])
 ```
 
 ### Generating responsive images
