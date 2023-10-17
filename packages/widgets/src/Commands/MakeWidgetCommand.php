@@ -21,8 +21,6 @@ class MakeWidgetCommand extends Command
 
     protected $signature = 'make:filament-widget {name?} {--R|resource=} {--C|chart} {--T|table} {--S|stats-overview} {--panel=} {--F|force}';
 
-    protected string $chartType = 'Basic';
-
     public function handle(): int
     {
         $widget = (string) str($this->argument('name') ?? text(
@@ -42,16 +40,15 @@ class MakeWidgetCommand extends Command
         $resource = null;
         $resourceClass = null;
 
-        if ($this->option('chart') === false  && $this->option('stats-overview') === false) {
-            // if not, prompt for the type of chart
-            $type = select(
-                label: 'What type of chart do you want to create?',
-                options: ['Basic', 'Stats', 'Chart'],
-                default: 'Basic',
-            );
-
-            $this->chartType = $type;
-        }
+        $type = match (true) {
+            $this->option('chart') => 'Chart',
+            $this->option('stats-overview') => 'Stats overview',
+            $this->option('table') => 'Table',
+            default => select(
+                label: 'What type of widget do you want to create?',
+                options: ['Chart', 'Stats overview', 'Table', 'Custom'],
+            ),
+        };
 
         if (class_exists(Resource::class)) {
             $resourceInput = $this->option('resource') ?? text(
@@ -169,8 +166,8 @@ class MakeWidgetCommand extends Command
             return static::INVALID;
         }
 
-        if ($this->option('chart') || $this->chartType === 'Chart') {
-            $chart = select(
+        if ($type === 'Chart') {
+            $chartType = select(
                 label: 'Which type of chart would you like to create?',
                 options: [
                     'Bar chart',
@@ -187,7 +184,7 @@ class MakeWidgetCommand extends Command
             $this->copyStubToApp('ChartWidget', $path, [
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "{$resourceNamespace}\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : $namespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
-                'type' => match ($chart) {
+                'type' => match ($chartType) {
                     'Bar chart' => 'bar',
                     'Bubble chart' => 'bubble',
                     'Doughnut chart' => 'doughnut',
@@ -198,13 +195,13 @@ class MakeWidgetCommand extends Command
                     default => 'line',
                 },
             ]);
-        } elseif ($this->option('table')) {
-            $this->copyStubToApp('TableWidget', $path, [
+        } elseif ($type === 'Stats overview') {
+            $this->copyStubToApp('StatsOverviewWidget', $path, [
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "{$resourceNamespace}\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : $namespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
             ]);
-        } elseif ($this->option('stats-overview') || $this->chartType === 'Stats') {
-            $this->copyStubToApp('StatsOverviewWidget', $path, [
+        } elseif ($type === 'Table') {
+            $this->copyStubToApp('TableWidget', $path, [
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "{$resourceNamespace}\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : $namespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
             ]);
