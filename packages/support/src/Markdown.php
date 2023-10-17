@@ -10,7 +10,8 @@ class Markdown implements Htmlable, Stringable
 {
     public function __construct(
         protected string $text,
-    ) {}
+    ) {
+    }
 
     public function toHtml()
     {
