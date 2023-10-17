@@ -1,5 +1,6 @@
 @php
     use Filament\Infolists\Components\TextEntry\TextEntrySize;
+    use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconPosition;
@@ -7,6 +8,7 @@
 
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
+        $alignment = $entry->getAlignment();
         $isBadge = $isBadge();
         $iconPosition = $getIconPosition();
         $isListWithLineBreaks = $isListWithLineBreaks();
@@ -58,6 +60,14 @@
                     @class([
                         'list-inside list-disc' => $isBulleted(),
                         'flex flex-wrap items-center gap-1.5' => $isBadge,
+                        match ($alignment) {
+                            Alignment::Center, 'center' => 'justify-center',
+                            Alignment::End, 'end' => 'justify-end',
+                            Alignment::Left, 'left' => 'justify-start',
+                            Alignment::Right, 'right' => 'justify-end',
+                            Alignment::Justify, 'justify' => 'justify-between',
+                            default => 'justify-start',
+                        } => $isBadge,
                     ])
                 >
                     @foreach ($arrayState as $state)
