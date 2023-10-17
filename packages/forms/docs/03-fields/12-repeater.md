@@ -264,6 +264,8 @@ public function orderProducts(): HasMany
 
 If you don't already have an `OrderProduct` pivot model, you should create that, with inverse relationships to `Order` and `Product`:
 
+> Important! Each of your pivot models must have an ID in the database table.
+
 ```php
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
