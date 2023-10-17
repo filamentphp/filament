@@ -58,8 +58,9 @@
             >
                 <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
                     @class([
+                        'flex flex-wrap items-center' => !$isListWithLineBreaks,
                         'list-inside list-disc' => $isBulleted(),
-                        'flex flex-wrap items-center gap-1.5' => $isBadge,
+                        'gap-1.5' => $isBadge,
                         match ($alignment) {
                             Alignment::Center, 'center' => 'justify-center',
                             Alignment::End, 'end' => 'justify-end',
@@ -67,7 +68,7 @@
                             Alignment::Right, 'right' => 'justify-end',
                             Alignment::Justify, 'justify' => 'justify-between',
                             default => 'justify-start',
-                        } => $isBadge,
+                        } => !$isListWithLineBreaks,
                     ])
                 >
                     @foreach ($arrayState as $state)
