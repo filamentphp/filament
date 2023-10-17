@@ -8,7 +8,7 @@ use Stringable;
 
 class Markdown implements Htmlable, Stringable
 {
-    public function __construct(
+    final public function __construct(
         protected string $text,
         protected bool $isInline = false,
     ) {
@@ -24,9 +24,11 @@ class Markdown implements Htmlable, Stringable
         return new static($text);
     }
 
-    public function toHtml()
+    public function toHtml(): string
     {
-        return $this->isInline ? Str::inlineMarkdown($this->text) : Str::markdown($this->text);
+        return $this->isInline ?
+            Str::inlineMarkdown($this->text) :
+            Str::markdown($this->text);
     }
 
     public function __toString(): string
