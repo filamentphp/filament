@@ -8,7 +8,7 @@
 
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
-        $alignment = $entry->getAlignment();
+        $alignment = $getAlignment();
         $isBadge = $isBadge();
         $iconPosition = $getIconPosition();
         $isListWithLineBreaks = $isListWithLineBreaks();
