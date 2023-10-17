@@ -264,7 +264,7 @@ public function orderProducts(): HasMany
 
 If you don't already have an `OrderProduct` pivot model, you should create that, with inverse relationships to `Order` and `Product`:
 
-> Important! Each of your pivot models must have an ID in the database table.
+> Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted.
 
 ```php
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
