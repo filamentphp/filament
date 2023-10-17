@@ -264,8 +264,6 @@ public function orderProducts(): HasMany
 
 If you don't already have an `OrderProduct` pivot model, you should create that, with inverse relationships to `Order` and `Product`:
 
-> Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted.
-
 ```php
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -283,6 +281,8 @@ class OrderProduct extends Pivot
     }
 }
 ```
+
+> Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted.
 
 Now you can use the `orderProducts` relationship with the repeater, and it will save the data to the `order_product` pivot table:
 
