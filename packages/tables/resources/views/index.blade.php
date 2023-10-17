@@ -117,7 +117,7 @@
         wire:init="loadTable"
     @endif
     x-ignore
-    ax-load
+    ax-load="visible"
     ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('table', 'filament/tables') }}"
     x-data="table"
     @class([
