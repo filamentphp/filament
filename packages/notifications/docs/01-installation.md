@@ -140,6 +140,8 @@ Create a new `resources/views/components/layouts/app.blade.php` layout file for 
     <body class="antialiased">
         {{ $slot }}
 
+        @livewire('notifications')
+
         @filamentScripts
         @vite('resources/js/app.js')
     </body>
