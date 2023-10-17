@@ -32,6 +32,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected bool | Closure $isReorderable = true;
 
+    protected int | Closure $sortableAnimation = 300;
+
     protected bool | Closure $isReorderableWithDragAndDrop = true;
 
     protected bool | Closure $isReorderableWithButtons = false;
@@ -604,6 +606,18 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->reorderable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
         return $this;
+    }
+
+    public function sortableAnimation(int | Closure $animation = 300): static
+    {
+        $this->sortableAnimation = $animation;
+
+        return $this;
+    }
+
+    public function getSortableAnimation()
+    {
+        return (string) $this->evaluate($this->sortableAnimation);
     }
 
     public function reorderableWithDragAndDrop(bool | Closure $condition = true): static
