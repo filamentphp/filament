@@ -10,12 +10,23 @@ class Markdown implements Htmlable, Stringable
 {
     public function __construct(
         protected string $text,
+        protected bool $isInline = false,
     ) {
+    }
+
+    public static function inline(string $text): static
+    {
+        return new static($text, isInline: true);
+    }
+
+    public static function block(string $text): static
+    {
+        return new static($text);
     }
 
     public function toHtml()
     {
-        return Str::markdown($this->text);
+        return $this->isInline ? Str::inlineMarkdown($this->text) : Str::markdown($this->text);
     }
 
     public function __toString(): string
