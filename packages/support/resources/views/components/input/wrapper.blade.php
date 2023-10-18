@@ -60,7 +60,7 @@
             $prefixIconColor,
             shades: [400, 500],
             alias: 'input-wrapper-prefix-icon',
-        ) => $color !== 'gray',
+        ) => $prefixIconColor !== 'gray',
     ]);
 
     $suffixIconClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -76,7 +76,7 @@
             $suffixIconColor,
             shades: [400, 500],
             alias: 'input-wrapper-suffix-icon',
-        ) => $color !== 'gray',
+        ) => $suffixIconColor !== 'gray',
     ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
