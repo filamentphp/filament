@@ -131,7 +131,10 @@
             @endif
 
             @if ($hasActions)
-                <x-filament-actions::actions :actions="$actions" class="ms-auto"/>
+                <x-filament-actions::actions
+                    :actions="$actions"
+                    class="ms-auto"
+                />
             @endif
 
             {{ $headerEnd }}
