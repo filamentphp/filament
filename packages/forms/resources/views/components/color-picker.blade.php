@@ -4,11 +4,9 @@
     $isSuffixInline = $isSuffixInline();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
-    $prefixIconColor = $getPrefixIconColor();
     $prefixLabel = $getPrefixLabel();
     $suffixActions = $getSuffixActions();
     $suffixIcon = $getSuffixIcon();
-    $suffixIconColor = $getSuffixIconColor();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
 @endphp
@@ -21,11 +19,11 @@
         :prefix="$prefixLabel"
         :prefix-actions="$prefixActions"
         :prefix-icon="$prefixIcon"
-        :prefix-icon-color="$prefixIconColor"
+        :prefix-icon-color="$getPrefixIconColor()"
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
-        :suffix-icon-color="$suffixIconColor"
+        :suffix-icon-color="$getSuffixIconColor()"
         :valid="! $errors->has($statePath)"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
