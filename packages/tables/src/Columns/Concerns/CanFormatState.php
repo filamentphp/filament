@@ -35,6 +35,16 @@ trait CanFormatState
     protected bool | Closure $isHtml = false;
 
     protected bool | Closure $isMarkdown = false;
+ 
+    protected bool $isDate = false;
+    
+    protected bool $isDateTime = false;
+
+    protected bool $isTime = false;
+    
+    protected bool $isMoney = false;
+    
+    protected bool $isNumeric = false;
 
     public function markdown(bool | Closure $condition = true): static
     {
@@ -45,6 +55,8 @@ trait CanFormatState
 
     public function date(?string $format = null, ?string $timezone = null): static
     {
+        $this->isDate = true;
+        
         $format ??= Table::$defaultDateDisplayFormat;
 
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
@@ -62,6 +74,8 @@ trait CanFormatState
 
     public function dateTime(?string $format = null, ?string $timezone = null): static
     {
+        $this->isDateTime = true;
+
         $format ??= Table::$defaultDateTimeDisplayFormat;
 
         $this->date($format, $timezone);
@@ -71,6 +85,8 @@ trait CanFormatState
 
     public function since(?string $timezone = null): static
     {
+        $this->isDate = true;
+        
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($timezone): ?string {
             if (blank($state)) {
                 return null;
@@ -86,6 +102,8 @@ trait CanFormatState
 
     public function money(string | Closure | null $currency = null, int $divideBy = 0): static
     {
+        $this->isMoney = true;
+
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $divideBy): ?string {
             if (blank($state)) {
                 return null;
@@ -101,6 +119,8 @@ trait CanFormatState
 
     public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
     {
+        $this->isNumeric = true;
+
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
             if (blank($state)) {
                 return null;
@@ -127,6 +147,8 @@ trait CanFormatState
 
     public function time(?string $format = null, ?string $timezone = null): static
     {
+        $this->isTime = true;
+        
         $format ??= Table::$defaultTimeDisplayFormat;
 
         $this->date($format, $timezone);
@@ -268,5 +290,30 @@ trait CanFormatState
     public function isMarkdown(): bool
     {
         return (bool) $this->evaluate($this->isMarkdown);
+    }
+
+    public function isDate(): bool
+    {
+        return (bool) $this->isDate;
+    }
+
+    public function isDateTime(): bool
+    {
+        return (bool) $this->isDateTime;
+    }
+
+    public function isTime(): bool
+    {
+        return (bool) $this->isTime;
+    }
+
+    public function isMoney(): bool
+    {
+        return (bool) $this->isMoney;
+    }
+
+    public function isNumeric(): bool
+    {
+        return (bool) $this->isNumeric;
     }
 }
