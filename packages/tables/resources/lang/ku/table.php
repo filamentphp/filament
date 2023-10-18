@@ -167,20 +167,20 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Drag and drop the records into order.',
+    'reorder_indicator' => 'تۆمارەکان هەڵبگرە و ڕیزیان بکە.',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 record selected|:count records selected',
+        'selected_count' => '١ ڕیز دیاریکراوە|:count ڕیز دیاریکراوە',
 
         'actions' => [
 
             'select_all' => [
-                'label' => 'Select all :count',
+                'label' => 'هەڵبژاردنی هەموو :count',
             ],
 
             'deselect_all' => [
-                'label' => 'Deselect all',
+                'label' => 'هەڵنەبژاردنی هەموو',
             ],
 
         ],
@@ -192,16 +192,16 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'Sort by',
+                'label' => 'کۆمەڵکردن بە',
             ],
 
             'direction' => [
 
-                'label' => 'Sort direction',
+                'label' => 'ئاڕاستەی کۆمەڵ کردن',
 
                 'options' => [
-                    'asc' => 'Ascending',
-                    'desc' => 'Descending',
+                    'asc' => 'کەم بۆ زۆر',
+                    'desc' => 'زۆر بۆ کەم',
                 ],
 
             ],
