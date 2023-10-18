@@ -33,9 +33,9 @@ class TestsActions
                 $this->call(
                     'mountAction',
                     $actionName,
-                    count($name) > 1
-                        ? $arguments[$actionName] ?? []
-                        : $arguments,
+                    count($name) > 1 ?
+                        $arguments[$actionName] ?? $arguments :
+                        $arguments,
                 );
             }
 
