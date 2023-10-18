@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconPosition;
@@ -44,7 +45,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-ta-text grid gap-y-1',
+                'fi-ta-text grid gap-y-1 w-full',
                 'px-3 py-4' => ! $isInline(),
             ])
     }}
@@ -63,9 +64,18 @@
 
         <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
             @class([
+                'flex flex-wrap items-center' => ! $isListWithLineBreaks,
+                'gap-1.5' => $isBadge,
                 'list-inside list-disc' => $isBulleted,
-                'flex flex-wrap items-center gap-1.5' => $isBadge,
                 'whitespace-normal' => $canWrap,
+                match ($column->getAlignment()) {
+                    Alignment::Center, 'center' => 'justify-center text-center',
+                    Alignment::End, 'end' => 'justify-end text-end',
+                    Alignment::Left, 'left' => 'justify-start text-left',
+                    Alignment::Right, 'right' => 'justify-end text-right',
+                    Alignment::Justify, 'justify' => 'justify-between text-justify',
+                    default => 'justify-start text-start',
+                },
             ])
         >
             @foreach ($arrayState as $state)
