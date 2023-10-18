@@ -15,6 +15,7 @@
     'iconSize' => null,
     'keyBindings' => null,
     'label' => null,
+    'loadingIndicator' => true,
     'size' => 'md',
     'tag' => 'button',
     'target' => null,
@@ -30,7 +31,7 @@
     };
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
+        'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-70',
         match ($size) {
             ActionSize::ExtraSmall, 'xs' => 'h-7 w-7',
             ActionSize::Small, 'sm' => 'h-8 w-8',
@@ -40,8 +41,8 @@
             default => $size,
         },
         match ($color) {
-            'gray' => 'fi-color-gray text-gray-400 hover:text-gray-500 focus:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus:ring-primary-500',
-            default => 'fi-color-custom text-custom-500 hover:text-custom-600 focus:ring-custom-600 dark:text-custom-400 dark:hover:text-custom-300 dark:focus:ring-custom-500',
+            'gray' => 'fi-color-gray text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500',
+            default => 'fi-color-custom text-custom-500 hover:text-custom-600 focus-visible:ring-custom-600 dark:text-custom-400 dark:hover:text-custom-300 dark:focus-visible:ring-custom-500',
         },
     ]);
 
@@ -62,24 +63,26 @@
 
     $badgeContainerClasses = 'fi-icon-btn-badge-ctn absolute start-full top-0 z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
+    $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
     $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
 
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
+
+    $hasTooltip = filled($tooltip);
 @endphp
 
 @if ($tag === 'button')
     <button
-        @if ($keyBindings || $tooltip)
+        @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,
@@ -103,18 +106,28 @@
         @endif
 
         <x-filament::icon
-            :alias="$iconAlias"
-            :icon="$icon"
-            :wire:loading.remove.delay="$hasLoadingIndicator"
-            :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-            :class="$iconClasses"
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes(
+                    new \Illuminate\View\ComponentAttributeBag([
+                        'alias' => $iconAlias,
+                        'icon' => $icon,
+                        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                    ])
+                )->class([$iconClasses])
+            "
         />
 
         @if ($hasLoadingIndicator)
             <x-filament::loading-indicator
-                wire:loading.delay=""
-                :wire:target="$loadingIndicatorTarget"
-                :class="$iconClasses"
+                :attributes="
+                    \Filament\Support\prepare_inherited_attributes(
+                        new \Illuminate\View\ComponentAttributeBag([
+                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                            'wire:target' => $loadingIndicatorTarget,
+                        ])
+                    )->class([$iconClasses])
+                "
             />
         @endif
 
@@ -129,13 +142,13 @@
 @elseif ($tag === 'a')
     <a
         {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
-        @if ($keyBindings || $tooltip)
+        @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,

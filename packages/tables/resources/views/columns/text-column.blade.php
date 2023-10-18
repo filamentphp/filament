@@ -123,7 +123,7 @@
                             <div
                                 @class([
                                     'fi-ta-text-item inline-flex items-center gap-1.5',
-                                    'transition duration-75 hover:underline focus:underline' => $url,
+                                    'transition duration-75 hover:underline focus-visible:underline' => $url,
                                     match ($size) {
                                         TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
                                         TextColumnSize::Small, 'sm', null => 'text-sm',

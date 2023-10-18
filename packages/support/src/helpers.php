@@ -121,6 +121,8 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
                 [
                     '<!-- __BLOCK__ -->',
                     '<!-- __ENDBLOCK__ -->',
+                    '<!--[if BLOCK]><![endif]-->',
+                    '<!--[if ENDBLOCK]><![endif]-->',
                 ],
                 '',
                 $slot->toHtml()

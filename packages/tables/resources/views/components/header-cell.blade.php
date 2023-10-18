@@ -42,7 +42,9 @@
             </span>
         @endif
 
-        <span class="text-sm font-semibold text-gray-950 dark:text-white">
+        <span
+            class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white"
+        >
             {{ $slot }}
         </span>
 
@@ -53,7 +55,7 @@
                 @class([
                     'fi-ta-header-cell-sort-icon h-5 w-5 transition duration-75',
                     'text-gray-950 dark:text-white' => $activelySorted,
-                    'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 dark:group-hover:text-gray-400 dark:group-focus:text-gray-400' => ! $activelySorted,
+                    'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 group-focus-visible:text-gray-500 dark:group-hover:text-gray-400 dark:group-focus-visible:text-gray-400' => ! $activelySorted,
                 ])
             />
 

@@ -16,6 +16,7 @@
     'iconPosition' => IconPosition::Before,
     'iconSize' => null,
     'keyBindings' => null,
+    'loadingIndicator' => true,
     'size' => ActionSize::Medium,
     'tag' => 'a',
     'target' => null,
@@ -24,12 +25,16 @@
 ])
 
 @php
+    if (! $iconPosition instanceof IconPosition) {
+        $iconPosition = $iconPosition ? IconPosition::tryFrom($iconPosition) : null;
+    }
+
     if (! $size instanceof ActionSize) {
         $size = ActionSize::tryFrom($size) ?? $size;
     }
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-link relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline',
+        'fi-link relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus-visible:underline',
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         "fi-size-{$size->value}" => $size instanceof ActionSize,
@@ -84,25 +89,27 @@
 
     $badgeContainerClasses = 'fi-link-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
+    $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
     $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
 
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
+
+    $hasTooltip = filled($tooltip);
 @endphp
 
 @if ($tag === 'a')
     <a
         {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
-        @if ($keyBindings || $tooltip)
+        @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,
@@ -114,7 +121,7 @@
                 ->style([$linkStyles])
         }}
     >
-        @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($icon && $iconPosition === IconPosition::Before)
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -125,7 +132,7 @@
 
         {{ $slot }}
 
-        @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($icon && $iconPosition === IconPosition::After)
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -142,15 +149,16 @@
             </div>
         @endif
     </a>
+    @trim
 @elseif ($tag === 'button')
     <button
-        @if ($keyBindings || $tooltip)
+        @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,
@@ -168,45 +176,65 @@
                 ->style([$linkStyles])
         }}
     >
-        @if (in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($iconPosition === IconPosition::Before)
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $iconAlias,
+                                'icon' => $icon,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    wire:loading.delay=""
-                    :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => $loadingIndicatorTarget,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
         @endif
 
         {{ $slot }}
 
-        @if (in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($iconPosition === IconPosition::After)
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $iconAlias,
+                                'icon' => $icon,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )->class([$iconClasses])
+                    "
                     :style="$iconStyles"
                 />
             @endif
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    wire:loading.delay=""
-                    :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => $loadingIndicatorTarget,
+                            ])
+                        )->class([$iconClasses])
+                    "
                     :style="$iconStyles"
                 />
             @endif
@@ -220,4 +248,5 @@
             </div>
         @endif
     </button>
+    @trim
 @endif

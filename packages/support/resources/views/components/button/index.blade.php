@@ -19,6 +19,7 @@
     'keyBindings' => null,
     'labeledFrom' => null,
     'labelSrOnly' => false,
+    'loadingIndicator' => true,
     'outlined' => false,
     'size' => ActionSize::Medium,
     'tag' => 'button',
@@ -28,13 +29,17 @@
 ])
 
 @php
+    if (! $iconPosition instanceof IconPosition) {
+        $iconPosition = $iconPosition ? IconPosition::tryFrom($iconPosition) : null;
+    }
+
     if (! $size instanceof ActionSize) {
         $size = ActionSize::tryFrom($size) ?? $size;
     }
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            'fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2',
+            'fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2',
             'pointer-events-none opacity-70' => $disabled,
             'flex-1' => $grouped,
             'rounded-lg' => ! $grouped,
@@ -70,7 +75,7 @@
                 [
                     'fi-btn-outlined ring-1',
                     match ($color) {
-                        'gray' => 'text-gray-950 ring-gray-300 hover:bg-gray-400/10 focus:ring-gray-400/40 dark:text-white dark:ring-gray-700',
+                        'gray' => 'text-gray-950 ring-gray-300 hover:bg-gray-400/10 focus-visible:ring-gray-400/40 dark:text-white dark:ring-gray-700',
                         default => 'text-custom-600 ring-custom-600 hover:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-500',
                     },
                 ] :
@@ -83,7 +88,7 @@
                         ],
                         default => [
                             'bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400',
-                            'focus:ring-custom-500/50 dark:focus:ring-custom-400/50' => ! $grouped,
+                            'focus-visible:ring-custom-500/50 dark:focus-visible:ring-custom-400/50' => ! $grouped,
                         ],
                     },
                 ]
@@ -94,6 +99,7 @@
         \Filament\Support\get_color_css_variables(
             $color,
             shades: [400, 500, 600],
+            alias: 'button',
         ) => $color !== 'gray',
     ]);
 
@@ -123,7 +129,7 @@
         'sr-only' => $labelSrOnly,
     ]);
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
+    $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
     $hasFileUploadLoadingIndicator = $type === 'submit' && filled($form);
     $hasLoadingIndicator = filled($wireTarget) || $hasFileUploadLoadingIndicator;
@@ -131,6 +137,8 @@
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
+
+    $hasTooltip = filled($tooltip);
 @endphp
 
 @if ($labeledFrom)
@@ -165,13 +173,13 @@
 
 @if ($tag === 'button')
     <button
-        @if (($keyBindings || $tooltip) && (! $hasFileUploadLoadingIndicator))
+        @if (($keyBindings || $hasTooltip) && (! $hasFileUploadLoadingIndicator))
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,
@@ -208,22 +216,32 @@
                 ->style([$buttonStyles])
         }}
     >
-        @if (in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($iconPosition === IconPosition::Before)
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $iconAlias,
+                                'icon' => $icon,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    wire:loading.delay=""
-                    :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => $loadingIndicatorTarget,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
@@ -251,22 +269,32 @@
             </span>
         @endif
 
-        @if (in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($iconPosition === IconPosition::After)
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $iconAlias,
+                                'icon' => $icon,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    wire:loading.delay=""
-                    :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => $loadingIndicatorTarget,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
@@ -290,13 +318,13 @@
 @elseif ($tag === 'a')
     <a
         {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
-        @if ($keyBindings || $tooltip)
+        @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,
@@ -308,7 +336,7 @@
                 ->style([$buttonStyles])
         }}
     >
-        @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($icon && $iconPosition === IconPosition::Before)
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -320,7 +348,7 @@
             {{ $slot }}
         </span>
 
-        @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($icon && $iconPosition === IconPosition::After)
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"

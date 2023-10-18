@@ -249,6 +249,10 @@ return [
                 'label' => 'Add to :label',
             ],
 
+            'add_between' => [
+                'label' => 'Insert between',
+            ],
+
             'delete' => [
                 'label' => 'Delete',
             ],

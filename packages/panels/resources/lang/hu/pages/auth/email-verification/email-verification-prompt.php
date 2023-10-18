@@ -16,18 +16,18 @@ return [
 
     'messages' => [
         'notification_not_received' => 'Nem kaptad meg az emailt?',
-        'notification_sent' => 'Küldtünk egy e-mailt a :email címre, amely tartalmazza az e-mail címed ellenőrzésére vonatkozó utasításokat.',
+        'notification_sent' => 'Küldtünk egy emailt a(z) :email címre, amely tartalmazza az email címed ellenőrzésére vonatkozó utasításokat.',
     ],
 
     'notifications' => [
 
         'notification_resent' => [
-            'title' => 'Újra elküldtük az e-mailt.',
+            'title' => 'Újra elküldtük az emailt.',
         ],
 
         'notification_resend_throttled' => [
             'title' => 'Túl sok újraküldési kísérlet',
-            'body' => 'Kérjük, próbálja meg újra :second másodperc múlva.',
+            'body' => 'Kérjük, hogy próbáld meg újra :second másodperc múlva.',
         ],
 
     ],

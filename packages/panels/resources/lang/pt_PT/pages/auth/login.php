@@ -6,6 +6,19 @@ return [
 
     'heading' => 'Iniciar sessão',
 
+    'actions' => [
+
+        'register' => [
+            'before' => 'ou',
+            'label' => 'criar uma conta',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Recuperar password',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [
@@ -39,7 +52,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Muitas tentativas de login. Por favor, aguarde :seconds segundos para tentar novamente.',
+            'title' => 'Muitas tentativas de login.',
+            'body' => 'Por favor, aguarde :seconds segundos para tentar novamente.',
         ],
 
     ],

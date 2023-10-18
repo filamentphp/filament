@@ -3,7 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
-use Filament\Tables\Support\RelationshipJoiner;
+use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
