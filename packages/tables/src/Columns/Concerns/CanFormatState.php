@@ -35,16 +35,16 @@ trait CanFormatState
     protected bool | Closure $isHtml = false;
 
     protected bool | Closure $isMarkdown = false;
- 
+
     protected bool $isDate = false;
-    
+
     protected bool $isDateTime = false;
 
-    protected bool $isTime = false;
-    
     protected bool $isMoney = false;
-    
+
     protected bool $isNumeric = false;
+
+    protected bool $isTime = false;
 
     public function markdown(bool | Closure $condition = true): static
     {
