@@ -107,7 +107,7 @@ trait HasFilters
         foreach ($this->getTable()->getFilters() as $filter) {
             $filter->applyToBaseQuery(
                 $query,
-                $data[$filter->getName()] ?? [],
+                data_get($data, $filter->getName()) ?? [],
             );
         }
 
@@ -115,7 +115,7 @@ trait HasFilters
             foreach ($this->getTable()->getFilters() as $filter) {
                 $filter->apply(
                     $query,
-                    $data[$filter->getName()] ?? [],
+                    data_get($data, $filter->getName()) ?? [],
                 );
             }
         });
