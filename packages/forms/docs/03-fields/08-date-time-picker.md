@@ -201,6 +201,18 @@ TimePicker::make('at')
 
 <AutoScreenshot name="forms/fields/date-time-picker/prefix-icon" alt="Date time picker with prefix icon" version="3.x" />
 
+#### Setting the affix icon's color
+
+Affix icons are gray by default, but you may set a different color using the `prefixIconColor()` and `suffixIconColor()` methods:
+
+```php
+use Filament\Forms\Components\TimePicker;
+
+TimePicker::make('at')
+    ->prefixIcon('heroicon-m-check-circle')
+    ->prefixIconColor('success')
+```
+
 ## Date-time picker validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to date-time pickers.
