@@ -47,11 +47,6 @@
     $iconClasses = 'fi-input-wrp-icon h-5 w-5 text-gray-400 dark:text-gray-500';
     $labelClasses = 'fi-input-wrp-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
-    $prefixIconStyles = $prefixIconColor !== 'gray' ? \Filament\Support\get_color_css_variables(
-        $prefixIconColor,
-        shades: [400, 500],
-    ) : null;
-
     $prefixIconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-input-wrp-prefix-icon fi-input-wrp-icon h-5 w-5',
         match ($prefixIconColor) {
@@ -60,10 +55,13 @@
         },
     ]);
 
-    $suffixIconStyles = $suffixIconColor !== 'gray' ? \Filament\Support\get_color_css_variables(
-        $suffixIconColor,
-        shades: [400, 500],
-    ) : null;
+    $prefixIconStyles = \Illuminate\Support\Arr::toCssClasses([
+        \Filament\Support\get_color_css_variables(
+            $prefixIconColor,
+            shades: [400, 500],
+            alias: 'input-wrapper-prefix-icon',
+        ) => $color !== 'gray',
+    ]);
 
     $suffixIconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-input-wrp-suffix-icon fi-input-wrp-icon h-5 w-5',
@@ -71,6 +69,14 @@
             null, 'gray' => 'text-gray-400 dark:text-gray-500',
             default => 'text-custom-500',
         },
+    ]);
+
+    $suffixIconStyles = \Illuminate\Support\Arr::toCssClasses([
+        \Filament\Support\get_color_css_variables(
+            $suffixIconColor,
+            shades: [400, 500],
+            alias: 'input-wrapper-suffix-icon',
+        ) => $color !== 'gray',
     ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
