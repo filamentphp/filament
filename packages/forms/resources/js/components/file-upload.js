@@ -535,7 +535,10 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            if (confirmSvgEditing && this.editingFile.type === 'image/svg+xml') {
+            if (
+                confirmSvgEditing &&
+                this.editingFile.type === 'image/svg+xml'
+            ) {
                 if (!confirm(svgConfirmText)) {
                     return
                 }
