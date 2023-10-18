@@ -1,3 +1,7 @@
+@php
+    $parent = $container->getParentComponent();
+    $isCompact = $parent instanceof \Filament\Forms\Components\Section && $parent->isCompact();
+@endphp
 <x-filament::grid
     :default="$getColumns('default')"
     :sm="$getColumns('sm')"
@@ -5,7 +9,11 @@
     :lg="$getColumns('lg')"
     :xl="$getColumns('xl')"
     :two-xl="$getColumns('2xl')"
-    class="fi-fo-component-ctn gap-6"
+    @class([
+        "fi-fo-component-ctn",
+        "gap-6" => !$isCompact,
+        'gap-2' => $isCompact,
+    ])
 >
     @foreach ($getComponents(withHidden: true) as $formComponent)
         @php

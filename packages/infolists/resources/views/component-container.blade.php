@@ -1,3 +1,7 @@
+@php
+    $parent = $container->getParentComponent();
+    $isCompact = $parent instanceof \Filament\Infolists\Components\Section && $parent->isCompact();
+@endphp
 <dl>
     <x-filament::grid
         :default="$getColumns('default')"
@@ -6,7 +10,11 @@
         :lg="$getColumns('lg')"
         :xl="$getColumns('xl')"
         :two-xl="$getColumns('2xl')"
-        class="fi-in-component-ctn gap-6"
+        @class([
+            "fi-in-component-ctn",
+            "gap-6" => !$isCompact,
+            'gap-2' => $isCompact,
+        ])
     >
         @foreach ($getComponents() as $infolistComponent)
             <x-filament::grid.column
