@@ -467,13 +467,15 @@ export default function fileUploadFormComponent({
             const svgReader = new FileReader()
 
             svgReader.onload = (event) => {
-                const svgElement = new DOMParser().parseFromString(event.target.result, 'image/svg+xml')?.querySelector('svg')
+                const svgElement = new DOMParser()
+                    .parseFromString(event.target.result, 'image/svg+xml')
+                    ?.querySelector('svg')
 
                 if (!svgElement || !svgElement.hasAttribute('viewBox')) {
                     return this.loadEditor(file)
                 }
 
-                const viewBox = svgElement.getAttribute('viewBox')?.split(' ');
+                const viewBox = svgElement.getAttribute('viewBox')?.split(' ')
                 if (!viewBox || viewBox.length !== 4) {
                     return this.loadEditor(file)
                 }
@@ -481,14 +483,25 @@ export default function fileUploadFormComponent({
                 svgElement.setAttribute('width', parseFloat(viewBox[2]) + 'pt')
                 svgElement.setAttribute('height', parseFloat(viewBox[3]) + 'pt')
 
-                return this.loadEditor(new File(
-                    [new Blob([new XMLSerializer().serializeToString(svgElement)], {type: 'image/svg+xml'})],
-                    file.name,
-                    {
-                        type: 'image/svg+xml',
-                        _relativePath: "",
-                    }
-                ))
+                return this.loadEditor(
+                    new File(
+                        [
+                            new Blob(
+                                [
+                                    new XMLSerializer().serializeToString(
+                                        svgElement,
+                                    ),
+                                ],
+                                { type: 'image/svg+xml' },
+                            ),
+                        ],
+                        file.name,
+                        {
+                            type: 'image/svg+xml',
+                            _relativePath: '',
+                        },
+                    ),
+                )
             }
             svgReader.readAsText(file)
         },
