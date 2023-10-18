@@ -3,11 +3,13 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasHeading;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
@@ -104,5 +106,11 @@ class Section extends Component
     public function isContentBefore(): bool
     {
         return (bool) $this->evaluate($this->isContentBefore);
+    }
+
+    public function prepareAction(Action $action): Action
+    {
+        return parent::prepareAction($action)
+            ->defaultSize(ActionSize::Small);
     }
 }
