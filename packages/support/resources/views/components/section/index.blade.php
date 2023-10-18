@@ -131,9 +131,7 @@
             @endif
 
             @if ($hasActions)
-                <div class="flex flex-1 justify-end">
-                    <x-filament-actions::actions :actions="$actions" />
-                </div>
+                <x-filament-actions::actions :actions="$actions" class="ms-auto"/>
             @endif
 
             {{ $headerEnd }}
