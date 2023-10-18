@@ -132,11 +132,7 @@
 
             @if ($hasActions)
                 <div class="flex flex-1 justify-end">
-                    <div class="space-x-1">
-                        @foreach ($actions as $action)
-                            {{ $action }}
-                        @endforeach
-                    </div>
+                    <x-filament-actions::actions :actions="$actions" />
                 </div>
             @endif
 
