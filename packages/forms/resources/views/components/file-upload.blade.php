@@ -31,7 +31,7 @@
                     },
                     hasImageEditor: @js($hasImageEditor),
                     allowSvgEditing: @js($getAllowSvgEditing()),
-                    confirmSvgEditing: @js(getConfirmSvgEditing()),
+                    confirmSvgEditing: @js($getConfirmSvgEditing()),
                     svgConfirmText:
                         '{{ __('filament-forms::components.file_upload.editor.svg.confirm_edit') }}',
                     svgAlertText:
