@@ -294,26 +294,26 @@ trait CanFormatState
 
     public function isDate(): bool
     {
-        return (bool) $this->isDate;
+        return $this->isDate;
     }
 
     public function isDateTime(): bool
     {
-        return (bool) $this->isDateTime;
+        return $this->isDateTime;
     }
 
     public function isTime(): bool
     {
-        return (bool) $this->isTime;
+        return $this->isTime;
     }
 
     public function isMoney(): bool
     {
-        return (bool) $this->isMoney;
+        return $this->isMoney;
     }
 
     public function isNumeric(): bool
     {
-        return (bool) $this->isNumeric;
+        return $this->isNumeric;
     }
 }
