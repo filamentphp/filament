@@ -7,12 +7,12 @@
     'prefix' => null,
     'prefixActions' => [],
     'prefixIcon' => null,
-    'prefixIconColor' => null,
+    'prefixIconColor' => 'gray',
     'prefixIconAlias' => null,
     'suffix' => null,
     'suffixActions' => [],
     'suffixIcon' => null,
-    'suffixIconColor' => null,
+    'suffixIconColor' => 'gray',
     'suffixIconAlias' => null,
     'valid' => true,
 ])
@@ -44,39 +44,22 @@
     $disabledValidWrapperClasses = 'dark:ring-white/10';
 
     $actionsClasses = '-mx-1.5 flex items-center';
-    $iconClasses = 'fi-input-wrp-icon h-5 w-5 text-gray-400 dark:text-gray-500';
     $labelClasses = 'fi-input-wrp-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
-    $prefixIconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-input-wrp-prefix-icon fi-input-wrp-icon h-5 w-5',
+    $getIconClasses = fn (string | array | null $color = null): array => \Illuminate\Support\Arr::toCssClasses([
+        'fi-input-wrp-icon h-5 w-5',
         match ($prefixIconColor) {
-            null, 'gray' => 'text-gray-400 dark:text-gray-500',
+            'gray' => 'text-gray-400 dark:text-gray-500',
             default => 'text-custom-500',
         },
     ]);
 
-    $prefixIconStyles = \Illuminate\Support\Arr::toCssClasses([
+    $getIconStyles = fn (string | array | null $color = 'gray'): array => \Illuminate\Support\Arr::toCssStyles([
         \Filament\Support\get_color_css_variables(
-            $prefixIconColor,
+            $color,
             shades: [400, 500],
-            alias: 'input-wrapper-prefix-icon',
-        ) => $prefixIconColor !== 'gray',
-    ]);
-
-    $suffixIconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-input-wrp-suffix-icon fi-input-wrp-icon h-5 w-5',
-        match ($suffixIconColor) {
-            null, 'gray' => 'text-gray-400 dark:text-gray-500',
-            default => 'text-custom-500',
-        },
-    ]);
-
-    $suffixIconStyles = \Illuminate\Support\Arr::toCssClasses([
-        \Filament\Support\get_color_css_variables(
-            $suffixIconColor,
-            shades: [400, 500],
-            alias: 'input-wrapper-suffix-icon',
-        ) => $suffixIconColor !== 'gray',
+            alias: 'input-wrapper-icon',
+        ) => $color !== 'gray',
     ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
@@ -150,8 +133,8 @@
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                             ])
                         )
-                            ->class([$iconClasses])
-                            ->style([$prefixIconStyles])
+                            ->class([$getIconClasses($prefixIconColor)])
+                            ->style([$getIconStyles($prefixIconColor)])
                     "
                 />
             @endif
@@ -164,7 +147,7 @@
                                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
                                 'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                             ])
-                        )->class([$iconClasses])
+                        )->class([$getIconClasses()])
                     "
                 />
             @endif
@@ -212,8 +195,8 @@
                 <x-filament::icon
                     :alias="$suffixIconAlias"
                     :icon="$suffixIcon"
-                    :class="$suffixIconClasses"
-                    :style="$suffixIconStyles"
+                    :class="$getIconClasses($suffixIconColor)"
+                    :style="$getIconStyles($suffixIconColor)"
                 />
             @endif
 
