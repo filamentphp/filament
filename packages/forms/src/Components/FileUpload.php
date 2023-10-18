@@ -53,7 +53,7 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $hasImageEditor = false;
 
-    protected bool | Closure $allowSvgEditing = false;
+    protected bool | Closure $allowSvgEditing = true;
 
     protected int | Closure | null $imageEditorViewportWidth = null;
 

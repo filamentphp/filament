@@ -181,7 +181,7 @@ export default function fileUploadFormComponent({
                 },
                 allowImageEdit: hasImageEditor,
                 imageEditEditor: {
-                    open: (file) => this.loadEditor(file),
+                    open: (file) => this.fixSvgDimensions(file),
                     onconfirm: () => {},
                     oncancel: () => this.closeEditor(),
                     onclose: () => this.closeEditor(),
@@ -459,6 +459,40 @@ export default function fileUploadFormComponent({
             this.editor = null
         },
 
+        fixSvgDimensions: function (file) {
+            if (file.type !== 'image/svg+xml') {
+                return this.loadEditor(file)
+            }
+
+            const svgReader = new FileReader()
+
+            svgReader.onload = (event) => {
+                const svgElement = new DOMParser().parseFromString(event.target.result, 'image/svg+xml')?.querySelector('svg')
+
+                if (!svgElement || !svgElement.hasAttribute('viewBox')) {
+                    return this.loadEditor(file)
+                }
+
+                const viewBox = svgElement.getAttribute('viewBox')?.split(' ');
+                if (!viewBox || viewBox.length !== 4) {
+                    return this.loadEditor(file)
+                }
+
+                svgElement.setAttribute('width', parseFloat(viewBox[2]) + 'pt')
+                svgElement.setAttribute('height', parseFloat(viewBox[3]) + 'pt')
+
+                return this.loadEditor(new File(
+                    [new Blob([new XMLSerializer().serializeToString(svgElement)], {type: 'image/svg+xml'})],
+                    file.name,
+                    {
+                        type: 'image/svg+xml',
+                        _relativePath: "",
+                    }
+                ))
+            }
+            svgReader.readAsText(file)
+        },
+
         loadEditor: function (file) {
             if (isDisabled) {
                 return
@@ -493,7 +527,6 @@ export default function fileUploadFormComponent({
 
                 setTimeout(() => this.editor.replace(event.target.result), 200)
             }
-
             reader.readAsDataURL(file)
         },
 
@@ -543,18 +576,18 @@ export default function fileUploadFormComponent({
                             editingFileExtension = 'png'
                         }
 
-                        const regex = /-edit-(\d+)/
+                        const regex = /-v(\d+)/
 
                         if (regex.test(editingFileName)) {
                             editingFileName = editingFileName.replace(
                                 regex,
                                 (match, number) => {
                                     const newNumber = Number(number) + 1
-                                    return `-edit-${newNumber}`
+                                    return `-v${newNumber}`
                                 },
                             )
                         } else {
-                            editingFileName += '-edit-1'
+                            editingFileName += '-v1'
                         }
 
                         this.pond
@@ -576,7 +609,6 @@ export default function fileUploadFormComponent({
                                 this.closeEditor()
                             })
                             .catch((e) => {
-                                alert(e.error?.main + '\n' + e.error?.sub)
                                 this.closeEditor()
                             })
                     })
