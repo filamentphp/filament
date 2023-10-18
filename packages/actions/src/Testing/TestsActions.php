@@ -33,7 +33,7 @@ class TestsActions
                 $this->call(
                     'mountAction',
                     $actionName,
-                    (count($name) === $actionNestingIndex + 1) ? $arguments : [],
+                    $arguments[$actionName] ?? ($actionNestingIndex ? [] : $arguments),
                 );
             }
 
