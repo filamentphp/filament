@@ -130,8 +130,8 @@
                 </div>
             @endif
 
-            @if($hasActions)
-                <div class="flex-1 flex justify-end">
+            @if ($hasActions)
+                <div class="flex flex-1 justify-end">
                     <div class="space-x-1">
                         @foreach ($actions as $action)
                             {{ $action }}
