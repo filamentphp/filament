@@ -469,13 +469,21 @@ export default function fileUploadFormComponent({
             svgReader.onload = (event) => {
                 const svgElement = new DOMParser().parseFromString(event.target.result, 'image/svg+xml')?.querySelector('svg')
 
-                if (!svgElement || !svgElement.hasAttribute('viewBox')) {
-                    return this.loadEditor(file)
+                if (!svgElement) {
+                    return this.loadEditor(file);
                 }
 
-                const viewBox = svgElement.getAttribute('viewBox')?.split(' ');
+                const viewBoxAttribute = ['viewBox', 'ViewBox', 'viewbox'].find(attribute =>
+                    svgElement.hasAttribute(attribute)
+                );
+
+                if (!viewBoxAttribute) {
+                    return this.loadEditor(file);
+                }
+
+                const viewBox = svgElement.getAttribute(viewBoxAttribute).split(' ');
                 if (!viewBox || viewBox.length !== 4) {
-                    return this.loadEditor(file)
+                    return this.loadEditor(file);
                 }
 
                 svgElement.setAttribute('width', parseFloat(viewBox[2]) + 'pt')
