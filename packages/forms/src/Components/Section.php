@@ -3,11 +3,13 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasHeading;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
@@ -109,5 +111,11 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     public function isFormBefore(): bool
     {
         return (bool) $this->evaluate($this->isFormBefore);
+    }
+
+    public function prepareAction(Action $action): Action
+    {
+        return parent::prepareAction($action)
+            ->defaultSize(ActionSize::Small);
     }
 }
