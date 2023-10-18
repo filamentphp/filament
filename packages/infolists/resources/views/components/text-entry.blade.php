@@ -47,7 +47,7 @@
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
-                    'fi-in-text',
+                    'fi-in-text w-full',
                 ])
         }}
     >
@@ -59,8 +59,8 @@
                 <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
                     @class([
                         'flex flex-wrap items-center' => ! $isListWithLineBreaks,
-                        'list-inside list-disc' => $isBulleted(),
                         'gap-1.5' => $isBadge,
+                        'list-inside list-disc' => $isBulleted(),
                         match ($alignment) {
                             Alignment::Center, 'center' => 'justify-center',
                             Alignment::End, 'end' => 'justify-end',

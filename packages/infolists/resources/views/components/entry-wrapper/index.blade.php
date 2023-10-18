@@ -104,13 +104,14 @@
                     }"
                 @endif
                 @class([
+                    'flex',
                     match ($alignment) {
-                        Alignment::Center, 'center' => 'text-center',
-                        Alignment::End, 'end' => 'text-end',
-                        Alignment::Justify, 'justify' => 'text-justify',
-                        Alignment::Left, 'left' => 'text-left',
-                        Alignment::Right, 'right' => 'text-right',
-                        Alignment::Start, 'start' => 'text-start',
+                        Alignment::Center, 'center' => 'justify-center text-center',
+                        Alignment::End, 'end' => 'justify-end text-end',
+                        Alignment::Justify, 'justify' => 'justify-between text-justify',
+                        Alignment::Left, 'left' => 'justify-start text-left',
+                        Alignment::Right, 'right' => 'justify-end text-right',
+                        Alignment::Start, 'start' => 'justify-start text-start',
                         default => null,
                     },
                 ])
