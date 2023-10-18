@@ -17,7 +17,7 @@ if (! function_exists('Filament\Support\format_money')) {
         $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::CURRENCY);
 
         if ($divideBy) {
-            $money = bcdiv((string) $money, (string) $divideBy);
+            $money /= $divideBy;
         }
 
         return $formatter->formatCurrency($money, $currency);
