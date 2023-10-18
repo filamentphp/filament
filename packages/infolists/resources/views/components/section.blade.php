@@ -3,6 +3,7 @@
 @endphp
 
 <x-filament::section
+    :actions="$getActions()"
     :aside="$isAside"
     :collapsed="$isCollapsed()"
     :collapsible="$isCollapsible() && (! $isAside)"

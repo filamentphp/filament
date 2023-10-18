@@ -3,6 +3,7 @@
 @endphp
 
 @props([
+    'actions' => [],
     'aside' => false,
     'collapsed' => false,
     'collapsible' => false,
@@ -17,10 +18,15 @@
 ])
 
 @php
+    $actions = array_filter(
+        $actions,
+        fn ($action): bool => $action->isVisible(),
+    );
+    $hasActions = filled($actions);
     $hasDescription = filled((string) $description);
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
-    $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || filled((string) $headerEnd);
+    $hasHeader = $hasActions || $hasIcon || $hasHeading || $hasDescription || $collapsible || filled((string) $headerEnd);
 @endphp
 
 <section
@@ -121,6 +127,16 @@
                             {{ $description }}
                         </x-filament::section.description>
                     @endif
+                </div>
+            @endif
+
+            @if($hasActions)
+                <div class="flex-1 flex justify-end">
+                    <div class="space-x-1">
+                        @foreach ($actions as $action)
+                            {{ $action }}
+                        @endforeach
+                    </div>
                 </div>
             @endif
 
