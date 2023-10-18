@@ -19,9 +19,11 @@
         :prefix="$prefixLabel"
         :prefix-actions="$prefixActions"
         :prefix-icon="$prefixIcon"
+        :prefix-icon-color="$getPrefixIconColor()"
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
+        :suffix-icon-color="$getSuffixIconColor()"
         :valid="! $errors->has($statePath)"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())

@@ -7,10 +7,12 @@
     'prefix' => null,
     'prefixActions' => [],
     'prefixIcon' => null,
+    'prefixIconColor' => 'gray',
     'prefixIconAlias' => null,
     'suffix' => null,
     'suffixActions' => [],
     'suffixIcon' => null,
+    'suffixIconColor' => 'gray',
     'suffixIconAlias' => null,
     'valid' => true,
 ])
@@ -42,8 +44,23 @@
     $disabledValidWrapperClasses = 'dark:ring-white/10';
 
     $actionsClasses = '-mx-1.5 flex items-center';
-    $iconClasses = 'fi-input-wrp-icon h-5 w-5 text-gray-400 dark:text-gray-500';
     $labelClasses = 'fi-input-wrp-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+
+    $getIconClasses = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssClasses([
+        'fi-input-wrp-icon h-5 w-5',
+        match ($color) {
+            'gray' => 'text-gray-400 dark:text-gray-500',
+            default => 'text-custom-500',
+        },
+    ]);
+
+    $getIconStyles = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [400, 500],
+            alias: 'input-wrapper-icon',
+        ) => $color !== 'gray',
+    ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
 
@@ -115,7 +132,9 @@
                                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                             ])
-                        )->class([$iconClasses])
+                        )
+                            ->class([$getIconClasses($prefixIconColor)])
+                            ->style([$getIconStyles($prefixIconColor)])
                     "
                 />
             @endif
@@ -128,7 +147,7 @@
                                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
                                 'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                             ])
-                        )->class([$iconClasses])
+                        )->class([$getIconClasses()])
                     "
                 />
             @endif
@@ -176,7 +195,8 @@
                 <x-filament::icon
                     :alias="$suffixIconAlias"
                     :icon="$suffixIcon"
-                    :class="$iconClasses"
+                    :class="$getIconClasses($suffixIconColor)"
+                    :style="$getIconStyles($suffixIconColor)"
                 />
             @endif
 
