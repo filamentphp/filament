@@ -55,6 +55,8 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $allowSvgEditing = true;
 
+    protected bool | Closure $confirmSvgEditing = false;
+
     protected int | Closure | null $imageEditorViewportWidth = null;
 
     protected int | Closure | null $imageEditorViewportHeight = null;
@@ -301,6 +303,13 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function confirmEditingSvg(bool | Closure $condition = true): static
+    {
+        $this->confirmSvgEditing = $condition;
+
+        return $this;
+    }
+
     public function imageEditorViewportWidth(int | Closure | null $width): static
     {
         $this->imageEditorViewportWidth = $width;
@@ -396,6 +405,11 @@ class FileUpload extends BaseFileUpload
     public function getAllowSvgEditing(): bool
     {
         return (bool) $this->evaluate($this->allowSvgEditing);
+    }
+
+    public function getConfirmSvgEditing(): bool
+    {
+        return (bool) $this->evaluate($this->confirmSvgEditing);
     }
 
     /**

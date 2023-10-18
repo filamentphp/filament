@@ -46,6 +46,7 @@ export default function fileUploadFormComponent({
     isReorderable,
     hasImageEditor,
     allowSvgEditing,
+    confirmSvgEditing,
     svgConfirmText,
     svgAlertText,
     loadingIndicatorPosition,
@@ -534,13 +535,13 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            this.editingFile = file
-
-            if (this.editingFile.type === 'image/svg+xml') {
+            if (confirmSvgEditing && this.editingFile.type === 'image/svg+xml') {
                 if (!confirm(svgConfirmText)) {
                     return
                 }
             }
+
+            this.editingFile = file
 
             this.initEditor()
 
