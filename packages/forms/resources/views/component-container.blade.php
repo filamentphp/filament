@@ -2,6 +2,7 @@
     $parent = $container->getParentComponent();
     $isCompact = $parent instanceof \Filament\Forms\Components\Section && $parent->isCompact();
 @endphp
+
 <x-filament::grid
     :default="$getColumns('default')"
     :sm="$getColumns('sm')"
@@ -10,8 +11,8 @@
     :xl="$getColumns('xl')"
     :two-xl="$getColumns('2xl')"
     @class([
-        "fi-fo-component-ctn",
-        "gap-6" => !$isCompact,
+        'fi-fo-component-ctn',
+        'gap-6' => ! $isCompact,
         'gap-2' => $isCompact,
     ])
 >
