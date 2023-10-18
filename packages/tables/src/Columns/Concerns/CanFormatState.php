@@ -302,11 +302,6 @@ trait CanFormatState
         return $this->isDateTime;
     }
 
-    public function isTime(): bool
-    {
-        return $this->isTime;
-    }
-
     public function isMoney(): bool
     {
         return $this->isMoney;
@@ -316,4 +311,10 @@ trait CanFormatState
     {
         return $this->isNumeric;
     }
+
+    public function isTime(): bool
+    {
+        return $this->isTime;
+    }
+
 }
