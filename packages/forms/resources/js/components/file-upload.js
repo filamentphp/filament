@@ -472,20 +472,22 @@ export default function fileUploadFormComponent({
                     ?.querySelector('svg')
 
                 if (!svgElement) {
-                    return this.loadEditor(file);
+                    return this.loadEditor(file)
                 }
 
-                const viewBoxAttribute = ['viewBox', 'ViewBox', 'viewbox'].find(attribute =>
-                    svgElement.hasAttribute(attribute)
-                );
+                const viewBoxAttribute = ['viewBox', 'ViewBox', 'viewbox'].find(
+                    (attribute) => svgElement.hasAttribute(attribute),
+                )
 
                 if (!viewBoxAttribute) {
-                    return this.loadEditor(file);
+                    return this.loadEditor(file)
                 }
 
-                const viewBox = svgElement.getAttribute(viewBoxAttribute).split(' ');
+                const viewBox = svgElement
+                    .getAttribute(viewBoxAttribute)
+                    .split(' ')
                 if (!viewBox || viewBox.length !== 4) {
-                    return this.loadEditor(file);
+                    return this.loadEditor(file)
                 }
 
                 svgElement.setAttribute('width', parseFloat(viewBox[2]) + 'pt')
