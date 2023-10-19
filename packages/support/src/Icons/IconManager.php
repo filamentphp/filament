@@ -2,6 +2,8 @@
 
 namespace Filament\Support\Icons;
 
+use Illuminate\Support\Arr;
+
 class IconManager
 {
     /**
@@ -20,8 +22,14 @@ class IconManager
         ];
     }
 
-    public function resolve(string $name): ?string
+    public function resolve(string | array $alias): ?string
     {
-        return $this->icons[$name] ?? null;
+        foreach (Arr::wrap($alias) as $alias) {
+            if (isset($this->icons[$alias])) {
+                return $this->icons[$alias];
+            }
+        }
+
+        return null;
     }
 }
