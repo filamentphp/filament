@@ -22,6 +22,9 @@ class IconManager
         ];
     }
 
+    /**
+     * @param  string|array<string>  $alias
+     */
     public function resolve(string | array $alias): ?string
     {
         foreach (Arr::wrap($alias) as $alias) {
