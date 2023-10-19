@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissocierad',
+                'title' => 'Dissocierades',
             ],
 
         ],
@@ -41,7 +41,7 @@ return [
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociera valda',
+                    'label' => 'Dissociera',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissocierade',
+                'title' => 'Dissocierades',
             ],
 
         ],
