@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Hantera prenumeration',
+        ],
+
         'logout' => [
             'label' => 'Logga ut',
         ],
@@ -33,11 +37,15 @@ return [
         'theme_switcher' => [
 
             'dark' => [
-                'label' => 'Växla till mörkt läge',
+                'label' => 'Använd mörkt läge',
             ],
 
             'light' => [
-                'label' => 'Växla till ljust läge',
+                'label' => 'Använd ljust läge',
+            ],
+
+            'system' => [
+                'label' => 'Följ systemets läge',
             ],
 
         ],
