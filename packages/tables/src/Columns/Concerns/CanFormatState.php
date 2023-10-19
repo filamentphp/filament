@@ -100,7 +100,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0, int $scale = 2): static
     {
         $this->isMoney = true;
 
@@ -111,7 +111,7 @@ trait CanFormatState
 
             $currency = $column->evaluate($currency) ?? Table::$defaultCurrency;
 
-            return format_money($state, $currency, $divideBy);
+            return format_money($state, $currency, $divideBy, $scale);
         });
 
         return $this;
