@@ -37,15 +37,15 @@ return [
         'theme_switcher' => [
 
             'dark' => [
-                'label' => 'Använd mörkt läge',
+                'label' => 'Använd mörkt tema',
             ],
 
             'light' => [
-                'label' => 'Använd ljust läge',
+                'label' => 'Använd ljust tema',
             ],
 
             'system' => [
-                'label' => 'Följ systemets läge',
+                'label' => 'Följ systemets tema',
             ],
 
         ],
