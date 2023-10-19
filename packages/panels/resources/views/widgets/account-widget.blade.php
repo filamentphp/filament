@@ -4,6 +4,7 @@
 
 <x-filament-widgets::widget class="fi-account-widget">
     <x-filament::section>
+        @auth
         <div class="flex items-center gap-x-3">
             <x-filament-panels::avatar.user size="lg" :user="$user" />
 
@@ -38,5 +39,6 @@
                 </x-filament::button>
             </form>
         </div>
+        @endauth
     </x-filament::section>
 </x-filament-widgets::widget>
