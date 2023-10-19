@@ -56,7 +56,7 @@ trait CanFormatState
     public function date(?string $format = null, ?string $timezone = null): static
     {
         $this->isDate = true;
-        
+
         $format ??= Table::$defaultDateDisplayFormat;
 
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
@@ -86,7 +86,7 @@ trait CanFormatState
     public function since(?string $timezone = null): static
     {
         $this->isDateTime = true;
-        
+
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($timezone): ?string {
             if (blank($state)) {
                 return null;
@@ -148,7 +148,7 @@ trait CanFormatState
     public function time(?string $format = null, ?string $timezone = null): static
     {
         $this->isTime = true;
-        
+
         $format ??= Table::$defaultTimeDisplayFormat;
 
         $this->date($format, $timezone);
@@ -316,5 +316,4 @@ trait CanFormatState
     {
         return $this->isTime;
     }
-
 }

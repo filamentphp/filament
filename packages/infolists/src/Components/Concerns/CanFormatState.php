@@ -56,7 +56,7 @@ trait CanFormatState
     public function date(?string $format = null, ?string $timezone = null): static
     {
         $this->isDate = true;
-        
+
         $format ??= Infolist::$defaultDateDisplayFormat;
 
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($format, $timezone): ?string {
@@ -148,7 +148,7 @@ trait CanFormatState
     public function time(?string $format = null, ?string $timezone = null): static
     {
         $this->isTime = true;
-        
+
         $format ??= Infolist::$defaultTimeDisplayFormat;
 
         $this->date($format, $timezone);
