@@ -15,7 +15,7 @@ return [
         ],
 
         'open_database_notifications' => [
-            'label' => 'Öppna aviseringar',
+            'label' => 'Öppna notiser',
         ],
 
         'open_user_menu' => [
