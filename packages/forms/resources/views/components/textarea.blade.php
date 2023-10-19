@@ -1,16 +1,24 @@
 @php
-    $isConcealed = $isConcealed();
-    $rows = $getRows();
-    $shouldAutosize = $shouldAutosize();
-    $statePath = $getStatePath();
-
-    $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
+    use Filament\Support\Facades\FilamentView;
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+    @php
+        $isConcealed = $isConcealed();
+        $rows = $getRows();
+        $shouldAutosize = $shouldAutosize();
+        $statePath = $getStatePath();
+
+        $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
+    @endphp
+
     <textarea
         @if ($shouldAutosize)
-            ax-load
+            @if (FilamentView::hasSpaMode())
+                ax-load="visible"
+            @else
+                ax-load
+            @endif
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms') }}"
             x-data="textareaFormComponent({ initialHeight: @js($initialHeight) })"
             x-ignore
