@@ -178,18 +178,7 @@ A side effect of this change is that all custom icons that you use must now be [
 
 #### Logo customization
 
-In v2, you can customize the logo of the admin panel using a `/resources/views/vendor/filament/components/brand.blade.php` file. In v3, this has been moved to `/resources/views/vendor/filament-panels/components/logo.blade.php`. Additionally a `brandLogo` API has been added. You can set the logo by adding `brandLogo()` to your panel configuration.
-
-```php
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->brandLogo('/path/to/your/logo.png');
-}
-```
+In v2, you can customize the logo of the admin panel using a `/resources/views/vendor/filament/components/brand.blade.php` file. In v3, this has been moved to `/resources/views/vendor/filament-panels/components/logo.blade.php`. Additionally a `brandLogo` API has been added. You can now [set the brand logo](themes#adding-a-logo) by adding it to your panel configuration.
 
 #### Plugins
 
