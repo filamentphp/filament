@@ -51,6 +51,7 @@ class MakeResourceCommand extends Command
             (string) str($model)->beforeLast('\\') :
             '';
         $pluralModelClass = (string) str($modelClass)->pluralStudly();
+        $needsAlias = $modelClass === 'Record';
 
         $panel = $this->option('panel');
 
@@ -208,6 +209,8 @@ class MakeResourceCommand extends Command
 
         if ($this->option('simple')) {
             $this->copyStubToApp('ResourceManagePage', $manageResourcePagePath, [
+                'baseResourcePage' => 'Filament\\Resources\\Pages\\ManageRecords' . ($needsAlias ? ' as BaseManageRecords' : ''),
+                'baseResourcePageClass' => $needsAlias ? 'BaseManageRecords' : 'ManageRecords',
                 'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
                 'resource' => "{$namespace}\\{$resourceClass}",
                 'resourceClass' => $resourceClass,
@@ -215,6 +218,8 @@ class MakeResourceCommand extends Command
             ]);
         } else {
             $this->copyStubToApp('ResourceListPage', $listResourcePagePath, [
+                'baseResourcePage' => 'Filament\\Resources\\Pages\\ListRecords' . ($needsAlias ? ' as BaseListRecords' : ''),
+                'baseResourcePageClass' => $needsAlias ? 'BaseListRecords' : 'ListRecords',
                 'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
                 'resource' => "{$namespace}\\{$resourceClass}",
                 'resourceClass' => $resourceClass,
@@ -222,8 +227,8 @@ class MakeResourceCommand extends Command
             ]);
 
             $this->copyStubToApp('ResourcePage', $createResourcePagePath, [
-                'baseResourcePage' => 'Filament\\Resources\\Pages\\CreateRecord',
-                'baseResourcePageClass' => 'CreateRecord',
+                'baseResourcePage' => 'Filament\\Resources\\Pages\\CreateRecord' . ($needsAlias ? ' as BaseCreateRecord' : ''),
+                'baseResourcePageClass' => $needsAlias ? 'BaseCreateRecord' : 'CreateRecord',
                 'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
                 'resource' => "{$namespace}\\{$resourceClass}",
                 'resourceClass' => $resourceClass,
@@ -234,6 +239,8 @@ class MakeResourceCommand extends Command
 
             if ($this->option('view')) {
                 $this->copyStubToApp('ResourceViewPage', $viewResourcePagePath, [
+                    'baseResourcePage' => 'Filament\\Resources\\Pages\\ViewRecord' . ($needsAlias ? ' as BaseViewRecord' : ''),
+                    'baseResourcePageClass' => $needsAlias ? 'BaseViewRecord' : 'ViewRecord',
                     'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
                     'resource' => "{$namespace}\\{$resourceClass}",
                     'resourceClass' => $resourceClass,
@@ -253,6 +260,8 @@ class MakeResourceCommand extends Command
             $editPageActions = implode(PHP_EOL, $editPageActions);
 
             $this->copyStubToApp('ResourceEditPage', $editResourcePagePath, [
+                'baseResourcePage' => 'Filament\\Resources\\Pages\\EditRecord' . ($needsAlias ? ' as BaseEditRecord' : ''),
+                'baseResourcePageClass' => $needsAlias ? 'BaseEditRecord' : 'EditRecord',
                 'actions' => $this->indentString($editPageActions, 3),
                 'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
                 'resource' => "{$namespace}\\{$resourceClass}",
