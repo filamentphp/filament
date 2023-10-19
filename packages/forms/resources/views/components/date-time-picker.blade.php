@@ -1,7 +1,3 @@
-@php
-    use Filament\Support\Facades\FilamentView;
-@endphp
-
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @php
         $datalistOptions = $getDatalistOptions();
@@ -61,11 +57,7 @@
         @else
             <div
                 x-ignore
-                @if (FilamentView::hasSpaMode())
-                    ax-load="eager"
-                @else
-                    ax-load
-                @endif
+                ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
                 x-data="dateTimePickerFormComponent({
                             displayFormat:
