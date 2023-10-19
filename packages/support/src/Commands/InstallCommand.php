@@ -35,6 +35,17 @@ class InstallCommand extends Command
 
         $this->installUpgradeCommand();
 
+        $this->askToStar();
+
+        return static::SUCCESS;
+    }
+
+    protected function askToStar(): void
+    {
+        if ($this->option('no-interaction')) {
+            return;
+        }
+
         if (confirm(
             label: 'All done! Would you like to show some love by starring the Filament repo on GitHub?',
             default: true,
@@ -51,8 +62,6 @@ class InstallCommand extends Command
 
             $this->components->info('Thank you!');
         }
-
-        return static::SUCCESS;
     }
 
     protected function installAdminPanel(): bool
