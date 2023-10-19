@@ -85,7 +85,7 @@ trait CanFormatState
 
     public function since(?string $timezone = null): static
     {
-        $this->isDate = true;
+        $this->isDateTime = true;
         
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($timezone): ?string {
             if (blank($state)) {
