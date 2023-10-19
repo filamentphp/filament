@@ -62,7 +62,7 @@
             <div
                 x-ignore
                 @if (FilamentView::hasSpaMode())
-                    ax-load="visible"
+                    ax-load="eager"
                 @else
                     ax-load
                 @endif
