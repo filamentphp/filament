@@ -37,7 +37,7 @@ class InstallCommand extends Command
 
         if (confirm(
             label: 'All done! Would you like to show some love by starring the Filament repo on GitHub?',
-            default: true,
+            default: ! $this->option('no-interaction'),
         )) {
             if (PHP_OS_FAMILY === 'Darwin') {
                 exec('open https://github.com/filamentphp/filament');
