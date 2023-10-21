@@ -22,8 +22,8 @@
     if (is_array($arrayState)) {
         if ($listLimit = $getListLimit()) {
             $limitedArrayState = array_slice($arrayState, $listLimit);
-            $arrayState = array_slice($arrayState, 0, $listLimit);
         }
+        $listLimit ??= count($arrayState);
 
         if ((! $isListWithLineBreaks) && (! $isBadge)) {
             $arrayState = implode(
@@ -37,6 +37,7 @@
     }
 
     $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
+    $arrayIndex = 0;
 @endphp
 
 <div
@@ -67,10 +68,14 @@
                 'flex flex-wrap items-center gap-1.5' => $isBadge,
                 'whitespace-normal' => $canWrap,
             ])
+            @if ($isListWithLineBreaks)
+                x-data="{ showLimited: false }"
+            @endif
         >
             @foreach ($arrayState as $state)
                 @if (filled($formattedState = $formatState($state)))
                     @php
+                        $arrayIndex++;
                         $color = $getColor($state);
                         $copyableState = $getCopyableState($state) ?? $state;
                         $copyMessage = $getCopyMessage($state);
@@ -103,6 +108,11 @@
                                 window.navigator.clipboard.writeText(@js($copyableState))
                                 $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                             "
+                        @endif
+                        @if ($isListWithLineBreaks && $arrayIndex > $listLimit)
+                            x-show="showLimited"
+                            x-cloak
+                            x-transition
                         @endif
                         @class([
                             'flex' => ! $isBulleted,
@@ -189,8 +199,14 @@
             @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
                 <{{ $isListWithLineBreaks ? 'li' : 'div' }}
                     class="text-sm text-gray-500 dark:text-gray-400"
+                    x-on:click.prevent="showLimited = ! showLimited"
                 >
-                    {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
+                    <div x-show="! showLimited">
+                        {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
+                    </div>
+                    <div x-show="showLimited" x-cloak>
+                        {{ trans_choice('filament-tables::table.columns.text.less_list_items', $limitedArrayStateCount) }}
+                    </div>
                 </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
             @endif
         </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
