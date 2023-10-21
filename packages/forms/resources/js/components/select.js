@@ -226,9 +226,9 @@ export default function selectFormComponent({
                     return result
                 }
 
-                result.selected = Array.isArray(this.state) ?
-                    this.state.includes(result.value) :
-                    this.state === result.value
+                result.selected = Array.isArray(this.state)
+                    ? this.state.includes(result.value)
+                    : this.state === result.value
 
                 return result
             })
