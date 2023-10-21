@@ -27,7 +27,7 @@ composer require filament/filament
 
 ### Form Builder • [Documentation](https://filamentphp.com/docs/forms)
 
-Rendering interactive forms in a Livewire component has never been easier than with our Form Builder. Easily build stunning forms with over 25 components out of the box. It's also fully extensible, so you can add your own custom fields and actions. As well as the Panel Builder, it is seamlessly integrated into action modals, and is used by the Table Builder to filter rows.
+Rendering interactive forms in a Livewire component has never been easier than with our Form Builder. Easily build stunning forms with over 25 components out of the box. It's also fully extensible, so you can add your own custom fields and actions. As well as the Panel Builder, it is seamlessly integrated into action models, and is used by the Table Builder to filter rows.
 
 ```bash
 composer require filament/forms
