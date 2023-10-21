@@ -204,7 +204,7 @@
                     <div x-show="! showLimited">
                         {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
                     </div>
-                    
+
                     <div x-show="showLimited" x-cloak>
                         {{ trans_choice('filament-tables::table.columns.text.less_list_items', $limitedArrayStateCount) }}
                     </div>
