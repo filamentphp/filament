@@ -109,7 +109,7 @@
                                 $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                             "
                         @endif
-                        @if ($isListWithLineBreaks && $arrayIndex > $listLimit)
+                        @if ($isListWithLineBreaks && ($arrayIndex > $listLimit))
                             x-show="showLimited"
                             x-cloak
                             x-transition
