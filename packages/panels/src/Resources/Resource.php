@@ -367,7 +367,7 @@ abstract class Resource
         return [];
     }
 
-    public static function getGlobalSearchResultTitle(Model $record): string
+    public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
     {
         return static::getRecordTitle($record);
     }
