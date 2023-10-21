@@ -16,19 +16,23 @@ body:
       label: Package
       description: Which package is this bug report for?
       options:
+        - filament/actions
         - filament/filament
         - filament/forms
-        - filament/tables
+        - filament/infolists
+        - filament/minimal-theme
         - filament/notifications
-        - filament/actions
-        - filament/widgets
+        - filament/spark-billing-provider
         - filament/spatie-laravel-google-fonts-plugin
         - filament/spatie-laravel-media-library-plugin
         - filament/spatie-laravel-settings-plugin
         - filament/spatie-laravel-tags-plugin
         - filament/spatie-laravel-translatable-plugin
-        - filament/spark-billing-provider
+        - filament/support
+        - filament/tables
+        - filament/widgets
         - Other
+      default: 1
     validations:
       required: true
   - type: input
