@@ -497,7 +497,7 @@ const locales = {
     km: require('dayjs/locale/km'),
     ku: require('dayjs/locale/ku'),
     lt: require('dayjs/locale/lt'),
-    lv: require('dayjs/locale/lt'),
+    lv: require('dayjs/locale/lv'),
     ms: require('dayjs/locale/ms'),
     my: require('dayjs/locale/my'),
     nl: require('dayjs/locale/nl'),
