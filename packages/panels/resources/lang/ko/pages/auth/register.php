@@ -2,19 +2,15 @@
 
 return [
 
-    'title' => '로그인',
+    'title' => '회원가입',
 
-    'heading' => '로그인하세요',
+    'heading' => '회원가입',
 
     'actions' => [
 
-        'register' => [
+        'login' => [
             'before' => '또는',
-            'label' => '회원 가입',
-        ],
-
-        'request_password_reset' => [
-            'label' => '비밀번호를 잊어버리셨나요?',
+            'label' => '기존 계정으로 로그인',
         ],
 
     ],
@@ -25,27 +21,26 @@ return [
             'label' => '이메일',
         ],
 
-        'password' => [
-            'label' => '비밀번호',
+        'name' => [
+            'label' => '이름',
         ],
 
-        'remember' => [
-            'label' => '기억하기',
+        'password' => [
+            'label' => '비밀번호',
+            'validation_attribute' => '비밀번호',
+        ],
+
+        'password_confirmation' => [
+            'label' => '비밀번호 확인',
         ],
 
         'actions' => [
 
-            'authenticate' => [
-                'label' => '로그인',
+            'register' => [
+                'label' => '회원가입',
             ],
 
         ],
-
-    ],
-
-    'messages' => [
-
-        'failed' => '일치하는 계정이 없습니다.',
 
     ],
 
