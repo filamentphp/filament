@@ -10,10 +10,12 @@
     <div
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tags-input', 'filament/forms') }}"
-        x-data="tagsInputFormComponent({
-                    state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
-                    splitKeys: @js($splitKeys),
-                })"
+        x-init="function() {
+            return tagsInputFormComponent({
+                state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
+                splitKeys: @js($splitKeys),
+            })
+        }"
         x-ignore
         {{
             $attributes
