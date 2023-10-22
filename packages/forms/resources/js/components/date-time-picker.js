@@ -12,13 +12,13 @@ dayjs.extend(utc)
 window.dayjs = dayjs
 
 export default function dateTimePickerFormComponent({
-                                                        displayFormat,
-                                                        firstDayOfWeek,
-                                                        isAutofocused,
-                                                        locale,
-                                                        shouldCloseOnDateSelection,
-                                                        state,
-                                                    }) {
+    displayFormat,
+    firstDayOfWeek,
+    isAutofocused,
+    locale,
+    shouldCloseOnDateSelection,
+    state,
+}) {
     const timezone = dayjs.tz.guess()
 
     return {
@@ -497,7 +497,7 @@ const locales = {
     km: require('dayjs/locale/km'),
     ku: require('dayjs/locale/ku'),
     lt: require('dayjs/locale/lt'),
-    lv: require('dayjs/locale/lv'),
+    lv: require('dayjs/locale/lt'),
     ms: require('dayjs/locale/ms'),
     my: require('dayjs/locale/my'),
     nl: require('dayjs/locale/nl'),
