@@ -23,6 +23,8 @@ it can return a plain text string, or an instance of `Illuminate\Support\HtmlStr
 which allows you to render HTML:
 
 ```php
+use Illuminate\Contracts\Support\Htmlable;
+
 public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
 {
     return $record->name;
