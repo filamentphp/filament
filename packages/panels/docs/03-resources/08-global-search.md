@@ -21,7 +21,7 @@ This attribute is used to retrieve the search result title for that record.
 You may customize the title further by overriding `getGlobalSearchResultTitle()` method:
 
 ```php
-public static function getGlobalSearchResultTitle(Model $record): string
+public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
 {
     return $record->name;
 }
