@@ -23,8 +23,8 @@
         if (is_array($arrayState)) {
             if ($listLimit = $getListLimit()) {
                 $limitedArrayState = array_slice($arrayState, $listLimit);
-                $arrayState = array_slice($arrayState, 0, $listLimit);
             }
+            $listLimit ??= count($arrayState);
 
             if ((! $isListWithLineBreaks) && (! $isBadge)) {
                 $arrayState = implode(
@@ -38,6 +38,7 @@
         }
 
         $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
+        $arrayIndex = 0;
     @endphp
 
     <div
@@ -59,10 +60,14 @@
                         'list-inside list-disc' => $isBulleted(),
                         'flex flex-wrap items-center gap-1.5' => $isBadge,
                     ])
+                    @if ($isListWithLineBreaks)
+                        x-data="{ showLimited: false }"
+                    @endif
                 >
                     @foreach ($arrayState as $state)
                         @if (filled($formattedState = $formatState($state)))
                             @php
+                                $arrayIndex++;
                                 $color = $getColor($state);
                                 $copyableState = $getCopyableState($state) ?? $state;
                                 $copyMessage = $getCopyMessage($state);
@@ -109,6 +114,11 @@
                                         $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                                     "
                                     class="cursor-pointer max-w-max"
+                                @endif
+                                @if ($isListWithLineBreaks && ($arrayIndex > $listLimit))
+                                    x-show="showLimited"
+                                    x-cloak
+                                    x-transition
                                 @endif
                             >
                                 @if ($isBadge)
@@ -193,8 +203,15 @@
                     @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
                         <{{ $isListWithLineBreaks ? 'li' : 'div' }}
                             class="text-sm text-gray-500 dark:text-gray-400"
+                            x-on:click.prevent="showLimited = ! showLimited"
                         >
-                            {{ trans_choice('filament-infolists::components.text_entry.more_list_items', $limitedArrayStateCount) }}
+                            <x-filament::link tag="button" x-show="! showLimited">
+                                {{ trans_choice('filament-infolists::components.text_entry.more_list_items', $limitedArrayStateCount) }}
+                            </x-filament::link>
+
+                            <x-filament::link tag="button" x-show="showLimited" x-cloak>
+                                {{ trans_choice('filament-infolists::components.text_entry.less_list_items', $limitedArrayStateCount) }}
+                            </x-filament::link>
                         </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
                     @endif
                 </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>

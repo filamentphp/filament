@@ -201,13 +201,13 @@
                     class="text-sm text-gray-500 dark:text-gray-400"
                     x-on:click.prevent="showLimited = ! showLimited"
                 >
-                    <div x-show="! showLimited">
+                    <x-filament::link tag="button" x-show="! showLimited">
                         {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
-                    </div>
+                    </x-filament::link>
 
-                    <div x-show="showLimited" x-cloak>
+                    <x-filament::link tag="button" x-show="showLimited" x-cloak>
                         {{ trans_choice('filament-tables::table.columns.text.less_list_items', $limitedArrayStateCount) }}
-                    </div>
+                    </x-filament::link>
                 </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
             @endif
         </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
