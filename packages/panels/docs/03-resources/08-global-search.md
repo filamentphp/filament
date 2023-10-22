@@ -18,10 +18,14 @@ This attribute is used to retrieve the search result title for that record.
 
 > Your resource needs to have an Edit or View page to allow the global search results to link to a URL, otherwise no results will be returned for this resource.
 
-You may customize the title further by overriding `getGlobalSearchResultTitle()` method:
+You may customize the title further by overriding `getGlobalSearchResultTitle()` method,
+it can return a plain text string, or an instance of `Illuminate\Support\HtmlString` or `Illuminate\Contracts\Support\Htmlable`,
+which allows you to render HTML:
 
 ```php
-public static function getGlobalSearchResultTitle(Model $record): string
+use Illuminate\Contracts\Support\Htmlable;
+
+public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
 {
     return $record->name;
 }
