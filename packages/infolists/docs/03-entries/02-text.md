@@ -152,7 +152,7 @@ TextEntry::make('authors.name')
 
 ### Limiting the number of values in the list
 
-You can limit the number of values in the list using the `limitList()` method:
+You can limit the number of values initially displayed in the list using the `limitList()` method, which will add a `show X more` clickable link to reveal the rest of the values:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
