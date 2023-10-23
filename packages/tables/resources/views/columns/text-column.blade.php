@@ -69,7 +69,7 @@
                 'whitespace-normal' => $canWrap,
             ])
             @if ($isListWithLineBreaks)
-                x-data="{ showLimited: false }"
+                x-data="{ isLimited: true }"
             @endif
         >
             @foreach ($arrayState as $state)
@@ -111,7 +111,7 @@
                         @endif
                         @if ($isListWithLineBreaks && ($arrayIndex > $listLimit))
                             x-cloak
-                            x-show="showLimited"
+                            x-show="! isLimited"
                             x-transition
                         @endif
                         @class([
@@ -199,13 +199,13 @@
             @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
                 <{{ $isListWithLineBreaks ? 'li' : 'div' }}
                     class="text-sm text-gray-500 dark:text-gray-400"
-                    x-on:click.prevent="showLimited = ! showLimited"
+                    x-on:click.prevent="isLimited = ! isLimited"
                 >
                     <x-filament::link
                         color="gray"
                         tag="button"
                         x-cloak
-                        x-show="! showLimited"
+                        x-show="isLimited"
                     >
                         {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
                     </x-filament::link>
@@ -214,7 +214,7 @@
                         color="gray"
                         tag="button"
                         x-cloak
-                        x-show="showLimited"
+                        x-show="! isLimited"
                     >
                         {{ trans_choice('filament-tables::table.columns.text.less_list_items', $limitedArrayStateCount) }}
                     </x-filament::link>

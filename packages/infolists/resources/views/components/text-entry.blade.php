@@ -61,7 +61,7 @@
                         'flex flex-wrap items-center gap-1.5' => $isBadge,
                     ])
                     @if ($isListWithLineBreaks)
-                        x-data="{ showLimited: false }"
+                        x-data="{ isLimited: true }"
                     @endif
                 >
                     @foreach ($arrayState as $state)
@@ -116,7 +116,7 @@
                                     class="cursor-pointer max-w-max"
                                 @endif
                                 @if ($isListWithLineBreaks && ($arrayIndex > $listLimit))
-                                    x-show="showLimited"
+                                    x-show="! isLimited"
                                     x-cloak
                                     x-transition
                                 @endif
@@ -203,13 +203,13 @@
                     @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
                         <{{ $isListWithLineBreaks ? 'li' : 'div' }}
                             class="text-sm text-gray-500 dark:text-gray-400"
-                            x-on:click.prevent="showLimited = ! showLimited"
+                            x-on:click.prevent="isLimited = ! isLimited"
                         >
                             <x-filament::link
                                 color="gray"
                                 tag="button"
                                 x-cloak
-                                x-show="! showLimited"
+                                x-show="isLimited"
                             >
                                 {{ trans_choice('filament-infolists::components.text_entry.more_list_items', $limitedArrayStateCount) }}
                             </x-filament::link>
@@ -218,7 +218,7 @@
                                 color="gray"
                                 tag="button"
                                 x-cloak
-                                x-show="showLimited"
+                                x-show="! isLimited"
                             >
                                 {{ trans_choice('filament-infolists::components.text_entry.less_list_items', $limitedArrayStateCount) }}
                             </x-filament::link>
