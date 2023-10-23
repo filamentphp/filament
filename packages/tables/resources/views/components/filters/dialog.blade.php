@@ -26,7 +26,7 @@
         :sticky-footer="$triggerAction->isModalFooterSticky()"
         :sticky-header="$triggerAction->isModalHeaderSticky()"
         :slide-over="$triggerAction->isModalSlideOver()"
-        :width="$width"
+        :width="$triggerAction->getModalWidth()"
         wire:key="{{ $this->getId() }}.table.filters"
         {{ $attributes->class(['fi-ta-filters-modal']) }}
     >
