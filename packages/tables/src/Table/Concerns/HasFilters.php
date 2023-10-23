@@ -143,6 +143,14 @@ trait HasFilters
             ->icon('heroicon-m-funnel')
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
+            ->modalSubmitAction(false)
+            ->extraModalFooterActions([
+                Action::make('resetFilters')
+                    ->label(__('filament-tables::table.filters.actions.reset.label'))
+                    ->color('danger')
+                    ->action('resetTableFiltersForm'),
+            ])
+            ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))
             ->table($this);
 
         if ($this->modifyFiltersTriggerActionUsing) {
