@@ -62,13 +62,13 @@
     $hasFilters = $isFilterable();
     $filtersLayout = $getFiltersLayout();
     $filtersTriggerAction = $getFiltersTriggerAction();
-    $hasFiltersDropdown = $hasFilters && ($filtersLayout === FiltersLayout::Dropdown);
+    $hasFiltersDialog = $hasFilters && in_array($filtersLayout, [FiltersLayout::Dropdown, FiltersLayout::Modal]);
     $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
     $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
     $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
     $hasColumnToggleDropdown = $hasToggleableColumns();
     $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnToggleDropdown;
-    $hasHeaderToolbar = $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown;
+    $hasHeaderToolbar = $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
@@ -225,7 +225,7 @@
                     {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.grouping-selector.after', scopes: static::class) }}
                 </div>
 
-                @if ($isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown)
+                @if ($isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown)
                     <div
                         @class([
                             'ms-auto flex items-center',
@@ -243,11 +243,12 @@
 
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.after', scopes: static::class) }}
 
-                        @if ($hasFiltersDropdown || $hasColumnToggleDropdown)
-                            @if ($hasFiltersDropdown)
-                                <x-filament-tables::filters.dropdown
+                        @if ($hasFiltersDialog || $hasColumnToggleDropdown)
+                            @if ($hasFiltersDialog)
+                                <x-filament-tables::filters.dialog
                                     :form="$getFiltersForm()"
                                     :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
+                                    :layout="$filtersLayout"
                                     :max-height="$getFiltersFormMaxHeight()"
                                     :trigger-action="$filtersTriggerAction"
                                     :width="$getFiltersFormWidth()"
