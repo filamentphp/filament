@@ -25,7 +25,6 @@
         :slide-over="$triggerAction->isModalSlideOver()"
         :sticky-footer="$triggerAction->isModalFooterSticky()"
         :sticky-header="$triggerAction->isModalHeaderSticky()"
-        :width="$triggerAction->getModalWidth()"
         :slide-over="$triggerAction->isModalSlideOver()"
         :width="$width"
         wire:key="{{ $this->getId() }}.table.filters"
