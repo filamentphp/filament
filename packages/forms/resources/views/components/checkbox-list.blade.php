@@ -74,7 +74,7 @@
 
                 this.checkIfAllCheckboxesAreChecked()
 
-                $wire.set(@js($getStatePath()), updatedStates)
+                $wire.set(@js($getStatePath()), updatedState)
 
                 this.areAllCheckboxesChecked = state
             },
