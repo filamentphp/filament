@@ -775,3 +775,22 @@ class CommentsRelationManager extends RelationManager
 ```
 
 Now, you can access the `status` in the relation manager class using `$this->status`.
+
+## Disabling lazy loading
+
+By default, relation managers are lazy-loaded. This means that they will only be loaded when they are visible on the page. 
+
+You can disable this behavior, using the `make()` method:
+
+```php
+use App\Filament\Resources\Blog\PostResource\RelationManagers\CommentsRelationManager;
+ 
+public static function getRelations(): array
+{
+    return [
+        CommentsRelationManager::make([
+            'lazy' => false,
+        ]),
+    ];
+}
+```
