@@ -110,8 +110,8 @@
                             "
                         @endif
                         @if ($isListWithLineBreaks && ($arrayIndex > $listLimit))
-                            x-show="showLimited"
                             x-cloak
+                            x-show="showLimited"
                             x-transition
                         @endif
                         @class([
