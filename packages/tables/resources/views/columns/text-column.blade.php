@@ -201,7 +201,11 @@
                     class="text-sm text-gray-500 dark:text-gray-400"
                     x-on:click.prevent="showLimited = ! showLimited"
                 >
-                    <x-filament::link tag="button" x-show="! showLimited">
+                    <x-filament::link
+                        color="gray"
+                        tag="button"
+                        x-show="! showLimited"
+                    >
                         {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
                     </x-filament::link>
 
