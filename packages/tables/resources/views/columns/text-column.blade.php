@@ -209,7 +209,12 @@
                         {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
                     </x-filament::link>
 
-                    <x-filament::link tag="button" x-show="showLimited" x-cloak>
+                    <x-filament::link
+                        color="gray"
+                        tag="button"
+                        x-cloak
+                        x-show="showLimited"
+                    >
                         {{ trans_choice('filament-tables::table.columns.text.less_list_items', $limitedArrayStateCount) }}
                     </x-filament::link>
                 </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
