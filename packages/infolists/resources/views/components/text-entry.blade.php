@@ -214,9 +214,10 @@
                             </x-filament::link>
 
                             <x-filament::link
+                                color="gray"
                                 tag="button"
-                                x-show="showLimited"
                                 x-cloak
+                                x-show="showLimited"
                             >
                                 {{ trans_choice('filament-infolists::components.text_entry.less_list_items', $limitedArrayStateCount) }}
                             </x-filament::link>
