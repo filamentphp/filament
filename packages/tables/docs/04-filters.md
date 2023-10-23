@@ -418,6 +418,25 @@ public function table(Table $table): Table
 }
 ```
 
+## Displaying filters in a modal
+
+To render the filters in a modal instead of in a dropdown, you may use:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ], layout: FiltersLayout::Modal);
+}
+```
+
+You may use the [trigger action API](#customizing-the-filters-trigger-action) to [customize the modal](../actions/modals), including [using a `slideOver()`](../actions/modals#using-a-slide-over-instead-of-a-modal).
+
 ## Displaying filters above the table content
 
 To render the filters above the table content instead of in a dropdown, you may use:
@@ -526,9 +545,9 @@ TernaryFilter::make('trashed')
     ]))
 ```
 
-## Customizing the filters dropdown trigger action
+## Customizing the filters trigger action
 
-To customize the filters' dropdown trigger buttons, you may use the `filtersTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
+To customize the filters trigger buttons, you may use the `filtersTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
 
 ```php
 use Filament\Tables\Actions\Action;
