@@ -206,6 +206,7 @@
                             x-on:click.prevent="showLimited = ! showLimited"
                         >
                             <x-filament::link
+                                color="gray"
                                 tag="button"
                                 x-show="! showLimited"
                             >
