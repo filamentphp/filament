@@ -3,17 +3,18 @@
 namespace Filament\Support\Commands;
 
 use Filament\PanelProvider;
+use Filament\Support\Commands\Concerns\CanGeneratePanels;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 use function Laravel\Prompts\confirm;
 
 class InstallCommand extends Command
 {
     use CanManipulateFiles;
+    use CanGeneratePanels;
 
     protected $signature = 'filament:install {--scaffold} {--actions} {--forms} {--infolists} {--notifications} {--panels} {--tables} {--widgets} {--F|force}';
 
@@ -66,32 +67,13 @@ class InstallCommand extends Command
 
     protected function installAdminPanel(): bool
     {
-        $path = app_path('Providers/Filament/AdminPanelProvider.php');
-
-        if (! $this->option('force') && $this->checkForCollision([$path])) {
-            return true;
-        }
-
         if (! class_exists(PanelProvider::class)) {
             $this->components->error('Please require [filament/filament] before attempting to install the Panel Builder.');
 
             return false;
         }
 
-        $this->copyStubToApp('AdminPanelProvider', $path);
-
-        if (! Str::contains($appConfig = file_get_contents(config_path('app.php')), 'App\\Providers\\Filament\\AdminPanelProvider::class')) {
-            file_put_contents(config_path('app.php'), str_replace(
-                'App\\Providers\\RouteServiceProvider::class,',
-                'App\\Providers\\Filament\\AdminPanelProvider::class,' . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,',
-                $appConfig,
-            ));
-        }
-
-        $this->components->info('Successfully created AdminPanelProvider.php!');
-        $this->components->warn('We\'ve attempted to register the AdminPanelProvider in your [config/app.php] file as a service provider. If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the [providers] array.');
-
-        return true;
+        return $this->generatePanel(default: 'admin', force: $this->option('force'));
     }
 
     protected function installScaffolding(): void
