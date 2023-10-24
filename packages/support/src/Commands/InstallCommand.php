@@ -8,10 +8,8 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 use function Laravel\Prompts\confirm;
-use function Laravel\Prompts\text;
 
 class InstallCommand extends Command
 {
@@ -69,7 +67,7 @@ class InstallCommand extends Command
 
     protected function installAdminPanel(): bool
     {
-        if (!class_exists(PanelProvider::class)) {
+        if (! class_exists(PanelProvider::class)) {
             $this->components->error('Please require [filament/filament] before attempting to install the Panel Builder.');
 
             return false;

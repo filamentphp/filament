@@ -30,7 +30,7 @@ trait CanGeneratePanels
                 ->append('.php'),
         );
 
-        if (!$force && $this->checkForCollision([$path])) {
+        if (! $force && $this->checkForCollision([$path])) {
             return false;
         }
 
@@ -46,7 +46,7 @@ trait CanGeneratePanels
 
         $appConfig = file_get_contents(config_path('app.php'));
 
-        if (!Str::contains($appConfig, "App\\Providers\\Filament\\{$class}::class")) {
+        if (! Str::contains($appConfig, "App\\Providers\\Filament\\{$class}::class")) {
             file_put_contents(config_path('app.php'), str_replace(
                 'App\\Providers\\RouteServiceProvider::class,',
                 "App\\Providers\\Filament\\{$class}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,',
