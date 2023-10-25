@@ -14,26 +14,7 @@
     $content = $getContent();
     $contentGrid = $getContentGrid();
     $contentFooter = $getContentFooter();
-    $filterIndicators = [
-        ...($hasSearch() ? ['resetTableSearch' => $getSearchIndicator()] : []),
-        ...collect($getColumnSearchIndicators())
-            ->mapWithKeys(fn (string $indicator, string $column): array => [
-                "resetTableColumnSearch('{$column}')" => $indicator,
-            ])
-            ->all(),
-        ...array_reduce(
-            $getFilters(),
-            fn (array $carry, \Filament\Tables\Filters\BaseFilter $filter): array => [
-                ...$carry,
-                ...collect($filter->getIndicators())
-                    ->mapWithKeys(fn (string $label, int | string $field) => [
-                        "removeTableFilter('{$filter->getName()}'" . (is_string($field) ? ' , \'' . $field . '\'' : null) . ')' => $label,
-                    ])
-                    ->all(),
-            ],
-            [],
-        ),
-    ];
+    $filterIndicators = $getFilterIndicators();
     $hasColumnsLayout = $hasColumnsLayout();
     $hasSummary = $hasSummary();
     $header = $getHeader();
