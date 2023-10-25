@@ -314,11 +314,11 @@ Filter::make('is_admin')
     ->indicator('Administrators')
 ```
 
-If you are using a [custom filter form](#custom-filter-forms), you should use [`indicateUsing()`](#custom-active-indicators) to display an active indicator.
+If you are using a [custom filter form](#custom-filter-forms), you should use [`indicators()`](#custom-active-indicators) to display an active indicator.
 
 ### Custom active indicators
 
-Not all indicators are simple, so you may need to use `indicateUsing()` to customize which indicators should be shown at any time.
+Not all indicators are simple, so you may need to use `indicators()` to customize which indicators should be shown at any time.
 
 For example, if you have a custom date filter, you may create a custom indicator that formats the selected date:
 
@@ -329,7 +329,7 @@ use Filament\Tables\Filters\Filter;
 Filter::make('created_at')
     ->form([DatePicker::make('date')])
     // ...
-    ->indicateUsing(function (array $data): ?string {
+    ->indicators(function (array $data): ?string {
         if (! $data['date']) {
             return null;
         }
@@ -345,6 +345,7 @@ You may even render multiple indicators at once, by returning an array. If you h
 ```php
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Indicator;
 
 Filter::make('created_at')
     ->form([
@@ -352,15 +353,17 @@ Filter::make('created_at')
         DatePicker::make('until'),
     ])
     // ...
-    ->indicateUsing(function (array $data): array {
+    ->indicators(function (array $data): array {
         $indicators = [];
 
         if ($data['from'] ?? null) {
-            $indicators['from'] = 'Created from ' . Carbon::parse($data['from'])->toFormattedDateString();
+            $indicators[] = Indicator::make('Created from ' . Carbon::parse($data['from'])->toFormattedDateString())
+                ->removeField('from');
         }
 
         if ($data['until'] ?? null) {
-            $indicators['until'] = 'Created until ' . Carbon::parse($data['until'])->toFormattedDateString();
+            $indicators[] = Indicator::make('Created until ' . Carbon::parse($data['until'])->toFormattedDateString())
+                ->removeField('until');
         }
 
         return $indicators;
