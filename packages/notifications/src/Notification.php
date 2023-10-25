@@ -82,7 +82,7 @@ class Notification extends ViewComponent implements Arrayable
             'title' => $this->getTitle(),
             'view' => $this->getView(),
             'viewData' => $this->getViewData(),
-            'type' => $this->getType()
+            'type' => $this->getType(),
         ];
     }
 
