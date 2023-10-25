@@ -108,7 +108,7 @@ trait CanSearchRecords
      */
     protected function extractTableSearchWords(string $search): array
     {
-        return explode(' ', preg_replace('/\s+/', ' ', $search));
+        return $search === '' ? [''] : str_getcsv(preg_replace('/\s+/', ' ', $search), ' ');
     }
 
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
