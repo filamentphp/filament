@@ -25,7 +25,7 @@ class Indicator extends Component
 
     public static function make(string | Closure | null $label = null): static
     {
-        return new static($label);
+        return app(static::class, ['label' => $label]);
     }
 
     public function label(string $label): static
