@@ -3,36 +3,53 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
+use Filament\Tables\Filters\Indicator;
 use Illuminate\Support\Arr;
 
 trait HasIndicators
 {
     protected string | Closure | null $indicateUsing = null;
 
-    protected string | Closure | null $indicator = null;
+    protected Indicator | string | Closure | null $indicator = null;
 
-    public function indicator(string | Closure | null $indicator): static
+    /**
+     * @var array<Indicator> | Closure
+     */
+    protected array | Closure $indicators = [];
+
+    public function indicator(Indicator | string | Closure | null $indicator): static
     {
         $this->indicator = $indicator;
 
         return $this;
     }
 
-    public function indicateUsing(?Closure $callback): static
+    /**
+     * @param  array<Indicator> | Closure  $indicators
+     */
+    public function indicators(array | Closure $indicators): static
     {
-        $this->indicateUsing = $callback;
+        $this->indicators = $indicators;
 
         return $this;
     }
 
     /**
-     * @return array<string>
+     * @deprecated Use `indicators()` instead.
+     */
+    public function indicateUsing(?Closure $callback): static
+    {
+        return $this->indicators($callback);
+    }
+
+    /**
+     * @return array<Indicator> | array<string>
      */
     public function getIndicators(): array
     {
         $state = $this->getState();
 
-        $indicators = $this->evaluate($this->indicateUsing, [
+        $indicators = $this->evaluate($this->indicators, [
             'data' => $state,
             'state' => $state,
         ]);
@@ -41,10 +58,24 @@ trait HasIndicators
             return [];
         }
 
-        return Arr::wrap($indicators);
+        $indicators = Arr::wrap($indicators);
+
+        foreach ($indicators as $field => $indicator) {
+            if (! $indicator instanceof Indicator) {
+                $indicator = Indicator::make($indicator);
+            }
+
+            if (is_string($field)) {
+                $indicator = $indicator->removeField($field);
+            }
+
+            $indicators[$field] = $indicator;
+        }
+
+        return $indicators;
     }
 
-    public function getIndicator(): string
+    public function getIndicator(): Indicator | string
     {
         $state = $this->getState();
 

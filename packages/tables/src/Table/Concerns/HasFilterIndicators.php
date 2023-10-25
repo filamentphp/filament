@@ -3,26 +3,25 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\Indicator;
 
 trait HasFilterIndicators
 {
     public function getFilterIndicators(): array
     {
         return [
-            ...($this->hasSearch() ? ['resetTableSearch' => $this->getSearchIndicator()] : []),
-            ...collect($this->getColumnSearchIndicators())
-                ->mapWithKeys(fn (string $indicator, string $column): array => [
-                    "resetTableColumnSearch('{$column}')" => $indicator,
-                ])
-                ->all(),
+            ...($this->hasSearch() ? [$this->getSearchIndicator()] : []),
+            ...$this->getColumnSearchIndicators(),
             ...array_reduce(
                 $this->getFilters(),
                 fn (array $carry, BaseFilter $filter): array => [
                     ...$carry,
                     ...collect($filter->getIndicators())
-                        ->mapWithKeys(fn (string $label, int | string $field) => [
-                            "removeTableFilter('{$filter->getName()}'" . (is_string($field) ? ' , \'' . $field . '\'' : null) . ')' => $label,
-                        ])
+                        ->map(function (Indicator $indicator) use ($filter): Indicator {
+                            $removeField = $indicator->getRemoveField();
+
+                            return $indicator->removeLivewireClickHandler("removeTableFilter('{$filter->getName()}'" . (filled($removeField) ? ', \'' . $removeField . '\'' : null) . ')');
+                        })
                         ->all(),
                 ],
                 [],

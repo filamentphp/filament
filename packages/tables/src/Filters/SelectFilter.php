@@ -39,7 +39,7 @@ class SelectFilter extends BaseFilter
                 __('filament-tables::table.filters.select.placeholder'),
         );
 
-        $this->indicateUsing(function (SelectFilter $filter, array $state): array {
+        $this->indicators(function (SelectFilter $filter, array $state): array {
             if ($filter->isMultiple()) {
                 if (blank($state['values'] ?? null)) {
                     return [];
@@ -66,7 +66,13 @@ class SelectFilter extends BaseFilter
 
                 $labels = collect($labels)->join(', ', ' & ');
 
-                return ["{$filter->getIndicator()}: {$labels}"];
+                $indicator = $filter->getIndicator();
+
+                if (! $indicator instanceof Indicator) {
+                    $indicator = Indicator::make("{$indicator}: {$labels}");
+                }
+
+                return [$indicator];
             }
 
             if (blank($state['value'] ?? null)) {
@@ -86,7 +92,13 @@ class SelectFilter extends BaseFilter
                 return [];
             }
 
-            return ["{$filter->getIndicator()}: {$label}"];
+            $indicator = $filter->getIndicator();
+
+            if (! $indicator instanceof Indicator) {
+                $indicator = Indicator::make("{$indicator}: {$label}");
+            }
+
+            return [$indicator];
         });
 
         $this->resetState(['value' => null]);

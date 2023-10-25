@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\Filters\Indicator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use RecursiveArrayIterator;
@@ -171,13 +172,14 @@ trait CanSearchRecords
         $this->updatedTableColumnSearches();
     }
 
-    public function getTableSearchIndicator(): string
+    public function getTableSearchIndicator(): Indicator
     {
-        return __('filament-tables::table.fields.search.indicator') . ': ' . $this->getTableSearch();
+        return Indicator::make(__('filament-tables::table.fields.search.indicator') . ': ' . $this->getTableSearch())
+            ->removeLivewireClickHandler('resetTableSearch');
     }
 
     /**
-     * @return array<string, string>
+     * @return array<Indicator>
      */
     public function getTableColumnSearchIndicators(): array
     {
@@ -200,7 +202,8 @@ trait CanSearchRecords
                 continue;
             }
 
-            $indicators[$columnName] = "{$column->getLabel()}: {$search}";
+            $indicators[] = Indicator::make("{$column->getLabel()}: {$search}")
+                ->removeLivewireClickHandler("resetTableColumnSearch('{$columnName}')");
         }
 
         return $indicators;

@@ -14,12 +14,18 @@ class Filter extends BaseFilter
     {
         parent::setUp();
 
-        $this->indicateUsing(function (array $state): array {
+        $this->indicators(function (array $state): array {
             if (! ($state['isActive'] ?? false)) {
                 return [];
             }
 
-            return [$this->getIndicator()];
+            $indicator = $this->getIndicator();
+
+            if (! $indicator instanceof Indicator) {
+                $indicator = Indicator::make($indicator);
+            }
+
+            return [$indicator];
         });
     }
 
