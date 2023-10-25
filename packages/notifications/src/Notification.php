@@ -45,6 +45,8 @@ class Notification extends ViewComponent implements Arrayable
      */
     protected array $safeViews = [];
 
+    private string $type;
+
     public function __construct(string $id)
     {
         $this->id($id);
@@ -53,6 +55,7 @@ class Notification extends ViewComponent implements Arrayable
     public static function make(?string $id = null): static
     {
         $static = app(static::class, ['id' => $id ?? Str::orderedUuid()]);
+        $static->type(static::class);
         $static->configure();
 
         return $static;
@@ -79,6 +82,7 @@ class Notification extends ViewComponent implements Arrayable
             'title' => $this->getTitle(),
             'view' => $this->getView(),
             'viewData' => $this->getViewData(),
+            'type' => $this->getType()
         ];
     }
 
@@ -111,6 +115,7 @@ class Notification extends ViewComponent implements Arrayable
         $static->icon($data['icon'] ?? null);
         $static->iconColor($data['iconColor'] ?? $static->getIconColor());
         $static->title($data['title'] ?? null);
+        $static->type($data['type']);
 
         return $static;
     }
@@ -299,5 +304,15 @@ class Notification extends ViewComponent implements Arrayable
         }
 
         Assert::assertSame($expectedNotification->title, $notification);
+    }
+
+    public function type(string $type): void
+    {
+        $this->type = $type;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
     }
 }

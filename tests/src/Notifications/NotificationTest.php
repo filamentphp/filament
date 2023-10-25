@@ -221,3 +221,38 @@ it('can dispatch an event to a component', function () {
     $notification = Notification::make()->actions([$action])->send();
     expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', JSON.parse('[\\u0022data\\u0022]'))");
 });
+
+it('can send a custom notification', function () {
+
+    \Filament\Tests\Notifications\Fixtures\CustomNotification::make($id = Str::random())
+        ->size('lg')
+        ->send();
+
+    $notifications = session()->get('filament.notifications');
+
+    expect($notifications)
+        ->toBeArray()
+        ->toHaveCount(1);
+
+    $notification = Arr::last($notifications);
+
+    expect($notification)
+        ->toBeArray()
+        ->size->toBe('lg');
+
+    $component = livewire(Notifications::class);
+
+    $component
+        ->dispatch('notificationsSent');
+
+    expect($component->instance()->notifications)
+        ->toBeInstanceOf(Collection::class)
+        ->toHaveCount(1);
+
+    $notification = $component->instance()->notifications->first();
+
+    expect($notification)
+        ->toBeInstanceOf(\Filament\Tests\Notifications\Fixtures\CustomNotification::class)
+        ->getSize()->toBe('lg');
+
+});

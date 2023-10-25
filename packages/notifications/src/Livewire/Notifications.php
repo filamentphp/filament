@@ -35,7 +35,8 @@ class Notifications extends Component
     public function pullNotificationsFromSession(): void
     {
         foreach (session()->pull('filament.notifications') ?? [] as $notification) {
-            $notification = Notification::fromArray($notification);
+            $notification_class = $notification['type'];
+            $notification = $notification_class::fromArray($notification);
 
             $this->pushNotification($notification);
         }
@@ -47,7 +48,8 @@ class Notifications extends Component
     #[On('notificationSent')]
     public function pushNotificationFromEvent(array $notification): void
     {
-        $notification = Notification::fromArray($notification);
+        $notification_class = $notification['type'];
+        $notification = $notification_class::fromArray($notification);
 
         $this->pushNotification($notification);
     }
@@ -71,7 +73,8 @@ class Notifications extends Component
             return;
         }
 
-        $this->pushNotification(Notification::fromArray($notification));
+        $notification_class = $notification['type'];
+        $this->pushNotification($notification_class::fromArray($notification));
     }
 
     protected function pushNotification(Notification $notification): void

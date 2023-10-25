@@ -29,7 +29,7 @@ class Collection extends BaseCollection implements Wireable
     public static function fromLivewire($value): static
     {
         return app(static::class, ['items' => $value])->transform(
-            fn (array $notification): Notification => Notification::fromArray($notification),
+            fn (array $notification): Notification => $notification['type']::fromArray($notification),
         );
     }
 }
