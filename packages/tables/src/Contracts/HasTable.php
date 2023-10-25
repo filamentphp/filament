@@ -97,7 +97,7 @@ interface HasTable
     public function getTableSearchIndicator(): Indicator;
 
     /**
-     * @return array<string, string>
+     * @return array<Indicator>
      */
     public function getTableColumnSearchIndicators(): array;
 

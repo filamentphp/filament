@@ -7,6 +7,9 @@ use Filament\Tables\Filters\Indicator;
 
 trait HasFilterIndicators
 {
+    /**
+     * @return array<Indicator>
+     */
     public function getFilterIndicators(): array
     {
         return [
