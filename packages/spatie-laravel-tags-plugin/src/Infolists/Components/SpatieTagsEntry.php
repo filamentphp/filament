@@ -49,7 +49,7 @@ class SpatieTagsEntry extends TextEntry
         $type = $this->getType();
 
         if ($this->isAnyTagTypeAllowed()) {
-            /** @var Collection $tags */
+            /** @phpstan-ignore-next-line */
             $tags = $record->tags;
         } else {
             $tags = $record->tagsWithType($type);
