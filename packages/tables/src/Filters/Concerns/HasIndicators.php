@@ -34,9 +34,6 @@ trait HasIndicators
         return $this;
     }
 
-    /**
-     * @deprecated Use `indicators()` instead.
-     */
     public function indicateUsing(?Closure $callback): static
     {
         return $this->indicators($callback);
