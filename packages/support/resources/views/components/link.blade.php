@@ -33,6 +33,15 @@
         $size = ActionSize::tryFrom($size) ?? $size;
     }
 
+    $iconSize ??= match ($size) {
+        ActionSize::ExtraSmall, ActionSize::Small => IconSize::Small,
+        default => IconSize::Medium,
+    };
+
+    if (! $iconSize instanceof IconSize) {
+        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+    }
+
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-link relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus-visible:underline',
         'pe-4' => $badge,
@@ -61,17 +70,12 @@
         ) => $color !== 'gray',
     ]);
 
-    $iconSize ??= match ($size) {
-        ActionSize::ExtraSmall, ActionSize::Small, 'xs', 'sm' => IconSize::Small,
-        default => IconSize::Medium,
-    };
-
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-link-icon',
         match ($iconSize) {
-            IconSize::Small, 'sm' => 'h-4 w-4',
-            IconSize::Medium, 'md' => 'h-5 w-5',
-            IconSize::Large, 'lg' => 'h-6 w-6',
+            IconSize::Small => 'h-4 w-4',
+            IconSize::Medium => 'h-5 w-5',
+            IconSize::Large => 'h-6 w-6',
             default => $iconSize,
         },
         match ($color) {
