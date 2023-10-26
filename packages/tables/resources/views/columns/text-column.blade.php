@@ -198,8 +198,8 @@
 
             @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
                 <{{ $isListWithLineBreaks ? 'li' : 'div' }}
-                    class="text-sm text-gray-500 dark:text-gray-400"
                     x-on:click.prevent="isLimited = ! isLimited"
+                    class="text-sm text-gray-500 dark:text-gray-400"
                 >
                     <x-filament::link
                         color="gray"
