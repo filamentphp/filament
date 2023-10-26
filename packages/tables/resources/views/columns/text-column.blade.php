@@ -204,7 +204,6 @@
                     <x-filament::link
                         color="gray"
                         tag="button"
-                        x-cloak
                         x-show="isLimited"
                     >
                         {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
