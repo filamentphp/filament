@@ -89,7 +89,7 @@ class Notification extends ViewComponent implements Arrayable
     {
         $static = static::make($data['id'] ?? Str::random());
 
-        if (is_subclass_of($static, self::class) && get_called_class() === self::class) {
+        if (is_subclass_of($static::class, self::class) && get_called_class() === self::class) {
             $static = $static::fromArray($data);
         }
 
