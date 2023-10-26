@@ -46,14 +46,7 @@
         "
     >
         <x-slot name="trigger">
-            <span
-                @class([
-                    'inline-flex',
-                    '-mx-2' => $triggerAction->isIconButton(),
-                ])
-            >
-                {{ $triggerAction }}
-            </span>
+            {{ $triggerAction }}
         </x-slot>
 
         <div class="grid gap-y-6 p-6">

@@ -9,13 +9,16 @@
 
 @php
     use Filament\Support\Enums\Alignment;
+
+    $alignment = $alignment ?? Alignment::Start;
+
+    if (! $alignment instanceof Alignment) {
+        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+    }
 @endphp
 
 <th
-    {{
-        $attributes
-            ->class(['fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6'])
-    }}
+    {{ $attributes->class(['fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6']) }}
 >
     <{{ $sortable ? 'button' : 'span' }}
         @if ($sortable)
@@ -27,12 +30,12 @@
             'whitespace-nowrap' => ! $wrap,
             'whitespace-normal' => $wrap,
             match ($alignment) {
-                Alignment::Center, 'center' => 'justify-center',
-                Alignment::End, 'end' => 'justify-end',
-                Alignment::Left, 'left' => 'justify-start rtl:flex-row-reverse',
-                Alignment::Right, 'right' => 'justify-end rtl:flex-row-reverse',
-                Alignment::Start, 'start' => 'justify-start',
-                default => null,
+                Alignment::Start => 'justify-start',
+                Alignment::Center => 'justify-center',
+                Alignment::End => 'justify-end',
+                Alignment::Left => 'justify-start rtl:flex-row-reverse',
+                Alignment::Right => 'justify-end rtl:flex-row-reverse',
+                default => $alignment,
             },
         ])
     >
