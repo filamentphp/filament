@@ -108,10 +108,10 @@
                     >
                         @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $hasBlockLabels || $isCloneable || $isDeletable || $isCollapsible)
                             <div
-                                class="fi-fo-builder-item-header flex items-center gap-x-3 overflow-hidden px-4 py-2"
+                                class="fi-fo-builder-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3"
                             >
                                 @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
-                                    <ul class="-ms-1.5 flex">
+                                    <ul class="flex items-center gap-x-3">
                                         @if ($isReorderableWithDragAndDrop)
                                             <li x-sortable-handle>
                                                 {{ $reorderAction }}
@@ -119,15 +119,11 @@
                                         @endif
 
                                         @if ($isReorderableWithButtons)
-                                            <li
-                                                class="flex items-center justify-center"
-                                            >
+                                            <li>
                                                 {{ $moveUpAction(['item' => $uuid])->disabled($loop->first) }}
                                             </li>
 
-                                            <li
-                                                class="flex items-center justify-center"
-                                            >
+                                            <li>
                                                 {{ $moveDownAction(['item' => $uuid])->disabled($loop->last) }}
                                             </li>
                                         @endif
@@ -154,7 +150,9 @@
                                 @endif
 
                                 @if ($isCloneable || $isDeletable || $isCollapsible)
-                                    <ul class="-me-1.5 ms-auto flex">
+                                    <ul
+                                        class="ms-auto flex items-center gap-x-3"
+                                    >
                                         @if ($isCloneable)
                                             <li>
                                                 {{ $cloneAction(['item' => $uuid]) }}

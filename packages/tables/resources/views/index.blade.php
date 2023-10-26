@@ -152,18 +152,13 @@
                 <div
                     x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }"
                     @class([
-                        'grid px-4 sm:px-6',
-                        'py-4' => ! $hasFiltersAboveContentCollapsible,
-                        'gap-y-3 py-2.5 sm:gap-y-1 sm:py-3' => $hasFiltersAboveContentCollapsible,
+                        'grid gap-y-3 px-4 py-4 sm:px-6',
                     ])
                 >
                     @if ($hasFiltersAboveContentCollapsible)
                         <span
                             x-on:click="areFiltersOpen = ! areFiltersOpen"
-                            @class([
-                                'ms-auto inline-flex',
-                                '-mx-2' => $filtersTriggerAction->isIconButton(),
-                            ])
+                            class="ms-auto"
                         >
                             {{ $filtersTriggerAction->badge(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
                         </span>
@@ -173,9 +168,6 @@
                         :form="$getFiltersForm()"
                         x-cloak
                         x-show="areFiltersOpen"
-                        @class([
-                            'py-1 sm:py-3' => $hasFiltersAboveContentCollapsible,
-                        ])
                     />
                 </div>
             @endif
@@ -183,21 +175,15 @@
             <div
                 @if (! $hasHeaderToolbar) x-cloak @endif
                 x-show="@js($hasHeaderToolbar) || (selectedRecords.length && @js(count($bulkActions)))"
-                class="fi-ta-header-toolbar flex items-center justify-between gap-3 px-4 py-3 sm:px-6"
+                class="fi-ta-header-toolbar flex items-center justify-between gap-x-4 px-4 py-3 sm:px-6"
             >
                 {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.start', scopes: static::class) }}
 
-                <div class="flex shrink-0 items-center gap-x-3">
+                <div class="flex shrink-0 items-center gap-x-4">
                     {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.reorder-trigger.before', scopes: static::class) }}
 
                     @if ($isReorderable)
-                        <span
-                            x-show="! selectedRecords.length"
-                            @class([
-                                'inline-flex',
-                                '-me-1 -ms-2' => $reorderRecordsTriggerAction->isIconButton(),
-                            ])
-                        >
+                        <span x-show="! selectedRecords.length">
                             {{ $reorderRecordsTriggerAction }}
                         </span>
                     @endif
@@ -226,13 +212,7 @@
                 </div>
 
                 @if ($isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown)
-                    <div
-                        @class([
-                            'ms-auto flex items-center',
-                            'gap-x-3' => ! ($filtersTriggerAction->isIconButton() && $toggleColumnsTriggerAction->isIconButton()),
-                            'gap-x-4' => $filtersTriggerAction->isIconButton() && $toggleColumnsTriggerAction->isIconButton(),
-                        ])
-                    >
+                    <div class="ms-auto flex items-center gap-x-4">
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.before', scopes: static::class) }}
 
                         @if ($isGlobalSearchVisible)

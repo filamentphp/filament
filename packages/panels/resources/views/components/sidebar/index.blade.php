@@ -71,7 +71,6 @@
                 x-data="{}"
                 x-on:click="$store.sidebar.open()"
                 x-show="! $store.sidebar.isOpen"
-                class="-mx-1.5"
             />
         @endif
 
@@ -87,7 +86,7 @@
                 x-data="{}"
                 x-on:click="$store.sidebar.close()"
                 x-show="$store.sidebar.isOpen"
-                class="-mx-1.5 ms-auto hidden lg:flex"
+                class="ms-auto hidden lg:flex"
             />
         @endif
     </header>
