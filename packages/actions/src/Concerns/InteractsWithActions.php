@@ -11,6 +11,7 @@ use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 
 use function Livewire\store;
@@ -89,6 +90,10 @@ trait InteractsWithActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
+        } catch (ValidationException $exception) {
+            $this->unmountAction();
+
+            throw $exception;
         }
 
         $action->resetArguments();
