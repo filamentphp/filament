@@ -3,6 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Contracts\Support\Htmlable;
@@ -116,6 +117,8 @@ trait HasEmptyState
 
     public function getEmptyStateIcon(): string
     {
-        return $this->evaluate($this->emptyStateIcon) ?? 'heroicon-o-x-mark';
+        return $this->evaluate($this->emptyStateIcon)
+            ?? FilamentIcon::resolve('tables::empty-state')
+            ?? 'heroicon-o-x-mark';
     }
 }

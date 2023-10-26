@@ -193,7 +193,7 @@ return [
 You'll want to update your `README.md` file to include instructions on how to install your plugin and any other information you want to share with users, Like how to use it in their projects. For example:
 
 ```php
-Register the plugin and/or Widget in your Panel provider:
+// Register the plugin and/or Widget in your Panel provider:
 
 use Awcodes\ClockWidget\ClockWidgetWidget;
 

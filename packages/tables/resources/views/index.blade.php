@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Facades\FilamentView;
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\RecordCheckboxPosition;
@@ -61,13 +62,13 @@
     $hasFilters = $isFilterable();
     $filtersLayout = $getFiltersLayout();
     $filtersTriggerAction = $getFiltersTriggerAction();
-    $hasFiltersDropdown = $hasFilters && ($filtersLayout === FiltersLayout::Dropdown);
+    $hasFiltersDialog = $hasFilters && in_array($filtersLayout, [FiltersLayout::Dropdown, FiltersLayout::Modal]);
     $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
     $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
     $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
     $hasColumnToggleDropdown = $hasToggleableColumns();
     $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnToggleDropdown;
-    $hasHeaderToolbar = $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown;
+    $hasHeaderToolbar = $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
@@ -117,7 +118,11 @@
         wire:init="loadTable"
     @endif
     x-ignore
-    ax-load
+    @if (FilamentView::hasSpaMode())
+        ax-load="visible"
+    @else
+        ax-load
+    @endif
     ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('table', 'filament/tables') }}"
     x-data="table"
     @class([
@@ -218,11 +223,12 @@
 
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.after', scopes: static::class) }}
 
-                        @if ($hasFiltersDropdown || $hasColumnToggleDropdown)
-                            @if ($hasFiltersDropdown)
-                                <x-filament-tables::filters.dropdown
+                        @if ($hasFiltersDialog || $hasColumnToggleDropdown)
+                            @if ($hasFiltersDialog)
+                                <x-filament-tables::filters.dialog
                                     :form="$getFiltersForm()"
                                     :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
+                                    :layout="$filtersLayout"
                                     :max-height="$getFiltersFormMaxHeight()"
                                     :trigger-action="$filtersTriggerAction"
                                     :width="$getFiltersFormWidth()"
