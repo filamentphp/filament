@@ -204,7 +204,7 @@
                                     :label="__('filament::components/modal.actions.close.label')"
                                     tabindex="-1"
                                     :x-on:click="filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()'"
-                                    class="fi-modal-close-btn -m-1.5"
+                                    class="fi-modal-close-btn"
                                 />
                             </div>
                         @endif

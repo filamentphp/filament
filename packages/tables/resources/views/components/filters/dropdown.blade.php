@@ -15,14 +15,7 @@
     {{ $attributes->class(['fi-ta-filters-dropdown']) }}
 >
     <x-slot name="trigger">
-        <span
-            @class([
-                'inline-flex',
-                '-mx-2' => $triggerAction->isIconButton(),
-            ])
-        >
-            {{ $triggerAction->badge($indicatorsCount) }}
-        </span>
+        {{ $triggerAction->badge($indicatorsCount) }}
     </x-slot>
 
     <x-filament-tables::filters :form="$form" class="p-6" />

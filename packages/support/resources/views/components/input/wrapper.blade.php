@@ -43,7 +43,7 @@
     $enabledInvalidWrapperClasses = 'focus-within:ring-danger-600 dark:focus-within:ring-danger-500';
     $disabledValidWrapperClasses = 'dark:ring-white/10';
 
-    $actionsClasses = '-mx-1.5 flex items-center';
+    $actionsClasses = 'flex items-center gap-3';
     $labelClasses = 'fi-input-wrp-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
     $getIconClasses = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssClasses([
