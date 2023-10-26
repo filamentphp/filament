@@ -16,7 +16,7 @@
     'keyBindings' => null,
     'label' => null,
     'loadingIndicator' => true,
-    'size' => 'md',
+    'size' => ActionSize::Medium,
     'tag' => 'button',
     'target' => null,
     'tooltip' => null,
@@ -41,29 +41,48 @@
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-70',
-        match ($size) {
-            ActionSize::ExtraSmall => 'h-7 w-7',
-            ActionSize::Small => 'h-8 w-8',
-            ActionSize::Medium => 'h-9 w-9',
-            ActionSize::Large => 'h-10 w-10',
-            ActionSize::ExtraLarge => 'h-11 w-11',
-            default => $size,
+        ...match ($size) {
+            ActionSize::ExtraSmall => [
+                match ($iconSize) {
+                    IconSize::Small => '-m-1.5',
+                    IconSize::Medium => '-m-1',
+                    IconSize::Large => '-m-0.5',
+                },
+                'h-7 w-7',
+            ],
+            ActionSize::Small => [
+                match ($iconSize) {
+                    IconSize::Small => '-m-2',
+                    IconSize::Medium => '-m-1.5',
+                    IconSize::Large => '-m-1',
+                },
+                'h-8 w-8',
+            ],
+            ActionSize::Medium => [
+                match ($iconSize) {
+                    IconSize::Small => '-m-2.5',
+                    IconSize::Medium => '-m-2',
+                    IconSize::Large => '-m-1.5',
+                },
+                'h-9 w-9',
+            ],
+            ActionSize::Large => [
+                match ($iconSize) {
+                    IconSize::Small => '-m-3',
+                    IconSize::Medium => '-m-2.5',
+                    IconSize::Large => '-m-2',
+                },
+                'h-10 w-10',
+            ],
+            ActionSize::ExtraLarge => [
+                match ($iconSize) {
+                    IconSize::Small => '-m-3.5',
+                    IconSize::Medium => '-m-3',
+                    IconSize::Large => '-m-2.5',
+                },
+                'h-11 w-11',
+            ],
         },
-        '-m-1.5' => ($size === ActionSize::ExtraSmall) && ($iconSize === IconSize::Small),
-        '-m-1' => ($size === ActionSize::ExtraSmall) && ($iconSize === IconSize::Medium),
-        '-m-0.5' => ($size === ActionSize::ExtraSmall) && ($iconSize === IconSize::Large),
-        '-m-2' => ($size === ActionSize::Small) && ($iconSize === IconSize::Small),
-        '-m-1.5' => ($size === ActionSize::Small) && ($iconSize === IconSize::Medium),
-        '-m-1' => ($size === ActionSize::Small) && ($iconSize === IconSize::Large),
-        '-m-2.5' => ($size === ActionSize::Medium) && ($iconSize === IconSize::Small),
-        '-m-2' => ($size === ActionSize::Medium) && ($iconSize === IconSize::Medium),
-        '-m-1.5' => ($size === ActionSize::Medium) && ($iconSize === IconSize::Large),
-        '-m-3' => ($size === ActionSize::Large) && ($iconSize === IconSize::Small),
-        '-m-2.5' => ($size === ActionSize::Large) && ($iconSize === IconSize::Medium),
-        '-m-2' => ($size === ActionSize::Large) && ($iconSize === IconSize::Large),
-        '-m-3.5' => ($size === ActionSize::ExtraLarge) && ($iconSize === IconSize::Small),
-        '-m-3' => ($size === ActionSize::ExtraLarge) && ($iconSize === IconSize::Medium),
-        '-m-2.5' => ($size === ActionSize::ExtraLarge) && ($iconSize === IconSize::Large),
         match ($color) {
             'gray' => 'fi-color-gray text-gray-400 hover:text-gray-500 focus-visible:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus-visible:ring-primary-500',
             default => 'fi-color-custom text-custom-500 hover:text-custom-600 focus-visible:ring-custom-600 dark:text-custom-400 dark:hover:text-custom-300 dark:focus-visible:ring-custom-500',
