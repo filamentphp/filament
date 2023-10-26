@@ -91,7 +91,9 @@ trait InteractsWithActions
             return null;
         } catch (Cancel $exception) {
         } catch (ValidationException $exception) {
-            $this->unmountAction();
+            if (! $this->mountedActionShouldOpenModal()) {
+                $this->unmountAction();
+            }
 
             throw $exception;
         }
