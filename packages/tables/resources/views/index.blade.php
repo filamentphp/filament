@@ -211,7 +211,7 @@
                     {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.grouping-selector.after', scopes: static::class) }}
                 </div>
 
-                @if ($isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown)
+                @if ($isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown)
                     <div class="ms-auto flex items-center gap-x-4">
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.before', scopes: static::class) }}
 
