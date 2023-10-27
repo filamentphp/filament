@@ -8,8 +8,8 @@ use Illuminate\Console\Command;
 
 class MakePanelCommand extends Command
 {
-    use CanManipulateFiles;
     use CanGeneratePanels;
+    use CanManipulateFiles;
 
     protected $description = 'Create a new Filament panel';
 

@@ -24,7 +24,7 @@ use Livewire\Component;
 
 use function Filament\authorize;
 
-class RelationManager extends Component implements Actions\Contracts\HasActions, Infolists\Contracts\HasInfolists, Forms\Contracts\HasForms, Tables\Contracts\HasTable
+class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
 {
     use Actions\Concerns\InteractsWithActions;
     use Forms\Concerns\InteractsWithForms;

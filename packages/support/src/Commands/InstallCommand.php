@@ -13,8 +13,8 @@ use function Laravel\Prompts\confirm;
 
 class InstallCommand extends Command
 {
-    use CanManipulateFiles;
     use CanGeneratePanels;
+    use CanManipulateFiles;
 
     protected $signature = 'filament:install {--scaffold} {--actions} {--forms} {--infolists} {--notifications} {--panels} {--tables} {--widgets} {--F|force}';
 
