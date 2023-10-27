@@ -15,6 +15,12 @@
         $statePath = $getStatePath();
         $isDisabled = $isDisabled();
         $hasImageEditor = $hasImageEditor();
+
+        $alignment = $getAlignment() ?? Alignment::Start;
+
+        if (! $alignment instanceof Alignment) {
+            $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+        }
     @endphp
 
     <div
@@ -91,12 +97,13 @@
                 ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class([
                     'fi-fo-file-upload flex',
-                    match ($getAlignment()) {
-                        Alignment::Center, 'center' => 'justify-center',
-                        Alignment::End, 'end' => 'justify-end',
-                        Alignment::Left, 'left' => 'justify-left',
-                        Alignment::Right, 'right' => 'justify-right',
-                        Alignment::Start, 'start', null => 'justify-start',
+                    match ($alignment) {
+                        Alignment::Start => 'justify-start',
+                        Alignment::Center => 'justify-center',
+                        Alignment::End => 'justify-end',
+                        Alignment::Left => 'justify-left',
+                        Alignment::Right => 'justify-right',
+                        default => $alignment,
                     },
                 ])
         }}

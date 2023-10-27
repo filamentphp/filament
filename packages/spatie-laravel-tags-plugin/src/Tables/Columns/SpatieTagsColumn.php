@@ -43,7 +43,8 @@ class SpatieTagsColumn extends TagsColumn
         $type = $this->getType();
 
         if ($this->isAnyTagTypeAllowed()) {
-            $tags = $record->tags();
+            /** @phpstan-ignore-next-line */
+            $tags = $record->tags;
         } else {
             $tags = $record->tagsWithType($type);
         }

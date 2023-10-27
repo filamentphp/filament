@@ -2,19 +2,19 @@
 
 namespace Filament\Support\Enums;
 
-enum Alignment
+enum Alignment: string
 {
-    case Start;
+    case Start = 'start';
 
-    case Left;
+    case Left = 'left';
 
-    case Center;
+    case Center = 'center';
 
-    case End;
+    case End = 'end';
 
-    case Right;
+    case Right = 'right';
 
-    case Justify;
+    case Justify = 'justify';
 
-    case Between;
+    case Between = 'between';
 }
