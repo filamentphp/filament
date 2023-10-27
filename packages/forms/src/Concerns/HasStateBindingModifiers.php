@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Concerns;
 
-use Closure;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Str;
 
@@ -12,24 +11,20 @@ trait HasStateBindingModifiers
 
     protected string | int | null $debounce = null;
 
-    public function reactive(bool | Closure $condition = true): static
+    public function reactive(bool $condition = true): static
     {
-        if ($condition === false) {
-            return $this;
+        if ($condition) {
+            $this->stateBindingModifiers([]);
         }
-
-        $this->stateBindingModifiers([]);
 
         return $this;
     }
 
-    public function lazy(bool | Closure $condition = true): static
+    public function lazy(bool $condition = true): static
     {
-        if ($condition === false) {
-            return $this;
+        if ($condition) {
+            $this->stateBindingModifiers(['lazy']);
         }
-
-        $this->stateBindingModifiers(['lazy']);
 
         return $this;
     }
