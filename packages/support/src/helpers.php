@@ -5,6 +5,8 @@ namespace Filament\Support;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
@@ -143,5 +145,60 @@ if (! function_exists('Filament\Support\generate_href_html')) {
         }
 
         return new HtmlString($html);
+    }
+}
+
+if (! function_exists('Filament\Support\generate_search_column_expression')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string | Expression
+    {
+        $driverName = $databaseConnection->getDriverName();
+
+        $column = match ($driverName) {
+            'pgsql' => "{$column}::text",
+            default => $column,
+        };
+
+        $isSearchForcedCaseInsensitive ??= match ($driverName) {
+            'pgsql' => true,
+            default => false,
+        };
+
+        if ($isSearchForcedCaseInsensitive) {
+            $column = "lower({$column})";
+        }
+
+        $collation = $databaseConnection->getConfig('search_collation');
+
+        if (filled($collation)) {
+            $column = "{$column} collate {$collation}";
+        }
+
+        if ($isSearchForcedCaseInsensitive || filled($collation)) {
+            return new Expression($column);
+        }
+
+        return $column;
+    }
+}
+
+if (! function_exists('Filament\Support\generate_search_term_expression')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function generate_search_term_expression(string $search, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string
+    {
+        $isSearchForcedCaseInsensitive ??= match ($databaseConnection->getDriverName()) {
+            'pgsql' => true,
+            default => false,
+        };
+
+        if (! $isSearchForcedCaseInsensitive) {
+            return $search;
+        }
+
+        return Str::lower($search);
     }
 }
