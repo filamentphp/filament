@@ -6,6 +6,7 @@
     {{
         $attributes->class([
             'fi-topbar sticky top-0 z-20 overflow-x-clip',
+            'fi-topbar-with-navigation' => filament()->hasTopNavigation(),
         ])
     }}
 >
