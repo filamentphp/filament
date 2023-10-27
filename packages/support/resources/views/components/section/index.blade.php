@@ -31,27 +31,29 @@
     @if ($collapsible)
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:expand-concealing-component.window="
-            error = $el.querySelector('[data-validation-error]')
+            $nextTick(() => {
+                error = $el.querySelector('[data-validation-error]')
 
-            if (! error) {
-                return
-            }
+                if (! error) {
+                    return
+                }
 
-            isCollapsed = false
+                isCollapsed = false
 
-            if (document.body.querySelector('[data-validation-error]') !== error) {
-                return
-            }
+                if (document.body.querySelector('[data-validation-error]') !== error) {
+                    return
+                }
 
-            setTimeout(
-                () =>
-                    $el.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                        inline: 'start',
-                    }),
-                200,
-            )
+                setTimeout(
+                    () =>
+                        $el.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start',
+                            inline: 'start',
+                        }),
+                    200,
+                )
+            })
         "
         x-on:open-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:toggle-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
@@ -131,7 +133,6 @@
                     icon-alias="section.collapse-button"
                     x-on:click.stop="isCollapsed = ! isCollapsed"
                     x-bind:class="{ 'rotate-180': ! isCollapsed }"
-                    class="-m-2"
                 />
             @endif
         </header>
@@ -143,7 +144,7 @@
             @if ($collapsed)
                 x-cloak
             @endif
-            x-bind:class="{ 'invisible h-0 border-none': isCollapsed }"
+            x-bind:class="{ 'invisible h-0 overflow-y-hidden border-none': isCollapsed }"
         @endif
         @class([
             'fi-section-content-ctn',

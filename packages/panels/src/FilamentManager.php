@@ -84,9 +84,14 @@ class FilamentManager
         return $this->getCurrentPanel()->getBrandName();
     }
 
-    public function getBrandLogo(): ?string
+    public function getBrandLogo(): string | Htmlable | null
     {
         return $this->getCurrentPanel()->getBrandLogo();
+    }
+
+    public function getBrandLogoHeight(): ?string
+    {
+        return $this->getCurrentPanel()->getBrandLogoHeight();
     }
 
     public function getCollapsedSidebarWidth(): string
@@ -97,6 +102,11 @@ class FilamentManager
     public function getCurrentPanel(): ?Panel
     {
         return $this->currentPanel ?? null;
+    }
+
+    public function getDarkModeBrandLogo(): string | Htmlable | null
+    {
+        return $this->getCurrentPanel()->getDarkModeBrandLogo();
     }
 
     public function getDatabaseNotificationsPollingInterval(): ?string

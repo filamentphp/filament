@@ -9,6 +9,7 @@ use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
+use Spatie\MediaLibrary\MediaCollections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
@@ -23,6 +24,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     protected bool | Closure $hasResponsiveImages = false;
 
     protected string | Closure | null $mediaName = null;
+
+    /**
+     * @var array<string, mixed> | Closure | null
+     */
+    protected array | Closure | null $customHeaders = null;
 
     /**
      * @var array<string, mixed> | Closure | null
@@ -83,9 +89,12 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $url = null;
 
             if ($component->getVisibility() === 'private') {
+                $conversion = $component->getConversion();
+
                 try {
                     $url = $media?->getTemporaryUrl(
                         now()->addMinutes(5),
+                        (filled($conversion) && $media->hasGeneratedConversion($conversion)) ? $conversion : '',
                     );
                 } catch (Throwable $exception) {
                     // This driver does not support creating temporary URLs.
@@ -130,6 +139,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $filename = $component->getUploadedFileNameForStorage($file);
 
             $media = $mediaAdder
+                ->addCustomHeaders($component->getCustomHeaders())
                 ->usingFileName($filename)
                 ->usingName($component->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                 ->storingConversionsOnDisk($component->getConversionsDisk() ?? '')
@@ -175,6 +185,16 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     public function conversionsDisk(string | Closure | null $disk): static
     {
         $this->conversionsDisk = $disk;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, mixed> | Closure | null  $headers
+     */
+    public function customHeaders(array | Closure | null $headers): static
+    {
+        $this->customHeaders = $headers;
 
         return $this;
     }
@@ -227,6 +247,25 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             ->each(fn (Media $media) => $media->delete());
     }
 
+    public function getDiskName(): string
+    {
+        if ($diskName = $this->evaluate($this->diskName)) {
+            return $diskName;
+        }
+
+        /** @var Model&HasMedia $model */
+        $model = $this->getModelInstance();
+
+        /** @phpstan-ignore-next-line */
+        $diskNameFromRegisteredConversions = $model
+            ->getRegisteredMediaCollections()
+            ->filter(fn (MediaCollection $collection): bool => $collection->name === $this->getCollection())
+            ->first()
+            ?->diskName;
+
+        return $diskNameFromRegisteredConversions ?? config('filament.default_filesystem_disk');
+    }
+
     public function getCollection(): string
     {
         return $this->evaluate($this->collection) ?? 'default';
@@ -240,6 +279,14 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     public function getConversionsDisk(): ?string
     {
         return $this->evaluate($this->conversionsDisk);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getCustomHeaders(): array
+    {
+        return $this->evaluate($this->customHeaders) ?? [];
     }
 
     /**

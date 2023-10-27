@@ -29,14 +29,15 @@
         </div>
     </div>
 
-    <x-filament::icon-button
-        color="gray"
-        icon="heroicon-m-x-mark"
-        icon-alias="tables::filters.remove-all-button"
-        size="sm"
-        :tooltip="__('filament-tables::table.filters.actions.remove_all.tooltip')"
-        wire:click="removeTableFilters"
-        wire:target="removeTableFilters,removeTableFilter"
-        class="-mx-1.5 -my-1"
-    />
+    <div class="mt-0.5">
+        <x-filament::icon-button
+            color="gray"
+            icon="heroicon-m-x-mark"
+            icon-alias="tables::filters.remove-all-button"
+            size="sm"
+            :tooltip="__('filament-tables::table.filters.actions.remove_all.tooltip')"
+            wire:click="removeTableFilters"
+            wire:target="removeTableFilters,removeTableFilter"
+        />
+    </div>
 </div>

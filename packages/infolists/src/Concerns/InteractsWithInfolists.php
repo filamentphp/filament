@@ -13,6 +13,7 @@ use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Validation\ValidationException;
 
 use function Livewire\store;
 
@@ -120,14 +121,23 @@ trait InteractsWithInfolists
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-        }
+        } catch (ValidationException $exception) {
+            if (! $this->mountedInfolistActionShouldOpenModal()) {
+                $action->resetArguments();
+                $action->resetFormData();
 
-        $action->resetArguments();
-        $action->resetFormData();
+                $this->unmountInfolistAction();
+            }
+
+            throw $exception;
+        }
 
         if (store($this)->has('redirect')) {
             return $result;
         }
+
+        $action->resetArguments();
+        $action->resetFormData();
 
         $this->unmountInfolistAction();
 

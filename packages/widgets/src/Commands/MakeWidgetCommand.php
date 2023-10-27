@@ -40,6 +40,16 @@ class MakeWidgetCommand extends Command
         $resource = null;
         $resourceClass = null;
 
+        $type = match (true) {
+            $this->option('chart') => 'Chart',
+            $this->option('stats-overview') => 'Stats overview',
+            $this->option('table') => 'Table',
+            default => select(
+                label: 'What type of widget do you want to create?',
+                options: ['Chart', 'Stats overview', 'Table', 'Custom'],
+            ),
+        };
+
         if (class_exists(Resource::class)) {
             $resourceInput = $this->option('resource') ?? text(
                 label: 'Would you like to create the widget inside a resource?',
@@ -74,6 +84,7 @@ class MakeWidgetCommand extends Command
 
             if (! $panel) {
                 $panels = Filament::getPanels();
+                $namespace = config('livewire.class_namespace');
 
                 /** @var ?Panel $panel */
                 $panel = $panels[select(
@@ -83,8 +94,8 @@ class MakeWidgetCommand extends Command
                             fn (Panel $panel): string => "The [{$panel->getId()}] panel",
                             $panels,
                         ),
-                        '' => '[App\\Livewire] alongside other Livewire components',
-                    ]),
+                        $namespace => "[{$namespace}] alongside other Livewire components",
+                    ])
                 )] ?? null;
             }
         }
@@ -95,8 +106,8 @@ class MakeWidgetCommand extends Command
         $resourceNamespace = null;
 
         if (! $panel) {
-            $path = app_path('Livewire/');
-            $namespace = 'App\\Livewire';
+            $namespace = config('livewire.class_namespace');
+            $path = app_path((string) str($namespace)->after('App\\')->replace('\\', '/'));
         } elseif ($resource === null) {
             $widgetDirectories = $panel->getWidgetDirectories();
             $widgetNamespaces = $panel->getWidgetNamespaces();
@@ -155,8 +166,8 @@ class MakeWidgetCommand extends Command
             return static::INVALID;
         }
 
-        if ($this->option('chart')) {
-            $chart = select(
+        if ($type === 'Chart') {
+            $chartType = select(
                 label: 'Which type of chart would you like to create?',
                 options: [
                     'Bar chart',
@@ -173,7 +184,7 @@ class MakeWidgetCommand extends Command
             $this->copyStubToApp('ChartWidget', $path, [
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "{$resourceNamespace}\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : $namespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
-                'type' => match ($chart) {
+                'type' => match ($chartType) {
                     'Bar chart' => 'bar',
                     'Bubble chart' => 'bubble',
                     'Doughnut chart' => 'doughnut',
@@ -184,13 +195,13 @@ class MakeWidgetCommand extends Command
                     default => 'line',
                 },
             ]);
-        } elseif ($this->option('table')) {
-            $this->copyStubToApp('TableWidget', $path, [
+        } elseif ($type === 'Stats overview') {
+            $this->copyStubToApp('StatsOverviewWidget', $path, [
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "{$resourceNamespace}\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : $namespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
             ]);
-        } elseif ($this->option('stats-overview')) {
-            $this->copyStubToApp('StatsOverviewWidget', $path, [
+        } elseif ($type === 'Table') {
+            $this->copyStubToApp('TableWidget', $path, [
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "{$resourceNamespace}\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : $namespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
             ]);
@@ -204,7 +215,7 @@ class MakeWidgetCommand extends Command
             $this->copyStubToApp('WidgetView', $viewPath);
         }
 
-        $this->components->info("Successfully created {$widget}!");
+        $this->components->info("Filament widget [{$path}] created successfully.");
 
         if ($resource !== null) {
             $this->components->info("Make sure to register the widget in `{$resourceClass}::getWidgets()`, and then again in `getHeaderWidgets()` or `getFooterWidgets()` of any `{$resourceClass}` page.");

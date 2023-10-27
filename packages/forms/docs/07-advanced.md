@@ -39,7 +39,7 @@ TextInput::make('username')
 
 ### Debouncing reactive fields
 
-You may with to find a middle ground between `live()` and `live(onBlur: true)`, using "debouncing". Debouncing will prevent a network request from being sent until a user has finished typing for a certain period of time. You can do this using the `live(debounce: 500)` method:
+You may wish to find a middle ground between `live()` and `live(onBlur: true)`, using "debouncing". Debouncing will prevent a network request from being sent until a user has finished typing for a certain period of time. You can do this using the `live(debounce: 500)` method:
 
 ```php
 use Filament\Forms\Components\TextInput;

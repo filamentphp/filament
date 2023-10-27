@@ -106,7 +106,10 @@
                                     x-data="{}"
                                     x-on:click="
                                         window.navigator.clipboard.writeText(@js($copyableState))
-                                        $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
+                                        $tooltip(@js($copyMessage), {
+                                            theme: $store.theme,
+                                            timeout: @js($copyMessageDuration),
+                                        })
                                     "
                                     class="cursor-pointer max-w-max"
                                 @endif
@@ -123,7 +126,7 @@
                                     <div
                                         @class([
                                             'fi-in-text-item inline-flex items-center gap-1.5',
-                                            'transition duration-75 hover:underline focus:underline' => $url,
+                                            'transition duration-75 hover:underline focus-visible:underline' => $url,
                                             match ($size) {
                                                 TextEntrySize::ExtraSmall, 'xs' => 'text-xs',
                                                 TextEntrySize::Small, 'sm', null => 'text-sm leading-6',

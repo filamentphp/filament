@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => '外す対象を選択',
+        'label' => '選択中を外す',
 
         'modal' => [
 
-            'heading' => '選択した:labelを外す',
+            'heading' => '選択中の:labelを外す',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => '選択を外す',
+                    'label' => '外す',
                 ],
 
             ],

@@ -45,7 +45,9 @@ class Css extends Asset
 
     public function getRelativePublicPath(): string
     {
-        return "css/{$this->getPackage()}/{$this->getId()}.css";
+        $path = config('filament.assets_path', '');
+
+        return ltrim("{$path}/css/{$this->getPackage()}/{$this->getId()}.css", '/');
     }
 
     public function getPublicPath(): string

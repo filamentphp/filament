@@ -57,7 +57,7 @@ class MakeSettingsPageCommand extends Command
             'settingsClass' => $settingsClass,
         ]);
 
-        $this->components->info("Successfully created {$page}!");
+        $this->components->info("Filament settings page [{$path}] created successfully.");
 
         return static::SUCCESS;
     }

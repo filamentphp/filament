@@ -40,6 +40,13 @@ class ActionsDemo extends Component implements HasActions, HasForms
             ->iconButton();
     }
 
+    public function badgeAction(): Action
+    {
+        return Action::make('badge')
+            ->label('Edit')
+            ->badge();
+    }
+
     public function dangerAction(): Action
     {
         return Action::make('danger')
@@ -69,17 +76,17 @@ class ActionsDemo extends Component implements HasActions, HasForms
             ->iconPosition(IconPosition::After);
     }
 
-    public function badgeAction(): Action
+    public function badgedAction(): Action
     {
-        return Action::make('badge')
+        return Action::make('badged')
             ->iconButton()
             ->icon('heroicon-m-funnel')
             ->badge(5);
     }
 
-    public function successBadgeAction(): Action
+    public function successBadgedAction(): Action
     {
-        return Action::make('successBadge')
+        return Action::make('successBadged')
             ->iconButton()
             ->icon('heroicon-m-funnel')
             ->badge(5)

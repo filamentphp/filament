@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Columns\IconColumn\IconColumnSize;
 use Illuminate\Contracts\Support\Arrayable;
 
@@ -187,7 +188,9 @@ class IconColumn extends Column
 
     public function getFalseIcon(): string
     {
-        return $this->evaluate($this->falseIcon) ?? 'heroicon-o-x-circle';
+        return $this->evaluate($this->falseIcon)
+            ?? FilamentIcon::resolve('tables::columns.icon-column.false')
+            ?? 'heroicon-o-x-circle';
     }
 
     /**
@@ -200,7 +203,9 @@ class IconColumn extends Column
 
     public function getTrueIcon(): string
     {
-        return $this->evaluate($this->trueIcon) ?? 'heroicon-o-check-circle';
+        return $this->evaluate($this->trueIcon)
+            ?? FilamentIcon::resolve('tables::columns.icon-column.true')
+            ?? 'heroicon-o-check-circle';
     }
 
     public function isBoolean(): bool

@@ -32,6 +32,32 @@ class User extends Authenticatable implements FilamentUser
 
 The `canAccessPanel()` method returns `true` or `false` depending on whether the user is allowed to access the `$panel`. In this example, we check if the user's email ends with `@yourdomain.com` and if they have verified their email address.
 
+Since you have access to the current `$panel`, you can write conditional checks for separate panels. For example, only restricting access to the admin panel while allowing all users to access the other panels of your app:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable implements FilamentUser
+{
+    // ...
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        if ($panel->getId() === 'admin') {
+            return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail()
+        }
+
+        return true;
+    }
+}
+```
+
 ## Setting up user avatars
 
 Out of the box, Filament uses [ui-avatars.com](https://ui-avatars.com) to generate avatars based on a user's name. However, if you user model has an `avatar_url` attribute, that will be used instead. To customize how Filament gets a user's avatar URL, you can implement the `HasAvatar` contract:

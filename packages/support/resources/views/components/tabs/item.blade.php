@@ -17,14 +17,18 @@
 ])
 
 @php
+    if (! $iconPosition instanceof IconPosition) {
+        $iconPosition = $iconPosition ? IconPosition::tryFrom($iconPosition) : null;
+    }
+
     $hasAlpineActiveClasses = filled($alpineActive);
 
-    $inactiveItemClasses = 'hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5';
+    $inactiveItemClasses = 'hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5';
 
     // @deprecated `fi-tabs-item-active` has been replaced by `fi-active`.
     $activeItemClasses = 'fi-active fi-tabs-item-active bg-gray-50 dark:bg-white/5';
 
-    $inactiveLabelClasses = 'text-gray-500 group-hover:text-gray-700 group-focus:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 dark:group-focus:text-gray-200';
+    $inactiveLabelClasses = 'text-gray-500 group-hover:text-gray-700 group-focus-visible:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 dark:group-focus-visible:text-gray-200';
 
     $activeLabelClasses = 'text-primary-600 dark:text-primary-400';
 
@@ -60,7 +64,7 @@
             ])
     }}
 >
-    @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
+    @if ($icon && $iconPosition === IconPosition::Before)
         <x-filament::icon
             :icon="$icon"
             :x-bind:class="$hasAlpineActiveClasses ? '{ ' . \Illuminate\Support\Js::from($inactiveIconClasses) . ': ! (' . $alpineActive . '), ' . \Illuminate\Support\Js::from($activeIconClasses) . ': ' . $alpineActive . ' }' : null"
@@ -88,7 +92,7 @@
         {{ $slot }}
     </span>
 
-    @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+    @if ($icon && $iconPosition === IconPosition::After)
         <x-filament::icon
             :icon="$icon"
             :x-bind:class="$hasAlpineActiveClasses ? '{ ' . \Illuminate\Support\Js::from($inactiveIconClasses) . ': ! (' . $alpineActive . '), ' . \Illuminate\Support\Js::from($activeIconClasses) . ': ' . $alpineActive . ' }' : null"

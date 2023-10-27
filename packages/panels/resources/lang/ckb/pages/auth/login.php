@@ -10,7 +10,7 @@ return [
 
         'register' => [
             'before' => 'یان',
-            'label' => 'دروسکردنی هەژماری نوێ',
+            'label' => 'دروستکردنی هەژماری نوێ',
         ],
 
         'request_password_reset' => [

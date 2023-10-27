@@ -70,9 +70,10 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 - `panels::global-search.field` - Global search field
 - `panels::pages.dashboard.navigation-item` - Dashboard navigation item
-- `panels::pages.tenancy.register-tenant.open-tenant-button` - Button to open a tenant from the tenant registration page
 - `panels::sidebar.collapse-button` - Button to collapse the sidebar
+- `panels::sidebar.collapse-button.rtl` - Button to collapse the sidebar (right-to-left direction)
 - `panels::sidebar.expand-button` - Button to expand the sidebar
+- `panels::sidebar.expand-button.rtl` - Button to expand the sidebar (right-to-left direction)
 - `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
 - `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
 - `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
@@ -80,6 +81,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
 - `panels::topbar.close-sidebar-button` - Button to close the sidebar
 - `panels::topbar.open-sidebar-button` - Button to open the sidebar
+- `panels::topbar.group.toggle-button` - Toggle button for a topbar group
 - `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
 - `panels::user-menu.profile-item` - Profile item in the user menu
 - `panels::user-menu.logout-button` - Button in the user menu to log out
@@ -94,7 +96,10 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 ### Table Builder icon aliases
 
-- `tables::columns.collapse-button`
+- `tables::columns.collapse-button` - Button to collapse a column
+- `tables::columns.icon-column.false` - Falsy state of an icon column
+- `tables::columns.icon-column.true` - Truthy state of an icon column
+- `tables::empty-state` - Empty state icon
 - `tables::filters.remove-all-button` - Button to remove all filters
 - `tables::grouping.collapse-button` - Button to collapse a group of records
 - `tables::header-cell.sort-asc-button` - Sort button of a column sorted in ascending order
@@ -107,11 +112,37 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `notifications::database.modal.empty-state` - Empty state of the database notifications modal
 - `notifications::notification.close-button` - Button to close a notification
 
+### Actions icon aliases
+
+- `actions::delete-action` - Trigger button of a delete action
+- `actions::delete-action.grouped` - Trigger button of a grouped delete action
+- `actions::delete-action.modal` - Modal of a delete action
+- `actions::detach-action` - Trigger button of a detach action
+- `actions::detach-action.modal` - Modal of a detach action
+- `actions::dissociate-action` - Trigger button of a dissociate action
+- `actions::dissociate-action.modal` - Modal of a dissociate action
+- `actions::force-delete-action` - Trigger button of a force delete action
+- `actions::force-delete-action.grouped` - Trigger button of a grouped force delete action
+- `actions::force-delete-action.modal` - Modal of a force delete action
+- `actions::replicate-action` - Trigger button of a replicate action
+- `actions::replicate-action.grouped` - Trigger button of a grouped replicate action
+- `actions::restore-action` - Trigger button of a restore action
+- `actions::restore-action.grouped` - Trigger button of a grouped restore action
+- `actions::restore-action.modal` - Modal of a restore action
+
+### Infolist Builder icon aliases
+
+- `infolists::components.icon-entry.false` - Falsy state of an icon entry
+- `infolists::components.icon-entry.true` - Truthy state of an icon entry
+
 ### UI components icon aliases
 
 - `badge.delete-button` - Button to delete a badge
 - `breadcrumbs.separator` - Separator between breadcrumbs
+- `breadcrumbs.separator.rtl` - Separator between breadcrumbs (right-to-left direction)
 - `modal.close-button` - Button to close a modal
 - `pagination.previous-button` - Button to go to the previous page
+- `pagination.previous-button` - Button to go to the previous page (right-to-left direction)
 - `pagination.next-button` - Button to go to the next page
+- `pagination.next-button.rtl` - Button to go to the next page (right-to-left direction)
 - `section.collapse-button` - Button to collapse a section

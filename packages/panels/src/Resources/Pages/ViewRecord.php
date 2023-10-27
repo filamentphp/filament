@@ -212,12 +212,15 @@ class ViewRecord extends Page
 
     public function infolist(Infolist $infolist): Infolist
     {
-        return static::getResource()::infolist(
-            $infolist
-                ->record($this->getRecord())
-                ->columns($this->hasInlineLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineLabels()),
-        );
+        return static::getResource()::infolist($infolist);
+    }
+
+    protected function makeInfolist(): Infolist
+    {
+        return parent::makeInfolist()
+            ->record($this->getRecord())
+            ->columns($this->hasInlineLabels() ? 1 : 2)
+            ->inlineLabel($this->hasInlineLabels());
     }
 
     protected function getMountedActionFormModel(): Model
