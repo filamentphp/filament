@@ -57,7 +57,10 @@ class MorphToSelect extends Component
                 ))
                 ->required($isRequired)
                 ->reactive()
-                ->afterStateUpdated(fn (Closure $set) => $set($keyColumn, null)),
+                ->afterStateUpdated(function (Closure $set) use ($keyColumn) {
+                    $set($keyColumn, null);
+                    $this->callAfterStateUpdated();
+                }),
             Select::make($keyColumn)
                 ->label($selectedType?->getLabel())
                 ->disableLabel()
@@ -74,7 +77,11 @@ class MorphToSelect extends Component
                 ->loadingMessage($this->getLoadingMessage())
                 ->allowHtml($this->isHtmlAllowed())
                 ->optionsLimit($this->getOptionsLimit())
-                ->preload($this->isPreloaded()),
+                ->preload($this->isPreloaded())
+                ->reactive($this->isReactive())
+                ->afterStateUpdated(function () {
+                    $this->callAfterStateUpdated();
+                }),
         ];
     }
 

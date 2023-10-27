@@ -11,16 +11,20 @@ trait HasStateBindingModifiers
 
     protected string | int | null $debounce = null;
 
-    public function reactive(): static
+    public function reactive(bool $condition = true): static
     {
-        $this->stateBindingModifiers([]);
+        if ($condition) {
+            $this->stateBindingModifiers([]);
+        }
 
         return $this;
     }
 
-    public function lazy(): static
+    public function lazy(bool $condition = true): static
     {
-        $this->stateBindingModifiers(['lazy']);
+        if ($condition) {
+            $this->stateBindingModifiers(['lazy']);
+        }
 
         return $this;
     }
