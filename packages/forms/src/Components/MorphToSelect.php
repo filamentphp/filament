@@ -68,7 +68,7 @@ class MorphToSelect extends Component
                 ))
                 ->required($isRequired)
                 ->live()
-                ->afterStateUpdated(function (Closure $set) use ($keyColumn) {
+                ->afterStateUpdated(function (Set $set) use ($keyColumn) {
                     $set($keyColumn, null);
                     $this->callAfterStateUpdated();
                 }),
