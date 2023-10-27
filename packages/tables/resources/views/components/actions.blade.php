@@ -43,25 +43,6 @@
     }}
 >
     @foreach ($actions as $action)
-        @php
-            $labeledFromBreakpoint = $action->getLabeledFromBreakpoint();
-        @endphp
-
-        <span
-            @class([
-                'inline-flex',
-                '-mx-2' => $action->isIconButton() || $labeledFromBreakpoint,
-                match ($labeledFromBreakpoint) {
-                    'sm' => 'sm:mx-0',
-                    'md' => 'md:mx-0',
-                    'lg' => 'lg:mx-0',
-                    'xl' => 'xl:mx-0',
-                    '2xl' => '2xl:mx-0',
-                    default => null,
-                },
-            ])
-        >
-            {{ $action }}
-        </span>
+        {{ $action }}
     @endforeach
 </div>
