@@ -82,6 +82,8 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
     protected static ?string $badge = null;
 
+    protected static bool $isLazy = true;
+
     public function mount(): void
     {
         $this->loadDefaultActiveTab();
@@ -503,5 +505,24 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
                 $this->getTableRecordUrlUsing(),
                 fn (Table $table, ?Closure $using) => $table->recordUrl($using),
             );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getDefaultProperties(): array
+    {
+        $properties = [];
+
+        if (static::isLazy()) {
+            $properties['lazy'] = true;
+        }
+
+        return $properties;
+    }
+
+    public static function isLazy(): bool
+    {
+        return static::$isLazy;
     }
 }
