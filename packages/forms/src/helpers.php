@@ -60,20 +60,4 @@ if (! function_exists('Filament\Forms\array_move_before')) {
 
         return $newArray;
     }
-
-
-    if (! function_exists('Filament\Forms\evaluate_search_attribute_string')) {
-        /**
-         * @param  string $searchAttribute
-         * @param  \Illuminate\Database\Connection $databaseConnection
-         * @return string
-         */
-        function evaluate_search_attribute_string(string $searchAttribute, $databaseConnection): string
-        {
-            return match ($databaseConnection->getDriverName()) {
-                'pgsql' => "{$searchAttribute}::text",
-                default => $searchAttribute,
-            };
-        }
-    }
 }
