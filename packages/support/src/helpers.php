@@ -166,11 +166,21 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
             default => false,
         };
 
-        if (! $isSearchForcedCaseInsensitive) {
-            return $column;
+        if ($isSearchForcedCaseInsensitive) {
+            $column = "lower({$column})";
         }
 
-        return new Expression("lower({$column})");
+        $collation = $databaseConnection->getConfig('search_collation');
+
+        if (filled($collation)) {
+            $column = "{$column} collate {$collation}";
+        }
+
+        if ($isSearchForcedCaseInsensitive || filled($collation)) {
+            return new Expression($column);
+        }
+
+        return $column;
     }
 }
 
