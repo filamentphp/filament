@@ -92,10 +92,17 @@ trait InteractsWithActions
         } catch (Cancel $exception) {
         } catch (ValidationException $exception) {
             if (! $this->mountedActionShouldOpenModal()) {
+                $action->resetArguments();
+                $action->resetFormData();
+
                 $this->unmountAction();
             }
 
             throw $exception;
+        }
+
+        if (store($this)->has('redirect')) {
+            return $result;
         }
 
         $action->resetArguments();
@@ -107,10 +114,6 @@ trait InteractsWithActions
             $action->clearRecordAfter();
 
             return null;
-        }
-
-        if (store($this)->has('redirect')) {
-            return $result;
         }
 
         $this->unmountAction();
