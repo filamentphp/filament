@@ -30,8 +30,8 @@ it('can extract the search into words using whitespace', function () {
     $this->assertSame(['phrase one', 'test', 'number 2'],
         $trait->extractTableSearchWords('"phrase one"   test  "number   2"'));
 
-    // an empty search string should return array containing empty string ['']
-    $this->assertSame([''], $trait->extractTableSearchWords(''));
+    // an empty search string should return an empty array
+    $this->assertSame([], $trait->extractTableSearchWords(''));
 });
 
 it('can trim the search query', function () {
