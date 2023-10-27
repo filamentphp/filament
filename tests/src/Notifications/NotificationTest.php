@@ -8,6 +8,7 @@ use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
+use Filament\Tests\Notifications\Fixtures\CustomNotification;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -220,4 +221,42 @@ it('can dispatch an event to a component', function () {
 
     $notification = Notification::make()->actions([$action])->send();
     expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', JSON.parse('[\\u0022data\\u0022]'))");
+});
+
+it('can bind custom notification object', function () {
+    app()->bind(Notification::class, CustomNotification::class);
+
+    $notification = Notification::make();
+
+    expect($notification)
+        ->toBeInstanceOf(CustomNotification::class);
+});
+
+it('can resolve custom notification object from data', function () {
+    app()->bind(Notification::class, CustomNotification::class);
+
+    Notification::make()
+        ->size($size = 'lg')
+        ->body($body = Str::random())
+        ->title($title = Str::random())
+        ->send();
+
+    $notifications = session()->get('filament.notifications');
+
+    expect($notifications)
+        ->toBeArray()
+        ->toHaveCount(1);
+
+    $notification = Arr::last($notifications);
+
+    $component = livewire(Notifications::class);
+
+    $component
+        ->dispatch('notificationsSent');
+
+    $notification = $component->instance()->notifications->first();
+
+    expect($notification)
+        ->toBeInstanceOf(CustomNotification::class)
+        ->getSize()->toBe($size);
 });
