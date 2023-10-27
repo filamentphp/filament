@@ -70,7 +70,7 @@ namespace App\Notifications;
 
 use Filament\Notifications\Notification as BaseNotification;
 
-class CustomNotification extends BaseNotification
+class Notification extends BaseNotification
 {
     protected string $size = 'md';
 
@@ -104,10 +104,10 @@ class CustomNotification extends BaseNotification
 Next, you should bind your custom `Notification` class into the container inside a service provider's `boot()` method:
 
 ```php
-use App\Notifications\CustomNotification;
+use App\Notifications\Notification;
 use Filament\Notifications\Notification as BaseNotification;
 
-$this->app->bind(BaseNotification::class, CustomNotification::class);
+$this->app->bind(BaseNotification::class, Notification::class);
 ```
 
 You can now use your custom `Notification` class in the same way as you would with the default `Notification` object.
