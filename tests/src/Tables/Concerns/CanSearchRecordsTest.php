@@ -24,11 +24,15 @@ it('can extract the search into words using whitespace', function () {
     assertCount(1, $trait->extractTableSearchWords('"phrase one"'));
     assertCount(3, $trait->extractTableSearchWords('"phrase one" test "number 2"'));
     // test word/phrase split content, *within double quotes multiple adjacent spaces are compressed to single space.
-    $this->assertSame(['test', 'phrase one'],
-        $trait->extractTableSearchWords('test   "phrase    one"'));
+    $this->assertSame(
+        ['test', 'phrase one'],
+        $trait->extractTableSearchWords('test   "phrase    one"')
+    );
 
-    $this->assertSame(['phrase one', 'test', 'number 2'],
-        $trait->extractTableSearchWords('"phrase one"   test  "number   2"'));
+    $this->assertSame(
+        ['phrase one', 'test', 'number 2'],
+        $trait->extractTableSearchWords('"phrase one"   test  "number   2"')
+    );
 
     // an empty search string should return an empty array
     $this->assertSame([], $trait->extractTableSearchWords(''));
