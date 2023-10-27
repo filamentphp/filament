@@ -775,3 +775,13 @@ class CommentsRelationManager extends RelationManager
 ```
 
 Now, you can access the `status` in the relation manager class using `$this->status`.
+
+## Disabling lazy loading
+
+By default, relation managers are lazy-loaded. This means that they will only be loaded when they are visible on the page.
+
+To disable this behavior, you may override the `$isLazy` property on the relation manager class:
+
+```php
+protected static bool $isLazy = false;
+```
