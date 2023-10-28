@@ -5,7 +5,7 @@
 @import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css';
 
 .filepond--root {
-    @apply mb-0 overflow-hidden;
+    @apply mb-0;
 }
 
 .filepond--panel-root {

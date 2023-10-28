@@ -45,6 +45,10 @@ export default function fileUploadFormComponent({
     isPreviewable,
     isReorderable,
     hasImageEditor,
+    canEditSvgs,
+    isSvgEditingConfirmed,
+    confirmSvgEditingMessage,
+    disabledSvgEditingMessage,
     loadingIndicatorPosition,
     locale,
     panelAspectRatio,
@@ -178,7 +182,7 @@ export default function fileUploadFormComponent({
                 },
                 allowImageEdit: hasImageEditor,
                 imageEditEditor: {
-                    open: (file) => this.loadEditor(file),
+                    open: (file) => this.loadEditor(),
                     onconfirm: () => {},
                     oncancel: () => this.closeEditor(),
                     onclose: () => this.closeEditor(),
@@ -456,6 +460,65 @@ export default function fileUploadFormComponent({
             this.editor = null
         },
 
+        fixImageDimensions: function (file, callback) {
+            if (file.type !== 'image/svg+xml') {
+                return callback(file)
+            }
+
+            const svgReader = new FileReader()
+
+            svgReader.onload = (event) => {
+                const svgElement = new DOMParser()
+                    .parseFromString(event.target.result, 'image/svg+xml')
+                    ?.querySelector('svg')
+
+                if (!svgElement) {
+                    return callback(file)
+                }
+
+                const viewBoxAttribute = ['viewBox', 'ViewBox', 'viewbox'].find(
+                    (attribute) => svgElement.hasAttribute(attribute),
+                )
+
+                if (!viewBoxAttribute) {
+                    return callback(file)
+                }
+
+                const viewBox = svgElement
+                    .getAttribute(viewBoxAttribute)
+                    .split(' ')
+
+                if (!viewBox || viewBox.length !== 4) {
+                    return callback(file)
+                }
+
+                svgElement.setAttribute('width', parseFloat(viewBox[2]) + 'pt')
+                svgElement.setAttribute('height', parseFloat(viewBox[3]) + 'pt')
+
+                return callback(
+                    new File(
+                        [
+                            new Blob(
+                                [
+                                    new XMLSerializer().serializeToString(
+                                        svgElement,
+                                    ),
+                                ],
+                                { type: 'image/svg+xml' },
+                            ),
+                        ],
+                        file.name,
+                        {
+                            type: 'image/svg+xml',
+                            _relativePath: '',
+                        },
+                    ),
+                )
+            }
+
+            svgReader.readAsText(file)
+        },
+
         loadEditor: function (file) {
             if (isDisabled) {
                 return
@@ -469,18 +532,40 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            this.editingFile = file
+            const isFileSvg = file.type === 'image/svg+xml'
 
-            this.initEditor()
+            if (!canEditSvgs && isFileSvg) {
+                alert(disabledSvgEditingMessage)
 
-            const reader = new FileReader()
-            reader.onload = (event) => {
-                this.isEditorOpen = true
-
-                setTimeout(() => this.editor.replace(event.target.result), 200)
+                return
             }
 
-            reader.readAsDataURL(file)
+            if (
+                isSvgEditingConfirmed &&
+                isFileSvg &&
+                !confirm(confirmSvgEditingMessage)
+            ) {
+                return
+            }
+
+            this.fixImageDimensions(file, (editingFile) => {
+                this.editingFile = editingFile
+
+                this.initEditor()
+
+                const reader = new FileReader()
+
+                reader.onload = (event) => {
+                    this.isEditorOpen = true
+
+                    setTimeout(
+                        () => this.editor.replace(event.target.result),
+                        200,
+                    )
+                }
+
+                reader.readAsDataURL(file)
+            })
         },
 
         saveEditor: function () {
@@ -521,50 +606,48 @@ export default function fileUploadFormComponent({
                             0,
                             this.editingFile.name.lastIndexOf('.'),
                         )
-                        let editingFileExtension = this.editingFile.name.slice(
-                            this.editingFile.name.lastIndexOf('.') + 1,
-                        )
+                        let editingFileExtension = this.editingFile.name
+                            .split('.')
+                            .pop()
 
-                        let editingFileNameNumber = null
+                        if (editingFileExtension === 'svg') {
+                            editingFileExtension = 'png'
+                        }
 
-                        if (editingFileName.includes('-')) {
-                            editingFileNameNumber = +editingFileName.slice(
-                                editingFileName.lastIndexOf('-') + 1,
+                        const fileNameVersionRegex = /-v(\d+)/
+
+                        if (fileNameVersionRegex.test(editingFileName)) {
+                            editingFileName = editingFileName.replace(
+                                fileNameVersionRegex,
+                                (match, number) => {
+                                    const newNumber = Number(number) + 1
+
+                                    return `-v${newNumber}`
+                                },
                             )
+                        } else {
+                            editingFileName += '-v1'
                         }
-
-                        let newEditingFileName
-
-                        if (
-                            editingFileNameNumber !== null &&
-                            !isNaN(editingFileNameNumber)
-                        ) {
-                            newEditingFileName = `${editingFileName
-                                .slice(0, editingFileName.lastIndexOf('-'))
-                                .substring(0, 64)}-${Math.floor(
-                                Math.random() * 100000,
-                            )}.${editingFileExtension}`
-                        }
-
-                        newEditingFileName ??= `${editingFileName.substring(
-                            0,
-                            64,
-                        )}-${Math.floor(
-                            Math.random() * 100000,
-                        )}.${editingFileExtension}`
 
                         this.pond
                             .addFile(
-                                new File([croppedImage], newEditingFileName, {
-                                    type:
-                                        this.editingFile.type ===
-                                        'image/svg+xml'
-                                            ? 'image/png'
-                                            : this.editingFile.type,
-                                    lastModified: new Date().getTime(),
-                                }),
+                                new File(
+                                    [croppedImage],
+                                    `${editingFileName}.${editingFileExtension}`,
+                                    {
+                                        type:
+                                            this.editingFile.type ===
+                                            'image/svg+xml'
+                                                ? 'image/png'
+                                                : this.editingFile.type,
+                                        lastModified: new Date().getTime(),
+                                    },
+                                ),
                             )
                             .then(() => {
+                                this.closeEditor()
+                            })
+                            .catch(() => {
                                 this.closeEditor()
                             })
                     })
