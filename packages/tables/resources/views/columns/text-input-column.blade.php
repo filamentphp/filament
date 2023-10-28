@@ -122,6 +122,7 @@
                                 Alignment::End => 'text-end',
                                 Alignment::Left => 'text-left',
                                 Alignment::Right => 'text-right',
+                                Alignment::Justify => null,
                                 default => $alignment,
                             },
                         ])

@@ -36,6 +36,7 @@
                 Alignment::Center => 'justify-center',
                 Alignment::Start, Alignment::Left => 'justify-start',
                 Alignment::End, Alignment::Right => 'justify-end',
+                Alignment::Justify => null,
                 'start md:end' => 'justify-start md:justify-end',
                 default => $alignment,
             },
