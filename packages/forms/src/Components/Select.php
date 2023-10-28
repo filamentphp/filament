@@ -29,12 +29,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
-    use Concerns\CanSelectPlaceholder;
     use Concerns\CanLimitItemsLength;
+    use Concerns\CanSelectPlaceholder;
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
-    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasLoadingMessage;
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;

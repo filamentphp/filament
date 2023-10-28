@@ -9,6 +9,7 @@ use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\GlobalSearch\TestCase;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Str;
+
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);

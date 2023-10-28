@@ -14,9 +14,11 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait InteractsWithTable
 {
+    use CanBeStriped;
     use CanDeferLoading;
     use CanGroupRecords;
     use CanPaginateRecords;
+    use CanPollRecords;
     use CanReorderRecords;
     use CanSearchRecords;
     use CanSortRecords;
@@ -25,15 +27,13 @@ trait InteractsWithTable
     use HasActions;
     use HasBulkActions;
     use HasColumns;
-    use HasFilters;
-    use HasRecords;
-    use CanBeStriped;
-    use CanPollRecords;
     use HasContent;
     use HasEmptyState;
+    use HasFilters;
     use HasHeader;
     use HasRecordAction;
     use HasRecordClasses;
+    use HasRecords;
     use HasRecordUrl;
 
     protected Table $table;

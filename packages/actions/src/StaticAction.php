@@ -33,8 +33,8 @@ class StaticAction extends ViewComponent
     use Concerns\HasTooltip;
     use Conditionable;
     use HasColor;
-    use HasIcon;
     use HasExtraAttributes;
+    use HasIcon;
 
     public const BUTTON_VIEW = 'filament-actions::button-action';
 

@@ -7,6 +7,7 @@ use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
+
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);

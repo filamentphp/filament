@@ -7,7 +7,7 @@ use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
 
-class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHaveNumericState, Contracts\HasAffixActions
+class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, Contracts\HasAffixActions
 {
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;

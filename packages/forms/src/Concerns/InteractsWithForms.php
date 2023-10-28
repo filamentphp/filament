@@ -15,9 +15,9 @@ use Livewire\WithFileUploads;
 
 trait InteractsWithForms
 {
-    use WithFileUploads;
     use HasFormComponentActions;
     use ResolvesDynamicLivewireProperties;
+    use WithFileUploads;
 
     /**
      * @var array <string, TemporaryUploadedFile | null>
