@@ -30,12 +30,10 @@
                         return await $wire.getFormUploadedFiles(@js($statePath))
                     },
                     hasImageEditor: @js($hasImageEditor),
-                    allowSvgEditing: @js($getAllowSvgEditing()),
-                    confirmSvgEditing: @js($getConfirmSvgEditing()),
-                    svgConfirmText:
-                        '{{ __('filament-forms::components.file_upload.editor.svg.confirm_edit') }}',
-                    svgAlertText:
-                        '{{ __('filament-forms::components.file_upload.editor.svg.disabled_alert') }}',
+                    canEditSvgs: @js($canEditSvgs()),
+                    isSvgEditingConfirmed: @js($isSvgEditingConfirmed()),
+                    confirmSvgEditingMessage: '{{ __('filament-forms::components.file_upload.editor.svg.messages.confirmation') }}',
+                    disabledSvgEditingMessage: '{{ __('filament-forms::components.file_upload.editor.svg.messages.disabled') }}',
                     imageCropAspectRatio: @js($imageCropAspectRatio),
                     imagePreviewHeight: @js($getImagePreviewHeight()),
                     imageResizeMode: @js($getImageResizeMode()),

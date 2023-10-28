@@ -53,9 +53,9 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $hasImageEditor = false;
 
-    protected bool | Closure $allowSvgEditing = true;
+    protected bool | Closure $canEditSvgs = true;
 
-    protected bool | Closure $confirmSvgEditing = false;
+    protected bool | Closure $isSvgEditingConfirmed = false;
 
     protected int | Closure | null $imageEditorViewportWidth = null;
 
@@ -296,16 +296,16 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function allowEditingSvg(bool | Closure $condition = true): static
+    public function editableSvgs(bool | Closure $condition = true): static
     {
-        $this->allowSvgEditing = $condition;
+        $this->canEditSvgs = $condition;
 
         return $this;
     }
 
-    public function confirmEditingSvg(bool | Closure $condition = true): static
+    public function confirmSvgEditing(bool | Closure $condition = true): static
     {
-        $this->confirmSvgEditing = $condition;
+        $this->isSvgEditingConfirmed = $condition;
 
         return $this;
     }
@@ -402,14 +402,14 @@ class FileUpload extends BaseFileUpload
         return (bool) $this->evaluate($this->hasImageEditor);
     }
 
-    public function getAllowSvgEditing(): bool
+    public function canEditSvgs(): bool
     {
-        return (bool) $this->evaluate($this->allowSvgEditing);
+        return (bool) $this->evaluate($this->canEditSvgs);
     }
 
-    public function getConfirmSvgEditing(): bool
+    public function isSvgEditingConfirmed(): bool
     {
-        return (bool) $this->evaluate($this->confirmSvgEditing);
+        return (bool) $this->evaluate($this->isSvgEditingConfirmed);
     }
 
     /**

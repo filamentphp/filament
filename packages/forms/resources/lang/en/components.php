@@ -188,8 +188,12 @@ return [
             ],
 
             'svg' => [
-                'confirm_edit' => 'Editing SVG files is not recommended as it removes the ability to scale without quality loss.\n Are you sure you want to continue?',
-                'disabled_alert' => 'Editing SVG files is disabled as it removes the ability to scale without quality loss.',
+
+                'messages' => [
+                    'confirmation' => 'Editing SVG files is not recommended as it can result in quality loss when scaling.\n Are you sure you want to continue?',
+                    'disabled' => 'Editing SVG files is disabled as it can result in quality loss when scaling.',
+                ],
+
             ],
 
         ],
