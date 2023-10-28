@@ -472,7 +472,7 @@ export default function fileUploadFormComponent({
                     .parseFromString(event.target.result, 'image/svg+xml')
                     ?.querySelector('svg')
 
-                if (! svgElement) {
+                if (!svgElement) {
                     return callback(file)
                 }
 
@@ -480,7 +480,7 @@ export default function fileUploadFormComponent({
                     (attribute) => svgElement.hasAttribute(attribute),
                 )
 
-                if (! viewBoxAttribute) {
+                if (!viewBoxAttribute) {
                     return callback(file)
                 }
 
@@ -488,30 +488,32 @@ export default function fileUploadFormComponent({
                     .getAttribute(viewBoxAttribute)
                     .split(' ')
 
-                if ((! viewBox) || (viewBox.length !== 4)) {
+                if (!viewBox || viewBox.length !== 4) {
                     return callback(file)
                 }
 
                 svgElement.setAttribute('width', parseFloat(viewBox[2]) + 'pt')
                 svgElement.setAttribute('height', parseFloat(viewBox[3]) + 'pt')
 
-                return callback(new File(
-                    [
-                        new Blob(
-                            [
-                                new XMLSerializer().serializeToString(
-                                    svgElement,
-                                ),
-                            ],
-                            { type: 'image/svg+xml' },
-                        ),
-                    ],
-                    file.name,
-                    {
-                        type: 'image/svg+xml',
-                        _relativePath: '',
-                    },
-                ))
+                return callback(
+                    new File(
+                        [
+                            new Blob(
+                                [
+                                    new XMLSerializer().serializeToString(
+                                        svgElement,
+                                    ),
+                                ],
+                                { type: 'image/svg+xml' },
+                            ),
+                        ],
+                        file.name,
+                        {
+                            type: 'image/svg+xml',
+                            _relativePath: '',
+                        },
+                    ),
+                )
             }
 
             svgReader.readAsText(file)
@@ -522,17 +524,17 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            if (! hasImageEditor) {
+            if (!hasImageEditor) {
                 return
             }
 
-            if (! file) {
+            if (!file) {
                 return
             }
 
             const isFileSvg = file.type === 'image/svg+xml'
 
-            if ((! canEditSvgs) && isFileSvg) {
+            if (!canEditSvgs && isFileSvg) {
                 alert(disabledSvgEditingMessage)
 
                 return
@@ -541,7 +543,7 @@ export default function fileUploadFormComponent({
             if (
                 isSvgEditingConfirmed &&
                 isFileSvg &&
-                (! confirm(confirmSvgEditingMessage))
+                !confirm(confirmSvgEditingMessage)
             ) {
                 return
             }
@@ -556,7 +558,10 @@ export default function fileUploadFormComponent({
                 reader.onload = (event) => {
                     this.isEditorOpen = true
 
-                    setTimeout(() => this.editor.replace(event.target.result), 200)
+                    setTimeout(
+                        () => this.editor.replace(event.target.result),
+                        200,
+                    )
                 }
 
                 reader.readAsDataURL(file)
@@ -597,8 +602,13 @@ export default function fileUploadFormComponent({
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
 
-                        let editingFileName = this.editingFile.name.slice(0, this.editingFile.name.lastIndexOf('.'),)
-                        let editingFileExtension = this.editingFile.name.split('.').pop()
+                        let editingFileName = this.editingFile.name.slice(
+                            0,
+                            this.editingFile.name.lastIndexOf('.'),
+                        )
+                        let editingFileExtension = this.editingFile.name
+                            .split('.')
+                            .pop()
 
                         if (editingFileExtension === 'svg') {
                             editingFileExtension = 'png'
@@ -625,9 +635,11 @@ export default function fileUploadFormComponent({
                                     [croppedImage],
                                     `${editingFileName}.${editingFileExtension}`,
                                     {
-                                        type: (this.editingFile.type ===  'image/svg+xml') ?
-                                            'image/png' :
-                                            this.editingFile.type,
+                                        type:
+                                            this.editingFile.type ===
+                                            'image/svg+xml'
+                                                ? 'image/png'
+                                                : this.editingFile.type,
                                         lastModified: new Date().getTime(),
                                     },
                                 ),
