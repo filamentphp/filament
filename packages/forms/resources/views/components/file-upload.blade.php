@@ -55,6 +55,7 @@
                     isDeletable: @js($isDeletable()),
                     isDisabled: @js($isDisabled),
                     isDownloadable: @js($isDownloadable()),
+                    isMultiple: @js($isMultiple()),
                     isOpenable: @js($isOpenable()),
                     isPreviewable: @js($isPreviewable()),
                     isReorderable: @js($isReorderable()),

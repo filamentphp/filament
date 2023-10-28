@@ -45,6 +45,7 @@ export default function fileUploadFormComponent({
     confirmSvgEditingMessage,
     disabledSvgEditingMessage,
     isDownloadable,
+    isMultiple,
     isOpenable,
     isPreviewable,
     isReorderable,
@@ -182,7 +183,7 @@ export default function fileUploadFormComponent({
                 },
                 allowImageEdit: hasImageEditor,
                 imageEditEditor: {
-                    open: (file) => this.loadEditor(),
+                    open: (file) => this.loadEditor(file),
                     onconfirm: () => {},
                     oncancel: () => this.closeEditor(),
                     onclose: () => this.closeEditor(),
@@ -584,15 +585,18 @@ export default function fileUploadFormComponent({
                     width: imageResizeTargetWidth,
                 })
                 .toBlob((croppedImage) => {
-                    this.pond.removeFile(
-                        this.pond
-                            .getFiles()
-                            .find(
-                                (uploadedFile) =>
-                                    uploadedFile.filename ===
-                                    this.editingFile.name,
-                            ),
-                    )
+                    if (isMultiple) {
+                        this.pond.removeFile(
+                            this.pond
+                                .getFiles()
+                                .find(
+                                    (uploadedFile) =>
+                                        uploadedFile.filename ===
+                                        this.editingFile.name,
+                                )?.id,
+                            { revert: true },
+                        )
+                    }
 
                     this.$nextTick(() => {
                         this.shouldUpdateState = false

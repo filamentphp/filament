@@ -16,10 +16,6 @@
     @apply bg-transparent;
 }
 
-.filepond--root .filepond--drop-label {
-    min-height: theme(spacing.24);
-}
-
 .filepond--drop-label label {
     @apply !p-3 text-sm text-gray-600 dark:text-gray-400;
 }
