@@ -135,9 +135,11 @@
             $attributes
                 ->merge([
                     'disabled' => $disabled,
-                    'title' => $label,
                     'type' => $type,
                 ], escape: false)
+                ->merge([
+                    'title' => $label,
+                ], escape: true)
                 ->class([$buttonClasses])
                 ->style([$buttonStyles])
         }}
@@ -201,7 +203,7 @@
             $attributes
                 ->merge([
                     'title' => $label,
-                ], escape: false)
+                ], escape: true)
                 ->class([$buttonClasses])
                 ->style([$buttonStyles])
         }}
