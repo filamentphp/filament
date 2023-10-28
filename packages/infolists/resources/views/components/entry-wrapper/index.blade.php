@@ -108,7 +108,6 @@
                     }"
                 @endif
                 @class([
-                    'flex',
                     match ($alignment) {
                         Alignment::Start => 'text-start',
                         Alignment::Center => 'text-center',
