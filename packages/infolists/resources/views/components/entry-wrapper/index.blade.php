@@ -42,6 +42,10 @@
         $url ??= $entry->getUrl();
     }
 
+    if (! $alignment instanceof Alignment) {
+        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+    }
+
     $hintActions = array_filter(
         $hintActions ?? [],
         fn (\Filament\Infolists\Components\Actions\Action $hintAction): bool => $hintAction->isVisible(),
@@ -106,13 +110,13 @@
                 @class([
                     'flex',
                     match ($alignment) {
-                        Alignment::Center, 'center' => 'justify-center text-center',
-                        Alignment::End, 'end' => 'justify-end text-end',
-                        Alignment::Justify, 'justify' => 'justify-between text-justify',
-                        Alignment::Left, 'left' => 'justify-start text-left',
-                        Alignment::Right, 'right' => 'justify-end text-right',
-                        Alignment::Start, 'start' => 'justify-start text-start',
-                        default => null,
+                        Alignment::Start => 'text-start',
+                        Alignment::Center => 'text-center',
+                        Alignment::End => 'text-end',
+                        Alignment::Justify => 'text-justify',
+                        Alignment::Left => 'text-left',
+                        Alignment::Right => 'text-right',
+                        default => $alignment,
                     },
                 ])
             >

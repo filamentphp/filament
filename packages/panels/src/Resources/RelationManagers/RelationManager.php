@@ -24,7 +24,7 @@ use Livewire\Component;
 
 use function Filament\authorize;
 
-class RelationManager extends Component implements Actions\Contracts\HasActions, Infolists\Contracts\HasInfolists, Forms\Contracts\HasForms, Tables\Contracts\HasTable
+class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
 {
     use Actions\Concerns\InteractsWithActions;
     use Forms\Concerns\InteractsWithForms;
@@ -81,6 +81,8 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     protected static IconPosition $iconPosition = IconPosition::Before;
 
     protected static ?string $badge = null;
+
+    protected static bool $isLazy = true;
 
     public function mount(): void
     {
@@ -503,5 +505,24 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
                 $this->getTableRecordUrlUsing(),
                 fn (Table $table, ?Closure $using) => $table->recordUrl($using),
             );
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getDefaultProperties(): array
+    {
+        $properties = [];
+
+        if (static::isLazy()) {
+            $properties['lazy'] = true;
+        }
+
+        return $properties;
+    }
+
+    public static function isLazy(): bool
+    {
+        return static::$isLazy;
     }
 }

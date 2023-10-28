@@ -18,12 +18,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Livewire\Component as LivewireComponent;
+
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
 
 class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
@@ -31,12 +33,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
-    use Concerns\CanSelectPlaceholder;
     use Concerns\CanLimitItemsLength;
+    use Concerns\CanSelectPlaceholder;
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
-    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasLoadingMessage;
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
@@ -713,13 +715,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ]) ?? $relationshipQuery;
             }
 
-            if ($component->isSearchForcedCaseInsensitive($relationshipQuery)) {
-                $search = Str::lower($search);
-            }
-
             $component->applySearchConstraint(
                 $relationshipQuery,
-                $search,
+                generate_search_term_expression($search, $component->isSearchForcedCaseInsensitive(), $relationshipQuery->getConnection()),
             );
 
             $baseRelationshipQuery = $relationshipQuery->getQuery();
@@ -1011,19 +1009,19 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected function applySearchConstraint(Builder $query, string $search): Builder
     {
-        $isFirst = true;
-        $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($query);
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
 
-        $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $search): Builder {
+        $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+
+        $query->where(function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $search): Builder {
+            $isFirst = true;
+
             foreach ($this->getSearchColumns() as $searchColumn) {
-                $caseAwareSearchColumn = $isForcedCaseInsensitive ?
-                    new Expression("lower({$searchColumn})") :
-                    $searchColumn;
-
                 $whereClause = $isFirst ? 'where' : 'orWhere';
 
                 $query->{$whereClause}(
-                    $caseAwareSearchColumn,
+                    generate_search_column_expression($searchColumn, $isForcedCaseInsensitive, $databaseConnection),
                     'like',
                     "%{$search}%",
                 );
@@ -1178,15 +1176,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this;
     }
 
-    public function isSearchForcedCaseInsensitive(Builder $query): bool
+    public function isSearchForcedCaseInsensitive(): ?bool
     {
-        /** @var Connection $databaseConnection */
-        $databaseConnection = $query->getConnection();
-
-        return $this->evaluate($this->isSearchForcedCaseInsensitive) ?? match ($databaseConnection->getDriverName()) {
-            'pgsql' => true,
-            default => false,
-        };
+        return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
     public function hydrateDefaultState(?array &$hydratedDefaultState): void

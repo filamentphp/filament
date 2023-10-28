@@ -3,6 +3,7 @@ import AlpineLazyLoadAssets from 'alpine-lazy-load-assets'
 import Sortable from './sortable'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
 
+import '../css/components/pagination.css'
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
 

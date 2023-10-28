@@ -53,6 +53,10 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $hasImageEditor = false;
 
+    protected bool | Closure $canEditSvgs = true;
+
+    protected bool | Closure $isSvgEditingConfirmed = false;
+
     protected int | Closure | null $imageEditorViewportWidth = null;
 
     protected int | Closure | null $imageEditorViewportHeight = null;
@@ -85,9 +89,9 @@ class FileUpload extends BaseFileUpload
         $this->imageResizeTargetWidth('500');
         $this->loadingIndicatorPosition('center bottom');
         $this->panelLayout('compact circle');
-        $this->removeUploadedFileButtonPosition('center bottom');
-        $this->uploadButtonPosition('center bottom');
-        $this->uploadProgressIndicatorPosition('center bottom');
+        $this->removeUploadedFileButtonPosition(fn (FileUpload $component) => $component->hasImageEditor() ? 'left bottom' : 'center bottom');
+        $this->uploadButtonPosition(fn (FileUpload $component) => $component->hasImageEditor() ? 'right bottom' : 'center bottom');
+        $this->uploadProgressIndicatorPosition(fn (FileUpload $component) => $component->hasImageEditor() ? 'right bottom' : 'center bottom');
 
         return $this;
     }
@@ -294,6 +298,20 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function editableSvgs(bool | Closure $condition = true): static
+    {
+        $this->canEditSvgs = $condition;
+
+        return $this;
+    }
+
+    public function confirmSvgEditing(bool | Closure $condition = true): static
+    {
+        $this->isSvgEditingConfirmed = $condition;
+
+        return $this;
+    }
+
     public function imageEditorViewportWidth(int | Closure | null $width): static
     {
         $this->imageEditorViewportWidth = $width;
@@ -384,6 +402,16 @@ class FileUpload extends BaseFileUpload
     public function hasImageEditor(): bool
     {
         return (bool) $this->evaluate($this->hasImageEditor);
+    }
+
+    public function canEditSvgs(): bool
+    {
+        return (bool) $this->evaluate($this->canEditSvgs);
+    }
+
+    public function isSvgEditingConfirmed(): bool
+    {
+        return (bool) $this->evaluate($this->isSvgEditingConfirmed);
     }
 
     /**

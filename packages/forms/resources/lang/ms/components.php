@@ -249,16 +249,20 @@ return [
                 'label' => 'Tambah ke :label',
             ],
 
+            'add_between' => [
+                'label' => 'Masukkan antara',
+            ],
+
             'delete' => [
                 'label' => 'Padam',
             ],
 
-            'reorder' => [
-                'label' => 'Pindah',
-            ],
-
             'clone' => [
                 'label' => 'Klon',
+            ],
+
+            'reorder' => [
+                'label' => 'Pindah',
             ],
 
             'move_down' => [

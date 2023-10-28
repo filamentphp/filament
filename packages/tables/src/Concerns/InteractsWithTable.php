@@ -14,9 +14,11 @@ use Livewire\WithPagination;
 
 trait InteractsWithTable
 {
+    use CanBeStriped;
     use CanDeferLoading;
     use CanGroupRecords;
     use CanPaginateRecords;
+    use CanPollRecords;
     use CanReorderRecords;
     use CanSearchRecords;
     use CanSortRecords;
@@ -25,19 +27,17 @@ trait InteractsWithTable
     use HasActions;
     use HasBulkActions;
     use HasColumns;
-    use HasFilters;
-    use HasRecords;
-    use WithPagination {
-        WithPagination::resetPage as resetLivewirePage;
-    }
-    use CanBeStriped;
-    use CanPollRecords;
     use HasContent;
     use HasEmptyState;
+    use HasFilters;
     use HasHeader;
     use HasRecordAction;
     use HasRecordClasses;
+    use HasRecords;
     use HasRecordUrl;
+    use WithPagination {
+        WithPagination::resetPage as resetLivewirePage;
+    }
 
     protected Table $table;
 
@@ -286,5 +286,16 @@ trait InteractsWithTable
                 $value = true;
             }
         }
+    }
+
+    public function resetTable(): void
+    {
+        $this->cacheForms();
+
+        $this->bootedInteractsWithTable();
+
+        $this->resetTableFiltersForm();
+
+        $this->resetPage();
     }
 }
