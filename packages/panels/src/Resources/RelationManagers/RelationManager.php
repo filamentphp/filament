@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManagers;
 
+use function Filament\authorize;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
@@ -16,8 +17,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use Livewire\Component;
-
-use function Filament\authorize;
 
 class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {

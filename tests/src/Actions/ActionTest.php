@@ -4,7 +4,6 @@ use Filament\Notifications\Notification;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\Actions\TestCase;
 use Illuminate\Support\Str;
-
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);

@@ -6,7 +6,6 @@ use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
-
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);

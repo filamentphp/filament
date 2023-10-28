@@ -5,7 +5,6 @@ use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Support\Str;
-
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);

@@ -6,13 +6,12 @@ use Closure;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use function Filament\Support\format_money;
+use function Filament\Support\format_number;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
-
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 
 trait CanFormatState
 {

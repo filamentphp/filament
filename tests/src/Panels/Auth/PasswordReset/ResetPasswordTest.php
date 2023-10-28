@@ -8,7 +8,6 @@ use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
-
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
