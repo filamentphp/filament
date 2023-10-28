@@ -66,7 +66,7 @@
                         'gap-1.5' => $isBadge,
                         'list-inside list-disc' => $isBulleted(),
                         match ($alignment) {
-                            Alignment::Start=> 'justify-start',
+                            Alignment::Start => 'justify-start',
                             Alignment::Center => 'justify-center',
                             Alignment::End => 'justify-end',
                             Alignment::Justify => 'justify-between',
