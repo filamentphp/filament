@@ -16,6 +16,10 @@
         $isMarkdown = $isMarkdown();
         $url = $getUrl();
 
+        if (! $alignment instanceof Alignment) {
+            $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+        }
+
         $arrayState = $getState();
 
         if ($arrayState instanceof \Illuminate\Support\Collection) {
@@ -62,12 +66,13 @@
                         'gap-1.5' => $isBadge,
                         'list-inside list-disc' => $isBulleted(),
                         match ($alignment) {
-                            Alignment::Center, 'center' => 'justify-center',
-                            Alignment::End, 'end' => 'justify-end',
-                            Alignment::Left, 'left' => 'justify-start',
-                            Alignment::Right, 'right' => 'justify-end',
-                            Alignment::Justify, 'justify' => 'justify-between',
-                            default => 'justify-start',
+                            Alignment::Start=> 'justify-start',
+                            Alignment::Center => 'justify-center',
+                            Alignment::End => 'justify-end',
+                            Alignment::Justify => 'justify-between',
+                            Alignment::Left => 'justify-start',
+                            Alignment::Right => 'justify-end',
+                            default => $alignment,
                         } => ! $isListWithLineBreaks,
                     ])
                 >

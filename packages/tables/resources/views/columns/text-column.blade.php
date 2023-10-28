@@ -5,6 +5,7 @@
     use Filament\Support\Enums\IconPosition;
     use Filament\Tables\Columns\TextColumn\TextColumnSize;
 
+    $alignment = $column->getAlignment();
     $canWrap = $canWrap();
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
@@ -13,6 +14,10 @@
     $isBulleted = $isBulleted();
     $isListWithLineBreaks = $isListWithLineBreaks();
     $url = $getUrl();
+
+    if (! $alignment instanceof Alignment) {
+        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+    }
 
     $arrayState = $getState();
 
@@ -68,13 +73,14 @@
                 'gap-1.5' => $isBadge,
                 'list-inside list-disc' => $isBulleted,
                 'whitespace-normal' => $canWrap,
-                match ($column->getAlignment()) {
-                    Alignment::Center, 'center' => 'justify-center text-center',
-                    Alignment::End, 'end' => 'justify-end text-end',
-                    Alignment::Left, 'left' => 'justify-start text-left',
-                    Alignment::Right, 'right' => 'justify-end text-right',
-                    Alignment::Justify, 'justify' => 'justify-between text-justify',
-                    default => 'justify-start text-start',
+                match ($alignment) {
+                    Alignment::Start => 'justify-start text-start',
+                    Alignment::Center => 'justify-center text-center',
+                    Alignment::End => 'justify-end text-end',
+                    Alignment::Justify => 'justify-between text-justify',
+                    Alignment::Left => 'justify-start text-left',
+                    Alignment::Right => 'justify-end text-right',
+                    default => $alignment,
                 },
             ])
         >
