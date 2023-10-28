@@ -182,7 +182,7 @@ export default function fileUploadFormComponent({
                 },
                 allowImageEdit: hasImageEditor,
                 imageEditEditor: {
-                    open: (file) => this.loadEditor(),
+                    open: (file) => this.loadEditor(file),
                     onconfirm: () => {},
                     oncancel: () => this.closeEditor(),
                     onclose: () => this.closeEditor(),
