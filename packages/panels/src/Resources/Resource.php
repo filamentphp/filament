@@ -3,6 +3,7 @@
 namespace Filament\Resources;
 
 use Exception;
+use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\GlobalSearch\Actions\Action;
@@ -625,7 +626,7 @@ abstract class Resource
 
         return static::getUrl('index', [
             ...(match ($name) {
-                'create', 'import' => ['action' => $name],
+                CreateAction::getDefaultName() => ['action' => $name],
                 default => [
                     'tableAction' => $name,
                     'tableActionRecord' => $parameters['record'] ?? Arr::first($parameters),
