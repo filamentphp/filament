@@ -3,6 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Tables\Filters\Indicator;
 
 trait CanSearchRecords
 {
@@ -79,13 +80,13 @@ trait CanSearchRecords
         return $this->getLivewire()->hasTableSearch();
     }
 
-    public function getSearchIndicator(): string
+    public function getSearchIndicator(): Indicator
     {
         return $this->getLivewire()->getTableSearchIndicator();
     }
 
     /**
-     * @return array<string, string>
+     * @return array<Indicator> | array<string, string>
      */
     public function getColumnSearchIndicators(): array
     {

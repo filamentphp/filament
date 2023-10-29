@@ -345,6 +345,7 @@ You may even render multiple indicators at once, by returning an array. If you h
 ```php
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Indicator;
 
 Filter::make('created_at')
     ->form([
@@ -356,11 +357,13 @@ Filter::make('created_at')
         $indicators = [];
 
         if ($data['from'] ?? null) {
-            $indicators['from'] = 'Created from ' . Carbon::parse($data['from'])->toFormattedDateString();
+            $indicators[] = Indicator::make('Created from ' . Carbon::parse($data['from'])->toFormattedDateString())
+                ->removeField('from');
         }
 
         if ($data['until'] ?? null) {
-            $indicators['until'] = 'Created until ' . Carbon::parse($data['until'])->toFormattedDateString();
+            $indicators[] = Indicator::make('Created until ' . Carbon::parse($data['until'])->toFormattedDateString())
+                ->removeField('until');
         }
 
         return $indicators;
