@@ -19,9 +19,9 @@ trait HasIndicators
         return $this;
     }
 
-    public function indicateUsing(?Closure $indicators): static
+    public function indicateUsing(?Closure $callback): static
     {
-        $this->indicators = $indicators;
+        $this->indicateUsing = $callback;
 
         return $this;
     }
@@ -33,7 +33,7 @@ trait HasIndicators
     {
         $state = $this->getState();
 
-        $indicators = $this->evaluate($this->indicators, [
+        $indicators = $this->evaluate($this->indicateUsing, [
             'data' => $state,
             'state' => $state,
         ]);
