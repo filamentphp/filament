@@ -11,7 +11,7 @@ class LocalFontProvider implements Contracts\FontProvider
     public function getHtml(string $family, ?string $url = null): Htmlable
     {
         if (blank($url)) {
-            throw new InvalidArgumentException('The local font\'s CSS URL must be specified.');
+            return HtmlString("");
         }
 
         return new HtmlString("
