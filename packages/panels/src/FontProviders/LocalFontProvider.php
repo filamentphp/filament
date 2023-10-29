@@ -4,14 +4,13 @@ namespace Filament\FontProviders;
 
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
-use InvalidArgumentException;
 
 class LocalFontProvider implements Contracts\FontProvider
 {
     public function getHtml(string $family, ?string $url = null): Htmlable
     {
         if (blank($url)) {
-            return HtmlString("");
+            return HtmlString('');
         }
 
         return new HtmlString("
