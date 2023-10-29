@@ -700,23 +700,25 @@
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-filament-tables::selection.cell tag="th">
-                                    <x-filament-tables::selection.checkbox
-                                        :label="__('filament-tables::table.fields.bulk_select_page.label')"
-                                        x-bind:checked="
-                                            const recordsOnPage = getRecordsOnPage()
+                                    @if(!$isGroupsOnly)
+                                        <x-filament-tables::selection.checkbox
+                                            :label="__('filament-tables::table.fields.bulk_select_page.label')"
+                                            x-bind:checked="
+                                                const recordsOnPage = getRecordsOnPage()
 
-                                            if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                                                $el.checked = true
+                                                if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                                    $el.checked = true
 
-                                                return 'checked'
-                                            }
+                                                    return 'checked'
+                                                }
 
-                                            $el.checked = false
+                                                $el.checked = false
 
-                                            return null
-                                        "
-                                        x-on:click="toggleSelectRecordsOnPage"
-                                    />
+                                                return null
+                                            "
+                                            x-on:click="toggleSelectRecordsOnPage"
+                                        />
+                                    @endif
                                 </x-filament-tables::selection.cell>
                             @endif
 

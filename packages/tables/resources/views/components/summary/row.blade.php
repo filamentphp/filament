@@ -39,7 +39,7 @@
 
     @if ($extraHeadingColumn || $groupsOnly)
         <x-filament-tables::cell
-            class="text-sm font-medium text-gray-950 dark:text-white"
+            class="px-3 text-sm font-medium text-gray-950 dark:text-white"
         >
             {{ $heading }}
         </x-filament-tables::cell>
