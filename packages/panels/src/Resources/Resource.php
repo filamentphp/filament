@@ -375,11 +375,23 @@ abstract class Resource
 
     public static function getGlobalSearchResultUrl(Model $record): ?string
     {
-        if (static::hasPage('edit') && static::canEdit($record)) {
+        $canEdit = static::canEdit($record);
+
+        if (static::hasPage('edit') && $canEdit) {
             return static::getUrl('edit', ['record' => $record]);
         }
 
-        if (static::hasPage('view') && static::canView($record)) {
+        $canView = static::canView($record);
+
+        if (static::hasPage('view') && $canView) {
+            return static::getUrl('view', ['record' => $record]);
+        }
+
+        if ($canEdit) {
+            return static::getUrl('edit', ['record' => $record]);
+        }
+
+        if ($canView) {
             return static::getUrl('view', ['record' => $record]);
         }
 
@@ -591,11 +603,33 @@ abstract class Resource
      */
     public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
     {
+        if (! static::hasPage($name)) {
+            return static::getUrlWithDefaultAction($name, $parameters, $isAbsolute, $panel, $tenant);
+        }
+
         $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
 
         $routeBaseName = static::getRouteBaseName(panel: $panel);
 
         return route("{$routeBaseName}.{$name}", $parameters, $isAbsolute);
+    }
+
+    protected static function getUrlWithDefaultAction(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    {
+        if (! static::hasPage('index')) {
+            throw new Exception('An `index` page must be defined for [' . static::class . '].');
+        }
+
+        return static::getUrl('index', [
+            ...(match ($name) {
+                'create', 'import' => ['action' => $name],
+                default => [
+                    'tableAction' => $name,
+                    'tableActionRecord' => $parameters['record'] ?? Arr::first($parameters),
+                ],
+            }),
+            ...Arr::except($parameters, ['record']),
+        ], $isAbsolute, $panel, $tenant);
     }
 
     public static function hasPage(string $page): bool
