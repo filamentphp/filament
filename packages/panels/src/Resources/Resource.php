@@ -3,7 +3,6 @@
 namespace Filament\Resources;
 
 use Exception;
-use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\GlobalSearch\Actions\Action;
