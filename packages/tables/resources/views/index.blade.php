@@ -700,7 +700,7 @@
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-filament-tables::selection.cell tag="th">
-                                    @if(!$isGroupsOnly)
+                                    @if (! $isGroupsOnly)
                                         <x-filament-tables::selection.checkbox
                                             :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                             x-bind:checked="

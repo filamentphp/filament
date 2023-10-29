@@ -18,8 +18,8 @@
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
 
-    if($groupsOnly && $groupColumn){
-        $columns = collect($columns)->reject(fn($column) => $column->getName() == $groupColumn)->toArray();
+    if ($groupsOnly && $groupColumn) {
+        $columns = collect($columns)->reject(fn ($column) => $column->getName() == $groupColumn)->toArray();
     }
 @endphp
 
