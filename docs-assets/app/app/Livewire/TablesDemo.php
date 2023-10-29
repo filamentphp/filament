@@ -709,7 +709,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->filtersTable($table)
             ->filters([
                 Filter::make('dummy')
-                    ->indicators(fn () => [
+                    ->indicateUsing(fn () => [
                         Indicator::make('Posted by administrator')
                             ->removeField('one'),
                         Indicator::make('Less than 1 year old')

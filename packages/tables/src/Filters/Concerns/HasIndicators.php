@@ -12,11 +12,6 @@ trait HasIndicators
 
     protected Indicator | string | Closure | null $indicator = null;
 
-    /**
-     * @var array<Indicator> | Closure
-     */
-    protected array | Closure $indicators = [];
-
     public function indicator(Indicator | string | Closure | null $indicator): static
     {
         $this->indicator = $indicator;
@@ -24,23 +19,15 @@ trait HasIndicators
         return $this;
     }
 
-    /**
-     * @param  array<Indicator> | Closure  $indicators
-     */
-    public function indicators(array | Closure $indicators): static
+    public function indicateUsing(?Closure $indicators): static
     {
         $this->indicators = $indicators;
 
         return $this;
     }
 
-    public function indicateUsing(?Closure $callback): static
-    {
-        return $this->indicators($callback);
-    }
-
     /**
-     * @return array<Indicator> | array<string>
+     * @return array<Indicator>
      */
     public function getIndicators(): array
     {

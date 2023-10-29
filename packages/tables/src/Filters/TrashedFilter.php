@@ -34,7 +34,7 @@ class TrashedFilter extends TernaryFilter
             SoftDeletingScope::class,
         ]));
 
-        $this->indicators(function (array $state): array {
+        $this->indicateUsing(function (array $state): array {
             if ($state['value'] ?? null) {
                 return [Indicator::make($this->getTrueLabel())];
             }

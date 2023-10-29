@@ -39,7 +39,7 @@ class SelectFilter extends BaseFilter
                 __('filament-tables::table.filters.select.placeholder'),
         );
 
-        $this->indicators(function (SelectFilter $filter, array $state): array {
+        $this->indicateUsing(function (SelectFilter $filter, array $state): array {
             if ($filter->isMultiple()) {
                 if (blank($state['values'] ?? null)) {
                     return [];

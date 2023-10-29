@@ -14,7 +14,7 @@ class Filter extends BaseFilter
     {
         parent::setUp();
 
-        $this->indicators(function (array $state): array {
+        $this->indicateUsing(function (array $state): array {
             if (! ($state['isActive'] ?? false)) {
                 return [];
             }

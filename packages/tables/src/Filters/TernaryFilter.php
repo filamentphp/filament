@@ -22,7 +22,7 @@ class TernaryFilter extends SelectFilter
 
         $this->boolean();
 
-        $this->indicators(function (TernaryFilter $filter, array $state): array {
+        $this->indicateUsing(function (TernaryFilter $filter, array $state): array {
             if (blank($state['value'] ?? null)) {
                 return [];
             }
