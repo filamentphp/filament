@@ -356,10 +356,4 @@ trait HasActions
     {
         return $this->getMountedTableAction()->getInfolist();
     }
-
-    protected function setDefaultTableActionFromQueryString(): void
-    {
-        $this->defaultTableAction = request()->query('tableAction');
-        $this->defaultTableActionRecord = request()->query('tableActionRecord');
-    }
 }
