@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
-
 use Livewire\Attributes\Url;
+
 use function Livewire\store;
 
 /**

@@ -614,6 +614,9 @@ abstract class Resource
         return route("{$routeBaseName}.{$name}", $parameters, $isAbsolute);
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     protected static function getUrlWithDefaultAction(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
     {
         if (! static::hasPage('index')) {

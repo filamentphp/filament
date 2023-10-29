@@ -117,12 +117,12 @@
         </x-filament::modal>
     </form>
 
-    @if (
-        $this->isTableLoaded() &&
-        filled($this->defaultTableAction) &&
-        filled($this->defaultTableActionRecord)
-    )
-        <div wire:init="mountTableAction(@js($this->defaultTableAction), @js($this->defaultTableActionRecord))"></div>
+    @if ($this->isTableLoaded() &&
+         filled($this->defaultTableAction) &&
+         filled($this->defaultTableActionRecord))
+        <div
+            wire:init="mountTableAction(@js($this->defaultTableAction), @js($this->defaultTableActionRecord))"
+        ></div>
     @endif
 
     <form wire:submit.prevent="callMountedTableBulkAction">
