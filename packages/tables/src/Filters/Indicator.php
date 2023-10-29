@@ -20,7 +20,7 @@ class Indicator extends Component
 
     protected string $evaluationIdentifier = 'indicator';
 
-    public function __construct(string | Closure $label)
+    final public function __construct(string | Closure $label)
     {
         $this->label($label);
     }
