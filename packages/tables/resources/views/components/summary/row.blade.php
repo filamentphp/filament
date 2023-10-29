@@ -3,6 +3,7 @@
     'actionsPosition' => null,
     'columns',
     'extraHeadingColumn' => false,
+    'groupColumn' => null,
     'groupsOnly' => false,
     'heading',
     'placeholderColumns' => true,
@@ -16,6 +17,10 @@
     use Filament\Support\Enums\Alignment;
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
+
+    if($groupsOnly && $groupColumn){
+        $columns = collect($columns)->reject(fn($column) => $column->getName() == $groupColumn)->toArray();
+    }
 @endphp
 
 <x-filament-tables::row
