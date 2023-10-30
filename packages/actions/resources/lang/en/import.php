@@ -12,7 +12,7 @@ return [
 
             'file' => [
                 'label' => 'File',
-                'placeholder' => 'Upload a .csv file',
+                'placeholder' => 'Upload a CSV file',
             ],
 
             'columns' => [
