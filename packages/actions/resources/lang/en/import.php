@@ -25,7 +25,7 @@ return [
         'actions' => [
 
             'download_example' => [
-                'label' => 'Download an example .csv file.',
+                'label' => 'Download example CSV file.',
             ],
 
             'import' => [
