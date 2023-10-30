@@ -7,6 +7,11 @@
 @php
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
     $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
+
+    $smallestPageOption = collect($pageOptions)
+        ->filter(fn (int | string $option): bool => is_numeric($option) && ($option > 0))
+        ->sort()
+        ->first();
 @endphp
 
 <nav
@@ -49,7 +54,7 @@
         </span>
     @endif
 
-    @if (count($pageOptions) > 1)
+    @if ((count($pageOptions) > 1) && ($isSimple || $smallestPageOption || ($paginator->total() > $smallestPageOption)))
         <div class="col-start-2 justify-self-center">
             <label class="fi-pagination-records-per-page-select fi-compact">
                 <x-filament::input.wrapper>
