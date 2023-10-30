@@ -102,6 +102,8 @@ class ImportAction extends Action
                 ->required()
                 ->hiddenLabel(),
             Fieldset::make(__('filament-actions::import.modal.form.columns.label'))
+                ->columns(1)
+                ->inlineLabel()
                 ->schema(function (Forms\Get $get) use ($action): array {
                     $csvFile = Arr::first((array) ($get('file') ?? []));
 
