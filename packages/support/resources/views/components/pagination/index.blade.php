@@ -9,7 +9,7 @@
     $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
 
     $smallestPageOption = collect($pageOptions)
-        ->filter(fn (int | string $option) => is_numeric($option)  && $option > 0)
+        ->filter(fn (int | string $option) => is_numeric($option) && $option > 0)
         ->sort()
         ->first();
 @endphp
