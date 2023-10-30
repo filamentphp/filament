@@ -23,6 +23,7 @@
             ->reject(fn (Column $column): bool => $column->getName() === $groupColumn)
             ->all();
     }
+    
     $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 @endphp
 
