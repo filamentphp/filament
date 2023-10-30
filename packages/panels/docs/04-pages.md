@@ -111,7 +111,7 @@ You may change how many grid columns are used to display widgets.
 You may override the `getHeaderWidgetsColumns()` or `getFooterWidgetsColumns()` methods to return a number of grid columns to use:
 
 ```php
-protected function getHeaderWidgetsColumns(): int | array
+public function getHeaderWidgetsColumns(): int | array
 {
     return 3;
 }
@@ -122,7 +122,7 @@ protected function getHeaderWidgetsColumns(): int | array
 You may wish to change the number of widget grid columns based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. You can do this using an array that contains the number of columns that should be used at each breakpoint:
 
 ```php
-protected function getHeaderWidgetsColumns(): int | array
+public function getHeaderWidgetsColumns(): int | array
 {
     return [
         'md' => 4,
@@ -138,7 +138,7 @@ This pairs well with [responsive widget widths](dashboard#responsive-widget-widt
 You may pass data to widgets from the page using the `getWidgetsData()` method:
 
 ```php
-protected function getWidgetsData(): array
+public function getWidgetData(): array
 {
     return [
         'stats' => [
@@ -303,4 +303,34 @@ public function getMaxContentWidth(): ?string
 {
     return 'full';
 }
+```
+
+## Generating URLs to pages
+
+Filament provides `getUrl()` static method on page classes to generate URLs to them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the page's slug or route naming conventions.
+
+The `getUrl()` method, without any arguments, will generate a URL:
+
+```php
+use App\Filament\Pages\Settings;
+
+Settings::getUrl(); // /admin/settings
+```
+
+If your page uses URL / query parameters, you should use the argument:
+
+```php
+use App\Filament\Pages\Settings;
+
+Settings:::getUrl(['section' => 'notifications']); // /admin/settings?section=notifications
+```
+
+### Generating URLs to pages in other panels
+
+If you have multiple panels in your app, `getUrl()` will generate a URL within the current panel. You can also indicate which panel the page is associated with, by passing the panel ID to the `panel` argument:
+
+```php
+use App\Filament\Pages\Settings;
+
+Settings::getUrl(panel: 'marketing');
 ```

@@ -65,7 +65,7 @@
                 <trix-toolbar
                     id="trix-toolbar-{{ $id }}"
                     @class([
-                        'relative flex flex-col gap-x-3 border-b border-gray-100 px-2.5 py-2 dark:border-white/10',
+                        'fi-fo-rich-editor-toolbar relative flex flex-col gap-x-3 border-b border-gray-100 px-2.5 py-2 dark:border-white/10',
                         'hidden' => ! count($getToolbarButtons()),
                     ])
                 >
@@ -128,7 +128,7 @@
                                 @if ($hasToolbarButton('underline'))
                                     <x-filament-forms::rich-editor.toolbar.button
                                         data-trix-attribute="underline"
-                                        title="{{ __('forms::components.rich_editor.toolbar_buttons.underline') }}"
+                                        title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.underline') }}"
                                         tabindex="-1"
                                     >
                                         <svg
@@ -477,7 +477,7 @@
                     wire:ignore
                     {{
                         $getExtraInputAttributeBag()->class([
-                            'prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert focus:outline-none focus-visible:outline-none dark:text-white sm:text-sm sm:leading-6',
+                            'prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert focus-visible:outline-none dark:text-white sm:text-sm sm:leading-6',
                         ])
                     }}
                 ></trix-editor>

@@ -2,11 +2,11 @@
 
 namespace Filament\Support\Enums;
 
-enum IconSize
+enum IconSize: string
 {
-    case Small;
+    case Small = 'sm';
 
-    case Medium;
+    case Medium = 'md';
 
-    case Large;
+    case Large = 'lg';
 }

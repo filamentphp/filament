@@ -126,7 +126,7 @@ Edit and View resource pages:
 Relation managers:
 
 - `form()` is no longer static
-- `getInverseRelationshipName()`
+- `getInverseRelationshipName()` return type is now `?string`
 - `table()` is no longer static
 
 Custom dashboard pages:
@@ -178,7 +178,7 @@ A side effect of this change is that all custom icons that you use must now be [
 
 #### Logo customization
 
-In v2, you can customize the logo of the admin panel using a `/resources/views/vendor/filament/components/brand.blade.php` file. In v3, this has been moved to `/resources/views/vendor/filament-panels/components/logo.blade.php`.
+In v2, you can customize the logo of the admin panel using a `/resources/views/vendor/filament/components/brand.blade.php` file. In v3, this has been moved to the new `brandLogo()` API. You can now [set the brand logo](themes#adding-a-logo) by adding it to your panel configuration.
 
 #### Plugins
 

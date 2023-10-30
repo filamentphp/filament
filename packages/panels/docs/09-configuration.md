@@ -112,3 +112,37 @@ public function panel(Panel $panel): Panel
         ->maxContentWidth('full');
 }
 ```
+
+## Lifecycle hooks
+
+Hooks may be used to execute code during a panel's lifecycle. `bootUsing()` is a hook that gets run on every request that takes place within that panel. If you have multiple panels, only the current panel's `bootUsing()` will be run. The function gets run from middleware, after all service providers have been booted:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->bootUsing(function (Panel $panel) {
+            // ...
+        });
+}
+```
+
+## SPA mode
+
+> Warning: This feature is experimental, and you may encounter bugs while using it. Please report any issues you find to [Livewire](https://github.com/livewire/livewire) with a pull request containing a failing test.
+
+SPA mode utilizes [Livewire's `wire:navigate` feature](https://livewire.laravel.com/docs/navigate) to make your server-rendered panel feel like a single-page-application, with less delay between page loads and a loading bar for longer requests. To enable SPA mode on a panel, you can use the `spa()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->spa();
+}
+```

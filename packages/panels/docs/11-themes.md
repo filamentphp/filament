@@ -124,8 +124,8 @@ php artisan make:filament-theme admin
 The command will create a CSS file and Tailwind Configuration file in the `/resources/css/filament` directory. You can then customize the theme by editing these files. It will also give you instructions on how to compile the theme and register it in Filament. **Please follow the instructions in the command to complete the setup process:**
 
 ```
-⇂ First, add a new item to the `input` array of `vite.config.js`: `resources/css/filament/admin/theme.css`  
-⇂ Next, register the theme in the admin panel provider using `->viteTheme('resources/css/filament/admin/theme.css')`  
+⇂ First, add a new item to the `input` array of `vite.config.js`: `resources/css/filament/admin/theme.css`
+⇂ Next, register the theme in the admin panel provider using `->viteTheme('resources/css/filament/admin/theme.css')`
 ⇂ Finally, run `npm run build` to compile the theme
 ```
 
@@ -139,16 +139,6 @@ By default, the topbar sticks to the top of the page. You may make the topbar sc
 .fi-topbar {
     position: relative;
 }
-```
-
-## Changing the logo
-
-By default, Filament will use your app's name as a logo.
-
-You may create a `resources/views/vendor/filament-panels/components/logo.blade.php` file to provide a custom logo:
-
-```blade
-<img src="{{ asset('/images/logo.svg') }}" alt="Logo" class="h-10">
 ```
 
 ## Disabling dark mode
@@ -165,6 +155,76 @@ public function panel(Panel $panel): Panel
         ->darkMode(false);
 }
 ```
+
+## Adding a logo
+
+By default, Filament uses your app's name to render a simple text-based logo. However, you can easily customize this.
+
+If you want to simply change the text that is used in the logo, you can use the `brandName()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->brandName('Filament Demo');
+}
+```
+
+To render an image instead, you can pass a URL to the `brandLogo()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->brandLogo(asset('images/logo.svg'));
+}
+```
+
+Alternatively, you may directly pass HTML to the `brandLogo()` method to render an inline SVG element for example:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->brandLogo(fn () => view('filament.admin.logo'));
+}
+```
+
+```blade
+<svg
+    viewBox="0 0 128 26"
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-full fill-gray-500 dark:fill-gray-400"
+>
+    <!-- ... -->
+</svg>
+```
+
+If you need a different logo to be used when the application is in dark mode, you can pass it to `darkModeBrandLogo()` in the same way.
+
+The logo height defaults to a sensible value, but it's impossible to account for all possible aspect ratios. Therefore, you may customize the height of the rendered logo using the `brandLogoHeight()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->brandLogo(fn () => view('filament.admin.logo'))
+        ->brandLogoHeight('2rem');
+}
+```
+
 
 ## Adding a favicon
 

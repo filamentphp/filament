@@ -30,13 +30,21 @@
                     'commit',
                     ({ component, commit, succeed, fail, respond }) => {
                         succeed(({ snapshot, effect }) => {
-                            if (component.id !== @js($this->getId())) {
-                                return
-                            }
+                            $nextTick(() => {
+                                if (component.id !== @js($this->getId())) {
+                                    return
+                                }
 
-                            this.updateVisibleCheckboxListOptions()
+                                this.checkboxListOptions = Array.from(
+                                    $root.querySelectorAll(
+                                        '.fi-fo-checkbox-list-option-label',
+                                    ),
+                                )
 
-                            this.checkIfAllCheckboxesAreChecked()
+                                this.updateVisibleCheckboxListOptions()
+
+                                this.checkIfAllCheckboxesAreChecked()
+                            })
                         })
                     },
                 )
@@ -156,21 +164,17 @@
             "
         >
             @forelse ($getOptions() as $value => $label)
-                @php
-                    $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
-                @endphp
-
                 <div
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
                     @if ($isSearchable)
                         x-show="
                             $el
                                 .querySelector('.fi-fo-checkbox-list-option-label')
-                                .innerText.toLowerCase()
+                                ?.innerText.toLowerCase()
                                 .includes(search.toLowerCase()) ||
                                 $el
                                     .querySelector('.fi-fo-checkbox-list-option-description')
-                                    .innerText.toLowerCase()
+                                    ?.innerText.toLowerCase()
                                     .includes(search.toLowerCase())
                         "
                     @endif
@@ -186,7 +190,7 @@
                             :attributes="
                                 \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                                     ->merge([
-                                        'disabled' => $shouldOptionBeDisabled,
+                                        'disabled' => $isDisabled || $isOptionDisabled($value, $label),
                                         'value' => $value,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,
@@ -223,7 +227,7 @@
         @if ($isSearchable)
             <div
                 x-cloak
-                x-show="! visibleCheckboxListOptions.length"
+                x-show="search && ! visibleCheckboxListOptions.length"
                 class="fi-fo-checkbox-list-no-search-results-message text-sm text-gray-500 dark:text-gray-400"
             >
                 {{ $getNoSearchResultsMessage() }}

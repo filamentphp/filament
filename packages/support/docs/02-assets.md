@@ -1,6 +1,13 @@
 ---
 title: Assets
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
+
+<LaracastsBanner
+    title="Registering Plugin Assets"
+    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to get started with registering assets into a plugin. Alternatively, continue reading this text-based guide."
+    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/14"
+/>
 
 ## Overview
 
@@ -188,6 +195,12 @@ If your JavaScript file was [registered to a plugin](#registering-assets-for-a-p
 ```
 
 #### Asynchronous Alpine.js components
+
+<LaracastsBanner
+    title="Using Async Alpine components"
+    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to get started with Async Alpine components into a plugin."
+    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/15"
+/>
 
 Sometimes, you may want to load external JavaScript libraries for your Alpine.js-based components. The best way to do this is by storing the compiled JavaScript and Alpine component in a separate file, and letting us load it whenever the component is rendered.
 

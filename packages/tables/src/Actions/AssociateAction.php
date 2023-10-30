@@ -14,8 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Str;
+
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
 
 class AssociateAction extends Action
 {
@@ -190,24 +191,22 @@ class AssociateAction extends Action
             $titleAttribute = filled($titleAttribute) ? $relationshipQuery->qualifyColumn($titleAttribute) : null;
 
             if (filled($search) && ($searchColumns || filled($titleAttribute))) {
+                /** @var Connection $databaseConnection */
+                $databaseConnection = $relationshipQuery->getConnection();
+
+                $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+
+                $search = generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection);
                 $searchColumns ??= [$titleAttribute];
+
                 $isFirst = true;
-                $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($relationshipQuery);
 
-                if ($isForcedCaseInsensitive) {
-                    $search = Str::lower($search);
-                }
-
-                $relationshipQuery->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
+                $relationshipQuery->where(function (Builder $query) use ($databaseConnection, $isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
                     foreach ($searchColumns as $searchColumn) {
-                        $caseAwareSearchColumn = $isForcedCaseInsensitive ?
-                            new Expression("lower({$searchColumn})") :
-                            $searchColumn;
-
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
                         $query->{$whereClause}(
-                            $caseAwareSearchColumn,
+                            generate_search_column_expression($query->qualifyColumn($searchColumn), $isForcedCaseInsensitive, $databaseConnection),
                             'like',
                             "%{$search}%",
                         );
@@ -239,7 +238,11 @@ class AssociateAction extends Action
                     );
                 });
 
-            if (filled($titleAttribute)) {
+            if (
+                filled($titleAttribute) &&
+                (! $this->hasCustomRecordTitle()) &&
+                ($this->hasCustomRecordTitleAttribute() || (! $this->getTable()->hasCustomRecordTitle()))
+            ) {
                 if (empty($relationshipQuery->getQuery()->orders)) {
                     $relationshipQuery->orderBy($titleAttribute);
                 }
@@ -280,14 +283,8 @@ class AssociateAction extends Action
         return $this;
     }
 
-    public function isSearchForcedCaseInsensitive(Builder $query): bool
+    public function isSearchForcedCaseInsensitive(): ?bool
     {
-        /** @var Connection $databaseConnection */
-        $databaseConnection = $query->getConnection();
-
-        return $this->evaluate($this->isSearchForcedCaseInsensitive) ?? match ($databaseConnection->getDriverName()) {
-            'pgsql' => true,
-            default => false,
-        };
+        return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 }

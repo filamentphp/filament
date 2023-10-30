@@ -35,7 +35,17 @@ trait HasAffixes
 
     protected string | Closure | null $prefixIcon = null;
 
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
+    protected string | array | Closure | null $prefixIconColor = null;
+
     protected string | Closure | null $suffixIcon = null;
+
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
+    protected string | array | Closure | null $suffixIconColor = null;
 
     protected bool | Closure $isPrefixInline = false;
 
@@ -118,18 +128,38 @@ trait HasAffixes
         return $this;
     }
 
-    public function prefixIcon(string | Closure | null $iconName, bool | Closure $isInline = false): static
+    public function prefixIcon(string | Closure | null $icon, bool | Closure $isInline = false): static
     {
-        $this->prefixIcon = $iconName;
+        $this->prefixIcon = $icon;
         $this->inlinePrefix($isInline);
 
         return $this;
     }
 
-    public function suffixIcon(string | Closure | null $iconName, bool | Closure $isInline = false): static
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     */
+    public function prefixIconColor(string | array | Closure | null $color = null): static
     {
-        $this->suffixIcon = $iconName;
+        $this->prefixIconColor = $color;
+
+        return $this;
+    }
+
+    public function suffixIcon(string | Closure | null $icon, bool | Closure $isInline = false): static
+    {
+        $this->suffixIcon = $icon;
         $this->inlineSuffix($isInline);
+
+        return $this;
+    }
+
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     */
+    public function suffixIconColor(string | array | Closure | null $color = null): static
+    {
+        $this->suffixIconColor = $color;
 
         return $this;
     }
@@ -208,6 +238,22 @@ trait HasAffixes
     public function getSuffixIcon(): ?string
     {
         return $this->evaluate($this->suffixIcon);
+    }
+
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getPrefixIconColor(): string | array | null
+    {
+        return $this->evaluate($this->prefixIconColor);
+    }
+
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getSuffixIconColor(): string | array | null
+    {
+        return $this->evaluate($this->suffixIconColor);
     }
 
     public function isPrefixInline(): bool

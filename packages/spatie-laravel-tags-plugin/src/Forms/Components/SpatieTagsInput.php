@@ -40,7 +40,10 @@ class SpatieTagsInput extends TagsInput
                 return;
             }
 
-            if ($type = $component->getType() && ! $component->isAnyTagTypeAllowed()) {
+            if (
+                ($type = $component->getType()) &&
+                (! $component->isAnyTagTypeAllowed())
+            ) {
                 $record->syncTagsWithType($state, $type);
 
                 return;
@@ -80,7 +83,7 @@ class SpatieTagsInput extends TagsInput
             return $tag;
         })->flatten();
 
-        $record->tags()->sync($tags);
+        $record->tags()->sync($tags->pluck('id'));
     }
 
     public function type(string | Closure | AllTagTypes | null $type): static

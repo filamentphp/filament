@@ -11,6 +11,12 @@
         $statePath = $getStatePath();
         $isDisabled = $isDisabled();
         $hasImageEditor = $hasImageEditor();
+        
+        $alignment = $getAlignment() ?? Alignment::Start;
+        
+        if (!$alignment instanceof Alignment) {
+            $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+        }
     @endphp
 
     <div ax-load
@@ -28,6 +34,10 @@
                 return await $wire.getFormUploadedFiles(@js($statePath))
             },
             hasImageEditor: @js($hasImageEditor),
+            canEditSvgs: @js($canEditSvgs()),
+            isSvgEditingConfirmed: @js($isSvgEditingConfirmed()),
+            confirmSvgEditingMessage: '{{ __('filament-forms::components.file_upload.editor.svg.messages.confirmation') }}',
+            disabledSvgEditingMessage: '{{ __('filament-forms::components.file_upload.editor.svg.messages.disabled') }}',
             imageCropAspectRatio: @js($imageCropAspectRatio),
             imagePreviewHeight: @js($getImagePreviewHeight()),
             imageResizeMode: @js($getImageResizeMode()),
@@ -38,6 +48,7 @@
             isDeletable: @js($isDeletable()),
             isDisabled: @js($isDisabled),
             isDownloadable: @js($isDownloadable()),
+            isMultiple: @js($isMultiple()),
             isOpenable: @js($isOpenable()),
             isPreviewable: @js($isPreviewable()),
             isReorderable: @js($isReorderable()),
@@ -99,12 +110,13 @@
                 escape: false,
             )->merge($getExtraAttributes(), escape: false)->merge($getExtraAlpineAttributes(), escape: false)->class([
                 'fi-fo-file-upload flex',
-                match ($getAlignment()) {
-                    Alignment::Center, 'center' => 'justify-center',
-                    Alignment::End, 'end' => 'justify-end',
-                    Alignment::Left, 'left' => 'justify-left',
-                    Alignment::Right, 'right' => 'justify-right',
-                    Alignment::Start, 'start', null => 'justify-start',
+                match ($alignment) {
+                    Alignment::Start => 'justify-start',
+                    Alignment::Center => 'justify-center',
+                    Alignment::End => 'justify-end',
+                    Alignment::Left => 'justify-left',
+                    Alignment::Right => 'justify-right',
+                    default => $alignment,
                 },
             ]) }}>
         <div @class(['h-full', 'w-32' => $isAvatar, 'w-full' => !$isAvatar])>
@@ -180,8 +192,8 @@
                                                             {{ $input['label'] }}
                                                         </span>
 
-                                                        <input type="text" @class([
-                                                            'block w-full border-none text-sm transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
+                                                        <input @class([
+                                                            'block w-full border-none text-sm transition duration-75 focus-visible:border-primary-500 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus-visible:border-primary-500',
                                                         ])
                                                             x-on:keyup.enter.stop.prevent="{{ $input['alpineSaveHandler'] }}"
                                                             x-on:blur="{{ $input['alpineSaveHandler'] }}"

@@ -13,30 +13,33 @@
         </span>
 
         <div class="flex flex-wrap gap-1.5">
-            @foreach ($indicators as $wireClickHandler => $label)
-                <x-filament::badge>
-                    {{ $label }}
+            @foreach ($indicators as $indicator)
+                <x-filament::badge :color="$indicator->getColor()">
+                    {{ $indicator->getLabel() }}
 
-                    <x-slot
-                        name="deleteButton"
-                        :label="__('filament-tables::table.filters.actions.remove.label')"
-                        wire:click="{{ $wireClickHandler }}"
-                        wire:loading.attr="disabled"
-                        wire:target="removeTableFilter"
-                    ></x-slot>
+                    @if ($indicator->isRemovable())
+                        <x-slot
+                            name="deleteButton"
+                            :label="__('filament-tables::table.filters.actions.remove.label')"
+                            wire:click="{{ $indicator->getRemoveLivewireClickHandler() }}"
+                            wire:loading.attr="disabled"
+                            wire:target="removeTableFilter"
+                        ></x-slot>
+                    @endif
                 </x-filament::badge>
             @endforeach
         </div>
     </div>
 
-    <x-filament::icon-button
-        color="gray"
-        icon="heroicon-m-x-mark"
-        icon-alias="tables::filters.remove-all-button"
-        size="sm"
-        :tooltip="__('filament-tables::table.filters.actions.remove_all.tooltip')"
-        wire:click="removeTableFilters"
-        wire:target="removeTableFilters,removeTableFilter"
-        class="-mx-1.5 -my-1"
-    />
+    <div class="mt-0.5">
+        <x-filament::icon-button
+            color="gray"
+            icon="heroicon-m-x-mark"
+            icon-alias="tables::filters.remove-all-button"
+            size="sm"
+            :tooltip="__('filament-tables::table.filters.actions.remove_all.tooltip')"
+            wire:click="removeTableFilters"
+            wire:target="removeTableFilters,removeTableFilter"
+        />
+    </div>
 </div>

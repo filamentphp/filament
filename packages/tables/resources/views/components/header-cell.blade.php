@@ -9,13 +9,16 @@
 
 @php
     use Filament\Support\Enums\Alignment;
+
+    $alignment = $alignment ?? Alignment::Start;
+
+    if (! $alignment instanceof Alignment) {
+        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+    }
 @endphp
 
 <th
-    {{
-        $attributes
-            ->class(['fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6'])
-    }}
+    {{ $attributes->class(['fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6']) }}
 >
     <{{ $sortable ? 'button' : 'span' }}
         @if ($sortable)
@@ -27,12 +30,12 @@
             'whitespace-nowrap' => ! $wrap,
             'whitespace-normal' => $wrap,
             match ($alignment) {
-                Alignment::Center, 'center' => 'justify-center',
-                Alignment::End, 'end' => 'justify-end',
-                Alignment::Left, 'left' => 'justify-start rtl:flex-row-reverse',
-                Alignment::Right, 'right' => 'justify-end rtl:flex-row-reverse',
-                Alignment::Start, 'start' => 'justify-start',
-                default => null,
+                Alignment::Start => 'justify-start',
+                Alignment::Center => 'justify-center',
+                Alignment::End => 'justify-end',
+                Alignment::Left => 'justify-start rtl:flex-row-reverse',
+                Alignment::Right => 'justify-end rtl:flex-row-reverse',
+                default => $alignment,
             },
         ])
     >
@@ -42,7 +45,9 @@
             </span>
         @endif
 
-        <span class="text-sm font-semibold text-gray-950 dark:text-white">
+        <span
+            class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white"
+        >
             {{ $slot }}
         </span>
 
@@ -53,7 +58,7 @@
                 @class([
                     'fi-ta-header-cell-sort-icon h-5 w-5 transition duration-75',
                     'text-gray-950 dark:text-white' => $activelySorted,
-                    'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 dark:group-hover:text-gray-400 dark:group-focus:text-gray-400' => ! $activelySorted,
+                    'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 group-focus-visible:text-gray-500 dark:group-hover:text-gray-400 dark:group-focus-visible:text-gray-400' => ! $activelySorted,
                 ])
             />
 

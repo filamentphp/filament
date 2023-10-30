@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Model;
 
 class DeleteAction extends Action
@@ -28,11 +29,11 @@ class DeleteAction extends Action
 
         $this->color('danger');
 
-        $this->icon('heroicon-m-trash');
+        $this->icon(FilamentIcon::resolve('actions::delete-action') ?? 'heroicon-m-trash');
 
         $this->requiresConfirmation();
 
-        $this->modalIcon('heroicon-o-trash');
+        $this->modalIcon(FilamentIcon::resolve('actions::delete-action.modal') ?? 'heroicon-o-trash');
 
         $this->hidden(static function (Model $record): bool {
             if (! method_exists($record, 'trashed')) {

@@ -6,4 +6,12 @@ return [
 
     'breadcrumb' => 'Mostrar',
 
+    'content' => [
+
+        'tab' => [
+            'label' => 'Mostrar',
+        ],
+
+    ],
+
 ];

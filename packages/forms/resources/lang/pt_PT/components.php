@@ -6,12 +6,24 @@ return [
 
         'actions' => [
 
+            'clone' => [
+                'label' => 'Clonar',
+            ],
+
             'add' => [
                 'label' => 'Adicionar em :label',
             ],
 
+            'add_between' => [
+                'label' => 'Adicionar entre',
+            ],
+
             'delete' => [
                 'label' => 'Remover',
+            ],
+
+            'reorder' => [
+                'label' => 'Mover',
             ],
 
             'move_down' => [
@@ -38,8 +50,139 @@ return [
                 'label' => 'Expandir todos',
             ],
 
-            'add_between' => [
-                'label' => 'Adicionar entre',
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'actions' => [
+
+            'deselect_all' => [
+                'label' => 'Desmarcar todos',
+            ],
+
+            'select_all' => [
+                'label' => 'Marcar todos',
+            ],
+
+        ],
+
+    ],
+
+    'file_upload' => [
+
+        'editor' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'Cancelar',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'Modo de arrastar "cortar"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'Modo de arrastar "mover"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'Inverter imagem horizontalmente',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'Inverter imagem verticalmente',
+                ],
+
+                'move_down' => [
+                    'label' => 'Mover imagem para baixo',
+                ],
+
+                'move_left' => [
+                    'label' => 'Mover imagem para esquerda',
+                ],
+
+                'move_right' => [
+                    'label' => 'Mover imagem para direita',
+                ],
+
+                'move_up' => [
+                    'label' => 'Mover imagem para cima',
+                ],
+
+                'reset' => [
+                    'label' => 'Limpar',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'Rotacionar imagem para esquerda',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'Rotacionar imagem para direita',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'Definir proporção para :ratio',
+                ],
+
+                'save' => [
+                    'label' => 'Salvar',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'Ampliar imagem para 100%',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'Mais zoom',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'Menos zoom',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'Altura',
+                    'unit' => 'px',
+                ],
+
+                'rotation' => [
+                    'label' => 'Rotação',
+                    'unit' => 'deg',
+                ],
+
+                'width' => [
+                    'label' => 'Largura',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'Proporções',
+
+                'no_fixed' => [
+                    'label' => 'Livre',
+                ],
+
             ],
 
         ],
@@ -56,6 +199,10 @@ return [
 
             'delete' => [
                 'label' => 'Remover linha',
+            ],
+
+            'reorder' => [
+                'label' => 'Reordenar linha',
             ],
 
         ],
@@ -78,15 +225,18 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Anexar ficheiro',
+            'blockquote' => 'Bloco de citação',
             'bold' => 'Negrito',
             'bullet_list' => 'Lista',
             'code_block' => 'Bloco de código',
-            'edit' => 'Editar',
+            'heading' => 'Título',
             'italic' => 'Itálico',
             'link' => 'Link',
             'ordered_list' => 'Lista ordenada',
-            'preview' => 'Visualizar',
+            'redo' => 'Refazer',
             'strike' => 'Rasurado',
+            'table' => 'Tabela',
+            'undo' => 'Desfazer',
         ],
 
     ],
@@ -105,6 +255,10 @@ return [
 
             'clone' => [
                 'label' => 'Clonar',
+            ],
+
+            'reorder' => [
+                'label' => 'Mover',
             ],
 
             'move_down' => [
@@ -168,6 +322,7 @@ return [
             'ordered_list' => 'Números',
             'redo' => 'Refazer',
             'strike' => 'Rasurado',
+            'underline' => 'Sublinhado',
             'undo' => 'Desfazer',
         ],
 
@@ -189,6 +344,28 @@ return [
                             'label' => 'Criar',
                         ],
 
+                        'create_another' => [
+                            'label' => 'Salvar e criar outro',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Editar',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Salvar',
+                        ],
+
                     ],
 
                 ],
@@ -203,6 +380,8 @@ return [
         ],
 
         'loading_message' => 'A carregar...',
+
+        'max_items_message' => 'Apenas :count item pode ser selecionado.|Apenas :count itens podem ser selecionados.',
 
         'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
 

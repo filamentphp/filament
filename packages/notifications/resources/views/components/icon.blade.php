@@ -13,7 +13,11 @@
     :attributes="
         $attributes
             ->class([
-                'fi-no-notification-icon text-custom-400',
+                'fi-no-notification-icon',
+                match ($color) {
+                    'gray' => 'fi-color-gray text-gray-400',
+                    default => 'fi-color-custom text-custom-400',
+                },
                 match ($size) {
                     IconSize::Small, 'sm' => 'h-4 w-4',
                     IconSize::Medium, 'md' => 'h-5 w-5',
@@ -22,7 +26,10 @@
                 },
             ])
             ->style([
-                \Filament\Support\get_color_css_variables($color, shades: [400]),
+                \Filament\Support\get_color_css_variables(
+                    $color,
+                    shades: [400],
+                ),
             ])
     "
 />

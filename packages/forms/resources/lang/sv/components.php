@@ -124,6 +124,10 @@ return [
                     'label' => 'Rotera bilden åt höger',
                 ],
 
+                'set_aspect_ratio' => [
+                    'label' => 'Ändra bildformat till :ratio',
+                ],
+
                 'save' => [
                     'label' => 'Spara',
                 ],
@@ -146,24 +150,46 @@ return [
 
                 'height' => [
                     'label' => 'Höjd',
+                    'unit' => 'px',
                 ],
 
                 'rotation' => [
                     'label' => 'Rotera',
+                    'unit' => 'grad',
                 ],
 
                 'width' => [
                     'label' => 'Bredd',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
                 ],
 
             ],
 
             'aspect_ratios' => [
 
-                'label' => 'Aspect ratios',
+                'label' => 'Bildformat',
 
                 'no_fixed' => [
                     'label' => 'Fritt',
+                ],
+
+            ],
+
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Redigering av SVG-filer rekommenderas inte eftersom det tar bort bildens förmåga att skala utan kvalitetsförlust.\n Är du säker på att du vill fortsätta?',
+                    'disabled' => 'Redigering av SVG-filer är inaktiverat eftersom det tar bort bildens förmåga att skala utan kvalitetsförlust.',
                 ],
 
             ],

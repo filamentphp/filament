@@ -162,7 +162,7 @@ class BaseFileUpload extends Field
         });
 
         $this->getUploadedFileNameForStorageUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file) {
-            return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
+            return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : (Str::ulid() . '.' . $file->getClientOriginalExtension());
         });
 
         $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): ?string {
@@ -174,8 +174,7 @@ class BaseFileUpload extends Field
                 return null;
             }
 
-            /** @phpstan-ignore-next-line */
-            if ($component->shouldMoveFiles() && ($component->getDiskName() == $file->disk)) {
+            if ($component->shouldMoveFiles() && ($component->getDiskName() == invade($file)->disk)) {
                 $newPath = trim($component->getDirectory() . '/' . $component->getUploadedFileNameForStorage($file), '/');
 
                 $component->getDisk()->move($file->path(), $newPath);

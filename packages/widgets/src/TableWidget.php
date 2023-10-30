@@ -4,16 +4,18 @@ namespace Filament\Widgets;
 
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Infolists;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 
-class TableWidget extends Widget implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Tables\Contracts\HasTable
+class TableWidget extends Widget implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
 {
     use Actions\Concerns\InteractsWithActions;
     use Forms\Concerns\InteractsWithForms;
+    use Infolists\Concerns\InteractsWithInfolists;
     use Tables\Concerns\InteractsWithTable {
         makeTable as makeBaseTable;
     }

@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\BulkAction;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 use function Livewire\store;
 
@@ -78,19 +80,25 @@ trait HasBulkActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
+        } catch (ValidationException $exception) {
+            if (! $this->mountedTableBulkActionShouldOpenModal()) {
+                $action->resetArguments();
+                $action->resetFormData();
+
+                $this->unmountTableBulkAction();
+            }
+
+            throw $exception;
         }
 
         if (store($this)->has('redirect')) {
             return $result;
         }
 
-        $this->mountedTableBulkAction = null;
-        $this->selectedTableRecords = [];
-
         $action->resetArguments();
         $action->resetFormData();
 
-        $this->closeTableBulkActionModal();
+        $this->unmountTableBulkAction();
 
         return $result;
     }
@@ -180,6 +188,14 @@ trait HasBulkActions
             $this->mountedTableBulkActionHasForm();
     }
 
+    public function unmountTableBulkAction(): void
+    {
+        $this->mountedTableBulkAction = null;
+        $this->selectedTableRecords = [];
+
+        $this->closeTableBulkActionModal();
+    }
+
     public function mountedTableBulkActionHasForm(): bool
     {
         return (bool) count($this->getMountedTableBulkActionForm()?->getComponents() ?? []);
@@ -190,6 +206,9 @@ trait HasBulkActions
         $this->dispatch('deselectAllTableRecords');
     }
 
+    /**
+     * @return array<string>
+     */
     public function getAllSelectableTableRecordKeys(): array
     {
         $query = $this->getFilteredTableQuery();
@@ -207,6 +226,50 @@ trait HasBulkActions
 
         $records = $this->getTable()->selectsCurrentPageOnly() ?
             $this->getTableRecords() :
+            $query->get();
+
+        return $records->reduce(
+            function (array $carry, Model $record): array {
+                if (! $this->getTable()->isRecordSelectable($record)) {
+                    return $carry;
+                }
+
+                $carry[] = (string) $record->getKey();
+
+                return $carry;
+            },
+            initial: [],
+        );
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getGroupedSelectableTableRecordKeys(string $group): array
+    {
+        $query = $this->getFilteredTableQuery();
+
+        $tableGrouping = $this->getTableGrouping();
+
+        $tableGrouping->scopeQueryByKey($query, $group);
+
+        if (! $this->getTable()->checksIfRecordIsSelectable()) {
+            $records = $this->getTable()->selectsCurrentPageOnly() ?
+                $this->getTableRecords()->filter(
+                    fn (Model $record) => $tableGrouping->getStringKey($record) === $group,
+                ) :
+                $query;
+
+            return $records
+                ->pluck($query->getModel()->getQualifiedKeyName())
+                ->map(fn ($key): string => (string) $key)
+                ->all();
+        }
+
+        $records = $this->getTable()->selectsCurrentPageOnly() ?
+            $this->getTableRecords()->filter(
+                fn (Model $record) => $tableGrouping->getStringKey($record) === $group,
+            ) :
             $query->get();
 
         return $records->reduce(
@@ -262,6 +325,10 @@ trait HasBulkActions
             foreach ($this->getTable()->getColumns() as $column) {
                 $column->applyEagerLoading($query);
                 $column->applyRelationshipAggregates($query);
+            }
+
+            if ($table->shouldDeselectAllRecordsWhenFiltered()) {
+                $this->filterTableQuery($query);
             }
 
             return $this->cachedSelectedTableRecords = $query->get();
@@ -356,5 +423,10 @@ trait HasBulkActions
     public function isTableRecordSelectable(): ?Closure
     {
         return null;
+    }
+
+    public function mountedTableBulkActionInfolist(): Infolist
+    {
+        return $this->getMountedTableBulkAction()->getInfolist();
     }
 }
