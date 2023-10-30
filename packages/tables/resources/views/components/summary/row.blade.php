@@ -15,6 +15,7 @@
 
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Tables\Columns\Column;
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
 
