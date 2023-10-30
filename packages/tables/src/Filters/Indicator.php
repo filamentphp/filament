@@ -12,23 +12,25 @@ class Indicator extends Component
 
     protected bool | Closure $isRemovable = true;
 
-    protected string | Closure | null $label = null;
+    protected string | Closure $label;
 
     protected string | Closure | null $removeField = null;
 
     protected string | Closure | null $removeLivewireClickHandler = null;
 
-    public function __construct(string $label)
+    protected string $evaluationIdentifier = 'indicator';
+
+    final public function __construct(string | Closure $label)
     {
         $this->label($label);
     }
 
-    public static function make(string | Closure | null $label = null): static
+    public static function make(string | Closure $label): static
     {
         return app(static::class, ['label' => $label]);
     }
 
-    public function label(string $label): static
+    public function label(string | Closure $label): static
     {
         $this->label = $label;
 
@@ -37,7 +39,7 @@ class Indicator extends Component
 
     public function getLabel(): string
     {
-        return $this->label;
+        return $this->evaluate($this->label);
     }
 
     public function removable(bool | Closure $condition = true): static
