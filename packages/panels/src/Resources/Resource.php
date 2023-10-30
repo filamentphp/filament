@@ -388,14 +388,14 @@ abstract class Resource
         }
 
         if ($canEdit) {
-            return static::getUrl(parameters: [
+            return static::getUrl('index', [
                 'tableAction' => 'edit',
                 'tableActionRecord' => $record,
             ]);
         }
 
         if ($canView) {
-            return static::getUrl(parameters: [
+            return static::getUrl('index', [
                 'tableAction' => 'view',
                 'tableActionRecord' => $record,
             ]);
