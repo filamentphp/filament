@@ -19,7 +19,9 @@
     use Filament\Tables\Enums\RecordCheckboxPosition;
 
     if ($groupsOnly && $groupColumn) {
-        $columns = collect($columns)->reject(fn ($column) => $column->getName() == $groupColumn)->toArray();
+        $columns = collect($columns)
+            ->reject(fn (Column $column): bool => $column->getName() === $groupColumn)
+            ->all();
     }
     $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 @endphp

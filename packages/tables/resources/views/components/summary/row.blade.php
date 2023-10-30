@@ -20,7 +20,9 @@
     use Filament\Tables\Enums\RecordCheckboxPosition;
 
     if ($groupsOnly && $groupColumn) {
-        $columns = collect($columns)->reject(fn ($column) => $column->getName() == $groupColumn)->toArray();
+        $columns = collect($columns)
+            ->reject(fn (Column $column): bool => $column->getName() === $groupColumn)
+            ->all();
     }
 @endphp
 
