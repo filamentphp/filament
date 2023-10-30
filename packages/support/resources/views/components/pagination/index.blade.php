@@ -7,7 +7,7 @@
 @php
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
     $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
-	
+
     $smallestPageOption = collect($pageOptions)
         ->filter(fn (int $option) => $option > 0)
         ->sort()
