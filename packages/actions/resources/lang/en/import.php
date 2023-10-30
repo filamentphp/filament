@@ -29,7 +29,7 @@ return [
             ],
 
             'import' => [
-                'label' => 'Start import',
+                'label' => 'Import',
             ],
 
         ],
