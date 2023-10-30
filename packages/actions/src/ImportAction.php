@@ -14,6 +14,7 @@ use Filament\Forms\Components\Select;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Support\ChunkIterator;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Filesystem\AwsS3V3Adapter;
@@ -55,7 +56,7 @@ class ImportAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::import.modal.actions.import.label'));
 
-        $this->groupedIcon('heroicon-m-arrow-up-tray');
+        $this->groupedIcon(FilamentIcon::resolve('actions::import-action.grouped') ?? 'heroicon-m-arrow-up-tray');
 
         $this->form(fn (ImportAction $action): array => array_merge([
             FileUpload::make('file')
