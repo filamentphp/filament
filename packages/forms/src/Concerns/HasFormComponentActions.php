@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 
 use function Livewire\store;
 
@@ -80,14 +81,23 @@ trait HasFormComponentActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-        }
+        } catch (ValidationException $exception) {
+            if (! $this->mountedFormComponentActionShouldOpenModal()) {
+                $action->resetArguments();
+                $action->resetFormData();
 
-        $action->resetArguments();
-        $action->resetFormData();
+                $this->unmountFormComponentAction();
+            }
+
+            throw $exception;
+        }
 
         if (store($this)->has('redirect')) {
             return $result;
         }
+
+        $action->resetArguments();
+        $action->resetFormData();
 
         $this->unmountFormComponentAction();
 

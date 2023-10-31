@@ -60,9 +60,9 @@ class ManagePost extends Component implements HasForms, HasActions
 {
     use InteractsWithActions;
     use InteractsWithForms;
-    
+
     public Post $post;
-    
+
     public function deleteAction(): Action
     {
         return Action::make('delete')
@@ -79,7 +79,7 @@ Finally, you need to render the action in your view. To do this, you can use `{{
 ```blade
 <div>
     {{ $this->deleteAction }}
-    
+
     <x-filament-actions::modals />
 </div>
 ```
@@ -94,10 +94,10 @@ Sometimes, you may wish to pass arguments to your action. For example, if you're
 <div>
     @foreach ($posts as $post)
         <h2>{{ $post->title }}</h2>
-        
-        {{ ($this->delete)(['post' => $post->id]) }}
+
+        {{ ($this->deleteAction)(['post' => $post->id]) }}
     @endforeach
-    
+
     <x-filament-actions::modals />
 </div>
 ```
@@ -114,7 +114,7 @@ public function deleteAction(): Action
         ->requiresConfirmation()
         ->action(function (array $arguments) {
             $post = Post::find($arguments['post']);
-            
+
             $post?->delete();
         });
 }
@@ -131,7 +131,7 @@ You may [group actions together into a dropdown menu](grouping-actions) by using
         $this->viewAction,
         $this->deleteAction,
     ]" />
-    
+
     <x-filament-actions::modals />
 </div>
 ```
@@ -153,7 +153,7 @@ You can also pass in any attributes to customize the appearance of the trigger b
         tooltip="More actions"
         dropdown-placement="bottom-start"
     />
-    
+
     <x-filament-actions::modals />
 </div>
 ```
@@ -175,10 +175,10 @@ public function editAction(): Action
         // ...
         ->action(function (array $arguments) {
             $post = Post::find($arguments['post']);
-            
+
             // ...
-            
-            $this->replaceMountedAction('publish', $arguments);        
+
+            $this->replaceMountedAction('publish', $arguments);
         });
 }
 
@@ -189,7 +189,7 @@ public function publishAction(): Action
         // ...
         ->action(function (array $arguments) {
             $post = Post::find($arguments['post']);
-            
+
             $post->publish();
         });
 }

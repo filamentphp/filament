@@ -54,6 +54,26 @@ it('can mount an action with arguments', function () {
         ]);
 });
 
+it('can mount a nested action with parent arguments', function () {
+    livewire(Actions::class)
+        ->mountAction('arguments.nested', arguments: [
+            'arguments' => ['payload' => Str::random()],
+        ])
+        ->callMountedAction()
+        ->assertDispatched('nested-called', arguments: []);
+});
+
+it('can mount a nested action with nested arguments', function () {
+    livewire(Actions::class)
+        ->mountAction('arguments.nested', arguments: [
+            'nested' => ['payload' => $payload = Str::random()],
+        ])
+        ->callMountedAction()
+        ->assertDispatched('nested-called', arguments: [
+            'payload' => $payload,
+        ]);
+});
+
 it('can call an action with arguments', function () {
     livewire(Actions::class)
         ->callAction('arguments', arguments: [

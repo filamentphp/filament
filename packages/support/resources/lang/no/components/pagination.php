@@ -10,7 +10,7 @@ return [
 
         'records_per_page' => [
 
-            'label' => 'Per side',
+            'label' => 'Pr. side',
 
             'options' => [
                 'all' => 'Alle',

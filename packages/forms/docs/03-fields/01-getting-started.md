@@ -138,7 +138,7 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Support\HtmlString;
 
 TextInput::make('password')
-    ->hint(str(new HtmlString('<a href="/forgotten-password">Forgotten your password?</a>'))
+    ->hint(new HtmlString('<a href="/forgotten-password">Forgotten your password?</a>'))
 
 TextInput::make('password')
     ->hint(str('[Forgotten your password?](/forgotten-password)')->inlineMarkdown()->toHtmlString())

@@ -15,7 +15,7 @@
         "illuminate/contracts": "^10.0",
         "illuminate/support": "^10.0",
         "illuminate/view": "^10.0",
-        "livewire/livewire": "^3.0",
+        "livewire/livewire": "^3.0.8",
         "ryangjchandler/blade-capture-directive": "^0.2|^0.3",
         "spatie/color": "^1.5",
         "spatie/invade": "^1.0",

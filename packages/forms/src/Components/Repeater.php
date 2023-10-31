@@ -19,12 +19,15 @@ use function Filament\Forms\array_move_before;
 
 class Repeater extends Field implements Contracts\CanConcealComponents
 {
+    use Concerns\CanBeCloned;
     use Concerns\CanBeCollapsed;
+    use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
-    use Concerns\CanBeCloned;
 
     protected string | Closure | null $addActionLabel = null;
+
+    protected string | Closure | null $addBetweenActionLabel = null;
 
     protected bool | Closure $isAddable = true;
 
@@ -51,6 +54,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
     protected ?Closure $modifyAddActionUsing = null;
+
+    protected ?Closure $modifyAddBetweenActionUsing = null;
 
     protected ?Closure $modifyCloneActionUsing = null;
 
@@ -81,6 +86,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
      */
     protected ?array $hydratedDefaultState = null;
 
+    protected string | Closure | null $labelBetweenItems = null;
+
+    protected bool | Closure $isItemLabelTruncated = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -89,16 +98,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
             if (is_array($component->hydratedDefaultState)) {
-                $items = $component->hydratedDefaultState;
-
-                foreach ($items as $itemKey => $itemData) {
-                    $items[$itemKey] = [
-                        ...$state[$itemKey] ?? [],
-                        ...$itemData,
-                    ];
-                }
-
-                $component->state($items);
+                $component->mergeHydratedDefaultStateWithChildComponentContainerState();
 
                 return;
             }
@@ -108,7 +108,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             $simpleField = $component->getSimpleField();
 
             foreach ($state ?? [] as $itemData) {
-                $items[(string) Str::uuid()] = $simpleField ?
+                $items[$component->generateUuid()] = $simpleField ?
                     [$simpleField->getName() => $itemData] :
                     $itemData;
             }
@@ -118,6 +118,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
         $this->registerActions([
             fn (Repeater $component): Action => $component->getAddAction(),
+            fn (Repeater $component): Action => $component->getAddBetweenAction(),
             fn (Repeater $component): Action => $component->getCloneAction(),
             fn (Repeater $component): Action => $component->getCollapseAction(),
             fn (Repeater $component): Action => $component->getCollapseAllAction(),
@@ -147,7 +148,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->label(fn (Repeater $component) => $component->getAddActionLabel())
             ->color('gray')
             ->action(function (Repeater $component): void {
-                $newUuid = (string) Str::uuid();
+                $newUuid = $component->generateUuid();
 
                 $items = $component->getState();
                 $items[$newUuid] = [];
@@ -157,10 +158,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->getChildComponentContainers()[$newUuid]->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
+
+                $component->callAfterStateUpdated();
             })
             ->button()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isAddable());
+            ->visible(fn (Repeater $component): bool => $component->isAddable());
 
         if ($this->modifyAddActionUsing) {
             $action = $this->evaluate($this->modifyAddActionUsing, [
@@ -183,6 +186,69 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return 'add';
     }
 
+    public function getAddBetweenAction(): Action
+    {
+        $action = Action::make($this->getAddBetweenActionName())
+            ->label(fn (Repeater $component) => $component->getAddBetweenActionLabel())
+            ->color('gray')
+            ->action(function (array $arguments, Repeater $component): void {
+                $newUuid = $component->generateUuid();
+
+                $items = [];
+
+                foreach ($component->getState() ?? [] as $uuid => $item) {
+                    $items[$uuid] = $item;
+
+                    if ($uuid === $arguments['afterItem']) {
+                        $items[$newUuid] = [];
+                    }
+                }
+
+                $component->state($items);
+
+                $component->getChildComponentContainers()[$newUuid]->fill();
+
+                $component->collapsed(false, shouldMakeComponentCollapsible: false);
+
+                $component->callAfterStateUpdated();
+            })
+            ->button()
+            ->size(ActionSize::Small)
+            ->visible(false);
+
+        if ($this->modifyAddBetweenActionUsing) {
+            $action = $this->evaluate($this->modifyAddBetweenActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function addBetweenAction(?Closure $callback): static
+    {
+        $this->modifyAddBetweenActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getAddBetweenActionName(): string
+    {
+        return 'addBetween';
+    }
+
+    public function addBetweenActionLabel(string | Closure | null $label): static
+    {
+        $this->addBetweenActionLabel = $label;
+
+        return $this;
+    }
+
+    public function getAddBetweenActionLabel(): string
+    {
+        return $this->evaluate($this->addBetweenActionLabel) ?? __('filament-forms::components.repeater.actions.add_between.label');
+    }
+
     public function getCloneAction(): Action
     {
         $action = Action::make($this->getCloneActionName())
@@ -190,7 +256,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->icon('heroicon-m-square-2-stack')
             ->color('gray')
             ->action(function (array $arguments, Repeater $component): void {
-                $newUuid = (string) Str::uuid();
+                $newUuid = $component->generateUuid();
 
                 $items = $component->getState();
                 $items[$newUuid] = $items[$arguments['item']];
@@ -198,10 +264,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isCloneable());
+            ->visible(fn (Repeater $component): bool => $component->isCloneable());
 
         if ($this->modifyCloneActionUsing) {
             $action = $this->evaluate($this->modifyCloneActionUsing, [
@@ -235,10 +303,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 unset($items[$arguments['item']]);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isDeletable());
+            ->visible(fn (Repeater $component): bool => $component->isDeletable());
 
         if ($this->modifyDeleteActionUsing) {
             $action = $this->evaluate($this->modifyDeleteActionUsing, [
@@ -271,10 +341,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $items = array_move_after($component->getState(), $arguments['item']);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isReorderable());
+            ->visible(fn (Repeater $component): bool => $component->isReorderable());
 
         if ($this->modifyMoveDownActionUsing) {
             $action = $this->evaluate($this->modifyMoveDownActionUsing, [
@@ -307,10 +379,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $items = array_move_before($component->getState(), $arguments['item']);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isReorderable());
+            ->visible(fn (Repeater $component): bool => $component->isReorderable());
 
         if ($this->modifyMoveUpActionUsing) {
             $action = $this->evaluate($this->modifyMoveUpActionUsing, [
@@ -346,11 +420,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 ];
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isReorderableWithDragAndDrop());
+            ->visible(fn (Repeater $component): bool => $component->isReorderableWithDragAndDrop());
 
         if ($this->modifyReorderActionUsing) {
             $action = $this->evaluate($this->modifyReorderActionUsing, [
@@ -512,6 +588,20 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function labelBetweenItems(string | Closure | null $label): static
+    {
+        $this->labelBetweenItems = $label;
+
+        return $this;
+    }
+
+    public function truncateItemLabel(bool | Closure $condition = true): static
+    {
+        $this->isItemLabelTruncated = $condition;
+
+        return $this;
+    }
+
     public function defaultItems(int | Closure $count): static
     {
         $this->default(static function (Repeater $component) use ($count): array {
@@ -537,7 +627,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             $items = [];
 
             foreach ($state ?? [] as $itemData) {
-                $items[(string) Str::uuid()] = $simpleField ?
+                $items[$component->generateUuid()] = $simpleField ?
                     [$simpleField->getName() => $itemData] :
                     $itemData;
             }
@@ -728,7 +818,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
-        $this->afterStateHydrated(null);
+        $this->afterStateHydrated(function (Repeater $component) {
+            if (! is_array($component->hydratedDefaultState)) {
+                return;
+            }
+
+            $component->mergeHydratedDefaultStateWithChildComponentContainerState();
+        });
 
         $this->loadStateFromRelationshipsUsing(static function (Repeater $component) {
             $component->clearCachedExistingRecords();
@@ -815,6 +911,28 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->disableItemMovement();
 
         return $this;
+    }
+
+    /**
+     * After hydrating the state of child component containers, the default state
+     * of fields inside the repeater can be lost, if it was defined on the repeater
+     * itself. This method merges the hydrated default state with the state of the
+     * child component containers, so that the default state of the fields inside
+     * the repeater is preserved.
+     */
+    protected function mergeHydratedDefaultStateWithChildComponentContainerState(): void
+    {
+        $state = $this->getState();
+        $items = $this->hydratedDefaultState;
+
+        foreach ($items as $itemKey => $itemData) {
+            $items[$itemKey] = [
+                ...$state[$itemKey] ?? [],
+                ...$itemData,
+            ];
+        }
+
+        $this->state($items);
     }
 
     public function itemLabel(string | Closure | null $label): static
@@ -922,8 +1040,11 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     public function getItemLabel(string $uuid): string | Htmlable | null
     {
+        $container = $this->getChildComponentContainer($uuid);
+
         return $this->evaluate($this->itemLabel, [
-            'state' => $this->getChildComponentContainer($uuid)->getRawState(),
+            'container' => $container,
+            'state' => $container->getRawState(),
             'uuid' => $uuid,
         ]);
     }
@@ -1044,12 +1165,25 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this->isCollapsible();
     }
 
-    public function getView(): string
+    /**
+     * @return view-string
+     */
+    public function getDefaultView(): string
     {
         if ($this->isSimple()) {
             return 'filament-forms::components.simple-repeater';
         }
 
         return 'filament-forms::components.repeater';
+    }
+
+    public function getLabelBetweenItems(): ?string
+    {
+        return $this->evaluate($this->labelBetweenItems);
+    }
+
+    public function isItemLabelTruncated(): bool
+    {
+        return (bool) $this->evaluate($this->isItemLabelTruncated);
     }
 }

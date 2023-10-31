@@ -90,7 +90,10 @@
                         ]);
 
                         $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-                            \Filament\Support\get_color_css_variables($color, shades: [500]) => $color !== 'gray',
+                            \Filament\Support\get_color_css_variables(
+                                $color,
+                                shades: [500],
+                            ) => $color !== 'gray',
                         ]);
                     @endphp
 
@@ -98,7 +101,10 @@
                         @if ($itemIsCopyable)
                             x-on:click="
                                 window.navigator.clipboard.writeText(@js($copyableState))
-                                $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
+                                $tooltip(@js($copyMessage), {
+                                    theme: $store.theme,
+                                    timeout: @js($copyMessageDuration),
+                                })
                             "
                         @endif
                         @class([
@@ -120,7 +126,7 @@
                             <div
                                 @class([
                                     'fi-ta-text-item inline-flex items-center gap-1.5',
-                                    'transition duration-75 hover:underline focus:underline' => $url,
+                                    'transition duration-75 hover:underline focus-visible:underline' => $url,
                                     match ($size) {
                                         TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
                                         TextColumnSize::Small, 'sm', null => 'text-sm',
@@ -130,8 +136,8 @@
                                     },
                                     match ($color) {
                                         null => 'text-gray-950 dark:text-white',
-                                        'gray' => 'text-gray-500 dark:text-gray-400',
-                                        default => 'text-custom-600 dark:text-custom-400',
+                                        'gray' => 'fi-color-gray text-gray-500 dark:text-gray-400',
+                                        default => 'fi-color-custom text-custom-600 dark:text-custom-400',
                                     },
                                     match ($weight) {
                                         FontWeight::Thin, 'thin' => 'font-thin',
@@ -152,7 +158,10 @@
                                     },
                                 ])
                                 @style([
-                                    \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! in_array($color, [null, 'gray']),
+                                    \Filament\Support\get_color_css_variables(
+                                        $color,
+                                        shades: [400, 600],
+                                    ) => ! in_array($color, [null, 'gray']),
                                 ])
                             >
                                 @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))

@@ -40,7 +40,12 @@ export default function fileUploadFormComponent({
     imageResizeUpscale,
     isAvatar,
     hasImageEditor,
+    canEditSvgs,
+    isSvgEditingConfirmed,
+    confirmSvgEditingMessage,
+    disabledSvgEditingMessage,
     isDownloadable,
+    isMultiple,
     isOpenable,
     isPreviewable,
     isReorderable,
@@ -454,6 +459,65 @@ export default function fileUploadFormComponent({
             this.destroyEditor()
         },
 
+        fixImageDimensions: function (file, callback) {
+            if (file.type !== 'image/svg+xml') {
+                return callback(file)
+            }
+
+            const svgReader = new FileReader()
+
+            svgReader.onload = (event) => {
+                const svgElement = new DOMParser()
+                    .parseFromString(event.target.result, 'image/svg+xml')
+                    ?.querySelector('svg')
+
+                if (!svgElement) {
+                    return callback(file)
+                }
+
+                const viewBoxAttribute = ['viewBox', 'ViewBox', 'viewbox'].find(
+                    (attribute) => svgElement.hasAttribute(attribute),
+                )
+
+                if (!viewBoxAttribute) {
+                    return callback(file)
+                }
+
+                const viewBox = svgElement
+                    .getAttribute(viewBoxAttribute)
+                    .split(' ')
+
+                if (!viewBox || viewBox.length !== 4) {
+                    return callback(file)
+                }
+
+                svgElement.setAttribute('width', parseFloat(viewBox[2]) + 'pt')
+                svgElement.setAttribute('height', parseFloat(viewBox[3]) + 'pt')
+
+                return callback(
+                    new File(
+                        [
+                            new Blob(
+                                [
+                                    new XMLSerializer().serializeToString(
+                                        svgElement,
+                                    ),
+                                ],
+                                { type: 'image/svg+xml' },
+                            ),
+                        ],
+                        file.name,
+                        {
+                            type: 'image/svg+xml',
+                            _relativePath: '',
+                        },
+                    ),
+                )
+            }
+
+            svgReader.readAsText(file)
+        },
+
         loadEditor: function (file) {
             if (isDisabled) {
                 return
@@ -467,18 +531,40 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            this.editingFile = file
+            const isFileSvg = file.type === 'image/svg+xml'
 
-            this.initEditor()
+            if (!canEditSvgs && isFileSvg) {
+                alert(disabledSvgEditingMessage)
 
-            const reader = new FileReader()
-            reader.onload = (event) => {
-                this.isEditorOpen = true
-
-                setTimeout(() => this.editor.replace(event.target.result), 200)
+                return
             }
 
-            reader.readAsDataURL(file)
+            if (
+                isSvgEditingConfirmed &&
+                isFileSvg &&
+                !confirm(confirmSvgEditingMessage)
+            ) {
+                return
+            }
+
+            this.fixImageDimensions(file, (editingFile) => {
+                this.editingFile = editingFile
+
+                this.initEditor()
+
+                const reader = new FileReader()
+
+                reader.onload = (event) => {
+                    this.isEditorOpen = true
+
+                    setTimeout(
+                        () => this.editor.replace(event.target.result),
+                        200,
+                    )
+                }
+
+                reader.readAsDataURL(file)
+            })
         },
 
         saveEditor: function () {
@@ -499,24 +585,54 @@ export default function fileUploadFormComponent({
                     width: imageResizeTargetWidth,
                 })
                 .toBlob((croppedImage) => {
-                    this.pond.removeFile(
-                        this.pond
-                            .getFiles()
-                            .find(
-                                (uploadedFile) =>
-                                    uploadedFile.filename ===
-                                    this.editingFile.name,
-                            ),
-                    )
+                    if (isMultiple) {
+                        this.pond.removeFile(
+                            this.pond
+                                .getFiles()
+                                .find(
+                                    (uploadedFile) =>
+                                        uploadedFile.filename ===
+                                        this.editingFile.name,
+                                )?.id,
+                            { revert: true },
+                        )
+                    }
 
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
+
+                        let editingFileName = this.editingFile.name.slice(
+                            0,
+                            this.editingFile.name.lastIndexOf('.'),
+                        )
+                        let editingFileExtension = this.editingFile.name
+                            .split('.')
+                            .pop()
+
+                        if (editingFileExtension === 'svg') {
+                            editingFileExtension = 'png'
+                        }
+
+                        const fileNameVersionRegex = /-v(\d+)/
+
+                        if (fileNameVersionRegex.test(editingFileName)) {
+                            editingFileName = editingFileName.replace(
+                                fileNameVersionRegex,
+                                (match, number) => {
+                                    const newNumber = Number(number) + 1
+
+                                    return `-v${newNumber}`
+                                },
+                            )
+                        } else {
+                            editingFileName += '-v1'
+                        }
 
                         this.pond
                             .addFile(
                                 new File(
                                     [croppedImage],
-                                    this.editingFile.name,
+                                    `${editingFileName}.${editingFileExtension}`,
                                     {
                                         type:
                                             this.editingFile.type ===
@@ -528,6 +644,9 @@ export default function fileUploadFormComponent({
                                 ),
                             )
                             .then(() => {
+                                this.closeEditor()
+                            })
+                            .catch(() => {
                                 this.closeEditor()
                             })
                     })

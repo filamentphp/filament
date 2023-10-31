@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Filament\Actions\Contracts\HasLivewire;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
@@ -14,7 +15,6 @@ class ActionGroup extends ViewComponent implements HasLivewire
     use Concerns\CanBeHidden {
         isHidden as baseIsHidden;
     }
-    use Concerns\HasBadge;
     use Concerns\CanBeLabeledFrom;
     use Concerns\CanBeOutlined;
     use Concerns\HasDropdown;
@@ -22,11 +22,14 @@ class ActionGroup extends ViewComponent implements HasLivewire
     use Concerns\HasLabel;
     use Concerns\HasSize;
     use Concerns\HasTooltip;
+    use HasBadge;
     use HasColor;
     use HasExtraAttributes;
     use HasIcon {
         getIcon as getBaseIcon;
     }
+
+    public const BADGE_VIEW = 'filament-actions::badge-group';
 
     public const BUTTON_VIEW = 'filament-actions::button-group';
 
@@ -100,6 +103,11 @@ class ActionGroup extends ViewComponent implements HasLivewire
         }
 
         return $this;
+    }
+
+    public function isBadge(): bool
+    {
+        return $this->getView() === static::BADGE_VIEW;
     }
 
     public function button(): static

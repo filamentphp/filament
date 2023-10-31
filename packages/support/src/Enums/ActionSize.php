@@ -2,15 +2,15 @@
 
 namespace Filament\Support\Enums;
 
-enum ActionSize
+enum ActionSize: string
 {
-    case ExtraSmall;
+    case ExtraSmall = 'xs';
 
-    case Small;
+    case Small = 'sm';
 
-    case Medium;
+    case Medium = 'md';
 
-    case Large;
+    case Large = 'lg';
 
-    case ExtraLarge;
+    case ExtraLarge = 'xl';
 }

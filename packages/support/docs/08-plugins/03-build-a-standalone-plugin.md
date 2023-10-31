@@ -90,7 +90,7 @@ You may also remove the testing directories and files, but we'll leave them in f
 
 Now that we have our plugin cleaned up, we can start adding our code. The boilerplate in the `src/HeadingsServiceProvider.php` file has a lot going on so, let's delete everything and start from scratch.
 
-We need to be able to register our stylesheet with the Filament Asset Manager so that we can load it on demand in our blade view. To do this, we'll need to add the following to the `packageBooted` method in our service provider. 
+We need to be able to register our stylesheet with the Filament Asset Manager so that we can load it on demand in our blade view. To do this, we'll need to add the following to the `packageBooted` method in our service provider.
 
 ***Note the `loadedOnRequest()` method. This is important, because it tells Filament to only load the stylesheet when it's needed.***
 
@@ -195,7 +195,7 @@ class Heading extends Component
 
 Next, we'll need to create the view for our component. Create a new file at `resources/views/heading.blade.php` and add the following code.
 
-We are using x-load to asynchronously load stylesheet, so it's only loaded when necessary. You can learn more about this in the [Core Concepts](docs/3.x/support/assets#lazy-loading-css) section of the docs.
+We are using x-load to asynchronously load stylesheet, so it's only loaded when necessary. You can learn more about this in the [Core Concepts](/docs/3.x/support/assets#lazy-loading-css) section of the docs.
 
 ```blade
 @php
@@ -235,23 +235,23 @@ Next, let's provide some custom styling for our field. We'll add the following t
          letter-spacing: -.025em;
          line-height: 1.1;
      }
-    
+
     &h1 {
          font-size: 2rem;
      }
-    
+
     &h2 {
          font-size: 1.75rem;
      }
-    
+
     &h3 {
          font-size: 1.5rem;
      }
-    
+
     &h4 {
          font-size: 1.25rem;
      }
-    
+
     &h5,
     &h6 {
          font-size: 1rem;

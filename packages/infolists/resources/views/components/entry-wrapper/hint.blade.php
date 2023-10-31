@@ -11,12 +11,15 @@
             ->class([
                 'fi-in-entry-wrp-hint flex items-center gap-x-3 text-sm',
                 match ($color) {
-                    'gray' => 'text-gray-500',
-                    default => 'text-custom-600 dark:text-custom-400',
+                    'gray' => 'fi-color-gray text-gray-500',
+                    default => 'fi-color-custom text-custom-600 dark:text-custom-400',
                 },
             ])
             ->style([
-                \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]),
+                \Filament\Support\get_color_css_variables(
+                    $color,
+                    shades: [400, 500, 600],
+                ),
             ])
     }}
 >
@@ -40,7 +43,7 @@
     @endif
 
     @if (count($actions))
-        <div class="fi-in-entry-wrp-hint-action -m-1.5 flex items-center">
+        <div class="fi-in-entry-wrp-hint-action flex items-center gap-3">
             @foreach ($actions as $action)
                 {{ $action }}
             @endforeach

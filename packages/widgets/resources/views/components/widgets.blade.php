@@ -13,7 +13,7 @@
     :lg="$columns['lg'] ?? ($columns ? (is_array($columns) ? null : $columns) : 2)"
     :xl="$columns['xl'] ?? null"
     :two-xl="$columns['2xl'] ?? null"
-    class="fi-wi gap-6"
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->class('fi-wi gap-6')"
 >
     @php
         $normalizeWidgetClass = function (string | Filament\Widgets\WidgetConfiguration $widget): string {
@@ -28,7 +28,7 @@
     @foreach ($widgets as $key => $widget)
         @livewire(
             $normalizeWidgetClass($widget),
-            [...(($widget instanceof \Filament\Widgets\WidgetConfiguration) ? $widget->properties : $widget::getDefaultProperties()), ...$data],
+            [...(($widget instanceof \Filament\Widgets\WidgetConfiguration) ? [...$widget->widget::getDefaultProperties(), ...$widget->properties] : $widget::getDefaultProperties()), ...$data],
             key($key),
         )
     @endforeach

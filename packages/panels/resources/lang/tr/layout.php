@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Aboneliği yönet',
+        ],
+
         'logout' => [
             'label' => 'Oturumu kapat',
         ],
@@ -41,7 +45,7 @@ return [
             ],
 
             'system' => [
-                'label' => 'Sistem teması',
+                'label' => 'Sistem varsayılanı',
             ],
 
         ],

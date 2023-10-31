@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Colunas',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -12,9 +18,50 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Marcar/desmarcar todos os itens para ações em massa.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Marcar/desmarcar o item :key para ações em massa.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Marcar/desmarcar o grupo :key para ações em massa.',
+        ],
+
         'search' => [
             'label' => 'Procurar',
             'placeholder' => 'Procurar',
+            'indicator' => 'Procurar',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Resumo',
+
+        'subheadings' => [
+            'all' => 'Todos :label',
+            'group' => ':group resumo',
+            'page' => 'Esta página',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Média',
+            ],
+
+            'count' => [
+                'label' => 'Contagem',
+            ],
+
+            'sum' => [
+                'label' => 'Soma',
+            ],
+
         ],
 
     ],
@@ -33,8 +80,12 @@ return [
             'label' => 'Filtrar',
         ],
 
+        'group' => [
+            'label' => 'Agrupar',
+        ],
+
         'open_bulk_actions' => [
-            'label' => 'Ações abertas',
+            'label' => 'Abrir ações',
         ],
 
         'toggle_columns' => [
@@ -44,7 +95,10 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'Sem registos',
+
+        'description' => 'Crie um :model para começar.',
     ],
 
     'filters' => [
@@ -63,12 +117,9 @@ return [
             'reset' => [
                 'label' => 'Limpar filtros',
             ],
-
-            'close' => [
-                'label' => 'Fechar',
-            ],
-
         ],
+
+        'heading' => 'Filtros',
 
         'indicator' => 'Filtros ativos',
 
@@ -94,6 +145,29 @@ return [
 
     ],
 
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Agrupar por',
+                'placeholder' => 'Agrupar por',
+            ],
+
+            'direction' => [
+
+                'label' => 'Direção do agrupamento',
+
+                'options' => [
+                    'asc' => 'Ascendente',
+                    'desc' => 'Descendente',
+                ],
+
+            ],
+
+        ],
+    ],
+
     'reorder_indicator' => 'Arraste e solte os registos na ordem.',
 
     'selection_indicator' => [
@@ -108,6 +182,28 @@ return [
 
             'deselect_all' => [
                 'label' => 'Desmarcar todos',
+            ],
+
+        ],
+
+    ],
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Ordenar por',
+            ],
+
+            'direction' => [
+
+                'label' => 'Direção de ordenação',
+
+                'options' => [
+                    'asc' => 'Ascendente',
+                    'desc' => 'Descendente',
+                ],
+
             ],
 
         ],

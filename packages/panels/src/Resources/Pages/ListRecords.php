@@ -7,7 +7,7 @@ use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
-use Filament\Resources\Pages\ListRecords\Tab;
+use Filament\Resources\Concerns\HasTabs;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
@@ -20,6 +20,7 @@ use Livewire\Attributes\Url;
 
 class ListRecords extends Page implements Tables\Contracts\HasTable
 {
+    use HasTabs;
     use Tables\Concerns\InteractsWithTable {
         makeTable as makeBaseTable;
     }
@@ -59,18 +60,16 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     #[Url]
     public ?string $activeTab = null;
 
-    /**
-     * @var array<string | int, Tab>
-     */
-    protected array $cachedTabs;
-
     public function mount(): void
     {
-        static::authorizeResourceAccess();
+        $this->authorizeAccess();
 
-        if (blank($this->activeTab)) {
-            $this->activeTab = $this->getDefaultActiveTab();
-        }
+        $this->loadDefaultActiveTab();
+    }
+
+    protected function authorizeAccess(): void
+    {
+        static::authorizeResourceAccess();
     }
 
     public function getBreadcrumb(): ?string
@@ -243,6 +242,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         return $this->makeBaseTable()
             ->query(fn (): Builder => $this->getTableQuery())
+            ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
             ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
             ->recordAction(function (Model $record, Table $table): ?string {
@@ -311,20 +311,12 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->reorderable(condition: static::getResource()::canReorder());
     }
 
-    protected function getTableQuery(): Builder
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function getTableQuery(): ?Builder
     {
-        $query = static::getResource()::getEloquentQuery();
-
-        $tabs = $this->getCachedTabs();
-
-        if (
-            filled($this->activeTab) &&
-            array_key_exists($this->activeTab, $tabs)
-        ) {
-            $tabs[$this->activeTab]->modifyQuery($query);
-        }
-
-        return $query;
+        return static::getResource()::getEloquentQuery();
     }
 
     /**
@@ -333,38 +325,5 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getForms(): array
     {
         return [];
-    }
-
-    /**
-     * @return array<string | int, Tab>
-     */
-    public function getTabs(): array
-    {
-        return [];
-    }
-
-    /**
-     * @return array<string | int, Tab>
-     */
-    public function getCachedTabs(): array
-    {
-        return $this->cachedTabs ??= $this->getTabs();
-    }
-
-    public function getDefaultActiveTab(): string | int | null
-    {
-        return array_key_first($this->getCachedTabs());
-    }
-
-    public function updatedActiveTab(): void
-    {
-        $this->resetPage();
-    }
-
-    public function generateTabLabel(string $key): string
-    {
-        return (string) str($key)
-            ->replace(['_', '-'], ' ')
-            ->ucfirst();
     }
 }

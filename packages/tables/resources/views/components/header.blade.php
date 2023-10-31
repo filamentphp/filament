@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Tables\Actions\HeaderActionsPosition;
 @endphp
 
 @props([
@@ -12,8 +13,8 @@
 <div
     {{
         $attributes->class([
-            'fi-ta-header flex flex-col justify-start gap-3 p-4 sm:px-6',
-            'sm:flex-row sm:items-center sm:justify-between' => $actionsPosition === \Filament\Tables\Actions\HeaderActionsPosition::Adaptive,
+            'fi-ta-header flex flex-col gap-3 p-4 sm:px-6',
+            'sm:flex-row sm:items-center' => $actionsPosition === HeaderActionsPosition::Adaptive,
         ])
     }}
 >
@@ -42,6 +43,10 @@
             :actions="$actions"
             :alignment="Alignment::Start"
             wrap
+            @class([
+                'ms-auto' => $actionsPosition === HeaderActionsPosition::Adaptive && ! ($heading || $description),
+                'sm:ms-auto' => $actionsPosition === HeaderActionsPosition::Adaptive,
+            ])
         />
     @endif
 </div>

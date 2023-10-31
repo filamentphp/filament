@@ -105,7 +105,7 @@ The `money()` method allows you to easily format monetary values, in any currenc
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('price')
-    ->money('eur')
+    ->money('EUR')
 ```
 
 ## Limiting text length

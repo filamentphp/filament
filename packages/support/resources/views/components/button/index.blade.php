@@ -19,8 +19,9 @@
     'keyBindings' => null,
     'labeledFrom' => null,
     'labelSrOnly' => false,
+    'loadingIndicator' => true,
     'outlined' => false,
-    'size' => 'md',
+    'size' => ActionSize::Medium,
     'tag' => 'button',
     'target' => null,
     'tooltip' => null,
@@ -28,28 +29,45 @@
 ])
 
 @php
-    $stringSize = match ($size) {
-        ActionSize::ExtraSmall => 'xs',
-        ActionSize::Small => 'sm',
-        ActionSize::Medium => 'md',
-        ActionSize::Large => 'lg',
-        ActionSize::ExtraLarge => 'xl',
-        default => $size,
+    if (! $iconPosition instanceof IconPosition) {
+        $iconPosition = $iconPosition ? IconPosition::tryFrom($iconPosition) : null;
+    }
+
+    if (! $size instanceof ActionSize) {
+        $size = ActionSize::tryFrom($size) ?? $size;
+    }
+
+    $iconSize ??= match ($size) {
+        ActionSize::ExtraSmall, ActionSize::Small => IconSize::Small,
+        default => IconSize::Medium,
     };
+
+    if (! $iconSize instanceof IconSize) {
+        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+    }
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            "fi-btn fi-btn-size-{$stringSize} relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2",
+            'fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus-visible:ring-2',
             'pointer-events-none opacity-70' => $disabled,
             'flex-1' => $grouped,
             'rounded-lg' => ! $grouped,
+            match ($color) {
+                'gray' => 'fi-color-gray',
+                default => 'fi-color-custom',
+            },
+            // @deprecated `fi-btn-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
             is_string($color) ? "fi-btn-color-{$color}" : null,
+            "fi-size-{$size->value}" => $size instanceof ActionSize,
+            // @deprecated `fi-btn-size-*` has been replaced by `fi-size-*`.
+            "fi-btn-size-{$size->value}" => $size instanceof ActionSize,
             match ($size) {
-                ActionSize::ExtraSmall, 'xs' => 'gap-1 px-2 py-1.5 text-xs',
-                ActionSize::Small, 'sm' => 'gap-1 px-2.5 py-1.5 text-sm',
-                ActionSize::Medium, 'md' => 'gap-1.5 px-3 py-2 text-sm',
-                ActionSize::Large, 'lg' => 'gap-1.5 px-3.5 py-2.5 text-sm',
-                ActionSize::ExtraLarge, 'xl' => 'gap-1.5 px-4 py-3 text-sm',
+                ActionSize::ExtraSmall => 'gap-1 px-2 py-1.5 text-xs',
+                ActionSize::Small => 'gap-1 px-2.5 py-1.5 text-sm',
+                ActionSize::Medium => 'gap-1.5 px-3 py-2 text-sm',
+                ActionSize::Large => 'gap-1.5 px-3.5 py-2.5 text-sm',
+                ActionSize::ExtraLarge => 'gap-1.5 px-4 py-3 text-sm',
+                default => $size,
             },
             'hidden' => $labeledFrom,
             match ($labeledFrom) {
@@ -66,7 +84,7 @@
                 [
                     'fi-btn-outlined ring-1',
                     match ($color) {
-                        'gray' => 'text-gray-950 ring-gray-300 hover:bg-gray-400/10 focus:ring-gray-400/40 dark:text-white dark:ring-gray-700',
+                        'gray' => 'text-gray-950 ring-gray-300 hover:bg-gray-400/10 focus-visible:ring-gray-400/40 dark:text-white dark:ring-gray-700',
                         default => 'text-custom-600 ring-custom-600 hover:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-500',
                     },
                 ] :
@@ -79,7 +97,7 @@
                         ],
                         default => [
                             'bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400',
-                            'focus:ring-custom-500/50 dark:focus:ring-custom-400/50' => ! $grouped,
+                            'focus-visible:ring-custom-500/50 dark:focus-visible:ring-custom-400/50' => ! $grouped,
                         ],
                     },
                 ]
@@ -87,20 +105,19 @@
     ]);
 
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [400, 500, 600],
+            alias: 'button',
+        ) => $color !== 'gray',
     ]);
-
-    $iconSize ??= match ($size) {
-        ActionSize::ExtraSmall, ActionSize::Small, 'xs', 'sm' => IconSize::Small,
-        default => IconSize::Medium,
-    };
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-icon',
         match ($iconSize) {
-            IconSize::Small, 'sm' => 'h-4 w-4',
-            IconSize::Medium, 'md' => 'h-5 w-5',
-            IconSize::Large, 'lg' => 'h-6 w-6',
+            IconSize::Small => 'h-4 w-4',
+            IconSize::Medium => 'h-5 w-5',
+            IconSize::Large => 'h-6 w-6',
             default => $iconSize,
         },
         match ($color) {
@@ -116,7 +133,7 @@
         'sr-only' => $labelSrOnly,
     ]);
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
+    $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
     $hasFileUploadLoadingIndicator = $type === 'submit' && filled($form);
     $hasLoadingIndicator = filled($wireTarget) || $hasFileUploadLoadingIndicator;
@@ -124,6 +141,8 @@
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
+
+    $hasTooltip = filled($tooltip);
 @endphp
 
 @if ($labeledFrom)
@@ -158,13 +177,13 @@
 
 @if ($tag === 'button')
     <button
-        @if (($keyBindings || $tooltip) && (! $hasFileUploadLoadingIndicator))
+        @if (($keyBindings || $hasTooltip) && (! $hasFileUploadLoadingIndicator))
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,
@@ -201,22 +220,32 @@
                 ->style([$buttonStyles])
         }}
     >
-        @if (in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($iconPosition === IconPosition::Before)
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $iconAlias,
+                                'icon' => $icon,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    wire:loading.delay=""
-                    :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => $loadingIndicatorTarget,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
@@ -244,22 +273,32 @@
             </span>
         @endif
 
-        @if (in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($iconPosition === IconPosition::After)
             @if ($icon)
                 <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $iconAlias,
+                                'icon' => $icon,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    wire:loading.delay=""
-                    :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                                'wire:target' => $loadingIndicatorTarget,
+                            ])
+                        )->class([$iconClasses])
+                    "
                 />
             @endif
 
@@ -283,13 +322,13 @@
 @elseif ($tag === 'a')
     <a
         {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
-        @if ($keyBindings || $tooltip)
+        @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($tooltip)
+        @if ($hasTooltip)
             x-tooltip="{
                 content: @js($tooltip),
                 theme: $store.theme,
@@ -301,7 +340,7 @@
                 ->style([$buttonStyles])
         }}
     >
-        @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if ($icon && $iconPosition === IconPosition::Before)
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -313,7 +352,7 @@
             {{ $slot }}
         </span>
 
-        @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+        @if ($icon && $iconPosition === IconPosition::After)
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"

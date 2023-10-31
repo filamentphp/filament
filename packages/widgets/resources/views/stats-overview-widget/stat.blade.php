@@ -18,7 +18,10 @@
     ]);
 
     $descriptionIconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($descriptionColor, shades: [500]) => $descriptionColor !== 'gray',
+        \Filament\Support\get_color_css_variables(
+            $descriptionColor,
+            shades: [500],
+        ) => $descriptionColor !== 'gray',
     ]);
 @endphp
 
@@ -67,12 +70,15 @@
                     @class([
                         'fi-wi-stats-overview-stat-description text-sm',
                         match ($descriptionColor) {
-                            'gray' => 'text-gray-500 dark:text-gray-400',
-                            default => 'text-custom-600 dark:text-custom-400',
+                            'gray' => 'fi-color-gray text-gray-500 dark:text-gray-400',
+                            default => 'fi-color-custom text-custom-600 dark:text-custom-400',
                         },
                     ])
                     @style([
-                        \Filament\Support\get_color_css_variables($descriptionColor, shades: [400, 600]) => $descriptionColor !== 'gray',
+                        \Filament\Support\get_color_css_variables(
+                            $descriptionColor,
+                            shades: [400, 600],
+                        ) => $descriptionColor !== 'gray',
                     ])
                 >
                     {{ $description }}
@@ -100,9 +106,18 @@
                             labels: @js(array_keys($chart)),
                             values: @js(array_values($chart)),
                         })"
-                class="fi-wi-stats-overview-stat-chart absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
+                @class([
+                    'fi-wi-stats-overview-stat-chart absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl',
+                    match ($chartColor) {
+                        'gray' => 'fi-color-gray',
+                        default => 'fi-color-custom',
+                    },
+                ])
                 @style([
-                    \Filament\Support\get_color_css_variables($chartColor, shades: [50, 400, 500]) => $chartColor !== 'gray',
+                    \Filament\Support\get_color_css_variables(
+                        $chartColor,
+                        shades: [50, 400, 500],
+                    ) => $chartColor !== 'gray',
                 ])
             >
                 <canvas x-ref="canvas" class="h-6"></canvas>

@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 abstract class Page extends BasePage
 {
     use Concerns\HasRoutes;
+    use Concerns\HasSubNavigation;
     use Concerns\InteractsWithHeaderActions;
 
     protected static string $layout = 'filament-panels::components.layout.index';
