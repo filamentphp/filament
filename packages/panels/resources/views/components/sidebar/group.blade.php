@@ -34,7 +34,7 @@
             @endif
 
             <span
-                class="fi-sidebar-group-label flex-1 text-sm font-semibold text-gray-700 dark:text-gray-200"
+                class="fi-sidebar-group-label flex-1 text-sm font-semibold leading-6 text-gray-700 dark:text-gray-200"
             >
                 {{ $label }}
             </span>
