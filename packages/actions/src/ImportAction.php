@@ -21,7 +21,6 @@ use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\HtmlString;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
 use League\Csv\Writer;
@@ -52,7 +51,7 @@ class ImportAction extends Action
 
         $this->modalHeading(fn (ImportAction $action): string => __('filament-actions::import.modal.heading', ['label' => $action->getPluralModelLabel()]));
 
-        $this->modalDescription(fn (ImportAction $action): Htmlable => new HtmlString('<p>' . $action->getModalAction('downloadExample')->toHtml() . '</p>'));
+        $this->modalDescription(fn (ImportAction $action): Htmlable => $action->getModalAction('downloadExample'));
 
         $this->modalSubmitActionLabel(__('filament-actions::import.modal.actions.import.label'));
 
