@@ -45,7 +45,7 @@ FileUpload::make('attachment')
 ### Presigned Upload URLs
 
 If you're using a s3-compatible storage provider, you can also enable [presigned uploads](https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html).
-Presigned uploads allow you to upload files directly to s3, without having to go through your server. This can be useful for large files, or if you're using a serverless architecture like Laravel Vapor.
+Presigned uploads allow you to upload files directly to s3, without having to go through your server. This can be useful for large files, or if you're using a serverless architecture like AWS Lambda.
 
 ```php
 FileUpload::make('attachment')
