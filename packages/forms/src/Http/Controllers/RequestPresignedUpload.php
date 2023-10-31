@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -10,7 +11,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class RequestPresignedUpload
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): JsonResponse
     {
         ['disk' => $disk, 'fileName' => $fileName, 'fileType' => $fileType] = $request->validate([
             'disk' => 'required|string',
