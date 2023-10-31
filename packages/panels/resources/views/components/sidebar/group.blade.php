@@ -19,7 +19,7 @@
 >
     @if ($label)
         <div
-            @if ($collapsible && !$url)
+            @if ($collapsible && ! $url)
                 x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
             @endif
             @if (filament()->isSidebarCollapsibleOnDesktop())
@@ -29,7 +29,7 @@
                 x-transition:enter-end="opacity-100"
             @endif
             @class([
-                'flex items-center gap-x-3 px-2 py-2 rounded-lg',
+                'flex items-center gap-x-3 rounded-lg px-2 py-2',
                 'transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5' => (bool) $url,
                 'bg-gray-100 dark:bg-white/5' => $active,
                 'cursor-pointer' => $collapsible,
@@ -47,13 +47,13 @@
             @endif
 
             <a
-                @if($url)
+                @if ($url)
                     {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
                 @endif
                 @class([
                     'fi-sidebar-group-label flex-1 text-sm font-semibold',
                     'text-gray-700 dark:text-gray-200' => ! $active,
-                    'text-primary-600 dark:text-primary-400' => $active                    
+                    'text-primary-600 dark:text-primary-400' => $active,
                 ])
             >
                 {{ $label }}
