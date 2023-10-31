@@ -17,13 +17,14 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Repeater extends Field implements Contracts\CanConcealComponents
+class Repeater extends Field implements Contracts\CanConcealComponents, Contracts\HasHeaderActions
 {
     use Concerns\CanBeCloned;
     use Concerns\CanBeCollapsed;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
+    use Concerns\HasHeaderActions;
 
     protected string | Closure | null $addActionLabel = null;
 

@@ -1,3 +1,7 @@
+@php
+    use Filament\Forms\Components\Actions\Action;
+@endphp
+
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @php
         $containers = $getChildComponentContainers();
@@ -71,6 +75,13 @@
                 @endphp
 
                 @foreach ($containers as $uuid => $item)
+                    @php
+                        $itemHeaderActions = array_filter(
+                            $headerActions,
+                            fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
+                        );
+                    @endphp
+
                     <li
                         wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
                         x-data="{
@@ -107,7 +118,7 @@
                         class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                         x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                     >
-                        @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $hasBlockLabels || $isCloneable || $isDeletable || $isCollapsible || count($headerActions))
+                        @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $hasBlockLabels || $isCloneable || $isDeletable || $isCollapsible || count($itemHeaderActions))
                             <div
                                 class="fi-fo-builder-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3"
                             >
@@ -150,9 +161,11 @@
                                     </h4>
                                 @endif
 
-                                @if ($isCloneable || $isDeletable || $isCollapsible || count($headerActions))
-                                    <ul class="ms-auto flex items-center gap-x-3">
-                                        @foreach ($headerActions as $headerAction)
+                                @if ($isCloneable || $isDeletable || $isCollapsible || count($itemHeaderActions))
+                                    <ul
+                                        class="ms-auto flex items-center gap-x-3"
+                                    >
+                                        @foreach ($itemHeaderActions as $headerAction)
                                             <li>
                                                 {{ $headerAction(['item' => $uuid]) }}
                                             </li>

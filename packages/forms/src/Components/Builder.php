@@ -13,12 +13,13 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Builder extends Field implements Contracts\CanConcealComponents
+class Builder extends Field implements Contracts\CanConcealComponents, Contracts\HasHeaderActions
 {
     use Concerns\CanBeCloned;
     use Concerns\CanBeCollapsed;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
+    use Concerns\HasHeaderActions;
 
     /**
      * @var view-string
