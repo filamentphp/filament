@@ -34,6 +34,25 @@ FileUpload::make('attachment')
     ->visibility('private')
 ```
 
+If you're using a s3-compatible storage provider, you can use the `s3()` method to set all the appropriate settings:
+
+```php
+FileUpload::make('attachment')
+    ->directory('form-attachments')
+    ->s3(diskName: 's3')
+```
+
+### Presigned Upload URLs
+
+If you're using a s3-compatible storage provider, you can also enable [presigned uploads](https://docs.aws.amazon.com/AmazonS3/latest/userguide/PresignedUrlUploadObject.html).
+Presigned uploads allow you to upload files directly to s3, without having to go through your server. This can be useful for large files, or if you're using a serverless architecture like Laravel Vapor.
+
+```php
+FileUpload::make('attachment')
+    ->directory('form-attachments')
+    ->s3(presigned: true)
+```
+
 > It is the responsibility of the developer to delete these files from the disk if they are removed, as Filament is unaware if they are depended on elsewhere. One way to do this automatically is observing a [model event](https://laravel.com/docs/eloquent#events).
 
 ## Uploading multiple files
