@@ -42,9 +42,11 @@
 
     @if ($extraHeadingColumn || $groupsOnly)
         <x-filament-tables::cell
-            class="px-3 text-sm font-medium text-gray-950 dark:text-white"
+            class="text-sm font-medium text-gray-950 dark:text-white"
         >
-            {{ $heading }}
+            <span class="ps-3">
+                {{ $heading }}
+            </span>
         </x-filament-tables::cell>
     @else
         @php
