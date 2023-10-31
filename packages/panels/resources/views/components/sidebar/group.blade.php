@@ -48,7 +48,7 @@
                     x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)"
                     x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)"
                     class="fi-sidebar-group-collapse-button"
-                    x-bind:class="{ 'rotate-180': $store.sidebar.groupIsCollapsed(label) }"
+                    x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
                 />
             @endif
         </div>
