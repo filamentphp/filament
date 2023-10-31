@@ -188,6 +188,7 @@ export default function fileUploadFormComponent({
                                     xhr.setRequestHeader('Content-Type', file.type);
                                     xhr.send(file);
                                 })
+                                .catch(() => error('Failed to request a presigned upload URL'))
 
                             return
                         }
