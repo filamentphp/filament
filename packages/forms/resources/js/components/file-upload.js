@@ -155,8 +155,9 @@ export default function fileUploadFormComponent({
                             ).toString(16),
                         )
 
+                        // Handle presigned upload process
                         if(isPresigned) {
-                            const presignedFile = await fetch('/filament/uploads/request-presigned-upload', {
+                            await fetch('/filament/uploads/request-presigned-upload', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -170,26 +171,28 @@ export default function fileUploadFormComponent({
                                 })
                             })
                                 .then(response => response.json())
-
-                            const xhr = new XMLHttpRequest();
+                                .then(configuration => {
+                                    const xhr = new XMLHttpRequest();
                             
-                            xhr.upload.addEventListener('progress', e => progress(true, Math.round((e.loaded * 100) / e.total), 100));
-                            xhr.addEventListener('error', () => error('Error during upload'));
-                            xhr.addEventListener('abort', () => error('Upload aborted'));
-                            xhr.addEventListener('load', () => {
-                                this.shouldUpdateState = true
-
-                                loadUploadedFileUsing(fileKey, presignedFile.path)
-                                load(fileKey)
-                            });
-
-                            xhr.open('PUT', presignedFile.url, true);
-                            xhr.setRequestHeader('Content-Type', file.type);
-                            xhr.send(file);
+                                    xhr.upload.addEventListener('progress', e => progress(true, Math.round((e.loaded * 100) / e.total), 100));
+                                    xhr.addEventListener('error', () => error('Error during upload'));
+                                    xhr.addEventListener('abort', () => error('Upload aborted'));
+                                    xhr.addEventListener('load', () => {
+                                        this.shouldUpdateState = true
+        
+                                        loadUploadedFileUsing(fileKey, configuration.path)
+                                        load(fileKey)
+                                    });
+        
+                                    xhr.open('PUT', configuration.url, true);
+                                    xhr.setRequestHeader('Content-Type', file.type);
+                                    xhr.send(file);
+                                })
 
                             return
                         }
 
+                        // Handle default upload process
                         uploadUsing(
                             fileKey,
                             file,
