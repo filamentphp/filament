@@ -97,7 +97,8 @@ public function panel(Panel $panel): Panel
                  ->icon('heroicon-o-shopping-cart'),
             NavigationGroup::make()
                 ->label('Blog')
-                ->icon('heroicon-o-pencil'),
+                ->icon('heroicon-o-pencil')
+                ->url('/blogs'),
             NavigationGroup::make()
                 ->label(fn (): string => __('navigation.settings'))
                 ->icon('heroicon-o-cog-6-tooth')
@@ -145,6 +146,19 @@ public function panel(Panel $panel): Panel
         // ...
         ->collapsibleNavigationGroups(false);
 }
+```
+
+### Making navigation groups redirect to a URL
+
+By default, navigation groups only serve as a label for the items within them. You may make a navigation group redirect to a URL by calling `url()` on the `NavigationGroup` object:
+
+```php
+use Filament\Navigation\NavigationGroup;
+
+NavigationGroup::make()
+    ->label('Blogs')
+    ->icon('heroicon-o-pencil')
+    ->url('/blogs');
 ```
 
 ## Collapsible sidebar on desktop

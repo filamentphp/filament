@@ -13,7 +13,11 @@ class NavigationGroup extends Component
 
     protected bool | Closure | null $isCollapsible = null;
 
+    protected ?Closure $isActiveWhen = null;
+
     protected string | Closure | null $icon = null;
+
+    protected string | Closure | null $activeIcon = null;
 
     /**
      * @var array<NavigationItem> | Arrayable
@@ -21,6 +25,10 @@ class NavigationGroup extends Component
     protected array | Arrayable $items = [];
 
     protected string | Closure | null $label = null;
+
+    protected bool | Closure $shouldOpenUrlInNewTab = false;
+
+    protected string | Closure | null $url = null;
 
     final public function __construct(string | Closure | null $label = null)
     {
@@ -47,6 +55,20 @@ class NavigationGroup extends Component
     public function collapsible(bool | Closure | null $condition = true): static
     {
         $this->isCollapsible = $condition;
+
+        return $this;
+    }
+
+    public function activeIcon(string | Closure | null $activeIcon): static
+    {
+        $this->activeIcon = $activeIcon;
+
+        return $this;
+    }
+
+    public function isActiveWhen(Closure $callback): static
+    {
+        $this->isActiveWhen = $callback;
 
         return $this;
     }
@@ -84,6 +106,22 @@ class NavigationGroup extends Component
         return $this;
     }
 
+    public function openUrlInNewTab(bool | Closure $condition = true): static
+    {
+        $this->shouldOpenUrlInNewTab = $condition;
+
+        return $this;
+    }
+
+    public function url(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
+    {
+        $this->openUrlInNewTab($shouldOpenInNewTab);
+        $this->url = $url;
+        $this->isActiveWhen(fn () => request()->fullUrlIs($url) || request()->path() === trim($url, '/'));
+
+        return $this;
+    }
+
     public function getIcon(): ?string
     {
         $icon = $this->evaluate($this->icon);
@@ -93,6 +131,11 @@ class NavigationGroup extends Component
         }
 
         return $icon;
+    }
+
+    public function getActiveIcon(): ?string
+    {
+        return $this->evaluate($this->activeIcon);
     }
 
     /**
@@ -108,6 +151,11 @@ class NavigationGroup extends Component
         return $this->evaluate($this->label);
     }
 
+    public function getUrl(): ?string
+    {
+        return $this->evaluate($this->url);
+    }
+
     public function isCollapsed(): bool
     {
         return (bool) $this->evaluate($this->isCollapsed);
@@ -120,15 +168,13 @@ class NavigationGroup extends Component
 
     public function isActive(): bool
     {
-        foreach ($this->getItems() as $item) {
-            if (! $item->isActive()) {
-                continue;
-            }
+        $callback = $this->isActiveWhen;
 
-            return true;
+        if ($callback === null) {
+            return false;
         }
 
-        return false;
+        return (bool) $this->evaluate($callback);
     }
 
     public function hasItemIcons(): bool
@@ -155,5 +201,10 @@ class NavigationGroup extends Component
         }
 
         return $hasIconCount > 0;
+    }
+
+    public function shouldOpenUrlInNewTab(): bool
+    {
+        return (bool) $this->evaluate($this->shouldOpenUrlInNewTab);
     }
 }
