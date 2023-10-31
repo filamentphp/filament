@@ -28,6 +28,7 @@
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
+                    diskName: @js($getDiskName()),
                     imageEditorEmptyFillColor: @js($getImageEditorEmptyFillColor()),
                     imageEditorMode: @js($getImageEditorMode()),
                     imageEditorViewportHeight: @js($getImageEditorViewportHeight()),
@@ -57,9 +58,13 @@
                     isDownloadable: @js($isDownloadable()),
                     isMultiple: @js($isMultiple()),
                     isOpenable: @js($isOpenable()),
+                    isPresigned: @js($isPresigned()),
                     isPreviewable: @js($isPreviewable()),
                     isReorderable: @js($isReorderable()),
                     loadingIndicatorPosition: @js($getLoadingIndicatorPosition()),
+                    loadUploadedFileUsing: async (fileKey, filePath) => {
+                        return await $wire.loadFormUploadedFile(@js($statePath), fileKey, filePath)
+                    },
                     locale: @js(app()->getLocale()),
                     panelAspectRatio: @js($getPanelAspectRatio()),
                     panelLayout: @js($getPanelLayout()),

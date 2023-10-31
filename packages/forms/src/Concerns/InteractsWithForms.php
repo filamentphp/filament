@@ -145,6 +145,13 @@ trait InteractsWithForms
         return null;
     }
 
+    public function loadFormUploadedFile(string $statePath, string $fileKey, string $filePath): void
+    {
+        foreach ($this->getCachedForms() as $form) {
+            $form->loadUploadedFile($statePath, $fileKey, $filePath);
+        }
+    }
+
     public function removeFormUploadedFile(string $statePath, string $fileKey): void
     {
         foreach ($this->getCachedForms() as $form) {

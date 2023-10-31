@@ -24,6 +24,7 @@ window.FilePond = FilePond
 
 export default function fileUploadFormComponent({
     acceptedFileTypes,
+    diskName,
     imageEditorEmptyFillColor,
     imageEditorMode,
     imageEditorViewportHeight,
@@ -47,9 +48,11 @@ export default function fileUploadFormComponent({
     isDownloadable,
     isMultiple,
     isOpenable,
+    isPresigned,
     isPreviewable,
     isReorderable,
     loadingIndicatorPosition,
+    loadUploadedFileUsing,
     locale,
     maxSize,
     minSize,
@@ -128,7 +131,7 @@ export default function fileUploadFormComponent({
 
                         load(blob)
                     },
-                    process: (
+                    process: async (
                         fieldName,
                         file,
                         metadata,
@@ -138,7 +141,7 @@ export default function fileUploadFormComponent({
                     ) => {
                         this.shouldUpdateState = false
 
-                        let fileKey = (
+                        const fileKey = (
                             [1e7] +
                             -1e3 +
                             -4e3 +
@@ -151,6 +154,41 @@ export default function fileUploadFormComponent({
                                     (15 >> (c / 4)))
                             ).toString(16),
                         )
+
+                        if(isPresigned) {
+                            const presignedFile = await fetch('/filament/uploads/request-presigned-upload', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                },
+                                body: JSON.stringify({
+                                    disk: diskName,
+                                    fileName: file.name,
+                                    fileType: file.type,
+                                })
+                            })
+                                .then(response => response.json())
+
+                            const xhr = new XMLHttpRequest();
+                            
+                            xhr.upload.addEventListener('progress', e => progress(true, Math.round((e.loaded * 100) / e.total), 100));
+                            xhr.addEventListener('error', () => error('Error during upload'));
+                            xhr.addEventListener('abort', () => error('Upload aborted'));
+                            xhr.addEventListener('load', () => {
+                                this.shouldUpdateState = true
+
+                                loadUploadedFileUsing(fileKey, presignedFile.path)
+                                load(fileKey)
+                            });
+
+                            xhr.open('PUT', presignedFile.url, true);
+                            xhr.setRequestHeader('Content-Type', file.type);
+                            xhr.send(file);
+
+                            return
+                        }
 
                         uploadUsing(
                             fileKey,

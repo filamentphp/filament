@@ -47,6 +47,8 @@ class BaseFileUpload extends Field
 
     protected int | Closure | null $minFiles = null;
 
+    protected bool | Closure $presignedUpload = false;
+
     protected bool | Closure $shouldPreserveFilenames = false;
 
     protected bool | Closure $shouldMoveFiles = false;
@@ -227,6 +229,15 @@ class BaseFileUpload extends Field
     public function directory(string | Closure | null $directory): static
     {
         $this->directory = $directory;
+
+        return $this;
+    }
+
+    public function s3(string | Closure $diskName = 's3', bool | Closure $presigned = false): static
+    {
+        $this->diskName = $diskName;
+        $this->presignedUpload = $presigned;
+        $this->visibility = 'private';
 
         return $this;
     }
@@ -451,6 +462,11 @@ class BaseFileUpload extends Field
         return (bool) $this->evaluate($this->isOpenable);
     }
 
+    public function isPresigned(): bool
+    {
+        return (bool) $this->evaluate($this->presignedUpload);
+    }
+
     public function isPreviewable(): bool
     {
         return (bool) $this->evaluate($this->isPreviewable);
@@ -596,6 +612,23 @@ class BaseFileUpload extends Field
         $this->evaluate($callback, [
             'file' => $file,
         ]);
+
+        return $this;
+    }
+
+    public function loadUploadedFile(string $fileKey, string $filePath): static
+    {
+        $state = $this->getState();
+    
+        $file = new TemporaryUploadedFile($filePath, $this->getDiskName());
+
+        if($this->isMultiple()) {
+            $state[$fileKey] = $file;
+        } else {
+            $state = [$fileKey => $file];
+        }
+
+        $this->state($state);
 
         return $this;
     }

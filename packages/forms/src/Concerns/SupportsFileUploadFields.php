@@ -76,6 +76,29 @@ trait SupportsFileUploadFields
         return false;
     }
 
+    public function loadUploadedFile(string $statePath, string $fileKey, string $filePath): bool
+    {
+        foreach ($this->getComponents() as $component) {
+            if ($component instanceof BaseFileUpload && $component->getStatePath() === $statePath) {
+                $component->loadUploadedFile($fileKey, $filePath);
+
+                return true;
+            }
+
+            foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
+                if ($container->loadUploadedFile($statePath, $fileKey, $filePath)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     /**
      * @param  array<array-key>  $fileKeys
      */
