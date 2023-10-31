@@ -17,14 +17,14 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Repeater extends Field implements Contracts\CanConcealComponents, Contracts\HasHeaderActions
+class Repeater extends Field implements Contracts\CanConcealComponents, Contracts\HasExtraItemActions
 {
     use Concerns\CanBeCloned;
     use Concerns\CanBeCollapsed;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
-    use Concerns\HasHeaderActions;
+    use Concerns\HasExtraItemActions;
 
     protected string | Closure | null $addActionLabel = null;
 
@@ -156,7 +156,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
                 $component->state($items);
 
-                $component->getChildComponentContainers()[$newUuid]->fill();
+                $component->getChildComponentContainer($newUuid)->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -207,7 +207,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
                 $component->state($items);
 
-                $component->getChildComponentContainers()[$newUuid]->fill();
+                $component->getChildComponentContainer($newUuid)->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -1186,5 +1186,15 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     public function isItemLabelTruncated(): bool
     {
         return (bool) $this->evaluate($this->isItemLabelTruncated);
+    }
+
+    public function getItemState(string $uuid): array
+    {
+        return $this->getChildComponentContainer($uuid)->getState(shouldCallHooksBefore: false);
+    }
+
+    public function getRawItemState(string $uuid): array
+    {
+        return $this->getChildComponentContainer($uuid)->getRawState();
     }
 }

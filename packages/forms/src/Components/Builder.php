@@ -13,13 +13,13 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Builder extends Field implements Contracts\CanConcealComponents, Contracts\HasHeaderActions
+class Builder extends Field implements Contracts\CanConcealComponents, Contracts\HasExtraItemActions
 {
     use Concerns\CanBeCloned;
     use Concerns\CanBeCollapsed;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
-    use Concerns\HasHeaderActions;
+    use Concerns\HasExtraItemActions;
 
     /**
      * @var view-string
@@ -138,7 +138,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
                 $component->state($items);
 
-                $component->getChildComponentContainers()[$newUuid]->fill();
+                $component->getChildComponentContainer($newUuid)->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -193,7 +193,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
                 $component->state($items);
 
-                $component->getChildComponentContainers()[$newUuid]->fill();
+                $component->getChildComponentContainer($newUuid)->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -876,5 +876,15 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     public function getBlockPickerWidth(): ?string
     {
         return $this->evaluate($this->blockPickerWidth);
+    }
+
+    public function getItemState(string $uuid): array
+    {
+        return $this->getChildComponentContainer($uuid)->getState(shouldCallHooksBefore: false);
+    }
+
+    public function getRawItemState(string $uuid): array
+    {
+        return $this->getChildComponentContainer($uuid)->getRawState();
     }
 }

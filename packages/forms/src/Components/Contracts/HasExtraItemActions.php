@@ -4,10 +4,10 @@ namespace Filament\Forms\Components\Contracts;
 
 use Filament\Forms\Components\Actions\Action;
 
-interface HasHeaderActions
+interface HasExtraItemActions
 {
     /**
      * @return array<Action>
      */
-    public function getHeaderActions(): array;
+    public function getExtraItemActions(): array;
 }

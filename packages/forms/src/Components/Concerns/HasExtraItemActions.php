@@ -7,25 +7,25 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Support\Arr;
 
-trait HasHeaderActions
+trait HasExtraItemActions
 {
     /**
      * @var array<Action | Closure>
      */
-    protected array $headerActions = [];
+    protected array $extraItemActions = [];
 
     /**
      * @var array<Action> | null
      */
-    protected ?array $cachedHeaderActions = null;
+    protected ?array $cachedExtraItemActions = null;
 
     /**
      * @param  array<Action | Closure>  $actions
      */
-    public function headerActions(array $actions): static
+    public function extraItemActions(array $actions): static
     {
-        $this->headerActions = [
-            ...$this->headerActions,
+        $this->extraItemActions = [
+            ...$this->extraItemActions,
             ...$actions,
         ];
 
@@ -35,21 +35,21 @@ trait HasHeaderActions
     /**
      * @return array<Action>
      */
-    public function getHeaderActions(): array
+    public function getExtraItemActions(): array
     {
-        return $this->cachedHeaderActions ?? $this->cacheHeaderActions();
+        return $this->cachedExtraItemActions ?? $this->cacheExtraItemActions();
     }
 
     /**
      * @return array<Action>
      */
-    public function cacheHeaderActions(): array
+    public function cacheExtraItemActions(): array
     {
-        $this->cachedHeaderActions = [];
+        $this->cachedExtraItemActions = [];
 
-        foreach ($this->headerActions as $headerAction) {
-            foreach (Arr::wrap($this->evaluate($headerAction)) as $action) {
-                $this->cachedHeaderActions[$action->getName()] = $this->prepareAction(
+        foreach ($this->extraItemActions as $extraItemAction) {
+            foreach (Arr::wrap($this->evaluate($extraItemAction)) as $action) {
+                $this->cachedExtraItemActions[$action->getName()] = $this->prepareAction(
                     $action
                         ->defaultColor('gray')
                         ->defaultSize(ActionSize::Small)
@@ -58,6 +58,6 @@ trait HasHeaderActions
             }
         }
 
-        return $this->cachedHeaderActions;
+        return $this->cachedExtraItemActions;
     }
 }
