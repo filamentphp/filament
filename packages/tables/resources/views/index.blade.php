@@ -55,7 +55,7 @@
     $isReordering = $isReordering();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
-    $isSelectionEnabled = $isSelectionEnabled();
+    $isSelectionEnabled = ! $isGroupsOnly && $isSelectionEnabled();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
     $isLoaded = $isLoaded();
@@ -700,25 +700,23 @@
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-filament-tables::selection.cell tag="th">
-                                    @if (! $isGroupsOnly)
-                                        <x-filament-tables::selection.checkbox
-                                            :label="__('filament-tables::table.fields.bulk_select_page.label')"
-                                            x-bind:checked="
-                                                const recordsOnPage = getRecordsOnPage()
+                                    <x-filament-tables::selection.checkbox
+                                        :label="__('filament-tables::table.fields.bulk_select_page.label')"
+                                        x-bind:checked="
+                                            const recordsOnPage = getRecordsOnPage()
 
-                                                if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                                                    $el.checked = true
+                                            if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                                $el.checked = true
 
-                                                    return 'checked'
-                                                }
+                                                return 'checked'
+                                            }
 
-                                                $el.checked = false
+                                            $el.checked = false
 
-                                                return null
-                                            "
-                                            x-on:click="toggleSelectRecordsOnPage"
-                                        />
-                                    @endif
+                                            return null
+                                        "
+                                        x-on:click="toggleSelectRecordsOnPage"
+                                    />
                                 </x-filament-tables::selection.cell>
                             @endif
 
