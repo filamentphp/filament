@@ -44,7 +44,7 @@
         <x-filament-tables::cell
             class="text-sm font-medium text-gray-950 dark:text-white"
         >
-            <span class="grid gap-y-1 px-3 py-4">
+            <span class="px-3 py-4">
                 {{ $heading }}
             </span>
         </x-filament-tables::cell>
