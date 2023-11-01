@@ -17,11 +17,11 @@ class MakeThemeCommand extends Command
 
     protected $description = 'Create a new Filament panel theme';
 
-    protected $signature = 'make:filament-theme {panel?} {packet-manager?} {--F|force}';
+    protected $signature = 'make:filament-theme {panel?} {--pm=} {--F|force}';
 
     public function handle(): int
     {
-        $pm = $this->argument('packet-manager') ?? 'npm';
+        $pm = $this->option('pm') ?? 'npm';
 
         exec($pm . ' -v', $pmVersion, $pmVersionExistCode);
 
