@@ -33,7 +33,9 @@ class MakeThemeCommand extends Command
 
         $this->info("Using {$pm} v{$pmVersion[0]}");
 
-        exec("{$pm} install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev");
+        $installCommand = $pm === 'yarn' ? 'yarn add' : "{$pm} install";
+
+        exec("{$installCommand} tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev");
 
         $panel = $this->argument('panel');
 
