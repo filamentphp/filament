@@ -729,6 +729,10 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     public function getChildComponentContainers(bool $withHidden = false): array
     {
+        if ((! $withHidden) && $this->isHidden()) {
+            return [];
+        }
+
         return collect($this->getState())
             ->filter(fn (array $itemData): bool => $this->hasBlock($itemData['type']))
             ->map(
