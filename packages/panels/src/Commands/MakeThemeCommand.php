@@ -17,7 +17,7 @@ class MakeThemeCommand extends Command
 
     protected $description = 'Create a new Filament panel theme';
 
-    protected $signature = 'make:filament-theme {panel?} {packet-manager?} {--F|force} {--P|packet-manager=npm}';
+    protected $signature = 'make:filament-theme {panel?} {packet-manager?} {--F|force}';
 
     public function handle(): int
     {
