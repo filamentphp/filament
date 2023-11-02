@@ -23,7 +23,7 @@ class MakeThemeCommand extends Command
     {
         $pm = $this->option('pm') ?? 'npm';
 
-        exec($pm . ' -v', $pmVersion, $pmVersionExistCode);
+        exec("${$pm} -v", $pmVersion, $pmVersionExistCode);
 
         if ($pmVersionExistCode !== 0) {
             $this->error('Node.js is not installed. Please install before continuing.');
@@ -33,7 +33,10 @@ class MakeThemeCommand extends Command
 
         $this->info("Using {$pm} v{$pmVersion[0]}");
 
-        $installCommand = $pm === 'yarn' ? 'yarn add' : "{$pm} install";
+        $installCommand = match($pm) {
+            'yarn' => 'yarn add',
+            default => "{$pm} install",
+        };
 
         exec("{$installCommand} tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev");
 
@@ -63,9 +66,9 @@ class MakeThemeCommand extends Command
         $tailwindConfigFilePath = resource_path("css/filament/{$panelId}/tailwind.config.js");
 
         if (! $this->option('force') && $this->checkForCollision([
-                $cssFilePath,
-                $tailwindConfigFilePath,
-            ])) {
+            $cssFilePath,
+            $tailwindConfigFilePath,
+        ])) {
             return static::INVALID;
         }
 
