@@ -23,7 +23,7 @@ class MakeThemeCommand extends Command
     {
         $pm = $this->option('pm') ?? 'npm';
 
-        exec("$pm -v", $pmVersion, $pmVersionExistCode);
+        exec("{$pm} -v", $pmVersion, $pmVersionExistCode);
 
         if ($pmVersionExistCode !== 0) {
             $this->error('Node.js is not installed. Please install before continuing.');
