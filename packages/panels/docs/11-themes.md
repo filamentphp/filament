@@ -122,6 +122,7 @@ php artisan make:filament-theme admin
 ```
 
 By default, this command will use NPM to install dependencies. If you want to use a different package manager, you can use the `--pm` option:
+
 ```bash
 php artisan make:filament-theme --pm=bun
 ````
