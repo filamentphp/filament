@@ -17,13 +17,13 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'E-postadress',
+            'label' => 'Mejladress',
         ],
 
         'actions' => [
 
             'request' => [
-                'label' => 'Skicka e-postmeddelande',
+                'label' => 'Skicka mejlmeddelande',
             ],
 
         ],

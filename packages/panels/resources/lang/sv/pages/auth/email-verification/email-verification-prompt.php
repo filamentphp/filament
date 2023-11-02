@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Verifiera din e-postadress',
+    'title' => 'Verifiera din mejladress',
 
-    'heading' => 'Verifiera din e-postadress',
+    'heading' => 'Verifiera din mejladress',
 
     'actions' => [
 
@@ -15,8 +15,8 @@ return [
     ],
 
     'messages' => [
-        'notification_not_received' => 'Inte fått e-postmeddelandet vi skickade?',
-        'notification_sent' => 'Vi skickade ett meddelande till :email med instruktioner på hur du verifierar din e-postadress.',
+        'notification_not_received' => 'Inte fått mejlmeddelandet vi skickade?',
+        'notification_sent' => 'Vi skickade ett meddelande till :email med instruktioner på hur du verifierar din mejladress.',
     ],
 
     'notifications' => [
