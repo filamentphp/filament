@@ -664,6 +664,7 @@ export default function fileUploadFormComponent({
 }
 
 import ar from 'filepond/locale/ar-ar'
+import az from 'filepond/locale/az-az'
 import cs from 'filepond/locale/cs-cz'
 import da from 'filepond/locale/da-dk'
 import de from 'filepond/locale/de-de'
@@ -690,6 +691,7 @@ import zh_TW from 'filepond/locale/zh-tw'
 
 const locales = {
     ar,
+    az,
     cs,
     da,
     de,
