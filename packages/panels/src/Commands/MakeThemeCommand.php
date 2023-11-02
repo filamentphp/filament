@@ -33,7 +33,7 @@ class MakeThemeCommand extends Command
 
         $this->info("Using {$pm} v{$pmVersion[0]}");
 
-        $installCommand = match($pm) {
+        $installCommand = match ($pm) {
             'yarn' => 'yarn add',
             default => "{$pm} install",
         };
