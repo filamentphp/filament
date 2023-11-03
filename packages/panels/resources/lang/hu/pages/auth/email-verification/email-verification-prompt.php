@@ -9,7 +9,7 @@ return [
     'actions' => [
 
         'resend_notification' => [
-            'label' => 'Újra küldés',
+            'label' => 'Újraküldés',
         ],
 
     ],
