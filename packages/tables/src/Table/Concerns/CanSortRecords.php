@@ -24,7 +24,11 @@ trait CanSortRecords
             $this->defaultSortColumn = $column;
         }
 
-        $this->defaultSortDirection = Str::lower($direction);
+        if ($direction !== null) {
+            $direction = Str::lower($direction);
+        }
+        
+        $this->defaultSortDirection = $direction;
 
         return $this;
     }
