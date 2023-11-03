@@ -8,8 +8,6 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use function Filament\Support\generate_search_column_expression;
-use function Filament\Support\generate_search_term_expression;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
@@ -25,6 +23,9 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Livewire\Component as LivewireComponent;
+
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
 
 class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
