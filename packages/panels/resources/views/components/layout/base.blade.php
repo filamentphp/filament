@@ -50,6 +50,9 @@
         </style>
 
         @filamentStyles
+
+        @stack('styles')
+
         {{ filament()->getTheme()->getHtml() }}
         {{ filament()->getFontHtml() }}
 
