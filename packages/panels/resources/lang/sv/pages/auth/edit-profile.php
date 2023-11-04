@@ -7,25 +7,25 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Email cím',
+            'label' => 'Mejladress',
         ],
 
         'name' => [
-            'label' => 'Név',
+            'label' => 'Namn',
         ],
 
         'password' => [
-            'label' => 'Új jelszó',
+            'label' => 'Nytt lösenord',
         ],
 
         'password_confirmation' => [
-            'label' => 'Új jelszó megerősítése',
+            'label' => 'Bekräfta nytt lösenord',
         ],
 
         'actions' => [
 
             'save' => [
-                'label' => 'Mentés',
+                'label' => 'Spara ändringar',
             ],
 
         ],
@@ -35,7 +35,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'Mentve',
+            'title' => 'Sparades',
         ],
 
     ],
@@ -43,7 +43,7 @@ return [
     'actions' => [
 
         'cancel' => [
-            'label' => 'Mégsem',
+            'label' => 'Avbryt',
         ],
 
     ],

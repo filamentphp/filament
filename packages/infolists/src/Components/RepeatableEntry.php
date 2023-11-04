@@ -21,6 +21,10 @@ class RepeatableEntry extends Entry
      */
     public function getChildComponentContainers(bool $withHidden = false): array
     {
+        if ((! $withHidden) && $this->isHidden()) {
+            return [];
+        }
+
         $containers = [];
 
         foreach ($this->getState() ?? [] as $itemKey => $itemData) {

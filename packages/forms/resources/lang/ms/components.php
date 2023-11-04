@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Mengedit fail SVG tidak disyorkan kerana ia boleh mengakibatkan kehilangan kualiti semasa penskalaan.\n Adakah anda pasti mahu meneruskan?',
+                    'disabled' => 'Mengedit fail SVG dilumpuhkan kerana ia boleh menyebabkan kehilangan kualiti apabila penskalaan.',
+                ],
+
+            ],
+
         ],
 
     ],
