@@ -27,7 +27,7 @@ trait CanSortRecords
         $direction = $this->evaluate($direction);
 
         if ($direction !== null) {
-            return Str::lower($direction);
+            $direction = Str::lower($direction);
         }
 
         $this->defaultSortDirection = $direction;
