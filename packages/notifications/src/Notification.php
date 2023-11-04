@@ -334,8 +334,6 @@ class Notification extends ViewComponent implements Arrayable
             return;
         }
 
-        //Assert::assertNull($expectedNotification, 'A notification was sent');
-
         if ($notification instanceof Notification) {
             Assert::assertNotSame(
                 collect($expectedNotification)->except(['id'])->toArray(),
