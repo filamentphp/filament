@@ -1192,11 +1192,17 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         return (bool) $this->evaluate($this->isItemLabelTruncated);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getItemState(string $uuid): array
     {
         return $this->getChildComponentContainer($uuid)->getState(shouldCallHooksBefore: false);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getRawItemState(string $uuid): array
     {
         return $this->getChildComponentContainer($uuid)->getRawState();
