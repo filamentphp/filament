@@ -6,7 +6,7 @@
     'teleport' => false,
     'trigger' => null,
     'width' => null,
-    'fixed' => true,
+    'fixed' => false,
 ])
 
 <div
