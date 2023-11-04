@@ -340,7 +340,7 @@ Filter::make('created_at')
 
 ### Multiple active indicators
 
-You may even render multiple indicators at once, by returning an array. If you have different fields associated with different indicators, you should use the field's name as the array key, to ensure that the correct field is reset when the filter is removed:
+You may even render multiple indicators at once, by returning an array of `Indicator` objects. If you have different fields associated with different indicators, you should set the field using the `removeField()` method on the `Indicator` object to ensure that the correct field is reset when the filter is removed:
 
 ```php
 use Filament\Forms\Components\DatePicker;

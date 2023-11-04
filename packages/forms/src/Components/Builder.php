@@ -730,6 +730,10 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
     public function getChildComponentContainers(bool $withHidden = false): array
     {
+        if ((! $withHidden) && $this->isHidden()) {
+            return [];
+        }
+
         return collect($this->getState())
             ->filter(fn (array $itemData): bool => $this->hasBlock($itemData['type']))
             ->map(
@@ -878,11 +882,17 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
         return $this->evaluate($this->blockPickerWidth);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getItemState(string $uuid): array
     {
         return $this->getChildComponentContainer($uuid)->getState(shouldCallHooksBefore: false);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getRawItemState(string $uuid): array
     {
         return $this->getChildComponentContainer($uuid)->getRawState();

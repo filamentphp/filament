@@ -121,6 +121,12 @@ If you have multiple panels, you can specify the panel you want to create a them
 php artisan make:filament-theme admin
 ```
 
+By default, this command will use NPM to install dependencies. If you want to use a different package manager, you can use the `--pm` option:
+
+```bash
+php artisan make:filament-theme --pm=bun
+````
+
 The command will create a CSS file and Tailwind Configuration file in the `/resources/css/filament` directory. You can then customize the theme by editing these files. It will also give you instructions on how to compile the theme and register it in Filament. **Please follow the instructions in the command to complete the setup process:**
 
 ```
