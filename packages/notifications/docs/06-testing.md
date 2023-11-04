@@ -63,31 +63,23 @@ it('sends a notification', function () {
         );
 });
 ```
-Conversely, you can test if a notification was not sent:
+
+Conversely, you can assert that a notification was not sent:
+
 ```php
 use Filament\Notifications\Notification;
 use function Pest\Livewire\livewire;
 
 it('does not send a notification', function () {
     livewire(CreatePost::class)
-        ->assertNotNotified();
-```
-You can test that a notification was not sent with a given title:
-```php
-it('does not send a notification', function () {
-    livewire(CreatePost::class)
-        ->assertNotNotified('Unable to create post');
-});
-```
-Or with a given notification object:
-```php
-it('does not send a notification', function () {
-    livewire(CreatePost::class)
+        ->assertNotNotified()
+        // or
+        ->assertNotNotified('Unable to create post')
+        // or
         ->assertNotified(
             Notification::make()
                 ->danger()
                 ->title('Unable to create post')
                 ->body('Something went wrong.'),
         );
-});
 ```

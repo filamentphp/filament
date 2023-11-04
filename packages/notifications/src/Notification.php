@@ -344,7 +344,7 @@ class Notification extends ViewComponent implements Arrayable
             return;
         }
 
-        if($expectedNotification instanceof Notification) {
+        if ($expectedNotification instanceof Notification) {
             Assert::assertNotSame(
                 $expectedNotification->title,
                 $notification,
