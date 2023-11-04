@@ -34,15 +34,10 @@ trait CanGeneratePanels
             return false;
         }
 
-        if ($id === 'admin') {
-            $this->copyStubToApp('AdminPanelProvider', $path);
-        } else {
-            $this->copyStubToApp('PanelProvider', $path, [
-                'class' => $class,
-                'directory' => str($id)->studly(),
-                'id' => $id,
-            ]);
-        }
+        $this->copyStubToApp('DefaultPanelProvider', $path, [
+            'class' => $class,
+            'id' => $id,
+        ]);
 
         $appConfig = file_get_contents(config_path('app.php'));
 
