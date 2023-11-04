@@ -7,7 +7,7 @@ return [
         'actions' => [
 
             'clone' => [
-                'label' => 'Másolás',
+                'label' => 'Duplikálás',
             ],
 
             'add' => [
@@ -15,7 +15,7 @@ return [
             ],
 
             'add_between' => [
-                'label' => 'Beillesztés közé',
+                'label' => 'Beillesztés blokkok közé',
             ],
 
             'delete' => [
@@ -35,19 +35,19 @@ return [
             ],
 
             'collapse' => [
-                'label' => 'Becsuk',
+                'label' => 'Becsukás',
             ],
 
             'expand' => [
-                'label' => 'Kibont',
+                'label' => 'Kibontás',
             ],
 
             'collapse_all' => [
-                'label' => 'Becsuk mindent',
+                'label' => 'Összes becsukása',
             ],
 
             'expand_all' => [
-                'label' => 'Kibont mindent',
+                'label' => 'Összes kibontása',
             ],
 
         ],
@@ -81,11 +81,11 @@ return [
                 ],
 
                 'drag_crop' => [
-                    'label' => 'Kijelölés mód',
+                    'label' => 'Méretrevágási mód',
                 ],
 
                 'drag_move' => [
-                    'label' => 'Mozgatás mód',
+                    'label' => 'Mozgatási mód',
                 ],
 
                 'flip_horizontal' => [
@@ -125,7 +125,7 @@ return [
                 ],
 
                 'set_aspect_ratio' => [
-                    'label' => 'Állítsa be a képarányt :ratio értékre',
+                    'label' => 'Képarány beállítása :ratio értékre',
                 ],
 
                 'save' => [
@@ -154,7 +154,7 @@ return [
                 ],
 
                 'rotation' => [
-                    'label' => 'Forgatás',
+                    'label' => 'Elforgatás',
                     'unit' => 'fok',
                 ],
 
@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Az SVG fájlok szerkesztése nem ajánlott, mivel minőségromláshoz vezethet az átméretezés során.\n Biztosan szeretnéd folytatni?',
+                    'disabled' => 'Az SVG fájlok szerkesztése nem engedélyezett, mivel minőségromláshoz vezethet az átméretezés során.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -202,7 +211,7 @@ return [
             ],
 
             'reorder' => [
-                'label' => 'Sor újrarendezése',
+                'label' => 'Sor mozgatása',
             ],
 
         ],
@@ -233,10 +242,10 @@ return [
             'italic' => 'Dőlt',
             'link' => 'Hivatkozás',
             'ordered_list' => 'Számozott lista',
-            'redo' => 'Előre',
+            'redo' => 'Visszaállítás',
             'strike' => 'Áthúzott',
             'table' => 'Táblázat',
-            'undo' => 'Vissza',
+            'undo' => 'Visszavonás',
         ],
 
     ],
@@ -254,7 +263,7 @@ return [
             ],
 
             'clone' => [
-                'label' => 'Másolás',
+                'label' => 'Duplikálás',
             ],
 
             'reorder' => [
@@ -270,19 +279,19 @@ return [
             ],
 
             'collapse' => [
-                'label' => 'Becsuk',
+                'label' => 'Becsukás',
             ],
 
             'expand' => [
-                'label' => 'Kibont',
+                'label' => 'Kibontás',
             ],
 
             'collapse_all' => [
-                'label' => 'Becsuk mindent',
+                'label' => 'Összes becsukása',
             ],
 
             'expand_all' => [
-                'label' => 'Kibont mindent',
+                'label' => 'Összes kibontása',
             ],
 
         ],
@@ -320,10 +329,10 @@ return [
             'italic' => 'Dőlt',
             'link' => 'Hivatkozás',
             'ordered_list' => 'Számozott lista',
-            'redo' => 'Előre',
+            'redo' => 'Visszaállítás',
             'strike' => 'Áthúzott',
             'underline' => 'Alázhúzott',
-            'undo' => 'Vissza',
+            'undo' => 'Visszavonás',
         ],
 
     ],
@@ -336,7 +345,7 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'Új opció hozzáadása',
+                    'heading' => 'Új elem hozzáadása',
 
                     'actions' => [
 
@@ -345,7 +354,7 @@ return [
                         ],
 
                         'create_another' => [
-                            'label' => 'Hozzáadás és másik hozzáadása',
+                            'label' => 'Mentés és új hozzáadása',
                         ],
 
                     ],
@@ -385,7 +394,7 @@ return [
 
         'no_search_results_message' => 'Nincs találat',
 
-        'placeholder' => 'Válassz...',
+        'placeholder' => 'Válassz ki egy elemet',
 
         'searching_message' => 'Keresés...',
 

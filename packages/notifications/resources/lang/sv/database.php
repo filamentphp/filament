@@ -19,8 +19,8 @@ return [
         ],
 
         'empty' => [
-            'heading' => 'Inga notiser här',
-            'description' => 'Kolla igen lite senare',
+            'heading' => 'Inga notiser',
+            'description' => 'Kolla igen lite senare.',
         ],
 
     ],
