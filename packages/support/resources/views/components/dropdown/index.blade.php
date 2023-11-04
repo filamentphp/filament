@@ -6,6 +6,7 @@
     'teleport' => false,
     'trigger' => null,
     'width' => null,
+    'fixed' => true,
 ])
 
 <div
@@ -42,7 +43,9 @@
             wire:key="{{ $attributes->get('wire:key') }}.panel"
         @endif
         @class([
-            'fi-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10',
+            'fi-dropdown-panel z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10',
+            'fixed' => $fixed,
+            'absolute' => ! $fixed,
             match ($width) {
                 'xs' => 'max-w-xs',
                 'sm' => 'max-w-sm',
