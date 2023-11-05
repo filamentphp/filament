@@ -1139,7 +1139,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     public function hasDynamicSearchResults(): bool
     {
-        if ($this->hasRelationship()) {
+        if ($this->hasRelationship() && empty($this->searchColumns)) {
             return ! $this->isPreloaded();
         }
 

@@ -311,4 +311,45 @@ class Notification extends ViewComponent implements Arrayable
 
         Assert::assertSame($expectedNotification->title, $notification);
     }
+
+    public static function assertNotNotified(Notification | string | null $notification = null): void
+    {
+        $notificationsLivewireComponent = new Notifications();
+        $notificationsLivewireComponent->mount();
+        $notifications = $notificationsLivewireComponent->notifications;
+
+        $expectedNotification = null;
+
+        Assert::assertIsArray($notifications->toArray());
+
+        if (is_string($notification)) {
+            $expectedNotification = $notifications->first(fn (Notification $mountedNotification): bool => $mountedNotification->title === $notification);
+        }
+
+        if ($notification instanceof Notification) {
+            $expectedNotification = $notifications->first(fn (Notification $mountedNotification, string $key): bool => $mountedNotification->id === $key);
+        }
+
+        if (blank($notification)) {
+            return;
+        }
+
+        if ($notification instanceof Notification) {
+            Assert::assertNotSame(
+                collect($expectedNotification)->except(['id'])->toArray(),
+                collect($notification->toArray())->except(['id'])->toArray(),
+                'The notification with the given configration was sent'
+            );
+
+            return;
+        }
+
+        if ($expectedNotification instanceof Notification) {
+            Assert::assertNotSame(
+                $expectedNotification->title,
+                $notification,
+                'The notification with the given title was sent'
+            );
+        }
+    }
 }
