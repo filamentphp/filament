@@ -3,12 +3,12 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
-use Filament\Forms\Get;
+use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
-use Filament\Support\Concerns\HasIcon;
+use Filament\Forms\Get;
 use Filament\Support\Components\Component;
-use Filament\Forms\Components\Builder\Block;
+use Filament\Support\Concerns\HasIcon;
 use Illuminate\Validation\ValidationException;
 
 class Constraint extends Component

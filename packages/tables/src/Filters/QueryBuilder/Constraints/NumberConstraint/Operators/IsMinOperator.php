@@ -4,8 +4,8 @@ namespace Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Oper
 
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Illuminate\Database\Eloquent\Builder;
 
 class IsMinOperator extends Operator
 {

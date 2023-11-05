@@ -3,9 +3,9 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
-use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EqualsOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\ContainsOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EndsWithOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EqualsOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\StartsWithOperator;
 
 class TextConstraint extends Constraint

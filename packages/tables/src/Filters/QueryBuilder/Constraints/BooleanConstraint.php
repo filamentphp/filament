@@ -3,8 +3,8 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
-use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint\Operators\IsTrueOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 
 class BooleanConstraint extends Constraint
 {
