@@ -778,13 +778,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ]) ?? $relationshipQuery;
             }
 
-            $relatedKeyName = self::getRelatedKeyName($relationship);
+            $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::afterLast($relatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
@@ -804,7 +804,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             }
 
             return $relationshipQuery
-                ->pluck($relationshipTitleAttribute, $relatedKeyName)
+                ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
                 ->toArray();
         });
 
@@ -878,9 +878,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
-            $relatedKeyName = self::getRelatedKeyName($relationship);
-
-            $relationshipQuery->where($relatedKeyName, $state);
+            $relationshipQuery->where($component->getQualifiedRelatedKeyNameForRelationship($relationship), $state);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -896,9 +894,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
-            $relatedKeyName = self::getRelatedKeyName($relationship);
+            $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
 
-            $relationshipQuery->whereIn($relatedKeyName, $values);
+            $relationshipQuery->whereIn($qualifiedRelatedKeyName, $values);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -910,7 +908,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::afterLast($relatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
@@ -926,7 +924,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             }
 
             return $relationshipQuery
-                ->pluck($relationshipTitleAttribute, $relatedKeyName)
+                ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
                 ->toArray();
         });
 
@@ -1181,7 +1179,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         }
     }
 
-    public static function getRelatedKeyName(Relation $relationship): string
+    protected function getQualifiedRelatedKeyNameForRelationship(Relation $relationship): string
     {
         if ($relationship instanceof BelongsToMany) {
             return $relationship->getQualifiedRelatedKeyName();
@@ -1190,6 +1188,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
             $relatedKeyName = $relationship->getRelated()->getQualifiedKeyName();
         } else {
+            /** @var BelongsTo $relationship */
+
             $relatedKeyName = $relationship->getQualifiedOwnerKeyName();
         }
 
