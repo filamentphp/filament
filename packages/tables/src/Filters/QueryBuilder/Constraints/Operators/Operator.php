@@ -188,7 +188,7 @@ class Operator extends Component
     }
 
     /**
-     * @param array<string, mixed> | null $settings
+     * @param  array<string, mixed> | null  $settings
      */
     public function settings(?array $settings): static
     {

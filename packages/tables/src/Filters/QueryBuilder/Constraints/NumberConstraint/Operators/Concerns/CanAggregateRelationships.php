@@ -3,12 +3,11 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\Concerns;
 
 use Exception;
-use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
-use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
-use Illuminate\Support\Str;
 use Filament\Forms\Components\Select;
+use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Str;
 
 trait CanAggregateRelationships
 {

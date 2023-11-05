@@ -3,9 +3,9 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators;
 
 use Filament\Forms\Components\Component;
-use Illuminate\Database\Connection;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;

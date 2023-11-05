@@ -61,7 +61,7 @@ class QueryBuilder extends BaseFilter
     }
 
     /**
-     * @param array<string, mixed> $rules
+     * @param  array<string, mixed>  $rules
      */
     public function applyRulesToQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
@@ -104,7 +104,7 @@ class QueryBuilder extends BaseFilter
     }
 
     /**
-     * @param array<string, mixed> $rules
+     * @param  array<string, mixed>  $rules
      */
     public function applyRulesToBaseQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
@@ -211,7 +211,7 @@ class QueryBuilder extends BaseFilter
     }
 
     /**
-     * @param array<string, mixed> $rule
+     * @param  array<string, mixed>  $rule
      */
     protected function tapOperatorFromRule(array $rule, ComponentContainer $ruleBuilderBlockContainer, Closure $callback): void
     {
