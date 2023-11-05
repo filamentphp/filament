@@ -708,7 +708,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyQueryUsing): array {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
+            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -766,7 +766,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
+            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -875,7 +875,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
+            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
             $relationshipQuery->where($component->getQualifiedRelatedKeyNameForRelationship($relationship), $state);
 
@@ -891,7 +891,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyQueryUsing): array {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
+            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
             $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
 
