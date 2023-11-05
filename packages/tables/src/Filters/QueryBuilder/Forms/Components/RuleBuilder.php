@@ -35,7 +35,7 @@ class RuleBuilder extends Builder
                     Builder\Block::make(static::OR_BLOCK_NAME)
                         ->label(function (?array $state, ?string $uuid) use ($component) {
                             if (blank($state) || blank($uuid)) {
-                                return 'Disjunction (OR)';
+                                return __('filament-tables::filters/query-builder.form.or_groups.block.label');
                             }
 
                             if (! count($state[static::OR_BLOCK_GROUPS_REPEATER_NAME] ?? [])) {
@@ -57,6 +57,7 @@ class RuleBuilder extends Builder
                         ->icon('heroicon-m-bars-4')
                         ->schema(fn (): array => [
                             Repeater::make(static::OR_BLOCK_GROUPS_REPEATER_NAME)
+                                ->label(__('filament-tables::filters/query-builder.form.or_groups.label'))
                                 ->schema(fn (): array => [
                                     static::make('rules')
                                         ->constraints($this->getConstraints())
@@ -64,9 +65,9 @@ class RuleBuilder extends Builder
                                         ->blockPickerWidth($this->getBlockPickerWidth()),
                                 ])
                                 ->addAction(fn (Action $action) => $action
-                                    ->label('Add rule group')
+                                    ->label(__('filament-tables::filters/query-builder.actions.add_rule_group'))
                                     ->icon('heroicon-s-plus'))
-                                ->labelBetweenItems('OR')
+                                ->labelBetweenItems(__('filament-tables::filters/query-builder.item_separators.or'))
                                 ->collapsible()
                                 ->expandAllAction(fn (Action $action) => $action->hidden())
                                 ->collapseAllAction(fn (Action $action) => $action->hidden())
@@ -100,15 +101,16 @@ class RuleBuilder extends Builder
                                 ->hiddenLabel()
                                 ->generateUuidUsing(fn (): string => Str::random(4)),
                             Checkbox::make('not')
-                                ->label('NOT'),
+                                ->label(__('filament-tables::filters/query-builder.form.not.label')),
                         ]),
                 ];
             })
             ->addAction(fn (Action $action) => $action
-                ->label('Add rule')
+                ->label(__('filament-tables::filters/query-builder.actions.add_rule'))
                 ->icon('heroicon-s-plus'))
             ->addBetweenAction(fn (Action $action) => $action->hidden())
-            ->labelBetweenItems('AND')
+            ->label(__('filament-tables::filters/query-builder.form.rules.label'))
+            ->labelBetweenItems(__('filament-tables::filters/query-builder.item_separators.and'))
             ->blockNumbers(false)
             ->collapsible()
             ->cloneable()
