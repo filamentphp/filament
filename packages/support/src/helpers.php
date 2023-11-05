@@ -133,10 +133,10 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
     }
 }
 
-if (! function_exists('Filament\Support\is_internal_url')) {
+if (! function_exists('Filament\Support\is_app_url')) {
     function is_internal_url(string $url): bool
     {
-        return Str::startsWith($url, [config('app.url'), '/']);
+        return str($url)->startsWith(request()->root());
     }
 }
 
@@ -147,7 +147,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
 
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
-        } elseif (FilamentView::hasSpaMode() && str($url)->startsWith(request()->root())) {
+        } elseif (FilamentView::hasSpaMode() && is_app_url($url)) {
             $html .= ' wire:navigate';
         }
 
