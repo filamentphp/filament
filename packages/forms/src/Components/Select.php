@@ -829,7 +829,10 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return;
             }
 
-            if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+            if (
+                ($relationship instanceof HasOneThrough) ||
+                ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough)
+            ) {
                 $relatedModel = $relationship->getResults();
 
                 $component->state(
