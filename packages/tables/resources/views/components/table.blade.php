@@ -37,7 +37,7 @@
 
     <div 
         class="absolute top-0 left-0 w-full h-full bg-white opacity-60 dark:bg-gray-900 dark:opacity-60 flex items-center justify-center hidden"
-        wire:loading.class.remove="hidden"
+        wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="hidden"
     >
     </div>
 </div>
