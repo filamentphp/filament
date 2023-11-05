@@ -2,17 +2,18 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Facades\Filament;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
+use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\Actions\ActionGroup;
+use Filament\Support\Exceptions\Halt;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
  * @property Form $form
@@ -25,11 +26,6 @@ class CreateRecord extends Page
      * @var view-string
      */
     protected static string $view = 'filament-panels::resources.pages.create-record';
-
-    /**
-     * @var bool
-     */    
-    protected bool $useWireNavigateForRedirect = false;
 
     public ?Model $record = null;
 
@@ -137,7 +133,14 @@ class CreateRecord extends Page
             return;
         }
 
-        $this->redirect($this->getRedirectUrl(), navigate: $this->useWireNavigateForRedirect);
+        $redirectUrl = $this->getRedirectUrl();
+
+        if (FilamentView::hasSpaMode()) {
+            $isInternalUrl = Str::startsWith($redirectUrl, [config('app.url'), '/']);
+            $this->redirect($redirectUrl, navigate: $isInternalUrl);
+        } else {
+            $this->redirect($redirectUrl);
+        }
     }
 
     protected function getCreatedNotification(): ?Notification

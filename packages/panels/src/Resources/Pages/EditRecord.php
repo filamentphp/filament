@@ -2,20 +2,22 @@
 
 namespace Filament\Resources\Pages;
 
+use Filament\Forms\Form;
+use Illuminate\Support\Str;
 use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Infolist;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
-use Filament\Actions\ViewAction;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
-use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Actions\ReplicateAction;
 use Filament\Support\Exceptions\Halt;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Actions\ForceDeleteAction;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Pages\Concerns\InteractsWithFormActions;
 
 /**
  * @property Form $form
@@ -30,11 +32,6 @@ class EditRecord extends Page
      * @var view-string
      */
     protected static string $view = 'filament-panels::resources.pages.edit-record';
-
-    /**
-     * @var bool
-     */    
-    protected bool $useWireNavigateForRedirect = false;
 
     /**
      * @var array<string, mixed> | null
@@ -160,7 +157,12 @@ class EditRecord extends Page
         $this->getSavedNotification()?->send();
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            $this->redirect($redirectUrl, navigate: $this->useWireNavigateForRedirect);
+            if (FilamentView::hasSpaMode()) {
+                $isInternalUrl = Str::startsWith($redirectUrl, [config('app.url'), '/']);
+                $this->redirect($redirectUrl, navigate: $isInternalUrl);
+            } else {
+                $this->redirect($redirectUrl);
+            }
         }
     }
 
