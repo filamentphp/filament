@@ -4,32 +4,40 @@
     'reorderable' => false,
 ])
 
-<table
-    {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
->
-    @if ($header)
-        <thead class="bg-gray-50 dark:bg-white/5">
-            <tr>
-                {{ $header }}
-            </tr>
-        </thead>
-    @endif
-
-    <tbody
-        @if ($reorderable)
-            x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
-            x-sortable
-        @endif
-        class="divide-y divide-gray-200 whitespace-nowrap dark:divide-white/5"
+<div class="relative">
+    <table
+        {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
     >
-        {{ $slot }}
-    </tbody>
+        @if ($header)
+            <thead class="bg-gray-50 dark:bg-white/5">
+                <tr>
+                    {{ $header }}
+                </tr>
+            </thead>
+        @endif
 
-    @if ($footer)
-        <tfoot class="bg-gray-50 dark:bg-white/5">
-            <tr>
-                {{ $footer }}
-            </tr>
-        </tfoot>
-    @endif
-</table>
+        <tbody
+            @if ($reorderable)
+                x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
+                x-sortable
+            @endif
+            class="divide-y divide-gray-200 whitespace-nowrap dark:divide-white/5"
+        >
+            {{ $slot }}
+        </tbody>
+
+        @if ($footer)
+            <tfoot class="bg-gray-50 dark:bg-white/5">
+                <tr>
+                    {{ $footer }}
+                </tr>
+            </tfoot>
+        @endif
+    </table>
+
+    <div 
+        class="absolute top-0 left-0 w-full h-full bg-white opacity-60 dark:bg-gray-900 dark:opacity-60 flex items-center justify-center hidden"
+        wire:loading.class.remove="hidden"
+    >
+    </div>
+</div>
