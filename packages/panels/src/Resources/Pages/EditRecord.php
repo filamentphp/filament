@@ -32,6 +32,11 @@ class EditRecord extends Page
     protected static string $view = 'filament-panels::resources.pages.edit-record';
 
     /**
+     * @var bool
+     */    
+    protected bool $useWireNavigateForRedirect = false;
+
+    /**
      * @var array<string, mixed> | null
      */
     public ?array $data = [];
@@ -155,7 +160,7 @@ class EditRecord extends Page
         $this->getSavedNotification()?->send();
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            $this->redirect($redirectUrl);
+            $this->redirect($redirectUrl, navigate: $this->useWireNavigateForRedirect);
         }
     }
 

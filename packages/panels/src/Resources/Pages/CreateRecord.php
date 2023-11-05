@@ -26,6 +26,11 @@ class CreateRecord extends Page
      */
     protected static string $view = 'filament-panels::resources.pages.create-record';
 
+    /**
+     * @var bool
+     */    
+    protected bool $useWireNavigateForRedirect = false;
+
     public ?Model $record = null;
 
     /**
@@ -132,7 +137,7 @@ class CreateRecord extends Page
             return;
         }
 
-        $this->redirect($this->getRedirectUrl());
+        $this->redirect($this->getRedirectUrl(), navigate: $this->useWireNavigateForRedirect);
     }
 
     protected function getCreatedNotification(): ?Notification
