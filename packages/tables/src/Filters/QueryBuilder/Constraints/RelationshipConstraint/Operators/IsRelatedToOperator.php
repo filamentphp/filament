@@ -155,7 +155,7 @@ class IsRelatedToOperator extends Operator
 
         $value = $this->getSettings()[$constraint->isMultiple() ? 'values' : 'value'];
 
-        return $query->whereHas(
+        return $query->{$this->isInverse() ? 'whereDoesntHave' : 'whereHas'}(
             $constraint->getRelationshipName(),
             fn (Builder $query) => $query->whereKey($value),
         );

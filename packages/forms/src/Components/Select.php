@@ -1181,15 +1181,14 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $relationship->getQualifiedRelatedKeyName();
         }
 
-        if ($relationship instanceof HasOneOrMany) {
-            return $relationship->getQualifiedForeignKeyName();
-        }
-
         if ($relationship instanceof HasOneThrough) {
             return $relationship->getQualifiedForeignKeyName();
         }
 
-        if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+        if (
+            ($relationship instanceof HasOneOrMany) ||
+            ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough)
+        ) {
             return $relationship->getRelated()->getQualifiedKeyName();
         }
 
