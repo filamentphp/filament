@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -777,17 +778,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ]) ?? $relationshipQuery;
             }
 
-            if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
-                $keyName = $relationship->getRelated()->getQualifiedKeyName();
-            } else {
-                $keyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
-            }
+            $relatedKeyName = self::getRelatedKeyName($relationship);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($relatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
@@ -807,7 +804,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             }
 
             return $relationshipQuery
-                ->pluck($relationshipTitleAttribute, $keyName)
+                ->pluck($relationshipTitleAttribute, $relatedKeyName)
                 ->toArray();
         });
 
@@ -881,13 +878,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
-            if ($relationship instanceof BelongsToMany) {
-                $relatedKeyName = $relationship->getRelatedKeyName();
-            } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
-                $relatedKeyName = $relationship->getRelated()->getQualifiedKeyName();
-            } else {
-                $relatedKeyName = $relationship->getQualifiedOwnerKeyName();
-            }
+            $relatedKeyName = self::getRelatedKeyName($relationship);
 
             $relationshipQuery->where($relatedKeyName, $state);
 
@@ -905,13 +896,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
-            if ($relationship instanceof BelongsToMany) {
-                $relatedKeyName = $relationship->getQualifiedRelatedKeyName();
-            } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
-                $relatedKeyName = $relationship->getRelated()->getQualifiedKeyName();
-            } else {
-                $relatedKeyName = $relationship->getQualifiedOwnerKeyName();
-            }
+            $relatedKeyName = self::getRelatedKeyName($relationship);
 
             $relationshipQuery->whereIn($relatedKeyName, $values);
 
@@ -1081,7 +1066,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return parent::getLabel();
     }
 
-    public function getRelationship(): BelongsTo | BelongsToMany | \Znck\Eloquent\Relations\BelongsToThrough | null
+    public function getRelationship(): BelongsTo | BelongsToMany | HasOneThrough | \Znck\Eloquent\Relations\BelongsToThrough | null
     {
         if (blank($this->getRelationshipName())) {
             return null;
@@ -1194,5 +1179,20 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 Arr::set($hydratedDefaultState, $this->getStatePath(), $state);
             }
         }
+    }
+
+    public static function getRelatedKeyName(Relation $relationship): string
+    {
+        if ($relationship instanceof BelongsToMany) {
+            return $relationship->getQualifiedRelatedKeyName();
+        } elseif ($relationship instanceof HasOneThrough) {
+            $relatedKeyName = $relationship->getQualifiedForeignKeyName();
+        } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+            $relatedKeyName = $relationship->getRelated()->getQualifiedKeyName();
+        } else {
+            $relatedKeyName = $relationship->getQualifiedOwnerKeyName();
+        }
+
+        return $relatedKeyName;
     }
 }
