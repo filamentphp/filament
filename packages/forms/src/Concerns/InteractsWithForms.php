@@ -229,6 +229,19 @@ trait InteractsWithForms
 
     public function updatingInteractsWithForms(string $statePath): void
     {
+        // is it UploadField with 3 part state?
+        $parts = explode(".", $statePath);
+
+        if(count($parts) > 2) {
+            array_pop($parts);
+
+            $newStatePath = implode(".", $parts);
+
+            $uploadedFiles = $this->getFormUploadedFiles($newStatePath);
+
+            $statePath = blank($uploadedFiles) ? $statePath : $newStatePath;
+        }
+
         $this->oldFormState[$statePath] = data_get($this, $statePath);
     }
 
