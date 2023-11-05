@@ -138,7 +138,7 @@ class CreateRecord extends Page
         $redirectUrl = $this->getRedirectUrl();
 
         if (FilamentView::hasSpaMode()) {
-            $this->redirect($redirectUrl, navigate: is_internal_url($redirectUrl));
+            $this->redirect($redirectUrl, navigate: is_app_url($redirectUrl));
         } else {
             $this->redirect($redirectUrl);
         }
