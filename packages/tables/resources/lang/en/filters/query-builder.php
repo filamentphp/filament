@@ -10,19 +10,24 @@ return [
 
             'block' => [
                 'label' => 'Disjunction (OR)',
+                'or' => 'OR',
             ],
 
         ],
 
-        'not' => [
-            'label' => 'NOT',
-        ],
-
         'rules' => [
+
             'label' => 'Rules',
+
+            'item' => [
+                'and' => 'AND',
+            ],
+
         ],
 
     ],
+
+    'no_rules' => '(No rules)',
 
     'item_separators' => [
         'and' => 'AND',

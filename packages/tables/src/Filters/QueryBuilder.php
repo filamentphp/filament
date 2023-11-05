@@ -60,16 +60,11 @@ class QueryBuilder extends BaseFilter
             $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
 
             if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
-                $query->{$rule['data']['not'] ?? false ? 'whereNot' : 'where'}(function (Builder $query) use ($rule, $ruleBuilderBlockContainer) {
+                $query->where(function (Builder $query) use ($rule, $ruleBuilderBlockContainer) {
                     $isFirst = true;
 
                     foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
-                        $query->{match ([$isFirst, boolval($orGroup['not'] ?? false)]) {
-                            [true, false] => 'where',
-                            [true, true] => 'whereNot',
-                            [false, false] => 'orWhere', /** @phpstan-ignore-line */
-                            [false, true] => 'orWhereNot', /** @phpstan-ignore-line */
-                        }}(function (Builder $query) use ($orGroup, $orGroupIndex, $ruleBuilderBlockContainer) {
+                        $query->{$isFirst ? 'where' : 'orWhere'}(function (Builder $query) use ($orGroup, $orGroupIndex, $ruleBuilderBlockContainer) {
                             $this->applyRulesToQuery(
                                 $query,
                                 $orGroup['rules'],

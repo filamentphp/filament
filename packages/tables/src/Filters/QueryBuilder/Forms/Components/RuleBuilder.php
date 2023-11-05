@@ -39,7 +39,7 @@ class RuleBuilder extends Builder
                             }
 
                             if (! count($state[static::OR_BLOCK_GROUPS_REPEATER_NAME] ?? [])) {
-                                return '(No rules)';
+                                return __('filament-tables::filters/query-builder.no_rules');
                             }
 
                             $repeater = $component->getChildComponentContainer($uuid)
@@ -52,7 +52,11 @@ class RuleBuilder extends Builder
                             $itemLabels = collect($repeater->getChildComponentContainers())
                                 ->map(fn (ComponentContainer $blockContainer, string $blockContainerUuid): string => $repeater->getItemLabel($blockContainerUuid));
 
-                            return (($state['not'] ?? false) ? 'NOT ' : '') . '(' . $itemLabels->implode(') OR (') . ')';
+                            if ($itemLabels->count() === 1) {
+                                return $itemLabels->first();
+                            }
+
+                            return '(' . $itemLabels->implode(') ' . __('filament-tables::filters/query-builder.form.or_groups.block.or') . ' (') . ')';
                         })
                         ->icon('heroicon-m-bars-4')
                         ->schema(fn (): array => [
@@ -65,7 +69,7 @@ class RuleBuilder extends Builder
                                         ->blockPickerWidth($this->getBlockPickerWidth()),
                                 ])
                                 ->addAction(fn (Action $action) => $action
-                                    ->label(__('filament-tables::filters/query-builder.actions.add_rule_group'))
+                                    ->label(__('filament-tables::filters/query-builder.actions.add_rule_group.label'))
                                     ->icon('heroicon-s-plus'))
                                 ->labelBetweenItems(__('filament-tables::filters/query-builder.item_separators.or'))
                                 ->collapsible()
@@ -90,23 +94,25 @@ class RuleBuilder extends Builder
                                         });
 
                                     if ($blockLabels->isEmpty()) {
-                                        return '(No rules)';
+                                        return __('filament-tables::filters/query-builder.no_rules');
                                     }
 
-                                    return (($state['not'] ?? false) ? 'NOT ' : '') . '(' . $blockLabels->implode(') AND (') . ')';
+                                    if ($blockLabels->count() === 1) {
+                                        return $blockLabels->first();
+                                    }
+
+                                    return '(' . $blockLabels->implode(') ' . __('filament-tables::filters/query-builder.form.rules.item.and') . ' (') . ')';
                                 })
                                 ->truncateItemLabel(false)
                                 ->cloneable()
                                 ->reorderable(false)
                                 ->hiddenLabel()
                                 ->generateUuidUsing(fn (): string => Str::random(4)),
-                            Checkbox::make('not')
-                                ->label(__('filament-tables::filters/query-builder.form.not.label')),
                         ]),
                 ];
             })
             ->addAction(fn (Action $action) => $action
-                ->label(__('filament-tables::filters/query-builder.actions.add_rule'))
+                ->label(__('filament-tables::filters/query-builder.actions.add_rule.label'))
                 ->icon('heroicon-s-plus'))
             ->addBetweenAction(fn (Action $action) => $action->hidden())
             ->label(__('filament-tables::filters/query-builder.form.rules.label'))
