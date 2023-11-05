@@ -729,17 +729,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 $relationshipQuery->limit($component->getOptionsLimit());
             }
 
-            if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
-                $keyName = $relationship->getRelated()->getQualifiedKeyName();
-            } else {
-                $keyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
-            }
+            $qualifiedRelatedKeyName = $component->getQualifiedRelatedKeyNameForRelationship($relationship);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($qualifiedRelatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
@@ -759,7 +755,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             }
 
             return $relationshipQuery
-                ->pluck($relationshipTitleAttribute, $keyName)
+                ->pluck($relationshipTitleAttribute, $qualifiedRelatedKeyName)
                 ->toArray();
         });
 
@@ -930,15 +926,11 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
         $this->rule(
             static function (Select $component): Exists {
-                if ($component->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
-                    $column = $component->getRelationship()->getRelated()->getKeyName();
-                } else {
-                    $column = $component->getRelationship()->getOwnerKeyName();
-                }
+                $relationship = $component->getRelationship();
 
                 return Rule::exists(
-                    $component->getRelationship()->getModel()::class,
-                    $column,
+                    $relationship->getModel()::class,
+                    $component->getQualifiedRelatedKeyNameForRelationship($relationship),
                 );
             },
             static function (Select $component): bool {
