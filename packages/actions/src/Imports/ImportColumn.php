@@ -36,7 +36,7 @@ class ImportColumn extends Component
 
     protected ?Closure $fillRecordUsing = null;
 
-    protected ?Closure $sanitizeStateUsing = null;
+    protected ?Closure $castStateUsing = null;
 
     /**
      * @var array<mixed> | Closure
@@ -64,6 +64,8 @@ class ImportColumn extends Component
      */
     protected array $resolvedRelatedRecords = [];
 
+    protected string | Closure | null $validationAttribute = null;
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -80,9 +82,9 @@ class ImportColumn extends Component
     public function getSelect(): Select
     {
         return Select::make($this->getName())
-            ->label($this->label)
+            ->label($this->getLabel())
             ->placeholder(__('filament-actions::import.modal.form.columns.placeholder'))
-            ->required($this->isMappingRequired);
+            ->required($this->isMappingRequired());
     }
 
     public function name(string $name): static
@@ -117,6 +119,13 @@ class ImportColumn extends Component
     {
         $this->isNumeric = $condition;
         $this->decimalPlaces = $decimalPlaces;
+
+        return $this;
+    }
+
+    public function integer(bool | Closure $condition = true): static
+    {
+        $this->numeric($condition, decimalPlaces: 0);
 
         return $this;
     }
@@ -203,9 +212,9 @@ class ImportColumn extends Component
         }, []);
     }
 
-    public function sanitizeStateUsing(?Closure $callback): static
+    public function castStateUsing(?Closure $callback): static
     {
-        $this->sanitizeStateUsing = $callback;
+        $this->castStateUsing = $callback;
 
         return $this;
     }
@@ -220,21 +229,21 @@ class ImportColumn extends Component
     /**
      * @param  array<string, mixed>  $options
      */
-    public function sanitizeState(mixed $state, array $options): mixed
+    public function castState(mixed $state, array $options): mixed
     {
         $originalState = $state;
 
         if (filled($arraySeparator = $this->getArraySeparator())) {
             $state = collect(explode($arraySeparator, strval($state)))
-                ->map(fn (mixed $stateItem): mixed => $this->sanitizeStateItem($stateItem))
+                ->map(fn (mixed $stateItem): mixed => $this->castStateItem($stateItem))
                 ->filter(fn (mixed $stateItem): bool => filled($stateItem))
                 ->all();
         } else {
-            $state = $this->sanitizeStateItem($state);
+            $state = $this->castStateItem($state);
         }
 
-        if ($this->sanitizeStateUsing) {
-            return $this->evaluate($this->sanitizeStateUsing, [
+        if ($this->castStateUsing) {
+            return $this->evaluate($this->castStateUsing, [
                 'originalState' => $originalState,
                 'state' => $state,
                 'options' => $options,
@@ -315,6 +324,10 @@ class ImportColumn extends Component
         $resolveUsing = $this->evaluate($this->resolveRelationshipUsing, [
             'state' => $state,
         ]);
+
+        if (blank($resolveUsing)) {
+            return $this->resolvedRelatedRecords[$state] = null;
+        }
 
         if ($resolveUsing instanceof Model) {
             return $this->resolvedRelatedRecords[$state] = $resolveUsing;
@@ -422,12 +435,34 @@ class ImportColumn extends Component
         return $this->getImporter()->getRecord();
     }
 
+    public function isMappingRequired(): bool
+    {
+        return (bool) $this->evaluate($this->isMappingRequired);
+    }
+
     public function hasRelationship(): bool
     {
         return filled($this->getRelationshipName());
     }
 
-    protected function sanitizeStateItem(mixed $state): mixed
+    public function validationAttribute(string | Closure | null $label): static
+    {
+        $this->validationAttribute = $label;
+
+        return $this;
+    }
+
+    public function getValidationAttribute(): string
+    {
+        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->evaluate($this->label);
+    }
+
+    protected function castStateItem(mixed $state): mixed
     {
         if (is_string($state)) {
             $state = trim($state);
@@ -438,17 +473,17 @@ class ImportColumn extends Component
         }
 
         if ($this->isBoolean()) {
-            return $this->sanitizeBooleanStateItem($state);
+            return $this->castBooleanStateItem($state);
         }
 
         if ($this->isNumeric()) {
-            return $this->sanitizeNumericStateItem($state);
+            return $this->castNumericStateItem($state);
         }
 
         return $state;
     }
 
-    protected function sanitizeBooleanStateItem(mixed $state): bool
+    protected function castBooleanStateItem(mixed $state): bool
     {
         // Narrow down the possible values of the state to make comparison easier.
         $state = strtolower(strval($state));
@@ -460,7 +495,7 @@ class ImportColumn extends Component
         };
     }
 
-    protected function sanitizeNumericStateItem(mixed $state): int | float
+    protected function castNumericStateItem(mixed $state): int | float
     {
         $state = floatval(preg_replace('/[^0-9.]/', '', $state));
 

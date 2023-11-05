@@ -335,12 +335,12 @@ class ImportAction extends Action
 
     public function chunkSize(int | Closure $size): static
     {
-        $this->size = $size;
+        $this->chunkSize = $size;
 
         return $this;
     }
 
-    public function max(int | Closure | null $rows): static
+    public function maxRows(int | Closure | null $rows): static
     {
         $this->maxRows = $rows;
 

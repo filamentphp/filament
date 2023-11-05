@@ -169,7 +169,19 @@ abstract class Importer
      */
     public function getValidationAttributes(): array
     {
-        return [];
+        $attributes = [];
+
+        foreach ($this->getCachedColumns() as $column) {
+            $validationAttribute = $column->getValidationAttribute();
+
+            if (blank($validationAttribute)) {
+                continue;
+            }
+
+            $attributes[$column->getName()] = $validationAttribute;
+        }
+
+        return $attributes;
     }
 
     public function fillRecord(): void
