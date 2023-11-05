@@ -15,7 +15,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
-use function Filament\Support\is_internal_url;
+use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form
