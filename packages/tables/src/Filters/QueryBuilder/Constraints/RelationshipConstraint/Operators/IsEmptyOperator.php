@@ -2,8 +2,8 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators;
 
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Illuminate\Database\Eloquent\Builder;
 
 class IsEmptyOperator extends Operator
 {

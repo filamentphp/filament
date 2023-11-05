@@ -2,10 +2,10 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
-use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\EqualsOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\IsMaxOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\IsMinOperator;
-use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\EqualsOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 
 class NumberConstraint extends Constraint
 {

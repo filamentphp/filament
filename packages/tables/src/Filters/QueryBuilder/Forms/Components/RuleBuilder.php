@@ -2,15 +2,15 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Forms\Components;
 
-use Illuminate\Support\Str;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
+use Filament\Forms\Components\Repeater;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
+use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
+use Illuminate\Support\Str;
 
 class RuleBuilder extends Builder
 {

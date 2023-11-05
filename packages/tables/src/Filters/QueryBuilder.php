@@ -5,14 +5,13 @@ namespace Filament\Tables\Filters;
 use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Repeater;
-use Filament\Tables\Filters\BaseFilter;
-use Filament\Forms\Components\Component;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Validation\ValidationException;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
 use Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\ValidationException;
 
 class QueryBuilder extends BaseFilter
 {

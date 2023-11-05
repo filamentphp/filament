@@ -10,7 +10,7 @@ trait HasOperators
     protected array $operators = [];
 
     /**
-     * @param array<class-string<Operator> | Operator> $operators
+     * @param  array<class-string<Operator> | Operator>  $operators
      */
     public function operators(array $operators): static
     {

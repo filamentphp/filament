@@ -3,10 +3,10 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\Operators;
 
 use Closure;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Support\Components\Component;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Concerns\CanBeHidden;
+use Illuminate\Database\Eloquent\Builder;
 
 class Operator extends Component
 {

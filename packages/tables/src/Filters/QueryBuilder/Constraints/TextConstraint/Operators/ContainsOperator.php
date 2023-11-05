@@ -2,11 +2,11 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators;
 
-use Illuminate\Support\Str;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
-use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Illuminate\Support\Str;
 
 class ContainsOperator extends Operator
 {

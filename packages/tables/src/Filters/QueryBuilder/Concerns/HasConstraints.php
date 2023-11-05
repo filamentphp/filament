@@ -10,7 +10,7 @@ trait HasConstraints
     protected array $constraints = [];
 
     /**
-     * @param array<Constraint> $constraints
+     * @param  array<Constraint>  $constraints
      */
     public function constraints(array $constraints): static
     {

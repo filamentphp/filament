@@ -2,10 +2,10 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\Concerns;
 
-use Illuminate\Support\Str;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Str;
 
 trait CanAggregateRelationships
 {
