@@ -30,22 +30,15 @@ class QueryBuilder extends BaseFilter
         parent::setUp();
 
         $this->form(fn (QueryBuilder $filter): array => [
-            Fieldset::make($filter->getLabel())
-                ->schema([
-                    RuleBuilder::make('rules')
-                        ->constraints($filter->getConstraints())
-                        ->blockPickerColumns($filter->getConstraintPickerColumns())
-                        ->blockPickerWidth($filter->getConstraintPickerWidth()),
-                    Checkbox::make('not')
-                        ->label('Exclude these filters (NOT)'),
-                ])
-                ->columns(1),
+            RuleBuilder::make('rules')
+                ->label($filter->getLabel())
+                ->constraints($filter->getConstraints())
+                ->blockPickerColumns($filter->getConstraintPickerColumns())
+                ->blockPickerWidth($filter->getConstraintPickerWidth()),
         ]);
 
         $this->query(function (Builder $query, array $data) {
-            $query->{($data['not'] ?? false) ? 'whereNot' : 'where'}(function (Builder $query) use ($data) {
-                $this->applyRulesToQuery($query, $data['rules'], $this->getRuleBuilder());
-            });
+            $this->applyRulesToQuery($query, $data['rules'], $this->getRuleBuilder());
         });
 
         $this->baseQuery(function (Builder $query, array $data) {

@@ -109,7 +109,6 @@ class RuleBuilder extends Builder
                 ->icon('heroicon-s-plus'))
             ->addBetweenAction(fn (Action $action) => $action->hidden())
             ->labelBetweenItems('AND')
-            ->hiddenLabel()
             ->blockNumbers(false)
             ->collapsible()
             ->cloneable()
