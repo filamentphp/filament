@@ -6,7 +6,6 @@ use Exception;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
