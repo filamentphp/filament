@@ -133,6 +133,13 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
     }
 }
 
+if (! function_exists('Filament\Support\is_internal_url')) {
+    function is_internal_url(string $url): bool
+    {
+        return Str::startsWith($url, [config('app.url'), '/']);
+    }
+}
+
 if (! function_exists('Filament\Support\generate_href_html')) {
     function generate_href_html(?string $url, bool $shouldOpenInNewTab = false): Htmlable
     {

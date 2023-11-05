@@ -19,6 +19,8 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 
+use function Filament\Support\is_internal_url;
+
 /**
  * @property Form $form
  */
@@ -158,8 +160,7 @@ class EditRecord extends Page
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
             if (FilamentView::hasSpaMode()) {
-                $isInternalUrl = Str::startsWith($redirectUrl, [config('app.url'), '/']);
-                $this->redirect($redirectUrl, navigate: $isInternalUrl);
+                $this->redirect($redirectUrl, navigate: is_internal_url($redirectUrl));
             } else {
                 $this->redirect($redirectUrl);
             }

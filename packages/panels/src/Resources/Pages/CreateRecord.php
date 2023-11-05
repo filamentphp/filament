@@ -15,6 +15,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
+use function Filament\Support\is_internal_url;
+
 /**
  * @property Form $form
  */
@@ -136,8 +138,7 @@ class CreateRecord extends Page
         $redirectUrl = $this->getRedirectUrl();
 
         if (FilamentView::hasSpaMode()) {
-            $isInternalUrl = Str::startsWith($redirectUrl, [config('app.url'), '/']);
-            $this->redirect($redirectUrl, navigate: $isInternalUrl);
+            $this->redirect($redirectUrl, navigate: is_internal_url($redirectUrl));
         } else {
             $this->redirect($redirectUrl);
         }
