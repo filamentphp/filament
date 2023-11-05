@@ -4,6 +4,7 @@ namespace Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operat
 
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
@@ -38,7 +39,10 @@ class EqualsOperator extends Operator
     {
         $text = trim($this->getSettings()['text']);
 
-        if ($query->getConnection()->getDriverName() === 'pgsql') {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        if ($databaseConnection->getDriverName() === 'pgsql') {
             $qualifiedColumn = new Expression("lower({$qualifiedColumn}::text)");
             $text = Str::lower($text);
         }

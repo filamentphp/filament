@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasIcon;
+use Filament\Tables\Filters\QueryBuilder;
 use Illuminate\Validation\ValidationException;
 
 class Constraint extends Component
@@ -36,6 +37,8 @@ class Constraint extends Component
     protected ?array $settings = null;
 
     protected ?bool $isInverse = null;
+
+    protected QueryBuilder $filter;
 
     final public function __construct(string $name)
     {
@@ -194,6 +197,18 @@ class Constraint extends Component
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
         return $this;
+    }
+
+    public function filter(QueryBuilder $filter): static
+    {
+        $this->filter = $filter;
+
+        return $this;
+    }
+
+    public function getFilter(): QueryBuilder
+    {
+        return $this->filter;
     }
 
     public function getAttribute(): string

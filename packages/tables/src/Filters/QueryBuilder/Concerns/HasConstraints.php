@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Concerns;
 
+use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 
 trait HasConstraints
@@ -15,6 +16,10 @@ trait HasConstraints
     public function constraints(array $constraints): static
     {
         foreach ($constraints as $constraint) {
+            if ($this instanceof QueryBuilder) {
+                $constraint->filter($this);
+            }
+
             $this->constraints[$constraint->getName()] = $constraint;
         }
 
