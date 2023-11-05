@@ -18,7 +18,7 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 
-use function Filament\Support\is_internal_url;
+use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form
