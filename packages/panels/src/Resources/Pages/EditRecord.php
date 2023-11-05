@@ -14,8 +14,11 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+
+use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form
@@ -155,7 +158,11 @@ class EditRecord extends Page
         $this->getSavedNotification()?->send();
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            $this->redirect($redirectUrl);
+            if (FilamentView::hasSpaMode()) {
+                $this->redirect($redirectUrl, navigate: is_app_url($redirectUrl));
+            } else {
+                $this->redirect($redirectUrl);
+            }
         }
     }
 
