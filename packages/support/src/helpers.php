@@ -134,7 +134,7 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
 }
 
 if (! function_exists('Filament\Support\is_app_url')) {
-    function is_internal_url(string $url): bool
+    function is_app_url(string $url): bool
     {
         return str($url)->startsWith(request()->root());
     }
