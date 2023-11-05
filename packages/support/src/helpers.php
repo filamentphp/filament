@@ -133,6 +133,13 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
     }
 }
 
+if (! function_exists('Filament\Support\is_app_url')) {
+    function is_app_url(string $url): bool
+    {
+        return str($url)->startsWith(request()->root());
+    }
+}
+
 if (! function_exists('Filament\Support\generate_href_html')) {
     function generate_href_html(?string $url, bool $shouldOpenInNewTab = false): Htmlable
     {
@@ -140,7 +147,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
 
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
-        } elseif (FilamentView::hasSpaMode() && str($url)->startsWith(request()->root())) {
+        } elseif (FilamentView::hasSpaMode() && is_app_url($url)) {
             $html .= ' wire:navigate';
         }
 

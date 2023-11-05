@@ -71,7 +71,7 @@ class AttachAction extends Action
             /** @var BelongsToMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
+            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
             $isMultiple = is_array($data['recordId']);
 
@@ -183,7 +183,7 @@ class AttachAction extends Action
             /** @var BelongsToMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
+            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
             if ($this->modifyRecordSelectOptionsQueryUsing) {
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
@@ -264,7 +264,7 @@ class AttachAction extends Action
             ->getOptionLabelUsing(function ($value) use ($table): string {
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-                $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
+                $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
                 return $this->getRecordTitle($relationshipQuery->find($value));
             })
