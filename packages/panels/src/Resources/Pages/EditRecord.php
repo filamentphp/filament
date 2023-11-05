@@ -2,20 +2,23 @@
 
 namespace Filament\Resources\Pages;
 
+use Filament\Forms\Form;
 use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Infolist;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\ForceDeleteAction;
-use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
-use Filament\Actions\ViewAction;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
-use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Actions\ReplicateAction;
 use Filament\Support\Exceptions\Halt;
-use Illuminate\Contracts\Support\Htmlable;
+use Filament\Actions\ForceDeleteAction;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+
+use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form
@@ -155,7 +158,11 @@ class EditRecord extends Page
         $this->getSavedNotification()?->send();
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            $this->redirect($redirectUrl);
+            if (FilamentView::hasSpaMode()) {
+                $this->redirect($redirectUrl, navigate: is_app_url($redirectUrl));
+            } else {
+                $this->redirect($redirectUrl);
+            }
         }
     }
 

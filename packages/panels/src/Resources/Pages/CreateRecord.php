@@ -2,17 +2,20 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Facades\Filament;
 use Filament\Forms\Form;
-use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
+use Filament\Actions\Action;
+use Filament\Facades\Filament;
+use Filament\Actions\ActionGroup;
+use Filament\Support\Exceptions\Halt;
+use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
+use Filament\Support\Facades\FilamentView;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+
+use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form
@@ -132,7 +135,13 @@ class CreateRecord extends Page
             return;
         }
 
-        $this->redirect($this->getRedirectUrl());
+        $redirectUrl = $this->getRedirectUrl();
+
+        if (FilamentView::hasSpaMode()) {
+            $this->redirect($redirectUrl, navigate: is_app_url($redirectUrl));
+        } else {
+            $this->redirect($redirectUrl);
+        }
     }
 
     protected function getCreatedNotification(): ?Notification
