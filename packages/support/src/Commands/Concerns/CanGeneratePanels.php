@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands\Concerns;
 
+use Filament\Facades\Filament;
 use Illuminate\Support\Str;
 
 use function Laravel\Prompts\text;
@@ -34,10 +35,18 @@ trait CanGeneratePanels
             return false;
         }
 
-        $this->copyStubToApp('DefaultPanelProvider', $path, [
-            'class' => $class,
-            'id' => $id,
-        ]);
+        if (empty(Filament::getPanels())) {
+            $this->copyStubToApp('DefaultPanelProvider', $path, [
+                'class' => $class,
+                'id' => $id,
+            ]);
+        } else {
+            $this->copyStubToApp('PanelProvider', $path, [
+                'class' => $class,
+                'directory' => str($id)->studly(),
+                'id' => $id,
+            ]);
+        }
 
         $appConfig = file_get_contents(config_path('app.php'));
 
