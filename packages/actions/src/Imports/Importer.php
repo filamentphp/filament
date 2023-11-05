@@ -49,7 +49,7 @@ abstract class Importer
         $this->record = null;
 
         $this->remapData();
-        $this->sanitizeData();
+        $this->castData();
 
         $this->record = $this->resolveRecord();
 
@@ -94,7 +94,7 @@ abstract class Importer
         $this->data = $data;
     }
 
-    public function sanitizeData(): void
+    public function castData(): void
     {
         foreach ($this->getCachedColumns() as $column) {
             $columnName = $column->getName();
@@ -103,7 +103,7 @@ abstract class Importer
                 continue;
             }
 
-            $this->data[$columnName] = $column->sanitizeState(
+            $this->data[$columnName] = $column->castState(
                 $this->data[$columnName],
                 $this->options,
             );
