@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\Operators;
 
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 
@@ -26,7 +27,10 @@ class IsFilledOperator extends Operator
     {
         $qualifiedStringColumn = $qualifiedColumn;
 
-        if ($query->getConnection()->getDriverName() === 'pgsql') {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        if ($databaseConnection->getDriverName() === 'pgsql') {
             $qualifiedStringColumn = new Expression("{$qualifiedColumn}::text");
         }
 

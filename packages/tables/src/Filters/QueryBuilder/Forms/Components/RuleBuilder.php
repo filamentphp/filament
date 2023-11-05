@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Forms\Components;
 
+use Exception;
 use Illuminate\Support\Str;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Builder;
@@ -44,6 +45,10 @@ class RuleBuilder extends Builder
                             $repeater = $component->getChildComponentContainer($uuid)
                                 ->getComponent(fn (Component $component): bool => $component instanceof Repeater);
 
+                            if (! ($repeater instanceof Repeater)) {
+                                throw new Exception('No repeater component found.');
+                            }
+
                             $itemLabels = collect($repeater->getChildComponentContainers())
                                 ->map(fn (ComponentContainer $blockContainer, string $blockContainerUuid): string => $repeater->getItemLabel($blockContainerUuid));
 
@@ -68,8 +73,20 @@ class RuleBuilder extends Builder
                                 ->itemLabel(function (ComponentContainer $container, array $state): string {
                                     $builder = $container->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
+                                    if (! ($builder instanceof RuleBuilder)) {
+                                        throw new Exception('No rule builder component found.');
+                                    }
+
                                     $blockLabels = collect($builder->getChildComponentContainers())
-                                        ->map(fn (ComponentContainer $blockContainer, string $blockUuid): string => $blockContainer->getParentComponent()->getLabel($blockContainer->getRawState(), $blockUuid));
+                                        ->map(function (ComponentContainer $blockContainer, string $blockUuid): string {
+                                            $block = $blockContainer->getParentComponent();
+
+                                            if (! ($block instanceof Builder\Block)) {
+                                                throw new Exception('No block component found.');
+                                            }
+
+                                            return $block->getLabel($blockContainer->getRawState(), $blockUuid);
+                                        });
 
                                     if ($blockLabels->isEmpty()) {
                                         return '(No rules)';

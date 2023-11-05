@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters;
 
 use Closure;
+use Exception;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
@@ -60,6 +61,9 @@ class QueryBuilder extends BaseFilter
         return 'queryBuilder';
     }
 
+    /**
+     * @param array<string, mixed> $rules
+     */
     public function applyRulesToQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
         foreach ($rules as $ruleIndex => $rule) {
@@ -70,11 +74,11 @@ class QueryBuilder extends BaseFilter
                     $isFirst = true;
 
                     foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
-                        $query->{match ([$isFirst, ($orGroup['not'] ?? false)]) {
+                        $query->{match ([$isFirst, boolval($orGroup['not'] ?? false)]) {
                             [true, false] => 'where',
                             [true, true] => 'whereNot',
-                            [false, false] => 'orWhere',
-                            [false, true] => 'orWhereNot',
+                            [false, false] => 'orWhere', /** @phpstan-ignore-line */
+                            [false, true] => 'orWhereNot', /** @phpstan-ignore-line */
                         }}(function (Builder $query) use ($orGroup, $orGroupIndex, $ruleBuilderBlockContainer) {
                             $this->applyRulesToQuery(
                                 $query,
@@ -100,6 +104,9 @@ class QueryBuilder extends BaseFilter
         return $query;
     }
 
+    /**
+     * @param array<string, mixed> $rules
+     */
     public function applyRulesToBaseQuery(Builder $query, array $rules, RuleBuilder $ruleBuilder): Builder
     {
         foreach ($rules as $ruleIndex => $rule) {
@@ -181,17 +188,32 @@ class QueryBuilder extends BaseFilter
 
     protected function getRuleBuilder(): RuleBuilder
     {
-        return $this->getForm()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+        $builder = $this->getForm()->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+
+        if (! ($builder instanceof RuleBuilder)) {
+            throw new Exception('No rule builder component found.');
+        }
+
+        return $builder;
     }
 
     protected function getNestedRuleBuilder(ComponentContainer $ruleBuilderBlockContainer, string $orGroupIndex): RuleBuilder
     {
-        return $ruleBuilderBlockContainer
+        $builder = $ruleBuilderBlockContainer
             ->getComponent(fn (Component $component): bool => $component instanceof Repeater)
             ->getChildComponentContainer($orGroupIndex)
             ->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
+
+        if (! ($builder instanceof RuleBuilder)) {
+            throw new Exception('No nested rule builder component found.');
+        }
+
+        return $builder;
     }
 
+    /**
+     * @param array<string, mixed> $rule
+     */
     protected function tapOperatorFromRule(array $rule, ComponentContainer $ruleBuilderBlockContainer, Closure $callback): void
     {
         $constraint = $this->getConstraint($rule['type']);

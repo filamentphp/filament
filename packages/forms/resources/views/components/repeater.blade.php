@@ -231,7 +231,7 @@
                                     class="relative border-t border-gray-200 dark:border-white/10"
                                 >
                                     <span
-                                        class="absolute -top-3 left-3 bg-white px-1 text-sm font-medium dark:bg-gray-900"
+                                        class="absolute -top-3 left-3 px-1 text-sm font-medium"
                                     >
                                         {{ $labelBetweenItems }}
                                     </span>

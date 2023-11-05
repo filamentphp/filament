@@ -9,6 +9,9 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\
 
 class NumberConstraint extends Constraint
 {
+    /**
+     * @var array<string, string>
+     */
     protected array $existingAggregateAliases = [];
 
     protected function setUp(): void

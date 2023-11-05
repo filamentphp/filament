@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators;
 
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
@@ -18,6 +19,9 @@ class EqualsOperator extends Operator
         return $this->isInverse() ? 'Does not have' : 'Has';
     }
 
+    /**
+     * @return array<Component>
+     */
     public function getFormSchema(): array
     {
         return [

@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators;
 
+use Filament\Forms\Components\Component;
+use Illuminate\Database\Connection;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -20,6 +22,9 @@ class ContainsOperator extends Operator
         return $this->isInverse() ? 'Does not contain' : 'Contains';
     }
 
+    /**
+     * @return array<Component>
+     */
     public function getFormSchema(): array
     {
         return [
@@ -38,7 +43,10 @@ class ContainsOperator extends Operator
     {
         $text = trim($this->getSettings()['text']);
 
-        if ($query->getConnection()->getDriverName() === 'pgsql') {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        if ($databaseConnection->getDriverName() === 'pgsql') {
             $qualifiedColumn = new Expression("lower({$qualifiedColumn}::text)");
             $text = Str::lower($text);
         }

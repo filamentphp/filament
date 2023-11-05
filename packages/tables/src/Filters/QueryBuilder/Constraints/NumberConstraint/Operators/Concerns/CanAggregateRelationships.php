@@ -2,6 +2,9 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\Concerns;
 
+use Exception;
+use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
+use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
@@ -99,5 +102,16 @@ trait CanAggregateRelationships
         $aggregateAlias = $this->generateAggregateAlias();
 
         return "{$aggregateAlias}.{$aggregateAlias}";
+    }
+
+    public function getConstraint(): ?NumberConstraint
+    {
+        $constraint = parent::getConstraint();
+
+        if (! ($constraint instanceof NumberConstraint)) {
+            throw new Exception('Constraint must be an instance of [' . NumberConstraint::class . '].');
+        }
+
+        return $constraint;
     }
 }

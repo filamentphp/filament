@@ -30,6 +30,9 @@ class Constraint extends Component
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
+    /**
+     * @var array<string, mixed> | null
+     */
     protected ?array $settings = null;
 
     protected ?bool $isInverse = null;
@@ -141,6 +144,9 @@ class Constraint extends Component
             ->columns(3);
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getOperatorSelectOptions(): array
     {
         $options = [];
@@ -155,6 +161,9 @@ class Constraint extends Component
         return $options;
     }
 
+    /**
+     * @return array{string, bool}
+     */
     public function parseOperatorString(string $operator): array
     {
         if (str($operator)->endsWith('.inverse')) {
@@ -217,6 +226,9 @@ class Constraint extends Component
         return $this->modifyRelationshipQueryUsing;
     }
 
+    /**
+     * @param array<string, mixed> | null $settings
+     */
     public function settings(?array $settings): static
     {
         $this->settings = $settings;
@@ -231,6 +243,9 @@ class Constraint extends Component
         return $this;
     }
 
+    /**
+     * @return array<string, mixed> | null
+     */
     public function getSettings(): ?array
     {
         return $this->settings;

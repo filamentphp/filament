@@ -16,6 +16,9 @@ class Operator extends Component
 
     protected ?Constraint $constraint = null;
 
+    /**
+     * @var array<string, mixed> | null
+     */
     protected ?array $settings = null;
 
     protected ?bool $isInverse = null;
@@ -169,6 +172,9 @@ class Operator extends Component
         return $query;
     }
 
+    /**
+     * @return array<\Filament\Forms\Components\Component>
+     */
     public function getFormSchema(): array
     {
         return [];
@@ -181,6 +187,9 @@ class Operator extends Component
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> | null $settings
+     */
     public function settings(?array $settings): static
     {
         $this->settings = $settings;
@@ -200,6 +209,9 @@ class Operator extends Component
         return $this->constraint;
     }
 
+    /**
+     * @return array<string, mixed> | null
+     */
     public function getSettings(): ?array
     {
         return $this->settings;
