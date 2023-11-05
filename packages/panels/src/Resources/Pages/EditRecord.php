@@ -2,21 +2,21 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Forms\Form;
 use Filament\Actions\Action;
-use Filament\Actions\ViewAction;
-use Filament\Infolists\Infolist;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\RestoreAction;
-use Filament\Actions\ReplicateAction;
-use Filament\Support\Exceptions\Halt;
 use Filament\Actions\ForceDeleteAction;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
-use Filament\Pages\Concerns\InteractsWithFormActions;
+use Illuminate\Database\Eloquent\Model;
 
 use function Filament\Support\is_app_url;
 
