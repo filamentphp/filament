@@ -124,6 +124,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `actions::force-delete-action` - Trigger button of a force delete action
 - `actions::force-delete-action.grouped` - Trigger button of a grouped force delete action
 - `actions::force-delete-action.modal` - Modal of a force delete action
+- `actions::import-action.grouped` - Trigger button of a grouped import action
 - `actions::replicate-action` - Trigger button of a replicate action
 - `actions::replicate-action.grouped` - Trigger button of a grouped replicate action
 - `actions::restore-action` - Trigger button of a restore action
