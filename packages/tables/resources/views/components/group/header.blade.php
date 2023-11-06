@@ -43,8 +43,7 @@
             :label="filled($label) ? ($label . ': ' . $title) : $title"
             size="sm"
             :x-bind:aria-expanded="'! isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ')'"
-            class="-m-1.5"
-            :x-bind:class="'isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ') && \'rotate-180\''"
+            :x-bind:class="'isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ') && \'-rotate-180\''"
         />
     @endif
 </div>

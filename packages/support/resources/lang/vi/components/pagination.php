@@ -4,7 +4,7 @@ return [
 
     'label' => 'Điều hướng phân trang',
 
-    'overview' => '{1} Đang hiển thị 1 kết quả|[2,*] Đang hiển thị từ :first đến :last trong tổng số :total kết quả',
+    'overview' => '{1} Đang hiện 1 kết quả|[2,*] Đang hiện từ :first đến :last của :total kết quả',
 
     'fields' => [
 

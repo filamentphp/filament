@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
@@ -31,11 +32,11 @@ class DeleteBulkAction extends BulkAction
 
         $this->color('danger');
 
-        $this->icon('heroicon-m-trash');
+        $this->icon(FilamentIcon::resolve('actions::delete-action') ?? 'heroicon-m-trash');
 
         $this->requiresConfirmation();
 
-        $this->modalIcon('heroicon-o-trash');
+        $this->modalIcon(FilamentIcon::resolve('actions::delete-action.modal') ?? 'heroicon-o-trash');
 
         $this->action(function (): void {
             $this->process(static fn (Collection $records) => $records->each(fn (Model $record) => $record->delete()));

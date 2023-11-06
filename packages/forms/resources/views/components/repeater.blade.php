@@ -111,10 +111,10 @@
                         >
                             @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible)
                                 <div
-                                    class="fi-fo-repeater-item-header flex items-center gap-x-3 overflow-hidden px-4 py-2"
+                                    class="fi-fo-repeater-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3"
                                 >
                                     @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
-                                        <ul class="-ms-1.5 flex">
+                                        <ul class="flex items-center gap-x-3">
                                             @if ($isReorderableWithDragAndDrop)
                                                 <li x-sortable-handle>
                                                     {{ $reorderAction }}
@@ -153,7 +153,9 @@
                                     @endif
 
                                     @if ($isCloneable || $isDeletable || $isCollapsible)
-                                        <ul class="-me-1.5 ms-auto flex">
+                                        <ul
+                                            class="ms-auto flex items-center gap-x-3"
+                                        >
                                             @if ($isCloneable)
                                                 <li>
                                                     {{ $cloneAction(['item' => $uuid]) }}

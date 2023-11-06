@@ -6,6 +6,7 @@
     {{
         $attributes->class([
             'fi-topbar sticky top-0 z-20 overflow-x-clip',
+            'fi-topbar-with-navigation' => filament()->hasTopNavigation(),
         ])
     }}
 >
@@ -25,7 +26,6 @@
             x-on:click="$store.sidebar.open()"
             x-show="! $store.sidebar.isOpen"
             @class([
-                '-ms-1.5',
                 'lg:hidden' => (! filament()->isSidebarFullyCollapsibleOnDesktop()) || filament()->isSidebarCollapsibleOnDesktop(),
             ])
         />
@@ -40,7 +40,7 @@
             x-data="{}"
             x-on:click="$store.sidebar.close()"
             x-show="$store.sidebar.isOpen"
-            class="-ms-1.5 lg:hidden"
+            class="lg:hidden"
         />
 
         @if (filament()->hasTopNavigation())

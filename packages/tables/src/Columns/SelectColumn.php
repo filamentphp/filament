@@ -11,11 +11,11 @@ use Illuminate\Validation\Rule;
 
 class SelectColumn extends Column implements Editable
 {
+    use CanDisableOptions;
+    use CanSelectPlaceholder;
     use Concerns\CanBeValidated {
         getRules as baseGetRules;
     }
-    use CanDisableOptions;
-    use CanSelectPlaceholder;
     use Concerns\CanUpdateState;
     use HasExtraInputAttributes;
     use HasOptions;
