@@ -148,9 +148,9 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-### Making navigation groups redirect to a URL
+### Setting a navigation group URL
 
-By default, navigation groups only serve as a label for the items within them. You may make a navigation group redirect to a URL by calling `url()` on the `NavigationGroup` object:
+By default, navigation group labels are only clickable when a group is collapsible. However, you may set a navigation group URL to make the label itself link to a specific page by calling `url()` on the `NavigationGroup` object:
 
 ```php
 use Filament\Navigation\NavigationGroup;
