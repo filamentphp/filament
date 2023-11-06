@@ -302,7 +302,7 @@ Builder::make('content')
     ->maxItems(5)
 ```
 
-## Customizing the builder action objects
+## Customizing the builder item actions
 
 This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button). The following methods are available to customize the actions:
 
@@ -351,3 +351,63 @@ Builder::make('content')
 ```
 
 > The `addAction()`, `addBetweenAction()`, `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+
+### Adding extra item actions to a builder
+
+You may add new [action buttons](../actions) to the header of each builder item by passing `Action` objects into `extraItemActions()`:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\Mail;
+
+Builder::make('content')
+    ->blocks([
+        Builder\Block::make('contactDetails')
+            ->schema([
+                TextInput::make('email')
+                    ->label('Email address')
+                    ->email()
+                    ->required(),
+                // ...
+            ]),
+        // ...
+    ])
+    ->extraItemActions([
+        Action::make('sendEmail')
+            ->icon('heroicon-m-square-2-stack')
+            ->action(function (array $arguments, Builder $component): void {
+                $itemData = $component->getItemState($arguments['item']);
+                
+                Mail::to($itemData['email'])
+                    ->send(
+                        // ...
+                    );
+            }),
+    ])
+```
+
+In this example, `$arguments['item']` gives you the ID of the current builder item. You can validate the data in that builder item using the `getItemState()` method on the builder component. This method returns the validated data for the item. If the item is not valid, it will cancel the action and show an error message for that item in the form.
+
+If you want to get the raw data from the current item without validating it, you can use `$component->getRawItemState($arguments['item'])` instead.
+
+If you want to manipulate the raw data for the entire builder, for example, to add, remove or modify items, you can use `$component->getState()` to get the data, and `$component->state($state)` to set it again:
+
+```php
+use Illuminate\Support\Str;
+
+// Get the raw data for the entire builder
+$state = $component->getState();
+
+// Add an item, with a random UUID as the key
+$state[Str::uuid()] = [
+    'type' => 'contactDetails',
+    'data' => [
+        'email' => auth()->user()->email,
+    ],
+];
+
+// Set the new data for the builder
+$component->state($state);
+```
