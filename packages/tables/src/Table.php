@@ -25,6 +25,7 @@ class Table extends ViewComponent
     use Table\Concerns\HasEmptyState;
     use Table\Concerns\HasFilterIndicators;
     use Table\Concerns\HasFilters;
+    use Table\Concerns\HasLoadingOverlay;
     use Table\Concerns\HasHeader;
     use Table\Concerns\HasHeaderActions;
     use Table\Concerns\HasQuery;

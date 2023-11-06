@@ -2,6 +2,7 @@
     'footer' => null,
     'header' => null,
     'reorderable' => false,
+    'hasLoadingOverlay',
 ])
 
 <div class="relative">
@@ -36,8 +37,11 @@
     </table>
 
     <div 
-        class="absolute top-0 left-0 w-full h-full bg-white opacity-60 dark:bg-gray-900 dark:opacity-60 hidden"
-        wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="hidden"
+        class="absolute top-0 left-0 w-full h-full bg-white/60 dark:bg-gray-900/60 hidden"
+
+        @if ($hasLoadingOverlay)
+            wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="hidden"
+        @endif
     >
     </div>
 </div>
