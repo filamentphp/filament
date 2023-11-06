@@ -16,7 +16,24 @@ class HasMaxOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Has more than' : 'Has maximum';
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.relationship.has_max.label.inverse' :
+                'filament-tables::filters/query-builder.operators.relationship.has_max.label.direct',
+        );
+    }
+
+    public function getSummary(): string
+    {
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.relationship.has_max.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.relationship.has_max.summary.direct',
+            [
+                'relationship' => $this->getConstraint()->getAttributeLabel(),
+                'count' => $this->getSettings()['count'],
+            ],
+        );
     }
 
     /**
@@ -26,15 +43,11 @@ class HasMaxOperator extends Operator
     {
         return [
             TextInput::make('count')
-                ->integer()
+                ->label(__('filament-tables::filters/query-builder.operators.relationship.form.count.label'))
+                ->numeric()
                 ->required()
                 ->minValue(1),
         ];
-    }
-
-    public function getSummary(): string
-    {
-        return $this->isInverse() ? "Has more than {$this->getSettings()['count']} {$this->getConstraint()->getAttributeLabel()}" : "Has maximum {$this->getSettings()['count']} {$this->getConstraint()->getAttributeLabel()}";
     }
 
     public function applyToBaseQuery(Builder $query): Builder

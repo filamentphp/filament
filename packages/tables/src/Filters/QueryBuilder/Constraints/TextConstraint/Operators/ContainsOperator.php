@@ -19,7 +19,24 @@ class ContainsOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Does not contain' : 'Contains';
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.text.contains.label.inverse' :
+                'filament-tables::filters/query-builder.operators.text.contains.label.direct',
+        );
+    }
+
+    public function getSummary(): string
+    {
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.text.contains.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.text.contains.summary.direct',
+            [
+                'attribute' => $this->getConstraint()->getAttributeLabel(),
+                'text' => $this->getSettings()['text'],
+            ],
+        );
     }
 
     /**
@@ -29,14 +46,10 @@ class ContainsOperator extends Operator
     {
         return [
             TextInput::make('text')
+                ->label(__('filament-tables::filters/query-builder.operators.text.form.text.label'))
                 ->required()
                 ->columnSpanFull(),
         ];
-    }
-
-    public function getSummary(): string
-    {
-        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} does not contain \"{$this->getSettings()['text']}\"" : "{$this->getConstraint()->getAttributeLabel()} contains \"{$this->getSettings()['text']}\"";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

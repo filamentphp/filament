@@ -66,7 +66,8 @@ class RuleBuilder extends Builder
                                     static::make('rules')
                                         ->constraints($this->getConstraints())
                                         ->blockPickerColumns($this->getBlockPickerColumns())
-                                        ->blockPickerWidth($this->getBlockPickerWidth()),
+                                        ->blockPickerWidth($this->getBlockPickerWidth())
+                                        ->hiddenLabel(),
                                 ])
                                 ->addAction(fn (Action $action) => $action
                                     ->label(__('filament-tables::filters/query-builder.actions.add_rule_group.label'))

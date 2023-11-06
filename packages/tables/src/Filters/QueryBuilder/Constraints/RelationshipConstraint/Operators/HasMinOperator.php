@@ -16,7 +16,24 @@ class HasMinOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Has less than' : 'Has minimum';
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.relationship.has_min.label.inverse' :
+                'filament-tables::filters/query-builder.operators.relationship.has_min.label.direct',
+        );
+    }
+
+    public function getSummary(): string
+    {
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.relationship.has_min.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.relationship.has_min.summary.direct',
+            [
+                'relationship' => $this->getConstraint()->getAttributeLabel(),
+                'count' => $this->getSettings()['count'],
+            ],
+        );
     }
 
     /**
@@ -26,15 +43,11 @@ class HasMinOperator extends Operator
     {
         return [
             TextInput::make('count')
-                ->integer()
+                ->label(__('filament-tables::filters/query-builder.operators.relationship.form.count.label'))
+                ->numeric()
                 ->required()
                 ->minValue(1),
         ];
-    }
-
-    public function getSummary(): string
-    {
-        return $this->isInverse() ? "Has less than {$this->getSettings()['count']} {$this->getConstraint()->getAttributeLabel()}" : "Has minimum {$this->getSettings()['count']} {$this->getConstraint()->getAttributeLabel()}";
     }
 
     public function applyToBaseQuery(Builder $query): Builder

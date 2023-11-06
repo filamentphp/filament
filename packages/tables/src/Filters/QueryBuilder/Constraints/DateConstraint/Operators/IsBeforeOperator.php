@@ -17,7 +17,24 @@ class IsBeforeOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Is not before' : 'Is before';
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.date.is_before.label.inverse' :
+                'filament-tables::filters/query-builder.operators.date.is_before.label.direct',
+        );
+    }
+
+    public function getSummary(): string
+    {
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.date.is_before.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.date.is_before.summary.direct',
+            [
+                'attribute' => $this->getConstraint()->getAttributeLabel(),
+                'date' => Carbon::parse($this->getSettings()['date'])->toFormattedDateString(),
+            ],
+        );
     }
 
     /**
@@ -27,15 +44,9 @@ class IsBeforeOperator extends Operator
     {
         return [
             DatePicker::make('date')
+                ->label(__('filament-tables::filters/query-builder.operators.date.form.date.label'))
                 ->required(),
         ];
-    }
-
-    public function getSummary(): string
-    {
-        $date = Carbon::parse($this->getSettings()['date'])->toFormattedDateString();
-
-        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} is not before {$date}" : "{$this->getConstraint()->getAttributeLabel()} is before {$date}";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

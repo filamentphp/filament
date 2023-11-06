@@ -6,6 +6,8 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
+use function Filament\Support\format_number;
 
 class EqualsOperator extends Operator
 {
@@ -18,7 +20,24 @@ class EqualsOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Does not equal' : 'Equals';
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.number.equals.label.inverse' :
+                'filament-tables::filters/query-builder.operators.number.equals.label.direct',
+        );
+    }
+
+    public function getSummary(): string
+    {
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.number.equals.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.number.equals.summary.direct',
+            [
+                'attribute' => $this->getAttributeLabel(),
+                'number' => format_number($this->getSettings()['number']),
+            ],
+        );
     }
 
     /**
@@ -28,15 +47,12 @@ class EqualsOperator extends Operator
     {
         return [
             TextInput::make('number')
+                ->label(__('filament-tables::filters/query-builder.operators.number.form.number.label'))
                 ->numeric()
+                ->integer($this->getConstraint()->isInteger())
                 ->required(),
             $this->getAggregateSelect(),
         ];
-    }
-
-    public function getSummary(): string
-    {
-        return $this->isInverse() ? "{$this->getAttributeLabel()} does not equal {$this->getSettings()['number']}" : "{$this->getAttributeLabel()} equals {$this->getSettings()['number']}";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

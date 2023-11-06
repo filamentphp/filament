@@ -15,12 +15,21 @@ class IsFilledOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Is blank' : 'Is filled';
+        return __(
+            $this->isInverse() ?
+                    'filament-tables::filters/query-builder.operators.is_filled.label.inverse' :
+                    'filament-tables::filters/query-builder.operators.is_filled.label.direct',
+        );
     }
 
     public function getSummary(): string
     {
-        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} is blank" : "{$this->getConstraint()->getAttributeLabel()} is filled";
+        return __(
+            $this->isInverse() ?
+                    'filament-tables::filters/query-builder.operators.is_filled.summary.inverse' :
+                    'filament-tables::filters/query-builder.operators.is_filled.summary.direct',
+            ['attribute' => $this->getConstraint()->getAttributeLabel()],
+        );
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

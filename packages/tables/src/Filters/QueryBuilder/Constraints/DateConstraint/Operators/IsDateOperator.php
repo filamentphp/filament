@@ -17,7 +17,24 @@ class IsDateOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Is not date' : 'Is date';
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.date.is_date.label.inverse' :
+                'filament-tables::filters/query-builder.operators.date.is_date.label.direct',
+        );
+    }
+
+    public function getSummary(): string
+    {
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.date.is_date.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.date.is_date.summary.direct',
+            [
+                'attribute' => $this->getConstraint()->getAttributeLabel(),
+                'date' => Carbon::parse($this->getSettings()['date'])->toFormattedDateString(),
+            ],
+        );
     }
 
     /**
@@ -27,15 +44,9 @@ class IsDateOperator extends Operator
     {
         return [
             DatePicker::make('date')
+                ->label(__('filament-tables::filters/query-builder.operators.date.form.date.label'))
                 ->required(),
         ];
-    }
-
-    public function getSummary(): string
-    {
-        $date = Carbon::parse($this->getSettings()['date'])->toFormattedDateString();
-
-        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} is not {$date}" : "{$this->getConstraint()->getAttributeLabel()} is {$date}";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

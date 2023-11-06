@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
+use Closure;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\EqualsOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\IsMaxOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint\Operators\IsMinOperator;
@@ -13,6 +14,8 @@ class NumberConstraint extends Constraint
      * @var array<string, string>
      */
     protected array $existingAggregateAliases = [];
+
+    protected bool | Closure $isInteger = false;
 
     protected function setUp(): void
     {
@@ -26,6 +29,18 @@ class NumberConstraint extends Constraint
             EqualsOperator::class,
             IsFilledOperator::class,
         ]);
+    }
+
+    public function integer(bool | Closure $condition = true): static
+    {
+        $this->isInteger = $condition;
+
+        return $this;
+    }
+
+    public function isInteger(): bool
+    {
+        return (bool) $this->evaluate($this->isInteger);
     }
 
     public function reportAggregateAlias(string $alias): static

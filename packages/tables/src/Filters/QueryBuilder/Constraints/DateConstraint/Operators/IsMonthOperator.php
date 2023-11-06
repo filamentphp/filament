@@ -3,9 +3,11 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint\Operators;
 
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Carbon;
 
 class IsMonthOperator extends Operator
 {
@@ -16,7 +18,24 @@ class IsMonthOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Is not month' : 'Is month';
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.date.is_month.label.inverse' :
+                'filament-tables::filters/query-builder.operators.date.is_month.label.direct',
+        );
+    }
+
+    public function getSummary(): string
+    {
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.date.is_month.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.date.is_month.summary.direct',
+            [
+                'attribute' => $this->getConstraint()->getAttributeLabel(),
+                'month' => $this->getMonths()[$this->getSettings()['month']] ?? null,
+            ],
+        );
     }
 
     /**
@@ -26,16 +45,10 @@ class IsMonthOperator extends Operator
     {
         return [
             Select::make('month')
+                ->label(__('filament-tables::filters/query-builder.operators.date.form.month.label'))
                 ->options($this->getMonths())
                 ->required(),
         ];
-    }
-
-    public function getSummary(): string
-    {
-        $month = $this->getMonths()[$this->getSettings()['month']] ?? null;
-
-        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} is not {$month}" : "{$this->getConstraint()->getAttributeLabel()} is {$month}";
     }
 
     /**

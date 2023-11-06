@@ -19,7 +19,30 @@ class IsOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Is not' : 'Is';
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.select.is.label.inverse' :
+                'filament-tables::filters/query-builder.operators.select.is.label.direct',
+        );
+    }
+
+    public function getSummary(): string
+    {
+        $constraint = $this->getConstraint();
+
+        $values = Arr::wrap($this->getSettings()[$constraint->isMultiple() ? 'values' : 'value']);
+
+        $values = Arr::join($values, glue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.0'), finalGlue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.final'));
+
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.select.is.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.select.is.summary.direct',
+            [
+                'attribute' => $constraint->getAttributeLabel(),
+                'values' => $values,
+            ],
+        );
     }
 
     /**
@@ -30,7 +53,7 @@ class IsOperator extends Operator
         $constraint = $this->getConstraint();
 
         $field = Select::make($constraint->isMultiple() ? 'values' : 'value')
-            ->label($constraint->isMultiple() ? 'Values' : 'Value')
+            ->label(__($constraint->isMultiple() ? 'filament-tables::filters/query-builder.operators.select.is.form.values.label' : 'filament-tables::filters/query-builder.operators.select.is.form.value.label'))
             ->options($constraint->getOptions())
             ->multiple($constraint->isMultiple())
             ->searchable($constraint->isSearchable())
@@ -55,17 +78,6 @@ class IsOperator extends Operator
         }
 
         return [$field];
-    }
-
-    public function getSummary(): string
-    {
-        $constraint = $this->getConstraint();
-
-        $values = Arr::wrap($this->getSettings()[$constraint->isMultiple() ? 'values' : 'value']);
-
-        $values = Arr::join($values, glue: ', ', finalGlue: ' or ');
-
-        return $this->isInverse() ? "{$constraint->getAttributeLabel()} is not \"{$values}\"" : "{$constraint->getAttributeLabel()} is \"{$values}\"";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

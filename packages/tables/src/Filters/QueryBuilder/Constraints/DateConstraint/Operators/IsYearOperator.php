@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint\Operators;
 
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
@@ -16,7 +17,24 @@ class IsYearOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Is not year' : 'Is year';
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.date.is_year.label.inverse' :
+                'filament-tables::filters/query-builder.operators.date.is_year.label.direct',
+        );
+    }
+
+    public function getSummary(): string
+    {
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.date.is_year.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.date.is_year.summary.direct',
+            [
+                'attribute' => $this->getConstraint()->getAttributeLabel(),
+                'year' => $this->getSettings()['year'],
+            ],
+        );
     }
 
     /**
@@ -26,14 +44,10 @@ class IsYearOperator extends Operator
     {
         return [
             TextInput::make('year')
+                ->label(__('filament-tables::filters/query-builder.operators.date.form.year.label'))
                 ->integer()
                 ->required(),
         ];
-    }
-
-    public function getSummary(): string
-    {
-        return $this->isInverse() ? "{$this->getConstraint()->getAttributeLabel()} is not {$this->getSettings()['year']}" : "{$this->getConstraint()->getAttributeLabel()} is {$this->getSettings()['year']}";
     }
 
     public function apply(Builder $query, string $qualifiedColumn): Builder

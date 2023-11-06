@@ -48,14 +48,39 @@ class IsRelatedToOperator extends Operator
 
     public function getLabel(): string
     {
-        return $this->isInverse() ? 'Is not' : 'Is';
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.relationship.is_related_to.label.inverse' :
+                'filament-tables::filters/query-builder.operators.relationship.is_related_to.label.direct',
+        );
     }
 
-    public function titleAttribute(string | Closure $attribute): static
+    public function getSummary(): string
     {
-        $this->titleAttribute = $attribute;
+        $constraint = $this->getConstraint();
 
-        return $this;
+        $values = Arr::wrap($this->getSettings()[$constraint->isMultiple() ? 'values' : 'value']);
+
+        $relationshipQuery = $this->getRelationshipQuery();
+
+        $values = $relationshipQuery
+            ->when(
+                $this->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough,
+                fn (Builder $query) => $query->distinct(),
+            )
+            ->whereKey($values)
+            ->pluck($relationshipQuery->qualifyColumn($this->getTitleAttribute()))
+            ->join(glue: __('filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.values_glue.0'), finalGlue: __('filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.values_glue.final'));
+
+        return __(
+            $this->isInverse() ?
+                'filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.inverse' :
+                'filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.direct',
+            [
+                'relationship' => $constraint->getAttributeLabel(),
+                'values' => $values,
+            ],
+        );
     }
 
     /**
@@ -65,10 +90,8 @@ class IsRelatedToOperator extends Operator
     {
         $constraint = $this->getConstraint();
 
-        $this->getRelationship();
-
         $field = Select::make($constraint->isMultiple() ? 'values' : 'value')
-            ->label($constraint->isMultiple() ? 'Values' : 'Value')
+            ->label(__($constraint->isMultiple() ? 'filament-tables::filters/query-builder.operators.relationship.is_related_to.form.values.label' : 'filament-tables::filters/query-builder.operators.relationship.is_related_to.form.value.label'))
             ->multiple($this->isMultiple())
             ->searchable($this->isSearchable())
             ->preload($this->isPreloaded())
@@ -101,24 +124,11 @@ class IsRelatedToOperator extends Operator
         return [$field];
     }
 
-    public function getSummary(): string
+    public function titleAttribute(string | Closure $attribute): static
     {
-        $constraint = $this->getConstraint();
+        $this->titleAttribute = $attribute;
 
-        $values = Arr::wrap($this->getSettings()[$constraint->isMultiple() ? 'values' : 'value']);
-
-        $relationshipQuery = $this->getRelationshipQuery();
-
-        $values = $relationshipQuery
-            ->when(
-                $this->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough,
-                fn (Builder $query) => $query->distinct(),
-            )
-            ->whereKey($values)
-            ->pluck($relationshipQuery->qualifyColumn($this->getTitleAttribute()))
-            ->join(glue: ', ', finalGlue: ' or ');
-
-        return $this->isInverse() ? "{$constraint->getAttributeLabel()} is not \"{$values}\"" : "{$constraint->getAttributeLabel()} is \"{$values}\"";
+        return $this;
     }
 
     public function modifyRelationshipQueryUsing(?Closure $modifyQueryUsing = null): static

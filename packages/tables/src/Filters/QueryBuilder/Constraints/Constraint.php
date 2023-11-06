@@ -107,6 +107,7 @@ class Constraint extends Component
 
                 return [
                     Select::make(static::OPERATOR_SELECT_NAME)
+                        ->label(__('filament-tables::filters/query-builder.form.operator.label'))
                         ->options($operatorSelectOptions)
                         ->default(array_key_first($operatorSelectOptions))
                         ->live()
