@@ -6,7 +6,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Carbon;
+
 use function Filament\Support\format_number;
 
 class EqualsOperator extends Operator
