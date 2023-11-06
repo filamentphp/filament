@@ -9,6 +9,8 @@ use Illuminate\Support\Arr;
 
 trait CanUpdateState
 {
+    use HasLifecycleHooks;
+
     protected ?Closure $updateStateUsing = null;
 
     public function updateStateUsing(?Closure $callback): static
@@ -29,6 +31,8 @@ trait CanUpdateState
                 'state' => $state,
             ]);
         }
+
+        $this->callBefore();
 
         $record = $this->getRecord();
 
@@ -57,6 +61,8 @@ trait CanUpdateState
 
         $record->setAttribute($columnName, $state);
         $record->save();
+
+        $this->callAfter();
 
         return $state;
     }
