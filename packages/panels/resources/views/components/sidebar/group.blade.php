@@ -51,12 +51,12 @@
                 'cursor-pointer' => $collapsible,
             ])
         >
-            @if($hasUrl)
+            @if ($hasUrl)
                 <a
                     {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
                     class="{{ $labelClasses }}"
                 >
-                    @if($icon)
+                    @if ($icon)
                         <x-filament::icon
                             :icon="($active && $activeIcon) ? $activeIcon : $icon"
                             :class="$iconClasses"
@@ -67,13 +67,13 @@
                 </a>
             @else
                 <span class="{{ $labelClasses }}">
-                    @if(!$hasUrl && $icon)
+                    @if (! $hasUrl && $icon)
                         <x-filament::icon
                             :icon="($active && $activeIcon) ? $activeIcon : $icon"
                             :class="$iconClasses"
                         />
                     @endif
-                    
+
                     {{ $label }}
                 </span>
             @endif
@@ -101,7 +101,7 @@
             x-transition:enter-end="opacity-100"
         @endif
         x-collapse.duration.200ms
-        class="flex flex-col fi-sidebar-group-items gap-y-1"
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
     >
         @foreach ($items as $item)
             <x-filament-panels::sidebar.item
