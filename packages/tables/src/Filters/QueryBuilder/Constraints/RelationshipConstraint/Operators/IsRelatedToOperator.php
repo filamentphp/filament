@@ -15,7 +15,7 @@ use Illuminate\Support\Arr;
 
 class IsRelatedToOperator extends Operator
 {
-    protected string | Closure $titleAttribute;
+    protected string | Closure | null $titleAttribute = null;
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
@@ -124,7 +124,7 @@ class IsRelatedToOperator extends Operator
         return [$field];
     }
 
-    public function titleAttribute(string | Closure $attribute): static
+    public function titleAttribute(string | Closure | null $attribute): static
     {
         $this->titleAttribute = $attribute;
 
@@ -240,9 +240,9 @@ class IsRelatedToOperator extends Operator
         return $relationshipQuery;
     }
 
-    public function getTitleAttribute(): string
+    public function getTitleAttribute(): ?string
     {
-        return $this->evaluate($this->titleAttribute) ?? throw new Exception("The [titleAttribute()] is required for the [IsOperator] on the [{$this->getConstraint()->getName()}] constraint.");
+        return $this->evaluate($this->titleAttribute);
     }
 
     public function multiple(bool | Closure $condition = true): static

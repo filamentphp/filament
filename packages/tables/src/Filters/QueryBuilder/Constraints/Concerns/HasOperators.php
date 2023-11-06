@@ -12,6 +12,31 @@ trait HasOperators
     /**
      * @param  array<class-string<Operator> | Operator>  $operators
      */
+    public function unshiftOperators(array $operators): static
+    {
+        foreach ($operators as $operator) {
+            if (is_string($operator)) {
+                $operator = $operator::make();
+            }
+
+            $operatorName = $operator->getName();
+
+            if (array_key_exists($operatorName, $this->operators)) {
+                unset($this->operators[$operatorName]);
+            }
+
+            $this->operators = [
+                $operatorName => $operator,
+                ...$this->operators,
+            ];
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  array<class-string<Operator> | Operator>  $operators
+     */
     public function operators(array $operators): static
     {
         foreach ($operators as $operator) {

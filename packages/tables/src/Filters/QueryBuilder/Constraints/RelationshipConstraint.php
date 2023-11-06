@@ -7,6 +7,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Oper
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMinOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsEmptyOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsRelatedToOperator;
 
 class RelationshipConstraint extends Constraint
 {
@@ -24,6 +25,13 @@ class RelationshipConstraint extends Constraint
             IsEmptyOperator::class,
             EqualsOperator::make()->visible(fn (): bool => $this->isMultiple()),
         ]);
+    }
+
+    public function selectable(IsRelatedToOperator $operator): static
+    {
+        $this->unshiftOperators([$operator]);
+
+        return $this;
     }
 
     public function multiple(bool | Closure $condition = true): static

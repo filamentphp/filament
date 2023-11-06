@@ -65,8 +65,7 @@ class RuleBuilder extends Builder
                                     static::make('rules')
                                         ->constraints($this->getConstraints())
                                         ->blockPickerColumns($this->getBlockPickerColumns())
-                                        ->blockPickerWidth($this->getBlockPickerWidth())
-                                        ->hiddenLabel(),
+                                        ->blockPickerWidth($this->getBlockPickerWidth()),
                                 ])
                                 ->addAction(fn (Action $action) => $action
                                     ->label(__('filament-tables::filters/query-builder.actions.add_rule_group.label'))
@@ -116,6 +115,7 @@ class RuleBuilder extends Builder
                 ->icon('heroicon-s-plus'))
             ->addBetweenAction(fn (Action $action) => $action->hidden())
             ->label(__('filament-tables::filters/query-builder.form.rules.label'))
+            ->hiddenLabel()
             ->labelBetweenItems(__('filament-tables::filters/query-builder.item_separators.and'))
             ->blockNumbers(false)
             ->collapsible()
