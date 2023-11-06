@@ -5,21 +5,25 @@
     'icon' => null,
     'items' => [],
     'label' => null,
-    'url' => null,
     'shouldOpenUrlInNewTab' => false,
+    'url' => null,
 ])
+
+@php
+    $hasUrl = filled($url);
+@endphp
 
 <li
     x-data="{ label: @js($label) }"
     data-group-label="{{ $label }}"
     @class([
         'fi-sidebar-group flex flex-col gap-y-1',
-        'fi-active fi-sidebar-group-active' => $active,
+        'fi-active' => $active,
     ])
 >
     @if ($label)
         <div
-            @if ($collapsible && ! $url)
+            @if ($collapsible && (! $hasUrl))
                 x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
             @endif
             @if (filament()->isSidebarCollapsibleOnDesktop())
@@ -30,7 +34,7 @@
             @endif
             @class([
                 'flex items-center gap-x-3 rounded-lg px-2 py-2',
-                'transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5' => (bool) $url,
+                'transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5' => $hasUrl,
                 'bg-gray-100 dark:bg-white/5' => $active,
                 'cursor-pointer' => $collapsible,
             ])
@@ -47,7 +51,7 @@
             @endif
 
             <a
-                @if ($url)
+                @if ($hasUrl)
                     {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
                 @endif
                 @class([
