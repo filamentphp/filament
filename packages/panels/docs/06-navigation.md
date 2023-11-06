@@ -175,6 +175,19 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+By default, when you collapse the sidebar on desktop, the navigation icons still show but without text. You can collapse the sidebar and show the text using the `collapsibleNavigationWithText()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->collapsibleNavigationWithText();
+}
+```
+
 ## Registering custom navigation items
 
 To register new navigation items, you can use the [configuration](configuration):

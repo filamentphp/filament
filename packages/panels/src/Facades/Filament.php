@@ -104,6 +104,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasTopNavigation()
  * @method static bool isServing()
  * @method static bool isSidebarCollapsibleOnDesktop()
+ * @method static bool hasCollapsibleNavigationWithText()
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
  * @method static void mountNavigation()
  * @method static void serving(Closure $callback)
