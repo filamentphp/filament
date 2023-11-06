@@ -103,7 +103,7 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class([
-                    'fi-fo-file-upload flex [&_.filepond--root]:font-sans',
+                    'fi-fo-file-upload flex',
                     match ($alignment) {
                         Alignment::Start => 'justify-start',
                         Alignment::Center => 'justify-center',
