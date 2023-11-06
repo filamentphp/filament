@@ -45,10 +45,6 @@
         }
     }
 
-    .loading-active tr {
-        padding-left 20px;
-    }
-
     .loading-active td.fi-ta-cell-loading-state::after {
         display: block;
     }
