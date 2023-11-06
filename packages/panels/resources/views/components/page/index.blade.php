@@ -140,20 +140,8 @@
         @endif
     </section>
 
-    @if (! ($this instanceof \Filament\Tables\Contracts\HasTable))
+    @if (! $this instanceof \Filament\Tables\Contracts\HasTable)
         <x-filament-actions::modals />
-    @elseif ($this->isTableLoaded() &&
-             filled($this->defaultTableAction) &&
-             filled($this->defaultTableActionRecord))
-        <div
-            wire:init="mountTableAction(@js($this->defaultTableAction), @js($this->defaultTableActionRecord))"
-        ></div>
-    @endif
-
-    @if (filled($this->defaultAction))
-        <div
-            wire:init="mountAction(@js($this->defaultAction) @if (filled($this->defaultActionArguments)) , @js($this->defaultActionArguments) @endif)"
-        ></div>
     @endif
 
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.end', scopes: $this->getRenderHookScopes()) }}

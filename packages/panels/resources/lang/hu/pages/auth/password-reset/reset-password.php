@@ -35,7 +35,7 @@ return [
 
         'throttled' => [
             'title' => 'Túl sok visszaállítási kísérlet',
-            'body' => 'Kérjük, próbálja meg újra :second másodperc múlva.',
+            'body' => 'Kérjük, próbáld meg újra :second másodperc múlva.',
         ],
 
     ],

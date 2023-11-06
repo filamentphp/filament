@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Szétválasztás',
+        'label' => 'Lecsatolás',
 
         'modal' => [
 
-            'heading' => ':label szétválasztása',
+            'heading' => ':label lecstolása',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Szétválasztás',
+                    'label' => 'Lecsatolás',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Szétválasztva',
+                'title' => 'Lecsatolva',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Kijelöltek szétválasztása',
+        'label' => 'Kijelöltek lecsatolása',
 
         'modal' => [
 
-            'heading' => 'Kijelölt :label szétválasztása',
+            'heading' => 'Kijelölt :label lecsatolása',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Kijelöltek szétválasztása',
+                    'label' => 'Kijelöltek lecsatolása',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Szétválasztva',
+                'title' => 'Lecsatolva',
             ],
 
         ],

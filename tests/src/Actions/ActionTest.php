@@ -265,3 +265,40 @@ test('can assert that notifications are sent in any order', function () {
         ->callAction('two-notifications')
         ->assertNotified('Third notification');
 });
+
+it('will assert that a notification was not sent', function () {
+
+    livewire(Actions::class)
+        ->callAction('does-not-show-notification')
+        ->assertNotNotified();
+
+    livewire(Actions::class)
+        ->callAction('shows-notification-with-id')
+        ->assertNotNotified(
+            Notification::make()
+                ->title('An incorrect notification')
+                ->success()
+        );
+
+    livewire(Actions::class)
+        ->callAction('shows-notification-with-id')
+        ->assertNotNotified('An incorrect notification');
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('The notification with the given configration was sent');
+
+    livewire(Actions::class)
+        ->callAction('shows-notification-with-id')
+        ->assertNotNotified(
+            Notification::make()
+                ->title('A notification')
+                ->success()
+        );
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('The notification with the given title was sent');
+
+    livewire(Actions::class)
+        ->callAction('shows-notification-with-id')
+        ->assertNotNotified('A notification');
+});

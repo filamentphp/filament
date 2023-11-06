@@ -1441,6 +1441,7 @@ not all and (min-resolution:.001dpcm) {
   border-radius: .5rem;
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  font-family: var(--font-family);
   margin-bottom: 0
 }
 

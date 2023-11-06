@@ -50,6 +50,7 @@
         </style>
 
         @filamentStyles
+
         {{ filament()->getTheme()->getHtml() }}
         {{ filament()->getFontHtml() }}
 
@@ -60,6 +61,8 @@
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
             }
         </style>
+
+        @stack('styles')
 
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::styles.after') }}
 
