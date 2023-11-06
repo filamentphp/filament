@@ -56,6 +56,7 @@
 
     <div 
         class="absolute top-0 left-0 w-full h-full bg-white/60 dark:bg-gray-900/60 hidden"
+
         @if ($hasLoadingOverlay)
             wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="hidden"
         @endif
