@@ -2,6 +2,8 @@
 
 return [
 
+    'label' => 'Query builder',
+
     'form' => [
 
         'operator' => [

@@ -26,6 +26,8 @@ class QueryBuilder extends BaseFilter
     protected function setUp(): void
     {
         parent::setUp();
+        
+        $this->label(__('filament-tables::filters/query-builder.label'));
 
         $this->form(fn (QueryBuilder $filter): array => [
             RuleBuilder::make('rules')
