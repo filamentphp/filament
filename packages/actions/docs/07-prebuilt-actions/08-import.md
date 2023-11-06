@@ -599,4 +599,4 @@ class ProductImporter extends Importer
 
 Inside these hooks, you can access the current row's data using `$this->data`. You can also access the original row of data from the CSV, before it was [cast](#casting-state) or mapped, using `$this->originalData`.
 
-The current record (if it exists yet) is accessible in `$this->record`, and the [options](#using-import-options) using `$this->options`.
+The current record (if it exists yet) is accessible in `$this->record`, and the [import form options](#using-import-options) using `$this->options`.
