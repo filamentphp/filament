@@ -510,6 +510,11 @@ class FilamentManager
         return $this->getCurrentPanel()->hasCollapsibleNavigationGroups();
     }
 
+    public function hasCollapsibleNavigationWithText(): bool
+    {
+        return $this->getCurrentPanel()->hasCollapsibleNavigationWithText();
+    }
+
     public function hasDarkMode(): bool
     {
         return $this->getCurrentPanel()->hasDarkMode();

@@ -14,6 +14,8 @@ trait HasSidebar
 
     protected bool $hasCollapsibleNavigationGroups = true;
 
+    protected bool $hasCollapsibleNavigationWithText = false;
+
     public function sidebarCollapsibleOnDesktop(bool $condition = true): static
     {
         $this->isSidebarCollapsibleOnDesktop = $condition;
@@ -31,6 +33,13 @@ trait HasSidebar
     public function collapsibleNavigationGroups(bool $condition = true): static
     {
         $this->hasCollapsibleNavigationGroups = $condition;
+
+        return $this;
+    }
+
+    public function collapsibleNavigationWithText(bool $condition = true): static
+    {
+        $this->hasCollapsibleNavigationWithText = $condition;
 
         return $this;
     }
@@ -72,5 +81,10 @@ trait HasSidebar
     public function hasCollapsibleNavigationGroups(): bool
     {
         return $this->hasCollapsibleNavigationGroups;
+    }
+
+    public function hasCollapsibleNavigationWithText(): bool
+    {
+        return $this->hasCollapsibleNavigationWithText;
     }
 }
