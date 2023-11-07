@@ -169,15 +169,15 @@ it('can assert that a column exists with the given configuration', function () {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
-        ->assertTableColumnExists('title', function(\Filament\Tables\Columns\TextColumn $column) {
+        ->assertTableColumnExists('title', function (Filament\Tables\Columns\TextColumn $column) {
             return $column->isSortable() && $column->isSearchable();
         });
 
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
-    $this->expectExceptionMessage('Failed asserting that a field with the name [title] and provided configuration exists on the ['.PostsTable::class.'] component');
+    $this->expectExceptionMessage('Failed asserting that a field with the name [title] and provided configuration exists on the [' . PostsTable::class . '] component');
 
     livewire(PostsTable::class)
-        ->assertTableColumnExists('title', function(\Filament\Tables\Columns\TextColumn $column) {
+        ->assertTableColumnExists('title', function (Filament\Tables\Columns\TextColumn $column) {
             return $column->isTime();
         });
 });
