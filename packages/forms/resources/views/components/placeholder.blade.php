@@ -3,6 +3,7 @@
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
+    :has-inline-label="$hasInlineLabel()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
     :hint-actions="$getHintActions()"
