@@ -5,6 +5,7 @@
     $isCircular = $isCircular();
     $isSquare = $isSquare();
     $isStacked = $isStacked();
+    $hasLightbox = $hasLightBox() ?? false;
     $overlap = $isStacked ? ($getOverlap() ?? 2) : null;
     $ring = $isStacked ? ($getRing() ?? 2) : null;
     $height = $getHeight() ?? ($isStacked ? '2rem' : '2.5rem');
@@ -41,6 +42,7 @@
 @endphp
 
 <div
+    @if($hasLightbox) x-data="SimpleImageLightBox"  @endif
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
@@ -50,9 +52,13 @@
             ])
     }}
 >
+    
+
     @if (count($limitedState))
-        <div class="flex items-center gap-x-2.5">
+        <div class="flex items-center gap-x-2.5" 
+        >
             <div
+                
                 @class([
                     'flex',
                     match ($overlap) {
@@ -71,6 +77,7 @@
             >
                 @foreach ($limitedState as $stateItem)
                     <img
+                        @if($hasLightbox)  @click="openSimpleImageLightBox($event)"  @endif
                         src="{{ filled($stateItem) ? $getImageUrl($stateItem) : $defaultImageUrl }}"
                         {{
                             $getExtraImgAttributeBag()
@@ -84,8 +91,7 @@
                                     "width: {$width}" => $width,
                                 ])
                         }}
-                    />
-                @endforeach
+                    />    @endforeach
 
                 @if ($hasLimitedRemainingText && ($loop->iteration < count($limitedState)) && (! $isLimitedRemainingTextSeparate) && $isCircular)
                     <div
@@ -127,4 +133,5 @@
             {{ $placeholder }}
         </x-filament-tables::columns.placeholder>
     @endif
+            
 </div>

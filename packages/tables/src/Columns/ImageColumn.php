@@ -50,6 +50,8 @@ class ImageColumn extends Column
 
     protected string | Closure | null $limitedRemainingTextSize = null;
 
+    protected bool | Closure $lightbox = false;
+
     public function disk(string | Closure | null $disk): static
     {
         $this->disk = $disk;
@@ -281,6 +283,18 @@ class ImageColumn extends Column
     public function getRing(): ?int
     {
         return $this->evaluate($this->ring);
+    }
+
+    public function lightbox(bool | Closure $lightbox = true): static
+    {
+        $this->lightbox = $lightbox;
+
+        return $this;
+    }
+
+    public function hasLightBox(): ?bool
+    {
+        return $this->evaluate($this->lightbox);
     }
 
     public function limit(int | Closure | null $limit = 3): static

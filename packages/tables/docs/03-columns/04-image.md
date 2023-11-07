@@ -93,6 +93,17 @@ ImageColumn::make('avatar')
     ->defaultImageUrl(url('/images/placeholder.png'))
 ```
 
+## Image Lightbox
+
+You can display a image lightbox by using `lightbox()`:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('header_image')
+    ->lightbox()
+```
+
 ## Stacking images
 
 You may display multiple images as a stack of overlapping images by using `stacked()`:
