@@ -986,7 +986,7 @@
                                                     ])
                                             "
                                         >
-                                            <div class="fi-ta-cell-content">
+                                            
                                                 <x-filament-tables::columns.column
                                                         :column="$column"
                                                         :is-click-disabled="$column->isClickDisabled() || $isReordering"
@@ -995,7 +995,7 @@
                                                         :record-key="$recordKey"
                                                         :record-url="$recordUrl"
                                                 />
-                                            </div>
+
                                         </x-filament-tables::cell>
                                     @endforeach
 

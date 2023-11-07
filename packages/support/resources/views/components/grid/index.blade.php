@@ -48,6 +48,8 @@
                 },
             )
     }}
+
+    wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class="fi-loading"
 >
     {{ $slot }}
 </div>

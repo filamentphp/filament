@@ -42,7 +42,9 @@
         ])
     }}
 >
-    @foreach ($actions as $action)
-        {{ $action }}
-    @endforeach
+    <div class="fi-ta-cell-content">
+        @foreach ($actions as $action)
+            {{ $action }}
+        @endforeach
+    </div>
 </div>

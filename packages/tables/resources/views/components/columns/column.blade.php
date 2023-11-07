@@ -45,7 +45,7 @@
             theme: $store.theme,
         }"
     @endif
-    {{ $attributes->class(['fi-ta-col-wrp']) }}
+    {{ $attributes->class(['fi-ta-cell-content fi-ta-col-wrp']) }}
 >
     @if (($url || ($recordUrl && $action === null)) && (! $isClickDisabled))
         <a
