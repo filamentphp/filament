@@ -11,18 +11,7 @@
 
 @php
     $hasUrl = filled($url);
-
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-sidebar-group-icon h-6 w-6 inline-flex me-2',
-        'text-gray-400 dark:text-gray-500' => ! $active,
-        'text-primary-600 dark:text-primary-400' => $active,
-    ]);
-
-    $labelClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-sidebar-group-label flex-1 text-sm font-semibold leading-6',
-        'text-gray-700 dark:text-gray-200' => ! $active,
-        'text-primary-600 dark:text-primary-400' => $active,
-    ]);
+    $tag = $hasUrl ? 'a' : 'span';
 @endphp
 
 <li
@@ -51,32 +40,29 @@
                 'cursor-pointer' => $collapsible,
             ])
         >
-            @if($hasUrl)
-                <a
-                    {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
-                    class="{{ $labelClasses }}"
-                >
-                    @if($icon)
-                        <x-filament::icon
-                            :icon="($active && $activeIcon) ? $activeIcon : $icon"
-                            :class="$iconClasses"
-                        />
-                    @endif
+            <{{ $tag }}
+                @if($hasUrl)
+                {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
+                @endif
+                @class([
+                    'fi-sidebar-group-label flex-1 text-sm font-semibold leading-6',
+                    'text-gray-700 dark:text-gray-200' => ! $active,
+                    'text-primary-600 dark:text-primary-400' => $active,
+                ])
+            >
+                @if($icon)
+                    <x-filament::icon
+                        :icon="($active && $activeIcon) ? $activeIcon : $icon"
+                        @class([
+                            'fi-sidebar-group-icon h-6 w-6 inline-flex me-2',
+                            'text-gray-400 dark:text-gray-500' => ! $active,
+                            'text-primary-600 dark:text-primary-400' => $active,
+                        ])
+                    />
+                @endif
 
-                    {{ $label }}
-                </a>
-            @else
-                <span class="{{ $labelClasses }}">
-                    @if(!$hasUrl && $icon)
-                        <x-filament::icon
-                            :icon="($active && $activeIcon) ? $activeIcon : $icon"
-                            :class="$iconClasses"
-                        />
-                    @endif
-                    
-                    {{ $label }}
-                </span>
-            @endif
+                {{ $label }}
+            </{{ $tag }}>
 
             @if ($collapsible)
                 <x-filament::icon-button
