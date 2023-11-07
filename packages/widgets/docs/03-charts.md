@@ -252,3 +252,19 @@ To disable this behavior, you may override the `$isLazy` property on the widget 
 ```php
 protected static bool $isLazy = true;
 ```
+
+## Time Cartesian Axis
+
+To enable [Time Cartesian Axis](https://www.chartjs.org/docs/latest/axes/cartesian/time.html) you must add a date adapter to Chart.js. This means you must compile your own javascript chart.js file and replace it with the one provided by Filament. Currently there is no built in way to replace existing Filament javascript files with your own, you have to do this in your deploy script after the `php artisan filament:assets` command has been run.
+
+Your custom chart.js file might look like this:
+```js
+export { default as chart } from '../../vendor/filament/widgets/resources/js/components/chart.js';
+import 'chartjs-adapter-luxon'; // or any other date adapter
+```
+
+Compile this file and save it at this location in your app root directory:
+
+`
+/public/js/filament/widgets/components/chart.js
+`
