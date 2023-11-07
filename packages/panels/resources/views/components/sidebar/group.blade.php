@@ -41,8 +41,8 @@
             ])
         >
             <{{ $tag }}
-                @if($hasUrl)
-                {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
+                @if ($hasUrl)
+                    {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
                 @endif
                 @class([
                     'fi-sidebar-group-label flex-1 text-sm font-semibold leading-6',
@@ -50,7 +50,7 @@
                     'text-primary-600 dark:text-primary-400' => $active,
                 ])
             >
-                @if($icon)
+                @if ($icon)
                     <x-filament::icon
                         :icon="($active && $activeIcon) ? $activeIcon : $icon"
                         @class([
