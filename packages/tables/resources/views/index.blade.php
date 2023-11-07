@@ -994,7 +994,7 @@
                                                         :record-action="$recordAction"
                                                         :record-key="$recordKey"
                                                         :record-url="$recordUrl"
-                                                    />
+                                                />
                                             </div>
                                         </x-filament-tables::cell>
                                     @endforeach
