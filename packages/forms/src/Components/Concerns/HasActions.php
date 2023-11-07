@@ -65,17 +65,17 @@ trait HasActions
             ];
         }
 
-        if ($this instanceof HasHintActions) {
-            $this->cachedActions = [
-                ...$this->cachedActions,
-                ...$this->getHintActions(),
-            ];
-        }
-
         if ($this instanceof HasHeaderActions) {
             $this->cachedActions = [
                 ...$this->cachedActions,
                 ...$this->getHeaderActions(),
+            ];
+        }
+
+        if ($this instanceof HasHintActions) {
+            $this->cachedActions = [
+                ...$this->cachedActions,
+                ...$this->getHintActions(),
             ];
         }
 
