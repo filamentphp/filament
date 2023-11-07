@@ -31,7 +31,6 @@ trait InteractsWithTable
     use HasEmptyState;
     use HasFilters;
     use HasHeader;
-    use HasLoadingOverlay;
     use HasRecordAction;
     use HasRecordClasses;
     use HasRecords;

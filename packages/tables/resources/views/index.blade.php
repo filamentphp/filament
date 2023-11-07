@@ -16,7 +16,6 @@
     $contentFooter = $getContentFooter();
     $filterIndicators = $getFilterIndicators();
     $hasColumnsLayout = $hasColumnsLayout();
-    $hasLoadingOverlay = $hasLoadingOverlay();
     $hasSummary = $hasSummary();
     $header = $getHeader();
     $headerActions = array_filter(
@@ -375,7 +374,6 @@
                         :lg="$contentGrid['lg'] ?? null"
                         :xl="$contentGrid['xl'] ?? null"
                         :two-xl="$contentGrid['2xl'] ?? null"
-                        :hasLoadingOverlay="$hasLoadingOverlay"
                         x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                         x-sortable
                         @class([
@@ -405,7 +403,6 @@
                             @if ($recordGroupTitle !== $previousRecordGroupTitle)
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                     <x-filament-tables::table
-                                        :hasLoadingOverlay="$hasLoadingOverlay"
                                         class="col-span-full"
                                     >
                                         <x-filament-tables::summary.row
@@ -632,10 +629,7 @@
                         @endforeach
 
                         @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
-                            <x-filament-tables::table
-                                :hasLoadingOverlay="$hasLoadingOverlay"
-                                class="col-span-full"
-                            >
+                            <x-filament-tables::table class="col-span-full">
                                 <x-filament-tables::summary.row
                                     :columns="$columns"
                                     extra-heading-column
@@ -659,9 +653,7 @@
                 @endif
 
                 @if ($hasSummary && (! $isReordering))
-                    <x-filament-tables::table
-                        :hasLoadingOverlay="$hasLoadingOverlay"                    
-                    >
+                    <x-filament-tables::table>
                         <x-filament-tables::summary
                             :columns="$columns"
                             extra-heading-column
@@ -672,10 +664,7 @@
                     </x-filament-tables::table>
                 @endif
             @elseif (($records !== null) && count($records))
-                <x-filament-tables::table
-                    :reorderable="$isReorderable"
-                    :hasLoadingOverlay="$hasLoadingOverlay"                    
-                >
+                <x-filament-tables::table :reorderable="$isReorderable">
                     <x-slot name="header">
                         @if ($isReordering)
                             <th></th>

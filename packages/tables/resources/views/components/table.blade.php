@@ -2,9 +2,9 @@
     'footer' => null,
     'header' => null,
     'reorderable' => false,
-    'hasLoadingOverlay',    
 ])
 
+{{-- TODO: Extract to css file --}}
 <style>
     @keyframes pulse {
         0%, 100% {
@@ -21,18 +21,18 @@
         }
     }
 
-    td.fi-ta-cell-loading-state {
+    .fi-ta-cell-content {
         position: relative;
         min-height: 1em;
     }    
 
-    td.fi-ta-cell-loading-state::after {
+    .fi-ta-cell-content::after {
         content: '';
         position: absolute;
-        top: 35%;
+        top: 1em;
         left: 1em;
         right: 1em;
-        bottom: 35%;        
+        bottom: 1em;        
         background: rgb(249 250 251); /* bg-gray-50 */
         border-radius: 12px;
         animation: pulse 1.5s ease-in-out infinite;
@@ -40,27 +40,24 @@
     }
 
     @media (prefers-color-scheme: dark) {
-        td.fi-ta-cell-loading-state::after {
+        .fi-ta-cell-content::after {
             background: rgb(107 114 128); /* bg-gray-500 */
         }
     }
 
-    .loading-active td.fi-ta-cell-loading-state::after {
+    .loading-active .fi-ta-cell-content::after {
         display: block;
     }
     
-    .loading-active td.fi-ta-cell-loading-state > * {
+    .loading-active .fi-ta-cell-content > * {
       visibility: hidden;
     }
 </style>
 
-
 <table
     {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
+    wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class="loading-active"
 
-    @if ($hasLoadingOverlay)
-        wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class="loading-active"
-    @endif
 >
     @if ($header)
         <thead class="bg-gray-50 dark:bg-white/5">
