@@ -166,12 +166,25 @@ it('can state whether a select column has options', function () {
 });
 
 it('can assert that a column exists with the given configuration', function () {
-    $post = Post::factory()->create();
+    $post_published = Post::factory()->create([
+        'is_published' => true
+    ]);
 
     livewire(PostsTable::class)
-        ->assertTableColumnExists('title', function (Filament\Tables\Columns\TextColumn $column) {
-            return $column->isSortable() && $column->isSearchable();
-        });
+        ->assertTableColumnExists('title2', function(Filament\Tables\Columns\TextColumn $column) {
+            return $column->isSortable() &&
+                $column->isSearchable() &&
+                $column->getPrefix() == 'published';
+        }, $post_published);
+
+    $post_unpublished = Post::factory()->create([
+        'is_published' => false
+    ]);
+
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('title2', function(Filament\Tables\Columns\TextColumn $column) {
+            return $column->getPrefix() == 'unpublished';
+        }, $post_unpublished);
 
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
     $this->expectExceptionMessage('Failed asserting that a field with the name [title] and provided configuration exists on the [' . PostsTable::class . '] component');
@@ -179,5 +192,6 @@ it('can assert that a column exists with the given configuration', function () {
     livewire(PostsTable::class)
         ->assertTableColumnExists('title', function (Filament\Tables\Columns\TextColumn $column) {
             return $column->isTime();
-        });
+        }, $post_published);
+
 });
