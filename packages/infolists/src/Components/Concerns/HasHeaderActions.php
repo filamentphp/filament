@@ -19,7 +19,7 @@ trait HasHeaderActions
      */
     protected array $headerActions = [];
 
-    public function headerAction(Action|Closure $action): static
+    public function headerAction(Action | Closure $action): static
     {
         $this->headerActions([$action]);
 
