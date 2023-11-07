@@ -45,18 +45,18 @@
         }
     }
 
-    .loading-active .fi-ta-cell-content::after {
+    .fi-loading .fi-ta-cell-content::after {
         display: block;
     }
     
-    .loading-active .fi-ta-cell-content > * {
+    .fi-loading .fi-ta-cell-content > * {
       visibility: hidden;
     }
 </style>
 
 <table
     {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
-    wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class="loading-active"
+    wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class="fi-loading"
 
 >
     @if ($header)
