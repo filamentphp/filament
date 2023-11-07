@@ -35,3 +35,17 @@ use Filament\Tables\Columns\TextInputColumn;
 
 TextInputColumn::make('background_color')->type('color')
 ```
+
+## Lifecycle hooks
+
+Hooks may be used to execute code at various points within the input's lifecycle:
+
+```php
+TextInputColumn::make()
+    ->before(function () {
+        // Runs before the state is saved to the database.
+    })
+    ->after(function () {
+        // Runs after the state is saved to the database.
+    })
+```
