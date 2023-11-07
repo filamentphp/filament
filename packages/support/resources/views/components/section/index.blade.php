@@ -3,13 +3,13 @@
 @endphp
 
 @props([
-    'headerActions' => [],
     'aside' => false,
     'collapsed' => false,
     'collapsible' => false,
     'compact' => false,
     'contentBefore' => false,
     'description' => null,
+    'headerActions' => [],
     'headerEnd' => null,
     'heading' => null,
     'icon' => null,
