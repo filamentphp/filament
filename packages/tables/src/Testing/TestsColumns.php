@@ -71,7 +71,7 @@ class TestsColumns
                 message: "Failed asserting that a table column with name [{$name}] exists on the [{$livewireClass}] component.",
             );
 
-            if($record) {
+            if ($record) {
                 if (! ($record instanceof Model)) {
                     $record = $this->instance()->getTableRecord($record);
                 }

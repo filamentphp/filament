@@ -167,22 +167,22 @@ it('can state whether a select column has options', function () {
 
 it('can assert that a column exists with the given configuration', function () {
     $post_published = Post::factory()->create([
-        'is_published' => true
+        'is_published' => true,
     ]);
 
     livewire(PostsTable::class)
-        ->assertTableColumnExists('title2', function(Filament\Tables\Columns\TextColumn $column) {
+        ->assertTableColumnExists('title2', function (Filament\Tables\Columns\TextColumn $column) {
             return $column->isSortable() &&
                 $column->isSearchable() &&
                 $column->getPrefix() == 'published';
         }, $post_published);
 
     $post_unpublished = Post::factory()->create([
-        'is_published' => false
+        'is_published' => false,
     ]);
 
     livewire(PostsTable::class)
-        ->assertTableColumnExists('title2', function(Filament\Tables\Columns\TextColumn $column) {
+        ->assertTableColumnExists('title2', function (Filament\Tables\Columns\TextColumn $column) {
             return $column->getPrefix() == 'unpublished';
         }, $post_unpublished);
 
