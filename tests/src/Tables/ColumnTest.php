@@ -164,3 +164,20 @@ it('can state whether a select column has options', function () {
         ->assertTableSelectColumnHasOptions('with_options', ['red' => 'Red', 'blue' => 'Blue'], $post)
         ->assertTableSelectColumnDoesNotHaveOptions('with_options', ['one' => 'One', 'two' => 'Two'], $post);
 });
+
+it('can assert that a column exists with the given configuration', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('title', function(\Filament\Tables\Columns\TextColumn $column) {
+            return $column->isSortable() && $column->isSearchable();
+        });
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('Failed asserting that a field with the name [title] and provided configuration exists on the ['.PostsTable::class.'] component');
+
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('title', function(\Filament\Tables\Columns\TextColumn $column) {
+            return $column->isTime();
+        });
+});

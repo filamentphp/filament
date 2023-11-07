@@ -60,7 +60,7 @@ class TestsColumns
 
     public function assertTableColumnExists(): Closure
     {
-        return function (string $name): static {
+        return function (string $name, ?Closure $checkColumnUsing = null): static {
             $column = $this->instance()->getTable()->getColumn($name);
 
             $livewireClass = $this->instance()::class;
@@ -70,6 +70,13 @@ class TestsColumns
                 $column,
                 message: "Failed asserting that a table column with name [{$name}] exists on the [{$livewireClass}] component.",
             );
+
+            if ($checkColumnUsing) {
+                Assert::assertTrue(
+                    $checkColumnUsing($column),
+                    "Failed asserting that a field with the name [{$name}] and provided configuration exists on the [{$livewireClass}] component."
+                );
+            }
 
             return $this;
         };

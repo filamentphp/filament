@@ -175,6 +175,19 @@ it('has an author column', function () {
 });
 ```
 
+You can pass an additional `Closure` to check the configuration of a column:
+```php
+use function Pest\Livewire\livewire;
+use \Filament\Tables\Columns\TextColumn;
+
+it('has an author column', function () {
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableColumnExists(`author`, function(TextColumn $column) {
+            return $column->isSortable();
+        });
+});
+```
+
 ### Authorization
 
 To ensure that a particular user cannot see a column, you can use the `assertTableColumnVisible()` and `assertTableColumnHidden()` methods:
