@@ -3,7 +3,7 @@
 @endphp
 
 @props([
-    'actions' => [],
+    'headerActions' => [],
     'aside' => false,
     'collapsed' => false,
     'collapsible' => false,
@@ -18,15 +18,15 @@
 ])
 
 @php
-    $actions = array_filter(
-        $actions,
-        fn ($action): bool => $action->isVisible(),
+    $headerActions = array_filter(
+        $headerActions,
+        fn ($headerAction): bool => $headerAction->isVisible(),
     );
-    $hasActions = filled($actions);
+    $hasHeaderActions = filled($headerActions);
     $hasDescription = filled((string) $description);
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
-    $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || $hasActions || filled((string) $headerEnd);
+    $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || $hasHeaderActions || filled((string) $headerEnd);
 @endphp
 
 <section
@@ -130,9 +130,9 @@
                 </div>
             @endif
 
-            @if ($hasActions)
+            @if ($hasHeaderActions)
                 <x-filament-actions::actions
-                    :actions="$actions"
+                    :actions="$headerActions"
                     class="ms-auto"
                 />
             @endif
