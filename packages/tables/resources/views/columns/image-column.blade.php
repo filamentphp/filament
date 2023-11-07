@@ -52,13 +52,9 @@
             ])
     }}
 >
-    
-
     @if (count($limitedState))
-        <div class="flex items-center gap-x-2.5" 
-        >
+        <div class="flex items-center gap-x-2.5">
             <div
-                
                 @class([
                     'flex',
                     match ($overlap) {
@@ -91,7 +87,8 @@
                                     "width: {$width}" => $width,
                                 ])
                         }}
-                    />    @endforeach
+                    />
+                @endforeach
 
                 @if ($hasLimitedRemainingText && ($loop->iteration < count($limitedState)) && (! $isLimitedRemainingTextSeparate) && $isCircular)
                     <div
@@ -133,5 +130,4 @@
             {{ $placeholder }}
         </x-filament-tables::columns.placeholder>
     @endif
-            
 </div>
