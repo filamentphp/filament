@@ -248,7 +248,9 @@ TextEntry::make('email')
 
 ## Customizing the text size
 
-You may make the text larger using `size(TextEntrySize::Large)`:
+Text columns have small font size by default, but you may change this to `TextEntrySize::ExtraSmall`, `TextEntrySize::Medium`, or `TextEntrySize::Large`.
+
+For instance, you may make the text larger using `size(TextEntrySize::Large)`:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
