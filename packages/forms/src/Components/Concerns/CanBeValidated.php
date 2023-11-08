@@ -607,15 +607,15 @@ trait CanBeValidated
     }
 
     /**
-     * @param  array<string, array<string, string>>  $rules
+     * @param  array<string, array<string, string>>  $messages
      */
-    public function dehydrateValidationMessages(array &$rules): void
+    public function dehydrateValidationMessages(array &$messages): void
     {
         $statePath = $this->getStatePath();
 
         if (count($componentMessages = $this->getValidationMessages())) {
             foreach ($componentMessages as $rule => $message) {
-                $rules["{$statePath}.{$rule}"] = $message;
+                $messages["{$statePath}.{$rule}"] = $message;
             }
         }
     }
