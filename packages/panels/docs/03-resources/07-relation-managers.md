@@ -347,11 +347,14 @@ By default, you will not be allowed to attach a record more than once. This is b
 
 Please ensure that the `id` attribute is listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-Finally, add the `$allowsDuplicates` property to the relation manager:
+Finally, add the `allowDuplicates()` method to the table:
 
 ```php
-protected bool $allowsDuplicates = true;
-```
+public function table(Table $table): Table
+{
+    return $table
+        ->allowDuplicates();
+}
 
 ## Associating and dissociating records
 
