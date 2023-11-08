@@ -8,9 +8,6 @@ use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasColor;
-use Filament\Support\Concerns\HasIcon;
-use Filament\Support\Concerns\HasIconColor;
-use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -28,11 +25,12 @@ class Notification extends ViewComponent implements Arrayable
     use Concerns\HasBody;
     use Concerns\HasDate;
     use Concerns\HasDuration;
+    use Concerns\HasIcon;
+    use Concerns\HasIconColor;
     use Concerns\HasId;
+    use Concerns\HasStatus;
     use Concerns\HasTitle;
     use HasColor;
-    use HasIcon;
-    use HasIconColor;
 
     /**
      * @var view-string
@@ -77,6 +75,7 @@ class Notification extends ViewComponent implements Arrayable
             'duration' => $this->getDuration(),
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
+            'status' => $this->getStatus(),
             'title' => $this->getTitle(),
             'view' => $this->getView(),
             'viewData' => $this->getViewData(),
@@ -120,7 +119,8 @@ class Notification extends ViewComponent implements Arrayable
         $static->body($data['body'] ?? null);
         $static->color($data['color'] ?? null);
         $static->duration($data['duration'] ?? $static->getDuration());
-        $static->icon($data['icon'] ?? null);
+        $static->status($data['status'] ?? $static->getStatus());
+        $static->icon($data['icon'] ?? $static->getIcon());
         $static->iconColor($data['iconColor'] ?? $static->getIconColor());
         $static->title($data['title'] ?? null);
 
@@ -223,49 +223,6 @@ class Notification extends ViewComponent implements Arrayable
         unset($data['id']);
 
         return $data;
-    }
-
-    public function status(string $status): static
-    {
-        return match ($status) {
-            'danger' => $this->danger(),
-            'info' => $this->info(),
-            'success' => $this->success(),
-            'warning' => $this->warning(),
-            default => $this,
-        };
-    }
-
-    public function danger(): static
-    {
-        $this->icon(FilamentIcon::resolve('notifications::notification.danger') ?? 'heroicon-o-x-circle');
-        $this->iconColor('danger');
-
-        return $this;
-    }
-
-    public function info(): static
-    {
-        $this->icon(FilamentIcon::resolve('notifications::notification.info') ?? 'heroicon-o-information-circle');
-        $this->iconColor('info');
-
-        return $this;
-    }
-
-    public function success(): static
-    {
-        $this->icon(FilamentIcon::resolve('notifications::notification.success') ?? 'heroicon-o-check-circle');
-        $this->iconColor('success');
-
-        return $this;
-    }
-
-    public function warning(): static
-    {
-        $this->icon(FilamentIcon::resolve('notifications::notification.warning') ?? 'heroicon-o-exclamation-circle');
-        $this->iconColor('warning');
-
-        return $this;
     }
 
     public static function fromDatabase(DatabaseNotificationModel $notification): static
