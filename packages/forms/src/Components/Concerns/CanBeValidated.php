@@ -23,6 +23,11 @@ trait CanBeValidated
      */
     protected array $rules = [];
 
+    /**
+     * @var array<string, string | Closure>
+     */
+    protected array $validationMessages = [];
+    
     protected string | Closure | null $validationAttribute = null;
 
     public function activeUrl(bool | Closure $condition = true): static
@@ -538,6 +543,17 @@ trait CanBeValidated
         return $this;
     }
 
+    
+    /**
+     * @param  array<string, string | Closure>  $messages
+     */
+    public function validationMessages(array $messages): static
+    {
+        $this->validationMessages = $messages;
+
+        return $this;
+    }
+
     public function getRegexPattern(): ?string
     {
         return $this->evaluate($this->regexPattern);
@@ -553,6 +569,20 @@ trait CanBeValidated
         return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public function getValidationMessages(): array
+    {
+        $messages = [];
+        
+        foreach ($this->validationMessages as $rule => $message) {
+            $messages[] = $this->evaluate($message);
+        }
+
+        return array_filter($messages);
+    }
+    
     /**
      * @return array<mixed>
      */
@@ -577,6 +607,18 @@ trait CanBeValidated
         return $rules;
     }
 
+    /**
+     * @param  array<string, array<string, string>>  $rules
+     */
+    public function dehydrateValidationMessages(array &$rules): void
+    {
+        $statePath = $this->getStatePath();
+
+        if (count($componentMessages = $this->getValidationMessages())) {
+            $rules[$statePath] = $componentMessages;
+        }
+    }
+    
     /**
      * @param  array<string, array<mixed>>  $rules
      */
