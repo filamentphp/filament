@@ -1586,6 +1586,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/layout/section/actions': {
+        url: 'infolists/layout',
+        selector: '#sectionHeaderActions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/layout/section/icons': {
         url: 'infolists/layout',
         selector: '#sectionIcons',
