@@ -91,7 +91,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 ### Form Builder icon aliases
 
-- `forms:components.checkbox-list.search-field` - Search input in a checkbox list
+- `forms::components.checkbox-list.search-field` - Search input in a checkbox list
 - `forms::components.wizard.completed-step` - Completed step in a wizard
 
 ### Table Builder icon aliases
