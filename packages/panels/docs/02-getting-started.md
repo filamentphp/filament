@@ -76,7 +76,7 @@ public function boot(): void
 
 ### Setting up relationships between models
 
-Let's set up relationships between the models. For our system, pet owners can own multiple pets (patients), and patients can have many treatments:
+Let's set up relationships between the models. For our system, pet owners can own multiple patients (cats, dogs, or rabbits), and patients can have many treatments:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -117,7 +117,7 @@ class Treatment extends Model
 
 In Filament, resources are static classes used to build CRUD interfaces for your Eloquent models. They describe how administrators can interact with data from your panel using tables and forms.
 
-Since patients (pets) are the core entity in this system, let's start by creating a patient resource that enables us to build pages for creating, viewing, updating, and deleting patients.
+Since patients (cats, dogs, or rabbits) are the core entity in this system, let's start by creating a patient resource that enables us to build pages for creating, viewing, updating, and deleting patients.
 
 Use the following artisan command to create a new Filament resource for the `Patient` model:
 
