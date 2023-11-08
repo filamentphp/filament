@@ -1,3 +1,7 @@
+@php
+    use Filament\Forms\Components\Actions\Action;
+@endphp
+
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @php
         $containers = $getChildComponentContainers();
@@ -14,6 +18,7 @@
         $moveDownAction = $getAction($getMoveDownActionName());
         $moveUpAction = $getAction($getMoveUpActionName());
         $reorderAction = $getAction($getReorderActionName());
+        $extraItemActions = $getExtraItemActions();
 
         $isAddable = $isAddable();
         $isCloneable = $isCloneable();
@@ -70,6 +75,13 @@
                 @endphp
 
                 @foreach ($containers as $uuid => $item)
+                    @php
+                        $visibleExtraItemActions = array_filter(
+                            $extraItemActions,
+                            fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
+                        );
+                    @endphp
+
                     <li
                         wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
                         x-data="{
@@ -106,12 +118,12 @@
                         class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                         x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                     >
-                        @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $hasBlockLabels || $isCloneable || $isDeletable || $isCollapsible)
+                        @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $hasBlockLabels || $isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
                             <div
-                                class="fi-fo-builder-item-header flex items-center gap-x-3 overflow-hidden px-4 py-2"
+                                class="fi-fo-builder-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3"
                             >
                                 @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
-                                    <ul class="-ms-1.5 flex">
+                                    <ul class="flex items-center gap-x-3">
                                         @if ($isReorderableWithDragAndDrop)
                                             <li x-sortable-handle>
                                                 {{ $reorderAction }}
@@ -119,15 +131,11 @@
                                         @endif
 
                                         @if ($isReorderableWithButtons)
-                                            <li
-                                                class="flex items-center justify-center"
-                                            >
+                                            <li>
                                                 {{ $moveUpAction(['item' => $uuid])->disabled($loop->first) }}
                                             </li>
 
-                                            <li
-                                                class="flex items-center justify-center"
-                                            >
+                                            <li>
                                                 {{ $moveDownAction(['item' => $uuid])->disabled($loop->last) }}
                                             </li>
                                         @endif
@@ -153,8 +161,16 @@
                                     </h4>
                                 @endif
 
-                                @if ($isCloneable || $isDeletable || $isCollapsible)
-                                    <ul class="-me-1.5 ms-auto flex">
+                                @if ($isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
+                                    <ul
+                                        class="ms-auto flex items-center gap-x-3"
+                                    >
+                                        @foreach ($visibleExtraItemActions as $extraItemAction)
+                                            <li>
+                                                {{ $extraItemAction(['item' => $uuid]) }}
+                                            </li>
+                                        @endforeach
+
                                         @if ($isCloneable)
                                             <li>
                                                 {{ $cloneAction(['item' => $uuid]) }}

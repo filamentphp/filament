@@ -27,7 +27,7 @@ return [
         'notifications' => [
 
             'created' => [
-                'title' => 'Skapad',
+                'title' => 'Skapades',
             ],
 
         ],

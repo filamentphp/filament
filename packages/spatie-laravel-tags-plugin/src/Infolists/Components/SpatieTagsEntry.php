@@ -4,7 +4,7 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 
 class SpatieTagsEntry extends TextEntry
 {
@@ -49,7 +49,8 @@ class SpatieTagsEntry extends TextEntry
         $type = $this->getType();
 
         if ($this->isAnyTagTypeAllowed()) {
-            $tags = $record->tags();
+            /** @phpstan-ignore-next-line */
+            $tags = $record->tags;
         } else {
             $tags = $record->tagsWithType($type);
         }

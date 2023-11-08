@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\Filters\Indicator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use RecursiveArrayIterator;
@@ -108,7 +109,10 @@ trait CanSearchRecords
      */
     protected function extractTableSearchWords(string $search): array
     {
-        return explode(' ', preg_replace('/\s+/', ' ', $search));
+        return array_filter(
+            str_getcsv(preg_replace('/\s+/', ' ', $search), ' '),
+            fn ($word): bool => filled($word),
+        );
     }
 
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
@@ -171,13 +175,14 @@ trait CanSearchRecords
         $this->updatedTableColumnSearches();
     }
 
-    public function getTableSearchIndicator(): string
+    public function getTableSearchIndicator(): Indicator
     {
-        return __('filament-tables::table.fields.search.indicator') . ': ' . $this->getTableSearch();
+        return Indicator::make(__('filament-tables::table.fields.search.indicator') . ': ' . $this->getTableSearch())
+            ->removeLivewireClickHandler('resetTableSearch');
     }
 
     /**
-     * @return array<string, string>
+     * @return array<Indicator>
      */
     public function getTableColumnSearchIndicators(): array
     {
@@ -200,7 +205,8 @@ trait CanSearchRecords
                 continue;
             }
 
-            $indicators[$columnName] = "{$column->getLabel()}: {$search}";
+            $indicators[] = Indicator::make("{$column->getLabel()}: {$search}")
+                ->removeLivewireClickHandler("resetTableColumnSearch('{$columnName}')");
         }
 
         return $indicators;

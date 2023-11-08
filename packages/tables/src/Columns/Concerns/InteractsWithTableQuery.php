@@ -10,11 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
 
 trait InteractsWithTableQuery
 {
@@ -83,7 +84,14 @@ trait InteractsWithTableQuery
             return $query;
         }
 
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
         $model = $query->getModel();
+
+        $isSearchForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+
+        $search = generate_search_term_expression($search, $isSearchForcedCaseInsensitive, $databaseConnection);
 
         $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
@@ -92,36 +100,21 @@ trait InteractsWithTableQuery
 
             $query->when(
                 $translatableContentDriver?->isAttributeTranslatable($model::class, attribute: $searchColumn),
-                fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause, $this->isSearchForcedCaseInsensitive($query)),
-                function (EloquentBuilder $query) use ($search, $searchColumn, $whereClause): EloquentBuilder {
-                    /** @var Connection $databaseConnection */
-                    $databaseConnection = $query->getConnection();
-
-                    $isSearchForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($query);
-
-                    $caseAwareSearchColumn = $isSearchForcedCaseInsensitive ?
-                        new Expression("lower({$searchColumn})") :
-                        $searchColumn;
-
-                    if ($isSearchForcedCaseInsensitive) {
-                        $search = Str::lower($search);
-                    }
-
-                    return $query->when(
-                        $this->queriesRelationships($query->getModel()),
-                        fn (EloquentBuilder $query): EloquentBuilder => $query->{"{$whereClause}Relation"}(
-                            $this->getRelationshipName(),
-                            $caseAwareSearchColumn,
-                            'like',
-                            "%{$search}%",
-                        ),
-                        fn (EloquentBuilder $query): EloquentBuilder => $query->{$whereClause}(
-                            $caseAwareSearchColumn,
-                            'like',
-                            "%{$search}%",
-                        ),
-                    );
-                },
+                fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause, $isSearchForcedCaseInsensitive),
+                fn (EloquentBuilder $query) => $query->when(
+                    $this->queriesRelationships($query->getModel()),
+                    fn (EloquentBuilder $query): EloquentBuilder => $query->{"{$whereClause}Relation"}(
+                        $this->getRelationshipName(),
+                        generate_search_column_expression($searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection),
+                        'like',
+                        "%{$search}%",
+                    ),
+                    fn (EloquentBuilder $query): EloquentBuilder => $query->{$whereClause}(
+                        generate_search_column_expression($searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection),
+                        'like',
+                        "%{$search}%",
+                    ),
+                ),
             );
 
             $isFirst = false;

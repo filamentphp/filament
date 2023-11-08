@@ -347,11 +347,14 @@ By default, you will not be allowed to attach a record more than once. This is b
 
 Please ensure that the `id` attribute is listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-Finally, add the `$allowsDuplicates` property to the relation manager:
+Finally, add the `allowDuplicates()` method to the table:
 
 ```php
-protected bool $allowsDuplicates = true;
-```
+public function table(Table $table): Table
+{
+    return $table
+        ->allowDuplicates();
+}
 
 ## Associating and dissociating records
 
@@ -775,3 +778,13 @@ class CommentsRelationManager extends RelationManager
 ```
 
 Now, you can access the `status` in the relation manager class using `$this->status`.
+
+## Disabling lazy loading
+
+By default, relation managers are lazy-loaded. This means that they will only be loaded when they are visible on the page.
+
+To disable this behavior, you may override the `$isLazy` property on the relation manager class:
+
+```php
+protected static bool $isLazy = false;
+```

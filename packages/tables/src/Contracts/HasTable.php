@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -93,10 +94,10 @@ interface HasTable
 
     public function resetTableColumnSearch(string $column): void;
 
-    public function getTableSearchIndicator(): string;
+    public function getTableSearchIndicator(): Indicator;
 
     /**
-     * @return array<string, string>
+     * @return array<Indicator>
      */
     public function getTableColumnSearchIndicators(): array;
 

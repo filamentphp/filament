@@ -13,12 +13,13 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Builder extends Field implements Contracts\CanConcealComponents
+class Builder extends Field implements Contracts\CanConcealComponents, Contracts\HasExtraItemActions
 {
     use Concerns\CanBeCloned;
     use Concerns\CanBeCollapsed;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
+    use Concerns\HasExtraItemActions;
 
     /**
      * @var view-string
@@ -137,7 +138,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
                 $component->state($items);
 
-                $component->getChildComponentContainers()[$newUuid]->fill();
+                $component->getChildComponentContainer($newUuid)->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -192,7 +193,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
                 $component->state($items);
 
-                $component->getChildComponentContainers()[$newUuid]->fill();
+                $component->getChildComponentContainer($newUuid)->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -729,6 +730,10 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     public function getChildComponentContainers(bool $withHidden = false): array
     {
+        if ((! $withHidden) && $this->isHidden()) {
+            return [];
+        }
+
         return collect($this->getState())
             ->filter(fn (array $itemData): bool => $this->hasBlock($itemData['type']))
             ->map(
@@ -875,5 +880,21 @@ class Builder extends Field implements Contracts\CanConcealComponents
     public function getBlockPickerWidth(): ?string
     {
         return $this->evaluate($this->blockPickerWidth);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getItemState(string $uuid): array
+    {
+        return $this->getChildComponentContainer($uuid)->getState(shouldCallHooksBefore: false);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getRawItemState(string $uuid): array
+    {
+        return $this->getChildComponentContainer($uuid)->getRawState();
     }
 }

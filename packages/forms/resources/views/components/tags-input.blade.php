@@ -2,8 +2,6 @@
     @php
         $id = $getId();
         $isDisabled = $isDisabled();
-        $placeholder = $getPlaceholder();
-        $splitKeys = $getSplitKeys();
         $statePath = $getStatePath();
     @endphp
 
@@ -12,7 +10,7 @@
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tags-input', 'filament/forms') }}"
         x-data="tagsInputFormComponent({
                     state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
-                    splitKeys: @js($splitKeys),
+                    splitKeys: @js($getSplitKeys()),
                 })"
         x-ignore
         {{
@@ -36,7 +34,7 @@
             :disabled="$isDisabled"
             :id="$id"
             :list="$id . '-suggestions'"
-            :placeholder="$placeholder"
+            :placeholder="$getPlaceholder()"
             type="text"
             x-bind="input"
             :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())"
