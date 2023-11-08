@@ -8,9 +8,11 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,12 +30,17 @@ class ViewRecord extends Page
      */
     protected static string $view = 'filament-panels::resources.pages.view-record';
 
-    protected static ?string $navigationIcon = 'heroicon-o-eye';
-
     /**
      * @var array<string, mixed> | null
      */
     public ?array $data = [];
+
+    public static function getNavigationIcon(): ?string
+    {
+        return static::$navigationIcon
+            ?? FilamentIcon::resolve('panels::resources.pages.view-record.navigation-item')
+            ?? (Filament::hasTopNavigation() ? 'heroicon-m-eye' : 'heroicon-o-eye');
+    }
 
     public function getBreadcrumb(): string
     {

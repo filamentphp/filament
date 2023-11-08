@@ -10,6 +10,7 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -237,7 +238,7 @@ class Notification extends ViewComponent implements Arrayable
 
     public function danger(): static
     {
-        $this->icon('heroicon-o-x-circle');
+        $this->icon(FilamentIcon::resolve('notifications::notification.danger') ?? 'heroicon-o-x-circle');
         $this->iconColor('danger');
 
         return $this;
@@ -245,7 +246,7 @@ class Notification extends ViewComponent implements Arrayable
 
     public function info(): static
     {
-        $this->icon('heroicon-o-information-circle');
+        $this->icon(FilamentIcon::resolve('notifications::notification.info') ?? 'heroicon-o-information-circle');
         $this->iconColor('info');
 
         return $this;
@@ -253,7 +254,7 @@ class Notification extends ViewComponent implements Arrayable
 
     public function success(): static
     {
-        $this->icon('heroicon-o-check-circle');
+        $this->icon(FilamentIcon::resolve('notifications::notification.success') ?? 'heroicon-o-check-circle');
         $this->iconColor('success');
 
         return $this;
@@ -261,7 +262,7 @@ class Notification extends ViewComponent implements Arrayable
 
     public function warning(): static
     {
-        $this->icon('heroicon-o-exclamation-circle');
+        $this->icon(FilamentIcon::resolve('notifications::notification.warning') ?? 'heroicon-o-exclamation-circle');
         $this->iconColor('warning');
 
         return $this;
