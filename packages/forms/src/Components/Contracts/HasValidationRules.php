@@ -10,7 +10,7 @@ interface HasValidationRules
     public function dehydrateValidationAttributes(array &$attributes): void;
 
     /**
-     * @param  array<string, array<string, string>>  $rules
+     * @param  array<string, array<string, string>>  $messages
      */
     public function dehydrateValidationMessages(array &$messages): void;
 
