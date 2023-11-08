@@ -27,7 +27,7 @@ trait CanBeValidated
      * @var array<string, string | Closure>
      */
     protected array $validationMessages = [];
-    
+
     protected string | Closure | null $validationAttribute = null;
 
     public function activeUrl(bool | Closure $condition = true): static
@@ -543,7 +543,6 @@ trait CanBeValidated
         return $this;
     }
 
-    
     /**
      * @param  array<string, string | Closure>  $messages
      */
@@ -575,14 +574,14 @@ trait CanBeValidated
     public function getValidationMessages(): array
     {
         $messages = [];
-        
+
         foreach ($this->validationMessages as $rule => $message) {
             $messages[] = $this->evaluate($message);
         }
 
         return array_filter($messages);
     }
-    
+
     /**
      * @return array<mixed>
      */
@@ -618,7 +617,7 @@ trait CanBeValidated
             $rules[$statePath] = $componentMessages;
         }
     }
-    
+
     /**
      * @param  array<string, array<mixed>>  $rules
      */
