@@ -34,7 +34,7 @@ trait CanBeValidated
     }
 
     /**
-     * @return array<string, array<string, string>>
+     * @return array<string, string>>
      */
     public function getValidationMessages(): array
     {
