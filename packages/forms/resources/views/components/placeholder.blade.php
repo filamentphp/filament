@@ -15,7 +15,10 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-placeholder sm:text-sm'])
+                ->class([
+                    'fi-fo-placeholder sm:text-sm',
+                    'py-1.5' => $hasInlineLabel() && !$getContent() instanceof \Illuminate\Contracts\Support\Htmlable
+                ])
         }}
     >
         {{ $getContent() }}
