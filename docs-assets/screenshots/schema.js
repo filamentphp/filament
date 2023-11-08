@@ -1094,6 +1094,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/layout/section/actions': {
+        url: 'forms/layout',
+        selector: '#sectionHeaderActions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/layout/section/icons': {
         url: 'forms/layout',
         selector: '#sectionIcons',
