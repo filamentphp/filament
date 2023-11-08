@@ -279,6 +279,20 @@ TextColumn::make('email')
 
 <AutoScreenshot name="tables/columns/text/icon-after" alt="Text column with icon after" version="3.x" />
 
+You may set the color of an icon using `iconColor()`:
+
+```php
+use Filament\Support\Enums\IconPosition;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('email')
+    ->icon('heroicon-m-envelope')
+     ->iconPosition(IconPosition::After) // `IconPosition::Before` or `IconPosition::After`
+    ->iconColor('success')
+```
+
+<AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon color" version="3.x" />
+
 ## Customizing the text size
 
 You may make the text larger using `size(TextColumnSize::Large)`:
