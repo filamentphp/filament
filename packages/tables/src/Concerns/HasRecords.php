@@ -165,7 +165,7 @@ trait HasRecords
      */
     public function allowsDuplicates(): bool
     {
-        return $this->allowsDuplicates;
+        return null;
     }
 
     /**
