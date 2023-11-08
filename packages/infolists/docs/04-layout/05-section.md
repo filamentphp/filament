@@ -52,6 +52,8 @@ Section::make('Address')
     ])
 ```
 
+<AutoScreenshot name="infolists/layout/section/actions" alt="Section with header actions" version="3.x" />
+
 ## Adding an icon to the section's header
 
 You may add an icon to the section's header using the `icon()` method:
