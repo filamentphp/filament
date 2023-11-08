@@ -33,7 +33,6 @@ trait CanBeValidated
         return $attributes;
     }
 
-    
     /**
      * @return array<string, array<string, string>>
      */
@@ -60,7 +59,7 @@ trait CanBeValidated
 
         return $messages;
     }
-    
+
     /**
      * @return array<string, array<mixed>>
      */
