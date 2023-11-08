@@ -283,7 +283,7 @@ TextColumn::make('email')
 
 Text columns have small font size by default, but you may change this to any of the following options: `TextColumnSize::ExtraSmall`, `TextColumnSize::Small`, `TextColumnSize::Medium`, or `TextColumnSize::Large`.
 
-For instance, you may make the text larger using `size(TextColumn\TextColumnSize::Large)`:
+For instance, you may make the text larger using `size(TextColumnSize::Large)`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
