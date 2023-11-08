@@ -3,7 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
-use Filament\Support\Contracts\HasColor as ColorInterface;
+use Filament\Support\Contracts\HasIconColor as ColorInterface;
 use Filament\Tables\Columns\Column;
 
 trait HasIconColor
