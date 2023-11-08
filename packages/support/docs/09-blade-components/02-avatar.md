@@ -8,7 +8,7 @@ The avatar component is used to render a circular or square image, often used to
 
 ```blade
 <x-filament::avatar
-    src="https://filamentphp.com/dan.jpg"
+    src="https://avatars.githubusercontent.com/u/41773797"
     alt="Dan Harrin"
 />
 ```
@@ -19,7 +19,7 @@ Avatars are fully rounded by default, but you may make them square by setting th
 
 ```blade
 <x-filament::avatar
-    src="https://filamentphp.com/dan.jpg"
+    src="https://avatars.githubusercontent.com/u/41773797"
     alt="Dan Harrin"
     :circular="false"
 />
@@ -31,7 +31,7 @@ By default, the avatar will be "medium" size. You can make it "large" using the 
 
 ```blade
 <x-filament::avatar
-    src="https://filamentphp.com/dan.jpg"
+    src="https://avatars.githubusercontent.com/u/41773797"
     alt="Dan Harrin"
     size="lg"
 />
@@ -41,7 +41,7 @@ You can also pass your own custom size classes into the `size` attribute:
 
 ```blade
 <x-filament::avatar
-    src="https://filamentphp.com/dan.jpg"
+    src="https://avatars.githubusercontent.com/u/41773797"
     alt="Dan Harrin"
     size="w-12 h-12"
 />
