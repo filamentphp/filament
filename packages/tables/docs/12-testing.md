@@ -176,15 +176,17 @@ it('has an author column', function () {
 ```
 
 You can pass an additional `Closure` with a record's model or key to check the configuration of a column:
+
 ```php
 use function Pest\Livewire\livewire;
 use Filament\Tables\Columns\TextColumn;
 use App\Models\Post;
 
 it('has an author column', function () {
-    $post = \App\Models\Post::factory()->create();
+    $post = Post::factory()->create();
+    
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableColumnExists(`author`, function(TextColumn $column) {
+        ->assertTableColumnExists('author', function (TextColumn $column) {
             return $column->isSortable();
         }, $post);
 });

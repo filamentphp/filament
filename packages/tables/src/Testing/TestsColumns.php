@@ -82,7 +82,7 @@ class TestsColumns
             if ($checkColumnUsing && $column->getRecord()) {
                 Assert::assertTrue(
                     $checkColumnUsing($column),
-                    "Failed asserting that a field with the name [{$name}] and provided configuration exists on the [{$livewireClass}] component."
+                    "Failed asserting that a column with the name [{$name}] and provided configuration exists on the [{$livewireClass}] component."
                 );
             }
 
