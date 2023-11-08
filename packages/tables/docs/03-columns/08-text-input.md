@@ -42,10 +42,10 @@ Hooks may be used to execute code at various points within the input's lifecycle
 
 ```php
 TextInputColumn::make()
-    ->before(function () {
+    ->beforeStateUpdated(function ($record, $state) {
         // Runs before the state is saved to the database.
     })
-    ->after(function () {
+    ->afterStateUpdated(function ($record, $state) {
         // Runs after the state is saved to the database.
     })
 ```

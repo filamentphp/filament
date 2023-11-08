@@ -9,13 +9,29 @@ use Illuminate\Support\Arr;
 
 trait CanUpdateState
 {
-    use HasLifecycleHooks;
-
     protected ?Closure $updateStateUsing = null;
+
+    protected ?Closure $beforeStateUpdated = null;
+
+    protected ?Closure $afterStateUpdated = null;
 
     public function updateStateUsing(?Closure $callback): static
     {
         $this->updateStateUsing = $callback;
+
+        return $this;
+    }
+
+    public function beforeStateUpdated(Closure $callback): static
+    {
+        $this->beforeStateUpdated = $callback;
+
+        return $this;
+    }
+
+    public function afterStateUpdated(Closure $callback): static
+    {
+        $this->afterStateUpdated = $callback;
 
         return $this;
     }
@@ -26,13 +42,18 @@ trait CanUpdateState
             $state = null;
         }
 
+        $this->callBeforeStateUpdated($state);
+
         if ($this->updateStateUsing !== null) {
-            return $this->evaluate($this->updateStateUsing, [
+            $result = $this->evaluate($this->updateStateUsing, [
                 'state' => $state,
             ]);
+
+            $this->callAfterStateUpdated($state);
+
+            return $result;
         }
 
-        $this->callBefore();
 
         $record = $this->getRecord();
 
@@ -62,8 +83,18 @@ trait CanUpdateState
         $record->setAttribute($columnName, $state);
         $record->save();
 
-        $this->callAfter();
+        $this->callAfterStateUpdated($state);
 
         return $state;
+    }
+
+    public function callBeforeStateUpdated(mixed $state): mixed
+    {
+        return $this->evaluate($this->beforeStateUpdated, ['state' => $state]);
+    }
+
+    public function callAfterStateUpdated(mixed $state): mixed
+    {
+        return $this->evaluate($this->afterStateUpdated, ['state' => $state]);
     }
 }
