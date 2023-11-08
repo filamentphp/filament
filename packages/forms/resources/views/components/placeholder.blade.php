@@ -11,16 +11,20 @@
     :hint-icon="$getHintIcon()"
     :state-path="$getStatePath()"
 >
+    @php
+        $content = $getContent();
+    @endphp
+    
     <div
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
                     'fi-fo-placeholder sm:text-sm',
-                    'py-1.5' => $hasInlineLabel() && !$getContent() instanceof \Illuminate\Contracts\Support\Htmlable
+                    'py-1.5' => $hasInlineLabel() && (! $content instanceof \Illuminate\Contracts\Support\Htmlable),
                 ])
         }}
     >
-        {{ $getContent() }}
+        {{ $content }}
     </div>
 </x-dynamic-component>
