@@ -3,13 +3,13 @@
 @endphp
 
 <x-filament::section
-    :actions="$getActions()"
     :aside="$isAside"
     :collapsed="$isCollapsed()"
     :collapsible="$isCollapsible() && (! $isAside)"
     :compact="$isCompact()"
     :content-before="$isFormBefore()"
     :description="$getDescription()"
+    :header-actions="$getHeaderActions()"
     :heading="$getHeading()"
     :icon="$getIcon()"
     :icon-color="$getIconColor()"
