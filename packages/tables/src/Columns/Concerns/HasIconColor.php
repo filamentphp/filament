@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
-use Filament\Support\Contracts\HasIconColor as ColorInterface;
 use Filament\Tables\Columns\Column;
 
 trait HasIconColor
@@ -66,10 +65,6 @@ trait HasIconColor
             return $color;
         }
 
-        if (! $state instanceof ColorInterface) {
-            return null;
-        }
-
-        return $state->getIconColor();
+        return null;
     }
 }
