@@ -281,7 +281,7 @@ TextColumn::make('email')
 
 ## Customizing the text size
 
-Text columns have small font size by default, but you may change this to any of the following options: `TextColumnSize::ExtraSmall`, `TextColumnSize::Small`, `TextColumnSize::Medium`, or `TextColumnSize::Large`.
+Text columns have small font size by default, but you may change this to `TextColumnSize::ExtraSmall`, `TextColumnSize::Medium`, or `TextColumnSize::Large`.
 
 For instance, you may make the text larger using `size(TextColumnSize::Large)`:
 
