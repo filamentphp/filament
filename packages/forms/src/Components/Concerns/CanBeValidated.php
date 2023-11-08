@@ -576,7 +576,7 @@ trait CanBeValidated
         $messages = [];
 
         foreach ($this->validationMessages as $rule => $message) {
-            $messages[] = $this->evaluate($message);
+            $messages[$rule] = $this->evaluate($message);
         }
 
         return array_filter($messages);
@@ -614,7 +614,9 @@ trait CanBeValidated
         $statePath = $this->getStatePath();
 
         if (count($componentMessages = $this->getValidationMessages())) {
-            $rules[$statePath] = $componentMessages;
+            foreach ($componentMessages as $rule => $message) {
+                $rules["{$statePath}.{$rule}"] = $message;
+            }
         }
     }
 
