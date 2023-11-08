@@ -91,8 +91,7 @@
                 <x-filament::dropdown.list.item
                     :color="$profileItem?->getColor()"
                     :href="$profileItemUrl ?? filament()->getTenantProfileUrl()"
-                    :icon="$profileItem?->getIcon() ?? 'heroicon-m-cog-6-tooth'"
-                    icon-alias="panels::tenant-menu.profile-button"
+                    :icon="$profileItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::tenant-menu.profile-button') ?? 'heroicon-m-cog-6-tooth'"
                     tag="a"
                     :target="($profileItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
                 >
@@ -104,8 +103,7 @@
                 <x-filament::dropdown.list.item
                     :color="$billingItem?->getColor() ?? 'gray'"
                     :href="$billingItemUrl ?? filament()->getTenantBillingUrl()"
-                    :icon="$billingItem?->getIcon() ?? 'heroicon-m-credit-card'"
-                    icon-alias="panels::tenant-menu.billing-button"
+                    :icon="$billingItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::tenant-menu.billing-button') ?? 'heroicon-m-credit-card'"
                     tag="a"
                     :target="($billingItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
                 >
@@ -150,8 +148,7 @@
             <x-filament::dropdown.list.item
                 :color="$registrationItem?->getColor()"
                 :href="$registrationItemUrl ?? filament()->getTenantRegistrationUrl()"
-                :icon="$registrationItem?->getIcon() ?? 'heroicon-m-plus'"
-                icon-alias="panels::tenant-menu.registration-button"
+                :icon="$registrationItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::tenant-menu.registration-button') ?? 'heroicon-m-plus'"
                 tag="a"
                 :target="($registrationItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
             >
