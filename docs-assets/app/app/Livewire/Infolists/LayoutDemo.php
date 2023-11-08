@@ -187,7 +187,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                         Section::make('Address')
                             ->headerActions([
                                 Action::make('edit')
-                                    ->action(function(){
+                                    ->action(function () {
                                         // ...
                                     }),
                             ])
