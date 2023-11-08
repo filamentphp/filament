@@ -52,6 +52,8 @@ Section::make('Address')
     ])
 ```
 
+<AutoScreenshot name="forms/layout/section/actions" alt="Section with header actions" version="3.x" />
+
 ## Adding an icon to the section's header
 
 You may add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to the section's header using the `icon()` method:
