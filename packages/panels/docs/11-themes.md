@@ -66,8 +66,8 @@ $panel
 
 ### Evaluating colors during runtime using Closures
 
-Sometimes you may want to use colors stored in your database or other configuration as theme colors. In this case, the colors have to be evaluated during runtime.
-You can achieve this by passing an array of closures to the `colors()` method as follows:
+Sometimes you may want to use colors stored in your database or runtime configuration as your app's theme colors. A good use case for this is in a multi-tenant application where tenants should have the liberty to set their own theme colors. In this case, the colors have to be evaluated during runtime.
+You can achieve this by passing a closure that returns an array of colors to the `$panel->colors()` method as follows:
 
 ```php
 use Filament\Panel;
@@ -77,9 +77,9 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->colors([
-            'primary' => fn() => Filament::getTenant()?->danger_color ?: Color::Indigo, // Evaluate the color during runtime
-            'info' => fn() => settings()->info_color ?: Color::Amber,
+        ->colors(fn() => [
+            'primary' => Filament::getTenant()?->danger_color ?: Color::Indigo, // Evaluate the color during runtime
+            'info' => settings()->info_color ?: Color::Amber,
         ]);
 }
 ```

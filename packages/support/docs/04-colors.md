@@ -95,16 +95,15 @@ Now, you can use this color anywhere you would normally add `primary`, `danger`,
 
 ## Evaluating colors during runtime using Closures
 
-Sometimes you may want to use colors stored in your database or runtime configutation as your app's theme colors. A good use case for this is in a multi-tenant application where tenants should have the liberty to set their own theme colors. In this case, the colors have to be evaluated during runtime.
-You can achieve this by passing an array of closures to the `FilamentColor::register()` method as follows:
+Sometimes you may want to use colors stored in your database or runtime configuration as your app's theme colors. A good use case for this is in a multi-tenant application where tenants should have the liberty to set their own theme colors. In this case, the colors have to be evaluated during runtime.
+You can achieve this by passing a closure that returns an array of colors to the `FilamentColor::register()` method as follows:
 
 ```php
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 
-FilamentColor::register([
-    'primary' => fn() => tenant()?->primary_color ?: Color::Indigo,
-    'info' => fn() => Filament::getTenant()?->info_color ?: Color::Amber,
+FilamentColor::register(fn() => [
+    'primary' => tenant()?->primary_color ?: Color::Indigo,
+    'info' => Filament::getTenant()?->info_color ?: Color::Amber,
 ]);
 ```
-Each of the closures have to evaluate to a valid color (string or array) according to the options discussed above.
