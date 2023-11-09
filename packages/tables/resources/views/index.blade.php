@@ -407,6 +407,7 @@
                         :two-xl="$contentGrid['2xl'] ?? null"
                         x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                         x-sortable
+                        :data-sortable-animation-duration="$getReorderAnimationDuration()"
                         @class([
                             'fi-ta-content-grid gap-4 p-4 sm:px-6' => $contentGrid,
                             'pt-0' => $contentGrid && $this->getTableGrouping(),

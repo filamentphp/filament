@@ -40,6 +40,8 @@ class KeyValue extends Field
 
     protected bool | Closure $isReorderable = false;
 
+    protected int | Closure $reorderAnimationDuration = 300;
+
     protected ?Closure $modifyAddActionUsing = null;
 
     protected ?Closure $modifyDeleteActionUsing = null;
@@ -312,6 +314,18 @@ class KeyValue extends Field
         $this->isReorderable = $condition;
 
         return $this;
+    }
+
+    public function reorderAnimationDuration(int | Closure $animation = 300): static
+    {
+        $this->reorderAnimationDuration = $animation;
+
+        return $this;
+    }
+
+    public function getReorderAnimationDuration()
+    {
+        return (string) $this->evaluate($this->reorderAnimationDuration);
     }
 
     public function isAddable(): bool

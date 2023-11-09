@@ -9,6 +9,8 @@ trait CanReorderRecords
 {
     protected bool | Closure $isReorderable = true;
 
+    protected int | Closure $reorderAnimationDuration = 300;
+
     protected string | Closure | null $reorderColumn = null;
 
     protected ?Closure $modifyReorderRecordsTriggerActionUsing = null;
@@ -29,6 +31,18 @@ trait CanReorderRecords
         }
 
         return $this;
+    }
+
+    public function reorderAnimationDuration(int | Closure $animation = 300): static
+    {
+        $this->reorderAnimationDuration = $animation;
+
+        return $this;
+    }
+
+    public function getReorderAnimationDuration()
+    {
+        return (string) $this->evaluate($this->reorderAnimationDuration);
     }
 
     public function getReorderRecordsTriggerAction(bool $isReordering): Action

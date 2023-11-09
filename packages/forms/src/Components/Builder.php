@@ -30,6 +30,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     protected bool | Closure $isReorderable = true;
 
+    protected int | Closure $reorderAnimationDuration = 300;
+
     protected bool | Closure $isReorderableWithDragAndDrop = true;
 
     protected bool | Closure $isReorderableWithButtons = false;
@@ -587,6 +589,18 @@ class Builder extends Field implements Contracts\CanConcealComponents
         $this->isReorderable = $condition;
 
         return $this;
+    }
+
+    public function reorderAnimationDuration(int | Closure $animation = 300): static
+    {
+        $this->reorderAnimationDuration = $animation;
+
+        return $this;
+    }
+
+    public function getReorderAnimationDuration()
+    {
+        return (string) $this->evaluate($this->reorderAnimationDuration);
     }
 
     /**

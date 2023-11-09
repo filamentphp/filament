@@ -59,7 +59,7 @@
                     :two-xl="$getGridColumns('2xl')"
                     :wire:end.stop="'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })'"
                     x-sortable
-                    :data-sortable-animation="$getSortableAnimation()"
+                    :data-sortable-animation-duration="$getReorderAnimationDuration()"
                     class="gap-4"
                 >
                     @foreach ($containers as $uuid => $item)

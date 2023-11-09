@@ -52,6 +52,7 @@
         @if (count($containers))
             <ul
                 x-sortable
+                :data-sortable-animation-duration="$getReorderAnimationDuration()"
                 wire:end.stop="{{ 'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })' }}"
                 class="space-y-4"
             >
