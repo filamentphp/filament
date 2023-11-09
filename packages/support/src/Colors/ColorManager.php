@@ -2,12 +2,13 @@
 
 namespace Filament\Support\Colors;
 
+use Closure;
 use Spatie\Color\Hex;
 
 class ColorManager
 {
     /**
-     * @var array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}>
+     * @var array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | Closure<array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string>>
      */
     protected array $colors = [];
 
@@ -27,7 +28,7 @@ class ColorManager
     protected array $removedShades = [];
 
     /**
-     * @param  array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string>  $colors
+     * @param  array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | Closure<array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string>>  $colors
      */
     public function register(array $colors): static
     {
@@ -39,11 +40,14 @@ class ColorManager
     }
 
     /**
-     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string  $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | Closure  $color
      * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string
      */
-    public function processColor(array | string $color): array | string
+    public function processColor(array | string | Closure $color): array | string
     {
+        if ($color instanceof Closure) {
+            $color = $this->evaluate($color);
+        }
         if (is_string($color) && str_starts_with($color, '#')) {
             return Color::hex($color);
         }
