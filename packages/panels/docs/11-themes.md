@@ -137,16 +137,6 @@ The command will create a CSS file and Tailwind Configuration file in the `/reso
 
 Please reference the command to see the exact file names that you need to register, they may not be `admin/theme.css`.
 
-## Non-sticky topbar
-
-By default, the topbar sticks to the top of the page. You may make the topbar scroll out of view with the following CSS:
-
-```css
-.fi-topbar {
-    position: relative;
-}
-```
-
 ## Disabling dark mode
 
 To disable dark mode switching, you can use the [configuration](configuration) file:
