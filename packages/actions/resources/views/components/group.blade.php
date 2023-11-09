@@ -102,6 +102,7 @@
                 :component="$dynamicComponent"
                 :icon="$group->getIcon()"
                 :icon-size="$group->getIconSize()"
+                :icon-position="$group->getIconPosition()"
                 :label-sr-only="$group->isLabelHidden()"
                 :tooltip="$group->getTooltip()"
                 :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($group->getExtraAttributes(), escape: false)"
