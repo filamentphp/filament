@@ -163,9 +163,9 @@ trait HasRecords
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    public function allowsDuplicates(): bool
+    public function allowsDuplicates(): ?bool
     {
-        return $this->allowsDuplicates;
+        return null;
     }
 
     /**
