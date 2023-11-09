@@ -175,18 +175,17 @@ it('has an author column', function () {
 });
 ```
 
-You can pass an additional `Closure` with a record's model or key to check the configuration of a column:
+You can pass an additional function, alongside a record's model instance or key, to check the configuration of a column. The function will pass in the column instance, and you should return a boolean based on if the check passed:
 
 ```php
 use function Pest\Livewire\livewire;
 use Filament\Tables\Columns\TextColumn;
-use App\Models\Post;
 
 it('has an author column', function () {
     $post = Post::factory()->create();
     
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableColumnExists('author', function (TextColumn $column) {
+        ->assertTableColumnExists('author', function (TextColumn $column): bool {
             return $column->isSortable();
         }, $post);
 });
@@ -609,6 +608,7 @@ To ensure an action or bulk action has the correct URL traits, you can use `asse
 
 ```php
 use function Pest\Livewire\livewire;
+
 it('links to the correct Filament sites', function () {
     $post = Post::factory()->create();
 
