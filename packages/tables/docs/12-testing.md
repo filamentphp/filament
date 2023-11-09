@@ -175,7 +175,7 @@ it('has an author column', function () {
 });
 ```
 
-You can pass an additional function, alongside a record's model instance or key, to check the configuration of a column. The function will pass in the column instance, and you should return a boolean based on if the check passed:
+You may pass a function as an additional argument in order to assert that a column passes a given "truth test". This is useful for asserting that a column has a specific configuration. You can also pass in a record as the third parameter, which is useful if your check is dependant on which table row is being rendered:
 
 ```php
 use function Pest\Livewire\livewire;
