@@ -22,14 +22,14 @@ trait CanUpdateState
         return $this;
     }
 
-    public function beforeStateUpdated(Closure $callback): static
+    public function beforeStateUpdated(?Closure $callback): static
     {
         $this->beforeStateUpdated = $callback;
 
         return $this;
     }
 
-    public function afterStateUpdated(Closure $callback): static
+    public function afterStateUpdated(?Closure $callback): static
     {
         $this->afterStateUpdated = $callback;
 
@@ -45,15 +45,14 @@ trait CanUpdateState
         $this->callBeforeStateUpdated($state);
 
         if ($this->updateStateUsing !== null) {
-            $result = $this->evaluate($this->updateStateUsing, [
-                'state' => $state,
-            ]);
-
-            $this->callAfterStateUpdated($state);
-
-            return $result;
+            try {
+                return $this->evaluate($this->updateStateUsing, [
+                    'state' => $state,
+                ]);
+            } finally {
+                $this->callAfterStateUpdated($state);
+            }
         }
-
 
         $record = $this->getRecord();
 
