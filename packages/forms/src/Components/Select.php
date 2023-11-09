@@ -8,6 +8,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
@@ -304,7 +305,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 $action->halt();
             })
             ->color('gray')
-            ->icon('heroicon-m-plus')
+            ->icon(FilamentIcon::resolve('forms::components.select.actions.create-option') ?? 'heroicon-m-plus')
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
@@ -445,7 +446,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 $livewire->dispatch('filament-forms::select.refreshSelectedOptionLabel', livewireId: $livewire->getId(), statePath: $statePath);
             })
             ->color('gray')
-            ->icon('heroicon-m-pencil-square')
+            ->icon(FilamentIcon::resolve('forms::components.select.actions.edit-option') ?? 'heroicon-m-pencil-square')
             ->iconButton()
             ->modalHeading($this->getEditOptionModalHeading() ?? __('filament-forms::components.select.actions.edit_option.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'));
