@@ -10,9 +10,9 @@ class ColorManager
 {
     use EvaluatesClosures;
     /**
-     * @var array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | Closure>
+     * @var array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure
      */
-    protected array $colors = [];
+    protected array|Closure $colors = [];
 
     /**
      * @var array<string,array<int>>
@@ -30,10 +30,13 @@ class ColorManager
     protected array $removedShades = [];
 
     /**
-     * @param  array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | Closure>  $colors
+     * @param  array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure  $colors
      */
-    public function register(array $colors): static
+    public function register(array|Closure $colors): static
     {
+        if ($colors instanceof  Closure) {
+            $colors = $this->evaluate($colors);
+        }
         foreach ($colors as $name => $color) {
             $this->colors[$name] = $this->processColor($color);
         }
@@ -42,14 +45,11 @@ class ColorManager
     }
 
     /**
-     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | Closure  $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string  $color
      * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string
      */
-    public function processColor(array | string | Closure $color): array | string
+    public function processColor(array | string $color): array | string
     {
-        if ($color instanceof Closure) {
-            $color = $this->evaluate($color);
-        }
         if (is_string($color) && str_starts_with($color, '#')) {
             return Color::hex($color);
         }
