@@ -186,7 +186,7 @@ it('has an author column', function () {
     
     livewire(PostResource\Pages\ListPosts::class)
         ->assertTableColumnExists('author', function (TextColumn $column): bool {
-            return $column->isSortable();
+            return $column->getDescriptionBelow() === $post->subtitle;
         }, $post);
 });
 ```
