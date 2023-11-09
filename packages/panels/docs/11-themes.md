@@ -64,6 +64,26 @@ $panel
     ])
 ```
 
+### Evaluating colors during runtime using Closures
+
+Sometimes you may want to use colors stored in your database or other configuration as theme colors. In this case, the colors have to be evaluated during runtime.
+You can achieve this by passing an array of closures to the `colors()` method as follows:
+
+```php
+use Filament\Panel;
+use Filament\Support\Colors\Color;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->colors([
+            'primary' => fn() => Filament::getTenant()?->danger_color ?: Color::Indigo, // Evaluate the color during runtime
+            'info' => fn() => settings()->info_color ?: Color::Amber,
+        ]);
+}
+```
+
 ## Changing the font
 
 By default, we use the [Inter](https://fonts.google.com/specimen/Inter) font. You can change this using the `font()` method in the [configuration](configuration) file:
