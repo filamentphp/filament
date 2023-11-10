@@ -82,6 +82,6 @@ class Action extends MountableAction
 
     public function getInfolistName(): string
     {
-        return 'mountedInfolistActionInfoList';
+        return 'mountedInfolistActionsInfolist';
     }
 }
