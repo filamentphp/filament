@@ -1,7 +1,6 @@
 ---
 title: Query builder
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
