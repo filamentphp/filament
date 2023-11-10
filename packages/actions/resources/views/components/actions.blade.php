@@ -1,12 +1,12 @@
-@props([
-    'actions',
-    'alignment' => 'start',
-    'fullWidth' => false,
-])
-
 @php
     use Filament\Support\Enums\Alignment;
 @endphp
+
+@props([
+    'actions',
+    'alignment' => Alignment::Start,
+    'fullWidth' => false,
+])
 
 @if ($actions instanceof \Illuminate\Contracts\View\View)
     {{ $actions }}
@@ -16,6 +16,10 @@
             $actions,
             fn ($action): bool => $action->isVisible(),
         );
+
+        if (! $alignment instanceof Alignment) {
+            $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+        }
     @endphp
 
     @if (count($actions))
@@ -25,10 +29,11 @@
                     'fi-ac gap-3',
                     'flex flex-wrap items-center' => ! $fullWidth,
                     match ($alignment) {
-                        Alignment::Center, 'center' => 'justify-center',
-                        Alignment::End, Alignment::Right, 'end', 'right' => 'flex-row-reverse',
-                        Alignment::Between, 'between' => 'justify-between',
-                        default => 'justify-start',
+                        Alignment::Start, Alignment::Left => 'justify-start',
+                        Alignment::Center => 'justify-center',
+                        Alignment::End, Alignment::Right => 'flex-row-reverse',
+                        Alignment::Between => 'justify-between',
+                        default => $alignment,
                     } => ! $fullWidth,
                     'grid grid-cols-[repeat(auto-fit,minmax(0,1fr))]' => $fullWidth,
                 ])

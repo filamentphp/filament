@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 
@@ -51,5 +52,13 @@ trait HasFormSchema
     public function getFormField(): ?Field
     {
         return null;
+    }
+
+    public function getForm(): ComponentContainer
+    {
+        return $this->getLivewire()
+            ->getTableFiltersForm()
+            ->getComponents()[$this->getName()]
+            ->getChildComponentContainer();
     }
 }

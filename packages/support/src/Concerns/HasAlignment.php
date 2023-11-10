@@ -18,32 +18,32 @@ trait HasAlignment
 
     public function alignStart(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::Start : null);
+        return $this->alignment(fn (): ?Alignment => $this->evaluate($condition) ? Alignment::Start : null);
     }
 
     public function alignCenter(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::Center : null);
+        return $this->alignment(fn (): ?Alignment => $this->evaluate($condition) ? Alignment::Center : null);
     }
 
     public function alignEnd(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::End : null);
+        return $this->alignment(fn (): ?Alignment => $this->evaluate($condition) ? Alignment::End : null);
     }
 
     public function alignJustify(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::Justify : null);
+        return $this->alignment(fn (): ?Alignment => $this->evaluate($condition) ? Alignment::Justify : null);
     }
 
     public function alignLeft(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::Left : null);
+        return $this->alignment(fn (): ?Alignment => $this->evaluate($condition) ? Alignment::Left : null);
     }
 
     public function alignRight(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?Alignment => $condition ? Alignment::Right : null);
+        return $this->alignment(fn (): ?Alignment => $this->evaluate($condition) ? Alignment::Right : null);
     }
 
     public function getAlignment(): Alignment | string | null

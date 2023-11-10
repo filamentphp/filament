@@ -38,11 +38,12 @@
     @if ($collapsible)
         <x-filament::icon-button
             color="gray"
-            icon-alias="tables::grouping.collapse-button"
             icon="heroicon-m-chevron-up"
+            icon-alias="tables::grouping.collapse-button"
+            :label="filled($label) ? ($label . ': ' . $title) : $title"
             size="sm"
-            :x-bind:class="'isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ') && \'rotate-180\''"
-            class="-m-1.5"
+            :x-bind:aria-expanded="'! isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ')'"
+            :x-bind:class="'isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ') && \'-rotate-180\''"
         />
     @endif
 </div>

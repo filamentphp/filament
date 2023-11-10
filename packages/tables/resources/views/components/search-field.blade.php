@@ -1,4 +1,5 @@
 @props([
+    'placeholder' => __('filament-tables::table.fields.search.placeholder'),
     'wireModel' => 'tableSearch',
 ])
 
@@ -19,7 +20,7 @@
         <x-filament::input
             autocomplete="off"
             inline-prefix
-            :placeholder="__('filament-tables::table.fields.search.placeholder')"
+            :placeholder="$placeholder"
             type="search"
             :wire:model.live.debounce.500ms="$wireModel"
             x-bind:id="$id('input')"

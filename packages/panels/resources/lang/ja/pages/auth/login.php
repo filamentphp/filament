@@ -4,7 +4,20 @@ return [
 
     'title' => 'ログイン',
 
-    'heading' => 'アカウントにログインする',
+    'heading' => 'アカウントにログイン',
+
+    'actions' => [
+
+        'register' => [
+            'before' => 'または',
+            'label' => 'アカウントを登録',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'パスワードをお忘れですか？',
+        ],
+
+    ],
 
     'form' => [
 
@@ -17,7 +30,7 @@ return [
         ],
 
         'remember' => [
-            'label' => 'ログイン状態を保持する',
+            'label' => 'ログインしたままにする',
         ],
 
         'actions' => [
@@ -39,7 +52,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'ログインの試行回数が多すぎます。:seconds 秒後にお試しください。',
+            'title' => 'ログインの試行回数が多すぎます',
+            'body' => ':seconds 秒後に再試行してください。',
         ],
 
     ],

@@ -175,6 +175,23 @@ TextColumn::make('full_name')
     })
 ```
 
+#### Customizing the table search field placeholder
+
+You may customize the placeholder in the search field using the `searchPlaceholder()` method on the `$table`:
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchPlaceholder('Search (ID, Name)');
+}
+```
+
 ### Searching individually
 
 You can choose to enable a per-column search input field using the `isIndividual` parameter:

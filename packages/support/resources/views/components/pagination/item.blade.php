@@ -1,5 +1,6 @@
 @props([
     'active' => false,
+    'ariaLabel' => null,
     'disabled' => false,
     'icon' => null,
     'iconAlias' => null,
@@ -16,6 +17,7 @@
     }}
 >
     <button
+        aria-label="{{ $ariaLabel }}"
         @disabled($disabled)
         type="button"
         @class([

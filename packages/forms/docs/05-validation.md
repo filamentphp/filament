@@ -522,7 +522,7 @@ TextInput::make('slug')->rules([
 ])
 ```
 
-## Validation attributes
+## Customizing validation attributes
 
 When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
 
@@ -530,6 +530,20 @@ When fields fail validation, their label is used in the error message. To custom
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')->validationAttribute('full name')
+```
+
+## Validation messages
+
+By default Laravel's validation error message is used. To customize the error messages, use the `validationMessages()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('email')
+    ->unique(// ...)
+    ->validationMessages([
+        'unique' => 'The :attribute has already been registered.',
+    ])
 ```
 
 ## Sending validation notifications

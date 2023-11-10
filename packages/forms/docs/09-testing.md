@@ -10,7 +10,7 @@ Since the Form Builder works on Livewire components, you can use the [Livewire t
 
 ## Filling a form
 
-To fill a form with data, pass the data to `fillform()`:
+To fill a form with data, pass the data to `fillForm()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -57,6 +57,7 @@ it('can validate input', function () {
         ->fillForm([
             'title' => null,
         ])
+        ->call('save')
         ->assertHasFormErrors(['title' => 'required']);
 });
 ```

@@ -10,7 +10,7 @@ trait HasDropdown
 
     protected string | Closure | null $dropdownPlacement = null;
 
-    protected string | int | Closure | null $dropdownMaxHeight = null;
+    protected string | Closure | null $dropdownMaxHeight = null;
 
     protected string | Closure | null $dropdownWidth = null;
 
@@ -28,7 +28,7 @@ trait HasDropdown
         return $this;
     }
 
-    public function dropdownMaxHeight(string | int | Closure | null $height): static
+    public function dropdownMaxHeight(string | Closure | null $height): static
     {
         $this->dropdownMaxHeight = $height;
 
@@ -47,7 +47,7 @@ trait HasDropdown
         return $this->evaluate($this->dropdownPlacement);
     }
 
-    public function getDropdownMaxHeight(): string | int | null
+    public function getDropdownMaxHeight(): ?string
     {
         return $this->evaluate($this->dropdownMaxHeight);
     }

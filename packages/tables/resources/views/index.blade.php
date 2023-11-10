@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Facades\FilamentView;
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\RecordCheckboxPosition;
@@ -13,26 +14,7 @@
     $content = $getContent();
     $contentGrid = $getContentGrid();
     $contentFooter = $getContentFooter();
-    $filterIndicators = [
-        ...($hasSearch() ? ['resetTableSearch' => $getSearchIndicator()] : []),
-        ...collect($getColumnSearchIndicators())
-            ->mapWithKeys(fn (string $indicator, string $column): array => [
-                "resetTableColumnSearch('{$column}')" => $indicator,
-            ])
-            ->all(),
-        ...array_reduce(
-            $getFilters(),
-            fn (array $carry, \Filament\Tables\Filters\BaseFilter $filter): array => [
-                ...$carry,
-                ...collect($filter->getIndicators())
-                    ->mapWithKeys(fn (string $label, int | string $field) => [
-                        "removeTableFilter('{$filter->getName()}'" . (is_string($field) ? ' , \'' . $field . '\'' : null) . ')' => $label,
-                    ])
-                    ->all(),
-            ],
-            [],
-        ),
-    ];
+    $filterIndicators = $getFilterIndicators();
     $hasColumnsLayout = $hasColumnsLayout();
     $hasSummary = $hasSummary();
     $header = $getHeader();
@@ -61,13 +43,13 @@
     $hasFilters = $isFilterable();
     $filtersLayout = $getFiltersLayout();
     $filtersTriggerAction = $getFiltersTriggerAction();
-    $hasFiltersDropdown = $hasFilters && ($filtersLayout === FiltersLayout::Dropdown);
+    $hasFiltersDialog = $hasFilters && in_array($filtersLayout, [FiltersLayout::Dropdown, FiltersLayout::Modal]);
     $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
     $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
     $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
     $hasColumnToggleDropdown = $hasToggleableColumns();
     $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnToggleDropdown;
-    $hasHeaderToolbar = $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown;
+    $hasHeaderToolbar = $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
@@ -117,7 +99,11 @@
         wire:init="loadTable"
     @endif
     x-ignore
-    ax-load
+    @if (FilamentView::hasSpaMode())
+        ax-load="visible"
+    @else
+        ax-load
+    @endif
     ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('table', 'filament/tables') }}"
     x-data="table"
     @class([
@@ -147,18 +133,13 @@
                 <div
                     x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }"
                     @class([
-                        'grid px-4 sm:px-6',
-                        'py-4' => ! $hasFiltersAboveContentCollapsible,
-                        'gap-y-3 py-2.5 sm:gap-y-1 sm:py-3' => $hasFiltersAboveContentCollapsible,
+                        'grid gap-y-3 px-4 py-4 sm:px-6',
                     ])
                 >
                     @if ($hasFiltersAboveContentCollapsible)
                         <span
                             x-on:click="areFiltersOpen = ! areFiltersOpen"
-                            @class([
-                                'ms-auto inline-flex',
-                                '-mx-2' => $filtersTriggerAction->isIconButton(),
-                            ])
+                            class="ms-auto"
                         >
                             {{ $filtersTriggerAction->badge(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
                         </span>
@@ -168,9 +149,6 @@
                         :form="$getFiltersForm()"
                         x-cloak
                         x-show="areFiltersOpen"
-                        @class([
-                            'py-1 sm:py-3' => $hasFiltersAboveContentCollapsible,
-                        ])
                     />
                 </div>
             @endif
@@ -178,21 +156,15 @@
             <div
                 @if (! $hasHeaderToolbar) x-cloak @endif
                 x-show="@js($hasHeaderToolbar) || (selectedRecords.length && @js(count($bulkActions)))"
-                class="fi-ta-header-toolbar flex items-center justify-between gap-3 px-4 py-3 sm:px-6"
+                class="fi-ta-header-toolbar flex items-center justify-between gap-x-4 px-4 py-3 sm:px-6"
             >
                 {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.start', scopes: static::class) }}
 
-                <div class="flex shrink-0 items-center gap-x-3">
+                <div class="flex shrink-0 items-center gap-x-4">
                     {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.reorder-trigger.before', scopes: static::class) }}
 
                     @if ($isReorderable)
-                        <span
-                            x-show="! selectedRecords.length"
-                            @class([
-                                'inline-flex',
-                                '-me-1 -ms-2' => $reorderRecordsTriggerAction->isIconButton(),
-                            ])
-                        >
+                        <span x-show="! selectedRecords.length">
                             {{ $reorderRecordsTriggerAction }}
                         </span>
                     @endif
@@ -220,27 +192,24 @@
                     {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.grouping-selector.after', scopes: static::class) }}
                 </div>
 
-                @if ($isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown)
-                    <div
-                        @class([
-                            'ms-auto flex items-center',
-                            'gap-x-3' => ! ($filtersTriggerAction->isIconButton() && $toggleColumnsTriggerAction->isIconButton()),
-                            'gap-x-4' => $filtersTriggerAction->isIconButton() && $toggleColumnsTriggerAction->isIconButton(),
-                        ])
-                    >
+                @if ($isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown)
+                    <div class="ms-auto flex items-center gap-x-4">
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.before', scopes: static::class) }}
 
                         @if ($isGlobalSearchVisible)
-                            <x-filament-tables::search-field />
+                            <x-filament-tables::search-field
+                                :placeholder="$getSearchPlaceholder()"
+                            />
                         @endif
 
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.after', scopes: static::class) }}
 
-                        @if ($hasFiltersDropdown || $hasColumnToggleDropdown)
-                            @if ($hasFiltersDropdown)
-                                <x-filament-tables::filters.dropdown
+                        @if ($hasFiltersDialog || $hasColumnToggleDropdown)
+                            @if ($hasFiltersDialog)
+                                <x-filament-tables::filters.dialog
                                     :form="$getFiltersForm()"
                                     :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
+                                    :layout="$filtersLayout"
                                     :max-height="$getFiltersFormMaxHeight()"
                                     :trigger-action="$filtersTriggerAction"
                                     :width="$getFiltersFormWidth()"

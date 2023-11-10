@@ -1,8 +1,10 @@
 <x-filament-actions::group
-    :group="$group"
+    :badge="$getBadge()"
+    :badge-color="$getBadgeColor()"
     dynamic-component="filament::link"
+    :group="$group"
     :icon-position="$getIconPosition()"
-    :icon-size="$getIconSize()"
+    :size="$getSize()"
     tag="button"
     class="fi-ac-link-group"
 >

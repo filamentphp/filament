@@ -10,7 +10,7 @@ trait CanSortRecords
 {
     protected ?string $defaultSortColumn = null;
 
-    protected ?string $defaultSortDirection = null;
+    protected string | Closure | null $defaultSortDirection = null;
 
     protected ?Closure $defaultSortQuery = null;
 
@@ -24,7 +24,7 @@ trait CanSortRecords
             $this->defaultSortColumn = $column;
         }
 
-        $this->defaultSortDirection = Str::lower($direction);
+        $this->defaultSortDirection = $direction;
 
         return $this;
     }
@@ -62,7 +62,13 @@ trait CanSortRecords
 
     public function getDefaultSortDirection(): ?string
     {
-        return $this->evaluate($this->defaultSortDirection);
+        $direction = $this->evaluate($this->defaultSortDirection);
+
+        if ($direction !== null) {
+            $direction = Str::lower($direction);
+        }
+
+        return $direction;
     }
 
     public function getDefaultSortQuery(): ?Closure

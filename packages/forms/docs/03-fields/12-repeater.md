@@ -282,6 +282,8 @@ class OrderProduct extends Pivot
 }
 ```
 
+> Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted.
+
 Now you can use the `orderProducts` relationship with the repeater, and it will save the data to the `order_product` pivot table:
 
 ```php
@@ -487,7 +489,7 @@ Repeater::make('members')
     ->maxItems(5)
 ```
 
-## Customizing the repeater action objects
+## Customizing the repeater item actions
 
 This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button). The following methods are available to customize the actions:
 
@@ -535,3 +537,55 @@ Repeater::make('members')
 ```
 
 > The `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+
+### Adding extra item actions to a repeater
+
+You may add new [action buttons](../actions) to the header of each repeater item by passing `Action` objects into `extraItemActions()`:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\Mail;
+
+Repeater::make('members')
+    ->schema([
+        TextInput::make('email')
+            ->label('Email address')
+            ->email(),
+        // ...
+    ])
+    ->extraItemActions([
+        Action::make('sendEmail')
+            ->icon('heroicon-m-square-2-stack')
+            ->action(function (array $arguments, Repeater $component): void {
+                $itemData = $component->getItemState($arguments['item']);
+                
+                Mail::to($itemData['email'])
+                    ->send(
+                        // ...
+                    );
+            }),
+    ])
+```
+
+In this example, `$arguments['item']` gives you the ID of the current repeater item. You can validate the data in that repeater item using the `getItemState()` method on the repeater component. This method returns the validated data for the item. If the item is not valid, it will cancel the action and show an error message for that item in the form.
+
+If you want to get the raw data from the current item without validating it, you can use `$component->getRawItemState($arguments['item'])` instead.
+
+If you want to manipulate the raw data for the entire repeater, for example, to add, remove or modify items, you can use `$component->getState()` to get the data, and `$component->state($state)` to set it again:
+
+```php
+use Illuminate\Support\Str;
+
+// Get the raw data for the entire repeater
+$state = $component->getState();
+
+// Add an item, with a random UUID as the key
+$state[Str::uuid()] = [
+    'email' => auth()->user()->email,
+];
+
+// Set the new data for the repeater
+$component->state($state);
+```

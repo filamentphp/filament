@@ -14,8 +14,8 @@ return [
                 'label' => 'Lägg till i :label',
             ],
 
-            'add_item_between' => [
-                'label' => 'Infoga',
+            'add_between' => [
+                'label' => 'Infoga mellan block',
             ],
 
             'delete' => [
@@ -27,7 +27,7 @@ return [
             ],
 
             'move_down' => [
-                'label' => 'Flytta ned',
+                'label' => 'Flytta ner',
             ],
 
             'move_up' => [
@@ -77,7 +77,7 @@ return [
             'actions' => [
 
                 'cancel' => [
-                    'label' => 'Ångra',
+                    'label' => 'Avbryt',
                 ],
 
                 'drag_crop' => [
@@ -113,7 +113,7 @@ return [
                 ],
 
                 'reset' => [
-                    'label' => 'Reset',
+                    'label' => 'Återställ',
                 ],
 
                 'rotate_left' => [
@@ -122,6 +122,10 @@ return [
 
                 'rotate_right' => [
                     'label' => 'Rotera bilden åt höger',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'Ändra bildformat till :ratio',
                 ],
 
                 'save' => [
@@ -146,24 +150,46 @@ return [
 
                 'height' => [
                     'label' => 'Höjd',
+                    'unit' => 'px',
                 ],
 
                 'rotation' => [
-                    'label' => 'Rotera',
+                    'label' => 'Rotation',
+                    'unit' => 'grad',
                 ],
 
                 'width' => [
                     'label' => 'Bredd',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
                 ],
 
             ],
 
             'aspect_ratios' => [
 
-                'label' => 'Aspect ratios',
+                'label' => 'Bildformat',
 
                 'no_fixed' => [
                     'label' => 'Fritt',
+                ],
+
+            ],
+
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Redigering av SVG-filer rekommenderas inte eftersom det tar bort bildens förmåga att skala utan kvalitetsförlust.\n Är du säker på att du vill fortsätta?',
+                    'disabled' => 'Redigering av SVG-filer är inaktiverat eftersom det tar bort bildens förmåga att skala utan kvalitetsförlust.',
                 ],
 
             ],
@@ -208,15 +234,18 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Lägg till filer',
+            'blockquote' => 'Citat',
             'bold' => 'Fet',
             'bullet_list' => 'Punktlista',
             'code_block' => 'Kod',
-            'edit' => 'Skriv',
+            'heading' => 'Rubrik',
             'italic' => 'Kursiv',
             'link' => 'Länk',
             'ordered_list' => 'Nummerlista',
-            'preview' => 'Förhandsgranska',
+            'redo' => 'Gör om',
             'strike' => 'Genomstruken',
+            'table' => 'Tabell',
+            'undo' => 'Ångra',
         ],
 
     ],
@@ -227,6 +256,10 @@ return [
 
             'add' => [
                 'label' => 'Lägg till i :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Infoga mellan',
             ],
 
             'delete' => [
@@ -242,7 +275,7 @@ return [
             ],
 
             'move_down' => [
-                'label' => 'Flytta ned',
+                'label' => 'Flytta ner',
             ],
 
             'move_up' => [
@@ -302,6 +335,7 @@ return [
             'ordered_list' => 'Nummerlista',
             'redo' => 'Gör om',
             'strike' => 'Genomstruken',
+            'underline' => 'Understruken',
             'undo' => 'Ångra',
         ],
 
@@ -321,6 +355,28 @@ return [
 
                         'create' => [
                             'label' => 'Skapa',
+                        ],
+
+                        'create_another' => [
+                            'label' => 'Skapa & skapa en till',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Redigera',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Spara',
                         ],
 
                     ],

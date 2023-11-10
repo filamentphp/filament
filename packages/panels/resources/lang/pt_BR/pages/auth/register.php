@@ -48,7 +48,7 @@ return [
 
         'throttled' => [
             'title' => 'Muitas tentativas de cadastro',
-            'body' => 'Por favor tente novamente em :seconds segundos.',
+            'body' => 'Por favor, tente novamente em :seconds segundos.',
         ],
 
     ],

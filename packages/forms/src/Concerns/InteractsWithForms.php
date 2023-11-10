@@ -17,9 +17,9 @@ use Livewire\WithFileUploads;
 
 trait InteractsWithForms
 {
-    use WithFileUploads;
     use HasFormComponentActions;
     use ResolvesDynamicLivewireProperties;
+    use WithFileUploads;
 
     /**
      * @var array <string, TemporaryUploadedFile | null>
@@ -229,12 +229,14 @@ trait InteractsWithForms
 
     public function updatingInteractsWithForms(string $statePath): void
     {
+        $statePath = (string) str($statePath)->before('.');
+
         $this->oldFormState[$statePath] = data_get($this, $statePath);
     }
 
     public function getOldFormState(string $statePath): mixed
     {
-        return $this->oldFormState[$statePath] ?? null;
+        return data_get($this->oldFormState, $statePath);
     }
 
     public function updatedInteractsWithForms(string $statePath): void

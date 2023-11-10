@@ -62,9 +62,14 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     public function mount(): void
     {
-        static::authorizeResourceAccess();
+        $this->authorizeAccess();
 
         $this->loadDefaultActiveTab();
+    }
+
+    protected function authorizeAccess(): void
+    {
+        static::authorizeResourceAccess();
     }
 
     public function getBreadcrumb(): ?string

@@ -1,7 +1,7 @@
 {
-  "devDependencies": {
+  "type": "module",
+  "dependencies": {
     "puppeteer": "^19.7.1",
     "sharp": "^0.32.1"
-  },
-  "type": "module"
+  }
 }

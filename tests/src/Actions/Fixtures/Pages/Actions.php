@@ -31,7 +31,14 @@ class Actions extends Page
                 ->requiresConfirmation()
                 ->action(function (array $arguments) {
                     $this->dispatch('arguments-called', arguments: $arguments);
-                }),
+                })
+                ->extraModalFooterActions(fn (): array => [
+                    Action::make('nested')
+                        ->requiresConfirmation()
+                        ->action(function (array $arguments) {
+                            $this->dispatch('nested-called', arguments: $arguments);
+                        }),
+                ]),
             Action::make('halt')
                 ->requiresConfirmation()
                 ->action(function (Action $action) {

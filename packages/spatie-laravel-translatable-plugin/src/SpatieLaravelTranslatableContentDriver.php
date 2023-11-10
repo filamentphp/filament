@@ -6,7 +6,8 @@ use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Expression;
+
+use function Filament\Support\generate_search_column_expression;
 
 class SpatieLaravelTranslatableContentDriver implements TranslatableContentDriver
 {
@@ -86,7 +87,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         return $attributes;
     }
 
-    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, bool $isCaseInsensitivityForced = false): Builder
+    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, ?bool $isCaseInsensitivityForced = null): Builder
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
@@ -96,14 +97,8 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             default => "json_extract({$column}, \"$.{$this->activeLocale}\")",
         };
 
-        $caseAwareSearchColumn = new Expression(
-            $isCaseInsensitivityForced ?
-                "lower({$column})" :
-                $column
-        );
-
         return $query->{$whereClause}(
-            $caseAwareSearchColumn,
+            generate_search_column_expression($column, $isCaseInsensitivityForced, $databaseConnection),
             'like',
             "%{$search}%",
         );
