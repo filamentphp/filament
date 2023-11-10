@@ -506,6 +506,20 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->validationAttribute('full name')
 ```
 
+## Validation messages
+
+By default Laravel's validation error message is used. To customize the error messages, use the `validationMessages()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('email')
+    ->unique(// ...)
+    ->validationMessages([
+        'unique' => 'The :attribute has already been registered.',
+    ])
+```
+
 ## Sending validation notifications
 
 If you want to send a notification when validation error occurs, you may do so by using the `onValidationError()` method on your Livewire component:
