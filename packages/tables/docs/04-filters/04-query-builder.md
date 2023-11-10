@@ -172,6 +172,19 @@ DateConstraint::make('creatorCreatedAt')
     ->relationship(name: 'creator', titleAttribute: 'created_at') // Filter the `created_at` column on the `creator` relationship
 ```
 
+By default, the following operators are available:
+
+- Is after - filters a column to be after the search date
+- Is not after - filters a column to not be after the search date, or to be the same date
+- Is before - filters a column to be before the search date
+- Is not before - filters a column to not be before the search date, or to be the same date
+- Is date - filters a column to be the same date as the search date
+- Is not date - filters a column to not be the same date as the search date
+- Is month - filters a column to be in the same month as the selected month
+- Is not month - filters a column to not be in the same month as the selected month
+- Is year - filters a column to be in the same year as the searched year
+- Is not year - filters a column to not be in the same year as the searched year
+
 ### Select constraints
 
 Select constraints allow you to filter fields using a select field. They can be used to filter any field, including via relationships.
