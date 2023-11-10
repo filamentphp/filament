@@ -34,18 +34,6 @@ You can change the avatar size using the `size` attribute:
 - `md` _h-9 w-9_ (default)
 - `lg` _h-10 w-10_
 
-## Set Avatar Size
-
-To change the avatar size, use the `size` attribute. Example:
-
-```blade
-<x-filament::avatar
-    src="https://filamentphp.com/dan.jpg"
-    alt="Dan Harrin"
-    size="lg"
-/>
-```
-
 Here, `size="lg"` sets the avatar to a larger size. Choose the size that fits your design or layout.
 
 ```blade
