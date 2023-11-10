@@ -10,6 +10,8 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 
 class NumberConstraint extends Constraint
 {
+    use Concerns\CanBeNullable;
+
     /**
      * @var array<string, string>
      */
@@ -27,7 +29,8 @@ class NumberConstraint extends Constraint
             IsMinOperator::class,
             IsMaxOperator::class,
             EqualsOperator::class,
-            IsFilledOperator::class,
+            IsFilledOperator::make()
+                ->visible(fn (): bool => $this->isNullable()),
         ]);
     }
 

@@ -60,10 +60,10 @@ trait CanAggregateRelationships
         return Select::make(static::AGGREGATE_SELECT_NAME)
             ->label(__('filament-tables::filters/query-builder.operators.number.form.aggregate.label'))
             ->options([
-                static::AGGREGATE_AVERAGE => __('filament-tables::filters/query-builder.operators.number.aggregates.average.label'),
-                static::AGGREGATE_MAX => __('filament-tables::filters/query-builder.operators.number.aggregates.min.label'),
-                static::AGGREGATE_MIN => __('filament-tables::filters/query-builder.operators.number.aggregates.max.label'),
                 static::AGGREGATE_SUM => __('filament-tables::filters/query-builder.operators.number.aggregates.sum.label'),
+                static::AGGREGATE_AVERAGE => __('filament-tables::filters/query-builder.operators.number.aggregates.average.label'),
+                static::AGGREGATE_MIN => __('filament-tables::filters/query-builder.operators.number.aggregates.max.label'),
+                static::AGGREGATE_MAX => __('filament-tables::filters/query-builder.operators.number.aggregates.min.label'),
             ])
             ->visible($this->getConstraint()->queriesRelationships());
     }

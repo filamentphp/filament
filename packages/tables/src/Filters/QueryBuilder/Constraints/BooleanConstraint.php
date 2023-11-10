@@ -8,7 +8,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 
 class BooleanConstraint extends Constraint
 {
-    protected bool | Closure $isNullable = false;
+    use Concerns\CanBeNullable;
 
     protected function setUp(): void
     {
@@ -21,17 +21,5 @@ class BooleanConstraint extends Constraint
             IsFilledOperator::make()
                 ->visible(fn (): bool => $this->isNullable()),
         ]);
-    }
-
-    public function nullable(bool | Closure $condition = true): static
-    {
-        $this->isNullable = $condition;
-
-        return $this;
-    }
-
-    public function isNullable(): bool
-    {
-        return (bool) $this->evaluate($this->isNullable);
     }
 }

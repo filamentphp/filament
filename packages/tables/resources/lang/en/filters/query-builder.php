@@ -184,12 +184,12 @@ return [
 
                 'label' => [
                     'direct' => 'Is maximum',
-                    'inverse' => 'Is more than',
+                    'inverse' => 'Is greater than',
                 ],
 
                 'summary' => [
                     'direct' => ':attribute is maximum :number',
-                    'inverse' => ':attribute is more than :number',
+                    'inverse' => ':attribute is greater than :number',
                 ],
 
             ],
@@ -307,17 +307,36 @@ return [
             'is_related_to' => [
 
                 'label' => [
-                    'direct' => 'Is',
-                    'inverse' => 'Is not',
+
+                    'single' => [
+                        'direct' => 'Is',
+                        'inverse' => 'Is not',
+                    ],
+
+                    'multiple' => [
+                        'direct' => 'Contains',
+                        'inverse' => 'Does not contain',
+                    ],
+
                 ],
 
                 'summary' => [
-                    'direct' => ':relationship is :values',
-                    'inverse' => ':relationship is not :values',
+
+                    'single' => [
+                        'direct' => ':relationship is :values',
+                        'inverse' => ':relationship is not :values',
+                    ],
+
+                    'multiple' => [
+                        'direct' => ':relationship contains :values',
+                        'inverse' => ':relationship does not contain :values',
+                    ],
+
                     'values_glue' => [
                         0 => ', ',
                         'final' => ' or ',
                     ],
+
                 ],
 
                 'form' => [

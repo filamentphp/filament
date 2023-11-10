@@ -13,6 +13,8 @@ class RelationshipConstraint extends Constraint
 {
     protected bool | Closure $isMultiple = false;
 
+    protected bool | Closure | null $canBeEmpty = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -20,10 +22,14 @@ class RelationshipConstraint extends Constraint
         $this->icon('heroicon-m-arrows-pointing-out');
 
         $this->operators([
-            HasMinOperator::make()->visible(fn (): bool => $this->isMultiple()),
-            HasMaxOperator::make()->visible(fn (): bool => $this->isMultiple()),
-            IsEmptyOperator::class,
-            EqualsOperator::make()->visible(fn (): bool => $this->isMultiple()),
+            HasMinOperator::make()
+                ->visible(fn (): bool => $this->isMultiple()),
+            HasMaxOperator::make()
+                ->visible(fn (): bool => $this->isMultiple()),
+            EqualsOperator::make()
+                ->visible(fn (): bool => $this->isMultiple()),
+            IsEmptyOperator::make()
+                ->visible(fn (): bool => $this->canBeEmpty()),
         ]);
     }
 
@@ -44,5 +50,17 @@ class RelationshipConstraint extends Constraint
     public function isMultiple(): bool
     {
         return (bool) $this->evaluate($this->isMultiple);
+    }
+
+    public function emptyable(bool | Closure | null $condition = true): static
+    {
+        $this->canBeEmpty = $condition;
+
+        return $this;
+    }
+
+    public function canBeEmpty(): bool
+    {
+        return $this->evaluate($this->canBeEmpty) ?? $this->isMultiple();
     }
 }

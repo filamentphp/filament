@@ -11,6 +11,8 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 
 class DateConstraint extends Constraint
 {
+    use Concerns\CanBeNullable;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,7 +25,8 @@ class DateConstraint extends Constraint
             IsDateOperator::class,
             IsMonthOperator::class,
             IsYearOperator::class,
-            IsFilledOperator::class,
+            IsFilledOperator::make()
+                ->visible(fn (): bool => $this->isNullable()),
         ]);
     }
 }

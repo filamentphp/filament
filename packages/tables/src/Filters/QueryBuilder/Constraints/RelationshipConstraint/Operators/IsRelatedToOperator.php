@@ -49,9 +49,17 @@ class IsRelatedToOperator extends Operator
     public function getLabel(): string
     {
         return __(
-            $this->isInverse() ?
-                'filament-tables::filters/query-builder.operators.relationship.is_related_to.label.inverse' :
-                'filament-tables::filters/query-builder.operators.relationship.is_related_to.label.direct',
+            $this->getConstraint()->isMultiple() ?
+                (
+                    $this->isInverse() ?
+                        'filament-tables::filters/query-builder.operators.relationship.is_related_to.label.multiple.inverse' :
+                        'filament-tables::filters/query-builder.operators.relationship.is_related_to.label.multiple.direct'
+                ) :
+                (
+                    $this->isInverse() ?
+                        'filament-tables::filters/query-builder.operators.relationship.is_related_to.label.single.inverse' :
+                        'filament-tables::filters/query-builder.operators.relationship.is_related_to.label.single.direct'
+                ),
         );
     }
 
@@ -73,9 +81,17 @@ class IsRelatedToOperator extends Operator
             ->join(glue: __('filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.values_glue.0'), finalGlue: __('filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.values_glue.final'));
 
         return __(
-            $this->isInverse() ?
-                'filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.inverse' :
-                'filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.direct',
+            $this->getConstraint()->isMultiple() ?
+                (
+                    $this->isInverse() ?
+                        'filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.multiple.inverse' :
+                        'filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.multiple.direct'
+                ) :
+                (
+                    $this->isInverse() ?
+                        'filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.single.inverse' :
+                        'filament-tables::filters/query-builder.operators.relationship.is_related_to.summary.single.direct'
+                ),
             [
                 'relationship' => $constraint->getAttributeLabel(),
                 'values' => $values,

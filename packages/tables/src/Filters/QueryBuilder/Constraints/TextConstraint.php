@@ -10,6 +10,8 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\St
 
 class TextConstraint extends Constraint
 {
+    use Concerns\CanBeNullable;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -21,7 +23,8 @@ class TextConstraint extends Constraint
             StartsWithOperator::class,
             EndsWithOperator::class,
             EqualsOperator::class,
-            IsFilledOperator::class,
+            IsFilledOperator::make()
+                ->visible(fn (): bool => $this->isNullable()),
         ]);
     }
 }

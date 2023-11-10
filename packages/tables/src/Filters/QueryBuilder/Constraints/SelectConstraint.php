@@ -9,6 +9,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint\Operators\
 
 class SelectConstraint extends Constraint
 {
+    use Concerns\CanBeNullable;
     use HasOptions;
 
     protected bool | Closure $isMultiple = false;
@@ -29,7 +30,8 @@ class SelectConstraint extends Constraint
 
         $this->operators([
             IsOperator::class,
-            IsFilledOperator::class,
+            IsFilledOperator::make()
+                ->visible(fn (): bool => $this->isNullable()),
         ]);
     }
 

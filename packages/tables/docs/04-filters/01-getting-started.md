@@ -31,6 +31,17 @@ Filter::make('is_featured')
     ->query(fn (Builder $query): Builder => $query->where('is_featured', true))
 ```
 
+## Available filters
+
+By default, using the `Filter::make()` method will render a checkbox form component. When the checkbox is on, the `query()` will be activated.
+
+- You can also [replace the checkbox with a toggle](#using-a-toggle-button-instead-of-a-checkbox).
+- You can use a [ternary filter](ternary) to replace the checkbox with a select field to allow users to pick between 3 states - usually "true", "false" and "blank". This is useful for filtering boolean columns that are nullable.
+- The [trashed filter](ternary#filtering-soft-deletable-records) is a pre-built ternary filter that allows you to filter soft-deletable records.
+- You may use a [select filter](select) to allow users to select from a list of options, and filter using the selection.
+- You may use a [query builder](query-builder) to allow users to create complex sets of filters, with an advanced user interface for combining constraints.
+- You may build [custom filters](custom) with other form fields, to do whatever you want.
+
 ## Setting a label
 
 By default, the label of the filter, which is displayed in the filter form, is generated from the name of the filter. You may customize this using the `label()` method:
