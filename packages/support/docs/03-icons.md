@@ -91,7 +91,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 ### Form Builder icon aliases
 
-- `forms:components.checkbox-list.search-field` - Search input in a checkbox list
+- `forms::components.checkbox-list.search-field` - Search input in a checkbox list
 - `forms::components.wizard.completed-step` - Completed step in a wizard
 
 ### Table Builder icon aliases
@@ -143,7 +143,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `breadcrumbs.separator.rtl` - Separator between breadcrumbs (right-to-left direction)
 - `modal.close-button` - Button to close a modal
 - `pagination.previous-button` - Button to go to the previous page
-- `pagination.previous-button` - Button to go to the previous page (right-to-left direction)
+- `pagination.previous-button.rtl` - Button to go to the previous page (right-to-left direction)
 - `pagination.next-button` - Button to go to the next page
 - `pagination.next-button.rtl` - Button to go to the next page (right-to-left direction)
 - `section.collapse-button` - Button to collapse a section

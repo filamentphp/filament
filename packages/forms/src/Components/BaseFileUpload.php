@@ -195,6 +195,7 @@ class BaseFileUpload extends Field
 
             $this->evaluate($callback, [
                 'state' => $this->isMultiple() ? $state : Arr::first($state ?? []),
+                'old' => $this->isMultiple() ? $this->getOldState() : Arr::first($this->getOldState() ?? []),
             ]);
         }
 

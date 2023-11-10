@@ -400,7 +400,7 @@ ImportColumn::make('sku')
 
 ## Providing example CSV data
 
-Before the user uploads a CSV, they have an option to download example CSV file, containing all the available columns that can be imported. This is useful, as it allows the user import this file directly into their spreadsheet software, and fill it out.
+Before the user uploads a CSV, they have an option to download an example CSV file, containing all the available columns that can be imported. This is useful, as it allows the user to import this file directly into their spreadsheet software, and fill it out.
 
 You can also add an example row to the CSV, to show the user what the data should look like. To fill in this example row, you can pass in an example column value to the `example()` method:
 
@@ -599,4 +599,4 @@ class ProductImporter extends Importer
 
 Inside these hooks, you can access the current row's data using `$this->data`. You can also access the original row of data from the CSV, before it was [cast](#casting-state) or mapped, using `$this->originalData`.
 
-The current record (if it exists yet) is accessible in `$this->record`, and the [options](#using-import-options) using `$this->options`.
+The current record (if it exists yet) is accessible in `$this->record`, and the [import form options](#using-import-options) using `$this->options`.
