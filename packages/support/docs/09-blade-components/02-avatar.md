@@ -27,7 +27,26 @@ Avatars are fully rounded by default, but you may make them square by setting th
 
 ## Setting the size of an avatar
 
-By default, the avatar will be "medium" size. You can make it "large" using the `size` attribute:
+You can change the avatar size using the `size` attribute:
+
+- `xs` _h-5 w-5_
+- `sm` _h-7 w-7_
+- `md` _h-9 w-9_ (default)
+- `lg` _h-10 w-10_
+
+## Set Avatar Size
+
+To change the avatar size, use the `size` attribute. Example:
+
+```blade
+<x-filament::avatar
+    src="https://filamentphp.com/dan.jpg"
+    alt="Dan Harrin"
+    size="lg"
+/>
+```
+
+Here, `size="lg"` sets the avatar to a larger size. Choose the size that fits your design or layout.
 
 ```blade
 <x-filament::avatar
