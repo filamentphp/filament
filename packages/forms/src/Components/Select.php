@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
@@ -1060,7 +1061,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return parent::getLabel();
     }
 
-    public function getRelationship(): BelongsTo | BelongsToMany | HasOneThrough | \Znck\Eloquent\Relations\BelongsToThrough | null
+    public function getRelationship(): BelongsTo | BelongsToMany | HasOneOrMany | HasOneThrough | \Znck\Eloquent\Relations\BelongsToThrough | null
     {
         if (blank($this->getRelationshipName())) {
             return null;
@@ -1185,7 +1186,10 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $relationship->getQualifiedForeignKeyName();
         }
 
-        if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+        if (
+            ($relationship instanceof HasOneOrMany) ||
+            ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough)
+        ) {
             return $relationship->getRelated()->getQualifiedKeyName();
         }
 
