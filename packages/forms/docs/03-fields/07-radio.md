@@ -104,7 +104,7 @@ Radio::make('status')
 
 ## Distinct selection in a Repeater
 
-You may enforce selection of any given radio button in only one instance of a Repeater by using the `distinctOptions()` method.
+You may enforce selection of any given radio button in only one instance of a Repeater by using the `distinctSelection()` method.
 
 This example of creating teams for a tournament in a Repeater would only allow each shirt color to be chosen once
 
@@ -123,7 +123,7 @@ Repeater::make('teams')
                 'yellow' => 'Yellow',
                 'white' => 'White',
             ])
-            ->distinctOptions(),
+            ->distinctSelection(),
         //
     ])
 ```

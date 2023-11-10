@@ -134,7 +134,7 @@ CheckboxList::make('technologies')
 
 ## Distinct selection in a Repeater
 
-You may enforce selection of any given checkbox in only one instance of a Repeater by using the `distinctOptions()` method.
+You may enforce selection of any given checkbox in only one instance of a Repeater by using the `distinctSelection()` method.
 
 This example of assigning pets to rooms in your house would only allow each pet to be assigned to one room:
 
@@ -152,7 +152,7 @@ Repeater::make('rooms')
                 'gracie' => 'Gracie',
                 'mocheese' => 'MoCheese',
             ])
-            ->distinctOptions(),
+            ->distinctSelection(),
         //
     ])
 ```

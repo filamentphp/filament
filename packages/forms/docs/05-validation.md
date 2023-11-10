@@ -424,7 +424,7 @@ For Radio, CheckboxList and Select (any field whose state is an array) any given
 
 For any other field types (any field whose state is a string) the value must be distinct within the repeater.
 
-Note that this validation does not police selection on the form.  If you wish to prevent the user from selecting non-distinct options for Radio, Toggle, Checkbox(List) or Select fields, use the `distinctOptions()` method instead (which also applies this validation).
+Note that this validation does not police selection on the form.  If you wish to prevent the user from selecting non-distinct options for Radio, Toggle, Checkbox(List) or Select fields, use the `distinctSelection()` method instead (which also applies this validation).
 
 ```php
 Field::make('email')->unique()

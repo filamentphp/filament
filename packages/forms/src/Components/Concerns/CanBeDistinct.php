@@ -13,7 +13,7 @@ trait CanBeDistinct
 {
     protected bool | Closure $isDistinct = false;
 
-    public function distinctOptions(bool | Closure $condition = true, bool $shouldDisableOptions = false): static
+    public function distinctSelection(bool | Closure $condition = true, bool $shouldDisableOptions = false): static
     {
         $this->isDistinct = $condition;
 
