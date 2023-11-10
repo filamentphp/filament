@@ -414,10 +414,10 @@ You may enforce selection of any given option in only one instance of a Repeater
 This example of creating teams for a tournament in a Repeater would only allow each shirt color to be chosen once:
 
 ```php
-use Filament\Forms\Components\Repeaater;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 
-Repeaater::make('teams')
+Repeater::make('teams')
     ->maxItems(5)
     ->schema([  
         Select::make('shirt_color')

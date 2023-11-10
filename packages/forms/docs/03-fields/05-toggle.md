@@ -94,9 +94,9 @@ This example of adding multiple locations in a Repeater would require that one (
 
 ```php
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Repeaater;
+use Filament\Forms\Components\Repeater;
 
-Repeaater::make('locations')
+Repeater::make('locations')
     ->schema([  
         Toggle::make('primary')
             ->distinctOptions(),

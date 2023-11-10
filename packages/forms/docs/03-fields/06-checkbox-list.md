@@ -140,9 +140,9 @@ This example of assigning pets to rooms in your house would only allow each pet 
 
 ```php
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Repeaater;
+use Filament\Forms\Components\Repeater;
 
-Repeaater::make('rooms')
+Repeater::make('rooms')
     ->schema([  
         CheckboxList::make('pets')
             ->options([

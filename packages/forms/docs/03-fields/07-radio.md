@@ -110,9 +110,9 @@ This example of creating teams for a tournament in a Repeater would only allow e
 
 ```php
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Repeaater;
+use Filament\Forms\Components\Repeater;
 
-Repeaater::make('teams')
+Repeater::make('teams')
     ->maxItems(5)
     ->schema([  
         Radio::make('shirt_color')
