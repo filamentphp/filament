@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Filters\QueryBuilder\Constraints\BooleanConstraint\Operators\IsTrueOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 
@@ -13,7 +14,7 @@ class BooleanConstraint extends Constraint
     {
         parent::setUp();
 
-        $this->icon('heroicon-m-check-circle');
+        $this->icon(FilamentIcon::resolve('tables::filters.query-builder.constraints.boolean') ?? 'heroicon-m-check-circle');
 
         $this->operators([
             IsTrueOperator::class,

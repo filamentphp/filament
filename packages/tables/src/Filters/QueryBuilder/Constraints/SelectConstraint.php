@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Filters\Concerns\HasOptions;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint\Operators\IsOperator;
@@ -26,7 +27,7 @@ class SelectConstraint extends Constraint
     {
         parent::setUp();
 
-        $this->icon('heroicon-m-chevron-up-down');
+        $this->icon(FilamentIcon::resolve('tables::filters.query-builder.constraints.select') ?? 'heroicon-m-chevron-up-down');
 
         $this->operators([
             IsOperator::class,

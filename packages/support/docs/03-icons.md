@@ -145,6 +145,12 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `tables::columns.icon-column.false` - Falsy state of an icon column
 - `tables::columns.icon-column.true` - Truthy state of an icon column
 - `tables::empty-state` - Empty state icon
+- `tables::filters.query-builder.constraints.boolean` - Default icon for a boolean constraint in the query builder
+- `tables::filters.query-builder.constraints.date` - Default icon for a date constraint in the query builder
+- `tables::filters.query-builder.constraints.number` - Default icon for a number constraint in the query builder
+- `tables::filters.query-builder.constraints.relationship` - Default icon for a relationship constraint in the query builder
+- `tables::filters.query-builder.constraints.select` - Default icon for a select constraint in the query builder
+- `tables::filters.query-builder.constraints.text` - Default icon for a text constraint in the query builder
 - `tables::filters.remove-all-button` - Button to remove all filters
 - `tables::grouping.collapse-button` - Button to collapse a group of records
 - `tables::header-cell.sort-asc-button` - Sort button of a column sorted in ascending order
