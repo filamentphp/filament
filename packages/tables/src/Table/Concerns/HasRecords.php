@@ -112,10 +112,10 @@ trait HasRecords
 
         $titleAttribute = $this->getRecordTitleAttribute();
 
-        $titleAttributeValue = $record->getAttributeValue($titleAttribute);
+        $attributeValue = $record->getAttributeValue($titleAttribute);
 
-        if ($titleAttributeValue instanceof \BackedEnum) {
-            return $titleAttributeValue->value;
+        if ($attributeValue instanceof \BackedEnum) {
+            return $attributeValue->value;
         }
 
         if (filled($title)) {
