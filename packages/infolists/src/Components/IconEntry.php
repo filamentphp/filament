@@ -188,10 +188,10 @@ class IconEntry extends Entry
 
     public function isBoolean(): bool
     {
-        if (filled($this->isBoolean)) {
-            return (bool) $this->evaluate($this->isBoolean);
+        if (blank($this->isBoolean)) {
+            $this->isBoolean = $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean']);
         }
 
-        return $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean']) || is_bool($this->getState());
+        return (bool) $this->evaluate($this->isBoolean);
     }
 }
