@@ -8,8 +8,8 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class Radio extends Field
 {
-    use Concerns\HasExtraInputAttributes;
     use Concerns\CanFixIndistinctState;
+    use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;
     use Concerns\HasOptions;
 

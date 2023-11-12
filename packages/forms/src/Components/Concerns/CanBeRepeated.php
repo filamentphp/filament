@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components\Concerns;
 
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 
 trait CanBeRepeated

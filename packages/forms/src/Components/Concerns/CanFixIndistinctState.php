@@ -2,9 +2,7 @@
 
 namespace Filament\Forms\Components\Concerns;
 
-use Closure;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Contracts\CanDisableOptions;
 use Filament\Forms\Set;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
