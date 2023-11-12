@@ -27,11 +27,11 @@ trait CanFixIndistinctState
 
             $repeaterStatePath = $repeater->getStatePath();
 
-            $componentItemStatePath = str($component->getStatePath())
+            $componentItemStatePath = (string) str($component->getStatePath())
                 ->after("{$repeaterStatePath}.")
-                ->before('.');
+                ->after('.');
 
-            $repeaterItemKey = (string) Str::of($component->getStatePath())
+            $repeaterItemKey = (string) str($component->getStatePath())
                 ->after("{$repeaterStatePath}.")
                 ->beforeLast(".{$componentItemStatePath}");
 
@@ -42,7 +42,7 @@ trait CanFixIndistinctState
             }
 
             if (is_array($state)) {
-                $repeaterSiblingState
+                collect($repeaterSiblingState)
                     ->filter(fn (array $itemState): bool => filled(array_intersect(data_get($itemState, $componentItemStatePath, []), $state)))
                     ->map(fn (array $itemState): array => collect(data_get($itemState, $componentItemStatePath) ?? [])
                         ->diff($state)
@@ -57,7 +57,7 @@ trait CanFixIndistinctState
                 return;
             }
 
-            $repeaterSiblingState
+            collect($repeaterSiblingState)
                 ->map(fn (array $itemState): mixed => data_get($itemState, $componentItemStatePath))
                 ->filter(function (mixed $siblingItemComponentState) use ($state): bool {
                     if ($siblingItemComponentState === false) {

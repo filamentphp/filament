@@ -33,7 +33,6 @@ use function Filament\Support\generate_search_term_expression;
 class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanAllowHtml;
-    use Concerns\CanBeDistinct;
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
@@ -1220,7 +1219,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ->pluck(
                     (string) str($component->getStatePath())
                         ->after("{$repeater->getStatePath()}.")
-                        ->before('.'),
+                        ->after('.'),
                 )
                 ->flatten()
                 ->diff(Arr::wrap($state))

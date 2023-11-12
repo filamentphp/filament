@@ -553,11 +553,11 @@ trait CanBeValidated
 
                 $repeaterStatePath = $repeater->getStatePath();
 
-                $componentItemStatePath = str($component->getStatePath())
+                $componentItemStatePath = (string) str($component->getStatePath())
                     ->after("{$repeaterStatePath}.")
-                    ->before('.');
+                    ->after('.');
 
-                $repeaterItemKey = (string) Str::of($component->getStatePath())
+                $repeaterItemKey = (string) str($component->getStatePath())
                     ->after("{$repeaterStatePath}.")
                     ->beforeLast(".{$componentItemStatePath}");
 
@@ -567,7 +567,7 @@ trait CanBeValidated
                     return;
                 }
 
-                $validationMessages = $this->getValidationMessages();
+                $validationMessages = $component->getValidationMessages();
 
                 if (is_bool($state)) {
                     $isSiblingItemSelected = collect($repeaterSiblingState)
@@ -590,11 +590,11 @@ trait CanBeValidated
                 }
 
                 if (is_array($state)) {
-                    $hasSiblingStateIntersections = $repeaterSiblingState
+                    $hasSiblingStateIntersections = collect($repeaterSiblingState)
                         ->filter(fn (array $item): bool => filled(array_intersect(data_get($item, $componentItemStatePath, []), $state)))
                         ->isNotEmpty();
 
-                    if ($hasSiblingStateIntersections) {
+                    if (! $hasSiblingStateIntersections) {
                         return;
                     }
 
@@ -603,7 +603,7 @@ trait CanBeValidated
                     return;
                 }
 
-                $hasDuplicateSiblingState = $repeaterSiblingState
+                $hasDuplicateSiblingState = collect($repeaterSiblingState)
                     ->pluck($componentItemStatePath)
                     ->contains($state);
 
