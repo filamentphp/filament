@@ -35,8 +35,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     use Concerns\CanAllowHtml;
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
-    use Concerns\CanBeDistinct;
     use Concerns\CanDisableOptions;
+    use Concerns\CanFixIndistinctState;
     use Concerns\CanLimitItemsLength;
     use Concerns\CanSelectPlaceholder;
     use Concerns\HasAffixes;
@@ -1111,7 +1111,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     public function hasDynamicOptions(): bool
     {
-        if ($this->isDistinct()) {
+        if ($this->hasDynamicDisabledOptions()) {
             return true;
         }
 
@@ -1201,5 +1201,32 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         /** @var BelongsTo $relationship */
 
         return $relationship->getQualifiedOwnerKeyName();
+    }
+
+    public function disableOptionsWhenSelectedInOtherRepeaterItems(): static
+    {
+        $this->distinct();
+        $this->live();
+
+        $this->disableOptionWhen(static function (Select $component, string $value, mixed $state) {
+            $repeater = $component->getParentRepeater();
+
+            if (! $repeater) {
+                return false;
+            }
+
+            return collect($repeater->getState())
+                ->pluck(
+                    (string) str($component->getStatePath())
+                        ->after("{$repeater->getStatePath()}.")
+                        ->before('.'),
+                )
+                ->flatten()
+                ->diff(Arr::wrap($state))
+                ->filter(fn (mixed $key): bool => filled($key))
+                ->contains($value);
+        });
+
+        return $this;
     }
 }

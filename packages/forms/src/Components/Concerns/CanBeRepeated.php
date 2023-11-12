@@ -7,29 +7,24 @@ use Filament\Forms\Components\Repeater;
 
 trait CanBeRepeated
 {
-    protected Component | bool | null $cachedRepeaterComponent = null;
+    protected Repeater | bool | null $cachedParentRepeater = null;
 
-    public function getRepeaterComponent(): ?Component
+    public function getParentRepeater(): ?Repeater
     {
-        if (filled($this->cachedRepeaterComponent)) {
-            return $this->cachedRepeaterComponent ?: null;
+        if (filled($this->cachedParentRepeater)) {
+            return $this->cachedParentRepeater ?: null;
         }
 
         $parentComponent = $this->getContainer()->getParentComponent();
 
         if (! $parentComponent) {
-            $this->cachedRepeaterComponent = false;
+            $this->cachedParentRepeater = false;
         } elseif ($parentComponent instanceof Repeater) {
-            $this->cachedRepeaterComponent = $parentComponent;
+            $this->cachedParentRepeater = $parentComponent;
         } else {
-            $this->cachedRepeaterComponent = $parentComponent->getRepeaterComponent();
+            $this->cachedParentRepeater = $parentComponent->getParentRepeater();
         }
 
-        return $this->cachedRepeaterComponent ?: null;
-    }
-
-    public function isRepeated(): bool
-    {
-        return (bool) $this->getRepeaterComponent();
+        return $this->cachedParentRepeater ?: null;
     }
 }

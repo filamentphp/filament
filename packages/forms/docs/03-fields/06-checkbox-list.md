@@ -152,7 +152,7 @@ Repeater::make('rooms')
                 'gracie' => 'Gracie',
                 'mocheese' => 'MoCheese',
             ])
-            ->distinctSelection(),
+            ->fixIndistinctState(),
         //
     ])
 ```

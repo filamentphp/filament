@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-The select component allows you to select from a list of predefined options:
+The select component allows you to select from **a** list of predefined options:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -428,7 +428,8 @@ Repeater::make('teams')
                 'yellow' => 'Yellow',
                 'white' => 'White',
             ])
-            ->distinctSelection(),
+            ->distinct()
+            ->disableOptionsWhenSelectedInOtherRepeaterItems(),
         //
     ])
 ```

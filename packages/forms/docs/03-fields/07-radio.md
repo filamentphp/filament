@@ -123,7 +123,7 @@ Repeater::make('teams')
                 'yellow' => 'Yellow',
                 'white' => 'White',
             ])
-            ->distinctSelection(),
+            ->fixIndistinctState(),
         //
     ])
 ```

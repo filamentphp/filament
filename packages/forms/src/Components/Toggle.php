@@ -7,8 +7,8 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 class Toggle extends Field
 {
     use Concerns\CanBeAccepted;
-    use Concerns\CanBeDistinct;
     use Concerns\CanBeInline;
+    use Concerns\CanFixIndistinctState;
     use Concerns\HasToggleColors;
     use Concerns\HasToggleIcons;
     use HasExtraAlpineAttributes;
