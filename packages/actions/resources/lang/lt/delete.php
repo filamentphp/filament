@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Ištrinti pažymėtus',
+        'label' => 'Ištrinti pasirinktus',
 
         'modal' => [
 
-            'heading' => 'Ištrinti pažymėtą :label',
+            'heading' => 'Ištrinti pasirinktus :label',
 
             'actions' => [
 

@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Допис відновлено',
+                'title' => 'Запис відновлено',
             ],
 
         ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Дописи відновлені',
+                'title' => 'Записи відновлені',
             ],
 
         ],

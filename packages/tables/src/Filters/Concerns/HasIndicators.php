@@ -3,15 +3,16 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
+use Filament\Tables\Filters\Indicator;
 use Illuminate\Support\Arr;
 
 trait HasIndicators
 {
     protected string | Closure | null $indicateUsing = null;
 
-    protected string | Closure | null $indicator = null;
+    protected Indicator | string | Closure | null $indicator = null;
 
-    public function indicator(string | Closure | null $indicator): static
+    public function indicator(Indicator | string | Closure | null $indicator): static
     {
         $this->indicator = $indicator;
 
@@ -26,7 +27,7 @@ trait HasIndicators
     }
 
     /**
-     * @return array<string>
+     * @return array<Indicator>
      */
     public function getIndicators(): array
     {
@@ -41,10 +42,24 @@ trait HasIndicators
             return [];
         }
 
-        return Arr::wrap($indicators);
+        $indicators = Arr::wrap($indicators);
+
+        foreach ($indicators as $field => $indicator) {
+            if (! $indicator instanceof Indicator) {
+                $indicator = Indicator::make($indicator);
+            }
+
+            if (is_string($field)) {
+                $indicator = $indicator->removeField($field);
+            }
+
+            $indicators[$field] = $indicator;
+        }
+
+        return $indicators;
     }
 
-    public function getIndicator(): string
+    public function getIndicator(): Indicator | string
     {
         $state = $this->getState();
 

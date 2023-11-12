@@ -4,6 +4,7 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Infolists\Components\IconEntry\IconEntrySize;
+use Filament\Support\Facades\FilamentIcon;
 
 class IconEntry extends Entry
 {
@@ -165,7 +166,9 @@ class IconEntry extends Entry
 
     public function getFalseIcon(): string
     {
-        return $this->evaluate($this->falseIcon) ?? 'heroicon-o-x-circle';
+        return $this->evaluate($this->falseIcon)
+            ?? FilamentIcon::resolve('infolists::components.icon-entry.false')
+            ?? 'heroicon-o-x-circle';
     }
 
     /**
@@ -178,7 +181,9 @@ class IconEntry extends Entry
 
     public function getTrueIcon(): string
     {
-        return $this->evaluate($this->trueIcon) ?? 'heroicon-o-check-circle';
+        return $this->evaluate($this->trueIcon)
+            ?? FilamentIcon::resolve('infolists::components.icon-entry.true')
+            ?? 'heroicon-o-check-circle';
     }
 
     public function isBoolean(): bool

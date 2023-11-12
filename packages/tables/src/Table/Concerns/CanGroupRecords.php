@@ -4,6 +4,7 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Grouping\Group;
 
@@ -71,7 +72,7 @@ trait CanGroupRecords
         $action = Action::make('groupRecords')
             ->label(__('filament-tables::table.actions.group.label'))
             ->iconButton()
-            ->icon('heroicon-m-rectangle-stack')
+            ->icon(FilamentIcon::resolve('tables::actions.group') ?? 'heroicon-m-rectangle-stack')
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->table($this);
@@ -144,6 +145,6 @@ trait CanGroupRecords
 
     public function isGroupsOnly(): bool
     {
-        return $this->isGroupsOnly;
+        return (bool) $this->evaluate($this->isGroupsOnly);
     }
 }

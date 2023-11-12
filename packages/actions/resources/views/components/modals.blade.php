@@ -57,65 +57,6 @@
     @endphp
 @endif
 
-@if ($this instanceof \Filament\Infolists\Contracts\HasInfolists && (! $this->hasInfolistsModalRendered))
-    <form wire:submit.prevent="callMountedInfolistAction">
-        @php
-            $action = $this->getMountedInfolistAction();
-        @endphp
-
-        <x-filament::modal
-            :alignment="$action?->getModalAlignment()"
-            :close-button="$action?->hasModalCloseButton()"
-            :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
-            :description="$action?->getModalDescription()"
-            display-classes="block"
-            :footer-actions="$action?->getVisibleModalFooterActions()"
-            :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
-            :heading="$action?->getModalHeading()"
-            :icon="$action?->getModalIcon()"
-            :icon-color="$action?->getModalIconColor()"
-            :id="$this->getId() . '-infolist-action'"
-            :slide-over="$action?->isModalSlideOver()"
-            :sticky-footer="$action?->isModalFooterSticky()"
-            :sticky-header="$action?->isModalHeaderSticky()"
-            :visible="filled($action)"
-            :width="$action?->getModalWidth()"
-            :wire:key="$action ? $this->getId() . '.infolist.actions.' . $action->getName() . '.modal' : null"
-            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedInfolistActions.length) open()"
-            x-on:modal-closed.stop="
-                const mountedInfolistActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedInfolistActionShouldOpenModal()) }}
-
-                if (! mountedInfolistActionShouldOpenModal) {
-                    return
-                }
-
-                if ($wire.mountedFormComponentActions.length) {
-                    return
-                }
-
-                $wire.unmountInfolistAction(false)
-            "
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
-        >
-            @if ($action)
-                {{ $action->getModalContent() }}
-
-                @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
-                    {{ $infolist }}
-                @elseif ($this->mountedInfolistActionHasForm())
-                    {{ $this->getMountedInfolistActionForm() }}
-                @endif
-
-                {{ $action->getModalContentFooter() }}
-            @endif
-        </x-filament::modal>
-    </form>
-
-    @php
-        $this->hasInfolistsModalRendered = true;
-    @endphp
-@endif
-
 @if ($this instanceof \Filament\Tables\Contracts\HasTable && (! $this->hasTableModalRendered))
     <form wire:submit.prevent="callMountedTableAction">
         @php
@@ -225,6 +166,65 @@
 
     @php
         $this->hasTableModalRendered = true;
+    @endphp
+@endif
+
+@if ($this instanceof \Filament\Infolists\Contracts\HasInfolists && (! $this->hasInfolistsModalRendered))
+    <form wire:submit.prevent="callMountedInfolistAction">
+        @php
+            $action = $this->getMountedInfolistAction();
+        @endphp
+
+        <x-filament::modal
+            :alignment="$action?->getModalAlignment()"
+            :close-button="$action?->hasModalCloseButton()"
+            :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
+            :description="$action?->getModalDescription()"
+            display-classes="block"
+            :footer-actions="$action?->getVisibleModalFooterActions()"
+            :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
+            :heading="$action?->getModalHeading()"
+            :icon="$action?->getModalIcon()"
+            :icon-color="$action?->getModalIconColor()"
+            :id="$this->getId() . '-infolist-action'"
+            :slide-over="$action?->isModalSlideOver()"
+            :sticky-footer="$action?->isModalFooterSticky()"
+            :sticky-header="$action?->isModalHeaderSticky()"
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            :wire:key="$action ? $this->getId() . '.infolist.actions.' . $action->getName() . '.modal' : null"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedInfolistActions.length) open()"
+            x-on:modal-closed.stop="
+                const mountedInfolistActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedInfolistActionShouldOpenModal()) }}
+
+                if (! mountedInfolistActionShouldOpenModal) {
+                    return
+                }
+
+                if ($wire.mountedFormComponentActions.length) {
+                    return
+                }
+
+                $wire.unmountInfolistAction(false)
+            "
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
+        >
+            @if ($action)
+                {{ $action->getModalContent() }}
+
+                @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
+                    {{ $infolist }}
+                @elseif ($this->mountedInfolistActionHasForm())
+                    {{ $this->getMountedInfolistActionForm() }}
+                @endif
+
+                {{ $action->getModalContentFooter() }}
+            @endif
+        </x-filament::modal>
+    </form>
+
+    @php
+        $this->hasInfolistsModalRendered = true;
     @endphp
 @endif
 

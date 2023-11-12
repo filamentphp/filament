@@ -3,10 +3,10 @@
 namespace Filament\Actions;
 
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Traits\Conditionable;
 
@@ -23,7 +23,6 @@ class StaticAction extends ViewComponent
     use Concerns\CanSubmitForm;
     use Concerns\HasAction;
     use Concerns\HasArguments;
-    use Concerns\HasBadge;
     use Concerns\HasGroupedIcon;
     use Concerns\HasKeyBindings;
     use Concerns\HasLabel;
@@ -31,9 +30,12 @@ class StaticAction extends ViewComponent
     use Concerns\HasSize;
     use Concerns\HasTooltip;
     use Conditionable;
+    use HasBadge;
     use HasColor;
-    use HasIcon;
     use HasExtraAttributes;
+    use HasIcon;
+
+    public const BADGE_VIEW = 'filament-actions::badge-action';
 
     public const BUTTON_VIEW = 'filament-actions::button-action';
 
@@ -60,6 +62,11 @@ class StaticAction extends ViewComponent
         $static->configure();
 
         return $static;
+    }
+
+    public function isBadge(): bool
+    {
+        return $this->getView() === static::BADGE_VIEW;
     }
 
     public function button(): static
@@ -121,14 +128,19 @@ class StaticAction extends ViewComponent
         }
 
         if ($event = $this->getEvent()) {
-            $arguments = collect([$event])
-                ->merge($this->getEventData())
-                ->when(
-                    $this->getDispatchToComponent(),
-                    fn (Collection $collection, string $component) => $collection->prepend($component),
-                )
-                ->map(fn (mixed $value): string => Js::from($value)->toHtml())
-                ->implode(', ');
+            $arguments = '';
+
+            if ($component = $this->getDispatchToComponent()) {
+                $arguments .= Js::from($component)->toHtml();
+                $arguments .= ', ';
+            }
+
+            $arguments .= Js::from($event)->toHtml();
+
+            if ($this->getEventData()) {
+                $arguments .= ', ';
+                $arguments .= Js::from($this->getEventData())->toHtml();
+            }
 
             return match ($this->getDispatchDirection()) {
                 'self' => "\$dispatchSelf($arguments)",

@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Filament\Support\Enums\Alignment;
@@ -401,8 +402,16 @@ trait CanOpenModal
             return $action;
         }
 
-        return $action
-            ->livewire($this->getLivewire());
+        $action->livewire($this->getLivewire());
+
+        if (
+            ($this instanceof HasRecord) &&
+            ($action instanceof HasRecord)
+        ) {
+            $action->record($this->getRecord());
+        }
+
+        return $action;
     }
 
     /**
@@ -498,9 +507,14 @@ trait CanOpenModal
         return $this->evaluate($this->modalContentFooter);
     }
 
+    public function getCustomModalHeading(): string | Htmlable | null
+    {
+        return $this->evaluate($this->modalHeading);
+    }
+
     public function getModalHeading(): string | Htmlable
     {
-        return $this->evaluate($this->modalHeading) ?? $this->getLabel();
+        return $this->getCustomModalHeading() ?? $this->getLabel();
     }
 
     public function getModalDescription(): string | Htmlable | null

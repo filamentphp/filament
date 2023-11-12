@@ -2,13 +2,13 @@
     $columns = $this->getColumns();
 @endphp
 
-<x-filament-widgets::widget>
+<x-filament-widgets::widget class="fi-wi-stats-overview">
     <div
         @if ($pollingInterval = $this->getPollingInterval())
             wire:poll.{{ $pollingInterval }}
         @endif
         @class([
-            'fi-wi-stats-overview grid gap-6',
+            'fi-wi-stats-overview-stats-ctn grid gap-6',
             'md:grid-cols-1' => $columns === 1,
             'md:grid-cols-2' => $columns === 2,
             'md:grid-cols-3' => $columns === 3,

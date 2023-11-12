@@ -9,6 +9,10 @@
     <a href="https://php.net"><img alt="PHP 8.1" src="https://img.shields.io/badge/PHP-8.1-777BB4?style=for-the-badge&logo=php"></a>
 </p>
 
+<p align="center">
+    <a href="https://trendshift.io/repositories/238" target="_blank"><img src="https://trendshift.io/api/badge/repositories/238" alt="filamentphp%2Ffilament | Trendshift" style="width: 250px; height: 55px;" /></a>
+</p>
+
 Filament is a collection of full-stack components for accelerated Laravel development. They are beautifully designed, intuitive to use, and fully extensible - the perfect starting point for your next Laravel app. Why waste time building the same features over and over again?
 
 ## Packages

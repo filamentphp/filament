@@ -26,7 +26,14 @@ trait HasInfolist
 
     public function getInfolist(): ?Infolist
     {
-        $infolist = Infolist::make($this->getLivewire());
+        $infolistName = $this->getInfolistName();
+
+        if (blank($infolistName)) {
+            return null;
+        }
+
+        $infolist = Infolist::make($this->getLivewire())
+            ->name($infolistName);
 
         if ($this instanceof HasRecord) {
             $infolist->record($this->getRecord());
@@ -49,5 +56,10 @@ trait HasInfolist
         }
 
         return $modifiedInfolist;
+    }
+
+    public function getInfolistName(): ?string
+    {
+        return null;
     }
 }

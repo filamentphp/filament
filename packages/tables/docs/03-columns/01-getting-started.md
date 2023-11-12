@@ -171,8 +171,25 @@ TextColumn::make('full_name')
     ->searchable(query: function (Builder $query, string $search): Builder {
         return $query
             ->where('first_name', 'like', "%{$search}%")
-            ->where('last_name', 'like', "%{$search}%");
+            ->orWhere('last_name', 'like', "%{$search}%");
     })
+```
+
+#### Customizing the table search field placeholder
+
+You may customize the placeholder in the search field using the `searchPlaceholder()` method on the `$table`:
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchPlaceholder('Search (ID, Name)');
+}
 ```
 
 ### Searching individually
@@ -289,14 +306,27 @@ TextColumn::make('title')
 
 ## Setting a default value
 
-To set a default value for fields with a `null` state, you may use the `default()` method:
+To set a default value for columns with an empty state, you may use the `default()` method. This method will treat the default state as if it were real, so columns like [image](image) or [color](color) will display the default image or color.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')
-    ->default('Untitled')
+TextColumn::make('description')
+    ->default('No description.')
 ```
+
+## Adding placeholder text if a column is empty
+
+Sometimes you may want to display placeholder text for columns with an empty state, which is styled as a lighter gray text. This differs from the [default value](#setting-a-default-value), as the placeholder is always text and not treated as if it were real state.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')
+    ->placeholder('No description.')
+```
+
+<AutoScreenshot name="tables/columns/placeholder" alt="Column with a placeholder for empty state" version="3.x" />
 
 ## Hiding columns
 

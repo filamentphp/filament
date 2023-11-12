@@ -117,17 +117,6 @@ select:not(.choices) {
     background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==');
 }
 
-.choices[data-type*='select-one'] .choices__button:hover,
-.choices[data-type*='select-one'] .choices__button:focus {
-    @apply opacity-70 dark:opacity-60;
-}
-
-.choices[data-type*='select-one']
-    .choices__item[data-value='']
-    .choices__button {
-    @apply hidden;
-}
-
 .choices[data-type*='select-multiple'] .choices__button {
     @apply h-4 w-4 opacity-50 dark:opacity-40;
     background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==');
@@ -138,9 +127,17 @@ select:not(.choices) {
     background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==');
 }
 
+.choices[data-type*='select-one'] .choices__button:hover,
+.choices[data-type*='select-one'] .choices__button:focus-visible,
 .choices[data-type*='select-multiple'] .choices__button:hover,
-.choices[data-type*='select-multiple'] .choices__button:focus {
+.choices[data-type*='select-multiple'] .choices__button:focus-visible {
     @apply opacity-70 dark:opacity-60;
+}
+
+.choices[data-type*='select-one']
+    .choices__item[data-value='']
+    .choices__button {
+    @apply hidden;
 }
 
 .choices.is-disabled .choices__button {
@@ -150,7 +147,7 @@ select:not(.choices) {
 /* !important is used to override default Tailwind input styling */
 
 .choices__input {
-    @apply border-none !bg-transparent !p-0 !text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:!ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray[500])] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray[400])] sm:!text-sm sm:leading-6;
+    @apply border-none !bg-transparent !p-0 !text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus-visible:!ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray[500])] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray[400])] sm:!text-sm sm:leading-6;
 }
 
 .choices__list--dropdown .choices__input {

@@ -4,6 +4,7 @@ namespace Filament\Tables\Actions;
 
 use Filament\Actions\Concerns\CanReplicateRecords;
 use Filament\Actions\Contracts\ReplicatesRecords;
+use Filament\Support\Facades\FilamentIcon;
 
 class ReplicateAction extends Action implements ReplicatesRecords
 {
@@ -15,6 +16,6 @@ class ReplicateAction extends Action implements ReplicatesRecords
     {
         $this->baseSetUp();
 
-        $this->icon('heroicon-m-square-2-stack');
+        $this->icon(FilamentIcon::resolve('actions::replicate-action') ?? 'heroicon-m-square-2-stack');
     }
 }

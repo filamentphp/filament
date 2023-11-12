@@ -1,10 +1,17 @@
 ---
 title: Custom layouts
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
+
+<LaracastsBanner
+    title="Build a Custom Infolist Layout"
+    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to build components, and you'll get to know all the internal tools to help you."
+    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/9"
+/>
 
 ## View components
 
-Aside from [building custom layout components](custom), you may create "view" components which allow you to create custom layouts without extra PHP classes.
+Aside from [building custom layout components](#custom-layout-classes), you may create "view" components which allow you to create custom layouts without extra PHP classes.
 
 ```php
 use Filament\Infolists\Components\View;

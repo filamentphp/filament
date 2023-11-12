@@ -167,16 +167,42 @@ it('can state whether a select column has options', function () {
         ->assertTableSelectColumnDoesNotHaveOptions('with_options', ['one' => 'One', 'two' => 'Two'], $post);
 });
 
-it('can automatically detect boolean cast attribute in icon column', function () {
-    $post = Post::factory()->create(['is_published' => false]);
-
-    /** @var Table $table */
-    $table = tap(livewire(PostsTable::class)->instance()->getTable())->columns([
-        IconColumn::make('is_published')
+it('can assert that a column exists with the given configuration', function () {
+    $publishedPost = Post::factory()->create([
+        'is_published' => true,
     ]);
 
-    /** @var IconColumn $column */
-    $column = tap($table->getColumn('is_published'))->record($post);
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('title2', function (Filament\Tables\Columns\TextColumn $column) {
+            return $column->isSortable() &&
+                $column->isSearchable() &&
+                $column->getPrefix() == 'published';
+        }, $publishedPost);
 
-    expect($column->isBoolean())->toBeTrue();
+    $unpublishedPost = Post::factory()->create([
+        'is_published' => false,
+    ]);
+
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('title2', function (Filament\Tables\Columns\TextColumn $column) {
+            return $column->getPrefix() == 'unpublished';
+        }, $unpublishedPost);
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('Failed asserting that a column with the name [title] and provided configuration exists on the [' . PostsTable::class . '] component');
+
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('title', function (Filament\Tables\Columns\TextColumn $column) {
+            return $column->isTime();
+        }, $publishedPost);
+});
+
+it('can automatically detect boolean cast attribute in icon column', function () {
+    $post = Post::factory()
+        ->create(['is_published' => false]);
+
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('is_published', function (IconColumn $column) {
+            return $column->isBoolean();
+        }, $post);
 });

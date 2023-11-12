@@ -58,17 +58,25 @@
 
     @foreach ($columns as $column)
         @if (($loop->first || $extraHeadingColumn || $groupsOnly || ($loop->iteration > $headingColumnSpan)) && ($placeholderColumns || $column->hasSummary()))
+            @php
+                $alignment = $column->getAlignment() ?? Alignment::Start;
+
+                if (! $alignment instanceof Alignment) {
+                    $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+                }
+            @endphp
+
             <x-filament-tables::cell
                 :colspan="($loop->first && (! $extraHeadingColumn) && (! $groupsOnly) && ($headingColumnSpan > 1)) ? $headingColumnSpan : null"
                 @class([
-                    match ($column->getAlignment()) {
-                        Alignment::Start, 'start' => 'text-start',
-                        Alignment::Center, 'center' => 'text-center',
-                        Alignment::End, 'end' => 'text-end',
-                        Alignment::Left, 'left' => 'text-left',
-                        Alignment::Right, 'right' => 'text-right',
-                        Alignment::Justify, 'justify' => 'text-justify',
-                        default => null,
+                    match ($alignment) {
+                        Alignment::Start => 'text-start',
+                        Alignment::Center => 'text-center',
+                        Alignment::End => 'text-end',
+                        Alignment::Left => 'text-left',
+                        Alignment::Right => 'text-right',
+                        Alignment::Justify => 'text-justify',
+                        default => $alignment,
                     },
                 ])
             >

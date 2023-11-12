@@ -7,6 +7,7 @@ use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
@@ -22,6 +23,11 @@ trait CanBeValidated
      * @var array<mixed>
      */
     protected array $rules = [];
+
+    /**
+     * @var array<string, string | Closure>
+     */
+    protected array $validationMessages = [];
 
     protected string | Closure | null $validationAttribute = null;
 
@@ -531,9 +537,100 @@ trait CanBeValidated
         return $this;
     }
 
+    public function distinct(): static
+    {
+        $this->rule(static function (Field $component, mixed $state) {
+            return function (string $attribute, mixed $value, Closure $fail) use ($component, $state) {
+                if (blank($state)) {
+                    return;
+                }
+
+                $repeater = $component->getParentRepeater();
+
+                if (! $repeater) {
+                    return;
+                }
+
+                $repeaterStatePath = $repeater->getStatePath();
+
+                $componentItemStatePath = (string) str($component->getStatePath())
+                    ->after("{$repeaterStatePath}.")
+                    ->after('.');
+
+                $repeaterItemKey = (string) str($component->getStatePath())
+                    ->after("{$repeaterStatePath}.")
+                    ->beforeLast(".{$componentItemStatePath}");
+
+                $repeaterSiblingState = Arr::except($repeater->getState(), [$repeaterItemKey]);
+
+                if (empty($repeaterSiblingState)) {
+                    return;
+                }
+
+                $validationMessages = $component->getValidationMessages();
+
+                if (is_bool($state)) {
+                    $isSiblingItemSelected = collect($repeaterSiblingState)
+                        ->pluck($componentItemStatePath)
+                        ->contains(true);
+
+                    if ($state && $isSiblingItemSelected) {
+                        $fail(__($validationMessages['distinct.only_one_must_be_selected'] ?? 'filament-forms::validation.distinct.only_one_must_be_selected', ['attribute' => $component->getValidationAttribute()]));
+
+                        return;
+                    }
+
+                    if ($state || $isSiblingItemSelected) {
+                        return;
+                    }
+
+                    $fail(__($validationMessages['distinct.must_be_selected'] ?? 'filament-forms::validation.distinct.must_be_selected', ['attribute' => $component->getValidationAttribute()]));
+
+                    return;
+                }
+
+                if (is_array($state)) {
+                    $hasSiblingStateIntersections = collect($repeaterSiblingState)
+                        ->filter(fn (array $item): bool => filled(array_intersect(data_get($item, $componentItemStatePath, []), $state)))
+                        ->isNotEmpty();
+
+                    if (! $hasSiblingStateIntersections) {
+                        return;
+                    }
+
+                    $fail(__($validationMessages['distinct'] ?? 'validation.distinct', ['attribute' => $component->getValidationAttribute()]));
+
+                    return;
+                }
+
+                $hasDuplicateSiblingState = collect($repeaterSiblingState)
+                    ->pluck($componentItemStatePath)
+                    ->contains($state);
+
+                if (! $hasDuplicateSiblingState) {
+                    return;
+                }
+
+                $fail(__($validationMessages['distinct'] ?? 'validation.distinct', ['attribute' => $component->getValidationAttribute()]));
+            };
+        });
+
+        return $this;
+    }
+
     public function validationAttribute(string | Closure | null $label): static
     {
         $this->validationAttribute = $label;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, string | Closure>  $messages
+     */
+    public function validationMessages(array $messages): static
+    {
+        $this->validationMessages = $messages;
 
         return $this;
     }
@@ -551,6 +648,20 @@ trait CanBeValidated
     public function getValidationAttribute(): string
     {
         return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getValidationMessages(): array
+    {
+        $messages = [];
+
+        foreach ($this->validationMessages as $rule => $message) {
+            $messages[$rule] = $this->evaluate($message);
+        }
+
+        return array_filter($messages);
     }
 
     /**
@@ -575,6 +686,20 @@ trait CanBeValidated
         }
 
         return $rules;
+    }
+
+    /**
+     * @param  array<string, array<string, string>>  $messages
+     */
+    public function dehydrateValidationMessages(array &$messages): void
+    {
+        $statePath = $this->getStatePath();
+
+        if (count($componentMessages = $this->getValidationMessages())) {
+            foreach ($componentMessages as $rule => $message) {
+                $messages["{$statePath}.{$rule}"] = $message;
+            }
+        }
     }
 
     /**

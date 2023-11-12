@@ -145,6 +145,19 @@ TextInput::make('domain')
 
 <AutoScreenshot name="forms/fields/text-input/suffix-icon" alt="Text input with suffix icon" version="3.x" />
 
+#### Setting the affix icon's color
+
+Affix icons are gray by default, but you may set a different color using the `prefixIconColor()` and `suffixIconColor()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->suffixIcon('heroicon-m-check-circle')
+    ->suffixIconColor('success')
+```
+
 ## Input masking
 
 Input masking is the practice of defining a format that the input value must conform to.

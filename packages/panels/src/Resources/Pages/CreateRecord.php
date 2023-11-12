@@ -9,9 +9,13 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
+
+use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form
@@ -131,7 +135,13 @@ class CreateRecord extends Page
             return;
         }
 
-        $this->redirect($this->getRedirectUrl());
+        $redirectUrl = $this->getRedirectUrl();
+
+        if (FilamentView::hasSpaMode()) {
+            $this->redirect($redirectUrl, navigate: is_app_url($redirectUrl));
+        } else {
+            $this->redirect($redirectUrl);
+        }
     }
 
     protected function getCreatedNotification(): ?Notification
@@ -183,7 +193,15 @@ class CreateRecord extends Page
 
     protected function associateRecordWithTenant(Model $record, Model $tenant): Model
     {
-        return static::getResource()::getTenantRelationship($tenant)->save($record);
+        $relationship = static::getResource()::getTenantRelationship($tenant);
+
+        if ($relationship instanceof HasManyThrough) {
+            $record->save();
+
+            return $record;
+        }
+
+        return $relationship->save($record);
     }
 
     /**
@@ -250,14 +268,24 @@ class CreateRecord extends Page
 
     public function form(Form $form): Form
     {
-        return static::getResource()::form(
-            $form
-                ->operation('create')
-                ->model($this->getModel())
-                ->statePath($this->getFormStatePath())
-                ->columns($this->hasInlineLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineLabels()),
-        );
+        return $form;
+    }
+
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(static::getResource()::form(
+                $this->makeForm()
+                    ->operation('create')
+                    ->model($this->getModel())
+                    ->statePath($this->getFormStatePath())
+                    ->columns($this->hasInlineLabels() ? 1 : 2)
+                    ->inlineLabel($this->hasInlineLabels()),
+            )),
+        ];
     }
 
     protected function getRedirectUrl(): string

@@ -108,7 +108,9 @@ class Js extends Asset
 
     public function getRelativePublicPath(): string
     {
-        return "js/{$this->getPackage()}/{$this->getId()}.js";
+        $path = config('filament.assets_path', '');
+
+        return ltrim("{$path}/js/{$this->getPackage()}/{$this->getId()}.js", '/');
     }
 
     public function getPublicPath(): string

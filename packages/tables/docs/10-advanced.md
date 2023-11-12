@@ -33,6 +33,20 @@ public function table(Table $table): Table
 }
 ```
 
+### Customizing the default pagination page option
+
+To customize the default number of records shown use the `defaultPaginationPageOption()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->defaultPaginationPageOption(25);
+}
+```
+
 ### Preventing query string conflicts with the pagination page
 
 By default, Livewire stores the pagination state in a `page` parameter of the URL query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.
@@ -115,6 +129,18 @@ public function table(Table $table): Table
 {
     return $table
         ->reorderable('order_column');
+}
+```
+
+The `reorderable()` method also accepts a boolean condition as its second parameter, allowing you to conditionally enable reordering:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->reorderable('sort', auth()->user()->isAdmin());
 }
 ```
 
@@ -286,6 +312,14 @@ public function table(Table $table): Table
 ```
 
 These classes are not automatically compiled by Tailwind CSS. If you want to apply Tailwind CSS classes that are not already used in Blade files, you should update your `content` configuration in `tailwind.config.js` to also scan for classes inside your directory: `'./app/Filament/**/*.php'`
+
+## Resetting the table
+
+If you make changes to the table definition during a Livewire request, for example, when consuming a public property in the `table()` method, you may need to reset the table to ensure that the changes are applied. To do this, you can call the `resetTable()` method on the Livewire component:
+
+```php
+$this->resetTable();
+```
 
 ## Global settings
 

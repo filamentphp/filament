@@ -430,7 +430,7 @@ If you're using the [Panel Builder](../panels), you can easily ignore the curren
 Field::make('email')->unique(ignoreRecord: true)
 ```
 
-You can further customize the rule by passing a [closure](advanced#closure-customization) to the `callback` parameter:
+You can further customize the rule by passing a [closure](advanced#closure-customization) to the `modifyRuleUsing` parameter:
 
 ```php
 use Illuminate\Validation\Rules\Unique;
@@ -474,7 +474,7 @@ TextInput::make('slug')->rules([
     function () {
         return function (string $attribute, $value, Closure $fail) {
             if ($value === 'foo') {
-                $fail("The {$attribute} is invalid.");
+                $fail('The :attribute is invalid.');
             }
         };
     },
@@ -494,8 +494,9 @@ TextInput::make('slug')->rules([
         }
     },
 ])
+```
 
-## Validation attributes
+## Customizing validation attributes
 
 When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
 
@@ -503,6 +504,20 @@ When fields fail validation, their label is used in the error message. To custom
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')->validationAttribute('full name')
+```
+
+## Validation messages
+
+By default Laravel's validation error message is used. To customize the error messages, use the `validationMessages()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('email')
+    ->unique(// ...)
+    ->validationMessages([
+        'unique' => 'The :attribute has already been registered.',
+    ])
 ```
 
 ## Sending validation notifications

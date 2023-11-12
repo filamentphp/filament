@@ -122,6 +122,12 @@ formComponents.forEach((componentName) => {
 
 compile({
     ...defaultOptions,
+    entryPoints: [`./packages/tables/resources/js/components/table.js`],
+    outfile: `./packages/tables/dist/components/table.js`,
+})
+
+compile({
+    ...defaultOptions,
     entryPoints: [`./packages/widgets/resources/js/components/chart.js`],
     outfile: `./packages/widgets/dist/components/chart.js`,
 })

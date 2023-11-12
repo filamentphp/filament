@@ -1,10 +1,17 @@
 ---
 title: Custom fields
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
+
+<LaracastsBanner
+    title="Build a Custom Form Field"
+    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to build components, and you'll get to know all the internal tools to help you."
+    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/6"
+/>
 
 ## View fields
 
-Aside from [building custom fields](custom), you may create "view" fields which allow you to create custom fields without extra PHP classes.
+Aside from [building custom fields](#custom-field-classes), you may create "view" fields which allow you to create custom fields without extra PHP classes.
 
 ```php
 use Filament\Forms\Components\ViewField;
@@ -14,6 +21,23 @@ ViewField::make('rating')
 ```
 
 This assumes that you have a `resources/views/filament/forms/components/range-slider.blade.php` file.
+
+### Passing data to view fields
+
+You can pass a simple array of data to the view using `viewData()`:
+
+```php
+use Filament\Forms\Components\ViewField;
+
+ViewField::make('rating')
+    ->view('filament.forms.components.range-slider')
+    ->viewData([
+        'min' => 1,
+        'max' => 5,
+    ])
+```
+
+However, more complex configuration can be achieved with a [custom field class](#custom-field-classes).
 
 ## Custom field classes
 
@@ -44,7 +68,7 @@ It will also create a view file at `resources/views/filament/forms/components/ra
 
 Livewire components are PHP classes that have their state stored in the user's browser. When a network request is made, the state is sent to the server, and filled into public properties on the Livewire component class, where it can be accessed in the same way as any other class property in PHP can be.
 
-Imagine you had a Livewire component with a public property called `$name`. You could bind that property to an input field in the HTML of the Livewire component in one of two ways: by a the [`wire:model` attribute](https://livewire.laravel.com/docs/properties#data-binding), or by [entangling](https://livewire.laravel.com/docs/2.x/alpine-js#sharing-state) it with an Alpine.js property:
+Imagine you had a Livewire component with a public property called `$name`. You could bind that property to an input field in the HTML of the Livewire component in one of two ways: with the [`wire:model` attribute](https://livewire.laravel.com/docs/properties#data-binding), or by [entangling](https://livewire.laravel.com/docs/javascript#the-wire-object) it with an Alpine.js property:
 
 ```blade
 <input wire:model="name" />

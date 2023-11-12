@@ -8,6 +8,48 @@ Multi-tenancy is a concept where a single instance of an application serves mult
 
 Multi-tenancy is a very sensitive topic. It's important to understand the security implications of multi-tenancy and how to properly implement it. If implemented partially or incorrectly, data belonging to one tenant may be exposed to another tenant. Filament provides a set of tools to help you implement multi-tenancy in your application, but it is up to you to understand how to use them. Filament does not provide any guarantees about the security of your application. It is your responsibility to ensure that your application is secure. Please see the [security](#tenancy-security) section for more information.
 
+## Simple one-to-many tenancy
+
+The term "multi-tenancy" is broad and may mean different things in different contexts. Filament's tenancy system implies that the user belongs to **many** tenants (*organizations, teams, companies, etc.*) and may switch between them. 
+
+If your case is simpler and you don't need a many-to-many relationship, then you don't need to set up the tenancy in Filament. You could use [observers](https://laravel.com/docs/eloquent#observers) and [global scopes](https://laravel.com/docs/eloquent#global-scopes) instead.
+
+Let's say you have a database column `users.team_id`, you can scope all records to have the same `team_id` as the user using a [global scope](https://laravel.com/docs/eloquent#global-scopes):
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+
+class Post extends Model
+{
+    protected static function booted(): void
+    {
+        if (auth()->check()) {
+            static::addGlobalScope('team', function (Builder $query) {
+                $query->where('team_id', auth()->user()->team_id);
+                // or with a `team` relationship defined:
+                $query->whereBelongsTo(auth()->user()->team);
+            });
+        }
+    }
+}
+```
+
+To automatically set the `team_id` on the record when it's created, you can create an [observer](https://laravel.com/docs/eloquent#observers):
+
+```php
+class PostObserver
+{
+    public function creating(Post $post): void
+    {
+        if (auth()->check()) {
+            $post->team_id = auth()->user()->team_id;
+            // or with a `team` relationship defined:
+            $post->team()->associate(auth()->user()->team);
+        }
+    }
+}
+```
+
 ## Setting up tenancy
 
 To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](configuration):
@@ -197,7 +239,7 @@ $tenant = Filament::getTenant();
 
 Filament provides a billing integration with [Laravel Spark](https://spark.laravel.com). Your users can start subscriptions and manage their billing information.
 
-To install the integration, first [install Spark](https://spark.laravel.com/docs/2.x/installation.html) and configure it for your tenant model.
+To install the integration, first [install Spark](https://spark.laravel.com/docs/installation.html) and configure it for your tenant model.
 
 Now, you can install the Filament billing provider for Spark using Composer:
 
@@ -300,7 +342,7 @@ public function panel(Panel $panel): Panel
         ->tenantMenuItems([
             MenuItem::make()
                 ->label('Settings')
-                ->url(fn (): string => Settings::getUrl()),
+                ->url(fn (): string => Settings::getUrl())
                 ->icon('heroicon-m-cog-8-tooth'),
             // ...
         ]);
@@ -321,6 +363,25 @@ public function panel(Panel $panel): Panel
         // ...
         ->tenantMenuItems([
             'register' => MenuItem::make()->label('Register new team'),
+            // ...
+        ]);
+}
+```
+
+### Customizing the profile link
+
+To customize the profile link on the tenant menu, register a new item with the `profile` array key:
+
+```php
+use Filament\Navigation\MenuItem;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMenuItems([
+            'profile' => MenuItem::make()->label('Edit team profile'),
             // ...
         ]);
 }
@@ -513,6 +574,7 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasTenants;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -520,7 +582,7 @@ class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
 {
     // ...
     
-    public function getDefaultTenant(): ?Model
+    public function getDefaultTenant(Panel $panel): ?Model
     {
         return $this->latestTeam;
     }

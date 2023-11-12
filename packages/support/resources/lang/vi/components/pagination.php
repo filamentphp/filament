@@ -4,13 +4,13 @@ return [
 
     'label' => 'Điều hướng phân trang',
 
-    'overview' => 'Hiển thị từ :first đến :last trong số :total kết quả',
+    'overview' => '{1} Đang hiện 1 kết quả|[2,*] Đang hiện từ :first đến :last của :total kết quả',
 
     'fields' => [
 
         'records_per_page' => [
 
-            'label' => 'mỗi trang',
+            'label' => 'Mỗi trang',
 
             'options' => [
                 'all' => 'Tất cả',
@@ -27,11 +27,11 @@ return [
         ],
 
         'next' => [
-            'label' => 'Tiếp',
+            'label' => 'Tiếp theo',
         ],
 
         'previous' => [
-            'label' => 'Trước',
+            'label' => 'Trước đó',
         ],
 
     ],

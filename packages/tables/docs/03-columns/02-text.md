@@ -105,7 +105,7 @@ The `money()` method allows you to easily format monetary values, in any currenc
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('price')
-    ->money('eur')
+    ->money('EUR')
 ```
 
 ## Limiting text length
@@ -240,17 +240,6 @@ TextColumn::make('status')
     ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
 ```
 
-## Adding a placeholder if the cell is empty
-
-Sometimes you may want to display a placeholder if the cell's value is empty:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('updated_at')
-    ->placeholder('Never')
-```
-
 ## Customizing the color
 
 You may set a color for the text, either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
@@ -292,7 +281,9 @@ TextColumn::make('email')
 
 ## Customizing the text size
 
-You may make the text larger using `size(TextColumnSize::Large)`:
+Text columns have small font size by default, but you may change this to `TextColumnSize::ExtraSmall`, `TextColumnSize::Medium`, or `TextColumnSize::Large`.
+
+For instance, you may make the text larger using `size(TextColumnSize::Large)`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
