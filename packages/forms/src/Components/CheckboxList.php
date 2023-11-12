@@ -18,6 +18,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
 {
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
+    use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;

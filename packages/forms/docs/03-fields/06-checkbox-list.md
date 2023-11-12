@@ -132,36 +132,6 @@ CheckboxList::make('technologies')
     ->in(fn (CheckboxList $component): array => array_keys($component->getEnabledOptions()))
 ```
 
-## Distinct selection in a Repeater
-
-You may enforce selection of any given checkbox in only one instance of a Repeater by using the `distinctSelection()` method.
-
-This example of assigning pets to rooms in your house would only allow each pet to be assigned to one room:
-
-```php
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Repeater;
-
-Repeater::make('rooms')
-    ->schema([  
-        CheckboxList::make('pets')
-            ->options([
-                'della' => 'Della',
-                'leslie' => 'Leslie',
-                'rosie' => 'Rosie',
-                'gracie' => 'Gracie',
-                'mocheese' => 'MoCheese',
-            ])
-            ->fixIndistinctState(),
-        //
-    ])
-```
-
-If any checkbox is selected again in a subsequent repeat instance, the previous selection will be de-selected.
-
-Enabling this method will automatically apply the `distinct()` validation, which will fail if any given option is selected in more than one instance of the repeater.
-
-
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchable()` method:

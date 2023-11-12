@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Contracts\CanDisableOptions;
 use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentIcon;
@@ -30,12 +31,13 @@ use Livewire\Component as LivewireComponent;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
-class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
+class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
+    use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
     use Concerns\CanLimitItemsLength;
     use Concerns\CanSelectPlaceholder;
@@ -1201,32 +1203,5 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         /** @var BelongsTo $relationship */
 
         return $relationship->getQualifiedOwnerKeyName();
-    }
-
-    public function disableOptionsWhenSelectedInOtherRepeaterItems(): static
-    {
-        $this->distinct();
-        $this->live();
-
-        $this->disableOptionWhen(static function (Select $component, string $value, mixed $state) {
-            $repeater = $component->getParentRepeater();
-
-            if (! $repeater) {
-                return false;
-            }
-
-            return collect($repeater->getState())
-                ->pluck(
-                    (string) str($component->getStatePath())
-                        ->after("{$repeater->getStatePath()}.")
-                        ->after('.'),
-                )
-                ->flatten()
-                ->diff(Arr::wrap($state))
-                ->filter(fn (mixed $key): bool => filled($key))
-                ->contains($value);
-        });
-
-        return $this;
     }
 }

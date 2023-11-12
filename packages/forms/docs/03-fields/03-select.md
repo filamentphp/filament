@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-The select component allows you to select from **a** list of predefined options:
+The select component allows you to select from a list of predefined options:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -406,49 +406,6 @@ Select::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
     ->in(fn (Select $component): array => array_keys($component->getEnabledOptions()))
 ```
-
-## Distinct selection in a Repeater
-
-You may enforce selection of any given option in only one instance of a Repeater by using the `distinctSelection()` method.
-
-This example of creating teams for a tournament in a Repeater would only allow each shirt color to be chosen once:
-
-```php
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-
-Repeater::make('teams')
-    ->maxItems(5)
-    ->schema([  
-        Select::make('shirt_color')
-            ->options([
-                'blue' => 'Blue',
-                'green' => 'Green',
-                'red' => 'Red',
-                'yellow' => 'Yellow',
-                'white' => 'White',
-            ])
-            ->distinct()
-            ->disableOptionsWhenSelectedInOtherRepeaterItems(),
-        //
-    ])
-```
-
-With no arguments, this will allow selection of the same color again, but will de-select the other occurrence of it.
-
-Alternatively, you may specify the `shouldDisableOptions` argument, which will disable any selected option in all other repeater instances, so once an option is selected in one instance, it cannot be selected in another.  **Note** that this may impact performance for Selects with a lot of options.
-
-```php
-        Select::make('shirt_color')
-            ->options([
-                //
-            ])
-            ->distinctSelection(shouldDisableOptions: true)
-```
-
-The `distinctSelection()` method works for single and multiple selects, with and without `shouldDisableOptions`.  Without the `shouldDisableOptions` argument, the `live()` method is automatically applied.
-
-Enabling this method will automatically apply the `distinct()` validation.
 
 ## Adding affix text aside the field
 
