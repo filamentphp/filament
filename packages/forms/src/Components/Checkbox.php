@@ -6,6 +6,7 @@ class Checkbox extends Field
 {
     use Concerns\CanBeAccepted;
     use Concerns\CanBeInline;
+    use Concerns\CanFixIndistinctState;
     use Concerns\HasExtraInputAttributes;
 
     /**

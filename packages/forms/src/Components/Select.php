@@ -30,12 +30,14 @@ use Livewire\Component as LivewireComponent;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
-class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
+class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
+    use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
+    use Concerns\CanFixIndistinctState;
     use Concerns\CanLimitItemsLength;
     use Concerns\CanSelectPlaceholder;
     use Concerns\HasAffixes;
@@ -1110,6 +1112,10 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     public function hasDynamicOptions(): bool
     {
+        if ($this->hasDynamicDisabledOptions()) {
+            return true;
+        }
+
         if ($this->hasRelationship()) {
             return $this->isPreloaded();
         }
