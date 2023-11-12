@@ -6,7 +6,6 @@ use Closure;
 use Exception;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Contracts\CanDisableOptions;
 use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentIcon;

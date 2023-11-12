@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
-class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
+class CheckboxList extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;

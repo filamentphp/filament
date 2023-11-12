@@ -5,9 +5,8 @@ namespace Filament\Forms\Components;
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
 
-class Radio extends Field
+class Radio extends Field implements Contracts\CanDisableOptions
 {
     use Concerns\CanDisableOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;

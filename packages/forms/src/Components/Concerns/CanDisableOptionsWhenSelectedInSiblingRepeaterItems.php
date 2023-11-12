@@ -13,7 +13,7 @@ trait CanDisableOptionsWhenSelectedInSiblingRepeaterItems
         $this->distinct();
         $this->live();
 
-        $this->disableOptionWhen(static function (Component&CanDisableOptions $component, string $value, mixed $state) {
+        $this->disableOptionWhen(static function (Component & CanDisableOptions $component, string $value, mixed $state) {
             $repeater = $component->getParentRepeater();
 
             if (! $repeater) {
