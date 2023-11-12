@@ -880,7 +880,19 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
     public function getBlockPickerWidth(): ?string
     {
-        return $this->evaluate($this->blockPickerWidth) ?? match (max($this->getBlockPickerColumns())) {
+        $width = $this->evaluate($this->blockPickerWidth);
+
+        if (filled($width)) {
+            return $width;
+        }
+
+        $columns = $this->getBlockPickerColumns();
+
+        if (empty($columns)) {
+            return null;
+        }
+
+        return match (max($columns)) {
             2 => 'md',
             3 => '2xl',
             4 => '4xl',
