@@ -172,9 +172,10 @@ class CreateRecord extends Page
     protected function handleRecordCreation(array $data): Model
     {
         $record = new ($this->getModel())($data);
+        
         $tenant = Filament::getTenant();
 
-        if ($tenant && static::getResource()::shouldApplyTenantRelationship()) {
+        if ($tenant && static::getResource()::isScopedToTenant()) {
             return $this->associateRecordWithTenant($record, $tenant);
         }
 
