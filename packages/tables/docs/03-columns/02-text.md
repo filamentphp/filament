@@ -279,7 +279,7 @@ TextColumn::make('email')
 
 <AutoScreenshot name="tables/columns/text/icon-after" alt="Text column with icon after" version="3.x" />
 
-You may set the color of an icon using `iconColor()`:
+The icon color defaults to the text color, but can be set separately using `iconColor()`:
 
 ```php
 use Filament\Support\Enums\IconPosition;
