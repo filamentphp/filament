@@ -286,7 +286,6 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('email')
     ->icon('heroicon-m-envelope')
-     ->iconPosition(IconPosition::After) // `IconPosition::Before` or `IconPosition::After`
     ->iconColor('success')
 ```
 
