@@ -246,20 +246,14 @@ TextEntry::make('email')
 
 <AutoScreenshot name="infolists/entries/text/icon-after" alt="Text entry with icon after" version="3.x" />
 
-You may set the color of an icon using `iconColor()`:
+The icon color defaults to the text color, but you may customize the icon color separately using `iconColor()`:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
-use Filament\Support\Enums\IconPosition;
 
 TextEntry::make('email')
     ->icon('heroicon-m-envelope')
-    ->iconPosition(IconPosition::After) // `IconPosition::Before` or `IconPosition::After`
-    ->iconColor('success')
-```
-
-<AutoScreenshot name="infolists/entries/text/icon-color" alt="Text entry with icon color" version="3.x" />
-
+    ->iconColor('primary')
 ## Customizing the text size
 
 You may make the text larger using `size(TextEntrySize::Large)`:
