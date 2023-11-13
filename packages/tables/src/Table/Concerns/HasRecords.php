@@ -2,13 +2,16 @@
 
 namespace Filament\Tables\Table\Concerns;
 
+use BackedEnum;
 use Closure;
-use function Filament\Support\get_model_label;
-use function Filament\Support\locale_has_pluralization;
+use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+
+use function Filament\Support\get_model_label;
+use function Filament\Support\locale_has_pluralization;
 
 trait HasRecords
 {
@@ -108,21 +111,17 @@ trait HasRecords
                 Model::class => $record,
                 $record::class => $record,
             ],
-        );
+        ) ?? $record->getAttributeValue($this->getRecordTitleAttribute()) ?? $this->getModelLabel();
 
-        $titleAttribute = $this->getRecordTitleAttribute();
-
-        $attributeValue = $record->getAttributeValue($titleAttribute);
-
-        if ($attributeValue instanceof \BackedEnum) {
-            return $attributeValue->value;
+        if ($title instanceof HasLabel) {
+            return $title->getLabel();
         }
 
-        if (filled($title)) {
-            return $title;
+        if ($title instanceof BackedEnum) {
+            return $title->value;
         }
 
-        return $attributeValue ?? $this->getModelLabel();
+        return $title;
     }
 
     public function hasCustomRecordTitle(): bool
