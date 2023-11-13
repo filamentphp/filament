@@ -289,7 +289,7 @@ TextColumn::make('email')
     ->iconColor('success')
 ```
 
-<AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon color" version="3.x" />
+<AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon in the primary color" version="3.x" />
 
 ## Customizing the text size
 
