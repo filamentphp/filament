@@ -77,7 +77,7 @@
                         $copyMessageDuration = $getCopyMessageDuration($state);
                         $fontFamily = $getFontFamily($state);
                         $icon = $getIcon($state);
-                        $iconColor = $getIconColor($state);
+                        $iconColor = $getIconColor($state) ?? $color;
                         $itemIsCopyable = $isCopyable($state);
                         $size = $getSize($state);
                         $weight = $getWeight($state);
