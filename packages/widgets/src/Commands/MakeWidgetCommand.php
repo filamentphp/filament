@@ -52,7 +52,7 @@ class MakeWidgetCommand extends Command
 
         if (class_exists(Resource::class)) {
             $resourceInput = $this->option('resource') ?? text(
-                label: 'Which resource would you like to create this widget in?',
+                label: 'What is the resource you would like to create this in?',
                 placeholder: '[Optional] BlogPostResource',
             );
 
