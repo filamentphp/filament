@@ -93,32 +93,29 @@ protected function getData(): array
 
 ## Generating chart data from an Eloquent model
 
-To generate chart data from an Eloquent model, Filament recommends that you install the `flowframe/laravel-trend` package. You can view the [documentation](https://github.com/Flowframe/laravel-trend).
+To generate chart data from an Eloquent model, Filament recommends that you install the `eliseekn/laravel-metrics` package. You can view the [documentation](https://github.com/eliseekn/laravel-metrics).
 
-Here is an example of generating chart data from a model using the `laravel-trend` package:
+Here is an example of generating chart data from a model using the `laravel-metrics` package:
 
 ```php
-use Flowframe\Trend\Trend;
-use Flowframe\Trend\TrendValue;
+use Eliseekn\LaravelMetrics\LaravelMetrics;
 
 protected function getData(): array
 {
-    $data = Trend::model(BlogPost::class)
-        ->between(
-            start: now()->startOfYear(),
-            end: now()->endOfYear(),
-        )
-        ->perMonth()
-        ->count();
+    $trends = LaravelMetrics::query(BlogPost::query())
+        ->countByMonth(count: 12)
+        ->forYear(now()->year)
+        ->fillMissingData()
+        ->trends();
 
     return [
         'datasets' => [
             [
                 'label' => 'Blog posts',
-                'data' => $data->map(fn (TrendValue $value) => $value->aggregate),
+                'data' => $trends['data'],
             ],
         ],
-        'labels' => $data->map(fn (TrendValue $value) => $value->date),
+        'labels' => $trends['labels'],
     ];
 }
 ```
