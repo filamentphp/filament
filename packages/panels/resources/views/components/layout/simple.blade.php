@@ -24,7 +24,7 @@
             <main
                 @class([
                     'fi-simple-main my-16 w-full bg-white px-6 py-12 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 sm:rounded-xl sm:px-12',
-                    match ($maxWidth) {
+                    match ($maxWidth ?? null) {
                         'xs' => 'sm:max-w-xs',
                         'sm' => 'sm:max-w-sm',
                         'md' => 'sm:max-w-md',
