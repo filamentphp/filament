@@ -92,7 +92,7 @@
 
                         $iconStyles = \Illuminate\Support\Arr::toCssStyles([
                             \Filament\Support\get_color_css_variables(
-                                $iconColor ?? $color,
+                                $iconColor,
                                 shades: [500],
                             ) => ($iconColor ?? $color) !== 'gray',
                         ]);
