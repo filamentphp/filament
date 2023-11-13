@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
-use Filament\Infolists\Components\Component;
 
 trait HasIconColor
 {
@@ -18,32 +17,6 @@ trait HasIconColor
     public function iconColor(string | array | bool | Closure | null $color): static
     {
         $this->iconColor = $color;
-
-        return $this;
-    }
-
-    /**
-     * @param  array<mixed> | Closure  $colors
-     */
-    public function iconColors(array | Closure $colors): static
-    {
-        $this->iconColor(function (Component $component, $state) use ($colors) {
-            $colors = $component->evaluate($colors);
-
-            $color = null;
-
-            foreach ($colors as $conditionalColor => $condition) {
-                if (is_numeric($conditionalColor)) {
-                    $color = $condition;
-                } elseif ($condition instanceof Closure && $component->evaluate($condition)) {
-                    $color = $conditionalColor;
-                } elseif ($condition === $state) {
-                    $color = $conditionalColor;
-                }
-            }
-
-            return $color;
-        });
 
         return $this;
     }

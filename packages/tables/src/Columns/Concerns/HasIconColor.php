@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
-use Filament\Tables\Columns\Column;
 
 trait HasIconColor
 {
@@ -18,32 +17,6 @@ trait HasIconColor
     public function iconColor(string | array | bool | Closure | null $color): static
     {
         $this->iconColor = $color;
-
-        return $this;
-    }
-
-    /**
-     * @param  array<mixed> | Closure  $colors
-     */
-    public function iconColors(array | Closure $colors): static
-    {
-        $this->iconColor(function (Column $column, $state) use ($colors) {
-            $colors = $column->evaluate($colors);
-
-            $color = null;
-
-            foreach ($colors as $conditionalColor => $condition) {
-                if (is_numeric($conditionalColor)) {
-                    $color = $condition;
-                } elseif ($condition instanceof Closure && $column->evaluate($condition)) {
-                    $color = $conditionalColor;
-                } elseif ($condition === $state) {
-                    $color = $conditionalColor;
-                }
-            }
-
-            return $color;
-        });
 
         return $this;
     }
