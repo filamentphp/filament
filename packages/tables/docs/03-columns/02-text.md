@@ -282,7 +282,6 @@ TextColumn::make('email')
 The icon color defaults to the text color, but can be set separately using `iconColor()`:
 
 ```php
-use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('email')
