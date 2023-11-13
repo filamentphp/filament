@@ -98,7 +98,7 @@
                                     \Filament\Support\get_color_css_variables(
                                         $iconColor,
                                         shades: [500],
-                                    ) => ($iconColor ?? $color) !== 'gray',
+                                    ) => $iconColor !== 'gray',
                                 ]);
                             @endphp
 
