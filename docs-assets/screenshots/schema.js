@@ -1315,6 +1315,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/entries/text/icon-color': {
+        url: 'infolists/entries',
+        selector: '#textIconColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/entries/text/large': {
         url: 'infolists/entries',
         selector: '#textLarge',
@@ -1952,6 +1961,15 @@ export default {
     },
     'tables/columns/text/icon-after': {
         url: 'tables?table=textColumnIconAfter',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/icon-color': {
+        url: 'tables?table=textColumnIconColor',
         selector: 'body',
         viewport: {
             width: 1080,
