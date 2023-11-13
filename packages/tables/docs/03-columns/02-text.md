@@ -286,7 +286,7 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('email')
     ->icon('heroicon-m-envelope')
-    ->iconColor('success')
+    ->iconColor('primary')
 ```
 
 <AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon in the primary color" version="3.x" />
