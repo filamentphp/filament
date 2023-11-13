@@ -26,7 +26,7 @@ return [
         'bulk_select_group' => [
             'label' => 'Выбрать/отменить сводку :title для массовых действий.',
         ],
-    
+
         'search' => [
             'label' => 'Поиск',
             'placeholder' => 'Поиск',
