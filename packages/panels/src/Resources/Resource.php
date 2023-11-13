@@ -309,9 +309,11 @@ abstract class Resource
     public static function getEloquentQuery(): Builder
     {
         $query = static::getModel()::query();
-        $tenant = Filament::getTenant();
 
-        if ($tenant && static::isScopedToTenant()) {
+        if (
+            static::isScopedToTenant() &&
+            ($tenant = Filament::getTenant())
+        ) {
             static::scopeEloquentQueryToTenant($query, $tenant);
         }
 
