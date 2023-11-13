@@ -26,18 +26,8 @@ trait HasIconColor
      */
     public function getIconColor(mixed $state): string | array | null
     {
-        $color = $this->evaluate($this->iconColor, [
+        return $this->evaluate($this->iconColor, [
             'state' => $state,
         ]);
-
-        if ($color === false) {
-            return null;
-        }
-
-        if (filled($color)) {
-            return $color;
-        }
-
-        return null;
     }
 }
