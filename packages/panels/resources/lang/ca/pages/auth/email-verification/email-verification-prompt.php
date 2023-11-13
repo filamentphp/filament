@@ -27,7 +27,7 @@ return [
 
         'notification_resend_throttled' => [
             'title' => 'Massa intents de reenviament',
-            'body' => 'Si us plau, torna a intentar-ho en :seconds segons.'
+            'body' => 'Si us plau, torna a intentar-ho en :seconds segons.',
         ],
 
     ],

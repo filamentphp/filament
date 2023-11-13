@@ -26,7 +26,7 @@ return [
         'bulk_select_group' => [
             'label' => 'Обрати/зняти елемент групу :title для масових дій.',
         ],
-    
+
         'search' => [
             'label' => 'Пошук',
             'placeholder' => 'Пошук',

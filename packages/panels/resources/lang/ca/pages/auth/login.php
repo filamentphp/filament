@@ -53,7 +53,7 @@ return [
 
         'throttled' => [
             'title' => 'Massa intents de connexió',
-            'body' => 'Si us plau, torneu-ho a provar en :seconds segons.'
+            'body' => 'Si us plau, torneu-ho a provar en :seconds segons.',
         ],
 
     ],

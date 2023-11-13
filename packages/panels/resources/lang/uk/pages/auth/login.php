@@ -5,7 +5,7 @@ return [
     'title' => 'Логін',
 
     'heading' => 'Увійдіть у свій акаунт',
-    
+
     'actions' => [
 
         'register' => [

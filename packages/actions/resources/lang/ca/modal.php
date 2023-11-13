@@ -7,7 +7,7 @@ return [
     'actions' => [
 
         'cancel' => [
-            'label' => 'Cancel·lar'
+            'label' => 'Cancel·lar',
         ],
 
         'confirm' => [
