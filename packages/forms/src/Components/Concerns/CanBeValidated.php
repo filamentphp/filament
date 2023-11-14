@@ -329,6 +329,21 @@ trait CanBeValidated
         return $this;
     }
 
+    public function prohibitedIf(string | Closure $statePath, mixed $stateValues, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldValueComparisonRule('prohibited_if', $statePath, $stateValues, $isStatePathAbsolute);
+    }
+
+    public function prohibitedUnless(string | Closure $statePath, mixed $stateValues, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldValueComparisonRule('prohibited_unless', $statePath, $stateValues, $isStatePathAbsolute);
+    }
+
+    public function prohibits(string | Closure $statePath, bool $isStatePathAbsolute = false): static
+    {
+        return $this->fieldComparisonRule('prohibits', $statePath, $isStatePathAbsolute);
+    }
+
     public function required(bool | Closure $condition = true): static
     {
         $this->isRequired = $condition;
