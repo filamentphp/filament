@@ -9,10 +9,11 @@ use Spatie\Color\Hex;
 class ColorManager
 {
     use EvaluatesClosures;
+
     /**
      * @var array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure
      */
-    protected array|Closure $colors = [];
+    protected array | Closure $colors = [];
 
     /**
      * @var array<string,array<int>>
@@ -32,9 +33,9 @@ class ColorManager
     /**
      * @param  array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure  $colors
      */
-    public function register(array|Closure $colors): static
+    public function register(array | Closure $colors): static
     {
-        if ($colors instanceof  Closure) {
+        if ($colors instanceof Closure) {
             $colors = $this->evaluate($colors);
         }
         foreach ($colors as $name => $color) {
