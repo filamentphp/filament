@@ -184,6 +184,7 @@ return [
                 ],
 
             ],
+
             'svg' => [
 
                 'messages' => [
