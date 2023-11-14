@@ -246,6 +246,17 @@ TextEntry::make('email')
 
 <AutoScreenshot name="infolists/entries/text/icon-after" alt="Text entry with icon after" version="3.x" />
 
+The icon color defaults to the text color, but you may customize the icon color separately using `iconColor()`:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('email')
+    ->icon('heroicon-m-envelope')
+    ->iconColor('primary')
+
+<AutoScreenshot name="infolists/entries/text/icon-color" alt="Text entry with icon in the primary color" version="3.x" />
+
 ## Customizing the text size
 
 Text columns have small font size by default, but you may change this to `TextEntrySize::ExtraSmall`, `TextEntrySize::Medium`, or `TextEntrySize::Large`.

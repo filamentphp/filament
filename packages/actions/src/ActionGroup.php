@@ -8,6 +8,7 @@ use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
+use Filament\Support\Facades\FilamentIcon;
 use Livewire\Component;
 
 class ActionGroup extends ViewComponent implements HasLivewire
@@ -194,7 +195,7 @@ class ActionGroup extends ViewComponent implements HasLivewire
 
     public function getIcon(): string
     {
-        return $this->getBaseIcon() ?? 'heroicon-m-ellipsis-vertical';
+        return $this->getBaseIcon() ?? FilamentIcon::resolve('actions::action-group') ?? 'heroicon-m-ellipsis-vertical';
     }
 
     public function isHidden(): bool

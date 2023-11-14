@@ -171,7 +171,7 @@ TextColumn::make('full_name')
     ->searchable(query: function (Builder $query, string $search): Builder {
         return $query
             ->where('first_name', 'like', "%{$search}%")
-            ->where('last_name', 'like', "%{$search}%");
+            ->orWhere('last_name', 'like', "%{$search}%");
     })
 ```
 
