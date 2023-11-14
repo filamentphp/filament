@@ -6,6 +6,7 @@ use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 use function Filament\Support\generate_search_column_expression;
 
@@ -38,6 +39,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         }
 
         $record->fill($data);
+        $record = $this->setRecordTranslations($record, $data);
 
         return $record;
     }
@@ -60,7 +62,9 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             $record->setLocale($this->activeLocale);
         }
 
-        $record->fill($data)->save();
+        $record->fill($data);
+        $record = $this->setRecordTranslations($record, $data);
+        $record->save();
 
         return $record;
     }
@@ -102,5 +106,14 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             'like',
             "%{$search}%",
         );
+    }
+
+    protected function setRecordTranslations(Model $record, array $data): Model
+    {
+        foreach (Arr::only($data, $record->getTranslatableAttributes()) as $key => $value) {
+            $record->setTranslation($key, $this->activeLocale, $value);
+        }
+
+        return $record;
     }
 }
