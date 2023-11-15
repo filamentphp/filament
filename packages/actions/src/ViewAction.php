@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Model;
 
 class ViewAction extends Action
@@ -28,7 +29,7 @@ class ViewAction extends Action
 
         $this->color('gray');
 
-        $this->groupedIcon('heroicon-m-eye');
+        $this->groupedIcon(FilamentIcon::resolve('actions::view-action.grouped') ?? 'heroicon-m-eye');
 
         $this->disabledForm();
 

@@ -32,7 +32,7 @@
 
     $activeLabelClasses = 'text-primary-600 dark:text-primary-400';
 
-    $iconClasses = 'fi-tabs-item-icon h-5 w-5 transition duration-75';
+    $iconClasses = 'fi-tabs-item-icon h-5 w-5 shrink-0 transition duration-75';
 
     $inactiveIconClasses = 'text-gray-400 dark:text-gray-500';
 

@@ -25,7 +25,7 @@ return [
                 ],
 
                 'associate_another' => [
-                    'label' => 'Társítás és új társítása',
+                    'label' => 'Mentés és új társítása',
                 ],
 
             ],

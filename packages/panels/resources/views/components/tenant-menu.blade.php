@@ -54,7 +54,10 @@
             type="button"
             class="fi-tenant-menu-trigger group flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
         >
-            <x-filament-panels::avatar.tenant :tenant="$currentTenant" />
+            <x-filament-panels::avatar.tenant
+                :tenant="$currentTenant"
+                class="shrink-0"
+            />
 
             <span
                 @if (filament()->isSidebarCollapsibleOnDesktop())
@@ -88,9 +91,9 @@
                 <x-filament::dropdown.list.item
                     :color="$profileItem?->getColor()"
                     :href="$profileItemUrl ?? filament()->getTenantProfileUrl()"
-                    :target="($profileItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
-                    :icon="$profileItem?->getIcon() ?? 'heroicon-m-cog-6-tooth'"
+                    :icon="$profileItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::tenant-menu.profile-button') ?? 'heroicon-m-cog-6-tooth'"
                     tag="a"
+                    :target="($profileItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
                 >
                     {{ $profileItem?->getLabel() ?? filament()->getTenantProfilePage()::getLabel() }}
                 </x-filament::dropdown.list.item>
@@ -100,9 +103,9 @@
                 <x-filament::dropdown.list.item
                     :color="$billingItem?->getColor() ?? 'gray'"
                     :href="$billingItemUrl ?? filament()->getTenantBillingUrl()"
-                    :target="($billingItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
-                    :icon="$billingItem?->getIcon() ?? 'heroicon-m-credit-card'"
+                    :icon="$billingItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::tenant-menu.billing-button') ?? 'heroicon-m-credit-card'"
                     tag="a"
+                    :target="($billingItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
                 >
                     {{ $billingItem?->getLabel() ?? __('filament-panels::layout.actions.billing.label') }}
                 </x-filament::dropdown.list.item>
@@ -145,9 +148,9 @@
             <x-filament::dropdown.list.item
                 :color="$registrationItem?->getColor()"
                 :href="$registrationItemUrl ?? filament()->getTenantRegistrationUrl()"
-                :target="($registrationItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
-                :icon="$registrationItem?->getIcon() ?? 'heroicon-m-plus'"
+                :icon="$registrationItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::tenant-menu.registration-button') ?? 'heroicon-m-plus'"
                 tag="a"
+                :target="($registrationItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
             >
                 {{ $registrationItem?->getLabel() ?? filament()->getTenantRegistrationPage()::getLabel() }}
             </x-filament::dropdown.list.item>

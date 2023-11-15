@@ -82,13 +82,14 @@
                         $copyMessageDuration = $getCopyMessageDuration($state);
                         $fontFamily = $getFontFamily($state);
                         $icon = $getIcon($state);
+                        $iconColor = $getIconColor($state) ?? $color;
                         $itemIsCopyable = $isCopyable($state);
                         $size = $getSize($state);
                         $weight = $getWeight($state);
 
                         $iconClasses = \Illuminate\Support\Arr::toCssClasses([
                             'fi-ta-text-item-icon h-5 w-5',
-                            match ($color) {
+                            match ($iconColor) {
                                 'gray', null => 'text-gray-400 dark:text-gray-500',
                                 default => 'text-custom-500',
                             },
@@ -96,9 +97,9 @@
 
                         $iconStyles = \Illuminate\Support\Arr::toCssStyles([
                             \Filament\Support\get_color_css_variables(
-                                $color,
+                                $iconColor,
                                 shades: [500],
-                            ) => $color !== 'gray',
+                            ) => $iconColor !== 'gray',
                         ]);
                     @endphp
 
@@ -106,7 +107,10 @@
                         @if ($itemIsCopyable)
                             x-on:click="
                                 window.navigator.clipboard.writeText(@js($copyableState))
-                                $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
+                                $tooltip(@js($copyMessage), {
+                                    theme: $store.theme,
+                                    timeout: @js($copyMessageDuration),
+                                })
                             "
                         @endif
                         @if ($isListWithLineBreaks && ($arrayIndex > $listLimit))

@@ -115,7 +115,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
 
-        if ($action instanceof CreateAction) {
+        if (($action instanceof CreateAction) && static::getResource()::isScopedToTenant()) {
             $action->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null);
         }
 

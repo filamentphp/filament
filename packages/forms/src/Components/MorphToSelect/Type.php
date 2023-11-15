@@ -8,9 +8,10 @@ use Filament\Forms\Components\Select;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
 
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
 use function Filament\Support\get_model_label;
 
 class Type
@@ -63,23 +64,21 @@ class Type
                 ]) ?? $query;
             }
 
+            /** @var Connection $databaseConnection */
+            $databaseConnection = $query->getConnection();
+
+            $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+
             $isFirst = true;
-            $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($query);
 
-            if ($isForcedCaseInsensitive) {
-                $search = Str::lower($search);
-            }
+            $search = generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection);
 
-            $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $search): Builder {
+            $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $databaseConnection, $search): Builder {
                 foreach ($this->getSearchColumns() as $searchColumn) {
-                    $caseAwareSearchColumn = $isForcedCaseInsensitive ?
-                        new Expression("lower({$searchColumn})") :
-                        $searchColumn;
-
                     $whereClause = $isFirst ? 'where' : 'orWhere';
 
                     $query->{$whereClause}(
-                        $caseAwareSearchColumn,
+                        generate_search_column_expression($searchColumn, $isForcedCaseInsensitive, $databaseConnection),
                         'like',
                         "%{$search}%",
                     );
@@ -310,14 +309,8 @@ class Type
         return $this;
     }
 
-    public function isSearchForcedCaseInsensitive(Builder $query): bool
+    public function isSearchForcedCaseInsensitive(): ?bool
     {
-        /** @var Connection $databaseConnection */
-        $databaseConnection = $query->getConnection();
-
-        return $this->isSearchForcedCaseInsensitive ?? match ($databaseConnection->getDriverName()) {
-            'pgsql' => true,
-            default => false,
-        };
+        return $this->isSearchForcedCaseInsensitive;
     }
 }

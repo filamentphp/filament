@@ -84,7 +84,7 @@ class Notification extends BaseNotification
 
     public static function fromArray(array $data): static
     {
-        return parent::fromArray()->size($data['size']);
+        return parent::fromArray($data)->size($data['size']);
     }
 
     public function size(string $size): static
@@ -101,7 +101,7 @@ class Notification extends BaseNotification
 }
 ```
 
-Next, you should bind your custom `Notification` class into the container inside a service provider's `boot()` method:
+Next, you should bind your custom `Notification` class into the container inside a service provider's `register()` method:
 
 ```php
 use App\Notifications\Notification;

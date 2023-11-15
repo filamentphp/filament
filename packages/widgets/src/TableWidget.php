@@ -11,7 +11,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 
-class TableWidget extends Widget implements Actions\Contracts\HasActions, Infolists\Contracts\HasInfolists, Forms\Contracts\HasForms, Tables\Contracts\HasTable
+class TableWidget extends Widget implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
 {
     use Actions\Concerns\InteractsWithActions;
     use Forms\Concerns\InteractsWithForms;

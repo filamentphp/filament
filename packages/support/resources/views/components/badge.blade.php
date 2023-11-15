@@ -32,14 +32,18 @@
         $size = ActionSize::tryFrom($size) ?? $size;
     }
 
+    if (! $iconSize instanceof IconSize) {
+        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+    }
+
     $isDeletable = count($deleteButton?->attributes->getAttributes() ?? []) > 0;
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-badge-icon h-4 w-4',
         match ($iconSize) {
-            IconSize::Small, 'sm' => 'h-4 w-4',
-            IconSize::Medium, 'md' => 'h-5 w-5',
-            IconSize::Large, 'lg' => 'h-6 w-6',
+            IconSize::Small => 'h-4 w-4',
+            IconSize::Medium => 'h-5 w-5',
+            IconSize::Large => 'h-6 w-6',
             default => $iconSize,
         },
         match ($color) {

@@ -304,3 +304,33 @@ public function getMaxContentWidth(): ?string
     return 'full';
 }
 ```
+
+## Generating URLs to pages
+
+Filament provides `getUrl()` static method on page classes to generate URLs to them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the page's slug or route naming conventions.
+
+The `getUrl()` method, without any arguments, will generate a URL:
+
+```php
+use App\Filament\Pages\Settings;
+
+Settings::getUrl(); // /admin/settings
+```
+
+If your page uses URL / query parameters, you should use the argument:
+
+```php
+use App\Filament\Pages\Settings;
+
+Settings:::getUrl(['section' => 'notifications']); // /admin/settings?section=notifications
+```
+
+### Generating URLs to pages in other panels
+
+If you have multiple panels in your app, `getUrl()` will generate a URL within the current panel. You can also indicate which panel the page is associated with, by passing the panel ID to the `panel` argument:
+
+```php
+use App\Filament\Pages\Settings;
+
+Settings::getUrl(panel: 'marketing');
+```

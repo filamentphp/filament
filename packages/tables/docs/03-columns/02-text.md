@@ -279,9 +279,23 @@ TextColumn::make('email')
 
 <AutoScreenshot name="tables/columns/text/icon-after" alt="Text column with icon after" version="3.x" />
 
+The icon color defaults to the text color, but you may customize the icon color separately using `iconColor()`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('email')
+    ->icon('heroicon-m-envelope')
+    ->iconColor('primary')
+```
+
+<AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon in the primary color" version="3.x" />
+
 ## Customizing the text size
 
-You may make the text larger using `size(TextColumnSize::Large)`:
+Text columns have small font size by default, but you may change this to `TextColumnSize::ExtraSmall`, `TextColumnSize::Medium`, or `TextColumnSize::Large`.
+
+For instance, you may make the text larger using `size(TextColumnSize::Large)`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
