@@ -20,4 +20,9 @@ trait HasColors
 
         return $this;
     }
+
+    public function getColors(): array
+    {
+        return $this->colors;
+    }
 }
