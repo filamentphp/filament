@@ -44,7 +44,7 @@ trait CanReadModelSchemas
     {
         /** @var Model $modelInstance */
         $modelInstance = app($model);
-        $modelInstanceReflection = new ReflectionClass(invade($modelInstance));
+        $modelInstanceReflection = new ReflectionClass($modelInstance);
         $guessedRelationshipName = str($column->getName())->beforeLast('_id');
         $hasRelationship = $modelInstanceReflection->hasMethod($guessedRelationshipName);
 
