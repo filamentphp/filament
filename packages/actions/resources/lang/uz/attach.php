@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Attach',
+        'label' => 'Biriktirish',
 
         'modal' => [
 
-            'heading' => 'Attach :label',
+            'heading' => ':label - biriktirish',
 
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Record',
+                    'label' => 'Yozib olish',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Attach',
+                    'label' => 'Biriktirish',
                 ],
 
                 'attach_another' => [
-                    'label' => 'Attach & attach another',
+                    'label' => 'Biriktirish va boshqa biriktirish',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'attached' => [
-                'title' => 'Attached',
+                'title' => 'Biriktirilgan',
             ],
 
         ],
