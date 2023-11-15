@@ -330,7 +330,9 @@ Field::make('name')->prohibitedUnless('field', 'value')
 If the field is not empty, all other specified fields must be empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibits)
 
 ```php
-Field::make('name')->prohibits('field,another_field')
+Field::make('name')->prohibits('field')
+
+Field::make('name')->prohibits(['field', 'another_field'])
 ```
 
 ### Required
