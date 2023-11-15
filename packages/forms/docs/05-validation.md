@@ -311,7 +311,7 @@ Field::make('name')->prohibited()
 
 ### Prohibited If
 
-The field must be empty _only if_ the other specified field has any of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibited-if)
+The field must be empty *only if* the other specified field has any of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibited-if)
 
 ```php
 Field::make('name')->prohibitedIf('field', 'value')
@@ -319,7 +319,7 @@ Field::make('name')->prohibitedIf('field', 'value')
 
 ### Prohibited Unless
 
-The field must be empty _unless_ the other specified field has any of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibited-unless)
+The field must be empty *unless* the other specified field has any of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibited-unless)
 
 ```php
 Field::make('name')->prohibitedUnless('field', 'value')
