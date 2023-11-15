@@ -1,17 +1,14 @@
 @php
     use Filament\Support\Facades\FilamentView;
+
+    $isConcealed = $isConcealed();
+    $rows = $getRows();
+    $shouldAutosize = $shouldAutosize();
+    $statePath = $getStatePath();
+    $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $isConcealed = $isConcealed();
-        $rows = $getRows();
-        $shouldAutosize = $shouldAutosize();
-        $statePath = $getStatePath();
-
-        $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
-    @endphp
-
     <textarea
         @if ($shouldAutosize)
             @if (FilamentView::hasSpaMode())

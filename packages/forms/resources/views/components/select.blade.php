@@ -1,22 +1,20 @@
 @php
     use Filament\Support\Facades\FilamentView;
+
+    $canSelectPlaceholder = $canSelectPlaceholder();
+    $isDisabled = $isDisabled();
+    $isPrefixInline = $isPrefixInline();
+    $isSuffixInline = $isSuffixInline();
+    $prefixActions = $getPrefixActions();
+    $prefixIcon = $getPrefixIcon();
+    $prefixLabel = $getPrefixLabel();
+    $suffixActions = $getSuffixActions();
+    $suffixIcon = $getSuffixIcon();
+    $suffixLabel = $getSuffixLabel();
+    $statePath = $getStatePath();
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $canSelectPlaceholder = $canSelectPlaceholder();
-        $isDisabled = $isDisabled();
-        $isPrefixInline = $isPrefixInline();
-        $isSuffixInline = $isSuffixInline();
-        $prefixActions = $getPrefixActions();
-        $prefixIcon = $getPrefixIcon();
-        $prefixLabel = $getPrefixLabel();
-        $suffixActions = $getSuffixActions();
-        $suffixIcon = $getSuffixIcon();
-        $suffixLabel = $getSuffixLabel();
-        $statePath = $getStatePath();
-    @endphp
-
     <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
