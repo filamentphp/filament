@@ -22,8 +22,13 @@
 
         if (is_array($arrayState)) {
             if ($listLimit = $getListLimit()) {
-                $limitedArrayState = array_slice($arrayState, $listLimit);
+                $limitedArrayStateCount = (count($arrayState) > $listLimit) ? (count($arrayState) - $listLimit) : 0;
+
+                if (! $isListWithLineBreaks) {
+                    $arrayState = array_slice($arrayState, 0, $listLimit);
+                }
             }
+
             $listLimit ??= count($arrayState);
 
             if ((! $isListWithLineBreaks) && (! $isBadge)) {
@@ -38,7 +43,6 @@
         }
 
         $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
-        $arrayIndex = 0;
     @endphp
 
     <div
@@ -67,7 +71,6 @@
                     @foreach ($arrayState as $state)
                         @if (filled($formattedState = $formatState($state)))
                             @php
-                                $arrayIndex++;
                                 $color = $getColor($state);
                                 $copyableState = $getCopyableState($state) ?? $state;
                                 $copyMessage = $getCopyMessage($state);
@@ -119,7 +122,7 @@
                                     "
                                     class="cursor-pointer max-w-max"
                                 @endif
-                                @if ($isListWithLineBreaks && ($arrayIndex > $listLimit))
+                                @if ($isListWithLineBreaks && ($loop->index > $listLimit))
                                     x-show="! isLimited"
                                     x-cloak
                                     x-transition
@@ -204,7 +207,7 @@
                         @endif
                     @endforeach
 
-                    @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
+                    @if ($limitedArrayStateCount ?? 0)
                         <{{ $isListWithLineBreaks ? 'li' : 'div' }}
                             class="text-sm text-gray-500 dark:text-gray-400"
                             x-on:click.prevent="isLimited = ! isLimited"
@@ -214,7 +217,7 @@
                                 tag="button"
                                 x-show="isLimited"
                             >
-                                {{ trans_choice('filament-infolists::components.text_entry.more_list_items', $limitedArrayStateCount) }}
+                                {{ trans_choice('filament-infolists::components.entries.text.more_list_items', $limitedArrayStateCount) }}
                             </x-filament::link>
 
                             <x-filament::link
@@ -223,7 +226,7 @@
                                 x-cloak
                                 x-show="! isLimited"
                             >
-                                {{ trans_choice('filament-infolists::components.text_entry.less_list_items', $limitedArrayStateCount) }}
+                                {{ trans_choice('filament-infolists::components.entries.text.less_list_items', $limitedArrayStateCount) }}
                             </x-filament::link>
                         </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
                     @endif

@@ -21,8 +21,13 @@
 
     if (is_array($arrayState)) {
         if ($listLimit = $getListLimit()) {
-            $limitedArrayState = array_slice($arrayState, $listLimit);
+            $limitedArrayStateCount = (count($arrayState) > $listLimit) ? (count($arrayState) - $listLimit) : 0;
+
+            if (! $isListWithLineBreaks) {
+                $arrayState = array_slice($arrayState, 0, $listLimit);
+            }
         }
+
         $listLimit ??= count($arrayState);
 
         if ((! $isListWithLineBreaks) && (! $isBadge)) {
@@ -37,7 +42,6 @@
     }
 
     $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
-    $arrayIndex = 0;
 @endphp
 
 <div
@@ -75,7 +79,6 @@
             @foreach ($arrayState as $state)
                 @if (filled($formattedState = $formatState($state)))
                     @php
-                        $arrayIndex++;
                         $color = $getColor($state);
                         $copyableState = $getCopyableState($state) ?? $state;
                         $copyMessage = $getCopyMessage($state);
@@ -113,7 +116,7 @@
                                 })
                             "
                         @endif
-                        @if ($isListWithLineBreaks && ($arrayIndex > $listLimit))
+                        @if ($isListWithLineBreaks && ($loop->index > $listLimit))
                             x-cloak
                             x-show="! isLimited"
                             x-transition
@@ -200,7 +203,7 @@
                 @endif
             @endforeach
 
-            @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
+            @if ($limitedArrayStateCount ?? 0)
                 <{{ $isListWithLineBreaks ? 'li' : 'div' }}
                     x-on:click.prevent="isLimited = ! isLimited"
                     class="text-sm text-gray-500 dark:text-gray-400"
