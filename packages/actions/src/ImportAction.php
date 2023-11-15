@@ -297,7 +297,7 @@ class ImportAction extends Action
         /** @var AwsS3V3Adapter $s3Adapter */
         $s3Adapter = Storage::disk('s3')->getAdapter();
 
-        invade($s3Adapter)->client->registerStreamWrapper();
+        invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
 
         $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
 
