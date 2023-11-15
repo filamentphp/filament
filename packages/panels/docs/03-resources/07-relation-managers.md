@@ -355,6 +355,7 @@ public function table(Table $table): Table
     return $table
         ->allowDuplicates();
 }
+```
 
 ## Associating and dissociating records
 
