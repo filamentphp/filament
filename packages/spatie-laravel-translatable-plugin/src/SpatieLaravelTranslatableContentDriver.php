@@ -74,7 +74,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
             $record->setTranslation($key, $this->activeLocale, $value);
         }
-        
+
         $record->save();
 
         return $record;
