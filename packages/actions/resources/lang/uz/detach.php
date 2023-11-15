@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Detach',
+        'label' => 'Ajratish',
 
         'modal' => [
 
-            'heading' => 'Detach :label',
+            'heading' => ":label ajratish",
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Detach',
+                    'label' => 'Ajratish',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Detached',
+                'title' => 'Ajratish',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Detach selected',
+        'label' => 'Tanlanganlarni ajratish',
 
         'modal' => [
 
-            'heading' => 'Detach selected :label',
+            'heading' => 'Tanlangan :label ajratish ',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Detach',
+                    'label' => 'Ajratish',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Detached',
+                'title' => 'Ajratish',
             ],
 
         ],

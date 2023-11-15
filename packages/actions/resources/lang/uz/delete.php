@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Delete',
+        'label' => 'O\'chirish',
 
         'modal' => [
 
-            'heading' => 'Delete :label',
+            'heading' => ':label o\'chirish',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'O\'chirish',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => 'O\'chirildi',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Delete selected',
+        'label' => 'Tanlanganlarni o\chirish',
 
         'modal' => [
 
-            'heading' => 'Delete selected :label',
+            'heading' => 'Tanlangan :label ni o\'chirish',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'O\'chirish',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => 'O\'chirish',
             ],
 
         ],
