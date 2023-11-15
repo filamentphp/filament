@@ -1,20 +1,24 @@
 @php
-    $datalistOptions = $getDatalistOptions();
-    $extraAlpineAttributes = $getExtraAlpineAttributes();
-    $id = $getId();
-    $isDisabled = $isDisabled();
-    $isPrefixInline = $isPrefixInline();
-    $isSuffixInline = $isSuffixInline();
-    $prefixActions = $getPrefixActions();
-    $prefixIcon = $getPrefixIcon();
-    $prefixLabel = $getPrefixLabel();
-    $suffixActions = $getSuffixActions();
-    $suffixIcon = $getSuffixIcon();
-    $suffixLabel = $getSuffixLabel();
-    $statePath = $getStatePath();
+    use Filament\Support\Facades\FilamentView;
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+    @php
+        $datalistOptions = $getDatalistOptions();
+        $extraAlpineAttributes = $getExtraAlpineAttributes();
+        $id = $getId();
+        $isDisabled = $isDisabled();
+        $isPrefixInline = $isPrefixInline();
+        $isSuffixInline = $isSuffixInline();
+        $prefixActions = $getPrefixActions();
+        $prefixIcon = $getPrefixIcon();
+        $prefixLabel = $getPrefixLabel();
+        $suffixActions = $getSuffixActions();
+        $suffixIcon = $getSuffixIcon();
+        $suffixLabel = $getSuffixLabel();
+        $statePath = $getStatePath();
+    @endphp
+
     <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
@@ -57,7 +61,12 @@
         @else
             <div
                 x-ignore
-                ax-load
+                @if (FilamentView::hasSpaMode())
+                    wire:ignore
+                    ax-load="visible"
+                @else
+                    ax-load
+                @endif
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
                 x-data="dateTimePickerFormComponent({
                             displayFormat:
