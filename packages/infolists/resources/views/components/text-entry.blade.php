@@ -231,7 +231,9 @@
                                     {{ trans_choice('filament-infolists::components.entries.text.actions.collapse_list', $limitedArrayStateCount) }}
                                 </x-filament::link>
                             @else
-                                <span class="text-sm text-gray-500 dark:text-gray-400">
+                                <span
+                                    class="text-sm text-gray-500 dark:text-gray-400"
+                                >
                                     {{ trans_choice('filament-infolists::components.entries.text.more_list_items', $limitedArrayStateCount) }}
                                 </span>
                             @endif
