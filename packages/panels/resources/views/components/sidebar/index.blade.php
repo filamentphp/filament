@@ -71,7 +71,6 @@
                 x-data="{}"
                 x-on:click="$store.sidebar.open()"
                 x-show="! $store.sidebar.isOpen"
-                class="-mx-1.5"
             />
         @endif
 
@@ -87,7 +86,7 @@
                 x-data="{}"
                 x-on:click="$store.sidebar.close()"
                 x-show="$store.sidebar.isOpen"
-                class="-mx-1.5 ms-auto hidden lg:flex"
+                class="ms-auto hidden lg:flex"
             />
         @endif
     </header>
@@ -112,7 +111,7 @@
         @endif
 
         @if (filament()->hasNavigation())
-            <ul class="-mx-2 flex flex-col gap-y-7">
+            <ul class="-mx-2 flex flex-col gap-y-1">
                 @foreach ($navigation as $group)
                     <x-filament-panels::sidebar.group
                         :collapsible="$group->isCollapsible()"

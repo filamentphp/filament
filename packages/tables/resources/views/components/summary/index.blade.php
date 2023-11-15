@@ -3,6 +3,7 @@
     'actionsPosition' => null,
     'columns',
     'extraHeadingColumn' => false,
+    'groupColumn' => null,
     'groupsOnly' => false,
     'placeholderColumns' => true,
     'pluralModelLabel',
@@ -13,8 +14,15 @@
 
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Tables\Columns\Column;
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
+
+    if ($groupsOnly && $groupColumn) {
+        $columns = collect($columns)
+            ->reject(fn (Column $column): bool => $column->getName() === $groupColumn)
+            ->all();
+    }
 
     $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 @endphp
@@ -40,6 +48,12 @@
         @foreach ($columns as $column)
             @if ($placeholderColumns || $column->hasSummary())
                 @php
+                    $alignment = $column->getAlignment() ?? Alignment::Start;
+
+                    if (! $alignment instanceof Alignment) {
+                        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+                    }
+
                     $hasColumnHeaderLabel = (! $placeholderColumns) || $column->hasSummary();
                 @endphp
 
@@ -49,14 +63,14 @@
                             ->class([
                                 'whitespace-nowrap' => ! $column->isHeaderWrapped(),
                                 'whitespace-normal' => $column->isHeaderWrapped(),
-                                match ($column->getAlignment()) {
-                                    Alignment::Start, 'start' => 'text-start',
-                                    Alignment::Center, 'center' => 'text-center',
-                                    Alignment::End, 'end' => 'text-end',
-                                    Alignment::Left, 'left' => 'text-left',
-                                    Alignment::Right, 'right' => 'text-right',
-                                    Alignment::Justify, 'justify' => 'text-justify',
-                                    default => null,
+                                match ($alignment) {
+                                    Alignment::Start => 'text-start',
+                                    Alignment::Center => 'text-center',
+                                    Alignment::End => 'text-end',
+                                    Alignment::Left => 'text-left',
+                                    Alignment::Right => 'text-right',
+                                    Alignment::Justify => 'text-justify',
+                                    default => $alignment,
                                 } => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
                             ])
                     "

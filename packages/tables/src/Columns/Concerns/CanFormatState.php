@@ -209,13 +209,13 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
-        if ($state instanceof LabelInterface) {
-            $state = $state->getLabel();
-        }
-
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
         ]);
+
+        if ($state instanceof LabelInterface) {
+            $state = $state->getLabel();
+        }
 
         if ($characterLimit = $this->getCharacterLimit()) {
             $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());

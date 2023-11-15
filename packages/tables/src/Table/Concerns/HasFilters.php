@@ -5,6 +5,7 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Forms\Form;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
@@ -140,9 +141,17 @@ trait HasFilters
         $action = Action::make('openFilters')
             ->label(__('filament-tables::table.actions.filter.label'))
             ->iconButton()
-            ->icon('heroicon-m-funnel')
+            ->icon(FilamentIcon::resolve('tables::actions.filter') ?? 'heroicon-m-funnel')
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
+            ->modalSubmitAction(false)
+            ->extraModalFooterActions([
+                Action::make('resetFilters')
+                    ->label(__('filament-tables::table.filters.actions.reset.label'))
+                    ->color('danger')
+                    ->action('resetTableFiltersForm'),
+            ])
+            ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))
             ->table($this);
 
         if ($this->modifyFiltersTriggerActionUsing) {

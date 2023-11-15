@@ -71,7 +71,7 @@
             class="flex flex-col gap-y-4"
         >
             @php
-                $managerLivewireProperties = ['lazy' => true, 'ownerRecord' => $ownerRecord, 'pageClass' => $pageClass];
+                $managerLivewireProperties = ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass];
 
                 if (filled($activeLocale)) {
                     $managerLivewireProperties['activeLocale'] = $activeLocale;
@@ -86,7 +86,7 @@
 
                     @livewire(
                         $normalizedGroupedManagerClass,
-                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $groupedManager->properties : [])],
+                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? [...$groupedManager->relationManager::getDefaultProperties(), ...$groupedManager->properties] : $groupedManager::getDefaultProperties())],
                         key($normalizedGroupedManagerClass),
                     )
                 @endforeach
@@ -98,7 +98,7 @@
 
                 @livewire(
                     $normalizedManagerClass,
-                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $manager->properties : [])],
+                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? [...$manager->relationManager::getDefaultProperties(), ...$manager->properties] : $manager::getDefaultProperties())],
                     key($normalizedManagerClass),
                 )
             @endif

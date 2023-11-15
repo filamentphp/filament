@@ -40,7 +40,7 @@
                 :id="$getId()"
                 :inline-prefix="$isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel))"
                 :inline-suffix="$isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel))"
-                :required="$isRequired() && ((bool) $isConcealed())"
+                :required="$isRequired() && (! $isConcealed())"
                 :attributes="
                     $getExtraInputAttributeBag()
                         ->merge([
@@ -141,6 +141,9 @@
                     $attributes
                         ->merge($getExtraAttributes(), escape: false)
                         ->merge($getExtraAlpineAttributes(), escape: false)
+                        ->class([
+                            '[&_.choices\_\_inner]:ps-0' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                        ])
                 }}
             >
                 <select

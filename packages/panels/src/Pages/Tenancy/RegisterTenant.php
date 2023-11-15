@@ -24,8 +24,8 @@ use function Filament\authorize;
  */
 abstract class RegisterTenant extends SimplePage
 {
-    use InteractsWithFormActions;
     use Concerns\HasRoutes;
+    use InteractsWithFormActions;
 
     /**
      * @var view-string

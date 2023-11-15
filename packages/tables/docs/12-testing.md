@@ -175,6 +175,22 @@ it('has an author column', function () {
 });
 ```
 
+You may pass a function as an additional argument in order to assert that a column passes a given "truth test". This is useful for asserting that a column has a specific configuration. You can also pass in a record as the third parameter, which is useful if your check is dependant on which table row is being rendered:
+
+```php
+use function Pest\Livewire\livewire;
+use Filament\Tables\Columns\TextColumn;
+
+it('has an author column', function () {
+    $post = Post::factory()->create();
+    
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableColumnExists('author', function (TextColumn $column): bool {
+            return $column->getDescriptionBelow() === $post->subtitle;
+        }, $post);
+});
+```
+
 ### Authorization
 
 To ensure that a particular user cannot see a column, you can use the `assertTableColumnVisible()` and `assertTableColumnHidden()` methods:
@@ -592,6 +608,7 @@ To ensure an action or bulk action has the correct URL traits, you can use `asse
 
 ```php
 use function Pest\Livewire\livewire;
+
 it('links to the correct Filament sites', function () {
     $post = Post::factory()->create();
 

@@ -16,19 +16,23 @@ body:
       label: Package
       description: Which package is this bug report for?
       options:
+        - filament/actions
         - filament/filament
         - filament/forms
-        - filament/tables
+        - filament/infolists
+        - filament/minimal-theme
         - filament/notifications
-        - filament/actions
-        - filament/widgets
+        - filament/spark-billing-provider
         - filament/spatie-laravel-google-fonts-plugin
         - filament/spatie-laravel-media-library-plugin
         - filament/spatie-laravel-settings-plugin
         - filament/spatie-laravel-tags-plugin
         - filament/spatie-laravel-translatable-plugin
-        - filament/spark-billing-provider
+        - filament/support
+        - filament/tables
+        - filament/widgets
         - Other
+      default: 1
     validations:
       required: true
   - type: input
@@ -36,7 +40,7 @@ body:
     attributes:
       label: Package Version
       description: Please provide the full version of the package you have installed.
-      placeholder: v2.0.0
+      placeholder: v3.0.0
     validations:
       required: true
   - type: input
@@ -44,7 +48,7 @@ body:
     attributes:
       label: Laravel Version
       description: Please provide the full Laravel version of your project.
-      placeholder: v9.0.0
+      placeholder: v10.0.0
     validations:
       required: true
   - type: input
@@ -52,13 +56,13 @@ body:
     attributes:
       label: Livewire Version
       description: Please provide the full Livewire version of your project, if applicable.
-      placeholder: v2.0.0
+      placeholder: v3.0.0
   - type: input
     id: php-version
     attributes:
       label: PHP Version
       description: Please provide the full PHP version of your server.
-      placeholder: PHP 8.1.0
+      placeholder: PHP 8.2.0
     validations:
       required: true
   - type: textarea

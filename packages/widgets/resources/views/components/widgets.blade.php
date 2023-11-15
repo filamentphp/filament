@@ -28,7 +28,7 @@
     @foreach ($widgets as $key => $widget)
         @livewire(
             $normalizeWidgetClass($widget),
-            [...(($widget instanceof \Filament\Widgets\WidgetConfiguration) ? $widget->properties : $widget::getDefaultProperties()), ...$data],
+            [...(($widget instanceof \Filament\Widgets\WidgetConfiguration) ? [...$widget->widget::getDefaultProperties(), ...$widget->properties] : $widget::getDefaultProperties()), ...$data],
             key($key),
         )
     @endforeach
