@@ -7,23 +7,16 @@ use Closure;
 trait HasColors
 {
     /**
-     * @var array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure
+     * @var array<array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure>
      */
-    protected array | Closure $colors = [];
+    protected array $colors = [];
 
     /**
      * @param  array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure  $colors
      */
     public function colors(array | Closure $colors): static
     {
-        if ($colors instanceof Closure) {
-            $this->colors = $colors;
-
-            return $this;
-        }
-        foreach ($colors as $name => $color) {
-            $this->colors[$name] = $color;
-        }
+        $this->colors[] = $colors;
 
         return $this;
     }
@@ -33,6 +26,16 @@ trait HasColors
      */
     public function getColors(): array
     {
-        return $this->colors;
+        $colors = [];
+
+        foreach ($this->colors as $set) {
+            $set = $this->evaluate($set);
+
+            foreach ($set as $name => $color) {
+                $colors[$name] = $color;
+            }
+        }
+
+        return $colors;
     }
 }

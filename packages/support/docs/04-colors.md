@@ -28,6 +28,8 @@ FilamentColor::register([
 
 The `Color` class contains every [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference) to choose from.
 
+You can also pass in a function to `register()` which will only get called when the app is getting rendered. This is useful if you are calling `register()` from a service provider, and want to access objects like the currently authenticated user, which are initialized later in middleware.
+
 ## Using a non-Tailwind color
 
 You can use custom colors that are not included in the [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference) palette by passing an array of color shades from `50` to `900` in RGB format:
@@ -92,18 +94,3 @@ FilamentColor::register([
 ```
 
 Now, you can use this color anywhere you would normally add `primary`, `danger`, etc.
-
-## Evaluating colors during runtime using Closures
-
-Sometimes you may want to use colors stored in your database or runtime configuration as your app's theme colors. A good use case for this is in a multi-tenant application where tenants should have the liberty to set their own theme colors. In this case, the colors have to be evaluated during runtime.
-You can achieve this by passing a closure that returns an array of colors to the `FilamentColor::register()` method as follows:
-
-```php
-use Filament\Support\Colors\Color;
-use Filament\Support\Facades\FilamentColor;
-
-FilamentColor::register(fn() => [
-    'primary' => tenant()?->primary_color ?: Color::Indigo,
-    'info' => Filament::getTenant()?->info_color ?: Color::Amber,
-]);
-```
