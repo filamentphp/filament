@@ -38,12 +38,16 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             $record->setLocale($this->activeLocale);
         }
 
-        $translatableAttributes = $record->getTranslatableAttributes();
+        $translatableAttributes = method_exists($record, 'getTranslatableAttributes') ?
+            $record->getTranslatableAttributes() :
+            [];
 
         $record->fill(Arr::except($data, $translatableAttributes));
 
-        foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
-            $record->setTranslation($key, $this->activeLocale, $value);
+        if (method_exists($record, 'setTranslation')) {
+            foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
+                $record->setTranslation($key, $this->activeLocale, $value);
+            }
         }
 
         return $record;
@@ -67,12 +71,16 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             $record->setLocale($this->activeLocale);
         }
 
-        $translatableAttributes = $record->getTranslatableAttributes();
+        $translatableAttributes = method_exists($record, 'getTranslatableAttributes') ?
+            $record->getTranslatableAttributes() :
+            [];
 
         $record->fill(Arr::except($data, $translatableAttributes));
 
-        foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
-            $record->setTranslation($key, $this->activeLocale, $value);
+        if (method_exists($record, 'setTranslation')) {
+            foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
+                $record->setTranslation($key, $this->activeLocale, $value);
+            }
         }
 
         $record->save();
