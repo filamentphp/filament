@@ -309,6 +309,32 @@ The field value must be empty. [See the Laravel documentation.](https://laravel.
 Field::make('name')->prohibited()
 ```
 
+### Prohibited If
+
+The field must be empty *only if* the other specified field has any of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibited-if)
+
+```php
+Field::make('name')->prohibitedIf('field', 'value')
+```
+
+### Prohibited Unless
+
+The field must be empty *unless* the other specified field has any of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibited-unless)
+
+```php
+Field::make('name')->prohibitedUnless('field', 'value')
+```
+
+### Prohibits
+
+If the field is not empty, all other specified fields must be empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibits)
+
+```php
+Field::make('name')->prohibits('field')
+
+Field::make('name')->prohibits(['field', 'another_field'])
+```
+
 ### Required
 
 The field value must not be empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required)

@@ -313,7 +313,7 @@ use Filament\Tables\Actions\AttachAction;
 use Illuminate\Database\Eloquent\Builder;
 
 AttachAction::make()
-    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
 ```
 
 ### Searching the options to attach across multiple columns
@@ -355,6 +355,7 @@ public function table(Table $table): Table
     return $table
         ->allowDuplicates();
 }
+```
 
 ## Associating and dissociating records
 
@@ -415,7 +416,7 @@ use Filament\Tables\Actions\AssociateAction;
 use Illuminate\Database\Eloquent\Builder;
 
 AssociateAction::make()
-    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
 ```
 
 ### Searching the options to associate across multiple columns

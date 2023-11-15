@@ -15,6 +15,7 @@ class TextEntry extends Entry implements HasAffixActions
     use Concerns\HasColor;
     use Concerns\HasFontFamily;
     use Concerns\HasIcon;
+    use Concerns\HasIconColor;
     use Concerns\HasWeight;
 
     /**

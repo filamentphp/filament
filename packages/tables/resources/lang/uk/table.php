@@ -20,8 +20,13 @@ return [
         ],
 
         'bulk_select_record' => [
-            'label' => 'Обрати/скасувати :key для масових дій.',
+            'label' => 'Обрати/зняти елемент :key для масових дій.',
         ],
+
+        'bulk_select_group' => [
+            'label' => 'Обрати/зняти елемент групу :title для масових дій.',
+        ],
+
         'search' => [
             'label' => 'Пошук',
             'placeholder' => 'Пошук',
@@ -123,13 +128,13 @@ return [
 
         'trashed' => [
 
-            'label' => 'Віддалені записи',
+            'label' => 'Видалені записи',
 
             'only_trashed' => 'Тільки видалені записи',
 
-            'with_trashed' => 'З віддаленими записами',
+            'with_trashed' => 'З видаленими записами',
 
-            'without_trashed' => 'Без віддалених записів',
+            'without_trashed' => 'Без видалених записів',
 
         ],
 
@@ -159,7 +164,7 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Drag-n-drop порядок.',
+    'reorder_indicator' => 'Перетягуйте елементи, щоб змінити порядок.',
 
     'selection_indicator' => [
 
