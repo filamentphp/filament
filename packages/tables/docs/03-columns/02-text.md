@@ -185,7 +185,7 @@ TextColumn::make('authors.name')
 
 ### Limiting the number of values in the list
 
-You can limit the number of values initially displayed in the list using the `limitList()` method, which will add a `show X more` clickable link to reveal the rest of the values:
+You can limit the number of values in the list using the `limitList()` method:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -194,6 +194,21 @@ TextColumn::make('authors.name')
     ->listWithLineBreaks()
     ->limitList(3)
 ```
+
+#### Expanding the limited list
+
+You can allow the limited items to be expanded and collapsed, using the `expandableLimitedList()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('authors.name')
+    ->listWithLineBreaks()
+    ->limitList(3)
+    ->expandableLimitedList()
+```
+
+Please note that this is only a feature for `listWithLineBreaks()` or `bulleted()`, where each item is on its own line.
 
 ### Using a list separator
 

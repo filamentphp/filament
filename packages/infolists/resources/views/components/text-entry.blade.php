@@ -10,6 +10,7 @@
         $isBadge = $isBadge();
         $iconPosition = $getIconPosition();
         $isListWithLineBreaks = $isListWithLineBreaks();
+        $isLimitedListExpandable = $isLimitedListExpandable();
         $isProse = $isProse();
         $isMarkdown = $isMarkdown();
         $url = $getUrl();
@@ -64,12 +65,15 @@
                         'list-inside list-disc' => $isBulleted(),
                         'flex flex-wrap items-center gap-1.5' => $isBadge,
                     ])
-                    @if ($isListWithLineBreaks)
+                    @if ($isListWithLineBreaks && $isLimitedListExpandable)
                         x-data="{ isLimited: true }"
                     @endif
                 >
                     @foreach ($arrayState as $state)
-                        @if (filled($formattedState = $formatState($state)))
+                        @if (
+                            filled($formattedState = $formatState($state)) &&
+                            (! ($isListWithLineBreaks && (! $isLimitedListExpandable) && ($loop->index > $listLimit)))
+                        )
                             @php
                                 $color = $getColor($state);
                                 $copyableState = $getCopyableState($state) ?? $state;
@@ -212,22 +216,26 @@
                             class="text-sm text-gray-500 dark:text-gray-400"
                             x-on:click.prevent="isLimited = ! isLimited"
                         >
-                            <x-filament::link
-                                color="gray"
-                                tag="button"
-                                x-show="isLimited"
-                            >
-                                {{ trans_choice('filament-infolists::components.entries.text.more_list_items', $limitedArrayStateCount) }}
-                            </x-filament::link>
+                            @if ($isLimitedListExpandable)
+                                <x-filament::link
+                                    color="gray"
+                                    tag="button"
+                                    x-show="isLimited"
+                                >
+                                    {{ trans_choice('filament-infolists::components.entries.text.actions.expand_list', $limitedArrayStateCount) }}
+                                </x-filament::link>
 
-                            <x-filament::link
-                                color="gray"
-                                tag="button"
-                                x-cloak
-                                x-show="! isLimited"
-                            >
-                                {{ trans_choice('filament-infolists::components.entries.text.less_list_items', $limitedArrayStateCount) }}
-                            </x-filament::link>
+                                <x-filament::link
+                                    color="gray"
+                                    tag="button"
+                                    x-cloak
+                                    x-show="! isLimited"
+                                >
+                                    {{ trans_choice('filament-infolists::components.entries.text.actions.collapse_list', $limitedArrayStateCount) }}
+                                </x-filament::link>
+                            @else
+                                {{ trans_choice('filament-infolists::components.entries.text.more_list_items', $limitedArrayStateCount) }}
+                            @endif
                         </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
                     @endif
                 </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>

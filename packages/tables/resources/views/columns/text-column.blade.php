@@ -11,6 +11,7 @@
     $isBadge = $isBadge();
     $isBulleted = $isBulleted();
     $isListWithLineBreaks = $isListWithLineBreaks();
+    $isLimitedListExpandable = $isLimitedListExpandable();
     $url = $getUrl();
 
     $arrayState = $getState();
@@ -72,12 +73,15 @@
                 'flex flex-wrap items-center gap-1.5' => $isBadge,
                 'whitespace-normal' => $canWrap,
             ])
-            @if ($isListWithLineBreaks)
+            @if ($isListWithLineBreaks && $isLimitedListExpandable)
                 x-data="{ isLimited: true }"
             @endif
         >
             @foreach ($arrayState as $state)
-                @if (filled($formattedState = $formatState($state)))
+                @if (
+                    filled($formattedState = $formatState($state)) &&
+                    (! ($isListWithLineBreaks && (! $isLimitedListExpandable) && ($loop->index > $listLimit)))
+                )
                     @php
                         $color = $getColor($state);
                         $copyableState = $getCopyableState($state) ?? $state;
@@ -208,22 +212,26 @@
                     x-on:click.prevent="isLimited = ! isLimited"
                     class="text-sm text-gray-500 dark:text-gray-400"
                 >
-                    <x-filament::link
-                        color="gray"
-                        tag="button"
-                        x-show="isLimited"
-                    >
-                        {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
-                    </x-filament::link>
+                    @if ($isLimitedListExpandable)
+                        <x-filament::link
+                            color="gray"
+                            tag="button"
+                            x-show="isLimited"
+                        >
+                            {{ trans_choice('filament-tables::table.columns.text.actions.expand_list', $limitedArrayStateCount) }}
+                        </x-filament::link>
 
-                    <x-filament::link
-                        color="gray"
-                        tag="button"
-                        x-cloak
-                        x-show="! isLimited"
-                    >
-                        {{ trans_choice('filament-tables::table.columns.text.less_list_items', $limitedArrayStateCount) }}
-                    </x-filament::link>
+                        <x-filament::link
+                            color="gray"
+                            tag="button"
+                            x-cloak
+                            x-show="! isLimited"
+                        >
+                            {{ trans_choice('filament-tables::table.columns.text.actions.collapse_list', $limitedArrayStateCount) }}
+                        </x-filament::link>
+                    @else
+                        {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
+                    @endif
                 </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
             @endif
         </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
