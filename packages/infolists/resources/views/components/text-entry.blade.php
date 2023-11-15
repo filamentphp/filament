@@ -212,14 +212,12 @@
                     @endforeach
 
                     @if ($limitedArrayStateCount ?? 0)
-                        <{{ $isListWithLineBreaks ? 'li' : 'div' }}
-                            class="text-sm text-gray-500 dark:text-gray-400"
-                            x-on:click.prevent="isLimited = ! isLimited"
-                        >
+                        <{{ $isListWithLineBreaks ? 'li' : 'div' }}>
                             @if ($isLimitedListExpandable)
                                 <x-filament::link
                                     color="gray"
                                     tag="button"
+                                    x-on:click.prevent="isLimited = false"
                                     x-show="isLimited"
                                 >
                                     {{ trans_choice('filament-infolists::components.entries.text.actions.expand_list', $limitedArrayStateCount) }}
@@ -229,12 +227,15 @@
                                     color="gray"
                                     tag="button"
                                     x-cloak
+                                    x-on:click.prevent="isLimited = true"
                                     x-show="! isLimited"
                                 >
                                     {{ trans_choice('filament-infolists::components.entries.text.actions.collapse_list', $limitedArrayStateCount) }}
                                 </x-filament::link>
                             @else
-                                {{ trans_choice('filament-infolists::components.entries.text.more_list_items', $limitedArrayStateCount) }}
+                                <span class="text-sm text-gray-500 dark:text-gray-400">
+                                    {{ trans_choice('filament-infolists::components.entries.text.more_list_items', $limitedArrayStateCount) }}
+                                </span>
                             @endif
                         </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
                     @endif
