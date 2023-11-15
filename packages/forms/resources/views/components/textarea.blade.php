@@ -5,6 +5,7 @@
     $rows = $getRows();
     $shouldAutosize = $shouldAutosize();
     $statePath = $getStatePath();
+
     $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
 @endphp
 
