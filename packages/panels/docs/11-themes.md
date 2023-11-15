@@ -27,6 +27,8 @@ public function panel(Panel $panel): Panel
 
 The `Filament\Support\Colors\Color` class contains color options for all [Tailwind CSS color palettes](https://tailwindcss.com/docs/customizing-colors).
 
+You can also pass in a function to `register()` which will only get called when the app is getting rendered. This is useful if you are calling `register()` from a service provider, and want to access objects like the currently authenticated user, which are initialized later in middleware.
+
 Alternatively, you may pass your own palette in as an array of RGB values:
 
 ```php
