@@ -38,8 +38,13 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             $record->setLocale($this->activeLocale);
         }
 
-        $record->fill($data);
-        $record = $this->setRecordTranslations($record, $data);
+        $translatableAttributes = $record->getTranslatableAttributes();
+
+        $record->fill(Arr::except($data, $translatableAttributes));
+
+        foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
+            $record->setTranslation($key, $this->activeLocale, $value);
+        }
 
         return $record;
     }
@@ -62,8 +67,14 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             $record->setLocale($this->activeLocale);
         }
 
-        $record->fill($data);
-        $record = $this->setRecordTranslations($record, $data);
+        $translatableAttributes = $record->getTranslatableAttributes();
+
+        $record->fill(Arr::except($data, $translatableAttributes));
+
+        foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
+            $record->setTranslation($key, $this->activeLocale, $value);
+        }
+        
         $record->save();
 
         return $record;
@@ -106,14 +117,5 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             'like',
             "%{$search}%",
         );
-    }
-
-    protected function setRecordTranslations(Model $record, array $data): Model
-    {
-        foreach (Arr::only($data, $record->getTranslatableAttributes()) as $key => $value) {
-            $record->setTranslation($key, $this->activeLocale, $value);
-        }
-
-        return $record;
     }
 }
