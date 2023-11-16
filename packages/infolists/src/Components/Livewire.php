@@ -6,31 +6,56 @@ use Closure;
 
 class Livewire extends Component
 {
-    protected bool|Closure $isLazy = false;
-    protected array|Closure $componentData = [];
-    protected bool|Closure $isWithRecord = false;
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-infolists::components.livewire';
+
+    protected bool | Closure $isLazy = false;
 
     /**
-     * @param string $component
+     * @var array<string, mixed> | Closure
      */
-    final public function __construct(string $component)
+    protected array | Closure $data = [];
+
+    protected string | Closure $component;
+
+    /**
+     * @param array<string, mixed> | Closure $data
+     */
+    final public function __construct(string | Closure $component, array | Closure $data = [])
     {
-        $this->view('filament-infolists::components.livewire', compact('component'));
+        $this->component($component);
+        $this->data($data);
     }
 
     /**
-     * @param string $component
-     * @return Livewire
+     * @param array<string, mixed> | Closure $data
      */
-    public static function make(string $component): static
+    public static function make(string | Closure $component, array | Closure $data = []): static
     {
-        $static = app(static::class, compact('component'));
+        $static = app(static::class, [
+            'component' => $component,
+            'data' => $data,
+        ]);
         $static->configure();
 
         return $static;
     }
 
-    public function lazy(bool|Closure $condition = true): static
+    public function component(string | Closure $component): static
+    {
+        $this->component = $component;
+
+        return $this;
+    }
+
+    public function getComponent(): string
+    {
+        return $this->evaluate($this->component);
+    }
+
+    public function lazy(bool | Closure $condition = true): static
     {
         $this->isLazy = $condition;
 
@@ -39,30 +64,43 @@ class Livewire extends Component
 
     public function isLazy(): bool
     {
-        return (bool)$this->evaluate($this->isLazy);
+        return (bool) $this->evaluate($this->isLazy);
     }
 
-    public function componentData(array|Closure $data = []): static
+    /**
+     * @param array<string, mixed> | Closure $data
+     */
+    public function data(array | Closure $data): static
     {
-        $this->componentData = $data;
+        $this->data = $data;
 
         return $this;
     }
 
-    public function getComponentData(): array
+    /**
+     * @return array<string, mixed>
+     */
+    public function getData(): array
     {
-        return (array)$this->evaluate($this->componentData);
+        return $this->evaluate($this->data);
     }
 
-    public function withRecord(bool|Closure $condition = true): static
+    /**
+     * @return array<string, mixed>
+     */
+    public function getComponentProperties(): array
     {
-        $this->isWithRecord = $condition;
+        $properties = [
+            'record' => $this->getRecord(),
+        ];
 
-        return $this;
-    }
+        if ($this->isLazy()) {
+            $properties['lazy'] = true;
+        }
 
-    public function isWithRecord(): bool
-    {
-        return (bool)$this->evaluate($this->isWithRecord);
+        return [
+            ...$properties,
+            ...$this->getData(),
+        ];
     }
 }
