@@ -21,7 +21,7 @@ class Livewire extends Component
     protected string | Closure $component;
 
     /**
-     * @param array<string, mixed> | Closure $data
+     * @param  array<string, mixed> | Closure  $data
      */
     final public function __construct(string | Closure $component, array | Closure $data = [])
     {
@@ -30,7 +30,7 @@ class Livewire extends Component
     }
 
     /**
-     * @param array<string, mixed> | Closure $data
+     * @param  array<string, mixed> | Closure  $data
      */
     public static function make(string | Closure $component, array | Closure $data = []): static
     {
@@ -68,7 +68,7 @@ class Livewire extends Component
     }
 
     /**
-     * @param array<string, mixed> | Closure $data
+     * @param  array<string, mixed> | Closure  $data
      */
     public function data(array | Closure $data): static
     {
