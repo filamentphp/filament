@@ -5,6 +5,7 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Enums\ActionSize;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 
 trait HasAffixes
@@ -19,7 +20,7 @@ trait HasAffixes
      */
     protected array $suffixActions = [];
 
-    protected string | Closure | null $suffixLabel = null;
+    protected string | Htmlable | Closure | null $suffixLabel = null;
 
     /**
      * @var array<Action> | null
@@ -31,7 +32,7 @@ trait HasAffixes
      */
     protected array $prefixActions = [];
 
-    protected string | Closure | null $prefixLabel = null;
+    protected string | Htmlable | Closure | null $prefixLabel = null;
 
     protected string | Closure | null $prefixIcon = null;
 
@@ -51,7 +52,7 @@ trait HasAffixes
 
     protected bool | Closure $isSuffixInline = false;
 
-    public function prefix(string | Closure | null $label, bool | Closure $isInline = false): static
+    public function prefix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
     {
         $this->prefixLabel = $label;
         $this->inlinePrefix($isInline);
@@ -59,7 +60,7 @@ trait HasAffixes
         return $this;
     }
 
-    public function postfix(string | Closure | null $label, bool | Closure $isInline = false): static
+    public function postfix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
     {
         return $this->suffix($label, $isInline);
     }
@@ -106,7 +107,7 @@ trait HasAffixes
         return $this;
     }
 
-    public function suffix(string | Closure | null $label, bool | Closure $isInline = false): static
+    public function suffix(string | Htmlable | Closure | null $label, bool | Closure $isInline = false): static
     {
         $this->suffixLabel = $label;
         $this->inlineSuffix($isInline);
@@ -220,12 +221,12 @@ trait HasAffixes
         return $this->cachedSuffixActions;
     }
 
-    public function getPrefixLabel(): ?string
+    public function getPrefixLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->prefixLabel);
     }
 
-    public function getSuffixLabel(): ?string
+    public function getSuffixLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->suffixLabel);
     }
