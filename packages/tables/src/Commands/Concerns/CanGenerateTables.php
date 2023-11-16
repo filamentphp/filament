@@ -4,6 +4,7 @@ namespace Filament\Tables\Commands\Concerns;
 
 use Doctrine\DBAL\Types;
 use Filament\Tables;
+use Illuminate\Support\Str;
 
 trait CanGenerateTables
 {
@@ -65,7 +66,7 @@ trait CanGenerateTables
                 'sku',
                 'uuid',
             ])) {
-                $columnData['label'] = [strtoupper($columnName)];
+                $columnData['label'] = [Str::upper($columnName)];
             }
 
             if ($column->getType() instanceof Types\BooleanType) {
@@ -120,6 +121,7 @@ trait CanGenerateTables
             if (in_array($columnName, [
                 'created_at',
                 'updated_at',
+                'deleted_at',
             ])) {
                 $columnData['toggleable'] = ['isToggledHiddenByDefault' => true];
             }

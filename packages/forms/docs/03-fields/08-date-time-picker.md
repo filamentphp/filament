@@ -119,11 +119,11 @@ There are additionally convenient helper methods to set the first day of the wee
 use Filament\Forms\Components\DateTimePicker;
 
 DateTimePicker::make('published_at')
-    ->native()
+    ->native(false)
     ->weekStartsOnMonday()
 
 DateTimePicker::make('published_at')
-    ->native()
+    ->native(false)
     ->weekStartsOnSunday()
 ```
 
@@ -201,18 +201,31 @@ TimePicker::make('at')
 
 <AutoScreenshot name="forms/fields/date-time-picker/prefix-icon" alt="Date time picker with prefix icon" version="3.x" />
 
+#### Setting the affix icon's color
+
+Affix icons are gray by default, but you may set a different color using the `prefixIconColor()` and `suffixIconColor()` methods:
+
+```php
+use Filament\Forms\Components\TimePicker;
+
+TimePicker::make('at')
+    ->prefixIcon('heroicon-m-check-circle')
+    ->prefixIconColor('success')
+```
+
 ## Date-time picker validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to date-time pickers.
 
 ### Max date / min date validation
 
-You may restrict the minimum and maximum date that can be selected with the picker. The `minDate()` and `maxDate()` methods accept a `DateTime` instance (e.g., Carbon), or a string:
+You may restrict the minimum and maximum date that can be selected with the picker. The `minDate()` and `maxDate()` methods accept a `DateTime` instance (e.g. `Carbon`), or a string:
 
 ```php
 use Filament\Forms\Components\DatePicker;
 
 DatePicker::make('date_of_birth')
+    ->native(false)
     ->minDate(now()->subYears(150))
     ->maxDate(now())
 ```

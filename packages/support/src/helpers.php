@@ -2,7 +2,12 @@
 
 namespace Filament\Support;
 
+use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
@@ -14,7 +19,7 @@ if (! function_exists('Filament\Support\format_money')) {
         $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::CURRENCY);
 
         if ($divideBy) {
-            $money = bcdiv((string) $money, (string) $divideBy);
+            $money /= $divideBy;
         }
 
         return $formatter->formatCurrency($money, $currency);
@@ -48,13 +53,27 @@ if (! function_exists('Filament\Support\locale_has_pluralization')) {
 
 if (! function_exists('Filament\Support\get_color_css_variables')) {
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}  $color
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
      * @param  array<int>  $shades
      */
-    function get_color_css_variables(string | array | null $color, array $shades): ?string
+    function get_color_css_variables(string | array | null $color, array $shades, ?string $alias = null): ?string
     {
         if ($color === null) {
             return null;
+        }
+
+        if ($alias !== null) {
+            if (($overridingShades = FilamentColor::getOverridingShades($alias)) !== null) {
+                $shades = $overridingShades;
+            }
+
+            if ($addedShades = FilamentColor::getAddedShades($alias)) {
+                $shades = [...$shades, ...$addedShades];
+            }
+
+            if ($removedShades = FilamentColor::getRemovedShades($alias)) {
+                $shades = array_diff($shades, $removedShades);
+            }
         }
 
         $variables = [];
@@ -104,10 +123,89 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
                 [
                     '<!-- __BLOCK__ -->',
                     '<!-- __ENDBLOCK__ -->',
+                    '<!--[if BLOCK]><![endif]-->',
+                    '<!--[if ENDBLOCK]><![endif]-->',
                 ],
                 '',
                 $slot->toHtml()
             ),
         ) === '';
+    }
+}
+
+if (! function_exists('Filament\Support\is_app_url')) {
+    function is_app_url(string $url): bool
+    {
+        return str($url)->startsWith(request()->root());
+    }
+}
+
+if (! function_exists('Filament\Support\generate_href_html')) {
+    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false): Htmlable
+    {
+        $html = "href=\"{$url}\"";
+
+        if ($shouldOpenInNewTab) {
+            $html .= ' target="_blank"';
+        } elseif (FilamentView::hasSpaMode() && is_app_url($url)) {
+            $html .= ' wire:navigate';
+        }
+
+        return new HtmlString($html);
+    }
+}
+
+if (! function_exists('Filament\Support\generate_search_column_expression')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string | Expression
+    {
+        $driverName = $databaseConnection->getDriverName();
+
+        $column = match ($driverName) {
+            'pgsql' => "{$column}::text",
+            default => $column,
+        };
+
+        $isSearchForcedCaseInsensitive ??= match ($driverName) {
+            'pgsql' => true,
+            default => false,
+        };
+
+        if ($isSearchForcedCaseInsensitive) {
+            $column = "lower({$column})";
+        }
+
+        $collation = $databaseConnection->getConfig('search_collation');
+
+        if (filled($collation)) {
+            $column = "{$column} collate {$collation}";
+        }
+
+        if ($isSearchForcedCaseInsensitive || filled($collation)) {
+            return new Expression($column);
+        }
+
+        return $column;
+    }
+}
+
+if (! function_exists('Filament\Support\generate_search_term_expression')) {
+    /**
+     * @internal This function is only to be used internally by Filament and is subject to change at any time. Please do not use this function in your own code.
+     */
+    function generate_search_term_expression(string $search, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string
+    {
+        $isSearchForcedCaseInsensitive ??= match ($databaseConnection->getDriverName()) {
+            'pgsql' => true,
+            default => false,
+        };
+
+        if (! $isSearchForcedCaseInsensitive) {
+            return $search;
+        }
+
+        return Str::lower($search);
     }
 }

@@ -40,7 +40,6 @@ trait HasOptions
         $enum = $options;
         if (
             is_string($enum) &&
-            function_exists('enum_exists') &&
             enum_exists($enum)
         ) {
             return collect($enum::cases())
@@ -84,5 +83,20 @@ trait HasOptions
         $this->getSearchResultsUsing = $callback;
 
         return $this;
+    }
+
+    public function getOptionLabelUsingCallback(): ?Closure
+    {
+        return $this->getOptionLabelUsing;
+    }
+
+    public function getOptionLabelsUsingCallback(): ?Closure
+    {
+        return $this->getOptionLabelsUsing;
+    }
+
+    public function getSearchResultsUsingCallback(): ?Closure
+    {
+        return $this->getSearchResultsUsing;
     }
 }

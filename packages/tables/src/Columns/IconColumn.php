@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Columns\IconColumn\IconColumnSize;
 use Illuminate\Contracts\Support\Arrayable;
 
@@ -20,7 +21,7 @@ class IconColumn extends Column
      */
     protected string $view = 'filament-tables::columns.icon-column';
 
-    protected bool | Closure $isBoolean = false;
+    protected bool | Closure | null $isBoolean = null;
 
     /**
      * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
@@ -187,7 +188,9 @@ class IconColumn extends Column
 
     public function getFalseIcon(): string
     {
-        return $this->evaluate($this->falseIcon) ?? 'heroicon-o-x-circle';
+        return $this->evaluate($this->falseIcon)
+            ?? FilamentIcon::resolve('tables::columns.icon-column.false')
+            ?? 'heroicon-o-x-circle';
     }
 
     /**
@@ -200,11 +203,17 @@ class IconColumn extends Column
 
     public function getTrueIcon(): string
     {
-        return $this->evaluate($this->trueIcon) ?? 'heroicon-o-check-circle';
+        return $this->evaluate($this->trueIcon)
+            ?? FilamentIcon::resolve('tables::columns.icon-column.true')
+            ?? 'heroicon-o-check-circle';
     }
 
     public function isBoolean(): bool
     {
+        if (blank($this->isBoolean)) {
+            $this->isBoolean = $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean']);
+        }
+
         return (bool) $this->evaluate($this->isBoolean);
     }
 

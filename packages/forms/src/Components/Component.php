@@ -15,6 +15,7 @@ class Component extends ViewComponent
     use Concerns\CanBeConcealed;
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
+    use Concerns\CanBeRepeated;
     use Concerns\CanSpanColumns;
     use Concerns\Cloneable;
     use Concerns\HasActions;

@@ -2,19 +2,66 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'カラム',
+
+    ],
+
     'columns' => [
 
         'text' => [
-            'more_list_items' => 'あと:count個あります',
+            'more_list_items' => 'あと:countアイテムがあります',
         ],
 
     ],
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => '一括操作の全項目の選択/解除。',
+        ],
+
+        'bulk_select_record' => [
+            'label' => '一括操作のキー:keyの選択/解除。',
+        ],
+
+        'bulk_select_group' => [
+            'label' => '一括操作のグループ:keyの選択/解除。',
+        ],
+
         'search' => [
             'label' => '検索',
             'placeholder' => '検索',
+            'indicator' => '検索',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'サマリー',
+
+        'subheadings' => [
+            'all' => 'すべての:label',
+            'group' => ':groupのサマリー',
+            'page' => 'このページ',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => '平均',
+            ],
+
+            'count' => [
+                'label' => 'カウント',
+            ],
+
+            'sum' => [
+                'label' => '合計',
+            ],
+
         ],
 
     ],
@@ -30,7 +77,11 @@ return [
         ],
 
         'filter' => [
-            'label' => '絞り込み',
+            'label' => 'フィルター',
+        ],
+
+        'group' => [
+            'label' => 'グループ',
         ],
 
         'open_bulk_actions' => [
@@ -44,7 +95,11 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'レコードが見つかりません',
+
+        'heading' => ':modelが見つかりません',
+
+        'description' => ':modelを作成して始めてください。',
+
     ],
 
     'filters' => [
@@ -52,12 +107,12 @@ return [
         'actions' => [
 
             'remove' => [
-                'label' => '絞り込みを解除',
+                'label' => 'フィルターを解除',
             ],
 
             'remove_all' => [
-                'label' => '全ての絞り込みを解除',
-                'tooltip' => '全ての絞り込みを解除',
+                'label' => 'すべてのフィルターを解除',
+                'tooltip' => 'すべてのフィルターを解除',
             ],
 
             'reset' => [
@@ -66,7 +121,9 @@ return [
 
         ],
 
-        'indicator' => '有効な絞り込み',
+        'heading' => 'フィルター',
+
+        'indicator' => '有効なフィルター',
 
         'multi_select' => [
             'placeholder' => '全件',
@@ -90,7 +147,31 @@ return [
 
     ],
 
-    'reorder_indicator' => 'ドラッグ＆ドロップでレコードを並び替え',
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'グループ化',
+                'placeholder' => 'グループ化',
+            ],
+
+            'direction' => [
+
+                'label' => 'グループ順の方向',
+
+                'options' => [
+                    'asc' => '昇順',
+                    'desc' => '降順',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
+    'reorder_indicator' => 'ドラッグ＆ドロップでレコードを並び替え。',
 
     'selection_indicator' => [
 
@@ -99,7 +180,7 @@ return [
         'actions' => [
 
             'select_all' => [
-                'label' => ':count件全て選択',
+                'label' => ':count件すべて選択',
             ],
 
             'deselect_all' => [
@@ -120,7 +201,7 @@ return [
 
             'direction' => [
 
-                'label' => '並び変え方向',
+                'label' => '並び変えの方向',
 
                 'options' => [
                     'asc' => '昇順',

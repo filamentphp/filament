@@ -20,7 +20,7 @@ trait CanBeSearchable
 
     protected ?Closure $searchQuery = null;
 
-    protected bool | Closure $isSearchForcedCaseInsensitive = false;
+    protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
     /**
      * @param  bool | array<string> | string  $condition
@@ -46,7 +46,7 @@ trait CanBeSearchable
         return $this;
     }
 
-    public function forceSearchCaseInsensitive(bool | Closure $condition = true): static
+    public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
     {
         $this->isSearchForcedCaseInsensitive = $condition;
 
@@ -76,9 +76,9 @@ trait CanBeSearchable
         return $this->isSearchable() && $this->isIndividuallySearchable;
     }
 
-    public function isSearchForcedCaseInsensitive(): bool
+    public function isSearchForcedCaseInsensitive(): ?bool
     {
-        return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
+        return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
     /**
@@ -86,6 +86,6 @@ trait CanBeSearchable
      */
     public function getDefaultSearchColumns(): array
     {
-        return [str($this->getName())->afterLast('.')];
+        return [(string) str($this->getName())->afterLast('.')];
     }
 }

@@ -5,6 +5,7 @@ namespace Filament\Forms\Commands;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\text;
 
 class MakeFieldCommand extends Command
@@ -66,7 +67,7 @@ class MakeFieldCommand extends Command
             $this->copyStubToApp('FieldView', $viewPath);
         }
 
-        $this->components->info("Successfully created {$field}!");
+        $this->components->info("Filament form field [{$path}] created successfully.");
 
         return static::SUCCESS;
     }

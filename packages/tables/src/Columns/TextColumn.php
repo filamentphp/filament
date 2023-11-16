@@ -15,6 +15,7 @@ class TextColumn extends Column
     use Concerns\HasDescription;
     use Concerns\HasFontFamily;
     use Concerns\HasIcon;
+    use Concerns\HasIconColor;
     use Concerns\HasWeight;
 
     /**
@@ -33,6 +34,8 @@ class TextColumn extends Column
     protected int | Closure | null $listLimit = null;
 
     protected TextColumnSize | string | Closure | null $size = null;
+
+    protected bool | Closure $isLimitedListExpandable = false;
 
     public function badge(bool | Closure $condition = true): static
     {
@@ -67,7 +70,13 @@ class TextColumn extends Column
         $this->state(static function (HasTable $livewire, stdClass $rowLoop) use ($isFromZero): string {
             $rowIndex = $rowLoop->{$isFromZero ? 'index' : 'iteration'};
 
-            return (string) ($rowIndex + ($livewire->getTableRecordsPerPage() * ($livewire->getTablePage() - 1)));
+            $recordsPerPage = $livewire->getTableRecordsPerPage();
+
+            if (! is_numeric($recordsPerPage)) {
+                return (string) $rowIndex;
+            }
+
+            return (string) ($rowIndex + ($recordsPerPage * ($livewire->getTablePage() - 1)));
         });
 
         return $this;
@@ -117,5 +126,17 @@ class TextColumn extends Column
     public function getListLimit(): ?int
     {
         return $this->evaluate($this->listLimit);
+    }
+
+    public function expandableLimitedList(bool | Closure $condition = true): static
+    {
+        $this->isLimitedListExpandable = $condition;
+
+        return $this;
+    }
+
+    public function isLimitedListExpandable(): bool
+    {
+        return (bool) $this->evaluate($this->isLimitedListExpandable);
     }
 }

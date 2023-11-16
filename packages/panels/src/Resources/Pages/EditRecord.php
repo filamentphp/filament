@@ -9,13 +9,18 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
+use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+
+use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form
@@ -37,6 +42,13 @@ class EditRecord extends Page
     public ?array $data = [];
 
     public ?string $previousUrl = null;
+
+    public static function getNavigationIcon(): ?string
+    {
+        return static::$navigationIcon
+            ?? FilamentIcon::resolve('panels::resources.pages.edit-record.navigation-item')
+            ?? (Filament::hasTopNavigation() ? 'heroicon-m-pencil-square' : 'heroicon-o-pencil-square');
+    }
 
     public function getBreadcrumb(): string
     {
@@ -153,7 +165,11 @@ class EditRecord extends Page
         $this->getSavedNotification()?->send();
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            $this->redirect($redirectUrl);
+            if (FilamentView::hasSpaMode()) {
+                $this->redirect($redirectUrl, navigate: is_app_url($redirectUrl));
+            } else {
+                $this->redirect($redirectUrl);
+            }
         }
     }
 
@@ -307,14 +323,24 @@ class EditRecord extends Page
 
     public function form(Form $form): Form
     {
-        return static::getResource()::form(
-            $form
-                ->operation('edit')
-                ->model($this->getRecord())
-                ->statePath($this->getFormStatePath())
-                ->columns($this->hasInlineLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineLabels()),
-        );
+        return $form;
+    }
+
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(static::getResource()::form(
+                $this->makeForm()
+                    ->operation('edit')
+                    ->model($this->getRecord())
+                    ->statePath($this->getFormStatePath())
+                    ->columns($this->hasInlineLabels() ? 1 : 2)
+                    ->inlineLabel($this->hasInlineLabels()),
+            )),
+        ];
     }
 
     public function getFormStatePath(): ?string
@@ -340,5 +366,25 @@ class EditRecord extends Page
         return [
             'record' => $this->getRecord(),
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSubNavigationParameters(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
+    }
+
+    public function getSubNavigation(): array
+    {
+        return static::getResource()::getRecordSubNavigation($this);
+    }
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        return parent::shouldRegisterNavigation($parameters) && static::getResource()::canEdit($parameters['record']);
     }
 }

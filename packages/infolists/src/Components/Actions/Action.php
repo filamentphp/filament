@@ -79,4 +79,9 @@ class Action extends MountableAction
 
         return $action->component($this->getInfolistComponent());
     }
+
+    public function getInfolistName(): string
+    {
+        return 'mountedInfolistActionsInfolist';
+    }
 }

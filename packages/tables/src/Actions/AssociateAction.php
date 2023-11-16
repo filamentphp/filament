@@ -7,13 +7,16 @@ use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Expression;
+
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
 
 class AssociateAction extends Action
 {
@@ -32,7 +35,7 @@ class AssociateAction extends Action
      */
     protected array | Closure | null $recordSelectSearchColumns = null;
 
-    protected bool | Closure $isSearchForcedCaseInsensitive = false;
+    protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
     public static function getDefaultName(): ?string
     {
@@ -70,17 +73,20 @@ class AssociateAction extends Action
 
             $record = $relationship->getQuery()->find($data['recordId']);
 
+            if ($record instanceof Model) {
+                $this->record($record);
+            }
+
             /** @var BelongsTo $inverseRelationship */
             $inverseRelationship = $table->getInverseRelationshipFor($record);
 
             $this->process(function () use ($inverseRelationship, $record, $relationship) {
                 $inverseRelationship->associate($relationship->getParent());
                 $record->save();
-            });
-
-            if ($record instanceof Model) {
-                $this->record($record);
-            }
+            }, [
+                'inverseRelationship' => $inverseRelationship,
+                'relationship' => $relationship,
+            ]);
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
@@ -184,27 +190,23 @@ class AssociateAction extends Action
             $titleAttribute = $this->getRecordTitleAttribute();
             $titleAttribute = filled($titleAttribute) ? $relationshipQuery->qualifyColumn($titleAttribute) : null;
 
-            if (empty($relationshipQuery->getQuery()->orders) && filled($titleAttribute)) {
-                $relationshipQuery->orderBy($titleAttribute);
-            }
-
             if (filled($search) && ($searchColumns || filled($titleAttribute))) {
-                $search = strtolower($search);
+                /** @var Connection $databaseConnection */
+                $databaseConnection = $relationshipQuery->getConnection();
 
-                $searchColumns ??= [$titleAttribute];
-                $isFirst = true;
                 $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
-                $relationshipQuery->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
-                    foreach ($searchColumns as $searchColumn) {
-                        $caseAwareSearchColumn = $isForcedCaseInsensitive ?
-                            new Expression("lower({$searchColumn})") :
-                            $searchColumn;
+                $search = generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection);
+                $searchColumns ??= [$titleAttribute];
 
+                $isFirst = true;
+
+                $relationshipQuery->where(function (Builder $query) use ($databaseConnection, $isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
+                    foreach ($searchColumns as $searchColumn) {
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
                         $query->{$whereClause}(
-                            $caseAwareSearchColumn,
+                            generate_search_column_expression($query->qualifyColumn($searchColumn), $isForcedCaseInsensitive, $databaseConnection),
                             'like',
                             "%{$search}%",
                         );
@@ -236,7 +238,15 @@ class AssociateAction extends Action
                     );
                 });
 
-            if (filled($titleAttribute)) {
+            if (
+                filled($titleAttribute) &&
+                (! $this->hasCustomRecordTitle()) &&
+                ($this->hasCustomRecordTitleAttribute() || (! $this->getTable()->hasCustomRecordTitle()))
+            ) {
+                if (empty($relationshipQuery->getQuery()->orders)) {
+                    $relationshipQuery->orderBy($titleAttribute);
+                }
+
                 return $relationshipQuery
                     ->pluck($titleAttribute, $relationship->getModel()->getQualifiedKeyName())
                     ->all();
@@ -266,15 +276,15 @@ class AssociateAction extends Action
         return $select;
     }
 
-    public function forceSearchCaseInsensitive(bool | Closure $condition = true): static
+    public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
     {
         $this->isSearchForcedCaseInsensitive = $condition;
 
         return $this;
     }
 
-    public function isSearchForcedCaseInsensitive(): bool
+    public function isSearchForcedCaseInsensitive(): ?bool
     {
-        return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
+        return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 }

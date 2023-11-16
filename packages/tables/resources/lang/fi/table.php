@@ -26,6 +26,10 @@ return [
             'label' => 'Aseta/poista massatoiminnon valinta kohteelle :key.',
         ],
 
+        'bulk_select_group' => [
+            'label' => 'Aseta/poista massatoiminnon valinta ryhmälle :title.',
+        ],
+
         'search' => [
             'label' => 'Etsi',
             'placeholder' => 'Etsi',

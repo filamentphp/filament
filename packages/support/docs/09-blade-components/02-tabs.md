@@ -54,10 +54,10 @@ You can also use the `active` attribute to make a tab appear active conditionall
 Or you can use the `alpine-active` attribute to make a tab appear active conditionally using Alpine.js:
 
 ```blade
-<x-filament::tabs x-data={ activeTab: 'tab1' }>
+<x-filament::tabs x-data="{ activeTab: 'tab1' }">
     <x-filament::tabs.item
         alpine-active="activeTab === 'tab1'"
-        x-on:click="alpineActive = 'tab1'"
+        x-on:click="activeTab = 'tab1'"
     >
         Tab 1
     </x-filament::tabs.item>

@@ -8,6 +8,7 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
@@ -44,7 +45,7 @@ class MakePageCommand extends Command
         $resourcePage = null;
 
         $resourceInput = $this->option('resource') ?? text(
-            label: 'Would you like to create the page inside a resource?',
+            label: 'What is the resource you would like to create this in?',
             placeholder: '[Optional] UserResource',
         );
 
@@ -180,7 +181,7 @@ class MakePageCommand extends Command
             $this->copyStubToApp('PageView', $viewPath);
         }
 
-        $this->components->info("Successfully created {$page}!");
+        $this->components->info("Filament page [{$path}] created successfully.");
 
         if ($resource !== null) {
             $this->components->info("Make sure to register the page in `{$resourceClass}::getPages()`.");

@@ -11,11 +11,16 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 
+use function Livewire\store;
+
 trait HasState
 {
     protected ?Closure $afterStateHydrated = null;
 
-    protected ?Closure $afterStateUpdated = null;
+    /**
+     * @var array<Closure>
+     */
+    protected array $afterStateUpdated = [];
 
     protected ?Closure $beforeStateDehydrated = null;
 
@@ -40,9 +45,16 @@ trait HasState
         return $this;
     }
 
+    public function clearAfterStateUpdatedHooks(): static
+    {
+        $this->afterStateUpdated = [];
+
+        return $this;
+    }
+
     public function afterStateUpdated(?Closure $callback): static
     {
-        $this->afterStateUpdated = $callback;
+        $this->afterStateUpdated[] = $callback;
 
         return $this;
     }
@@ -65,13 +77,26 @@ trait HasState
 
     public function callAfterStateUpdated(): static
     {
-        if ($callback = $this->afterStateUpdated) {
-            $this->evaluate($callback, [
-                'old' => $this->getOldState(),
-            ]);
+        foreach ($this->afterStateUpdated as $callback) {
+            $callbackId = spl_object_id($callback);
+
+            if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $callbackId)) {
+                return $this;
+            }
+
+            $this->callAfterStateUpdatedHook($callback);
+
+            store($this)->push('executedAfterStateUpdatedCallbacks', value: $callbackId, iKey: $callbackId);
         }
 
         return $this;
+    }
+
+    protected function callAfterStateUpdatedHook(Closure $hook): void
+    {
+        $this->evaluate($hook, [
+            'old' => $this->getOldState(),
+        ]);
     }
 
     public function callBeforeStateDehydrated(): static

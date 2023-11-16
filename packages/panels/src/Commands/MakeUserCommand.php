@@ -9,6 +9,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Hash;
+
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
@@ -88,8 +89,13 @@ class MakeUserCommand extends Command
     {
         $this->options = $this->options();
 
-        $user = $this->createUser();
+        if (! Filament::getCurrentPanel()) {
+            $this->error('Filament has not been installed yet: php artisan filament:install --panels');
 
+            return static::INVALID;
+        }
+
+        $user = $this->createUser();
         $this->sendSuccessMessage($user);
 
         return static::SUCCESS;

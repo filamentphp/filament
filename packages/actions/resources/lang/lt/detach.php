@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Atskirti pasirinktą',
+        'label' => 'Atskirti pasirinktus',
 
         'modal' => [
 
-            'heading' => 'Atskirti pasirinktą :label',
+            'heading' => 'Atskirti pasirinktus :label',
 
             'actions' => [
 

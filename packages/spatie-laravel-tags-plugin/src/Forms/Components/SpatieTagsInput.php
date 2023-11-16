@@ -3,17 +3,20 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Tags\Tag;
 
 class SpatieTagsInput extends TagsInput
 {
-    protected string | Closure | null $type = null;
+    protected string | Closure | AllTagTypes | null $type;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->type(new AllTagTypes());
 
         $this->loadStateFromRelationshipsUsing(static function (SpatieTagsInput $component, ?Model $record): void {
             if (! method_exists($record, 'tagsWithType')) {
@@ -21,9 +24,15 @@ class SpatieTagsInput extends TagsInput
             }
 
             $type = $component->getType();
-            $tags = $record->load('tags')->tagsWithType($type);
+            $record->load('tags');
 
-            $component->state($tags->pluck('name')->toArray());
+            if ($component->isAnyTagTypeAllowed()) {
+                $tags = $record->getRelationValue('tags');
+            } else {
+                $tags = $record->tagsWithType($type);
+            }
+
+            $component->state($tags->pluck('name')->all());
         });
 
         $this->saveRelationshipsUsing(static function (SpatieTagsInput $component, ?Model $record, array $state) {
@@ -31,28 +40,59 @@ class SpatieTagsInput extends TagsInput
                 return;
             }
 
-            if ($type = $component->getType()) {
+            if (
+                ($type = $component->getType()) &&
+                (! $component->isAnyTagTypeAllowed())
+            ) {
                 $record->syncTagsWithType($state, $type);
 
                 return;
             }
 
-            $record->syncTags($state);
+            $component->syncTagsWithAnyType($record, $state);
         });
 
         $this->dehydrated(false);
     }
 
-    public function type(string | Closure | null $type): static
+    /**
+     * Syncs tags with the record without taking types into account. This avoids recreating existing tags with an empty type.
+     * Spatie's `HasTags` trait does not have functionality for this behaviour.
+     *
+     * @param  array<string>  $state
+     */
+    protected function syncTagsWithAnyType(?Model $record, array $state): void
+    {
+        if (! ($record && method_exists($record, 'tags'))) {
+            return;
+        }
+
+        $tagClassName = config('tags.tag_model', Tag::class);
+
+        $tags = collect($state)->map(function ($tagName) use ($tagClassName) {
+            $locale = $tagClassName::getLocale();
+
+            $tag = $tagClassName::findFromStringOfAnyType($tagName, $locale);
+
+            if ($tag?->isEmpty() ?? true) {
+                $tag = $tagClassName::create([
+                    'name' => [$locale => $tagName],
+                ]);
+            }
+
+            return $tag;
+        })->flatten();
+
+        $record->tags()->sync($tags->pluck('id'));
+    }
+
+    public function type(string | Closure | AllTagTypes | null $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    /**
-     * @return array<string>
-     */
     public function getSuggestions(): array
     {
         if ($this->suggestions !== null) {
@@ -62,18 +102,26 @@ class SpatieTagsInput extends TagsInput
         $model = $this->getModel();
         $tagClass = $model ? $model::getTagClassName() : config('tags.tag_model', Tag::class);
         $type = $this->getType();
+        $query = $tagClass::query();
 
-        return $tagClass::query()
-            ->when(
+        if (! $this->isAnyTagTypeAllowed()) {
+            $query->when(
                 filled($type),
-                fn (Builder $query) => $query->where('type', $type)
-            )
-            ->pluck('name')
-            ->toArray();
+                fn (Builder $query) => $query->where('type', $type),
+                fn (Builder $query) => $query->where('type', null),
+            );
+        }
+
+        return $query->pluck('name')->all();
     }
 
-    public function getType(): ?string
+    public function getType(): string | AllTagTypes | null
     {
         return $this->evaluate($this->type);
+    }
+
+    public function isAnyTagTypeAllowed(): bool
+    {
+        return $this->getType() instanceof AllTagTypes;
     }
 }

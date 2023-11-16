@@ -4,6 +4,7 @@ namespace Filament\Infolists\Components;
 
 use Filament\Infolists\Components\Contracts\HasHintActions;
 use Filament\Support\Concerns\HasAlignment;
+use Filament\Support\Concerns\HasPlaceholder;
 use Illuminate\Contracts\Support\Htmlable;
 
 class Entry extends Component implements HasHintActions
@@ -14,6 +15,7 @@ class Entry extends Component implements HasHintActions
     use Concerns\HasName;
     use Concerns\HasTooltip;
     use HasAlignment;
+    use HasPlaceholder;
 
     protected string $viewIdentifier = 'entry';
 

@@ -6,7 +6,9 @@ use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Arr;
+
+use function Filament\Support\generate_search_column_expression;
 
 class SpatieLaravelTranslatableContentDriver implements TranslatableContentDriver
 {
@@ -36,7 +38,17 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             $record->setLocale($this->activeLocale);
         }
 
-        $record->fill($data);
+        $translatableAttributes = method_exists($record, 'getTranslatableAttributes') ?
+            $record->getTranslatableAttributes() :
+            [];
+
+        $record->fill(Arr::except($data, $translatableAttributes));
+
+        if (method_exists($record, 'setTranslation')) {
+            foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
+                $record->setTranslation($key, $this->activeLocale, $value);
+            }
+        }
 
         return $record;
     }
@@ -59,7 +71,19 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             $record->setLocale($this->activeLocale);
         }
 
-        $record->fill($data)->save();
+        $translatableAttributes = method_exists($record, 'getTranslatableAttributes') ?
+            $record->getTranslatableAttributes() :
+            [];
+
+        $record->fill(Arr::except($data, $translatableAttributes));
+
+        if (method_exists($record, 'setTranslation')) {
+            foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
+                $record->setTranslation($key, $this->activeLocale, $value);
+            }
+        }
+
+        $record->save();
 
         return $record;
     }
@@ -86,7 +110,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         return $attributes;
     }
 
-    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, bool $isCaseInsensitivityForced = false): Builder
+    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, ?bool $isCaseInsensitivityForced = null): Builder
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
@@ -96,14 +120,8 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             default => "json_extract({$column}, \"$.{$this->activeLocale}\")",
         };
 
-        $caseAwareSearchColumn = new Expression(
-            $isCaseInsensitivityForced ?
-                "lower({$column})" :
-                $column
-        );
-
         return $query->{$whereClause}(
-            $caseAwareSearchColumn,
+            generate_search_column_expression($column, $isCaseInsensitivityForced, $databaseConnection),
             'like',
             "%{$search}%",
         );

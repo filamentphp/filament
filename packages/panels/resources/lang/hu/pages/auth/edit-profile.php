@@ -42,8 +42,8 @@ return [
 
     'actions' => [
 
-        'back' => [
-            'label' => 'vissza',
+        'cancel' => [
+            'label' => 'Mégsem',
         ],
 
     ],

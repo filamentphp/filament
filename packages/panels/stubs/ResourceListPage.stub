@@ -4,9 +4,9 @@ namespace {{ namespace }};
 
 use {{ resource }};
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
+use {{ baseResourcePage }};
 
-class {{ resourcePageClass }} extends ListRecords
+class {{ resourcePageClass }} extends {{ baseResourcePageClass }}
 {
     protected static string $resource = {{ resourceClass }}::class;
 

@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
@@ -31,11 +32,11 @@ class RestoreBulkAction extends BulkAction
 
         $this->color('gray');
 
-        $this->icon('heroicon-m-arrow-uturn-left');
+        $this->icon(FilamentIcon::resolve('actions::restore-action') ?? 'heroicon-m-arrow-uturn-left');
 
         $this->requiresConfirmation();
 
-        $this->modalIcon('heroicon-o-arrow-uturn-left');
+        $this->modalIcon(FilamentIcon::resolve('actions::restore-action.modal') ?? 'heroicon-o-arrow-uturn-left');
 
         $this->action(function (): void {
             $this->process(static function (Collection $records): void {
