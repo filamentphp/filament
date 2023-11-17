@@ -5,10 +5,10 @@
         'subheading' => null,
     ])
 
-    <div class="fi-simple-layout flex min-h-screen flex-col items-center">
+    <div class="flex flex-col items-center min-h-screen fi-simple-layout">
         @if (filament()->auth()->check())
             <div
-                class="absolute end-0 top-0 flex h-16 items-center gap-x-4 pe-4 md:pe-6 lg:pe-8"
+                class="absolute top-0 flex items-center h-16 end-0 gap-x-4 pe-4 md:pe-6 lg:pe-8"
             >
                 @if (filament()->hasDatabaseNotifications())
                     @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
@@ -18,8 +18,10 @@
             </div>
         @endif
 
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::header') }}
+
         <div
-            class="fi-simple-main-ctn flex w-full flex-grow items-center justify-center"
+            class="flex items-center justify-center flex-grow w-full fi-simple-main-ctn"
         >
             <main
                 @class([
