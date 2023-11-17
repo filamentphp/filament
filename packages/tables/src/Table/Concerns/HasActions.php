@@ -47,6 +47,16 @@ trait HasActions
     /**
      * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
+    public function groupedActions(array | ActionGroup $actions = [], ActionsPosition | string | Closure | null $position = null): static
+    {
+        $this->actions([ActionGroup::make($actions)], $position);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Action | ActionGroup> | ActionGroup  $actions
+     */
     public function pushActions(array | ActionGroup $actions): static
     {
         foreach (Arr::wrap($actions) as $action) {
