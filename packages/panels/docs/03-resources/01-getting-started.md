@@ -311,6 +311,27 @@ public static function getNavigationGroup(): ?string
 }
 ```
 
+#### Grouping resource navigation items under other items
+
+You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationSubGroup`:
+
+```php
+protected static ?string $navigationSubGroup = 'Products';
+
+protected static ?string $navigationGroup = 'Shop';
+```
+
+As seen above, if the parent item has a navigation group, that navigation group must also be defined, so the correct parent item can be identified.
+
+You may also use the `getNavigationSubGroup()` method to set a dynamic parent item label:
+
+```php
+public static function getNavigationSubGroup(): ?string
+{
+    return __('filament/navigation.groups.shop.items.products');
+}
+```
+
 ## Generating URLs to resource pages
 
 Filament provides `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.

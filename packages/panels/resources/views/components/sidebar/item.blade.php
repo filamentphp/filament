@@ -14,12 +14,16 @@
     'url',
 ])
 
-<li {{ $attributes->class([
-    'fi-sidebar-item',
-    // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
-    'fi-active fi-sidebar-item-active' => $active,
-    'flex flex-col gap-y-1' => $active || $activeSubItems,
-]) }}>
+<li
+    {{
+        $attributes->class([
+            'fi-sidebar-item',
+            // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
+            'fi-active fi-sidebar-item-active' => $active,
+            'flex flex-col gap-y-1' => $active || $activeSubItems,
+        ])
+    }}
+>
     <a
         {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"

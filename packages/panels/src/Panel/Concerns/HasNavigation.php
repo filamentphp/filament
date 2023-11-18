@@ -108,10 +108,10 @@ trait HasNavigation
             ->map(function (Collection $items, ?string $groupIndex) use ($groups): NavigationGroup {
                 $subGroups = $items->groupBy(fn (NavigationItem $item): ?string => $item->getSubGroup());
 
-                $items = $subGroups->get(null)
+                $items = $subGroups->get('')
                     ->keyBy(fn (NavigationItem $item): string => $item->getLabel());
 
-                $subGroups->except(null)->each(function (Collection $subGroupItems, string $subGroupLabel) use ($items) {
+                $subGroups->except([''])->each(function (Collection $subGroupItems, string $subGroupLabel) use ($items) {
                     if (! $items->has($subGroupLabel)) {
                         return;
                     }
