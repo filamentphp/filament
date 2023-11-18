@@ -362,6 +362,35 @@ CustomerResource::getUrl('edit', ['record' => $customer]); // /admin/customers/e
 
 In this example, `$customer` can be an Eloquent model object, or an ID.
 
+### Generating URLs to resource modals
+
+This can be especially useful if you are using [simple resources](#simple-modal-resources) with only one page.
+
+To generate a URL for an action in the resource's table, you should pass the `tableAction` and `tableActionRecord` as URL parameters:
+
+```php
+use App\Filament\Resources\CustomerResource;
+use Filament\Tables\Actions\EditAction;
+
+CustomerResource::getUrl(parameters: [
+    'tableAction' => EditAction::getDefaultName(),
+    'tableActionRecord' => $customer,
+]); // /admin/customers?tableAction=edit&tableActionRecord=1
+```
+
+Or if you want to generate a URL for an action on the page like a `CreateAction` in the header, you can pass it in to the `action` parameter:
+
+```php
+use App\Filament\Resources\CustomerResource;
+use Filament\Actions\CreateAction;
+
+CustomerResource::getUrl(parameters: [
+    'action' => CreateAction::getDefaultName(),
+]); // /admin/customers?action=create
+```
+
+### Generating URLs to resources in other panels
+
 If you have multiple panels in your app, `getUrl()` will generate a URL within the current panel. You can also indicate which panel the resource is associated with, by passing the panel ID to the `panel` argument:
 
 ```php

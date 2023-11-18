@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
@@ -193,5 +194,14 @@ it('can assert that a column exists with the given configuration', function () {
         ->assertTableColumnExists('title', function (Filament\Tables\Columns\TextColumn $column) {
             return $column->isTime();
         }, $publishedPost);
+});
 
+it('can automatically detect boolean cast attribute in icon column', function () {
+    $post = Post::factory()
+        ->create(['is_published' => false]);
+
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('is_published', function (IconColumn $column) {
+            return $column->isBoolean();
+        }, $post);
 });

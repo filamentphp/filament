@@ -522,7 +522,7 @@ TextInput::make('slug')->rules([
 ])
 ```
 
-## Validation attributes
+## Customizing validation attributes
 
 When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
 

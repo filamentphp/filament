@@ -145,6 +145,12 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `tables::columns.icon-column.false` - Falsy state of an icon column
 - `tables::columns.icon-column.true` - Truthy state of an icon column
 - `tables::empty-state` - Empty state icon
+- `tables::filters.query-builder.constraints.boolean` - Default icon for a boolean constraint in the query builder
+- `tables::filters.query-builder.constraints.date` - Default icon for a date constraint in the query builder
+- `tables::filters.query-builder.constraints.number` - Default icon for a number constraint in the query builder
+- `tables::filters.query-builder.constraints.relationship` - Default icon for a relationship constraint in the query builder
+- `tables::filters.query-builder.constraints.select` - Default icon for a select constraint in the query builder
+- `tables::filters.query-builder.constraints.text` - Default icon for a text constraint in the query builder
 - `tables::filters.remove-all-button` - Button to remove all filters
 - `tables::grouping.collapse-button` - Button to collapse a group of records
 - `tables::header-cell.sort-asc-button` - Sort button of a column sorted in ascending order
@@ -177,6 +183,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `actions::force-delete-action` - Trigger button of a force delete action
 - `actions::force-delete-action.grouped` - Trigger button of a grouped force delete action
 - `actions::force-delete-action.modal` - Modal of a force delete action
+- `actions::import-action.grouped` - Trigger button of a grouped import action
 - `actions::modal.confirmation` - Modal of an action that requires confirmation
 - `actions::replicate-action` - Trigger button of a replicate action
 - `actions::replicate-action.grouped` - Trigger button of a grouped replicate action
