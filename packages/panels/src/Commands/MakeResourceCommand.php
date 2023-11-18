@@ -31,7 +31,7 @@ class MakeResourceCommand extends Command
         $modelName = $this->argument('name');
         $modelNamespace = $this->option('model');
         
-        $model = $modelNamespace ? $this->getModelFromNamespace($modelNamespace) : $this->getModelFromNamespace($modelName);
+        $model = $this->getModelFromNamespace(filled($modelNamespace) ? $modelNamespace : $modelName);
 
         $modelClass = (string) str($model)->afterLast('\\');
         $modelNamespace = str($model)->contains('\\') ?
