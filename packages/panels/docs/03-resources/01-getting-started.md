@@ -313,20 +313,20 @@ public static function getNavigationGroup(): ?string
 
 #### Grouping resource navigation items under other items
 
-You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationSubGroup`:
+You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationParentItem`:
 
 ```php
-protected static ?string $navigationSubGroup = 'Products';
+protected static ?string $navigationParentItem = 'Products';
 
 protected static ?string $navigationGroup = 'Shop';
 ```
 
 As seen above, if the parent item has a navigation group, that navigation group must also be defined, so the correct parent item can be identified.
 
-You may also use the `getNavigationSubGroup()` method to set a dynamic parent item label:
+You may also use the `getNavigationParentItem()` method to set a dynamic parent item label:
 
 ```php
-public static function getNavigationSubGroup(): ?string
+public static function getNavigationParentItem(): ?string
 {
     return __('filament/navigation.groups.shop.items.products');
 }

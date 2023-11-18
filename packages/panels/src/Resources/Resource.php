@@ -63,7 +63,7 @@ abstract class Resource
 
     protected static ?string $navigationGroup = null;
 
-    protected static ?string $navigationSubGroup = null;
+    protected static ?string $navigationParentItem = null;
 
     protected static ?string $navigationIcon = null;
 
@@ -144,7 +144,7 @@ abstract class Resource
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
-                ->subGroup(static::getNavigationSubGroup())
+                ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*'))
@@ -692,9 +692,9 @@ abstract class Resource
         return static::$navigationGroup;
     }
 
-    public static function getNavigationSubGroup(): ?string
+    public static function getNavigationParentItem(): ?string
     {
-        return static::$navigationSubGroup;
+        return static::$navigationParentItem;
     }
 
     public static function navigationGroup(?string $group): void
@@ -702,9 +702,9 @@ abstract class Resource
         static::$navigationGroup = $group;
     }
 
-    public static function navigationSubGroup(?string $group): void
+    public static function navigationParentItem(?string $group): void
     {
-        static::$navigationSubGroup = $group;
+        static::$navigationParentItem = $group;
     }
 
     public static function getNavigationIcon(): ?string

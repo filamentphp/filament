@@ -21,7 +21,7 @@ abstract class Page extends BasePage
 
     protected static ?string $navigationGroup = null;
 
-    protected static ?string $navigationSubGroup = null;
+    protected static ?string $navigationParentItem = null;
 
     protected static ?string $navigationIcon = null;
 
@@ -61,7 +61,7 @@ abstract class Page extends BasePage
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
-                ->subGroup(static::getNavigationSubGroup())
+                ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
@@ -93,9 +93,9 @@ abstract class Page extends BasePage
         return static::$navigationGroup;
     }
 
-    public static function getNavigationSubGroup(): ?string
+    public static function getNavigationParentItem(): ?string
     {
-        return static::$navigationSubGroup;
+        return static::$navigationParentItem;
     }
 
     public static function getActiveNavigationIcon(): ?string

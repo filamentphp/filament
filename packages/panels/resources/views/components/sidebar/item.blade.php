@@ -1,16 +1,16 @@
 @props([
     'active' => false,
     'activeIcon' => null,
-    'activeSubItems' => false,
+    'activeChildItems' => false,
     'badge' => null,
     'badgeColor' => null,
+    'childItems' => [],
     'grouped' => false,
     'subGrouped' => false,
     'last' => false,
     'first' => false,
     'icon' => null,
     'shouldOpenUrlInNewTab' => false,
-    'subItems' => [],
     'url',
 ])
 
@@ -20,7 +20,7 @@
             'fi-sidebar-item',
             // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
             'fi-active fi-sidebar-item-active' => $active,
-            'flex flex-col gap-y-1' => $active || $activeSubItems,
+            'flex flex-col gap-y-1' => $active || $activeChildItems,
         ])
     }}
 >
@@ -120,23 +120,23 @@
         @endif
     </a>
 
-    @if (($active || $activeSubItems) && $subItems)
+    @if (($active || $activeChildItems) && $childItems)
         <ul class="fi-sidebar-sub-group-items flex flex-col gap-y-1">
-            @foreach ($subItems as $subItem)
+            @foreach ($childItems as $childItem)
                 <x-filament-panels::sidebar.item
-                    :active-icon="$subItem->getActiveIcon()"
-                    :active-sub-items="$subItem->isSubItemsActive()"
-                    :active="$subItem->isActive()"
-                    :badge-color="$subItem->getBadgeColor()"
-                    :badge="$subItem->getBadge()"
+                    :active-child-items="$childItem->isChildItemsActive()"
+                    :active-icon="$childItem->getActiveIcon()"
+                    :active="$childItem->isActive()"
+                    :badge-color="$childItem->getBadgeColor()"
+                    :badge="$childItem->getBadge()"
                     grouped
-                    subGrouped
-                    :icon="$subItem->getIcon()"
+                    sub-grouped
+                    :icon="$childItem->getIcon()"
                     :last="$loop->last"
-                    :url="$subItem->getUrl()"
-                    :should-open-url-in-new-tab="$subItem->shouldOpenUrlInNewTab()"
+                    :url="$childItem->getUrl()"
+                    :should-open-url-in-new-tab="$childItem->shouldOpenUrlInNewTab()"
                 >
-                    {{ $subItem->getLabel() }}
+                    {{ $childItem->getLabel() }}
                 </x-filament-panels::sidebar.item>
             @endforeach
         </ul>

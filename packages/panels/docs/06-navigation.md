@@ -81,10 +81,10 @@ All items in the same navigation group will be displayed together under the same
 
 #### Grouping navigation items under other items
 
-You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationSubGroup`:
+You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationParentItem`:
 
 ```php
-protected static ?string $navigationSubGroup = 'Notifications';
+protected static ?string $navigationParentItem = 'Notifications';
 
 protected static ?string $navigationGroup = 'Settings';
 ```

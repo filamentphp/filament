@@ -66,16 +66,16 @@
     >
         @foreach ($items as $item)
             <x-filament-panels::sidebar.item
+                :active-child-items="$item->isChildItemsActive()"
                 :active-icon="$item->getActiveIcon()"
-                :active-sub-items="$item->isSubItemsActive()"
                 :active="$item->isActive()"
                 :badge-color="$item->getBadgeColor()"
                 :badge="$item->getBadge()"
+                :child-items="$item->getChildItems()"
                 :first="$loop->first"
                 :grouped="filled($label)"
                 :icon="$item->getIcon()"
                 :last="$loop->last"
-                :sub-items="$item->getSubItems()"
                 :url="$item->getUrl()"
                 :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
             >

@@ -106,17 +106,17 @@ trait HasNavigation
             ->sortBy(fn (NavigationItem $item): int => $item->getSort())
             ->groupBy(fn (NavigationItem $item): ?string => $item->getGroup())
             ->map(function (Collection $items, ?string $groupIndex) use ($groups): NavigationGroup {
-                $subGroups = $items->groupBy(fn (NavigationItem $item): ?string => $item->getSubGroup());
+                $parentItems = $items->groupBy(fn (NavigationItem $item): ?string => $item->getParentItem());
 
-                $items = $subGroups->get('')
+                $items = $parentItems->get('')
                     ->keyBy(fn (NavigationItem $item): string => $item->getLabel());
 
-                $subGroups->except([''])->each(function (Collection $subGroupItems, string $subGroupLabel) use ($items) {
-                    if (! $items->has($subGroupLabel)) {
+                $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemLabel) use ($items) {
+                    if (! $items->has($parentItemLabel)) {
                         return;
                     }
 
-                    $items->get($subGroupLabel)->subItems($subGroupItems);
+                    $items->get($parentItemLabel)->childItems($parentItemItems);
                 });
 
                 if (blank($groupIndex)) {

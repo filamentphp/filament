@@ -10,7 +10,7 @@ class NavigationItem extends Component
 {
     protected string | Closure | null $group = null;
 
-    protected string | Closure | null $subGroup = null;
+    protected string | Closure | null $parentItem = null;
 
     protected bool | Closure | null $isActive = null;
 
@@ -40,7 +40,7 @@ class NavigationItem extends Component
     /**
      * @var array<NavigationItem> | Arrayable
      */
-    protected array | Arrayable $subItems = [];
+    protected array | Arrayable $childItems = [];
 
     final public function __construct(string | Closure | null $label = null)
     {
@@ -75,9 +75,9 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function subGroup(string | Closure | null $group): static
+    public function parentItem(string | Closure | null $group): static
     {
-        $this->subGroup = $group;
+        $this->parentItem = $group;
 
         return $this;
     }
@@ -164,9 +164,9 @@ class NavigationItem extends Component
         return $this->evaluate($this->group);
     }
 
-    public function getSubGroup(): ?string
+    public function getParentItem(): ?string
     {
-        return $this->evaluate($this->subGroup);
+        return $this->evaluate($this->parentItem);
     }
 
     public function getIcon(): ?string
@@ -217,10 +217,10 @@ class NavigationItem extends Component
         return (bool) $this->isActive;
     }
 
-    public function isSubItemsActive(): bool
+    public function isChildItemsActive(): bool
     {
-        foreach ($this->getSubItems() as $subItem) {
-            if ($subItem->isActive()) {
+        foreach ($this->getChildItems() as $childItem) {
+            if ($childItem->isActive()) {
                 return true;
             }
         }
@@ -236,9 +236,9 @@ class NavigationItem extends Component
     /**
      * @param  array<NavigationItem> | Arrayable  $items
      */
-    public function subItems(array | Arrayable $items): static
+    public function childItems(array | Arrayable $items): static
     {
-        $this->subItems = $items;
+        $this->childItems = $items;
 
         return $this;
     }
@@ -246,8 +246,8 @@ class NavigationItem extends Component
     /**
      * @return array<NavigationItem> | Arrayable
      */
-    public function getSubItems(): array | Arrayable
+    public function getChildItems(): array | Arrayable
     {
-        return $this->subItems;
+        return $this->childItems;
     }
 }
