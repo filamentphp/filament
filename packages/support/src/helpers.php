@@ -143,6 +143,10 @@ if (! function_exists('Filament\Support\is_app_url')) {
 if (! function_exists('Filament\Support\generate_href_html')) {
     function generate_href_html(?string $url, bool $shouldOpenInNewTab = false): Htmlable
     {
+        if (blank($url)) {
+            return new HtmlString('');
+        }
+
         $html = "href=\"{$url}\"";
 
         if ($shouldOpenInNewTab) {

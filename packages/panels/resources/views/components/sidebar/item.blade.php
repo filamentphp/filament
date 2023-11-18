@@ -1,23 +1,25 @@
 @props([
     'active' => false,
     'activeIcon' => null,
+    'activeSubItems' => false,
     'badge' => null,
     'badgeColor' => null,
     'grouped' => false,
+    'subGrouped' => false,
     'last' => false,
     'first' => false,
     'icon' => null,
     'shouldOpenUrlInNewTab' => false,
+    'subItems' => [],
     'url',
 ])
 
-<li
-    @class([
-        'fi-sidebar-item',
-        // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
-        'fi-active fi-sidebar-item-active' => $active,
-    ])
->
+<li {{ $attributes->class([
+    'fi-sidebar-item',
+    // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
+    'fi-active fi-sidebar-item-active' => $active,
+    'flex flex-col gap-y-1' => $active || $activeSubItems,
+]) }}>
     <a
         {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
@@ -39,8 +41,9 @@
             'bg-gray-100 dark:bg-white/5' => $active,
         ])
     >
-        @if (filled($icon))
+        @if (filled($icon) && ((! $subGrouped) || filament()->isSidebarCollapsibleOnDesktop()))
             <x-filament::icon
+                :x-show="($subGrouped && filament()->isSidebarCollapsibleOnDesktop()) ? '! $store.sidebar.isOpen' : false"
                 :icon="($active && $activeIcon) ? $activeIcon : $icon"
                 @class([
                     'fi-sidebar-item-icon h-6 w-6',
@@ -48,8 +51,13 @@
                     'text-primary-600 dark:text-primary-400' => $active,
                 ])
             />
-        @elseif ($grouped)
+        @endif
+
+        @if ((blank($icon) && $grouped) || $subGrouped)
             <div
+                @if (filled($icon) && $subGrouped && filament()->isSidebarCollapsibleOnDesktop())
+                    x-show="$store.sidebar.isOpen"
+                @endif
                 class="fi-sidebar-item-grouped-border relative flex h-6 w-6 items-center justify-center"
             >
                 @if (! $first)
@@ -107,4 +115,26 @@
             </span>
         @endif
     </a>
+
+    @if (($active || $activeSubItems) && $subItems)
+        <ul class="fi-sidebar-sub-group-items flex flex-col gap-y-1">
+            @foreach ($subItems as $subItem)
+                <x-filament-panels::sidebar.item
+                    :active-icon="$subItem->getActiveIcon()"
+                    :active-sub-items="$subItem->isSubItemsActive()"
+                    :active="$subItem->isActive()"
+                    :badge-color="$subItem->getBadgeColor()"
+                    :badge="$subItem->getBadge()"
+                    grouped
+                    subGrouped
+                    :icon="$subItem->getIcon()"
+                    :last="$loop->last"
+                    :url="$subItem->getUrl()"
+                    :should-open-url-in-new-tab="$subItem->shouldOpenUrlInNewTab()"
+                >
+                    {{ $subItem->getLabel() }}
+                </x-filament-panels::sidebar.item>
+            @endforeach
+        </ul>
+    @endif
 </li>

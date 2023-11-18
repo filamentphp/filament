@@ -8,7 +8,7 @@
 <li
     x-data="{ label: @js($label) }"
     data-group-label="{{ $label }}"
-    class="fi-sidebar-group flex flex-col gap-y-1"
+    {{ $attributes->class(['fi-sidebar-group flex flex-col gap-y-1']) }}
 >
     @if ($label)
         <div
@@ -67,6 +67,7 @@
         @foreach ($items as $item)
             <x-filament-panels::sidebar.item
                 :active-icon="$item->getActiveIcon()"
+                :active-sub-items="$item->isSubItemsActive()"
                 :active="$item->isActive()"
                 :badge-color="$item->getBadgeColor()"
                 :badge="$item->getBadge()"
@@ -74,6 +75,7 @@
                 :grouped="filled($label)"
                 :icon="$item->getIcon()"
                 :last="$loop->last"
+                :sub-items="$item->getSubItems()"
                 :url="$item->getUrl()"
                 :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
             >
