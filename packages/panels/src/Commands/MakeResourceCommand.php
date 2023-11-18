@@ -181,7 +181,7 @@ class MakeResourceCommand extends Command
             'formSchema' => $this->indentString($this->option('generate') ? $this->getResourceFormSchema(
                 ($modelNamespace !== '' ? "\\{$modelNamespace}" : 'App\\Models') . '\\' . $modelClass,
             ) : '//', 4),
-            'model' => $model === 'Resource' ? 'Resource as ResourceModel' : ($this->option('model') ? $model : 'App\Models\\' . $model),
+            'model' => ($model === 'Resource') ? 'App\\Models\\Resource as ResourceModel' : ($this->option('model') ? $model : ('App\\Models\\' . $model)),
             'modelClass' => $model === 'Resource' ? 'ResourceModel' : $modelClass,
             'namespace' => $namespace,
             'pages' => $this->indentString($pages, 3),
