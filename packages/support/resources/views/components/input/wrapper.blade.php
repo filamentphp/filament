@@ -9,11 +9,13 @@
     'prefixIcon' => null,
     'prefixIconColor' => 'gray',
     'prefixIconAlias' => null,
+    'prefixSlot' => null,
     'suffix' => null,
     'suffixActions' => [],
     'suffixIcon' => null,
     'suffixIconColor' => 'gray',
     'suffixIconAlias' => null,
+    'suffixSlot' => null,
     'valid' => true,
 ])
 
@@ -28,8 +30,8 @@
         fn (\Filament\Forms\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
     );
 
-    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
-    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
+    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix) || $prefixSlot !== null;
+    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix) || $suffixSlot !== null;
 
     $hasAlpineDisabledClasses = filled($alpineDisabled);
     $hasAlpineValidClasses = filled($alpineValid);
@@ -157,6 +159,10 @@
                     {{ $prefix }}
                 </span>
             @endif
+
+            @if($prefixSlot !== null)
+                {{$prefixSlot}}
+            @endif
         </div>
     @endif
 
@@ -206,6 +212,10 @@
                         {{ $suffixAction }}
                     @endforeach
                 </div>
+            @endif
+
+            @if($suffixSlot !== null)
+                {{$suffixSlot}}
             @endif
         </div>
     @endif
