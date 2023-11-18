@@ -44,6 +44,7 @@ FilamentView::registerRenderHook(
 - `panels::body.end` - Before `</body>`
 - `panels::content.end` - After page content, inside `<main>`
 - `panels::content.start` - Before page content, inside `<main>`
+- `panels::header` - Header of the page
 - `panels::footer` - Footer of the page
 - `panels::global-search.after` - After the [global search](../panels/resources/global-search) container, inside the topbar
 - `panels::global-search.before` - Before the [global search](../panels/resources/global-search) container, inside the topbar
