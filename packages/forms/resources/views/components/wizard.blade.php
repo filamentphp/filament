@@ -4,6 +4,7 @@
 @endphp
 
 <div
+    wire:ignore.self
     x-cloak
     x-data="{
         step: null,
@@ -93,7 +94,7 @@
             ->merge($getExtraAlpineAttributes(), escape: false)
             ->class([
                 'fi-fo-wizard',
-                'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $isContained,
+                'fi-contained rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $isContained,
             ])
     }}
 >
@@ -178,18 +179,20 @@
                     </div>
 
                     <div class="grid justify-items-start">
-                        <span
-                            class="fi-fo-wizard-header-step-label text-sm font-medium"
-                            x-bind:class="{
-                                'text-gray-500 dark:text-gray-400':
-                                    getStepIndex(step) < {{ $loop->index }},
-                                'text-primary-600 dark:text-primary-400':
-                                    getStepIndex(step) === {{ $loop->index }},
-                                'text-gray-950 dark:text-white': getStepIndex(step) > {{ $loop->index }},
-                            }"
-                        >
-                            {{ $step->getLabel() }}
-                        </span>
+                        @if (! $step->isLabelHidden())
+                            <span
+                                class="fi-fo-wizard-header-step-label text-sm font-medium"
+                                x-bind:class="{
+                                    'text-gray-500 dark:text-gray-400':
+                                        getStepIndex(step) < {{ $loop->index }},
+                                    'text-primary-600 dark:text-primary-400':
+                                        getStepIndex(step) === {{ $loop->index }},
+                                    'text-gray-950 dark:text-white': getStepIndex(step) > {{ $loop->index }},
+                                }"
+                            >
+                                {{ $step->getLabel() }}
+                            </span>
+                        @endif
 
                         @if (filled($description = $step->getDescription()))
                             <span

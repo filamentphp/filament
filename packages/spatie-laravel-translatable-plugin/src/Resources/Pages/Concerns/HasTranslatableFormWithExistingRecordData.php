@@ -27,7 +27,7 @@ trait HasTranslatableFormWithExistingRecordData
     protected function setActiveLocale(?string $locale = null): void
     {
         $this->activeLocale = filled($locale) ? $locale : $this->getDefaultTranslatableLocale();
-        $this->cacheForm('form', $this->form($this->makeForm()));
+        $this->cacheForm('form', $this->getForms()['form']);
     }
 
     protected function getDefaultTranslatableLocale(): string

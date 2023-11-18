@@ -10,18 +10,12 @@ Filament requires the following to run:
 - Laravel v10.0+
 - Livewire v3.0+
 
-> **Livewire v3 is still in beta!**<br />
-> Although breaking changes should be minimal, we recommend testing your application thoroughly before using Filament v3 in production.
+> **Livewire v3 is recently released!**<br />
+> The Livewire team have done a great job in making it stable, but it was a complete rewrite of Livewire v2. You may encounter issues, so we recommend testing your application thoroughly before using Filament v3 in production.
 
 ## Installation
 
 > If you are upgrading from Filament v2, please review the [upgrade guide](upgrade-guide).
-
-Since Livewire v3 is still in beta, set the `minimum-stability` in your `composer.json` to `dev`:
-
-```json
-"minimum-stability": "dev",
-```
 
 Install the Filament Panel Builder by running the following commands in your Laravel project directory:
 
@@ -47,9 +41,11 @@ Open `/admin` in your web browser, sign in, and start building your app!
 Not sure where to start? Review the [Getting Started guide](getting-started) to learn how to build a complete Filament admin panel.
 
 ## Using other Filament packages
-The Filament Panel Builder pre-installs the [form builder](/docs/forms), [table builder](/docs/tables), [notifications](/docs/notifications), [actions](/docs/actions), [infolists](/docs/infolists), and [widgets](/docs/widgets) packages. No other installation steps are required to use these packages within a panel.
+The Filament Panel Builder pre-installs the [Form Builder](/docs/forms), [Table Builder](/docs/tables), [Notifications](/docs/notifications), [Actions](/docs/actions), [Infolists](/docs/infolists), and [Widgets](/docs/widgets) packages. No other installation steps are required to use these packages within a panel.
 
 ## Deploying to production
+
+### Allowing users to access a panel
 
 By default, all `User` models can access Filament locally. However, when deploying to production, you must update your `App\Models\User.php` to implement the `FilamentUser` contract — ensuring that only the correct users can access your panel:
 
@@ -76,6 +72,10 @@ class User extends Authenticatable implements FilamentUser
 > If you don't complete these steps, a 403 Forbidden error will be returned when accessing the app in production.
 
 Learn more about [users](users).
+
+### Caching Blade Icons
+
+You may wish to consider using `php artisan icons:cache` in your deployment process, as Filament uses the [Blade Icons](https://blade-ui-kit.com/blade-icons) package, which can be much more performant when cached. This is very hardware-dependant though, and many servers do not require this command for Filament to run smoothly.
 
 ## Publishing configuration
 
@@ -111,7 +111,7 @@ php artisan vendor:publish --tag=filament-translations
 
 > Upgrading from Filament v2? Please review the [upgrade guide](upgrade-guide).
 
-Filament automatically upgrades to the latest non-breaking version when you run `composer update`. If you notice that Filament is not upgrading automatically, ensure that the `filament:upgrade` command is present in your `composer.json`:
+Filament automatically upgrades to the latest non-breaking version when you run `composer update`. After any updates, all Laravel caches need to be cleared, and frontend assets need to be republished. You can do this all at once using the `filament:upgrade` command, which should have been added to your `composer.json` file when you ran `filament:install` the first time:
 
 ```json
 "post-autoload-dump": [
@@ -120,7 +120,7 @@ Filament automatically upgrades to the latest non-breaking version when you run 
 ],
 ```
 
-If you prefer not to use automatic upgrades, remove the `filament:upgrade` command from your `composer.json` and run the following commands:
+Please note that `filament:upgrade` does not actually handle the update process, as Composer does that already. If you're upgrading manually without a `post-autoload-dump` hook, you can run the command yourself:
 
 ```bash
 composer update

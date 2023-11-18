@@ -23,6 +23,11 @@ trait CanBeValidated
      */
     protected array $rules = [];
 
+    /**
+     * @var array<string, string | Closure>
+     */
+    protected array $validationMessages = [];
+
     protected string | Closure | null $validationAttribute = null;
 
     public function activeUrl(bool | Closure $condition = true): static
@@ -324,6 +329,24 @@ trait CanBeValidated
         return $this;
     }
 
+    public function prohibitedIf(string | Closure $statePath, mixed $stateValues, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldValueComparisonRule('prohibited_if', $statePath, $stateValues, $isStatePathAbsolute);
+    }
+
+    public function prohibitedUnless(string | Closure $statePath, mixed $stateValues, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldValueComparisonRule('prohibited_unless', $statePath, $stateValues, $isStatePathAbsolute);
+    }
+
+    /**
+     * @param  array<string> | string | Closure  $statePaths
+     */
+    public function prohibits(array | string | Closure $statePaths, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldComparisonRule('prohibits', $statePaths, $isStatePathAbsolute);
+    }
+
     public function required(bool | Closure $condition = true): static
     {
         $this->isRequired = $condition;
@@ -538,6 +561,16 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @param  array<string, string | Closure>  $messages
+     */
+    public function validationMessages(array $messages): static
+    {
+        $this->validationMessages = $messages;
+
+        return $this;
+    }
+
     public function getRegexPattern(): ?string
     {
         return $this->evaluate($this->regexPattern);
@@ -551,6 +584,20 @@ trait CanBeValidated
     public function getValidationAttribute(): string
     {
         return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getValidationMessages(): array
+    {
+        $messages = [];
+
+        foreach ($this->validationMessages as $rule => $message) {
+            $messages[$rule] = $this->evaluate($message);
+        }
+
+        return array_filter($messages);
     }
 
     /**
@@ -575,6 +622,20 @@ trait CanBeValidated
         }
 
         return $rules;
+    }
+
+    /**
+     * @param  array<string, array<string, string>>  $messages
+     */
+    public function dehydrateValidationMessages(array &$messages): void
+    {
+        $statePath = $this->getStatePath();
+
+        if (count($componentMessages = $this->getValidationMessages())) {
+            foreach ($componentMessages as $rule => $message) {
+                $messages["{$statePath}.{$rule}"] = $message;
+            }
+        }
     }
 
     /**

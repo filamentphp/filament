@@ -8,7 +8,10 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 trait CanPaginateRecords
 {
-    public int | string | null $tableRecordsPerPage = null;
+    /**
+     * @var int | string | null
+     */
+    public $tableRecordsPerPage = null;
 
     protected int | string | null $defaultTableRecordsPerPageSelectOption = null;
 
@@ -32,7 +35,7 @@ trait CanPaginateRecords
             $this->getTablePaginationPageName(),
         );
 
-        return $records->onEachSide(1);
+        return $records->onEachSide(0);
     }
 
     public function getTableRecordsPerPage(): int | string | null

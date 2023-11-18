@@ -148,6 +148,11 @@ class SettingsPage extends Page
         return $this->getSaveFormAction();
     }
 
+    public function form(Form $form): Form
+    {
+        return $form;
+    }
+
     /**
      * @return array<int | string, string | Form>
      */
@@ -156,6 +161,7 @@ class SettingsPage extends Page
         return [
             'form' => $this->form(
                 $this->makeForm()
+                    ->schema($this->getFormSchema())
                     ->statePath('data')
                     ->columns(2)
                     ->inlineLabel($this->hasInlineLabels()),

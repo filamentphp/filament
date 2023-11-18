@@ -2,6 +2,7 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
 use Filament\Livewire\DatabaseNotifications;
 use Filament\Livewire\GlobalSearch;
 use Filament\Livewire\Notifications;
@@ -71,6 +72,8 @@ trait HasComponents
      * @var array<string>
      */
     protected array $widgetNamespaces = [];
+
+    protected bool | Closure $hasReadOnlyRelationManagersOnResourceViewPagesByDefault = true;
 
     /**
      * @param  array<class-string>  $pages
@@ -242,6 +245,20 @@ trait HasComponents
         return $this->widgetNamespaces;
     }
 
+    public function discoverLivewireComponents(string $in, string $for): static
+    {
+        $component = [];
+
+        $this->discoverComponents(
+            Component::class,
+            $component,
+            directory: $in,
+            namespace: $for,
+        );
+
+        return $this;
+    }
+
     /**
      * @return array<class-string>
      */
@@ -265,7 +282,7 @@ trait HasComponents
     {
         return collect($this->widgets)
             ->unique()
-            ->sortBy(fn (string $widget): int => $this->normalizeWidgetClass($widget)::getSort())
+            ->sortBy(fn (string | WidgetConfiguration $widget): int => $this->normalizeWidgetClass($widget)::getSort())
             ->all();
     }
 
@@ -301,8 +318,12 @@ trait HasComponents
 
             $class = (string) $namespace
                 ->append('\\', $file->getRelativePathname())
-                ->replace('*', $variableNamespace)
+                ->replace('*', $variableNamespace ?? '')
                 ->replace(['/', '.php'], ['\\', '']);
+
+            if (! class_exists($class)) {
+                continue;
+            }
 
             if ((new ReflectionClass($class))->isAbstract()) {
                 continue;
@@ -316,12 +337,27 @@ trait HasComponents
                 continue;
             }
 
-            if (! $class::isDiscovered()) {
+            if (
+                method_exists($class, 'isDiscovered') &&
+                (! $class::isDiscovered())
+            ) {
                 continue;
             }
 
             $register[] = $class;
         }
+    }
+
+    /**
+     * @param  array<string, class-string<Component>>  $components
+     */
+    public function livewireComponents(array $components): static
+    {
+        foreach ($components as $component) {
+            $this->queueLivewireComponentForRegistration($component);
+        }
+
+        return $this;
     }
 
     protected function registerLivewireComponents(): void
@@ -400,5 +436,17 @@ trait HasComponents
         $componentName = app(ComponentRegistry::class)->getName($component);
 
         $this->livewireComponents[$componentName] = $component;
+    }
+
+    public function readOnlyRelationManagersOnResourceViewPagesByDefault(bool | Closure $condition = true): static
+    {
+        $this->hasReadOnlyRelationManagersOnResourceViewPagesByDefault = $condition;
+
+        return $this;
+    }
+
+    public function hasReadOnlyRelationManagersOnResourceViewPagesByDefault(): bool
+    {
+        return (bool) $this->evaluate($this->hasReadOnlyRelationManagersOnResourceViewPagesByDefault);
     }
 }

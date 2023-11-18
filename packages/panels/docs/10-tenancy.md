@@ -8,6 +8,48 @@ Multi-tenancy is a concept where a single instance of an application serves mult
 
 Multi-tenancy is a very sensitive topic. It's important to understand the security implications of multi-tenancy and how to properly implement it. If implemented partially or incorrectly, data belonging to one tenant may be exposed to another tenant. Filament provides a set of tools to help you implement multi-tenancy in your application, but it is up to you to understand how to use them. Filament does not provide any guarantees about the security of your application. It is your responsibility to ensure that your application is secure. Please see the [security](#tenancy-security) section for more information.
 
+## Simple one-to-many tenancy
+
+The term "multi-tenancy" is broad and may mean different things in different contexts. Filament's tenancy system implies that the user belongs to **many** tenants (*organizations, teams, companies, etc.*) and may switch between them. 
+
+If your case is simpler and you don't need a many-to-many relationship, then you don't need to set up the tenancy in Filament. You could use [observers](https://laravel.com/docs/eloquent#observers) and [global scopes](https://laravel.com/docs/eloquent#global-scopes) instead.
+
+Let's say you have a database column `users.team_id`, you can scope all records to have the same `team_id` as the user using a [global scope](https://laravel.com/docs/eloquent#global-scopes):
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+
+class Post extends Model
+{
+    protected static function booted(): void
+    {
+        if (auth()->check()) {
+            static::addGlobalScope('team', function (Builder $query) {
+                $query->where('team_id', auth()->user()->team_id);
+                // or with a `team` relationship defined:
+                $query->whereBelongsTo(auth()->user()->team);
+            });
+        }
+    }
+}
+```
+
+To automatically set the `team_id` on the record when it's created, you can create an [observer](https://laravel.com/docs/eloquent#observers):
+
+```php
+class PostObserver
+{
+    public function creating(Post $post): void
+    {
+        if (auth()->check()) {
+            $post->team_id = auth()->user()->team_id;
+            // or with a `team` relationship defined:
+            $post->team()->associate(auth()->user()->team);
+        }
+    }
+}
+```
+
 ## Setting up tenancy
 
 To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](configuration):
@@ -186,6 +228,8 @@ You can override any method you want on the base profile page class to make it a
 Anywhere in the app, you can access the tenant model for the current request using `Filament::getTenant()`:
 
 ```php
+use Filament\Facades\Filament;
+
 $tenant = Filament::getTenant();
 ```
 
@@ -195,7 +239,7 @@ $tenant = Filament::getTenant();
 
 Filament provides a billing integration with [Laravel Spark](https://spark.laravel.com). Your users can start subscriptions and manage their billing information.
 
-To install the integration, first [install Spark](https://spark.laravel.com/docs/2.x/installation.html) and configure it for your tenant model.
+To install the integration, first [install Spark](https://spark.laravel.com/docs/installation.html) and configure it for your tenant model.
 
 Now, you can install the Filament billing provider for Spark using Composer:
 
@@ -287,6 +331,7 @@ The tenant-switching menu is featured in the sidebar of the admin layout. It's f
 To register new items to the tenant menu, you can use the [configuration](configuration):
 
 ```php
+use App\Filament\Pages\Settings;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
 
@@ -297,7 +342,7 @@ public function panel(Panel $panel): Panel
         ->tenantMenuItems([
             MenuItem::make()
                 ->label('Settings')
-                ->url(route('filament.pages.settings'))
+                ->url(fn (): string => Settings::getUrl())
                 ->icon('heroicon-m-cog-8-tooth'),
             // ...
         ]);
@@ -316,8 +361,27 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->userMenuItems([
+        ->tenantMenuItems([
             'register' => MenuItem::make()->label('Register new team'),
+            // ...
+        ]);
+}
+```
+
+### Customizing the profile link
+
+To customize the profile link on the tenant menu, register a new item with the `profile` array key:
+
+```php
+use Filament\Navigation\MenuItem;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMenuItems([
+            'profile' => MenuItem::make()->label('Edit team profile'),
             // ...
         ]);
 }
@@ -335,7 +399,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->userMenuItems([
+        ->tenantMenuItems([
             'billing' => MenuItem::make()->label('Manage subscription'),
             // ...
         ]);
@@ -403,7 +467,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Alternatively, you can set the `$tenantOwnershipRelationshipName` static property on the resource class, which you can then be used to customize the ownership relationship name that is just used for that resource. In this example, the `Post` model class has an `owner` relationship defined:
+Alternatively, you can set the `$tenantOwnershipRelationshipName` static property on the resource class, which can then be used to customize the ownership relationship name that is just used for that resource. In this example, the `Post` model class has an `owner` relationship defined:
 
 ```php
 use Filament\Resources\Resource;
@@ -418,7 +482,7 @@ class PostResource extends Resource
 
 ### Customizing the resource relationship name
 
-You can set the `$tenantRelationshipName` static property on the resource class, which you can then be used to customize the relationship name that is used to fetch that resource. In this example, the tenant model class has an `blogPosts` relationship defined:
+You can set the `$tenantRelationshipName` static property on the resource class, which can then be used to customize the relationship name that is used to fetch that resource. In this example, the tenant model class has an `blogPosts` relationship defined:
 
 ```php
 use Filament\Resources\Resource;
@@ -448,7 +512,7 @@ public function panel(Panel $panel): Panel
 
 ## Configuring the name attribute
 
-By default, Filament will use Filament\Resources\Pages\CreateRecord;use the `name` attribute of the tenant to display its name in the app. To change this, you can implement the `HasName` contract:
+By default, Filament will use the `name` attribute of the tenant to display its name in the app. To change this, you can implement the `HasName` contract:
 
 ```php
 <?php
@@ -510,6 +574,7 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasTenants;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -517,7 +582,7 @@ class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
 {
     // ...
     
-    public function getDefaultTenant(): ?Model
+    public function getDefaultTenant(Panel $panel): ?Model
     {
         return $this->latestTeam;
     }
@@ -561,6 +626,33 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Adding a tenant route prefix
+
+By default the URL structure will put the tenant ID or slug immediately after the panel path. If you wish to prefix it with another URL segment, use the `tenantRoutePrefix()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->path('admin')
+        ->tenant(Team::class)
+        ->tenantRoutePrefix('team');
+}
+```
+
+Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1`.
+
+## Disabling tenancy for a resource
+
+By default, all resources within a panel with tenancy will be scoped to the current tenant. If you have resources that are shared between tenants, you can disable tenancy for them by setting the `$isScopedToTenant` static property to `false` on the resource class:
+
+```php
+protected static bool $isScopedToTenant = false;
+```
+
 ## Tenancy security
 
 It's important to understand the security implications of multi-tenancy and how to properly implement it. If implemented partially or incorrectly, data belonging to one tenant may be exposed to another tenant. Filament provides a set of tools to help you implement multi-tenancy in your application, but it is up to you to understand how to use them. Filament does not provide any guarantees about the security of your application. It is your responsibility to ensure that your application is secure.
@@ -573,9 +665,9 @@ Below is a list of features that Filament provides to help you implement multi-t
 
 And here are the things that Filament does not currently provide:
 
-- Scoping of relation manager records to the current tenant. When using the relation manager, in the vast majority of cases the query will not need to be scoped to the current tenant, since it is already scoped to the parent record, which is itself scoped to the current tenant. For example, if a `Team` tenant model had an `Author` resource, and that resource had a `posts` relationship and relation manager set up, and posts only belong to one author, there is no need to scope the query. This is because the user will only be able to see authors that belong to the current team anyway, and thus will only be able to see posts that belong to those authors. You can [scope the Eloquent query](resources/relation-managers#customizing-the-relation-manager-eloquent-query) if you wish.
+- Scoping of relation manager records to the current tenant. When using the relation manager, in the vast majority of cases, the query will not need to be scoped to the current tenant, since it is already scoped to the parent record, which is itself scoped to the current tenant. For example, if a `Team` tenant model had an `Author` resource, and that resource had a `posts` relationship and relation manager set up, and posts only belong to one author, there is no need to scope the query. This is because the user will only be able to see authors that belong to the current team anyway, and thus will only be able to see posts that belong to those authors. You can [scope the Eloquent query](resources/relation-managers#customizing-the-relation-manager-eloquent-query) if you wish.
 
-- Form component and filter scoping. When using the `Select`, `CheckboxList` or `Repeater` form components, the `SelectFilter`, or any other similar Filament component which is able to automatically fetch "options" or other data from the database (usually using a `relationship()` method), this data is not scoped. The main reason for this is that these features often don't belong to the Filament panel builder package, and have no knowledge that they are being used within that context, and that a tenant even exists. And even if they did have access to the tenant, there is nowhere for the tenant relationship configuration to live. To scope these components, you need to pass in a query function that scopes the query to the current tenant. For example, if you were using the `Select` form component to select an `author` from a relationship, you could do this:
+- Form component and filter scoping. When using the `Select`, `CheckboxList` or `Repeater` form components, the `SelectFilter`, or any other similar Filament component which is able to automatically fetch "options" or other data from the database (usually using a `relationship()` method), this data is not scoped. The main reason for this is that these features often don't belong to the Filament Panel Builder package, and have no knowledge that they are being used within that context, and that a tenant even exists. And even if they did have access to the tenant, there is nowhere for the tenant relationship configuration to live. To scope these components, you need to pass in a query function that scopes the query to the current tenant. For example, if you were using the `Select` form component to select an `author` from a relationship, you could do this:
 
 ```php
 use Filament\Facades\Filament;

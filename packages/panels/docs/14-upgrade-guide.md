@@ -11,18 +11,12 @@ title: Upgrading from v2.x
 
 Please upgrade Filament before upgrading to Livewire v3. Instructions on how to upgrade Livewire can be found [here](https://livewire.laravel.com/docs/upgrading).
 
-> **Livewire v3 is still in beta!**<br />
-> Although breaking changes should be minimal, we recommend testing your application thoroughly before using Filament v3 in production.
+> **Livewire v3 is recently released!**<br />
+> The Livewire team have done a great job in making it stable, but it was a complete rewrite of Livewire v2. You may encounter issues, so we recommend testing your application thoroughly before using Filament v3 in production.
 
 ## Upgrading automatically
 
-Since Livewire v3 is still in beta, set the `minimum-stability` in your `composer.json` to `dev`:
-
-```json
-"minimum-stability": "dev",
-```
-
-The easiest way to upgrade your app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code which handle most breaking changes.
+The easiest way to upgrade your app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes.
 
 ```bash
 composer require filament/upgrade:"^3.0-stable" -W --dev
@@ -32,23 +26,19 @@ vendor/bin/filament-v3
 
 Make sure to carefully follow the instructions, and review the changes made by the script. You may need to make some manual changes to your code afterwards, but the script should handle most of the repetitive work for you.
 
-A new `app/Providers/Filament/*PanelProvider.php` file will be created, and the configuration from your old `config/filament.php` file should be copied. Since this is a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `config/app.php`. Filament will attempt to do this for you, but if you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the `providers` array.
+A new `app/Providers/Filament/*PanelProvider.php` file will be created, and the configuration from your old `config/filament.php` file should be copied. Since this is a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `config/app.php`. Filament will attempt to do this for you, but if you get an error while trying to access your panel, then this process has probably failed. You can manually register the service provider by adding it to the `providers` array.
 
 Finally, you must run `php artisan filament:install` to finalize the Filament v3 installation. This command must be run for all new Filament projects.
 
-You can now `composer remove filament/upgrade` as you don't need it any more.
+You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 > Some plugins you're using may not be available in v3 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v3-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 
 ## Upgrading manually
 
-Since Livewire v3 is still in beta, set the `minimum-stability` in your `composer.json` to `dev`:
+After upgrading the dependency via Composer, you should execute `php artisan filament:upgrade` in order to clear any Laravel caches and publish the new frontend assets.
 
-```json
-"minimum-stability": "dev",
-```
-
-### High impact changes
+### High-impact changes
 
 #### Panel provider instead of the config file
 
@@ -60,9 +50,9 @@ Before you can create the new panel provider, make sure that you've got Filament
 php artisan filament:install --panels
 ```
 
-A new `app/Providers/Filament/AdminPanelProvider.php` file will be created, ready for you to transfer over your old configuration from the `config/filament.php` file. Since this is a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `config/app.php`. Filament will attempt to do this for you, but if you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the `providers` array.
+A new `app/Providers/Filament/AdminPanelProvider.php` file will be created, ready for you to transfer over your old configuration from the `config/filament.php` file. Since this is a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `config/app.php`. Filament will attempt to do this for you, but if you get an error while trying to access your panel, then this process has probably failed. You can manually register the service provider by adding it to the `providers` array.
 
-Most configuration transfer is very self-explanatory, but if you get stuck please refer to the [configuration documentation](configuration).
+Most configuration transfer is very self-explanatory, but if you get stuck, please refer to the [configuration documentation](configuration).
 
 This will especially affect configuration done via the `Filament::serving()` method, which was used for theme customization, navigation and menu registration. Consult the [configuration](configuration), [navigation](navigation) and [themes](themes) documentation sections.
 
@@ -136,7 +126,7 @@ Edit and View resource pages:
 Relation managers:
 
 - `form()` is no longer static
-- `getInverseRelationshipName()`
+- `getInverseRelationshipName()` return type is now `?string`
 - `table()` is no longer static
 
 Custom dashboard pages:
@@ -154,7 +144,7 @@ Resource classes and all page classes, including resource pages, custom pages, s
 
 The Heroicons library has been updated to v2. This means that any icons you use in your app may have changed names. You can find a list of changes [here](https://github.com/tailwindlabs/heroicons/releases/tag/v2.0.0).
 
-### Medium impact changes
+### Medium-impact changes
 
 #### Date-time pickers
 
@@ -173,7 +163,7 @@ Filament v2 had a `secondary` color for many components which was gray. All refe
 
 #### `$get` and `$set` closure parameters
 
-In the forms package, `$get` and `$set` parameters now use a type of either `\Filament\Forms\Get` or `\Filament\Forms\Set` instead of `\Closure`. This allows for better IDE autocomplete support of the parameters of each function.
+In the Form Builder package, `$get` and `$set` parameters now use a type of either `\Filament\Forms\Get` or `\Filament\Forms\Set` instead of `\Closure`. This allows for better IDE autocomplete support of each function's parameters.
 
 An easy way to upgrade your code quickly is to find and replace:
 
@@ -188,13 +178,13 @@ A side effect of this change is that all custom icons that you use must now be [
 
 #### Logo customization
 
-In v2, you can customize the logo of the admin panel using a `/resources/views/vendor/filament/components/brand.blade.php` file. In v3, this has been moved to `/resources/views/vendor/filament-panels/components/logo.blade.php`.
+In v2, you can customize the logo of the admin panel using a `/resources/views/vendor/filament/components/brand.blade.php` file. In v3, this has been moved to the new `brandLogo()` API. You can now [set the brand logo](themes#adding-a-logo) by adding it to your panel configuration.
 
 #### Plugins
 
 Filament v3 has a new universal plugin system that breaches the constraints of the admin panel. Learn how to build v3 plugins [here](plugins).
 
-### Low impact changes
+### Low-impact changes
 
 #### Default actions and type-specific relation manager classes
 

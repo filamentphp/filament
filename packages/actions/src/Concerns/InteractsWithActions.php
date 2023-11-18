@@ -6,11 +6,14 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
+
 use function Livewire\store;
 
 /**
@@ -87,6 +90,19 @@ trait InteractsWithActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
+        } catch (ValidationException $exception) {
+            if (! $this->mountedActionShouldOpenModal()) {
+                $action->resetArguments();
+                $action->resetFormData();
+
+                $this->unmountAction();
+            }
+
+            throw $exception;
+        }
+
+        if (store($this)->has('redirect')) {
+            return $result;
         }
 
         $action->resetArguments();
@@ -98,10 +114,6 @@ trait InteractsWithActions
             $action->clearRecordAfter();
 
             return null;
-        }
-
-        if (store($this)->has('redirect')) {
-            return $result;
         }
 
         $this->unmountAction();
@@ -417,5 +429,10 @@ trait InteractsWithActions
     public function getActiveActionsLocale(): ?string
     {
         return null;
+    }
+
+    public function mountedActionInfolist(): Infolist
+    {
+        return $this->getMountedAction()->getInfolist();
     }
 }

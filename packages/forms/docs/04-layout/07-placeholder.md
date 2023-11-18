@@ -8,10 +8,11 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 Placeholders can be used to render text-only "fields" within your forms. Each placeholder has `content()`, which cannot be changed by the user.
 
 ```php
+use App\Models\Post;
 use Filament\Forms\Components\Placeholder;
 
 Placeholder::make('created')
-    ->content($this->getRecord()->created_at->toFormattedDateString())
+    ->content(fn (Post $record): string => $record->created_at->toFormattedDateString())
 ```
 
 <AutoScreenshot name="forms/layout/placeholder/simple" alt="Placeholder" version="3.x" />

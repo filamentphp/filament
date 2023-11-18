@@ -23,6 +23,8 @@ class BaseFileUpload extends Field
      */
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
+    protected bool | Closure $isDeletable = true;
+
     protected bool | Closure $isDownloadable = false;
 
     protected bool | Closure $isOpenable = false;
@@ -156,7 +158,7 @@ class BaseFileUpload extends Field
         });
 
         $this->getUploadedFileNameForStorageUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file) {
-            return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
+            return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : (Str::ulid() . '.' . $file->getClientOriginalExtension());
         });
 
         $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): ?string {
@@ -168,8 +170,10 @@ class BaseFileUpload extends Field
                 return null;
             }
 
-            /** @phpstan-ignore-next-line */
-            if ($component->shouldMoveFiles() && ($component->getDiskName() == $file->disk)) {
+            if (
+                $component->shouldMoveFiles() &&
+                ($component->getDiskName() == invade($file)->disk) /** @phpstan-ignore-line */
+            ) {
                 $newPath = trim($component->getDirectory() . '/' . $component->getUploadedFileNameForStorage($file), '/');
 
                 $component->getDisk()->move($file->path(), $newPath);
@@ -194,6 +198,7 @@ class BaseFileUpload extends Field
 
             $this->evaluate($callback, [
                 'state' => $this->isMultiple() ? $state : Arr::first($state ?? []),
+                'old' => $this->isMultiple() ? $this->getOldState() : Arr::first($this->getOldState() ?? []),
             ]);
         }
 
@@ -212,6 +217,13 @@ class BaseFileUpload extends Field
 
             return "mimetypes:{$types}";
         });
+
+        return $this;
+    }
+
+    public function deletable(bool | Closure $condition = true): static
+    {
+        $this->isDeletable = $condition;
 
         return $this;
     }
@@ -428,6 +440,11 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function isDeletable(): bool
+    {
+        return (bool) $this->evaluate($this->isDeletable);
+    }
+
     public function isDownloadable(): bool
     {
         return (bool) $this->evaluate($this->isDownloadable);
@@ -475,6 +492,16 @@ class BaseFileUpload extends Field
     public function getDiskName(): string
     {
         return $this->evaluate($this->diskName) ?? config('filament.default_filesystem_disk');
+    }
+
+    public function getMaxFiles(): ?int
+    {
+        return $this->evaluate($this->maxFiles);
+    }
+
+    public function getMinFiles(): ?int
+    {
+        return $this->evaluate($this->minFiles);
     }
 
     public function getMaxSize(): ?int
@@ -526,11 +553,11 @@ class BaseFileUpload extends Field
             'array',
         ];
 
-        if (filled($count = $this->maxFiles)) {
+        if (filled($count = $this->getMaxFiles())) {
             $rules[] = "max:{$count}";
         }
 
-        if (filled($count = $this->minFiles)) {
+        if (filled($count = $this->getMinFiles())) {
             $rules[] = "min:{$count}";
         }
 

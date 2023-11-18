@@ -18,10 +18,12 @@ This attribute is used to retrieve the search result title for that record.
 
 > Your resource needs to have an Edit or View page to allow the global search results to link to a URL, otherwise no results will be returned for this resource.
 
-You may customize the title further by overriding `getGlobalSearchResultTitle()` method:
+You may customize the title further by overriding `getGlobalSearchResultTitle()` method. It may return a plain text string, or an instance of `Illuminate\Support\HtmlString` or `Illuminate\Contracts\Support\Htmlable`. This allows you to render HTML, or even Markdown, in the search result title:
 
 ```php
-public static function getGlobalSearchResultTitle(Model $record): string
+use Illuminate\Contracts\Support\Htmlable;
+
+public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
 {
     return $record->name;
 }
@@ -29,7 +31,7 @@ public static function getGlobalSearchResultTitle(Model $record): string
 
 ## Globally searching across multiple columns
 
-If you would like to search across multiple columns of your resource, you may override the `getGloballySearchableAttributes()` method. "Dot notation" allows you to search inside of relationships:
+If you would like to search across multiple columns of your resource, you may override the `getGloballySearchableAttributes()` method. "Dot notation" allows you to search inside relationships:
 
 ```php
 public static function getGloballySearchableAttributes(): array
@@ -74,7 +76,7 @@ public static function getGlobalSearchResultUrl(Model $record): string
 
 ## Adding actions to global search results
 
-Global search supports actions, which are buttons that render below each search result. They can open a URL or dispatch a Livewire event. 
+Global search supports actions, which are buttons that render below each search result. They can open a URL or dispatch a Livewire event.
 
 Actions can be defined as follows:
 
@@ -105,7 +107,7 @@ Action::make('view')
 
 ### Dispatching Livewire events from global search actions
 
-Sometimes you want to execute additional code when a global search result action is clicked. This can be achieved by setting a Livewire event which should be dispatchted on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
+Sometimes you want to execute additional code when a global search result action is clicked. This can be achieved by setting a Livewire event which should be dispatched on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
 
 ```php
 use Filament\GlobalSearch\Actions\Action;
@@ -124,7 +126,7 @@ protected static int $globalSearchResultsLimit = 20;
 
 ## Disabling global search
 
-As [explained above](#title), global search is automatically enables once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
+As [explained above](#title), global search is automatically enabled once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
 
 This can be achieved by disabling global search in the [configuration](configuration):
 
@@ -152,12 +154,4 @@ public function panel(Panel $panel): Panel
         // ...
         ->globalSearchKeyBindings(['command+k', 'ctrl+k']);
 }
-```
-
-## Forcing case-insensitive global search
-
-By default, searching will use the sensitivity settings from the database table column. This is to avoid unnecessary performance overhead when searching large datasets that would arise if we were to force insensitivity for all users. However, if your database does not search case-insensitively by default, you can force it to by using the `$isGlobalSearchForcedCaseInsensitive` property:
-
-```php
-protected static bool $isGlobalSearchForcedCaseInsensitive = true;
 ```

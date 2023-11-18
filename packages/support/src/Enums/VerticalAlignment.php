@@ -2,11 +2,11 @@
 
 namespace Filament\Support\Enums;
 
-enum VerticalAlignment
+enum VerticalAlignment: string
 {
-    case Start;
+    case Start = 'start';
 
-    case Center;
+    case Center = 'center';
 
-    case End;
+    case End = 'end';
 }

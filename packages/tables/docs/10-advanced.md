@@ -33,6 +33,20 @@ public function table(Table $table): Table
 }
 ```
 
+### Customizing the default pagination page option
+
+To customize the default number of records shown use the `defaultPaginationPageOption()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->defaultPaginationPageOption(25);
+}
+```
+
 ### Preventing query string conflicts with the pagination page
 
 By default, Livewire stores the pagination state in a `page` parameter of the URL query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.
@@ -53,7 +67,7 @@ public function table(Table $table): Table
 
 You may use simple pagination by overriding `paginateTableQuery()` method.
 
-First, locate your Livewire component. If you're using a resource from the panel builder and you want to add simple pagination to the List page, you'll want to open the `Pages/List.php` file in the resource, not the resource class itself.
+First, locate your Livewire component. If you're using a resource from the Panel Builder and you want to add simple pagination to the List page, you'll want to open the `Pages/List.php` file in the resource, not the resource class itself.
 
 ```php
 use Illuminate\Contracts\Pagination\Paginator;
@@ -115,6 +129,18 @@ public function table(Table $table): Table
 {
     return $table
         ->reorderable('order_column');
+}
+```
+
+The `reorderable()` method also accepts a boolean condition as its second parameter, allowing you to conditionally enable reordering:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->reorderable('sort', auth()->user()->isAdmin());
 }
 ```
 
@@ -193,6 +219,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 protected function applySearchToTableQuery(Builder $query): Builder
 {
+    $this->applyColumnSearchesToTableQuery($query);
+    
     if (filled($search = $this->getTableSearch())) {
         $query->whereIn('id', Post::search($search)->keys());
     }
@@ -202,6 +230,8 @@ protected function applySearchToTableQuery(Builder $query): Builder
 ```
 
 Scout uses this `whereIn()` method to retrieve results internally, so there is no performance penalty for using it.
+
+The `applyColumnSearchesToTableQuery()` method ensures that searching individual columns will still work. You can replace that method with your own implementation if you want to use Scout for those search inputs as well.
 
 ## Query string
 
@@ -282,6 +312,14 @@ public function table(Table $table): Table
 ```
 
 These classes are not automatically compiled by Tailwind CSS. If you want to apply Tailwind CSS classes that are not already used in Blade files, you should update your `content` configuration in `tailwind.config.js` to also scan for classes inside your directory: `'./app/Filament/**/*.php'`
+
+## Resetting the table
+
+If you make changes to the table definition during a Livewire request, for example, when consuming a public property in the `table()` method, you may need to reset the table to ensure that the changes are applied. To do this, you can call the `resetTable()` method on the Livewire component:
+
+```php
+$this->resetTable();
+```
 
 ## Global settings
 

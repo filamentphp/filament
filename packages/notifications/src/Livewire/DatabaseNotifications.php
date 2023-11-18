@@ -26,6 +26,8 @@ class DatabaseNotifications extends Component
 
     public static ?string $pollingInterval = '30s';
 
+    public static ?string $authGuard = null;
+
     #[On('databaseNotificationsSent')]
     public function refresh(): void
     {
@@ -115,7 +117,7 @@ class DatabaseNotifications extends Component
 
     public function getUser(): Model | Authenticatable | null
     {
-        return auth()->user();
+        return auth(static::$authGuard)->user();
     }
 
     public function getBroadcastChannel(): ?string
@@ -154,6 +156,11 @@ class DatabaseNotifications extends Component
     public static function pollingInterval(?string $interval): void
     {
         static::$pollingInterval = $interval;
+    }
+
+    public static function authGuard(?string $guard): void
+    {
+        static::$authGuard = $guard;
     }
 
     /**

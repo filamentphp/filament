@@ -47,7 +47,7 @@ protected int | string | array $columnSpan = [
 
 This is especially useful when using a [responsive widgets grid](#responsive-widgets-grid).
 
-## Customizing the widgets grid
+## Customizing the widgets' grid
 
 You may change how many grid columns are used to display widgets.
 
@@ -126,16 +126,14 @@ public function panel(Panel $panel): Panel
 
 ## Customizing the dashboard page
 
-If you want to customize the dashboard class, for example to [change the number of widget columns](#customizing-widget-width), create a new file at `app/Filament/Pages/Dashboard.php`:
+If you want to customize the dashboard class, for example, to [change the number of widget columns](#customizing-widget-width), create a new file at `app/Filament/Pages/Dashboard.php`:
 
 ```php
 <?php
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Dashboard as BasePage;
-
-class Dashboard extends BasePage
+class Dashboard extends \Filament\Pages\Dashboard
 {
     // ...
 }
@@ -156,9 +154,15 @@ public function panel(Panel $panel): Panel
 
 ### Creating multiple dashboards
 
-If you want to create multiple dashboards, you can do so by repeating the process described above. Creating new pages that extend the `Dashboard` class will allow you to create as many dashboards as you need.
+If you want to create multiple dashboards, you can do so by repeating [the process described above](#customizing-the-dashboard-page). Creating new pages that extend the `Dashboard` class will allow you to create as many dashboards as you need.
 
-You may change the title of the dashboard by overriding the `$title` property:
+You will also need to define the URL path to the extra dashboard, otherwise it will be at `/`:
+
+```php
+protected static string $routePath = 'finance';
+```
+
+You may also customize the title of the dashboard by overriding the `$title` property:
 
 ```php
 protected static ?string $title = 'Finance dashboard';

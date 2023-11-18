@@ -12,6 +12,7 @@ use Filament\Actions\StaticAction;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Features\SupportTesting\Testable;
+
 use function Livewire\store;
 
 /**
@@ -32,7 +33,7 @@ class TestsActions
                 $this->call(
                     'mountAction',
                     $actionName,
-                    (count($name) === $actionNestingIndex + 1) ? $arguments : [],
+                    $arguments[$actionName] ?? ($actionNestingIndex ? [] : $arguments),
                 );
             }
 

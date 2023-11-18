@@ -120,6 +120,11 @@ export default function markdownEditorFormComponent({
                 uploadImage: true,
             })
 
+            this.editor.codemirror.setOption(
+                'direction',
+                document.documentElement?.dir ?? 'ltr',
+            )
+
             // When creating a link, highlight the URL instead of the label:
             this.editor.codemirror.on('changes', (instance, changes) => {
                 try {

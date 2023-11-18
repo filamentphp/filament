@@ -2,7 +2,7 @@
 title: Upgrading from v2.x
 ---
 
-> If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/3.x/packages/tables/docs/11-upgrade-guide.md) to our repository! Any help is appreciated!
+> If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/3.x/packages/tables/docs/13-upgrade-guide.md) to our repository! Any help is appreciated!
 
 ## New requirements
 
@@ -11,16 +11,10 @@ title: Upgrading from v2.x
 
 Please upgrade Filament before upgrading to Livewire v3. Instructions on how to upgrade Livewire can be found [here](https://livewire.laravel.com/docs/upgrading).
 
-> **Livewire v3 is still in beta!**<br />
-> Although breaking changes should be minimal, we recommend testing your application thoroughly before using Filament v3 in production.
+> **Livewire v3 is recently released!**<br />
+> The Livewire team have done a great job in making it stable, but it was a complete rewrite of Livewire v2. You may encounter issues, so we recommend testing your application thoroughly before using Filament v3 in production.
 
 ## Upgrading automatically
-
-Since Livewire v3 is still in beta, set the `minimum-stability` in your `composer.json` to `dev`:
-
-```json
-"minimum-stability": "dev",
-```
 
 The easiest way to upgrade your app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament, and make changes to your code which handle most breaking changes.
 
@@ -33,19 +27,15 @@ Make sure to carefully follow the instructions, and review the changes made by t
 
 Finally, you must run `php artisan filament:install` to finalize the Filament v3 installation. This command must be run for all new Filament projects.
 
-You can now `composer remove filament/upgrade` as you don't need it any more.
+You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 > Some plugins you're using may not be available in v3 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v3-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 
 ## Upgrading manually
 
-Since Livewire v3 is still in beta, set the `minimum-stability` in your `composer.json` to `dev`:
+After upgrading the dependency via Composer, you should execute `php artisan filament:upgrade` in order to clear any Laravel caches and publish the new frontend assets.
 
-```json
-"minimum-stability": "dev",
-```
-
-### High impact changes
+### High-impact changes
 
 #### Config file renamed and combined with other Filament packages
 
@@ -62,7 +52,7 @@ The `TABLES_FILESYSTEM_DRIVER` .env variable has been renamed to `FILAMENT_FILES
 
 #### New `@filamentScripts` and `@filamentStyles` Blade directives
 
-The `@filamentScripts` and `@filamentStyles` Blade directives must be added to your Blade layout file/s. Since Livewire 3 no longer uses similar directives, you can replace `@livewireScripts` with `@filamentScripts`  and `@livewireStyles` with `@filamentStyles`.
+The `@filamentScripts` and `@filamentStyles` Blade directives must be added to your Blade layout file/s. Since Livewire v3 no longer uses similar directives, you can replace `@livewireScripts` with `@filamentScripts`  and `@livewireStyles` with `@filamentStyles`.
 
 #### CSS file removed
 
@@ -76,7 +66,7 @@ You no longer need to import the `FormsAlpinePlugin` in your JavaScript files. A
 
 The Heroicons library has been updated to v2. This means that any icons you use in your app may have changed names. You can find a list of changes [here](https://github.com/tailwindlabs/heroicons/releases/tag/v2.0.0).
 
-### Medium impact changes
+### Medium-impact changes
 
 #### Secondary color
 

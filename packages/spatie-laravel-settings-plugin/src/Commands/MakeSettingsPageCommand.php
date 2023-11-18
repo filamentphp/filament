@@ -4,6 +4,7 @@ namespace Filament\Commands;
 
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
+
 use function Laravel\Prompts\text;
 
 class MakeSettingsPageCommand extends Command
@@ -56,7 +57,7 @@ class MakeSettingsPageCommand extends Command
             'settingsClass' => $settingsClass,
         ]);
 
-        $this->components->info("Successfully created {$page}!");
+        $this->components->info("Filament settings page [{$path}] created successfully.");
 
         return static::SUCCESS;
     }

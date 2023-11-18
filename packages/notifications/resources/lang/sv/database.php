@@ -4,7 +4,7 @@ return [
 
     'modal' => [
 
-        'heading' => 'Aviseringar',
+        'heading' => 'Notiser',
 
         'actions' => [
 
@@ -19,8 +19,8 @@ return [
         ],
 
         'empty' => [
-            'heading' => 'Inga aviseringar här',
-            'description' => 'Kolla igen lite senare',
+            'heading' => 'Inga notiser',
+            'description' => 'Kolla igen lite senare.',
         ],
 
     ],

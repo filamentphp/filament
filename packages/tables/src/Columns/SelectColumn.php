@@ -6,21 +6,19 @@ use Filament\Forms\Components\Concerns\CanDisableOptions;
 use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasOptions;
-use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Filament\Tables\Columns\Contracts\Editable;
 use Illuminate\Validation\Rule;
 
 class SelectColumn extends Column implements Editable
 {
+    use CanDisableOptions;
+    use CanSelectPlaceholder;
     use Concerns\CanBeValidated {
         getRules as baseGetRules;
     }
-    use CanDisableOptions;
-    use CanSelectPlaceholder;
     use Concerns\CanUpdateState;
     use HasExtraInputAttributes;
     use HasOptions;
-    use HasPlaceholder;
 
     /**
      * @var view-string

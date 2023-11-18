@@ -12,6 +12,10 @@
             {{ $this->iconButtonAction }}
         </div>
 
+        <div id="badgeAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->badgeAction }}
+        </div>
+
         <div id="dangerAction" class="p-16 flex items-center justify-center max-w-xl">
             {{ $this->dangerAction }}
         </div>
@@ -28,12 +32,12 @@
             {{ $this->iconAfterAction }}
         </div>
 
-        <div id="badgeAction" class="p-16 flex items-center justify-center max-w-xl">
-            {{ $this->badgeAction }}
+        <div id="badgedAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->badgedAction }}
         </div>
 
-        <div id="successBadgeAction" class="p-16 flex items-center justify-center max-w-xl">
-            {{ $this->successBadgeAction }}
+        <div id="successBadgedAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->successBadgedAction }}
         </div>
 
         <div id="outlinedAction" class="p-16 flex items-center justify-center max-w-xl">

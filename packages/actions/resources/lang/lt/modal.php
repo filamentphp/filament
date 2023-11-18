@@ -2,7 +2,7 @@
 
 return [
 
-    'confirmation' => 'Ar tikrai tai nori atlikti?',
+    'confirmation' => 'Ar tikrai norite tai atlikti?',
 
     'actions' => [
 
@@ -11,7 +11,7 @@ return [
         ],
 
         'confirm' => [
-            'label' => 'Patvirinti',
+            'label' => 'Patvirtinti',
         ],
 
         'submit' => [

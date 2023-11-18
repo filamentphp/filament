@@ -81,7 +81,7 @@ return [
         ],
 
         'open_bulk_actions' => [
-            'label' => 'Actions ouvertes',
+            'label' => 'Ouvrir les actions',
         ],
 
         'toggle_columns' => [

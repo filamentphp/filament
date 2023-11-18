@@ -146,7 +146,7 @@ class Stat extends Component implements Htmlable
 
     public function url(?string $url, bool $shouldOpenInNewTab = false): static
     {
-        $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
+        $this->openUrlInNewTab($shouldOpenInNewTab);
         $this->url = $url;
 
         return $this;
@@ -287,5 +287,10 @@ class Stat extends Component implements Htmlable
     public function render(): View
     {
         return view('filament-widgets::stats-overview-widget.stat', $this->data());
+    }
+
+    public function generateDataChecksum(): string
+    {
+        return md5(json_encode($this->getChart()) . now());
     }
 }

@@ -53,7 +53,7 @@ Alternatively, you can use an Alpine.js expression to trigger the error state, b
 
 ## Disabling the input
 
-To disable the input, you must also pass the `disabled` attribute to the affixes component:
+To disable the input, you must also pass the `disabled` attribute to the wrapper component:
 
 ```blade
 <x-filament::input.wrapper disabled>
@@ -92,6 +92,22 @@ You may place an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) befor
 
 ```blade
 <x-filament::input.wrapper suffix-icon="heroicon-m-globe-alt">
+    <x-filament::input
+        type="url"
+        wire:model="domain"
+    />
+</x-filament::input.wrapper>
+```
+
+#### Setting the affix icon's color
+
+Affix icons are gray by default, but you may set a different color using the `prefix-icon-color` and `affix-icon-color` attributes:
+
+```blade
+<x-filament::input.wrapper
+    suffix-icon="heroicon-m-check-circle"
+    suffix-icon-color="success"
+>
     <x-filament::input
         type="url"
         wire:model="domain"

@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-Filament's tables can use [actions](../actions). They are buttons that can be added to the [end of any table row](#row-actions), or even in the [header](#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](#bulk-actions) can be used to execute code when records in the table are selected. Additionally, actions can be added to any [table column](#column-actions), such that each cell in that column is a trigger for your action.
+Filament's tables can use [Actions](../actions). They are buttons that can be added to the [end of any table row](#row-actions), or even in the [header](#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](#bulk-actions) can be used to execute code when records in the table are selected. Additionally, actions can be added to any [table column](#column-actions), such that each cell in that column is a trigger for your action.
 
 It's highly advised that you read the documentation about [customizing action trigger buttons](../actions/trigger-button) and [action modals](../actions/modals) to that you are aware of the full capabilities of actions.
 
@@ -86,7 +86,7 @@ public function table(Table $table): Table
 
 ## Bulk actions
 
-Tables also support "bulk actions". These can be used when the user selects rows int the table. Traditionally, when rows are selected, a "bulk actions" button appears in the top left corner of the table. When the user clicks this button, they are presented with a dropdown menu of actions to choose from. You can put them in the `$table->bulkActions()` method:
+Tables also support "bulk actions". These can be used when the user selects rows in the table. Traditionally, when rows are selected, a "bulk actions" button appears in the top left corner of the table. When the user clicks this button, they are presented with a dropdown menu of actions to choose from. You can put them in the `$table->bulkActions()` method:
 
 ```php
 use Filament\Tables\Table;
@@ -117,7 +117,7 @@ The function allows you to access the current table `$records` that are selected
 
 ### Grouping bulk actions
 
-You may use a `BulkActionGroup` object to [group multiple bulk actions together](../actions/grouping-actions) in a dropdown. Any bulk actions that remain outside of the `BulkActionGroup` will be rendered next to the dropdown's trigger button:
+You may use a `BulkActionGroup` object to [group multiple bulk actions together](../actions/grouping-actions) in a dropdown. Any bulk actions that remain outside the `BulkActionGroup` will be rendered next to the dropdown's trigger button:
 
 ```php
 use Filament\Tables\Actions\BulkAction;
@@ -258,7 +258,7 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/actions/group" alt="Table with action group" version="3.x" />
 
-### Choosing a action group button style
+### Choosing an action group button style
 
 Out of the box, action group triggers have 3 styles - "button", "link", and "icon button".
 

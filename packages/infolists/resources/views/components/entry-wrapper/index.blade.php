@@ -8,6 +8,7 @@
     'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'hintIconTooltip' => null,
     'id' => null,
     'label' => null,
     'labelPrefix' => null,
@@ -31,6 +32,7 @@
         $hintActions ??= $entry->getHintActions();
         $hintColor ??= $entry->getHintColor();
         $hintIcon ??= $entry->getHintIcon();
+        $hintIconTooltip ??= $entry->getHintIconTooltip();
         $id ??= $entry->getId();
         $label ??= $entry->getLabel();
         $labelSrOnly ??= $entry->isLabelHidden();
@@ -38,6 +40,10 @@
         $statePath ??= $entry->getStatePath();
         $tooltip ??= $entry->getTooltip();
         $url ??= $entry->getUrl();
+    }
+
+    if (! $alignment instanceof Alignment) {
+        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
     }
 
     $hintActions = array_filter(
@@ -79,6 +85,7 @@
                         :actions="$hintActions"
                         :color="$hintColor"
                         :icon="$hintIcon"
+                        :tooltip="$hintIconTooltip"
                     >
                         {{ $hint }}
                     </x-filament-infolists::entry-wrapper.hint>
@@ -93,7 +100,7 @@
             ])
         >
             <dd
-                @if ($tooltip)
+                @if (filled($tooltip))
                     x-data="{}"
                     x-tooltip="{
                         content: @js($tooltip),
@@ -102,22 +109,19 @@
                 @endif
                 @class([
                     match ($alignment) {
-                        Alignment::Center, 'center' => 'text-center',
-                        Alignment::End, 'end' => 'text-end',
-                        Alignment::Justify, 'justify' => 'text-justify',
-                        Alignment::Left, 'left' => 'text-left',
-                        Alignment::Right, 'right' => 'text-right',
-                        Alignment::Start, 'start' => 'text-start',
-                        default => null,
+                        Alignment::Start => 'text-start',
+                        Alignment::Center => 'text-center',
+                        Alignment::End => 'text-end',
+                        Alignment::Justify => 'text-justify',
+                        Alignment::Left => 'text-left',
+                        Alignment::Right => 'text-right',
+                        default => $alignment,
                     },
                 ])
             >
                 @if ($url)
                     <a
-                        href="{{ $url }}"
-                        @if ($shouldOpenUrlInNewTab)
-                            target="_blank"
-                        @endif
+                        {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
                         class="block"
                     >
                         {{ $slot }}
