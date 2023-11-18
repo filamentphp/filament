@@ -333,9 +333,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->groups([
-            // ...
-        ])
+		->defaultGroup('status');
         ->groupSelectionVisible(false);
 }
 ```
