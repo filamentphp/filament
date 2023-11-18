@@ -72,6 +72,18 @@ By default, only List, Create and Edit pages are generated for your resource. If
 php artisan make:filament-resource Customer --view
 ```
 
+### Specifiying a custom model namespace
+
+By default, Filament will assume that your model exists in the `App\Models` directory. You can pass a different namespace for the model using the `--model-namespace` flag:
+
+```bash
+php artisan make:filament-resource Customer --model-namespace=Custom\\Path\\Models
+```
+
+In this example, the model should exist at `Custom\Path\Models\Customer`. Please note the double backslashes `\\` in the command that are required.
+
+Now when [generating the resource](#automatically-generating-forms-and-tables), Filament will be able to locate the model and read the database schema.
+
 ## Record titles
 
 A `$recordTitleAttribute` may be set for your resource, which is the name of the column on your model that can be used to identify it from others.
