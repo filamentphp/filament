@@ -12,7 +12,6 @@ use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
 use NumberFormatter;
-use DB;
 
 if (! function_exists('Filament\Support\format_money')) {
     function format_money(float | int $money, string $currency, int $divideBy = 0): string
@@ -184,11 +183,15 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
             $column = "{$column} collate {$collation}";
         }
 
-        if ($isSearchForcedCaseInsensitive || filled($collation)) {
+        if (
+            str($column)->contains('(') || // This checks if the column name probably contains a raw expression like `json_extract()`.
+            $isSearchForcedCaseInsensitive ||
+            filled($collation)
+        ) {
             return new Expression($column);
         }
 
-        return DB::raw($column);
+        return $column;
     }
 }
 
