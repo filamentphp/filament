@@ -13,4 +13,6 @@ enum IconColumnSize
     case Large;
 
     case ExtraLarge;
+
+    case ExtraExtraLarge;
 }
