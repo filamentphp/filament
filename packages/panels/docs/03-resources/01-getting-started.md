@@ -32,14 +32,6 @@ The classes in the `Pages` directory are used to customize the pages in the app 
 
 > Have you created a resource, but it's not appearing in the navigation menu? If you have a [model policy](#authorization), make sure you return `true` from the `viewAny()` method.
 
-### Custom Namespaces for existing models
-In some cases, you may wish to specify a model under a different namespace to the original \App\Models. In this case, you can pass a model for your resource, make sure that when you add --model, you include the full namespace path to the model and include the model class name.
-```bash
-php artisan make:filament-resource Customer --model=Path\To\Customer\Model
-```
-
-Now when paired with the likes of the --generate flag, it will be able to automatically generate table and form from the right model.
-
 ### Simple (modal) resources
 
 Sometimes, your models are simple enough that you only want to manage records on one page, using modals to create, edit and delete records. To generate a simple resource with modals:
@@ -79,6 +71,16 @@ By default, only List, Create and Edit pages are generated for your resource. If
 ```bash
 php artisan make:filament-resource Customer --view
 ```
+
+### Specifiying a custom model namespace
+
+By default, Filament will assume that your model exists in the `App\Models` directory. You can pass a different namespace for the model using the `--model` flag, which is especially:
+
+```bash
+php artisan make:filament-resource Customer --model=Custom\Path\Models\Customer
+```
+
+Now when [generating the resource](#automatically-generating-forms-and-tables), Filament will be able to locate the model and read the database schema.
 
 ## Record titles
 
