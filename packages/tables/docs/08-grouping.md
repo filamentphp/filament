@@ -322,3 +322,20 @@ public function table(Table $table): Table
         ->groupsInDropdownOnDesktop();
 }
 ```
+
+## Hiding the group selection
+
+You can disable the groups selection by using the `->groupSelectionVisible()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            // ...
+        ])
+        ->groupSelectionVisible(false);
+}
+```

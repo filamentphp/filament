@@ -181,7 +181,7 @@
 
                     {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.grouping-selector.before', scopes: static::class) }}
 
-                    @if (count($groups))
+                    @if (count($groups) && $isGroupSelectionVisible())
                         <x-filament-tables::groups
                             :dropdown-on-desktop="$areGroupsInDropdownOnDesktop()"
                             :groups="$groups"

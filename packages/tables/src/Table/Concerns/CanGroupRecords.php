@@ -21,6 +21,8 @@ trait CanGroupRecords
 
     protected bool | Closure $areGroupsInDropdownOnDesktop = false;
 
+	protected bool|\Closure $isGroupSelectionVisible = true;
+
     protected ?Closure $modifyGroupRecordsTriggerActionUsing = null;
 
     public function groupRecordsTriggerAction(?Closure $callback): static
@@ -33,6 +35,13 @@ trait CanGroupRecords
     public function groupsInDropdownOnDesktop(bool | Closure $condition = true): static
     {
         $this->areGroupsInDropdownOnDesktop = $condition;
+
+        return $this;
+    }
+
+	public function groupSelectionVisible(bool|\Closure $condition = true): static
+    {
+        $this->isGroupSelectionVisible = $condition;
 
         return $this;
     }
@@ -104,6 +113,11 @@ trait CanGroupRecords
     public function areGroupsInDropdownOnDesktop(): bool
     {
         return (bool) $this->evaluate($this->areGroupsInDropdownOnDesktop);
+    }
+
+    public function isGroupSelectionVisible(): bool
+    {
+        return (bool) $this->evaluate($this->isGroupSelectionVisible);
     }
 
     public function getDefaultGroup(): ?Group
