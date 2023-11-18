@@ -260,7 +260,7 @@ class MakeResourceCommand extends Command
         return static::SUCCESS;
     }
     
-    protected function getModelFromNamespace($modelName)
+    protected function getModelFromNamespace($modelName): string
     {
         if (class_exists($modelName)) {
             return $modelName;
