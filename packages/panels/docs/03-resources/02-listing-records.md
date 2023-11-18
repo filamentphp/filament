@@ -82,7 +82,7 @@ The color of a badge may be changed using the `badgeColor()` method:
 use Filament\Resources\Components\Tab;
 
 Tab::make()
-    ->badge(Customer::query()->where('active', true)
+    ->badge(Customer::query()->where('active', true)->count())
     ->badgeColor('success')
 ```
 
