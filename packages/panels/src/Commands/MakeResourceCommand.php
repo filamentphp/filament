@@ -29,9 +29,9 @@ class MakeResourceCommand extends Command
     public function handle(): int
     {
         $modelName = $this->argument('name');
-        $modelNamespace = $this->option('model');
+        $modelFqn = $this->option('model');
         
-        $model = $this->getModelFromNamespace(filled($modelNamespace) ? $modelNamespace : $modelName);
+        $model = $this->getModelFqn(filled($modelFqn) ? $modelFqn : $modelName);
 
         $modelClass = (string) str($model)->afterLast('\\');
         $modelNamespace = str($model)->contains('\\') ?
@@ -260,13 +260,13 @@ class MakeResourceCommand extends Command
         return static::SUCCESS;
     }
     
-    protected function getModelFromNamespace($modelName): string
+    protected function getModelFqn($model): string
     {
-        if (class_exists($modelName)) {
-            return $modelName;
+        if (class_exists($model)) {
+            return $model;
         }
 
-        $model = (string) str($modelName)
+        $model = (string) str($model)
             ->studly()
             ->beforeLast('Resource')
             ->trim('/')
