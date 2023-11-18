@@ -1,3 +1,4 @@
 @danharrin
 
-*.js @zepfietje
+*.blade.php @zepfietje
+*.css @zepfietje
