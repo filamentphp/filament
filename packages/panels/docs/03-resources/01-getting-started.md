@@ -74,11 +74,13 @@ php artisan make:filament-resource Customer --view
 
 ### Specifiying a custom model namespace
 
-By default, Filament will assume that your model exists in the `App\Models` directory. You can pass a different namespace for the model using the `--model` flag, which is especially:
+By default, Filament will assume that your model exists in the `App\Models` directory. You can pass a different namespace for the model using the `--model-namespace` flag:
 
 ```bash
-php artisan make:filament-resource Customer --model=Custom\Path\Models\Customer
+php artisan make:filament-resource Customer --model-namespace=Custom\\Path\\Models
 ```
+
+In this example, the model should exist at `Custom\Path\Models\Customer`. Please note the double backslashes `\\` in the command that are required.
 
 Now when [generating the resource](#automatically-generating-forms-and-tables), Filament will be able to locate the model and read the database schema.
 

@@ -25,19 +25,32 @@ class MakeResourceCommand extends Command
 
     protected $description = 'Create a new Filament resource class and default page classes';
 
-    protected $signature = 'make:filament-resource {name?} {--model=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--F|force}';
+    protected $signature = 'make:filament-resource {name?} {--model-namespace=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--F|force}';
 
     public function handle(): int
     {
-        $modelName = $this->argument('name');
-        $modelFqn = $this->option('model');
-        
-        $model = $this->getModelFqn(filled($modelFqn) ? $modelFqn : $modelName);
+        $model = (string) str($this->argument('name') ?? text(
+            label: 'What is the model name?',
+            placeholder: 'BlogPost',
+            required: true,
+        ))
+            ->studly()
+            ->beforeLast('Resource')
+            ->trim('/')
+            ->trim('\\')
+            ->trim(' ')
+            ->studly()
+            ->replace('/', '\\');
+
+        if (blank($model)) {
+            $model = 'Resource';
+        }
 
         $modelClass = (string) str($model)->afterLast('\\');
-        $modelNamespace = str($model)->contains('\\') ?
+        $modelSubNamespace = str($model)->contains('\\') ?
             (string) str($model)->beforeLast('\\') :
             '';
+        $modelNamespace = $this->option('model-namespace') ?? 'App\\Models';
         $pluralModelClass = (string) str($modelClass)->pluralStudly();
         $needsAlias = $modelClass === 'Record';
 
@@ -76,7 +89,7 @@ class MakeResourceCommand extends Command
 
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";
-        $resourceNamespace = $modelNamespace;
+        $resourceNamespace = $modelSubNamespace;
         $namespace .= $resourceNamespace !== '' ? "\\{$resourceNamespace}" : '';
         $listResourcePageClass = "List{$pluralModelClass}";
         $manageResourcePageClass = "Manage{$pluralModelClass}";
@@ -100,13 +113,13 @@ class MakeResourceCommand extends Command
         $viewResourcePagePath = "{$resourcePagesDirectory}/{$viewResourcePageClass}.php";
 
         if (! $this->option('force') && $this->checkForCollision([
-            $resourcePath,
-            $listResourcePagePath,
-            $manageResourcePagePath,
-            $createResourcePagePath,
-            $editResourcePagePath,
-            $viewResourcePagePath,
-        ])) {
+                $resourcePath,
+                $listResourcePagePath,
+                $manageResourcePagePath,
+                $createResourcePagePath,
+                $editResourcePagePath,
+                $viewResourcePagePath,
+            ])) {
             return static::INVALID;
         }
 
@@ -175,10 +188,10 @@ class MakeResourceCommand extends Command
         $this->copyStubToApp('Resource', $resourcePath, [
             'eloquentQuery' => $this->indentString($eloquentQuery, 1),
             'formSchema' => $this->indentString($this->option('generate') ? $this->getResourceFormSchema(
-                ($modelNamespace !== '' ? "\\{$modelNamespace}" : 'App\\Models') . '\\' . $modelClass,
+                $modelNamespace . ($modelSubNamespace !== '' ? "\\{$modelSubNamespace}" : '') . '\\' . $modelClass,
             ) : '//', 4),
-            'model' => ($model === 'Resource') ? 'App\\Models\\Resource as ResourceModel' : ($this->option('model') ? $model : ('App\\Models\\' . $model)),
-            'modelClass' => $model === 'Resource' ? 'ResourceModel' : $modelClass,
+            'model' => ($model === 'Resource') ? "{$modelNamespace}\\Resource as ResourceModel" :  "{$modelNamespace}\\{$model}",
+            'modelClass' => ($model === 'Resource') ? 'ResourceModel' : $modelClass,
             'namespace' => $namespace,
             'pages' => $this->indentString($pages, 3),
             'relations' => $this->indentString($relations, 1),
@@ -187,7 +200,7 @@ class MakeResourceCommand extends Command
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 5),
             'tableColumns' => $this->indentString($this->option('generate') ? $this->getResourceTableColumns(
-                ($modelNamespace !== '' ? "\\{$modelNamespace}" : 'App\\Models') . '\\' . $modelClass,
+                $modelNamespace . ($modelSubNamespace !== '' ? "\\{$modelSubNamespace}" : '') . '\\' . $modelClass,
             ) : '//', 4),
             'tableFilters' => $this->indentString(
                 $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make(),' : '//',
@@ -261,27 +274,5 @@ class MakeResourceCommand extends Command
         $this->components->info("Filament resource [{$resourcePath}] created successfully.");
 
         return static::SUCCESS;
-    }
-    
-    protected function getModelFqn($model): string
-    {
-        if (class_exists($model)) {
-            return $model;
-        }
-
-        $model = (string) str($model)
-            ->studly()
-            ->beforeLast('Resource')
-            ->trim('/')
-            ->trim('\\')
-            ->trim(' ')
-            ->studly()
-            ->replace('/', '\\');
-            
-        if (blank($model)) {
-            $model = 'Resource';
-        }
-        
-        return $model;
     }
 }
