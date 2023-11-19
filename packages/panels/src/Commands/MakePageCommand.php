@@ -45,7 +45,7 @@ class MakePageCommand extends Command
         $resourcePage = null;
 
         $resourceInput = $this->option('resource') ?? text(
-            label: 'Would you like to create the page inside a resource?',
+            label: 'What is the resource you would like to create this in?',
             placeholder: '[Optional] UserResource',
         );
 

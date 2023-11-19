@@ -1,9 +1,12 @@
 @props([
     'active' => false,
     'activeIcon' => null,
+    'activeChildItems' => false,
     'badge' => null,
     'badgeColor' => null,
+    'childItems' => [],
     'grouped' => false,
+    'subGrouped' => false,
     'last' => false,
     'first' => false,
     'icon' => null,
@@ -12,11 +15,14 @@
 ])
 
 <li
-    @class([
-        'fi-sidebar-item',
-        // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
-        'fi-active fi-sidebar-item-active' => $active,
-    ])
+    {{
+        $attributes->class([
+            'fi-sidebar-item',
+            // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
+            'fi-active fi-sidebar-item-active' => $active,
+            'flex flex-col gap-y-1' => $active || $activeChildItems,
+        ])
+    }}
 >
     <a
         {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
@@ -39,8 +45,9 @@
             'bg-gray-100 dark:bg-white/5' => $active,
         ])
     >
-        @if (filled($icon))
+        @if (filled($icon) && ((! $subGrouped) || filament()->isSidebarCollapsibleOnDesktop()))
             <x-filament::icon
+                :x-show="($subGrouped && filament()->isSidebarCollapsibleOnDesktop()) ? '! $store.sidebar.isOpen' : false"
                 :icon="($active && $activeIcon) ? $activeIcon : $icon"
                 @class([
                     'fi-sidebar-item-icon h-6 w-6',
@@ -48,8 +55,13 @@
                     'text-primary-600 dark:text-primary-400' => $active,
                 ])
             />
-        @elseif ($grouped)
+        @endif
+
+        @if ((blank($icon) && $grouped) || $subGrouped)
             <div
+                @if (filled($icon) && $subGrouped && filament()->isSidebarCollapsibleOnDesktop())
+                    x-show="$store.sidebar.isOpen"
+                @endif
                 class="fi-sidebar-item-grouped-border relative flex h-6 w-6 items-center justify-center"
             >
                 @if (! $first)
@@ -107,4 +119,26 @@
             </span>
         @endif
     </a>
+
+    @if (($active || $activeChildItems) && $childItems)
+        <ul class="fi-sidebar-sub-group-items flex flex-col gap-y-1">
+            @foreach ($childItems as $childItem)
+                <x-filament-panels::sidebar.item
+                    :active-child-items="$childItem->isChildItemsActive()"
+                    :active-icon="$childItem->getActiveIcon()"
+                    :active="$childItem->isActive()"
+                    :badge-color="$childItem->getBadgeColor()"
+                    :badge="$childItem->getBadge()"
+                    grouped
+                    sub-grouped
+                    :icon="$childItem->getIcon()"
+                    :last="$loop->last"
+                    :url="$childItem->getUrl()"
+                    :should-open-url-in-new-tab="$childItem->shouldOpenUrlInNewTab()"
+                >
+                    {{ $childItem->getLabel() }}
+                </x-filament-panels::sidebar.item>
+            @endforeach
+        </ul>
+    @endif
 </li>

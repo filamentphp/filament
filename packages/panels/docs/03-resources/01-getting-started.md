@@ -72,6 +72,18 @@ By default, only List, Create and Edit pages are generated for your resource. If
 php artisan make:filament-resource Customer --view
 ```
 
+### Specifiying a custom model namespace
+
+By default, Filament will assume that your model exists in the `App\Models` directory. You can pass a different namespace for the model using the `--model-namespace` flag:
+
+```bash
+php artisan make:filament-resource Customer --model-namespace=Custom\\Path\\Models
+```
+
+In this example, the model should exist at `Custom\Path\Models\Customer`. Please note the double backslashes `\\` in the command that are required.
+
+Now when [generating the resource](#automatically-generating-forms-and-tables), Filament will be able to locate the model and read the database schema.
+
 ## Record titles
 
 A `$recordTitleAttribute` may be set for your resource, which is the name of the column on your model that can be used to identify it from others.
@@ -296,6 +308,27 @@ Alternatively, you may use the `getNavigationGroup()` method to set a dynamic gr
 public static function getNavigationGroup(): ?string
 {
     return __('filament/navigation.groups.shop');
+}
+```
+
+#### Grouping resource navigation items under other items
+
+You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationParentItem`:
+
+```php
+protected static ?string $navigationParentItem = 'Products';
+
+protected static ?string $navigationGroup = 'Shop';
+```
+
+As seen above, if the parent item has a navigation group, that navigation group must also be defined, so the correct parent item can be identified.
+
+You may also use the `getNavigationParentItem()` method to set a dynamic parent item label:
+
+```php
+public static function getNavigationParentItem(): ?string
+{
+    return __('filament/navigation.groups.shop.items.products');
 }
 ```
 

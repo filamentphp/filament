@@ -313,7 +313,7 @@ use Filament\Tables\Actions\AttachAction;
 use Illuminate\Database\Eloquent\Builder;
 
 AttachAction::make()
-    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
 ```
 
 ### Searching the options to attach across multiple columns
@@ -347,10 +347,14 @@ By default, you will not be allowed to attach a record more than once. This is b
 
 Please ensure that the `id` attribute is listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-Finally, add the `$allowsDuplicates` property to the relation manager:
+Finally, add the `allowDuplicates()` method to the table:
 
 ```php
-protected bool $allowsDuplicates = true;
+public function table(Table $table): Table
+{
+    return $table
+        ->allowDuplicates();
+}
 ```
 
 ## Associating and dissociating records
@@ -412,7 +416,7 @@ use Filament\Tables\Actions\AssociateAction;
 use Illuminate\Database\Eloquent\Builder;
 
 AssociateAction::make()
-    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
 ```
 
 ### Searching the options to associate across multiple columns

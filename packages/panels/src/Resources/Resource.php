@@ -63,6 +63,8 @@ abstract class Resource
 
     protected static ?string $navigationGroup = null;
 
+    protected static ?string $navigationParentItem = null;
+
     protected static ?string $navigationIcon = null;
 
     protected static ?string $activeNavigationIcon = null;
@@ -85,6 +87,8 @@ abstract class Resource
     protected static ?string $recordTitleAttribute = null;
 
     protected static ?string $slug = null;
+
+    protected static bool $isScopedToTenant = true;
 
     protected static ?string $tenantOwnershipRelationshipName = null;
 
@@ -140,6 +144,7 @@ abstract class Resource
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
+                ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*'))
@@ -308,7 +313,10 @@ abstract class Resource
     {
         $query = static::getModel()::query();
 
-        if ($tenant = Filament::getTenant()) {
+        if (
+            static::isScopedToTenant() &&
+            ($tenant = Filament::getTenant())
+        ) {
             static::scopeEloquentQueryToTenant($query, $tenant);
         }
 
@@ -702,9 +710,19 @@ abstract class Resource
         return static::$navigationGroup;
     }
 
+    public static function getNavigationParentItem(): ?string
+    {
+        return static::$navigationParentItem;
+    }
+
     public static function navigationGroup(?string $group): void
     {
         static::$navigationGroup = $group;
+    }
+
+    public static function navigationParentItem(?string $group): void
+    {
+        static::$navigationParentItem = $group;
     }
 
     public static function getNavigationIcon(): ?string
@@ -763,6 +781,11 @@ abstract class Resource
     public static function isDiscovered(): bool
     {
         return static::$isDiscovered;
+    }
+
+    public static function isScopedToTenant(): bool
+    {
+        return static::$isScopedToTenant;
     }
 
     public static function getTenantOwnershipRelationshipName(): string

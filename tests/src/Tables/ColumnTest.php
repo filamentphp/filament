@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
@@ -163,4 +164,44 @@ it('can state whether a select column has options', function () {
     livewire(PostsTable::class)
         ->assertTableSelectColumnHasOptions('with_options', ['red' => 'Red', 'blue' => 'Blue'], $post)
         ->assertTableSelectColumnDoesNotHaveOptions('with_options', ['one' => 'One', 'two' => 'Two'], $post);
+});
+
+it('can assert that a column exists with the given configuration', function () {
+    $publishedPost = Post::factory()->create([
+        'is_published' => true,
+    ]);
+
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('title2', function (Filament\Tables\Columns\TextColumn $column) {
+            return $column->isSortable() &&
+                $column->isSearchable() &&
+                $column->getPrefix() == 'published';
+        }, $publishedPost);
+
+    $unpublishedPost = Post::factory()->create([
+        'is_published' => false,
+    ]);
+
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('title2', function (Filament\Tables\Columns\TextColumn $column) {
+            return $column->getPrefix() == 'unpublished';
+        }, $unpublishedPost);
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('Failed asserting that a column with the name [title] and provided configuration exists on the [' . PostsTable::class . '] component');
+
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('title', function (Filament\Tables\Columns\TextColumn $column) {
+            return $column->isTime();
+        }, $publishedPost);
+});
+
+it('can automatically detect boolean cast attribute in icon column', function () {
+    $post = Post::factory()
+        ->create(['is_published' => false]);
+
+    livewire(PostsTable::class)
+        ->assertTableColumnExists('is_published', function (IconColumn $column) {
+            return $column->isBoolean();
+        }, $post);
 });
