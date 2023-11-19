@@ -13,7 +13,7 @@ class NavigationGroup extends Component
 
     protected bool | Closure | null $isCollapsible = null;
 
-    protected ?Closure $isActiveWhen = null;
+    protected bool | Closure | null $isActive = null;
 
     protected string | Closure | null $icon = null;
 
@@ -68,7 +68,7 @@ class NavigationGroup extends Component
 
     public function isActiveWhen(Closure $callback): static
     {
-        $this->isActiveWhen = $callback;
+        $this->isActive = $callback;
 
         return $this;
     }
@@ -159,13 +159,11 @@ class NavigationGroup extends Component
 
     public function isActive(): bool
     {
-        $callback = $this->isActiveWhen;
-
-        if ($callback === null) {
-            return false;
+        if ($this->isActive instanceof Closure) {
+            $this->isActive = ((bool) $this->evaluate($this->isActive));
         }
 
-        return (bool) $this->evaluate($callback);
+        return (bool) $this->isActive;
     }
 
     public function hasItemIcons(): bool
