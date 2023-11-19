@@ -30,8 +30,8 @@
         fn (\Filament\Forms\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
     );
 
-    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix) || $prefixSlot !== null;
-    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix) || $suffixSlot !== null;
+    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix) || !\Filament\Support\is_slot_empty($prefixSlot);
+    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix) || !\Filament\Support\is_slot_empty($suffixSlot);
 
     $hasAlpineDisabledClasses = filled($alpineDisabled);
     $hasAlpineValidClasses = filled($alpineValid);
@@ -160,7 +160,7 @@
                 </span>
             @endif
 
-            @if($prefixSlot !== null)
+            @if(!\Filament\Support\is_slot_empty($prefixSlot))
                 {{$prefixSlot}}
             @endif
         </div>
@@ -214,7 +214,7 @@
                 </div>
             @endif
 
-            @if($suffixSlot !== null)
+            @if(!\Filament\Support\is_slot_empty($suffixSlot))
                 {{$suffixSlot}}
             @endif
         </div>
