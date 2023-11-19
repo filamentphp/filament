@@ -20,6 +20,16 @@ document.addEventListener('alpine:init', () => {
             this.collapsedGroups = this.collapsedGroups.concat(group)
         },
 
+        expandGroup: function (group) {
+            if (! this.collapsedGroups.includes(group)) {
+                return
+            }
+
+            this.collapsedGroups = this.collapsedGroups.filter(
+                (collapsedGroup) => collapsedGroup !== group,
+            )
+        },
+
         toggleCollapsedGroup: function (group) {
             this.collapsedGroups = this.collapsedGroups.includes(group)
                 ? this.collapsedGroups.filter(

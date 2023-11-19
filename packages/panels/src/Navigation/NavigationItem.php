@@ -214,6 +214,13 @@ class NavigationItem extends Component
             $this->isActive = ((bool) $this->evaluate($this->isActive));
         }
 
+        if (
+            is_null($this->isActive) &&
+            (filled($url = $this->getUrl()))
+        ) {
+            $this->isActive = request()->fullUrlIs($url) || (request()->path() === trim($url, '/'));
+        }
+
         return (bool) $this->isActive;
     }
 

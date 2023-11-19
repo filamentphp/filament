@@ -24,8 +24,8 @@
 >
     @if ($label)
         <div
-            @if ($collapsible && (! $hasUrl))
-                x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
+            @if ($collapsible)
+                x-on:click="@if ($hasUrl) $store.sidebar.expandGroup(label) @else $store.sidebar.toggleCollapsedGroup(label) @endif"
             @endif
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
@@ -35,8 +35,6 @@
             @endif
             @class([
                 'flex items-center rounded-lg px-2 py-2',
-                'transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5' => $hasUrl,
-                'bg-gray-100 dark:bg-white/5' => $active,
                 'cursor-pointer' => $collapsible,
             ])
         >

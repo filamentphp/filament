@@ -108,7 +108,6 @@ class NavigationGroup extends Component
     {
         $this->openUrlInNewTab($shouldOpenInNewTab);
         $this->url = $url;
-        $this->isActiveWhen(fn () => request()->fullUrlIs($url) || request()->path() === trim($url, '/'));
 
         return $this;
     }
@@ -161,6 +160,13 @@ class NavigationGroup extends Component
     {
         if ($this->isActive instanceof Closure) {
             $this->isActive = ((bool) $this->evaluate($this->isActive));
+        }
+
+        if (
+            is_null($this->isActive) &&
+            (filled($url = $this->getUrl()))
+        ) {
+            $this->isActive = request()->fullUrlIs($url) || (request()->path() === trim($url, '/'));
         }
 
         return (bool) $this->isActive;
