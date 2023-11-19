@@ -108,7 +108,7 @@ class NavigationGroup extends Component
     {
         $this->openUrlInNewTab($shouldOpenInNewTab);
         $this->url = $url;
-        $this->isActiveWhen(fn () => request()->fullUrlIs($url) || request()->path() === trim($url, '/'));
+        $this->isActiveWhen(fn (): bool => request()->fullUrlIs($url) || (request()->path() === trim($url, '/')));
 
         return $this;
     }
