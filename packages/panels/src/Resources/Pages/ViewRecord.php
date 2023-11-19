@@ -8,7 +8,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
-use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -39,7 +38,7 @@ class ViewRecord extends Page
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.view-record.navigation-item')
-            ?? (Filament::hasTopNavigation() ? 'heroicon-m-eye' : 'heroicon-o-eye');
+            ?? 'heroicon-o-eye';
     }
 
     public function getBreadcrumb(): string
