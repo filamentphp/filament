@@ -27,7 +27,7 @@
     @if ($label)
         <div
             @if ($collapsible)
-                x-on:click="@if ($hasUrl) $store.sidebar.expandGroup(label) @else $store.sidebar.toggleCollapsedGroup(label) @endif"
+                x-on:click="$store.sidebar.{{ $hasUrl ? 'expandGroup' : 'toggleCollapsedGroup' }}(label)"
             @endif
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"

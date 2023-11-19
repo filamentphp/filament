@@ -21,7 +21,7 @@ document.addEventListener('alpine:init', () => {
         },
 
         expandGroup: function (group) {
-            if (! this.collapsedGroups.includes(group)) {
+            if (!this.collapsedGroups.includes(group)) {
                 return
             }
 
