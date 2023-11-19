@@ -101,7 +101,7 @@
     }}
 >
     {{ $start }}
-    
+
     @if ($hasPrefix || $hasLoadingIndicator)
         <div
             @if (! $hasPrefix)
