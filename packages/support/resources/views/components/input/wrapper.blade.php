@@ -2,6 +2,7 @@
     'alpineDisabled' => null,
     'alpineValid' => null,
     'disabled' => false,
+    'end' => null,
     'inlinePrefix' => false,
     'inlineSuffix' => false,
     'prefix' => null,
@@ -9,13 +10,12 @@
     'prefixIcon' => null,
     'prefixIconColor' => 'gray',
     'prefixIconAlias' => null,
-    'prefixSlot' => null,
+    'start' => null,
     'suffix' => null,
     'suffixActions' => [],
     'suffixIcon' => null,
     'suffixIconColor' => 'gray',
     'suffixIconAlias' => null,
-    'suffixSlot' => null,
     'valid' => true,
 ])
 
@@ -30,8 +30,8 @@
         fn (\Filament\Forms\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
     );
 
-    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix) || !\Filament\Support\is_slot_empty($prefixSlot);
-    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix) || !\Filament\Support\is_slot_empty($suffixSlot);
+    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
+    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
 
     $hasAlpineDisabledClasses = filled($alpineDisabled);
     $hasAlpineValidClasses = filled($alpineValid);
@@ -100,6 +100,8 @@
             ])
     }}
 >
+    {{ $start }}
+    
     @if ($hasPrefix || $hasLoadingIndicator)
         <div
             @if (! $hasPrefix)
@@ -159,10 +161,6 @@
                     {{ $prefix }}
                 </span>
             @endif
-
-            @if(!\Filament\Support\is_slot_empty($prefixSlot))
-                {{$prefixSlot}}
-            @endif
         </div>
     @endif
 
@@ -213,10 +211,8 @@
                     @endforeach
                 </div>
             @endif
-
-            @if(!\Filament\Support\is_slot_empty($suffixSlot))
-                {{$suffixSlot}}
-            @endif
         </div>
     @endif
+
+    {{ $end }}
 </div>
