@@ -30,6 +30,7 @@
                                 IconEntrySize::Medium, 'md' => 'fi-in-icon-item-size-md h-5 w-5',
                                 IconEntrySize::Large, 'lg' => 'fi-in-icon-item-size-lg h-6 w-6',
                                 IconEntrySize::ExtraLarge, 'xl' => 'fi-in-icon-item-size-xl h-7 w-7',
+                                IconEntrySize::ExtraExtraLarge, '2xl' => 'fi-in-icon-item-size-2xl h-8 w-8',
                                 default => $size,
                             },
                             match ($color) {
