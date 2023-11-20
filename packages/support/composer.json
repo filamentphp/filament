@@ -18,7 +18,7 @@
         "livewire/livewire": "^3.0.8",
         "ryangjchandler/blade-capture-directive": "^0.2|^0.3",
         "spatie/color": "^1.5",
-        "spatie/invade": "^1.0",
+        "spatie/invade": "^1.0|^2.0",
         "spatie/laravel-package-tools": "^1.9",
         "symfony/html-sanitizer": "^6.1"
     },

@@ -100,6 +100,60 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 
 Users may access the View page if the `view()` method of the model policy returns `true`.
 
+## Creating another View page
+
+One View page may not be enough space to allow users to navigate a lot of information. You can create as many View pages for a resource as you want. This is especially useful if you are using [resource sub-navigation](getting-started#resource-sub-navigation), as you are then easily able to switch between the different View pages.
+
+To create a View page, you should use the `make:filament-page` command:
+
+```bash
+php artisan make:filament-page ViewCustomerContact --resource=CustomerResource --type=ViewRecord
+```
+
+You must register this new page in your resource's `getPages()` method:
+
+```php
+public static function getPages(): array
+{
+    return [
+        'index' => Pages\ListCustomers::route('/'),
+        'create' => Pages\CreateCustomer::route('/create'),
+        'view' => Pages\ViewCustomer::route('/{record}'),
+        'view-contact' => Pages\ViewCustomerContact::route('/{record}/contact'),
+        'edit' => Pages\EditCustomer::route('/{record}/edit'),
+    ];
+}
+```
+
+Now, you can define the `infolist()` or `form()` for this page, which can contain other components that are not present on the main View page:
+
+```php
+use Filament\Infolists\Infolist;
+
+public function infolist(Infolist $infolist): Infolist
+{
+    return $infolist
+        ->schema([
+            // ...
+        ]);
+}
+```
+
+If you're using [resource sub-navigation](getting-started#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
+
+```php
+use App\Filament\Resources\CustomerResource\Pages;
+use Filament\Resources\Pages\Page;
+
+public static function getRecordSubNavigation(Page $page): array
+{
+    return $page->generateNavigationItems([
+        // ...
+        Pages\ViewCustomerContact::class,
+    ]);
+}
+```
+
 ## Custom view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:

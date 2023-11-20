@@ -36,7 +36,7 @@
     $isReordering = $isReordering();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
-    $isSelectionEnabled = $isSelectionEnabled();
+    $isSelectionEnabled = $isSelectionEnabled() && (! $isGroupsOnly);
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
     $isLoaded = $isLoaded();
@@ -845,6 +845,7 @@
                                         :actions="count($actions)"
                                         :actions-position="$actionsPosition"
                                         :columns="$columns"
+                                        :group-column="$group?->getColumn()"
                                         :groups-only="$isGroupsOnly"
                                         :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                         :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
@@ -1050,6 +1051,7 @@
                                 :actions="count($actions)"
                                 :actions-position="$actionsPosition"
                                 :columns="$columns"
+                                :group-column="$group?->getColumn()"
                                 :groups-only="$isGroupsOnly"
                                 :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                 :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
@@ -1064,6 +1066,7 @@
                                 :actions="count($actions)"
                                 :actions-position="$actionsPosition"
                                 :columns="$columns"
+                                :group-column="$group?->getColumn()"
                                 :groups-only="$isGroupsOnly"
                                 :plural-model-label="$pluralModelLabel"
                                 :record-checkbox-position="$recordCheckboxPosition"

@@ -182,7 +182,10 @@ class CreateRecord extends Page
     {
         $record = new ($this->getModel())($data);
 
-        if ($tenant = Filament::getTenant()) {
+        if (
+            static::getResource()::isScopedToTenant() &&
+            ($tenant = Filament::getTenant())
+        ) {
             return $this->associateRecordWithTenant($record, $tenant);
         }
 
