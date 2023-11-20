@@ -107,9 +107,4 @@ class Section extends Component implements Contracts\HasHeaderActions
     {
         return (bool) $this->evaluate($this->isContentBefore);
     }
-
-    public function getKey(): string
-    {
-        return $this->getId();
-    }
 }

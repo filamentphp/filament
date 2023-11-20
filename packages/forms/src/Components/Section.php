@@ -112,9 +112,4 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     {
         return (bool) $this->evaluate($this->isFormBefore);
     }
-
-    public function getKey(): string
-    {
-        return $this->getId();
-    }
 }
