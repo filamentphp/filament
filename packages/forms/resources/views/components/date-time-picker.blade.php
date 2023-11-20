@@ -60,7 +60,6 @@
             <div
                 x-ignore
                 @if (FilamentView::hasSpaMode())
-                    wire:ignore
                     ax-load="visible"
                 @else
                     ax-load
