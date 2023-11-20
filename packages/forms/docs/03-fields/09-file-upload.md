@@ -105,6 +105,21 @@ FileUpload::make('attachments')
 
 `attachment_file_names` will now store the original file name/s of your uploaded files, so you can save them to the database when the form is submitted. If you're uploading `multiple()` files, make sure that you add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to this Eloquent model property too.
 
+## Avatar mode
+
+You can enable avatar mode for your file upload field using the `avatar()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('avatar')
+    ->avatar()
+```
+
+This will only allow images to be uploaded, and when they are, it will display them in a compact circle layout that is perfect for avatars.
+
+This feature pairs well with the [circle cropper](#allowing-users-to-crop-images-as-a-circle).
+
 ## Image editor
 
 You can enable an image editor for your file upload field using the `imageEditor()` method:
@@ -191,6 +206,22 @@ FileUpload::make('image')
     ->imageEditorViewportWidth('1920')
     ->imageEditorViewportHeight('1080')
 ```
+
+### Allowing users to crop images as a circle
+
+You can allow users to crop images as a circle using the `circleCropper()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->avatar()
+    ->imageEditor()
+    ->circleCropper()
+```
+
+This is perfectly accompanied by the [`avatar()` method](#avatar-mode), which renders the images in a compact circle layout.
 
 ### Cropping and resizing images without the editor
 
