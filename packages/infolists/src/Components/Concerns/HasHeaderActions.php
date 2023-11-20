@@ -49,11 +49,7 @@ trait HasHeaderActions
 
         foreach ($this->headerActions as $headerAction) {
             foreach (Arr::wrap($this->evaluate($headerAction)) as $action) {
-                $this->cachedHeaderActions[$action->getName()] = $this->prepareAction(
-                    $action
-                        ->defaultSize(ActionSize::Small)
-                        ->defaultView(Action::BUTTON_VIEW),
-                );
+                $this->cachedHeaderActions[$action->getName()] = $this->prepareAction($action);
             }
         }
 

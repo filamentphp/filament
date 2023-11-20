@@ -133,7 +133,7 @@
             @if ($hasHeaderActions)
                 <x-filament-actions::actions
                     :actions="$headerActions"
-                    class="ms-auto"
+                    :alignment="\Filament\Support\Enums\Alignment::End"
                 />
             @endif
 
