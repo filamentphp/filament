@@ -11,19 +11,34 @@ use Illuminate\Support\Str;
 
 trait CanAggregateRelationships
 {
-    public const AGGREGATE_SELECT_NAME = 'aggregate';
+    public static function getAggregateSelectName(): string
+    {
+        return 'aggregate';
+    }
 
-    public const AGGREGATE_AVERAGE = 'avg';
+    public static function getAggregateAverageKey(): string
+    {
+        return 'avg';
+    }
 
-    public const AGGREGATE_MAX = 'max';
+    public static function getAggregateMaxKey(): string
+    {
+        return 'max';
+    }
 
-    public const AGGREGATE_MIN = 'min';
+    public static function getAggregateMinKey(): string
+    {
+        return 'min';
+    }
 
-    public const AGGREGATE_SUM = 'sum';
+    public static function getAggregateSumKey(): string
+    {
+        return 'sum';
+    }
 
     public function queriesRelationshipsUsingSubSelect(): bool
     {
-        return parent::queriesRelationshipsUsingSubSelect() && blank($this->getSettings()[static::AGGREGATE_SELECT_NAME]);
+        return parent::queriesRelationshipsUsingSubSelect() && blank($this->getSettings()[static::getAggregateSelectName()]);
     }
 
     public function applyToBaseFilterQuery(Builder $query): Builder
@@ -57,20 +72,20 @@ trait CanAggregateRelationships
 
     protected function getAggregateSelect(): Select
     {
-        return Select::make(static::AGGREGATE_SELECT_NAME)
+        return Select::make(static::getAggregateSelectName())
             ->label(__('filament-tables::filters/query-builder.operators.number.form.aggregate.label'))
             ->options([
-                static::AGGREGATE_SUM => __('filament-tables::filters/query-builder.operators.number.aggregates.sum.label'),
-                static::AGGREGATE_AVERAGE => __('filament-tables::filters/query-builder.operators.number.aggregates.average.label'),
-                static::AGGREGATE_MIN => __('filament-tables::filters/query-builder.operators.number.aggregates.max.label'),
-                static::AGGREGATE_MAX => __('filament-tables::filters/query-builder.operators.number.aggregates.min.label'),
+                static::getAggregateSumKey() => __('filament-tables::filters/query-builder.operators.number.aggregates.sum.label'),
+                static::getAggregateAverageKey() => __('filament-tables::filters/query-builder.operators.number.aggregates.average.label'),
+                static::getAggregateMinKey() => __('filament-tables::filters/query-builder.operators.number.aggregates.max.label'),
+                static::getAggregateMaxKey() => __('filament-tables::filters/query-builder.operators.number.aggregates.min.label'),
             ])
             ->visible($this->getConstraint()->queriesRelationships());
     }
 
     protected function getAggregate(): ?string
     {
-        return $this->getSettings()[static::AGGREGATE_SELECT_NAME] ?? null;
+        return $this->getSettings()[static::getAggregateSelectName()] ?? null;
     }
 
     protected function getAttributeLabel(): string
@@ -78,10 +93,10 @@ trait CanAggregateRelationships
         $attributeLabel = $this->getConstraint()->getAttributeLabel();
 
         return __(match ($this->getAggregate()) {
-            static::AGGREGATE_AVERAGE => 'filament-tables::filters/query-builder.operators.number.aggregates.average.summary',
-            static::AGGREGATE_MAX => 'filament-tables::filters/query-builder.operators.number.aggregates.max.summary',
-            static::AGGREGATE_MIN => 'filament-tables::filters/query-builder.operators.number.aggregates.min.summary',
-            static::AGGREGATE_SUM => 'filament-tables::filters/query-builder.operators.number.aggregates.sum.summary',
+            static::getAggregateAverageKey() => 'filament-tables::filters/query-builder.operators.number.aggregates.average.summary',
+            static::getAggregateMaxKey() => 'filament-tables::filters/query-builder.operators.number.aggregates.max.summary',
+            static::getAggregateMinKey() => 'filament-tables::filters/query-builder.operators.number.aggregates.min.summary',
+            static::getAggregateSumKey() => 'filament-tables::filters/query-builder.operators.number.aggregates.sum.summary',
             default => $attributeLabel,
         }, ['attribute' => $attributeLabel]);
     }
