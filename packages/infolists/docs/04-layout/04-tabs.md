@@ -155,6 +155,7 @@ Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->badge(5)
+            ->badgeColor('success')
             ->schema([
                 // ...
             ]),
