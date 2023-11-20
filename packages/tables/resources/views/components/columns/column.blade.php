@@ -11,20 +11,26 @@
     use Filament\Support\Enums\Alignment;
 
     $action = $column->getAction();
+    $alignment = $column->getAlignment() ?? Alignment::Start;
     $name = $column->getName();
     $shouldOpenUrlInNewTab = $column->shouldOpenUrlInNewTab();
     $tooltip = $column->getTooltip();
     $url = $column->getUrl();
 
+    if (! $alignment instanceof Alignment) {
+        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+    }
+
     $columnClasses = \Illuminate\Support\Arr::toCssClasses([
         'flex w-full disabled:pointer-events-none',
-        match ($column->getAlignment()) {
-            Alignment::Center, 'center' => 'justify-center text-center',
-            Alignment::End, 'end' => 'justify-end text-end',
-            Alignment::Left, 'left' => 'justify-start text-left',
-            Alignment::Right, 'right' => 'justify-end text-right',
-            Alignment::Justify, 'justify' => 'justify-between text-justify',
-            default => 'justify-start text-start',
+        match ($alignment) {
+            Alignment::Start => 'justify-start text-start',
+            Alignment::Center => 'justify-center text-center',
+            Alignment::End => 'justify-end text-end',
+            Alignment::Left => 'justify-start text-left',
+            Alignment::Right => 'justify-end text-right',
+            Alignment::Justify => 'justify-between text-justify',
+            default => $alignment,
         },
     ]);
 
@@ -32,7 +38,7 @@
 @endphp
 
 <div
-    @if ($tooltip)
+    @if (filled($tooltip))
         x-data="{}"
         x-tooltip="{
             content: @js($tooltip),

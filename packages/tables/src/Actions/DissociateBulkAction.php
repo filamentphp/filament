@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -31,11 +32,11 @@ class DissociateBulkAction extends BulkAction
 
         $this->color('danger');
 
-        $this->icon('heroicon-m-x-mark');
+        $this->icon(FilamentIcon::resolve('actions::dissociate-action') ?? 'heroicon-m-x-mark');
 
         $this->requiresConfirmation();
 
-        $this->modalIcon('heroicon-o-x-mark');
+        $this->modalIcon(FilamentIcon::resolve('actions::dissociate-action.modal') ?? 'heroicon-o-x-mark');
 
         $this->action(function (): void {
             $this->process(function (Collection $records, Table $table): void {

@@ -22,4 +22,13 @@ class TestsNotifications
             return $this;
         };
     }
+
+    public function assertNotNotified(): Closure
+    {
+        return function (Notification | string | null $notification = null): static {
+            Notification::assertNotNotified($notification);
+
+            return $this;
+        };
+    }
 }

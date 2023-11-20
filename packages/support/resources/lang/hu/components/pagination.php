@@ -4,7 +4,7 @@ return [
 
     'label' => 'Lapozás',
 
-    'overview' => ':first / :last mutatása a(z) :total találatból',
+    'overview' => ':first / :last megjelenítve a(z) :total találatból',
 
     'fields' => [
 

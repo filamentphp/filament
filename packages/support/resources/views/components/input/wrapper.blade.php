@@ -2,20 +2,34 @@
     'alpineDisabled' => null,
     'alpineValid' => null,
     'disabled' => false,
+    'end' => null,
     'inlinePrefix' => false,
     'inlineSuffix' => false,
     'prefix' => null,
     'prefixActions' => [],
     'prefixIcon' => null,
+    'prefixIconColor' => 'gray',
     'prefixIconAlias' => null,
+    'start' => null,
     'suffix' => null,
     'suffixActions' => [],
     'suffixIcon' => null,
+    'suffixIconColor' => 'gray',
     'suffixIconAlias' => null,
     'valid' => true,
 ])
 
 @php
+    $prefixActions = array_filter(
+        $prefixActions,
+        fn (\Filament\Forms\Components\Actions\Action $prefixAction): bool => $prefixAction->isVisible(),
+    );
+
+    $suffixActions = array_filter(
+        $suffixActions,
+        fn (\Filament\Forms\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
+    );
+
     $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
     $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
 
@@ -31,19 +45,24 @@
     $enabledInvalidWrapperClasses = 'focus-within:ring-danger-600 dark:focus-within:ring-danger-500';
     $disabledValidWrapperClasses = 'dark:ring-white/10';
 
-    $actionsClasses = '-mx-1.5 flex items-center';
-    $iconClasses = 'fi-input-wrp-icon h-5 w-5 text-gray-400 dark:text-gray-500';
+    $actionsClasses = 'flex items-center gap-3';
     $labelClasses = 'fi-input-wrp-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
-    $prefixActions = array_filter(
-        $prefixActions,
-        fn (\Filament\Forms\Components\Actions\Action $prefixAction): bool => $prefixAction->isVisible(),
-    );
+    $getIconClasses = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssClasses([
+        'fi-input-wrp-icon h-5 w-5',
+        match ($color) {
+            'gray' => 'text-gray-400 dark:text-gray-500',
+            default => 'text-custom-500',
+        },
+    ]);
 
-    $suffixActions = array_filter(
-        $suffixActions,
-        fn (\Filament\Forms\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
-    );
+    $getIconStyles = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [400, 500],
+            alias: 'input-wrapper-icon',
+        ) => $color !== 'gray',
+    ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
 
@@ -81,10 +100,12 @@
             ])
     }}
 >
+    {{ $start }}
+
     @if ($hasPrefix || $hasLoadingIndicator)
         <div
             @if (! $hasPrefix)
-                wire:loading.delay.flex
+                wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.flex
                 wire:target="{{ $loadingIndicatorTarget }}"
                 wire:key="{{ \Illuminate\Support\Str::random() }}" {{-- Makes sure the loading indicator gets hidden again. --}}
             @endif
@@ -107,11 +128,18 @@
 
             @if ($prefixIcon)
                 <x-filament::icon
-                    :alias="$prefixIconAlias"
-                    :icon="$prefixIcon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'alias' => $prefixIconAlias,
+                                'icon' => $prefixIcon,
+                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            ])
+                        )
+                            ->class([$getIconClasses($prefixIconColor)])
+                            ->style([$getIconStyles($prefixIconColor)])
+                    "
                 />
             @endif
 
@@ -120,12 +148,11 @@
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay' => $hasPrefix,
+                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
                                 'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                             ])
-                        )
+                        )->class([$getIconClasses()])
                     "
-                    :class="$iconClasses"
                 />
             @endif
 
@@ -140,7 +167,7 @@
     <div
         @if ($hasLoadingIndicator && (! $hasPrefix))
             @if ($inlinePrefix)
-                wire:loading.delay.class.remove="ps-3"
+                wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="ps-3"
             @endif
 
             wire:target="{{ $loadingIndicatorTarget }}"
@@ -172,7 +199,8 @@
                 <x-filament::icon
                     :alias="$suffixIconAlias"
                     :icon="$suffixIcon"
-                    :class="$iconClasses"
+                    :class="$getIconClasses($suffixIconColor)"
+                    :style="$getIconStyles($suffixIconColor)"
                 />
             @endif
 
@@ -185,4 +213,6 @@
             @endif
         </div>
     @endif
+
+    {{ $end }}
 </div>

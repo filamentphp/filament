@@ -507,9 +507,14 @@ trait CanOpenModal
         return $this->evaluate($this->modalContentFooter);
     }
 
+    public function getCustomModalHeading(): string | Htmlable | null
+    {
+        return $this->evaluate($this->modalHeading);
+    }
+
     public function getModalHeading(): string | Htmlable
     {
-        return $this->evaluate($this->modalHeading) ?? $this->getLabel();
+        return $this->getCustomModalHeading() ?? $this->getLabel();
     }
 
     public function getModalDescription(): string | Htmlable | null

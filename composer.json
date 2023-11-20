@@ -14,6 +14,7 @@
         "kirschbaum-development/eloquent-power-joins": "^3.0",
         "laravel/cashier": "^14.2",
         "laravel/pint": "^1.0",
+        "league/csv": "^9.11",
         "league/flysystem-aws-s3-v3": "^3.0",
         "nunomaduro/larastan": "^2.2",
         "nunomaduro/termwind": "^1.0",

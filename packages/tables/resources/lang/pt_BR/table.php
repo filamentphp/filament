@@ -26,6 +26,10 @@ return [
             'label' => 'Marcar/desmarcar o item :key para ações em massa.',
         ],
 
+        'bulk_select_group' => [
+            'label' => 'Marcar/desmarcar o grupo :title para ações em massa.',
+        ],
+
         'search' => [
             'label' => 'Pesquisar',
             'placeholder' => 'Pesquisar',
@@ -81,7 +85,7 @@ return [
         ],
 
         'open_bulk_actions' => [
-            'label' => 'Ações abertas',
+            'label' => 'Abrir ações',
         ],
 
         'toggle_columns' => [

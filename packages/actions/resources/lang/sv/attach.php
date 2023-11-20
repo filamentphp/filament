@@ -13,7 +13,7 @@ return [
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Rader',
+                    'label' => 'Objekt',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'attached' => [
-                'title' => 'Kopplad',
+                'title' => 'Kopplades',
             ],
 
         ],

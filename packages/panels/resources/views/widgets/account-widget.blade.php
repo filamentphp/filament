@@ -22,7 +22,7 @@
             <form
                 action="{{ filament()->getLogoutUrl() }}"
                 method="post"
-                class="my-auto -me-2.5 sm:me-0"
+                class="my-auto"
             >
                 @csrf
 

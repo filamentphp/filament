@@ -4,6 +4,7 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Infolists\Components\IconEntry\IconEntrySize;
+use Filament\Support\Facades\FilamentIcon;
 
 class IconEntry extends Entry
 {
@@ -19,7 +20,7 @@ class IconEntry extends Entry
      */
     protected string $view = 'filament-infolists::components.icon-entry';
 
-    protected bool | Closure $isBoolean = false;
+    protected bool | Closure | null $isBoolean = null;
 
     /**
      * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
@@ -165,7 +166,9 @@ class IconEntry extends Entry
 
     public function getFalseIcon(): string
     {
-        return $this->evaluate($this->falseIcon) ?? 'heroicon-o-x-circle';
+        return $this->evaluate($this->falseIcon)
+            ?? FilamentIcon::resolve('infolists::components.icon-entry.false')
+            ?? 'heroicon-o-x-circle';
     }
 
     /**
@@ -178,11 +181,17 @@ class IconEntry extends Entry
 
     public function getTrueIcon(): string
     {
-        return $this->evaluate($this->trueIcon) ?? 'heroicon-o-check-circle';
+        return $this->evaluate($this->trueIcon)
+            ?? FilamentIcon::resolve('infolists::components.icon-entry.true')
+            ?? 'heroicon-o-check-circle';
     }
 
     public function isBoolean(): bool
     {
+        if (blank($this->isBoolean)) {
+            $this->isBoolean = $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean']);
+        }
+
         return (bool) $this->evaluate($this->isBoolean);
     }
 }

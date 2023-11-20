@@ -283,6 +283,44 @@ Builder::make('content')
 
 <AutoScreenshot name="forms/fields/builder/cloneable" alt="Builder repeater" version="3.x" />
 
+## Customizing the block picker
+
+### Changing the number of columns in the block picker
+
+The block picker has only 1 column. You may customize it by passing a number of columns to `blockPickerColumns()`:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make()
+    ->blockPickerColumns(2)
+    ->blocks([
+        // ...
+    ])
+```
+
+This method can be used in a couple of different ways:
+
+- You can pass an integer like `blockPickerColumns(2)`. This integer is the number of columns used on the `lg` breakpoint and higher. All smaller devices will have just 1 column.
+- You can pass an array, where the key is the breakpoint and the value is the number of columns. For example, `blockPickerColumns(['md' => 2, 'xl' => 4])` will create a 2 column layout on medium devices, and a 4 column layout on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
+
+Breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) are defined by Tailwind, and can be found in the [Tailwind documentation](https://tailwindcss.com/docs/responsive-design#overview).
+
+### Increasing the width of the block picker
+
+When you [increase the number of columns](#changing-the-number-of-columns-in-the-block-picker), the width of the dropdown should increase incrementally to handle the additional columns. If you'd like more control, you can manually set a maximum width for the dropdown using the `blockPickerWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make()
+    ->blockPickerColumns(3)
+    ->blockPickerWidth('2xl')
+    ->blocks([
+        // ...
+    ])
+```
+
 ## Builder validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to builders.
@@ -302,7 +340,7 @@ Builder::make('content')
     ->maxItems(5)
 ```
 
-## Customizing the builder action objects
+## Customizing the builder item actions
 
 This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button). The following methods are available to customize the actions:
 
@@ -351,3 +389,63 @@ Builder::make('content')
 ```
 
 > The `addAction()`, `addBetweenAction()`, `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+
+### Adding extra item actions to a builder
+
+You may add new [action buttons](../actions) to the header of each builder item by passing `Action` objects into `extraItemActions()`:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Facades\Mail;
+
+Builder::make('content')
+    ->blocks([
+        Builder\Block::make('contactDetails')
+            ->schema([
+                TextInput::make('email')
+                    ->label('Email address')
+                    ->email()
+                    ->required(),
+                // ...
+            ]),
+        // ...
+    ])
+    ->extraItemActions([
+        Action::make('sendEmail')
+            ->icon('heroicon-m-square-2-stack')
+            ->action(function (array $arguments, Builder $component): void {
+                $itemData = $component->getItemState($arguments['item']);
+                
+                Mail::to($itemData['email'])
+                    ->send(
+                        // ...
+                    );
+            }),
+    ])
+```
+
+In this example, `$arguments['item']` gives you the ID of the current builder item. You can validate the data in that builder item using the `getItemState()` method on the builder component. This method returns the validated data for the item. If the item is not valid, it will cancel the action and show an error message for that item in the form.
+
+If you want to get the raw data from the current item without validating it, you can use `$component->getRawItemState($arguments['item'])` instead.
+
+If you want to manipulate the raw data for the entire builder, for example, to add, remove or modify items, you can use `$component->getState()` to get the data, and `$component->state($state)` to set it again:
+
+```php
+use Illuminate\Support\Str;
+
+// Get the raw data for the entire builder
+$state = $component->getState();
+
+// Add an item, with a random UUID as the key
+$state[Str::uuid()] = [
+    'type' => 'contactDetails',
+    'data' => [
+        'email' => auth()->user()->email,
+    ],
+];
+
+// Set the new data for the builder
+$component->state($state);
+```

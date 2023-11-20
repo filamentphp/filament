@@ -158,7 +158,7 @@ class BaseFileUpload extends Field
         });
 
         $this->getUploadedFileNameForStorageUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file) {
-            return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
+            return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : (Str::ulid() . '.' . $file->getClientOriginalExtension());
         });
 
         $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): ?string {
@@ -170,7 +170,10 @@ class BaseFileUpload extends Field
                 return null;
             }
 
-            if ($component->shouldMoveFiles() && ($component->getDiskName() == invade($file)->disk)) {
+            if (
+                $component->shouldMoveFiles() &&
+                ($component->getDiskName() == invade($file)->disk) /** @phpstan-ignore-line */
+            ) {
                 $newPath = trim($component->getDirectory() . '/' . $component->getUploadedFileNameForStorage($file), '/');
 
                 $component->getDisk()->move($file->path(), $newPath);
@@ -188,17 +191,14 @@ class BaseFileUpload extends Field
         });
     }
 
-    public function callAfterStateUpdated(): static
+    protected function callAfterStateUpdatedHook(Closure $hook): void
     {
-        if ($callback = $this->afterStateUpdated) {
-            $state = $this->getState();
+        $state = $this->getState();
 
-            $this->evaluate($callback, [
-                'state' => $this->isMultiple() ? $state : Arr::first($state ?? []),
-            ]);
-        }
-
-        return $this;
+        $this->evaluate($hook, [
+            'state' => $this->isMultiple() ? $state : Arr::first($state ?? []),
+            'old' => $this->isMultiple() ? $this->getOldState() : Arr::first($this->getOldState() ?? []),
+        ]);
     }
 
     /**

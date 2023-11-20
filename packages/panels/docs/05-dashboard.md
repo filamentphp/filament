@@ -154,9 +154,15 @@ public function panel(Panel $panel): Panel
 
 ### Creating multiple dashboards
 
-If you want to create multiple dashboards, you can do so by repeating the process described above. Creating new pages that extend the `Dashboard` class will allow you to create as many dashboards as you need.
+If you want to create multiple dashboards, you can do so by repeating [the process described above](#customizing-the-dashboard-page). Creating new pages that extend the `Dashboard` class will allow you to create as many dashboards as you need.
 
-You may change the title of the dashboard by overriding the `$title` property:
+You will also need to define the URL path to the extra dashboard, otherwise it will be at `/`:
+
+```php
+protected static string $routePath = 'finance';
+```
+
+You may also customize the title of the dashboard by overriding the `$title` property:
 
 ```php
 protected static ?string $title = 'Finance dashboard';
