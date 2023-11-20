@@ -54,7 +54,7 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $hasImageEditor = false;
 
-    protected bool|Closure $hasCircleCropper = false;
+    protected bool | Closure $hasCircleCropper = false;
 
     protected bool | Closure $canEditSvgs = true;
 
@@ -301,7 +301,7 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function circleCropper(bool|Closure $condition = true): static
+    public function circleCropper(bool | Closure $condition = true): static
     {
         $this->hasCircleCropper = $condition;
 

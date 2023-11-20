@@ -428,28 +428,28 @@ export default function fileUploadFormComponent({
                 return
             }
 
-                this.editor = new Cropper(this.$refs.editor, {
-                    aspectRatio:
-                        imageEditorViewportWidth / imageEditorViewportHeight,
-                    autoCropArea: 1,
-                    center: true,
-                    crop: (event) => {
-                        this.$refs.xPositionInput.value = Math.round(event.detail.x)
-                        this.$refs.yPositionInput.value = Math.round(event.detail.y)
-                        this.$refs.heightInput.value = Math.round(
-                            event.detail.height,
-                        )
-                        this.$refs.widthInput.value = Math.round(event.detail.width)
-                        this.$refs.rotationInput.value = event.detail.rotate
-                    },
-                    cropBoxResizable: true,
-                    guides: true,
-                    highlight: true,
-                    responsive: true,
-                    toggleDragModeOnDblclick: true,
-                    viewMode: imageEditorMode,
-                    wheelZoomRatio: 0.02,
-                })
+            this.editor = new Cropper(this.$refs.editor, {
+                aspectRatio:
+                    imageEditorViewportWidth / imageEditorViewportHeight,
+                autoCropArea: 1,
+                center: true,
+                crop: (event) => {
+                    this.$refs.xPositionInput.value = Math.round(event.detail.x)
+                    this.$refs.yPositionInput.value = Math.round(event.detail.y)
+                    this.$refs.heightInput.value = Math.round(
+                        event.detail.height,
+                    )
+                    this.$refs.widthInput.value = Math.round(event.detail.width)
+                    this.$refs.rotationInput.value = event.detail.rotate
+                },
+                cropBoxResizable: true,
+                guides: true,
+                highlight: true,
+                responsive: true,
+                toggleDragModeOnDblclick: true,
+                viewMode: imageEditorMode,
+                wheelZoomRatio: 0.02,
+            })
         },
 
         closeEditor: function () {
@@ -569,18 +569,18 @@ export default function fileUploadFormComponent({
         },
 
         getRoundedCanvas: function (sourceCanvas) {
-            let width = sourceCanvas.width;
-            let height = sourceCanvas.height;
+            let width = sourceCanvas.width
+            let height = sourceCanvas.height
 
-            let canvas = document.createElement("canvas");
-            canvas.width = width;
-            canvas.height = height;
+            let canvas = document.createElement('canvas')
+            canvas.width = width
+            canvas.height = height
 
-            let context = canvas.getContext("2d");
-            context.imageSmoothingEnabled = true;
-            context.drawImage(sourceCanvas, 0, 0, width, height);
-            context.globalCompositeOperation = 'destination-in';
-            context.beginPath();
+            let context = canvas.getContext('2d')
+            context.imageSmoothingEnabled = true
+            context.drawImage(sourceCanvas, 0, 0, width, height)
+            context.globalCompositeOperation = 'destination-in'
+            context.beginPath()
             context.ellipse(
                 width / 2,
                 height / 2,
@@ -589,10 +589,10 @@ export default function fileUploadFormComponent({
                 0,
                 0,
                 2 * Math.PI,
-            );
-            context.fill();
+            )
+            context.fill()
 
-            return canvas;
+            return canvas
         },
 
         saveEditor: function () {
@@ -604,17 +604,20 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            const croppedCanvas = this.editor
-                .getCroppedCanvas({
-                    fillColor: imageEditorEmptyFillColor ?? "transparent",
-                    height: imageResizeTargetHeight,
-                    imageSmoothingEnabled: true,
-                    imageSmoothingQuality: "high",
-                    width: imageResizeTargetWidth,
-                })
+            let croppedCanvas = this.editor.getCroppedCanvas({
+                fillColor: imageEditorEmptyFillColor ?? 'transparent',
+                height: imageResizeTargetHeight,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+                width: imageResizeTargetWidth,
+            })
 
-            (hasCircleCropper ? this.getRoundedCanvas(croppedCanvas) : croppedCanvas)
-                .toBlob((croppedImage) => {
+            if (hasCircleCropper) {
+                croppedCanvas = this.getRoundedCanvas(croppedCanvas)
+            }
+
+            croppedCanvas.toBlob(
+                (croppedImage) => {
                     if (isMultiple) {
                         this.pond.removeFile(
                             this.pond
@@ -665,7 +668,9 @@ export default function fileUploadFormComponent({
                                     `${editingFileName}.${editingFileExtension}`,
                                     {
                                         type:
-                                            ((this.editingFile.type === 'image/svg+xml') || hasCircleCropper)
+                                            this.editingFile.type ===
+                                                'image/svg+xml' ||
+                                            hasCircleCropper
                                                 ? 'image/png'
                                                 : this.editingFile.type,
                                         lastModified: new Date().getTime(),
@@ -679,7 +684,9 @@ export default function fileUploadFormComponent({
                                 this.closeEditor()
                             })
                     })
-                }, hasCircleCropper ? 'image/png' : this.editingFile.type)
+                },
+                hasCircleCropper ? 'image/png' : this.editingFile.type,
+            )
         },
 
         destroyEditor: function () {
