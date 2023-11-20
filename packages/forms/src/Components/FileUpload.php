@@ -22,6 +22,10 @@ class FileUpload extends BaseFileUpload
      */
     protected string $view = 'filament-forms::components.file-upload';
 
+    protected string | Closure | null $pdfPreviewHeight = '320';
+
+    protected array | Closure | null $pdfPreviewParams = ['toolbar' => 0, 'view' => 'fit'];
+
     protected string | Closure | null $imageCropAspectRatio = null;
 
     protected string | Closure | null $imagePreviewHeight = null;
@@ -112,6 +116,20 @@ class FileUpload extends BaseFileUpload
         $this->acceptedFileTypes([
             'image/*',
         ]);
+
+        return $this;
+    }
+
+    public function pdfPreviewHeight(string | Closure | null $height): static
+    {
+        $this->pdfPreviewHeight = $height;
+
+        return $this;
+    }
+
+    public function pdfPreviewParams(array | Closure | null $params): static
+    {
+        $this->pdfPreviewParams = $params;
 
         return $this;
     }
@@ -215,6 +233,18 @@ class FileUpload extends BaseFileUpload
         $this->uploadProgressIndicatorPosition = $position;
 
         return $this;
+    }
+
+    public function getPdfPreviewHeight(): ?string
+    {
+        return $this->evaluate($this->pdfPreviewHeight);
+    }
+
+    public function getPdfPreviewParams(): ?string
+    {
+        $params = $this->evaluate($this->pdfPreviewParams);
+
+        return http_build_query($params);
     }
 
     public function getImageCropAspectRatio(): ?string
