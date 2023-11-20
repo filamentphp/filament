@@ -40,10 +40,10 @@ You may add [actions](../actions) to the section's header using the `headerActio
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 
-Section::make('Address')
+Section::make('Rate limiting')
     ->headerActions([
-        Action::make('edit')
-            ->action(function(){
+        Action::make('test')
+            ->action(function () {
                 // ...
             }),
     ])
@@ -60,7 +60,7 @@ If your section does not have a heading, Filament has no way of locating the act
 use Filament\Forms\Components\Section;
 
 Section::make()
-    ->id('addressSection')
+    ->id('rateLimitingSection')
     ->headerActions([
         // ...
     ])

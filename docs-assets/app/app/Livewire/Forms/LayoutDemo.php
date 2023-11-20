@@ -306,17 +306,26 @@ class LayoutDemo extends Component implements HasForms
                         'class' => 'p-16 max-w-2xl',
                     ])
                     ->schema([
-                        Section::make('Address')
+                        Section::make('Rate limiting')
+                            ->description('Prevent abuse by limiting the number of requests per period')
                             ->headerActions([
-                                Action::make('edit')
-                                    ->action(function () {
-                                        // ...
-                                    }),
+                                Action::make('test'),
                             ])
+                            ->statePath('section')
                             ->schema([
-                                TextEntry::make('line_one')
-                                    ->state('Lorem ipsum dolor sit amet'),
-                            ]),
+                                TextInput::make('hits')
+                                    ->default(30),
+                                Select::make('period')
+                                    ->default('hour')
+                                    ->options([
+                                        'hour' => 'Hour',
+                                    ]),
+                                TextInput::make('maximum')
+                                    ->default(100),
+                                Textarea::make('notes')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(3),
                     ]),
                 Group::make()
                     ->id('sectionIcons')

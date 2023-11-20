@@ -184,17 +184,23 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                         'class' => 'p-16 max-w-2xl',
                     ])
                     ->schema([
-                        Section::make('Address')
+                        Section::make('Rate limiting')
+                            ->description('Prevent abuse by limiting the number of requests per period')
                             ->headerActions([
-                                Action::make('edit')
-                                    ->action(function () {
-                                        // ...
-                                    }),
+                                Action::make('edit'),
                             ])
                             ->schema([
-                                TextEntry::make('line_one')
-                                    ->state('Lorem ipsum dolor sit amet'),
-                            ]),
+                                TextEntry::make('hits')
+                                    ->state(30),
+                                TextEntry::make('period')
+                                    ->state('Hour'),
+                                TextEntry::make('maximum')
+                                    ->state(100),
+                                TextEntry::make('notes')
+                                    ->state('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(3),
                     ]),
                 Group::make()
                     ->id('sectionIcons')
