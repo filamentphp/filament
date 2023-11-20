@@ -71,8 +71,3 @@
 .fi-fo-file-upload-circle-cropper .cropper-face {
     @apply rounded-full;
 }
-
-.fi-fo-file-upload-circle-cropper .cropper-view-box {
-    @apply outline-none;
-    box-shadow: 0 0 0 1px #39f;
-}
