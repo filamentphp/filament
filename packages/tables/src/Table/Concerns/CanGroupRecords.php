@@ -19,9 +19,9 @@ trait CanGroupRecords
 
     protected bool | Closure $isGroupsOnly = false;
 
-    protected bool | Closure $areGroupsInDropdownOnDesktop = false;
+    protected bool | Closure $areGroupingSettingsInDropdownOnDesktop = false;
 
-	protected bool | Closure $isGroupSelectionHidden = false;
+	protected bool | Closure $areGroupingSettingsHidden = false;
 
     protected ?Closure $modifyGroupRecordsTriggerActionUsing = null;
 
@@ -32,16 +32,26 @@ trait CanGroupRecords
         return $this;
     }
 
-    public function groupsInDropdownOnDesktop(bool | Closure $condition = true): static
+    public function groupingSettingsInDropdownOnDesktop(bool | Closure $condition = true): static
     {
-        $this->areGroupsInDropdownOnDesktop = $condition;
+        $this->areGroupingSettingsInDropdownOnDesktop = $condition;
 
         return $this;
     }
 
-	public function groupSelectionHidden(bool | Closure $condition = true): static
+    /**
+     * @deprecated Use the `groupingSettingsInDropdownOnDesktop()` method instead.
+     */
+    public function groupsInDropdownOnDesktop(bool | Closure $condition = true): static
     {
-        $this->isGroupSelectionHidden = $condition;
+        $this->groupingSettingsInDropdownOnDesktop($condition);
+
+        return $this;
+    }
+
+	public function groupingSettingsHidden(bool | Closure $condition = true): static
+    {
+        $this->areGroupingSettingsHidden = $condition;
 
         return $this;
     }
@@ -110,14 +120,14 @@ trait CanGroupRecords
         return $this->getGroup($defaultGroup->getId()) !== null;
     }
 
-    public function areGroupsInDropdownOnDesktop(): bool
+    public function areGroupingSettingsInDropdownOnDesktop(): bool
     {
-        return (bool) $this->evaluate($this->areGroupsInDropdownOnDesktop);
+        return (bool) $this->evaluate($this->areGroupingSettingsInDropdownOnDesktop);
     }
 
-    public function isGroupSelectionHidden(): bool
+    public function areGroupingSettingsHidden(): bool
     {
-        return (bool) $this->evaluate($this->isGroupSelectionHidden);
+        return (bool) $this->evaluate($this->areGroupingSettingsHidden);
     }
 
     public function getDefaultGroup(): ?Group
