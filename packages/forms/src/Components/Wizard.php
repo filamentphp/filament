@@ -94,6 +94,7 @@ class Wizard extends Component
     {
         $action = Action::make($this->getNextActionName())
             ->label(__('filament-forms::components.wizard.actions.next_step.label'))
+            ->color('gray')
             ->iconPosition(IconPosition::After)
             ->livewireClickHandlerEnabled(false)
             ->button();
