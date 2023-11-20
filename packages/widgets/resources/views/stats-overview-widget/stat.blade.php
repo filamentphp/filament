@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\IconPosition;
+    use Filament\Support\Facades\FilamentView;
 
     $chartColor = $getChartColor() ?? 'gray';
     $descriptionColor = $getDescriptionColor() ?? 'gray';
@@ -99,7 +100,11 @@
         {{-- An empty function to initialize the Alpine component with until it's loaded with `ax-load`. This removes the need for `x-ignore`, allowing the chart to be updated via Livewire polling. --}}
         <div x-data="{ statsOverviewStatChart: function () {} }">
             <div
-                ax-load
+                @if (FilamentView::hasSpaMode())
+                    ax-load="visible"
+                @else
+                    ax-load
+                @endif
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
                 x-data="statsOverviewStatChart({
                             dataChecksum: @js($dataChecksum),
