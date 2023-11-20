@@ -91,6 +91,11 @@ class Section extends Component implements Contracts\HasHeaderActions
         return $id;
     }
 
+    public function getKey(): ?string
+    {
+        return parent::getKey() ?? $this->getId();
+    }
+
     public function isAside(): bool
     {
         return (bool) ($this->evaluate($this->isAside) ?? false);

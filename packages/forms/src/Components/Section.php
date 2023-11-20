@@ -91,6 +91,11 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         return $id;
     }
 
+    public function getKey(): ?string
+    {
+        return parent::getKey() ?? $this->getId();
+    }
+
     public function canConcealComponents(): bool
     {
         return $this->isCollapsible();
