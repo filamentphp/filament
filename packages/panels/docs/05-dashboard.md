@@ -115,7 +115,7 @@ You may add a form to the dashboard that allows the user to filter the data disp
 
 Firstly, you must [replace the original Dashboard page](#customizing-the-dashboard-page).
 
-Now, in your new `app/Filament/Pages/Dashboard.php` file, you may add the `HasFiltersForm` trait, and add the `filtersForm()` method to return add form components:
+Now, in your new `app/Filament/Pages/Dashboard.php` file, you may add the `HasFiltersForm` trait, and add the `filtersForm()` method to return form components:
 
 ```php
 use Filament\Forms\Components\DatePicker;
