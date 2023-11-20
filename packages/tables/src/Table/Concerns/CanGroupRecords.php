@@ -21,7 +21,7 @@ trait CanGroupRecords
 
     protected bool | Closure $areGroupingSettingsInDropdownOnDesktop = false;
 
-	protected bool | Closure $areGroupingSettingsHidden = false;
+    protected bool | Closure $areGroupingSettingsHidden = false;
 
     protected ?Closure $modifyGroupRecordsTriggerActionUsing = null;
 
@@ -49,7 +49,7 @@ trait CanGroupRecords
         return $this;
     }
 
-	public function groupingSettingsHidden(bool | Closure $condition = true): static
+    public function groupingSettingsHidden(bool | Closure $condition = true): static
     {
         $this->areGroupingSettingsHidden = $condition;
 
