@@ -444,6 +444,36 @@ By default, Filament will generate a URL based on the name of the resource. You 
 protected static ?string $slug = 'pending-orders';
 ```
 
+## Resource sub-navigation
+
+Sub-navigation allows the user to navigate between different pages within a resource. Typically, all pages in the sub-navigation will be related to the same record in the resource. For example, in a Customer resource, you may have a sub-navigation with the following pages:
+
+- View customer, a [`ViewRecord` page](viewing-records) that provides a read-only view of the customer's details.
+- Edit customer, an [`EditRecord` page](editing-records) that allows the user to edit the customer's details.
+- Edit customer contact, an [`EditRecord` page](editing-records) that allows the user to edit the customer's contact details. You can [learn how to create more than one Edit page](editing-records#creating-another-edit-page).
+- Manage addresses, a [`ManageRelatedRecords` page](relation-managers#relation-pages) that allows the user to manage the customer's addresses.
+- Manage payments, a [`ManageRelatedRecords` page](relation-managers#relation-pages) that allows the user to manage the customer's payments.
+
+To add a sub-navigation to each "singular record" page in the resource, you can add the `getRecordSubNavigation()` method to the resource class:
+
+```php
+use App\Filament\Resources\CustomerResource\Pages;
+use Filament\Resources\Pages\Page;
+
+public static function getRecordSubNavigation(Page $page): array
+{
+    return $page->generateNavigationItems([
+        Pages\ViewCustomer::class,
+        Pages\EditCustomer::class,
+        Pages\EditCustomerContact::class,
+        Pages\ManageCustomerAddresses::class,
+        Pages\ManageCustomerPayments::class,
+    ]);
+}
+```
+
+Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
+
 ## Deleting resource pages
 
 If you'd like to delete a page from your resource, you can just delete the page file from the `Pages` directory of your resource, and its entry in the `getPages()` method.
