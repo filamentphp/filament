@@ -264,7 +264,7 @@ class MakePageCommand extends Command
                     4,
                 ),
                 'tableHeaderActions' => $this->indentString($tableHeaderActions ?? '', 4),
-                'title' => Str::headline($relationship),
+                'title' => Str::headline($relationship ?? ''),
                 'view' => $view,
             ]);
         } else {
