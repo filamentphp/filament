@@ -5,8 +5,8 @@
 ])
 
 <table
-    {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
     wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class="fi-loading"
+    {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
 >
     @if ($header)
         <thead class="bg-gray-50 dark:bg-white/5">
