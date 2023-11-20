@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
@@ -65,7 +64,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.manage-related-records.navigation-item')
-            ?? (Filament::hasTopNavigation() ? 'heroicon-m-rectangle-stack' : 'heroicon-o-rectangle-stack');
+            ?? 'heroicon-o-rectangle-stack';
     }
 
     public function mount(int | string $record): void

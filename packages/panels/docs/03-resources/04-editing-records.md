@@ -272,6 +272,60 @@ class EditUser extends EditRecord
 
 To view the entire actions API, please visit the [pages section](../pages#adding-actions-to-pages).
 
+## Creating another Edit page
+
+One Edit page may not be enough space to allow users to navigate many form fields. You can create as many Edit pages for a resource as you want. This is especially useful if you are using [resource sub-navigation](getting-started#resource-sub-navigation), as you are then easily able to switch between the different Edit pages.
+
+To create an Edit page, you should use the `make:filament-page` command:
+
+```bash
+php artisan make:filament-page EditCustomerContact --resource=CustomerResource --type=EditRecord
+```
+
+You must register this new page in your resource's `getPages()` method:
+
+```php
+public static function getPages(): array
+{
+    return [
+        'index' => Pages\ListCustomers::route('/'),
+        'create' => Pages\CreateCustomer::route('/create'),
+        'view' => Pages\ViewCustomer::route('/{record}'),
+        'edit' => Pages\EditCustomer::route('/{record}/edit'),
+        'edit-contact' => Pages\EditCustomerContact::route('/{record}/edit/contact'),
+    ];
+}
+```
+
+Now, you can define the `form()` for this page, which can contain other fields that are not present on the main Edit page:
+
+```php
+use Filament\Forms\Form;
+
+public function form(Form $form): Form
+{
+    return $form
+        ->schema([
+            // ...
+        ]);
+}
+```
+
+If you're using [resource sub-navigation](getting-started#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
+
+```php
+use App\Filament\Resources\CustomerResource\Pages;
+use Filament\Resources\Pages\Page;
+
+public static function getRecordSubNavigation(Page $page): array
+{
+    return $page->generateNavigationItems([
+        // ...
+        Pages\EditCustomerContact::class,
+    ]);
+}
+```
+
 ## Custom views
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
