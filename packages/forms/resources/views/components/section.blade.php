@@ -9,6 +9,7 @@
     :compact="$isCompact()"
     :content-before="$isFormBefore()"
     :description="$getDescription()"
+    :header-actions="$getHeaderActions()"
     :heading="$getHeading()"
     :icon="$getIcon()"
     :icon-color="$getIconColor()"

@@ -9,6 +9,7 @@
     'compact' => false,
     'contentBefore' => false,
     'description' => null,
+    'headerActions' => [],
     'headerEnd' => null,
     'heading' => null,
     'icon' => null,
@@ -17,10 +18,15 @@
 ])
 
 @php
+    $headerActions = array_filter(
+        $headerActions,
+        fn ($headerAction): bool => $headerAction->isVisible(),
+    );
+    $hasHeaderActions = filled($headerActions);
     $hasDescription = filled((string) $description);
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
-    $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || filled((string) $headerEnd);
+    $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || $hasHeaderActions || filled((string) $headerEnd);
 @endphp
 
 <section
@@ -122,6 +128,13 @@
                         </x-filament::section.description>
                     @endif
                 </div>
+            @endif
+
+            @if ($hasHeaderActions)
+                <x-filament-actions::actions
+                    :actions="$headerActions"
+                    :alignment="\Filament\Support\Enums\Alignment::End"
+                />
             @endif
 
             {{ $headerEnd }}
