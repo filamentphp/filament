@@ -69,7 +69,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 ### Panel Builder icon aliases
 
 - `panels::global-search.field` - Global search field
-- `panels::pages.dashboard.actions.filter.grouped` - Trigger button of the dashboard filter action
+- `panels::pages.dashboard.actions.filter` - Trigger button of the dashboard filter action
 - `panels::pages.dashboard.navigation-item` - Dashboard page navigation item
 - `panels::pages.password-reset.request-password-reset.actions.login` - Trigger button of the login action on the request password reset page
 - `panels::pages.password-reset.request-password-reset.actions.login.rtl` - Trigger button of the login action on the request password reset page (right-to-left direction)

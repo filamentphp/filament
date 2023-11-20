@@ -25,7 +25,7 @@ class FilterAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-panels::pages/dashboard.actions.filter.modal.actions.apply.label'));
 
-        $this->icon(FilamentIcon::resolve('panels::pages.dashboard.actions.filter.grouped') ?? 'heroicon-m-funnel');
+        $this->icon(FilamentIcon::resolve('panels::pages.dashboard.actions.filter') ?? 'heroicon-m-funnel');
 
         $this->color('gray');
 
