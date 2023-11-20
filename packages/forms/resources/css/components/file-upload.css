@@ -73,6 +73,6 @@
 }
 
 .fi-fo-file-upload-circle-cropper .cropper-view-box {
-    outline: 0;
+    @apply outline-none;
     box-shadow: 0 0 0 1px #39f;
 }
