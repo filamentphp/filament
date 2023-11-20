@@ -25,7 +25,7 @@ const processScreenshot = async (file, options, theme) => {
         fs.mkdirSync(`images/${theme}/${directory}`, { recursive: true })
     }
 
-    const browser = await puppeteer.launch({ headless: 'new' })
+    const browser = await puppeteer.launch()
     const page = await browser.newPage()
     await page.setViewport(
         options.viewport ?? {
