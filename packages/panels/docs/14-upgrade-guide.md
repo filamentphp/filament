@@ -184,22 +184,6 @@ In v2, you can customize the logo of the admin panel using a `/resources/views/v
 
 Filament v3 has a new universal plugin system that breaches the constraints of the admin panel. Learn how to build v3 plugins [here](plugins).
 
-#### Pages
-
-Filament v2 allowed for sub pages to be created without the resource definition. In v3 you must declare this, else you may end up with the error:
-
-`Typed static property Filament\Resources\Pages\Page::$resource must not be accessed before initialization`
-
-So enasure the page is declared with it's resource, i.e.
-
-```php
-class MyPage extends Page
- {
-     protected static string $resource = MyPageResource::class;
- 
-     public function mount($page_id)
-```
-
 ### Low-impact changes
 
 #### Default actions and type-specific relation manager classes
@@ -222,3 +206,15 @@ Some Blade components have been moved to different namespaces:
 - `<x-filament::widget>` is now `<x-filament-widgets::widget>`
 
 However, aliases have been set up so that you don't need to change your code.
+
+#### Resource pages without a `$resource` property
+
+Filament v2 allowed for resource pages to be created without a `$resource` property. In v3 you must declare this, else you may end up with the error:
+
+`Typed static property Filament\Resources\Pages\Page::$resource must not be accessed before initialization`
+
+You should ensure that the `$resource` property is set on all resource pages:
+
+```php
+protected static string $resource = PostResource::class;
+```
