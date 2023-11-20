@@ -301,6 +301,24 @@ class LayoutDemo extends Component implements HasForms
                             ->columns(3),
                     ]),
                 Group::make()
+                    ->id('sectionHeaderActions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Section::make('Address')
+                            ->headerActions([
+                                Action::make('edit')
+                                    ->action(function () {
+                                        // ...
+                                    }),
+                            ])
+                            ->schema([
+                                TextEntry::make('line_one')
+                                    ->state('Lorem ipsum dolor sit amet'),
+                            ]),
+                    ]),
+                Group::make()
                     ->id('sectionIcons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',

@@ -32,6 +32,28 @@ Section::make()
 
 <AutoScreenshot name="infolists/layout/section/without-header" alt="Section without header" version="3.x" />
 
+## Adding action to the section's header
+
+You may add action to the section's header using the `headerAction` or `headerActions()` method:
+
+```php
+use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Components\Section;
+
+Section::make('Address')
+    ->headerActions([
+        Action::make('edit')
+            ->action(function(){
+                // ...
+            }),
+    ])
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="infolists/layout/section/actions" alt="Section with header actions" version="3.x" />
+
 ## Adding an icon to the section's header
 
 You may add an icon to the section's header using the `icon()` method:
