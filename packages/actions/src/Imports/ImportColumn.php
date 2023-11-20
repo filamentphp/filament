@@ -197,15 +197,15 @@ class ImportColumn extends Component
         array_unshift($guesses, $this->getName());
 
         return array_reduce($guesses, function (array $carry, string $guess): array {
-            $guess = (string) Str::of($guess)
+            $guess = (string) str($guess)
                 ->lower()
                 ->replace('-', ' ')
                 ->replace('_', ' ');
             $carry[] = $guess;
 
-            if (Str::of($guess)->contains(' ')) {
-                $carry[] = (string) Str::of($guess)->replace(' ', '-');
-                $carry[] = (string) Str::of($guess)->replace(' ', '_');
+            if (str($guess)->contains(' ')) {
+                $carry[] = (string) str($guess)->replace(' ', '-');
+                $carry[] = (string) str($guess)->replace(' ', '_');
             }
 
             return $carry;

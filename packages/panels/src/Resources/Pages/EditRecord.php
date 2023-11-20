@@ -14,6 +14,7 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -41,7 +42,12 @@ class EditRecord extends Page
 
     public ?string $previousUrl = null;
 
-    protected static ?string $navigationIcon = 'heroicon-o-pencil';
+    public static function getNavigationIcon(): ?string
+    {
+        return static::$navigationIcon
+            ?? FilamentIcon::resolve('panels::resources.pages.edit-record.navigation-item')
+            ?? 'heroicon-o-pencil-square';
+    }
 
     public function getBreadcrumb(): string
     {

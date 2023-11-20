@@ -13,6 +13,11 @@ use function Livewire\invade;
 
 trait HasRecords
 {
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected bool $allowsDuplicates = false;
+
     protected Collection | Paginator | null $records = null;
 
     public function getFilteredTableQuery(): Builder

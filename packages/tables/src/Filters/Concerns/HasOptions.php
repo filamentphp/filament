@@ -84,4 +84,19 @@ trait HasOptions
 
         return $this;
     }
+
+    public function getOptionLabelUsingCallback(): ?Closure
+    {
+        return $this->getOptionLabelUsing;
+    }
+
+    public function getOptionLabelsUsingCallback(): ?Closure
+    {
+        return $this->getOptionLabelsUsing;
+    }
+
+    public function getSearchResultsUsingCallback(): ?Closure
+    {
+        return $this->getSearchResultsUsing;
+    }
 }

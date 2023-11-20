@@ -142,7 +142,7 @@ class ImageColumn extends Column
 
     public function getImageUrl(?string $state = null): ?string
     {
-        if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
+        if ((filter_var($state, FILTER_VALIDATE_URL) !== false) || str($state)->startsWith('data:')) {
             return $state;
         }
 

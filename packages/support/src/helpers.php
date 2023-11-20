@@ -183,7 +183,11 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
             $column = "{$column} collate {$collation}";
         }
 
-        if ($isSearchForcedCaseInsensitive || filled($collation)) {
+        if (
+            str($column)->contains('(') || // This checks if the column name probably contains a raw expression like `json_extract()`.
+            $isSearchForcedCaseInsensitive ||
+            filled($collation)
+        ) {
             return new Expression($column);
         }
 
