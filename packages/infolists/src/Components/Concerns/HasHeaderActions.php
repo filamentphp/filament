@@ -4,7 +4,6 @@ namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
 use Filament\Infolists\Components\Actions\Action;
-use Filament\Support\Enums\ActionSize;
 use Illuminate\Support\Arr;
 
 trait HasHeaderActions
