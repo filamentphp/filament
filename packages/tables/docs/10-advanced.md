@@ -233,6 +233,18 @@ Scout uses this `whereIn()` method to retrieve results internally, so there is n
 
 The `applyColumnSearchesToTableQuery()` method ensures that searching individual columns will still work. You can replace that method with your own implementation if you want to use Scout for those search inputs as well.
 
+For the global search input to show, at least one column in the table needs to be `searchable()`. Alternatively, if you are using Scout to control which columns are searchable already, you can simply pass `searchable()` to the entire table instead:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->searchable();
+}
+```
+
 ## Query string
 
 Livewire ships with a feature to store data in the URL's query string, to access across requests.
