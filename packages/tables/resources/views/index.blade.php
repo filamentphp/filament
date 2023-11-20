@@ -258,7 +258,7 @@
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
-                'fi-ta-content relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10',
+                'fi-ta-content relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10 [&_.fi-ta-cell-content::after]:bg-gray-300 dark:[&_.fi-ta-cell-content::after]:bg-gray-700',
                 '!border-t-0' => ! $hasHeader,
             ])
         >
@@ -986,16 +986,14 @@
                                                     ])
                                             "
                                         >
-                                            
-                                                <x-filament-tables::columns.column
-                                                        :column="$column"
-                                                        :is-click-disabled="$column->isClickDisabled() || $isReordering"
-                                                        :record="$record"
-                                                        :record-action="$recordAction"
-                                                        :record-key="$recordKey"
-                                                        :record-url="$recordUrl"
-                                                />
-
+                                            <x-filament-tables::columns.column
+                                                :column="$column"
+                                                :is-click-disabled="$column->isClickDisabled() || $isReordering"
+                                                :record="$record"
+                                                :record-action="$recordAction"
+                                                :record-key="$recordKey"
+                                                :record-url="$recordUrl"
+                                            />
                                         </x-filament-tables::cell>
                                     @endforeach
 

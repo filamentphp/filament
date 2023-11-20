@@ -3,6 +3,7 @@
 namespace Filament\Tables;
 
 use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Testing\TestsActions;
 use Filament\Tables\Testing\TestsBulkActions;
@@ -30,6 +31,7 @@ class TablesServiceProvider extends PackageServiceProvider
     {
         FilamentAsset::register([
             AlpineComponent::make('table', __DIR__ . '/../dist/components/table.js'),
+            Css::make('tables', __DIR__ . '/../dist/index.css'),
         ], 'filament/tables');
 
         if ($this->app->runningInConsole()) {
