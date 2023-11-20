@@ -123,7 +123,7 @@
             </ul>
 
             <script>
-                let collapsedGroups = JSON.parse(
+                var collapsedGroups = JSON.parse(
                     localStorage.getItem('collapsedGroups'),
                 )
 
