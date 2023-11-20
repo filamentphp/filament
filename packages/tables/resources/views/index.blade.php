@@ -30,6 +30,7 @@
         fn (\Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $groups = $getGroups();
+    $isGroupSelectionVisible = count($groups) && (! $isGroupSelectionHidden());
     $description = $getDescription();
     $isGroupsOnly = $isGroupsOnly() && $group;
     $isReorderable = $isReorderable();
@@ -48,8 +49,8 @@
     $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
     $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
     $hasColumnToggleDropdown = $hasToggleableColumns();
-    $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnToggleDropdown;
-    $hasHeaderToolbar = $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown;
+    $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $isGroupSelectionVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnToggleDropdown;
+    $hasHeaderToolbar = $isReorderable || $isGroupSelectionVisible || $isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
@@ -181,7 +182,7 @@
 
                     {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.grouping-selector.before', scopes: static::class) }}
 
-                    @if (count($groups) && $isGroupSelectionVisible())
+                    @if ($isGroupSelectionVisible)
                         <x-filament-tables::groups
                             :dropdown-on-desktop="$areGroupsInDropdownOnDesktop()"
                             :groups="$groups"
