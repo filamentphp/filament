@@ -35,7 +35,8 @@
         "files": [
             "packages/panels/src/global_helpers.php",
             "packages/panels/src/helpers.php",
-            "packages/support/src/helpers.php"
+            "packages/support/src/helpers.php",
+            "tests/helpers.php"
         ],
         "psr-4": {
             "Filament\\": [
