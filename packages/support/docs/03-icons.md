@@ -69,12 +69,13 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 ### Panel Builder icon aliases
 
 - `panels::global-search.field` - Global search field
+- `panels::pages.dashboard.actions.filter` - Trigger button of the dashboard filter action
 - `panels::pages.dashboard.navigation-item` - Dashboard page navigation item
+- `panels::pages.password-reset.request-password-reset.actions.login` - Trigger button of the login action on the request password reset page
+- `panels::pages.password-reset.request-password-reset.actions.login.rtl` - Trigger button of the login action on the request password reset page (right-to-left direction)
 - `panels::resources.pages.edit-record.navigation-item` - Resource edit record page navigation item
 - `panels::resources.pages.manage-related-records.navigation-item` - Resource manage related records page navigation item
 - `panels::resources.pages.view-record.navigation-item` - Resource view record page navigation item
-- `panels::pages.password-reset.request-password-reset.actions.login` - Trigger button of the login action on the request password reset page
-- `panels::pages.password-reset.request-password-reset.actions.login.rtl` - Trigger button of the login action on the request password reset page (right-to-left direction)
 - `panels::sidebar.collapse-button` - Button to collapse the sidebar
 - `panels::sidebar.collapse-button.rtl` - Button to collapse the sidebar (right-to-left direction)
 - `panels::sidebar.expand-button` - Button to expand the sidebar
