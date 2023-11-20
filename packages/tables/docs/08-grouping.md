@@ -306,9 +306,9 @@ public function table(Table $table): Table
 }
 ```
 
-## Enabling the groups dropdown on desktop
+## Using the grouping settings dropdown on desktop
 
-By default, the groups dropdown will only be shown on mobile devices. On desktop devices, the group select field is in the header of the time. You can enable the dropdown on desktop devices too by using the `groupsInDropdownOnDesktop()` method:
+By default, the grouping settings dropdown will only be shown on mobile devices. On desktop devices, the grouping settings are in the header of the time. You can enable the dropdown on desktop devices too by using the `groupingSettingsInDropdownOnDesktop()` method:
 
 ```php
 use Filament\Tables\Table;
@@ -319,6 +319,21 @@ public function table(Table $table): Table
         ->groups([
             // ...
         ])
-        ->groupsInDropdownOnDesktop();
+        ->groupingSettingsInDropdownOnDesktop();
+}
+```
+
+## Hiding the grouping settings
+
+You can hide the grouping settings interface using the `groupingSettingsHidden()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+		->defaultGroup('status');
+        ->groupingSettingsHidden();
 }
 ```
