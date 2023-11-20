@@ -33,7 +33,7 @@ class {{ class }} extends Component implements HasForms
             ->model($this->record);
     }
 
-    public function edit(): void
+    public function save(): void
     {
         $data = $this->form->getState();
 

@@ -9,7 +9,6 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
-use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
@@ -47,7 +46,7 @@ class EditRecord extends Page
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.edit-record.navigation-item')
-            ?? (Filament::hasTopNavigation() ? 'heroicon-m-pencil-square' : 'heroicon-o-pencil-square');
+            ?? 'heroicon-o-pencil-square';
     }
 
     public function getBreadcrumb(): string
