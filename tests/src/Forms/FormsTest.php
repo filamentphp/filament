@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
@@ -89,6 +90,12 @@ it('can have visible fields on multiple forms', function () {
         ->assertFormFieldIsVisible('visible', 'barForm');
 });
 
+it('sets default value to form select without selectable placeholder', function () {
+    livewire(TestComponentWithSelectForm::class)
+        ->assertFormSet(['select.placeholder' => null])
+        ->assertFormSet(['select.no-placeholder' => 2]);
+});
+
 class TestComponentWithForm extends Livewire
 {
     public function form(Form $form): Form
@@ -162,6 +169,32 @@ class TestComponentWithMultipleForms extends Livewire
 
             TextInput::make('visible'),
         ];
+    }
+
+    public function render(): View
+    {
+        return view('forms.fixtures.form');
+    }
+}
+
+class TestComponentWithSelectForm extends Livewire
+{
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Select::make('select.placeholder')
+                    ->options([
+                        2 => 'Two',
+                        3 => 'Three',
+                    ]),
+                Select::make('select.no-placeholder')
+                    ->selectablePlaceholder(false)
+                    ->options([
+                        2 => 'Two',
+                        3 => 'Three',
+                    ]),
+            ]);
     }
 
     public function render(): View

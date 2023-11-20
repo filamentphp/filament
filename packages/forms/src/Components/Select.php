@@ -115,7 +115,16 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     {
         parent::setUp();
 
-        $this->default(static fn (Select $component): ?array => $component->isMultiple() ? [] : null);
+        $this->default(static function (Select $component): int|array|null {
+            if ($component->isMultiple()) {
+                return [];
+            }
+            if (! $component->canSelectPlaceholder())
+            {
+                return collect($component->getOptions())->keys()->first();
+            }
+            return null;
+        });
 
         $this->afterStateHydrated(static function (Select $component, $state): void {
             if (! $component->isMultiple()) {
