@@ -7,6 +7,8 @@ use Filament\Tables\Filters\Indicator;
 
 trait CanSearchRecords
 {
+    protected ?bool $isSearchable = null;
+
     protected bool | Closure | null $persistsSearchInSession = false;
 
     protected bool | Closure | null $persistsColumnSearchesInSession = false;
@@ -27,8 +29,19 @@ trait CanSearchRecords
         return $this;
     }
 
+    public function searchable(?bool $condition = true): static
+    {
+        $this->isSearchable = $condition;
+
+        return $this;
+    }
+
     public function isSearchable(): bool
     {
+        if (is_bool($this->isSearchable)) {
+            return $this->isSearchable;
+        }
+
         foreach ($this->getColumns() as $column) {
             if (! $column->isGloballySearchable()) {
                 continue;
