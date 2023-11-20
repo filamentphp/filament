@@ -188,6 +188,7 @@ class TestComponentWithSelectForm extends Livewire
                         2 => 'Two',
                         3 => 'Three',
                     ]),
+
                 Select::make('select.no-placeholder')
                     ->selectablePlaceholder(false)
                     ->options([

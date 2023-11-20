@@ -119,10 +119,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             if ($component->isMultiple()) {
                 return [];
             }
+
             if (! $component->canSelectPlaceholder())
             {
                 return collect($component->getOptions())->keys()->first();
             }
+            
             return null;
         });
 
