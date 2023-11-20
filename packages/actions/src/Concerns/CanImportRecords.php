@@ -47,6 +47,11 @@ trait CanImportRecords
 
     protected int | Closure | null $maxRows = null;
 
+    /**
+     * @var array<string, mixed> | Closure
+     */
+    protected array | Closure $options = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -182,12 +187,17 @@ trait CanImportRecords
 
             $job = $action->getJob();
 
+            $options = array_merge(
+                $action->getOptions(),
+                Arr::except($data, ['file', 'columnMap']),
+            );
+
             $importJobs = collect($importChunks)
                 ->map(fn (array $importChunk): object => new ($job)(
                     $import,
                     rows: $importChunk,
                     columnMap: $data['columnMap'],
-                    options: Arr::except($data, ['file', 'columnMap']),
+                    options: $options,
                 ));
 
             Bus::batch($importJobs->all())
@@ -377,5 +387,23 @@ trait CanImportRecords
     public function getMaxRows(): ?int
     {
         return $this->evaluate($this->maxRows);
+    }
+
+    /**
+     * @param  array<string, mixed> | Closure  $options
+     */
+    public function options(array | Closure $options): static
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getOptions(): array
+    {
+        return $this->evaluate($this->options);
     }
 }
