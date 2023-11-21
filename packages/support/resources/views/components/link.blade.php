@@ -137,11 +137,7 @@
                 theme: $store.theme,
             }"
         @endif
-        {{
-            $attributes
-                ->class([$linkClasses])
-                ->style([$linkStyles])
-        }}
+        {{ $attributes->class([$linkClasses]) }}
     >
         @if ($icon && $iconPosition === IconPosition::Before)
             <x-filament::icon
@@ -197,7 +193,6 @@
                     'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 ], escape: false)
                 ->class([$linkClasses])
-                ->style([$linkStyles])
         }}
     >
         @if ($iconPosition === IconPosition::Before)
