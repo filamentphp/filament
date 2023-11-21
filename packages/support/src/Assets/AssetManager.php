@@ -16,6 +16,11 @@ class AssetManager
     /**
      * @var array<string, array<string, mixed>>
      */
+    protected array $cssVariables = [];
+
+    /**
+     * @var array<string, array<string, mixed>>
+     */
     protected array $scriptData = [];
 
     /**
@@ -27,11 +32,6 @@ class AssetManager
      * @var array<string, array<Css>>
      */
     protected array $styles = [];
-
-    /**
-     * @var array<string, array<string, mixed>>
-     */
-    protected array $cssVariables = [];
 
     /**
      * @var array<string, Theme>
@@ -57,17 +57,6 @@ class AssetManager
     }
 
     /**
-     * @param  array<string, mixed>  $data
-     */
-    public function registerScriptData(array $data, ?string $package = null): void
-    {
-        $this->scriptData[$package] = [
-            ...($this->scriptData[$package] ?? []),
-            ...$data,
-        ];
-    }
-
-    /**
      * @param  array<string, mixed>  $variables
      */
     public function registerCssVariables(array $variables, ?string $package = null): void
@@ -75,6 +64,17 @@ class AssetManager
         $this->cssVariables[$package] = [
             ...($this->cssVariables[$package] ?? []),
             ...$variables,
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public function registerScriptData(array $data, ?string $package = null): void
+    {
+        $this->scriptData[$package] = [
+            ...($this->scriptData[$package] ?? []),
+            ...$data,
         ];
     }
 
