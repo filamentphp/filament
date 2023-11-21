@@ -57,8 +57,8 @@
     $getIconStyles = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssStyles([
         \Filament\Support\get_color_css_variables(
             $color,
-            shades: [400, 500],
-            alias: 'input-wrapper-icon',
+            shades: [500],
+            alias: 'input-wrapper.icon',
         ) => $color !== 'gray',
     ]);
 

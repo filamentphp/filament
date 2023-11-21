@@ -98,6 +98,7 @@
                                     \Filament\Support\get_color_css_variables(
                                         $iconColor,
                                         shades: [500],
+                                        alias: 'infolists::components.text-entry.item.icon',
                                     ) => $iconColor !== 'gray',
                                 ]);
                             @endphp
@@ -162,6 +163,7 @@
                                             \Filament\Support\get_color_css_variables(
                                                 $color,
                                                 shades: [400, 600],
+                                                alias: 'infolists::components.text-entry.item',
                                             ) => ! in_array($color, [null, 'gray']),
                                         ])
                                     >

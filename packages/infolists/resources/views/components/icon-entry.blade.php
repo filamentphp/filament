@@ -42,6 +42,7 @@
                             \Filament\Support\get_color_css_variables(
                                 $color,
                                 shades: [400, 500],
+                                alias: 'infolists::components.icon-entry.item',
                             ) => $color !== 'gray',
                         ])
                     />

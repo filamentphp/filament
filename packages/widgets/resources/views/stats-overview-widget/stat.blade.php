@@ -22,6 +22,7 @@
         \Filament\Support\get_color_css_variables(
             $descriptionColor,
             shades: [500],
+            alias: 'widgets::stats-overview-widget.stat.description.icon',
         ) => $descriptionColor !== 'gray',
     ]);
 @endphp
@@ -79,6 +80,7 @@
                         \Filament\Support\get_color_css_variables(
                             $descriptionColor,
                             shades: [400, 600],
+                            alias: 'widgets::stats-overview-widget.stat.description',
                         ) => $descriptionColor !== 'gray',
                     ])
                 >
@@ -122,6 +124,7 @@
                     \Filament\Support\get_color_css_variables(
                         $chartColor,
                         shades: [50, 400, 500],
+                        alias: 'widgets::stats-overview-widget.stat.chart',
                     ) => $chartColor !== 'gray',
                 ])
             >
