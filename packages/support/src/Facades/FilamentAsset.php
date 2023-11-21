@@ -40,22 +40,22 @@ class FilamentAsset extends Facade
     }
 
     /**
-     * @param  array<string, mixed>  $data
-     */
-    public static function registerScriptData(array $data, ?string $package = null): void
-    {
-        static::resolved(function (AssetManager $assetManager) use ($data, $package) {
-            $assetManager->registerScriptData($data, $package);
-        });
-    }
-
-    /**
      * @param  array<string, mixed>  $variables
      */
     public static function registerCssVariables(array $variables, ?string $package = null): void
     {
         static::resolved(function (AssetManager $assetManager) use ($variables, $package) {
             $assetManager->registerCssVariables($variables, $package);
+        });
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public static function registerScriptData(array $data, ?string $package = null): void
+    {
+        static::resolved(function (AssetManager $assetManager) use ($data, $package) {
+            $assetManager->registerScriptData($data, $package);
         });
     }
 }
