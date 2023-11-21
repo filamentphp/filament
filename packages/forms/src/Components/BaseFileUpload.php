@@ -168,7 +168,7 @@ class BaseFileUpload extends Field
             return [
                 'name' => ($component->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
                 'size' => $shouldFetchFileInformation ? $storage->size($file) : 0,
-                'type' => $shouldFetchFileInformation ? $storage->mimeType($file) : '',
+                'type' => $shouldFetchFileInformation ? $storage->mimeType($file) : null,
                 'url' => $url,
             ];
         });
