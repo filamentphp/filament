@@ -76,7 +76,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function doesntStartWith(array | Arrayable | string | Closure $values): static
+    public function doesntStartWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -90,15 +90,7 @@ trait CanBeValidated
             }
 
             return 'doesnt_start_with:' . $values;
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -106,7 +98,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function doesntEndWith(array | Arrayable | string | Closure $values): static
+    public function doesntEndWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -120,15 +112,7 @@ trait CanBeValidated
             }
 
             return 'doesnt_end_with:' . $values;
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -136,7 +120,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function endsWith(array | Arrayable | string | Closure $values): static
+    public function endsWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -150,15 +134,7 @@ trait CanBeValidated
             }
 
             return 'ends_with:' . $values;
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -204,7 +180,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function in(array | Arrayable | string | Closure $values): static
+    public function in(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -218,15 +194,7 @@ trait CanBeValidated
             }
 
             return Rule::in($values);
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -278,7 +246,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function notIn(array | Arrayable | string | Closure $values): static
+    public function notIn(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -292,15 +260,7 @@ trait CanBeValidated
             }
 
             return Rule::notIn($values);
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -407,7 +367,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function startsWith(array | Arrayable | string | Closure $values): static
+    public function startsWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -421,15 +381,7 @@ trait CanBeValidated
             }
 
             return 'starts_with:' . $values;
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }

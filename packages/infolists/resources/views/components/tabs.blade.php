@@ -50,6 +50,7 @@
             <x-filament::tabs.item
                 :alpine-active="'tab === \'' . $tabId . '\''"
                 :badge="$tab->getBadge()"
+                :badge-color="$tab->getBadgeColor()"
                 :icon="$tab->getIcon()"
                 :icon-position="$tab->getIconPosition()"
                 :x-on:click="'tab = \'' . $tabId . '\''"
