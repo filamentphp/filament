@@ -50,7 +50,7 @@ class ImageColumn extends Column
 
     protected string | Closure | null $limitedRemainingTextSize = null;
 
-    protected bool | Closure $shouldQueryExists = true;
+    protected bool | Closure $shouldFetchFileExistence = true;
 
     public function disk(string | Closure | null $disk): static
     {
@@ -152,7 +152,7 @@ class ImageColumn extends Column
         $storage = $this->getDisk();
 
         try {
-            if ($this->shouldQueryExists() && ! $storage->exists($state)) {
+            if ($this->shouldFetchFileExistence() && ! $storage->exists($state)) {
                 return null;
             }
         } catch (UnableToCheckFileExistence $exception) {
@@ -335,14 +335,14 @@ class ImageColumn extends Column
         return $this->evaluate($this->limitedRemainingTextSize);
     }
 
-    public function shouldQueryExists(): bool
+    public function shouldFetchFileExistence(): bool
     {
-        return (bool) $this->evaluate($this->shouldQueryExists);
+        return (bool) $this->evaluate($this->shouldFetchFileExistence);
     }
 
-    public function queryExists(bool | Closure $condition = true): static
+    public function fetchFileExistence(bool | Closure $condition = true): static
     {
-        $this->shouldQueryExists = $condition;
+        $this->shouldFetchFileExistence = $condition;
 
         return $this;
     }

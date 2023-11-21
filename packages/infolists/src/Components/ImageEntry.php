@@ -50,6 +50,8 @@ class ImageEntry extends Entry
 
     protected string | Closure | null $limitedRemainingTextSize = null;
 
+    protected bool | Closure $shouldFetchFileExistence = true;
+
     public function disk(string | Closure | null $disk): static
     {
         $this->disk = $disk;
@@ -142,7 +144,7 @@ class ImageEntry extends Entry
         $storage = $this->getDisk();
 
         try {
-            if (! $storage->exists($state)) {
+            if ($this->shouldFetchFileExistence() && ! $storage->exists($state)) {
                 return null;
             }
         } catch (UnableToCheckFileExistence $exception) {
@@ -305,5 +307,17 @@ class ImageEntry extends Entry
     public function getLimitedRemainingTextSize(): ?string
     {
         return $this->evaluate($this->limitedRemainingTextSize);
+    }
+
+    public function shouldFetchFileExistence(): bool
+    {
+        return (bool) $this->evaluate($this->shouldFetchFileExistence);
+    }
+
+    public function fetchFileExistence(bool | Closure $condition = true): static
+    {
+        $this->shouldFetchFileExistence = $condition;
+
+        return $this;
     }
 }

@@ -216,3 +216,15 @@ ImageEntry::make('logo')
         'loading' => 'lazy',
     ]),
 ```
+
+## Detect Existence Information
+When the infolist is loaded, it will automatically detect whether the images exist. This is all done on the backend. When using remote storage with many images, this can be time-consuming. You can use the fetchFileExistence(false) method to disable this feature:
+
+```php
+use Filament\Infolists\Components\ImageEntry;
+
+ImageEntry::make('attachment')
+    ->fetchFileExistence(false)
+```
+
+This will prevent the system from automatically detecting if the image exists. Please note that this does not fetch the size of the image.
