@@ -155,7 +155,6 @@ Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->badge(5)
-            ->badgeColor('success')
             ->schema([
                 // ...
             ]),
@@ -164,6 +163,23 @@ Tabs::make('Label')
 ```
 
 <AutoScreenshot name="forms/layout/tabs/badges" alt="Tabs with badges" version="3.x" />
+
+If you'd like to change the color for a badge, you can use the `badgeColor()` method:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Label')
+    ->tabs([
+        Tabs\Tab::make('Notifications')
+            ->badge(5)
+            ->badgeColor('success')
+            ->schema([
+                // ...
+            ]),
+        // ...
+    ])
+```
 
 ## Using grid columns within a tab
 
