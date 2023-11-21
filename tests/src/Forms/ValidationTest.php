@@ -129,8 +129,7 @@ test('fields can be required unless', function () {
         ->toContain('The two field is required unless one is in foo.');
 });
 
-/* ----- in() ----- */
-test('the in() rule api works like passing laravel\'s `Rule::in()` as a custom rule', function (?string $input, array | Arrayable | string | Closure $allowed) {
+test('the `in()` rule behaves the same as Laravel\'s', function (?string $input, array | Arrayable | string | Closure $allowed) {
     $filamentFails = [];
 
     $laravelFails = [];
@@ -234,7 +233,7 @@ test('the in() rule api works like passing laravel\'s `Rule::in()` as a custom r
     ],
 ]);
 
-test('the in() rule can be conditionally validated', function () {
+test('the `in()` rule can be conditionally validated', function () {
     $fails = [];
 
     $fieldName = Str::random();
@@ -255,8 +254,7 @@ test('the in() rule can be conditionally validated', function () {
         ->toBeEmpty();
 });
 
-/* ----- notIn() ----- */
-test('the notIn() rule api works like passing laravel\'s `Rule::notIn()` as a custom rule', function (?string $input, array | Arrayable | string | Closure $allowed) {
+test('the `notIn()` rule behaves the same as Laravel\'s', function (?string $input, array | Arrayable | string | Closure $allowed) {
     $filamentFails = [];
 
     $laravelFails = [];
@@ -360,7 +358,7 @@ test('the notIn() rule api works like passing laravel\'s `Rule::notIn()` as a cu
     ],
 ]);
 
-test('the notIn rule can be conditionally validated', function () {
+test('the `notIn()` rule can be conditionally validated', function () {
     $fails = [];
 
     $fieldName = Str::random();
@@ -381,8 +379,7 @@ test('the notIn rule can be conditionally validated', function () {
         ->toBeEmpty();
 });
 
-/* ----- startsWith() ----- */
-test('the startsWith() rule api works like passing laravel\'s `starts_with:` as a custom rule', function (?string $input, array | Arrayable | string | Closure $allowed) {
+test('the `startsWith()` rule behaves the same as Laravel\'s', function (?string $input, array | Arrayable | string | Closure $allowed) {
     $filamentFails = [];
 
     $laravelFails = [];
@@ -495,7 +492,7 @@ test('the startsWith() rule api works like passing laravel\'s `starts_with:` as 
     ],
 ]);
 
-test('the startsWith rule can be conditionally validated', function () {
+test('the `startsWith()` rule can be conditionally validated', function () {
     $fails = [];
 
     $fieldName = Str::random();
@@ -516,8 +513,7 @@ test('the startsWith rule can be conditionally validated', function () {
         ->toBeEmpty();
 });
 
-/* ----- doesntStartWith() ----- */
-test('the doesntStartWith() rule api works like passing laravel\'s `doesnt_start_with:` as a custom rule', function (?string $input, array | Arrayable | string | Closure $allowed) {
+test('the `doesntStartWith()` rule behaves the same as Laravel\'s', function (?string $input, array | Arrayable | string | Closure $allowed) {
     $filamentFails = [];
 
     $laravelFails = [];
@@ -630,7 +626,7 @@ test('the doesntStartWith() rule api works like passing laravel\'s `doesnt_start
     ],
 ]);
 
-test('the doesntStartWith rule can be conditionally validated', function () {
+test('the `doesntStartWith()` rule can be conditionally validated', function () {
     $fails = [];
 
     $fieldName = Str::random();
@@ -651,8 +647,7 @@ test('the doesntStartWith rule can be conditionally validated', function () {
         ->toBeEmpty();
 });
 
-/* ----- endsWith() ----- */
-test('the endsWith() rule api works like passing laravel\'s `ends_with:` as a custom rule', function (?string $input, array | Arrayable | string | Closure $allowed) {
+test('the `endsWith()` rule behaves the same as Laravel\'s', function (?string $input, array | Arrayable | string | Closure $allowed) {
     $filamentFails = [];
 
     $laravelFails = [];
@@ -765,7 +760,7 @@ test('the endsWith() rule api works like passing laravel\'s `ends_with:` as a cu
     ],
 ]);
 
-test('the endsWith rule can be conditionally validated', function () {
+test('the `endsWith()` rule can be conditionally validated', function () {
     $fails = [];
 
     $fieldName = Str::random();
@@ -786,8 +781,7 @@ test('the endsWith rule can be conditionally validated', function () {
         ->toBeEmpty();
 });
 
-/* ----- doesntEndWith() ----- */
-test('the doesntEndWith() rule api works like passing laravel\'s `doesnt_end_with:` as a custom rule', function (?string $input, array | Arrayable | string | Closure $allowed) {
+test('the `doesntEndWith()` rule behaves the same as Laravel\'s', function (?string $input, array | Arrayable | string | Closure $allowed) {
     $filamentFails = [];
 
     $laravelFails = [];
@@ -900,7 +894,7 @@ test('the doesntEndWith() rule api works like passing laravel\'s `doesnt_end_wit
     ],
 ]);
 
-test('the doesntEndWith rule can be conditionally validated', function () {
+test('the `doesntEndWith()` rule can be conditionally validated', function () {
     $fails = [];
 
     $fieldName = Str::random();
