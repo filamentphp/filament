@@ -308,17 +308,6 @@ FileUpload::make('attachment')
 
 When the form is submitted, a temporary file upload object will be returned instead of a permanently stored file path. This is perfect for temporary files like imported CSVs.
 
-## Prevent file information fetching
-
-While the form is loaded, it will automatically detect whether the file exists, what its size is, and what type of file it is. When using remote storage with many files, this can be time-consuming. You can use the `fetchFileInformation(false)` method to disable this feature:
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::make('attachment')
-    ->fetchFileInformation(false)
-```
-
 ## Orienting images from their EXIF data
 
 By default, FilePond will automatically orient images based on their EXIF data. If you wish to disable this behaviour, you can use the `orientImagesFromExif(false)` method:
@@ -339,6 +328,17 @@ use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachment')
     ->deletable(false)
+```
+
+## Prevent file information fetching
+
+While the form is loaded, it will automatically detect whether the files exist, what its size they are, and what type of files they are. This is all done on the backend. When using remote storage with many files, this can be time-consuming. You can use the `fetchFileInformation(false)` method to disable this feature:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->fetchFileInformation(false)
 ```
 
 ## File upload validation
