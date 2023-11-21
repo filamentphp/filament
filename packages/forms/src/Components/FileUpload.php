@@ -131,7 +131,7 @@ class FileUpload extends BaseFileUpload
     }
 
     /**
-     * @param array<string, mixed> | Closure | null $params
+     * @param  array<string, mixed> | Closure | null  $params
      */
     public function pdfPreviewParams(array | Closure | null $params): static
     {
