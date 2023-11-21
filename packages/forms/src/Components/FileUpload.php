@@ -24,6 +24,9 @@ class FileUpload extends BaseFileUpload
 
     protected string | Closure | null $pdfPreviewHeight = '320';
 
+    /**
+     * @var array<string, mixed> | Closure | null
+     */
     protected array | Closure | null $pdfPreviewParams = ['toolbar' => 0, 'view' => 'fit'];
 
     protected string | Closure | null $imageCropAspectRatio = null;
@@ -127,6 +130,9 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> | Closure | null $params
+     */
     public function pdfPreviewParams(array | Closure | null $params): static
     {
         $this->pdfPreviewParams = $params;
