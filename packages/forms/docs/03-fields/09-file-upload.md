@@ -217,7 +217,6 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachment')
     ->imagePreviewHeight('250')
     ->pdfPreviewHeight('250')
-    ->pdfPreviewParams(['page' => '2'])
     ->loadingIndicatorPosition('left')
     ->panelAspectRatio('2:1')
     ->panelLayout('integrated')
