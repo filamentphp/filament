@@ -4,6 +4,12 @@
     $isDisabled = $isDisabled();
     $state = $getState();
     $type = $getType();
+
+    $alignment = $getAlignment() ?? Alignment::Start;
+
+    if (! $alignment instanceof Alignment) {
+        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+    }
 @endphp
 
 <div
@@ -21,29 +27,33 @@
         state: @js($state),
     }"
     x-init="
-        Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
-            succeed(({ snapshot, effect }) => {
-                if (component.id !== @js($this->getId())) {
-                    return
-                }
+        () => {
+            Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
+                succeed(({ snapshot, effect }) => {
+                    $nextTick(() => {
+                        if (component.id !== @js($this->getId())) {
+                            return
+                        }
 
-                if (isEditing) {
-                    return
-                }
+                        if (isEditing) {
+                            return
+                        }
 
-                if (! $refs.newState) {
-                    return
-                }
+                        if (! $refs.newState) {
+                            return
+                        }
 
-                let newState = $refs.newState.value
+                        let newState = $refs.newState.value
 
-                if (state === newState) {
-                    return
-                }
+                        if (state === newState) {
+                            return
+                        }
 
-                state = newState
+                        state = newState
+                    })
+                })
             })
-        })
+        }
     "
     {{
         $attributes
@@ -106,12 +116,13 @@
                             ',
                         ])
                         ->class([
-                            match ($getAlignment()) {
-                                Alignment::Center, 'center' => 'text-center',
-                                Alignment::End, 'end' => 'text-end',
-                                Alignment::Left, 'left' => 'text-left',
-                                Alignment::Right, 'right' => 'text-right',
-                                Alignment::Start, 'start', null => 'text-start',
+                            match ($alignment) {
+                                Alignment::Start => 'text-start',
+                                Alignment::Center => 'text-center',
+                                Alignment::End => 'text-end',
+                                Alignment::Left => 'text-left',
+                                Alignment::Right => 'text-right',
+                                default => $alignment,
                             },
                         ])
                 )

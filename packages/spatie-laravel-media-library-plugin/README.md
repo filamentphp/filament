@@ -51,9 +51,9 @@ SpatieMediaLibraryFileUpload::make('avatar')
 
 ### Configuring the storage disk and directory
 
-By default, files will be uploaded publicly to your storage disk defined in the [Filament configuration file](https://filamentphp.com/docs/forms/installation#publishing-configuration). You can also set the `FILAMENT_FILESYSTEM_DISK` environment variable to change this. Spatie's disk configuration will not be used. This is to ensure consistency between all Filament packages.
+By default, files will be uploaded publicly to your storage disk defined in the [Filament configuration file](https://filamentphp.com/docs/forms/installation#publishing-configuration). You can also set the `FILAMENT_FILESYSTEM_DISK` environment variable to change this. This is to ensure consistency between all Filament packages. Spatie's disk configuration will not be used, unless you [define a disk for a registered collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/defining-media-collections#content-using-a-specific-disk).
 
-You may set the disk for uploading files with the `disk()` method:
+Alternatively, you can manually set the disk with the `disk()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -90,6 +90,18 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
     ->customProperties(['zip_filename_prefix' => 'folder/subfolder/'])
+```
+
+### Adding custom headers
+
+You may pass in custom headers when uploading files using the `customHeaders()` method:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('attachments')
+    ->multiple()
+    ->customHeaders(['CacheControl' => 'max-age=86400'])
 ```
 
 ### Generating responsive images

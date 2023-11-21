@@ -135,7 +135,7 @@ ViewEntry::make('status')
             ])
             ->icon('heroicon-m-plus')
             ->action(function (array $data, Post $record) {
-                $post->status()->create($data);
+                $record->status()->create($data);
             }),
     ])
 ```

@@ -7,9 +7,10 @@
 >
     @php
         $relationManagers = $this->getRelationManagers();
+        $hasCombinedRelationManagerTabsWithContent = $this->hasCombinedRelationManagerTabsWithContent();
     @endphp
 
-    @if ((! $this->hasCombinedRelationManagerTabsWithContent()) || (! count($relationManagers)))
+    @if ((! $hasCombinedRelationManagerTabsWithContent) || (! count($relationManagers)))
         @if ($this->hasInfolist())
             {{ $this->infolist }}
         @else
@@ -24,13 +25,13 @@
     @if (count($relationManagers))
         <x-filament-panels::resources.relation-managers
             :active-locale="isset($activeLocale) ? $activeLocale : null"
-            :active-manager="$activeRelationManager"
+            :active-manager="$activeRelationManager ?? ($hasCombinedRelationManagerTabsWithContent ? null : array_key_first($relationManagers))"
             :content-tab-label="$this->getContentTabLabel()"
             :managers="$relationManagers"
             :owner-record="$record"
             :page-class="static::class"
         >
-            @if ($this->hasCombinedRelationManagerTabsWithContent())
+            @if ($hasCombinedRelationManagerTabsWithContent)
                 <x-slot name="content">
                     @if ($this->hasInfolist())
                         {{ $this->infolist }}

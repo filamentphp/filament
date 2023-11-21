@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Assets;
 
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 
@@ -12,6 +13,10 @@ class Js extends Asset
     protected bool $isDeferred = false;
 
     protected bool $isCore = false;
+
+    protected bool $isNavigateOnce = true;
+
+    protected bool $isModule = false;
 
     protected string | Htmlable | null $html = null;
 
@@ -32,6 +37,20 @@ class Js extends Asset
     public function core(bool $condition = true): static
     {
         $this->isCore = $condition;
+
+        return $this;
+    }
+
+    public function navigateOnce(bool $condition = true): static
+    {
+        $this->isNavigateOnce = $condition;
+
+        return $this;
+    }
+
+    public function module(bool $condition = true): static
+    {
+        $this->isModule = $condition;
 
         return $this;
     }
@@ -58,6 +77,16 @@ class Js extends Asset
         return $this->isCore;
     }
 
+    public function isNavigateOnce(): bool
+    {
+        return $this->isNavigateOnce;
+    }
+
+    public function isModule(): bool
+    {
+        return $this->isModule;
+    }
+
     public function getHtml(): Htmlable
     {
         $html = $this->html;
@@ -70,13 +99,21 @@ class Js extends Asset
 
         $async = $this->isAsync() ? 'async' : '';
         $defer = $this->isDeferred() ? 'defer' : '';
+        $module = $this->isModule() ? 'type="module"' : '';
+
+        $hasSpaMode = FilamentView::hasSpaMode();
+
+        $navigateOnce = ($hasSpaMode && $this->isNavigateOnce()) ? 'data-navigate-once' : '';
+        $navigateTrack = $hasSpaMode ? 'data-navigate-track' : '';
 
         return new HtmlString("
             <script
                 src=\"{$html}\"
                 {$async}
                 {$defer}
-                data-navigate-track
+                {$module}
+                {$navigateOnce}
+                {$navigateTrack}
             ></script>
         ");
     }
@@ -92,7 +129,9 @@ class Js extends Asset
 
     public function getRelativePublicPath(): string
     {
-        return "js/{$this->getPackage()}/{$this->getId()}.js";
+        $path = config('filament.assets_path', '');
+
+        return ltrim("{$path}/js/{$this->getPackage()}/{$this->getId()}.js", '/');
     }
 
     public function getPublicPath(): string

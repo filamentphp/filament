@@ -2,11 +2,13 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
+
 trait HasFavicon
 {
-    protected ?string $favicon = null;
+    protected string | Closure | null $favicon = null;
 
-    public function favicon(?string $url): static
+    public function favicon(string | Closure | null $url): static
     {
         $this->favicon = $url;
 
@@ -15,6 +17,6 @@ trait HasFavicon
 
     public function getFavicon(): ?string
     {
-        return $this->favicon;
+        return $this->evaluate($this->favicon);
     }
 }

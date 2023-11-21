@@ -9,6 +9,7 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
 import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
+import FilePondPluginPdfPreview from 'filepond-plugin-pdf-preview'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -19,6 +20,7 @@ FilePond.registerPlugin(FilePondPluginImagePreview)
 FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
 FilePond.registerPlugin(FilePondPluginMediaPreview)
+FilePond.registerPlugin(FilePondPluginPdfPreview)
 
 window.FilePond = FilePond
 
@@ -29,6 +31,7 @@ export default function fileUploadFormComponent({
     imageEditorViewportHeight,
     imageEditorViewportWidth,
     deleteUploadedFileUsing,
+    isDeletable,
     isDisabled,
     getUploadedFilesUsing,
     imageCropAspectRatio,
@@ -39,7 +42,12 @@ export default function fileUploadFormComponent({
     imageResizeUpscale,
     isAvatar,
     hasImageEditor,
+    canEditSvgs,
+    isSvgEditingConfirmed,
+    confirmSvgEditingMessage,
+    disabledSvgEditingMessage,
     isDownloadable,
+    isMultiple,
     isOpenable,
     isPreviewable,
     isReorderable,
@@ -49,6 +57,8 @@ export default function fileUploadFormComponent({
     minSize,
     panelAspectRatio,
     panelLayout,
+    pdfPreviewHeight,
+    pdfPreviewParams,
     placeholder,
     removeUploadedFileButtonPosition,
     removeUploadedFileUsing,
@@ -89,11 +99,13 @@ export default function fileUploadFormComponent({
                 acceptedFileTypes,
                 allowImageExifOrientation: shouldOrientImageFromExif,
                 allowPaste: false,
+                allowRemove: isDeletable,
                 allowReorder: isReorderable,
                 allowImagePreview: isPreviewable,
                 allowVideoPreview: isPreviewable,
                 allowAudioPreview: isPreviewable,
                 allowImageTransform: shouldTransformImage,
+                allowPdfPreview: isPreviewable,
                 credits: false,
                 files: await this.getFiles(),
                 imageCropAspectRatio,
@@ -112,6 +124,8 @@ export default function fileUploadFormComponent({
                 stylePanelAspectRatio: panelAspectRatio,
                 stylePanelLayout: panelLayout,
                 styleProgressIndicatorPosition: uploadProgressIndicatorPosition,
+                pdfPreviewHeight,
+                pdfComponentExtraParams: pdfPreviewParams,
                 server: {
                     load: async (source, load) => {
                         let response = await fetch(source, {
@@ -452,6 +466,65 @@ export default function fileUploadFormComponent({
             this.destroyEditor()
         },
 
+        fixImageDimensions: function (file, callback) {
+            if (file.type !== 'image/svg+xml') {
+                return callback(file)
+            }
+
+            const svgReader = new FileReader()
+
+            svgReader.onload = (event) => {
+                const svgElement = new DOMParser()
+                    .parseFromString(event.target.result, 'image/svg+xml')
+                    ?.querySelector('svg')
+
+                if (!svgElement) {
+                    return callback(file)
+                }
+
+                const viewBoxAttribute = ['viewBox', 'ViewBox', 'viewbox'].find(
+                    (attribute) => svgElement.hasAttribute(attribute),
+                )
+
+                if (!viewBoxAttribute) {
+                    return callback(file)
+                }
+
+                const viewBox = svgElement
+                    .getAttribute(viewBoxAttribute)
+                    .split(' ')
+
+                if (!viewBox || viewBox.length !== 4) {
+                    return callback(file)
+                }
+
+                svgElement.setAttribute('width', parseFloat(viewBox[2]) + 'pt')
+                svgElement.setAttribute('height', parseFloat(viewBox[3]) + 'pt')
+
+                return callback(
+                    new File(
+                        [
+                            new Blob(
+                                [
+                                    new XMLSerializer().serializeToString(
+                                        svgElement,
+                                    ),
+                                ],
+                                { type: 'image/svg+xml' },
+                            ),
+                        ],
+                        file.name,
+                        {
+                            type: 'image/svg+xml',
+                            _relativePath: '',
+                        },
+                    ),
+                )
+            }
+
+            svgReader.readAsText(file)
+        },
+
         loadEditor: function (file) {
             if (isDisabled) {
                 return
@@ -465,18 +538,40 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            this.editingFile = file
+            const isFileSvg = file.type === 'image/svg+xml'
 
-            this.initEditor()
+            if (!canEditSvgs && isFileSvg) {
+                alert(disabledSvgEditingMessage)
 
-            const reader = new FileReader()
-            reader.onload = (event) => {
-                this.isEditorOpen = true
-
-                setTimeout(() => this.editor.replace(event.target.result), 200)
+                return
             }
 
-            reader.readAsDataURL(file)
+            if (
+                isSvgEditingConfirmed &&
+                isFileSvg &&
+                !confirm(confirmSvgEditingMessage)
+            ) {
+                return
+            }
+
+            this.fixImageDimensions(file, (editingFile) => {
+                this.editingFile = editingFile
+
+                this.initEditor()
+
+                const reader = new FileReader()
+
+                reader.onload = (event) => {
+                    this.isEditorOpen = true
+
+                    setTimeout(
+                        () => this.editor.replace(event.target.result),
+                        200,
+                    )
+                }
+
+                reader.readAsDataURL(file)
+            })
         },
 
         saveEditor: function () {
@@ -497,24 +592,54 @@ export default function fileUploadFormComponent({
                     width: imageResizeTargetWidth,
                 })
                 .toBlob((croppedImage) => {
-                    this.pond.removeFile(
-                        this.pond
-                            .getFiles()
-                            .find(
-                                (uploadedFile) =>
-                                    uploadedFile.filename ===
-                                    this.editingFile.name,
-                            ),
-                    )
+                    if (isMultiple) {
+                        this.pond.removeFile(
+                            this.pond
+                                .getFiles()
+                                .find(
+                                    (uploadedFile) =>
+                                        uploadedFile.filename ===
+                                        this.editingFile.name,
+                                )?.id,
+                            { revert: true },
+                        )
+                    }
 
                     this.$nextTick(() => {
                         this.shouldUpdateState = false
+
+                        let editingFileName = this.editingFile.name.slice(
+                            0,
+                            this.editingFile.name.lastIndexOf('.'),
+                        )
+                        let editingFileExtension = this.editingFile.name
+                            .split('.')
+                            .pop()
+
+                        if (editingFileExtension === 'svg') {
+                            editingFileExtension = 'png'
+                        }
+
+                        const fileNameVersionRegex = /-v(\d+)/
+
+                        if (fileNameVersionRegex.test(editingFileName)) {
+                            editingFileName = editingFileName.replace(
+                                fileNameVersionRegex,
+                                (match, number) => {
+                                    const newNumber = Number(number) + 1
+
+                                    return `-v${newNumber}`
+                                },
+                            )
+                        } else {
+                            editingFileName += '-v1'
+                        }
 
                         this.pond
                             .addFile(
                                 new File(
                                     [croppedImage],
-                                    this.editingFile.name,
+                                    `${editingFileName}.${editingFileExtension}`,
                                     {
                                         type:
                                             this.editingFile.type ===
@@ -526,6 +651,9 @@ export default function fileUploadFormComponent({
                                 ),
                             )
                             .then(() => {
+                                this.closeEditor()
+                            })
+                            .catch(() => {
                                 this.closeEditor()
                             })
                     })
@@ -555,6 +683,7 @@ import hu from 'filepond/locale/hu-hu'
 import id from 'filepond/locale/id-id'
 import it from 'filepond/locale/it-it'
 import nl from 'filepond/locale/nl-nl'
+import no from 'filepond/locale/no_nb'
 import pl from 'filepond/locale/pl-pl'
 import pt_BR from 'filepond/locale/pt-br'
 import pt_PT from 'filepond/locale/pt-br'
@@ -581,6 +710,7 @@ const locales = {
     id,
     it,
     nl,
+    no,
     pl,
     pt_BR,
     pt_PT,

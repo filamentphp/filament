@@ -4,6 +4,7 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Actions\StaticAction;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,7 +30,7 @@ class ViewAction extends Action
 
         $this->color('gray');
 
-        $this->icon('heroicon-m-eye');
+        $this->icon(FilamentIcon::resolve('actions::view-action') ?? 'heroicon-m-eye');
 
         $this->disabledForm();
 

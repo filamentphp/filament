@@ -79,7 +79,7 @@ The `money()` method allows you to easily format monetary values, in any currenc
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('price')
-    ->money('eur')
+    ->money('EUR')
 ```
 
 ## Limiting text length
@@ -100,10 +100,10 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('description')
     ->limit(50)
-    ->tooltip(function (TextEntry $entry): ?string {
-        $state = $entry->getState();
+    ->tooltip(function (TextEntry $component): ?string {
+        $state = $component->getState();
 
-        if (strlen($state) <= $entry->getCharacterLimit()) {
+        if (strlen($state) <= $component->getCharacterLimit()) {
             return null;
         }
 
@@ -207,17 +207,6 @@ TextEntry::make('status')
     ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
 ```
 
-## Adding a placeholder if the entry is empty
-
-Sometimes you may want to display a placeholder if the entry's value is empty:
-
-```php
-use Filament\Infolists\Components\TextEntry;
-
-TextEntry::make('updated_at')
-    ->placeholder('Never')
-```
-
 ## Customizing the color
 
 You may set a color for the text, either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
@@ -247,7 +236,8 @@ TextEntry::make('email')
 You may set the position of an icon using `iconPosition()`:
 
 ```php
-use Filament\Infolists\Components\TextEntry;use Filament\Support\Enums\IconPosition;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\IconPosition;
 
 TextEntry::make('email')
     ->icon('heroicon-m-envelope')
@@ -256,9 +246,23 @@ TextEntry::make('email')
 
 <AutoScreenshot name="infolists/entries/text/icon-after" alt="Text entry with icon after" version="3.x" />
 
+The icon color defaults to the text color, but you may customize the icon color separately using `iconColor()`:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('email')
+    ->icon('heroicon-m-envelope')
+    ->iconColor('primary')
+```
+
+<AutoScreenshot name="infolists/entries/text/icon-color" alt="Text entry with icon in the primary color" version="3.x" />
+
 ## Customizing the text size
 
-You may make the text larger using `size(TextEntrySize::Large)`:
+Text columns have small font size by default, but you may change this to `TextEntrySize::ExtraSmall`, `TextEntrySize::Medium`, or `TextEntrySize::Large`.
+
+For instance, you may make the text larger using `size(TextEntrySize::Large)`:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -276,7 +280,8 @@ Text entries have regular font weight by default, but you may change this to any
 For instance, you may make the font bold using `weight(FontWeight::Bold)`:
 
 ```php
-use Filament\Infolists\Components\TextEntry;use Filament\Support\Enums\FontWeight;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\FontWeight;
 
 TextEntry::make('title')
     ->weight(FontWeight::Bold)

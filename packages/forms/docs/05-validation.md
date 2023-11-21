@@ -309,6 +309,32 @@ The field value must be empty. [See the Laravel documentation.](https://laravel.
 Field::make('name')->prohibited()
 ```
 
+### Prohibited If
+
+The field must be empty *only if* the other specified field has any of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibited-if)
+
+```php
+Field::make('name')->prohibitedIf('field', 'value')
+```
+
+### Prohibited Unless
+
+The field must be empty *unless* the other specified field has any of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibited-unless)
+
+```php
+Field::make('name')->prohibitedUnless('field', 'value')
+```
+
+### Prohibits
+
+If the field is not empty, all other specified fields must be empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibits)
+
+```php
+Field::make('name')->prohibits('field')
+
+Field::make('name')->prohibits(['field', 'another_field'])
+```
+
 ### Required
 
 The field value must not be empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required)
@@ -430,7 +456,7 @@ If you're using the [Panel Builder](../panels), you can easily ignore the curren
 Field::make('email')->unique(ignoreRecord: true)
 ```
 
-You can further customize the rule by passing a [closure](advanced#closure-customization) to the `callback` parameter:
+You can further customize the rule by passing a [closure](advanced#closure-customization) to the `modifyRuleUsing` parameter:
 
 ```php
 use Illuminate\Validation\Rules\Unique;
@@ -474,9 +500,24 @@ TextInput::make('slug')->rules([
     function () {
         return function (string $attribute, $value, Closure $fail) {
             if ($value === 'foo') {
-                $fail("The {$attribute} is invalid.");
+                $fail('The :attribute is invalid.');
             }
         };
+    },
+])
+```
+
+You may [inject utilities](advanced#form-component-utility-injection) like [`$get`](advanced#injecting-the-state-of-another-field) into your custom rules, for example if you need to reference other field values in your form:
+
+```php
+use Closure;
+use Filament\Forms\Get;
+
+TextInput::make('slug')->rules([
+    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+        if ($get('other_field') === 'foo' && $value !== 'bar') {
+            $fail("The {$attribute} is invalid.");
+        }
     },
 ])
 ```
@@ -489,6 +530,20 @@ When fields fail validation, their label is used in the error message. To custom
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')->validationAttribute('full name')
+```
+
+## Validation messages
+
+By default Laravel's validation error message is used. To customize the error messages, use the `validationMessages()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('email')
+    ->unique(// ...)
+    ->validationMessages([
+        'unique' => 'The :attribute has already been registered.',
+    ])
 ```
 
 ## Sending validation notifications

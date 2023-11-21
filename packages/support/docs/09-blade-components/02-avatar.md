@@ -4,12 +4,24 @@ title: Avatar Blade component
 
 ## Overview
 
-The avatar component is used to render a circular image, often used to represent a user or entity as their "profile picture":
+The avatar component is used to render a circular or square image, often used to represent a user or entity as their "profile picture":
 
 ```blade
 <x-filament::avatar
     src="https://filamentphp.com/dan.jpg"
     alt="Dan Harrin"
+/>
+```
+
+## Setting the rounding of an avatar
+
+Avatars are fully rounded by default, but you may make them square by setting the `circular` attribute to `false`:
+
+```blade
+<x-filament::avatar
+    src="https://filamentphp.com/dan.jpg"
+    alt="Dan Harrin"
+    :circular="false"
 />
 ```
 

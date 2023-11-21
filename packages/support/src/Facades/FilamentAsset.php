@@ -48,4 +48,14 @@ class FilamentAsset extends Facade
             $assetManager->registerScriptData($data, $package);
         });
     }
+
+    /**
+     * @param  array<string, mixed>  $variables
+     */
+    public static function registerCssVariables(array $variables, ?string $package = null): void
+    {
+        static::resolved(function (AssetManager $assetManager) use ($variables, $package) {
+            $assetManager->registerCssVariables($variables, $package);
+        });
+    }
 }

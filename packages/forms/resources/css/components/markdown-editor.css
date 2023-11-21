@@ -125,7 +125,7 @@
 }
 
 .EasyMDEContainer .editor-toolbar button {
-    @apply grid h-8 w-8 cursor-pointer place-content-center rounded-lg border-none p-0 transition duration-75 hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5;
+    @apply grid h-8 w-8 cursor-pointer place-content-center rounded-lg border-none p-0 transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 }
 
 .EasyMDEContainer .editor-toolbar button.active {

@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Facades\FilamentView;
 @endphp
 
 <x-dynamic-component
@@ -15,10 +16,20 @@
         $statePath = $getStatePath();
         $isDisabled = $isDisabled();
         $hasImageEditor = $hasImageEditor();
+
+        $alignment = $getAlignment() ?? Alignment::Start;
+
+        if (! $alignment instanceof Alignment) {
+            $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+        }
     @endphp
 
     <div
-        ax-load
+        @if (FilamentView::hasSpaMode())
+            ax-load="visible"
+        @else
+            ax-load
+        @endif
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
@@ -33,6 +44,12 @@
                         return await $wire.getFormUploadedFiles(@js($statePath))
                     },
                     hasImageEditor: @js($hasImageEditor),
+                    canEditSvgs: @js($canEditSvgs()),
+                    isSvgEditingConfirmed: @js($isSvgEditingConfirmed()),
+                    confirmSvgEditingMessage:
+                        '{{ __('filament-forms::components.file_upload.editor.svg.messages.confirmation') }}',
+                    disabledSvgEditingMessage:
+                        '{{ __('filament-forms::components.file_upload.editor.svg.messages.disabled') }}',
                     imageCropAspectRatio: @js($imageCropAspectRatio),
                     imagePreviewHeight: @js($getImagePreviewHeight()),
                     imageResizeMode: @js($getImageResizeMode()),
@@ -40,8 +57,10 @@
                     imageResizeTargetWidth: @js($imageResizeTargetWidth),
                     imageResizeUpscale: @js($getImageResizeUpscale()),
                     isAvatar: @js($isAvatar),
+                    isDeletable: @js($isDeletable()),
                     isDisabled: @js($isDisabled),
                     isDownloadable: @js($isDownloadable()),
+                    isMultiple: @js($isMultiple()),
                     isOpenable: @js($isOpenable()),
                     isPreviewable: @js($isPreviewable()),
                     isReorderable: @js($isReorderable()),
@@ -49,6 +68,8 @@
                     locale: @js(app()->getLocale()),
                     panelAspectRatio: @js($getPanelAspectRatio()),
                     panelLayout: @js($getPanelLayout()),
+                    pdfPreviewHeight: @js($getPdfPreviewHeight()),
+                    pdfPreviewParams: @js($getPdfPreviewParams()),
                     placeholder: @js($getPlaceholder()),
                     maxSize: @js(($size = $getMaxSize()) ? "'{$size} KB'" : null),
                     minSize: @js(($size = $getMinSize()) ? "'{$size} KB'" : null),
@@ -62,7 +83,7 @@
                     shouldAppendFiles: @js($shouldAppendFiles()),
                     shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
                     shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
-                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                    state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     uploadButtonPosition: @js($getUploadButtonPosition()),
                     uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
                     uploadUsing: (fileKey, file, success, error, progress) => {
@@ -89,13 +110,14 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class([
-                    'fi-fo-file-upload flex',
-                    match ($getAlignment()) {
-                        Alignment::Center, 'center' => 'justify-center',
-                        Alignment::End, 'end' => 'justify-end',
-                        Alignment::Left, 'left' => 'justify-left',
-                        Alignment::Right, 'right' => 'justify-right',
-                        Alignment::Start, 'start', null => 'justify-start',
+                    'fi-fo-file-upload flex [&_.filepond--root]:font-sans',
+                    match ($alignment) {
+                        Alignment::Start => 'justify-start',
+                        Alignment::Center => 'justify-center',
+                        Alignment::End => 'justify-end',
+                        Alignment::Left => 'justify-left',
+                        Alignment::Right => 'justify-right',
+                        default => $alignment,
                     },
                 ])
         }}
@@ -193,14 +215,14 @@
                                                         class="flex w-full items-center rounded-lg border border-gray-300 bg-gray-100 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-800"
                                                     >
                                                         <span
-                                                            class="flex w-20 flex-shrink-0 items-center justify-center self-stretch border-e border-gray-300 px-2 dark:border-gray-700"
+                                                            class="flex w-20 shrink-0 items-center justify-center self-stretch border-e border-gray-300 px-2 dark:border-gray-700"
                                                         >
                                                             {{ $input['label'] }}
                                                         </span>
 
                                                         <input
                                                             @class([
-                                                                'block w-full border-none text-sm transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
+                                                                'block w-full border-none text-sm transition duration-75 focus-visible:border-primary-500 focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus-visible:border-primary-500',
                                                             ])
                                                             x-on:keyup.enter.stop.prevent="{{ $input['alpineSaveHandler'] }}"
                                                             x-on:blur="{{ $input['alpineSaveHandler'] }}"

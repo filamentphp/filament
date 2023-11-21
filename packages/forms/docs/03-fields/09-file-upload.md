@@ -216,6 +216,7 @@ use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachment')
     ->imagePreviewHeight('250')
+    ->pdfPreviewHeight('250')
     ->loadingIndicatorPosition('left')
     ->panelAspectRatio('2:1')
     ->panelLayout('integrated')
@@ -327,6 +328,17 @@ use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachment')
     ->orientImagesFromExif(false)
+```
+
+## Hiding the remove file button
+
+It is also possible to hide the remove uploaded file button by using `deletable(false)`:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->deletable(false)
 ```
 
 ## File upload validation

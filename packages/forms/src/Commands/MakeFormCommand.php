@@ -8,6 +8,7 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
@@ -100,7 +101,7 @@ class MakeFormCommand extends Command
             'submitAction' => filled($model) ? ($isEditForm ? 'save' : 'create') : 'submit',
         ]);
 
-        $this->components->info("Successfully created {$component}!");
+        $this->components->info("Filament form [{$path}] created successfully.");
 
         return static::SUCCESS;
     }

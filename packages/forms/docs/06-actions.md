@@ -144,7 +144,7 @@ Notice `$set` injected into the `action()` function in this example. This is [fo
 Now, to render the action in the view of the custom component, you need to call `$getAction()`, passing the name of the action you registered:
 
 ```blade
-<div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+<div x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }">
     <input x-model="state" type="range" />
     
     {{ $getAction('setMaximum') }}

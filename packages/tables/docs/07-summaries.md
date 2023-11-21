@@ -244,7 +244,7 @@ use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('price')
-    ->summarize(Sum::make()->money('eur'))
+    ->summarize(Sum::make()->money('EUR'))
 ```
 
 ### Limiting text length

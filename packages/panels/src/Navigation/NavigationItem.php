@@ -43,7 +43,10 @@ class NavigationItem extends Component
 
     public static function make(string | Closure | null $label = null): static
     {
-        return app(static::class, ['label' => $label]);
+        $static = app(static::class, ['label' => $label]);
+        $static->configure();
+
+        return $static;
     }
 
     /**
@@ -122,7 +125,7 @@ class NavigationItem extends Component
 
     public function url(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
     {
-        $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
+        $this->openUrlInNewTab($shouldOpenInNewTab);
         $this->url = $url;
 
         return $this;

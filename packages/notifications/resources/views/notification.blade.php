@@ -31,38 +31,34 @@
         ])
     "
     @class([
-        'w-full transition duration-300',
+        'fi-no-notification w-full overflow-hidden transition duration-300',
         ...match ($isInline) {
-            true => [],
+            true => [
+                'fi-inline',
+            ],
             false => [
                 'max-w-sm rounded-xl bg-white shadow-lg ring-1 dark:bg-gray-900',
                 match ($color) {
-                    'gray' => 'ring-gray-950/5 dark:ring-white/10',
-                    default => 'ring-custom-600/20 dark:ring-custom-400/30',
+                    'gray' => 'fi-color-gray ring-gray-950/5 dark:ring-white/10',
+                    default => 'fi-color-custom ring-custom-600/20 dark:ring-custom-400/30',
                 },
             ],
         },
     ])
     @style([
-        \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! ($isInline || $color === 'gray'),
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [50, 400, 600],
+        ) => ! ($isInline || $color === 'gray'),
     ])
 >
     <div
         @class([
             'flex w-full gap-3 p-4',
-            ...match ($isInline) {
-                true => [],
-                false => [
-                    'rounded-xl',
-                    match ($color) {
-                        'gray' => null,
-                        default => 'bg-custom-50 dark:bg-custom-400/10',
-                    },
-                ],
+            match ($color) {
+                'gray' => null,
+                default => 'bg-custom-50 dark:bg-custom-400/10',
             },
-        ])
-        @style([
-            \Filament\Support\get_color_css_variables($color, shades: [50, 400]) => ! ($isInline || $color === 'gray'),
         ])
     >
         @if ($icon = $getIcon())

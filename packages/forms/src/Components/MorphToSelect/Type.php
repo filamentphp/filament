@@ -5,11 +5,14 @@ namespace Filament\Forms\Components\MorphToSelect;
 use Closure;
 use Exception;
 use Filament\Forms\Components\Select;
-use function Filament\Support\get_model_label;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
+
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
+use function Filament\Support\get_model_label;
 
 class Type
 {
@@ -36,7 +39,7 @@ class Type
 
     protected string $model;
 
-    protected bool $isSearchForcedCaseInsensitive = false;
+    protected ?bool $isSearchForcedCaseInsensitive = null;
 
     final public function __construct(string $model)
     {
@@ -61,25 +64,21 @@ class Type
                 ]) ?? $query;
             }
 
-            if (empty($query->getQuery()->orders)) {
-                $query->orderBy($this->getTitleAttribute());
-            }
+            /** @var Connection $databaseConnection */
+            $databaseConnection = $query->getConnection();
 
-            $search = Str::lower($search);
-
-            $isFirst = true;
             $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
-            $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $search): Builder {
-                foreach ($this->getSearchColumns() as $searchColumn) {
-                    $caseAwareSearchColumn = $isForcedCaseInsensitive ?
-                        new Expression("lower({$searchColumn})") :
-                        $searchColumn;
+            $isFirst = true;
 
+            $search = generate_search_term_expression($search, $isForcedCaseInsensitive, $databaseConnection);
+
+            $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $databaseConnection, $search): Builder {
+                foreach ($this->getSearchColumns() as $searchColumn) {
                     $whereClause = $isFirst ? 'where' : 'orWhere';
 
                     $query->{$whereClause}(
-                        $caseAwareSearchColumn,
+                        generate_search_column_expression($searchColumn, $isForcedCaseInsensitive, $databaseConnection),
                         'like',
                         "%{$search}%",
                     );
@@ -109,8 +108,14 @@ class Type
                     ->toArray();
             }
 
+            $titleAttribute = $this->getTitleAttribute();
+
+            if (empty($query->getQuery()->orders)) {
+                $query->orderBy($titleAttribute);
+            }
+
             return $query
-                ->pluck($this->getTitleAttribute(), $keyName)
+                ->pluck($titleAttribute, $keyName)
                 ->toArray();
         });
 
@@ -127,10 +132,6 @@ class Type
                 ]) ?? $query;
             }
 
-            if (empty($query->getQuery()->orders)) {
-                $query->orderBy($this->getTitleAttribute());
-            }
-
             $keyName = $query->getModel()->getKeyName();
 
             if ($this->hasOptionLabelFromRecordUsingCallback()) {
@@ -142,8 +143,14 @@ class Type
                     ->toArray();
             }
 
+            $titleAttribute = $this->getTitleAttribute();
+
+            if (empty($query->getQuery()->orders)) {
+                $query->orderBy($titleAttribute);
+            }
+
             return $query
-                ->pluck($this->getTitleAttribute(), $keyName)
+                ->pluck($titleAttribute, $keyName)
                 ->toArray();
         });
 
@@ -295,14 +302,14 @@ class Type
         return $this->optionsLimit;
     }
 
-    public function forceSearchCaseInsensitive(bool $condition = true): static
+    public function forceSearchCaseInsensitive(?bool $condition = true): static
     {
         $this->isSearchForcedCaseInsensitive = $condition;
 
         return $this;
     }
 
-    public function isSearchForcedCaseInsensitive(): bool
+    public function isSearchForcedCaseInsensitive(): ?bool
     {
         return $this->isSearchForcedCaseInsensitive;
     }

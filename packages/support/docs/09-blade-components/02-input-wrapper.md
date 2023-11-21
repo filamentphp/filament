@@ -98,3 +98,19 @@ You may place an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) befor
     />
 </x-filament::input.wrapper>
 ```
+
+#### Setting the affix icon's color
+
+Affix icons are gray by default, but you may set a different color using the `prefix-icon-color` and `affix-icon-color` attributes:
+
+```blade
+<x-filament::input.wrapper
+    suffix-icon="heroicon-m-check-circle"
+    suffix-icon-color="success"
+>
+    <x-filament::input
+        type="url"
+        wire:model="domain"
+    />
+</x-filament::input.wrapper>
+```
