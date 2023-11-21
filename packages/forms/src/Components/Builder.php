@@ -7,6 +7,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -15,9 +16,10 @@ use function Filament\Forms\array_move_before;
 
 class Builder extends Field implements Contracts\CanConcealComponents
 {
-    use Concerns\CanBeCollapsed;
-    use Concerns\CanLimitItemsLength;
     use Concerns\CanBeCloned;
+    use Concerns\CanBeCollapsed;
+    use Concerns\CanGenerateUuids;
+    use Concerns\CanLimitItemsLength;
 
     /**
      * @var view-string
@@ -64,6 +66,17 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     protected ?Closure $modifyExpandAllActionUsing = null;
 
+    protected string | Closure | null $labelBetweenItems = null;
+
+    protected bool | Closure $isBlockLabelTruncated = true;
+
+    /**
+     * @var array<string, int | string | null> | null
+     */
+    protected ?array $blockPickerColumns = [];
+
+    protected string | Closure | null $blockPickerWidth = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -74,7 +87,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             $items = [];
 
             foreach ($state ?? [] as $itemData) {
-                $items[(string) Str::uuid()] = $itemData;
+                $items[$component->generateUuid()] = $itemData;
             }
 
             $component->state($items);
@@ -115,7 +128,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ->label(fn (Builder $component) => $component->getAddActionLabel())
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $newUuid = (string) Str::uuid();
+                $newUuid = $component->generateUuid();
 
                 $items = $component->getState();
                 $items[$newUuid] = [
@@ -128,11 +141,13 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $component->getChildComponentContainers()[$newUuid]->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
+
+                $component->callAfterStateUpdated();
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isAddable());
+            ->visible(fn (Builder $component): bool => $component->isAddable());
 
         if ($this->modifyAddActionUsing) {
             $action = $this->evaluate($this->modifyAddActionUsing, [
@@ -161,7 +176,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ->label(fn (Builder $component) => $component->getAddBetweenActionLabel())
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $newUuid = (string) Str::uuid();
+                $newUuid = $component->generateUuid();
 
                 $items = [];
 
@@ -181,11 +196,13 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $component->getChildComponentContainers()[$newUuid]->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
+
+                $component->callAfterStateUpdated();
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isAddable());
+            ->visible(fn (Builder $component): bool => $component->isAddable());
 
         if ($this->modifyAddBetweenActionUsing) {
             $action = $this->evaluate($this->modifyAddBetweenActionUsing, [
@@ -212,10 +229,10 @@ class Builder extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getCloneActionName())
             ->label(__('filament-forms::components.builder.actions.clone.label'))
-            ->icon('heroicon-m-square-2-stack')
+            ->icon(FilamentIcon::resolve('forms::components.builder.actions.clone') ?? 'heroicon-m-square-2-stack')
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $newUuid = (string) Str::uuid();
+                $newUuid = $component->generateUuid();
 
                 $items = $component->getState();
                 $items[$newUuid] = $items[$arguments['item']];
@@ -223,10 +240,12 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isCloneable());
+            ->visible(fn (Builder $component): bool => $component->isCloneable());
 
         if ($this->modifyCloneActionUsing) {
             $action = $this->evaluate($this->modifyCloneActionUsing, [
@@ -253,17 +272,19 @@ class Builder extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getDeleteActionName())
             ->label(__('filament-forms::components.builder.actions.delete.label'))
-            ->icon('heroicon-m-trash')
+            ->icon(FilamentIcon::resolve('forms::components.builder.actions.delete') ?? 'heroicon-m-trash')
             ->color('danger')
             ->action(function (array $arguments, Builder $component): void {
                 $items = $component->getState();
                 unset($items[$arguments['item']]);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isDeletable());
+            ->visible(fn (Builder $component): bool => $component->isDeletable());
 
         if ($this->modifyDeleteActionUsing) {
             $action = $this->evaluate($this->modifyDeleteActionUsing, [
@@ -290,16 +311,18 @@ class Builder extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getMoveDownActionName())
             ->label(__('filament-forms::components.builder.actions.move_down.label'))
-            ->icon('heroicon-m-arrow-down')
+            ->icon(FilamentIcon::resolve('forms::components.builder.actions.move-down') ?? 'heroicon-m-arrow-down')
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
                 $items = array_move_after($component->getState(), $arguments['item']);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isReorderable());
+            ->visible(fn (Builder $component): bool => $component->isReorderable());
 
         if ($this->modifyMoveDownActionUsing) {
             $action = $this->evaluate($this->modifyMoveDownActionUsing, [
@@ -326,16 +349,18 @@ class Builder extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getMoveUpActionName())
             ->label(__('filament-forms::components.builder.actions.move_up.label'))
-            ->icon('heroicon-m-arrow-up')
+            ->icon(FilamentIcon::resolve('forms::components.builder.actions.move-up') ?? 'heroicon-m-arrow-up')
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
                 $items = array_move_before($component->getState(), $arguments['item']);
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isReorderable());
+            ->visible(fn (Builder $component): bool => $component->isReorderable());
 
         if ($this->modifyMoveUpActionUsing) {
             $action = $this->evaluate($this->modifyMoveUpActionUsing, [
@@ -353,6 +378,13 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function labelBetweenItems(string | Closure | null $label): static
+    {
+        $this->labelBetweenItems = $label;
+
+        return $this;
+    }
+
     public function getMoveUpActionName(): string
     {
         return 'moveUp';
@@ -362,7 +394,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getReorderActionName())
             ->label(__('filament-forms::components.builder.actions.reorder.label'))
-            ->icon('heroicon-m-arrows-up-down')
+            ->icon(FilamentIcon::resolve('forms::components.builder.actions.reorder') ?? 'heroicon-m-arrows-up-down')
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
                 $items = [
@@ -371,11 +403,13 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 ];
 
                 $component->state($items);
+
+                $component->callAfterStateUpdated();
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->size(ActionSize::Small)
-            ->visible(fn (): bool => $this->isReorderableWithDragAndDrop());
+            ->visible(fn (Builder $component): bool => $component->isReorderableWithDragAndDrop());
 
         if ($this->modifyReorderActionUsing) {
             $action = $this->evaluate($this->modifyReorderActionUsing, [
@@ -402,7 +436,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getCollapseActionName())
             ->label(__('filament-forms::components.builder.actions.collapse.label'))
-            ->icon('heroicon-m-chevron-up')
+            ->icon(FilamentIcon::resolve('forms::components.builder.actions.collapse') ?? 'heroicon-m-chevron-up')
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -433,7 +467,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getExpandActionName())
             ->label(__('filament-forms::components.builder.actions.expand.label'))
-            ->icon('heroicon-m-chevron-down')
+            ->icon(FilamentIcon::resolve('forms::components.builder.actions.expand') ?? 'heroicon-m-chevron-down')
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -518,6 +552,13 @@ class Builder extends Field implements Contracts\CanConcealComponents
     public function getExpandAllActionName(): string
     {
         return 'expandAll';
+    }
+
+    public function truncateBlockLabel(bool | Closure $condition = true): static
+    {
+        $this->isBlockLabelTruncated = $condition;
+
+        return $this;
     }
 
     public function addBetweenActionLabel(string | Closure | null $label): static
@@ -689,6 +730,10 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     public function getChildComponentContainers(bool $withHidden = false): array
     {
+        if ((! $withHidden) && $this->isHidden()) {
+            return [];
+        }
+
         return collect($this->getState())
             ->filter(fn (array $itemData): bool => $this->hasBlock($itemData['type']))
             ->map(
@@ -773,5 +818,67 @@ class Builder extends Field implements Contracts\CanConcealComponents
     public function canConcealComponents(): bool
     {
         return $this->isCollapsible();
+    }
+
+    public function getLabelBetweenItems(): ?string
+    {
+        return $this->evaluate($this->labelBetweenItems);
+    }
+
+    public function isBlockLabelTruncated(): bool
+    {
+        return (bool) $this->evaluate($this->isBlockLabelTruncated);
+    }
+
+    /**
+     * @param  array<string, int | string | null> | int | string | null  $columns
+     */
+    public function blockPickerColumns(array | int | string | null $columns = 2): static
+    {
+        if (! is_array($columns)) {
+            $columns = [
+                'lg' => $columns,
+            ];
+        }
+
+        $this->blockPickerColumns = [
+            ...($this->blockPickerColumns ?? []),
+            ...$columns,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, int | string | null> | int | string | null
+     */
+    public function getBlockPickerColumns(?string $breakpoint = null): array | int | string | null
+    {
+        $columns = $this->blockPickerColumns ?? [
+            'default' => 1,
+            'sm' => null,
+            'md' => null,
+            'lg' => null,
+            'xl' => null,
+            '2xl' => null,
+        ];
+
+        if ($breakpoint !== null) {
+            return $columns[$breakpoint] ?? null;
+        }
+
+        return $columns;
+    }
+
+    public function blockPickerWidth(string | Closure | null $width): static
+    {
+        $this->blockPickerWidth = $width;
+
+        return $this;
+    }
+
+    public function getBlockPickerWidth(): ?string
+    {
+        return $this->evaluate($this->blockPickerWidth);
     }
 }

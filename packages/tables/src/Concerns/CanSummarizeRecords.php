@@ -3,7 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
-use Filament\Tables\Support\RelationshipJoiner;
+use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
@@ -86,7 +86,7 @@ trait CanSummarizeRecords
             $selects[] = "{$group} as \"{$groupSelectAlias}\"";
 
             if (filled($groupingRelationshipName = $this->getTableGrouping()?->getRelationshipName())) {
-                $joins = (new RelationshipJoiner())->getLeftJoinsForRelationship(
+                $joins = app(RelationshipJoiner::class)->getLeftJoinsForRelationship(
                     query: $queryToJoin,
                     relationship: $groupingRelationshipName,
                 );

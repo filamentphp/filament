@@ -8,6 +8,7 @@ use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
+use Filament\Tests\Notifications\Fixtures\CustomNotification;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -100,22 +101,13 @@ it('can send notifications', function () {
         ->eventData->toBe($actionEventData)
         ->extraAttributes->toBe($actionExtraAttributes)
         ->icon->toBe($actionIcon)
-        ->iconPosition->toBe(match ($actionIconPosition) {
-            IconPosition::After => 'after',
-            IconPosition::Before => 'before',
-        })
+        ->iconPosition->toBe($actionIconPosition)
         ->isOutlined->toBe($isActionOutlined)
         ->isDisabled->toBe($isActionDisabled)
         ->label->toBe($actionLabel)
         ->shouldClose->toBe($shouldClose)
         ->shouldOpenUrlInNewTab->toBe($shouldActionOpenUrlInNewTab)
-        ->size->toBe(match ($actionSize) {
-            ActionSize::ExtraSmall => 'xs',
-            ActionSize::Small => 'sm',
-            ActionSize::Medium => 'md',
-            ActionSize::Large => 'lg',
-            ActionSize::ExtraLarge => 'xl',
-        })
+        ->size->toBe($actionSize)
         ->url->toBe($actionUrl);
 
     $component = livewire(Notifications::class);
@@ -153,22 +145,13 @@ it('can send notifications', function () {
         ->getEventData()->toBe($actionEventData)
         ->getExtraAttributes()->toBe($actionExtraAttributes)
         ->getIcon()->toBe($actionIcon)
-        ->getIconPosition()->toBe(match ($actionIconPosition) {
-            IconPosition::After => 'after',
-            IconPosition::Before => 'before',
-        })
+        ->getIconPosition()->toBe($actionIconPosition)
         ->isOutlined()->toBe($isActionOutlined)
         ->isDisabled()->toBe($isActionDisabled)
         ->getLabel()->toBe($actionLabel)
         ->shouldClose()->toBe($shouldClose)
         ->shouldOpenUrlInNewTab()->toBe($shouldActionOpenUrlInNewTab)
-        ->getSize()->toBe(match ($actionSize) {
-            ActionSize::ExtraSmall => 'xs',
-            ActionSize::Small => 'sm',
-            ActionSize::Medium => 'md',
-            ActionSize::Large => 'lg',
-            ActionSize::ExtraLarge => 'xl',
-        })
+        ->getSize()->toBe($actionSize)
         ->getUrl()->toBe($actionUrl);
 
     expect(session()->get('filament.notifications'))
@@ -206,10 +189,10 @@ it('can dispatch an event', function () {
     expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event')");
 
     $action = Action::make('action')->dispatch('an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$dispatch('an_event', 'data')");
+    expect($action->getLivewireClickHandler())->toBe("\$dispatch('an_event', JSON.parse('[\\u0022data\\u0022]'))");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event', 'data')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event', JSON.parse('[\\u0022data\\u0022]'))");
 });
 
 it('can dispatch an event to itself', function () {
@@ -220,10 +203,10 @@ it('can dispatch an event to itself', function () {
     expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event')");
 
     $action = Action::make('action')->dispatchSelf('an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', 'data')");
+    expect($action->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', JSON.parse('[\\u0022data\\u0022]'))");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', 'data')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', JSON.parse('[\\u0022data\\u0022]'))");
 });
 
 it('can dispatch an event to a component', function () {
@@ -234,8 +217,46 @@ it('can dispatch an event to a component', function () {
     expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event')");
 
     $action = Action::make('action')->dispatchTo('a_component', 'an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', 'data')");
+    expect($action->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', JSON.parse('[\\u0022data\\u0022]'))");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', 'data')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', JSON.parse('[\\u0022data\\u0022]'))");
+});
+
+it('can bind custom notification object', function () {
+    app()->bind(Notification::class, CustomNotification::class);
+
+    $notification = Notification::make();
+
+    expect($notification)
+        ->toBeInstanceOf(CustomNotification::class);
+});
+
+it('can resolve custom notification object from data', function () {
+    app()->bind(Notification::class, CustomNotification::class);
+
+    Notification::make()
+        ->size($size = 'lg')
+        ->body($body = Str::random())
+        ->title($title = Str::random())
+        ->send();
+
+    $notifications = session()->get('filament.notifications');
+
+    expect($notifications)
+        ->toBeArray()
+        ->toHaveCount(1);
+
+    $notification = Arr::last($notifications);
+
+    $component = livewire(Notifications::class);
+
+    $component
+        ->dispatch('notificationsSent');
+
+    $notification = $component->instance()->notifications->first();
+
+    expect($notification)
+        ->toBeInstanceOf(CustomNotification::class)
+        ->getSize()->toBe($size);
 });

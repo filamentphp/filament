@@ -27,7 +27,7 @@ if (! function_exists('Filament\authorize')) {
             (! method_exists($policy, $action))
         ) {
             /** @var bool | Response | null $response */
-            $response = invade(Gate::forUser($user))->callBeforeCallbacks(
+            $response = invade(Gate::forUser($user))->callBeforeCallbacks( /** @phpstan-ignore-line */
                 $user,
                 $action,
                 [$model],

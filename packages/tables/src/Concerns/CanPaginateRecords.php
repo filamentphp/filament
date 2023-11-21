@@ -35,7 +35,7 @@ trait CanPaginateRecords
             $this->getTablePaginationPageName(),
         );
 
-        return $records->onEachSide(1);
+        return $records->onEachSide(0);
     }
 
     public function getTableRecordsPerPage(): int | string | null

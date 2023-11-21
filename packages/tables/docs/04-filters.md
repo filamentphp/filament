@@ -2,6 +2,7 @@
 title: Filters
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
 
@@ -248,6 +249,12 @@ TernaryFilter::make('trashed')
 
 ### Custom filter forms
 
+<LaracastsBanner
+    title="Build a Custom Table Filter"
+    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to build components, and you'll get to know all the internal tools to help you."
+    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/11"
+/>
+
 You may use components from the [Form Builder](../forms/fields/getting-started) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
 
 ```php
@@ -333,11 +340,12 @@ Filter::make('created_at')
 
 ### Multiple active indicators
 
-You may even render multiple indicators at once, by returning an array. If you have different fields associated with different indicators, you should use the field's name as the array key, to ensure that the correct field is reset when the filter is removed:
+You may even render multiple indicators at once, by returning an array of `Indicator` objects. If you have different fields associated with different indicators, you should set the field using the `removeField()` method on the `Indicator` object to ensure that the correct field is reset when the filter is removed:
 
 ```php
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Indicator;
 
 Filter::make('created_at')
     ->form([
@@ -349,11 +357,13 @@ Filter::make('created_at')
         $indicators = [];
 
         if ($data['from'] ?? null) {
-            $indicators['from'] = 'Created from ' . Carbon::parse($data['from'])->toFormattedDateString();
+            $indicators[] = Indicator::make('Created from ' . Carbon::parse($data['from'])->toFormattedDateString())
+                ->removeField('from');
         }
 
         if ($data['until'] ?? null) {
-            $indicators['until'] = 'Created until ' . Carbon::parse($data['until'])->toFormattedDateString();
+            $indicators[] = Indicator::make('Created until ' . Carbon::parse($data['until'])->toFormattedDateString())
+                ->removeField('until');
         }
 
         return $indicators;
@@ -410,6 +420,25 @@ public function table(Table $table): Table
         ->filtersFormMaxHeight('400px');
 }
 ```
+
+## Displaying filters in a modal
+
+To render the filters in a modal instead of in a dropdown, you may use:
+
+```php
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ], layout: FiltersLayout::Modal);
+}
+```
+
+You may use the [trigger action API](#customizing-the-filters-trigger-action) to [customize the modal](../actions/modals), including [using a `slideOver()`](../actions/modals#using-a-slide-over-instead-of-a-modal).
 
 ## Displaying filters above the table content
 
@@ -519,9 +548,9 @@ TernaryFilter::make('trashed')
     ]))
 ```
 
-## Customizing the filters dropdown trigger action
+## Customizing the filters trigger action
 
-To customize the filters' dropdown trigger buttons, you may use the `filtersTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
+To customize the filters trigger buttons, you may use the `filtersTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
 
 ```php
 use Filament\Tables\Actions\Action;

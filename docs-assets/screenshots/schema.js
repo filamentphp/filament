@@ -29,6 +29,15 @@ export default {
             await page.hover('#iconButtonAction button')
         },
     },
+    'actions/trigger-button/badge': {
+        url: 'actions',
+        selector: '#badgeAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'actions/trigger-button/danger': {
         url: 'actions',
         selector: '#dangerAction',
@@ -65,28 +74,28 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'actions/trigger-button/badge': {
+    'actions/trigger-button/badged': {
         url: 'actions',
-        selector: '#badgeAction',
+        selector: '#badgedAction',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('#badgeAction button')
+            await page.hover('#badgedAction button')
         },
     },
-    'actions/trigger-button/success-badge': {
+    'actions/trigger-button/success-badged': {
         url: 'actions',
-        selector: '#successBadgeAction',
+        selector: '#successBadgedAction',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('#successBadgeAction button')
+            await page.hover('#successBadgedAction button')
         },
     },
     'actions/trigger-button/outlined': {
@@ -1306,6 +1315,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/entries/text/icon-color': {
+        url: 'infolists/entries',
+        selector: '#textIconColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/entries/text/large': {
         url: 'infolists/entries',
         selector: '#textLarge',
@@ -1943,6 +1961,15 @@ export default {
     },
     'tables/columns/text/icon-after': {
         url: 'tables?table=textColumnIconAfter',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/icon-color': {
+        url: 'tables?table=textColumnIconColor',
         selector: 'body',
         viewport: {
             width: 1080,

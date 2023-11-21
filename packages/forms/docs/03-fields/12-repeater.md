@@ -282,6 +282,8 @@ class OrderProduct extends Pivot
 }
 ```
 
+> Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted.
+
 Now you can use the `orderProducts` relationship with the repeater, and it will save the data to the `order_product` pivot table:
 
 ```php
@@ -386,7 +388,7 @@ Repeater::make('members')
     ->schema([
         TextInput::make('name')
             ->required()
-            ->blur(),
+            ->live(onBlur: true),
         Select::make('role')
             ->options([
                 'member' => 'Member',

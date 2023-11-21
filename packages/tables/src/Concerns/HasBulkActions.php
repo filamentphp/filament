@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 use function Livewire\store;
 
@@ -79,19 +80,25 @@ trait HasBulkActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
+        } catch (ValidationException $exception) {
+            if (! $this->mountedTableBulkActionShouldOpenModal()) {
+                $action->resetArguments();
+                $action->resetFormData();
+
+                $this->unmountTableBulkAction();
+            }
+
+            throw $exception;
         }
 
         if (store($this)->has('redirect')) {
             return $result;
         }
 
-        $this->mountedTableBulkAction = null;
-        $this->selectedTableRecords = [];
-
         $action->resetArguments();
         $action->resetFormData();
 
-        $this->closeTableBulkActionModal();
+        $this->unmountTableBulkAction();
 
         return $result;
     }
@@ -179,6 +186,14 @@ trait HasBulkActions
             $action->getModalContentFooter() ||
             $action->getInfolist() ||
             $this->mountedTableBulkActionHasForm();
+    }
+
+    public function unmountTableBulkAction(): void
+    {
+        $this->mountedTableBulkAction = null;
+        $this->selectedTableRecords = [];
+
+        $this->closeTableBulkActionModal();
     }
 
     public function mountedTableBulkActionHasForm(): bool
@@ -310,6 +325,10 @@ trait HasBulkActions
             foreach ($this->getTable()->getColumns() as $column) {
                 $column->applyEagerLoading($query);
                 $column->applyRelationshipAggregates($query);
+            }
+
+            if ($table->shouldDeselectAllRecordsWhenFiltered()) {
+                $this->filterTableQuery($query);
             }
 
             return $this->cachedSelectedTableRecords = $query->get();

@@ -31,15 +31,19 @@
                             IconColumnSize::Medium, 'md' => 'fi-ta-icon-item-size-md h-5 w-5',
                             IconColumnSize::Large, 'lg' => 'fi-ta-icon-item-size-lg h-6 w-6',
                             IconColumnSize::ExtraLarge, 'xl' => 'fi-ta-icon-item-size-xl h-7 w-7',
+                            IconColumnSize::ExtraExtraLarge, '2xl' => 'fi-ta-icon-item-size-2xl h-8 w-8',
                             default => $size,
                         },
                         match ($color) {
-                            'gray' => 'text-gray-400 dark:text-gray-500',
-                            default => 'text-custom-500 dark:text-custom-400',
+                            'gray' => 'fi-color-gray text-gray-400 dark:text-gray-500',
+                            default => 'fi-color-custom text-custom-500 dark:text-custom-400',
                         },
                     ])
                     @style([
-                        \Filament\Support\get_color_css_variables($color, shades: [400, 500]) => $color !== 'gray',
+                        \Filament\Support\get_color_css_variables(
+                            $color,
+                            shades: [400, 500],
+                        ) => $color !== 'gray',
                     ])
                 />
             @endif

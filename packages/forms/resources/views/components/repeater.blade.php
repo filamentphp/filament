@@ -3,7 +3,10 @@
         $containers = $getChildComponentContainers();
 
         $addAction = $getAction($getAddActionName());
+        $addBetweenAction = $getAction($getAddBetweenActionName());
         $cloneAction = $getAction($getCloneActionName());
+        $collapseAllAction = $getAction($getCollapseAllActionName());
+        $expandAllAction = $getAction($getExpandAllActionName());
         $deleteAction = $getAction($getDeleteActionName());
         $moveDownAction = $getAction($getMoveDownActionName());
         $moveUpAction = $getAction($getMoveUpActionName());
@@ -27,24 +30,28 @@
                 ->class(['fi-fo-repeater grid gap-y-4'])
         }}
     >
-        @if ($isCollapsible)
+        @if ($isCollapsible && ($collapseAllAction->isVisible() || $expandAllAction->isVisible()))
             <div
                 @class([
                     'flex gap-x-3',
                     'hidden' => count($containers) < 2,
                 ])
             >
-                <span
-                    x-on:click="$dispatch('repeater-collapse', '{{ $statePath }}')"
-                >
-                    {{ $getAction('collapseAll') }}
-                </span>
+                @if ($collapseAllAction->isVisible())
+                    <span
+                        x-on:click="$dispatch('repeater-collapse', '{{ $statePath }}')"
+                    >
+                        {{ $collapseAllAction }}
+                    </span>
+                @endif
 
-                <span
-                    x-on:click="$dispatch('repeater-expand', '{{ $statePath }}')"
-                >
-                    {{ $getAction('expandAll') }}
-                </span>
+                @if ($expandAllAction->isVisible())
+                    <span
+                        x-on:click="$dispatch('repeater-expand', '{{ $statePath }}')"
+                    >
+                        {{ $expandAllAction }}
+                    </span>
+                @endif
             </div>
         @endif
 
@@ -71,41 +78,43 @@
                             x-data="{
                                 isCollapsed: @js($isCollapsed($item)),
                             }"
-                            x-bind:class="isCollapsed && 'fi-collapsed'"
                             x-on:expand-concealing-component.window="
-                                error = $el.querySelector('[data-validation-error]')
+                                $nextTick(() => {
+                                    error = $el.querySelector('[data-validation-error]')
 
-                                if (! error) {
-                                    return
-                                }
+                                    if (! error) {
+                                        return
+                                    }
 
-                                isCollapsed = false
+                                    isCollapsed = false
 
-                                if (document.body.querySelector('[data-validation-error]') !== error) {
-                                    return
-                                }
+                                    if (document.body.querySelector('[data-validation-error]') !== error) {
+                                        return
+                                    }
 
-                                setTimeout(
-                                    () =>
-                                        $el.scrollIntoView({
-                                            behavior: 'smooth',
-                                            block: 'start',
-                                            inline: 'start',
-                                        }),
-                                    200,
-                                )
+                                    setTimeout(
+                                        () =>
+                                            $el.scrollIntoView({
+                                                behavior: 'smooth',
+                                                block: 'start',
+                                                inline: 'start',
+                                            }),
+                                        200,
+                                    )
+                                })
                             "
                             x-on:repeater-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                             x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                             x-sortable-item="{{ $uuid }}"
                             class="fi-fo-repeater-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
+                            x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                         >
                             @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible)
                                 <div
-                                    class="flex items-center gap-x-3 px-4 py-2"
+                                    class="fi-fo-repeater-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3"
                                 >
                                     @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
-                                        <ul class="-ms-1.5 flex">
+                                        <ul class="flex items-center gap-x-3">
                                             @if ($isReorderableWithDragAndDrop)
                                                 <li x-sortable-handle>
                                                     {{ $reorderAction }}
@@ -130,14 +139,23 @@
 
                                     @if (filled($itemLabel))
                                         <h4
-                                            class="truncate text-sm font-medium text-gray-950 dark:text-white"
+                                            @if ($isCollapsible)
+                                                x-on:click.stop="isCollapsed = !isCollapsed"
+                                            @endif
+                                            @class([
+                                                'text-sm font-medium text-gray-950 dark:text-white',
+                                                'truncate' => $isItemLabelTruncated(),
+                                                'cursor-pointer select-none' => $isCollapsible,
+                                            ])
                                         >
                                             {{ $itemLabel }}
                                         </h4>
                                     @endif
 
                                     @if ($isCloneable || $isDeletable || $isCollapsible)
-                                        <ul class="-me-1.5 ms-auto flex">
+                                        <ul
+                                            class="ms-auto flex items-center gap-x-3"
+                                        >
                                             @if ($isCloneable)
                                                 <li>
                                                     {{ $cloneAction(['item' => $uuid]) }}
@@ -177,12 +195,34 @@
                             @endif
 
                             <div
-                                class="border-t border-gray-100 p-4 dark:border-white/10"
                                 x-show="! isCollapsed"
+                                class="fi-fo-repeater-item-content border-t border-gray-100 p-4 dark:border-white/10"
                             >
                                 {{ $item }}
                             </div>
                         </li>
+
+                        @if (! $loop->last)
+                            @if ($isAddable && $addBetweenAction->isVisible())
+                                <li class="flex w-full justify-center">
+                                    <div
+                                        class="rounded-lg bg-white dark:bg-gray-900"
+                                    >
+                                        {{ $addBetweenAction(['afterItem' => $uuid]) }}
+                                    </div>
+                                </li>
+                            @elseif (filled($labelBetweenItems = $getLabelBetweenItems()))
+                                <li
+                                    class="relative border-t border-gray-200 dark:border-white/10"
+                                >
+                                    <span
+                                        class="absolute -top-3 left-3 bg-white px-1 text-sm font-medium dark:bg-gray-900"
+                                    >
+                                        {{ $labelBetweenItems }}
+                                    </span>
+                                </li>
+                            @endif
+                        @endif
                     @endforeach
                 </x-filament::grid>
             </ul>

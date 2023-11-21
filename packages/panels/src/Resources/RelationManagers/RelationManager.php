@@ -2,11 +2,15 @@
 
 namespace Filament\Resources\RelationManagers;
 
+use Closure;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
+use Filament\Pages\Page;
+use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
@@ -14,44 +18,31 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
 use function Filament\authorize;
 
-class RelationManager extends Component implements Actions\Contracts\HasActions, Infolists\Contracts\HasInfolists, Forms\Contracts\HasForms, Tables\Contracts\HasTable
+class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
 {
     use Actions\Concerns\InteractsWithActions;
     use Forms\Concerns\InteractsWithForms;
     use Infolists\Concerns\InteractsWithInfolists;
-    use Tables\Concerns\InteractsWithTable {
-        makeTable as makeBaseTable;
+    use InteractsWithRelationshipTable {
+        InteractsWithRelationshipTable::makeTable as makeBaseRelationshipTable;
     }
+
+    /**
+     * @var view-string
+     */
+    protected static string $view = 'filament-panels::resources.relation-manager';
 
     #[Locked]
     public Model $ownerRecord;
 
     #[Locked]
     public ?string $pageClass = null;
-
-    protected static string $relationship;
-
-    protected static ?string $title = null;
-
-    protected static ?string $icon = null;
-
-    protected static IconPosition $iconPosition = IconPosition::Before;
-
-    protected static ?string $badge = null;
-
-    /**
-     * @var view-string
-     */
-    protected static string $view = 'filament-panels::resources.relation-manager';
 
     /**
      * @deprecated Override the `table()` method to configure the table.
@@ -83,17 +74,100 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
      */
     protected static ?string $pluralModelLabel = null;
 
-    protected static bool $shouldCheckPolicyExistence = true;
+    protected static ?string $title = null;
 
-    protected static bool $shouldSkipAuthorization = false;
+    protected static ?string $icon = null;
 
-    public function isReadOnly(): bool
+    protected static IconPosition $iconPosition = IconPosition::Before;
+
+    protected static ?string $badge = null;
+
+    protected static bool $isLazy = true;
+
+    public function mount(): void
     {
-        if (blank($this->pageClass)) {
-            return false;
-        }
+        $this->loadDefaultActiveTab();
+    }
 
-        return is_subclass_of($this->pageClass, ViewRecord::class);
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
+    {
+        return [];
+    }
+
+    /**
+     * @param  array<string, mixed>  $properties
+     */
+    public static function make(array $properties = []): RelationManagerConfiguration
+    {
+        return app(RelationManagerConfiguration::class, ['relationManager' => static::class, 'properties' => $properties]);
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getRenderHookScopes(): array
+    {
+        return [
+            static::class,
+            $this->getPageClass(),
+        ];
+    }
+
+    public function placeholder(): View
+    {
+        return view('filament::components.loading-section');
+    }
+
+    public function render(): View
+    {
+        return view(static::$view, $this->getViewData());
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getViewData(): array
+    {
+        return [];
+    }
+
+    public static function getIcon(Model $ownerRecord, string $pageClass): ?string
+    {
+        return static::$icon;
+    }
+
+    public static function getIconPosition(Model $ownerRecord, string $pageClass): IconPosition
+    {
+        return static::$iconPosition;
+    }
+
+    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    {
+        return static::$badge;
+    }
+
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    {
+        return static::$title ?? (string) str(static::getRelationshipName())
+            ->kebab()
+            ->replace('-', ' ')
+            ->headline();
+    }
+
+    /**
+     * @return class-string<Page>
+     */
+    public function getPageClass(): string
+    {
+        return $this->pageClass;
+    }
+
+    public function getOwnerRecord(): Model
+    {
+        return $this->ownerRecord;
     }
 
     protected function configureTableAction(Tables\Actions\Action $action): void
@@ -241,41 +315,6 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         }
     }
 
-    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
-    {
-        if (static::shouldSkipAuthorization()) {
-            return true;
-        }
-
-        $model = $ownerRecord->{static::getRelationshipName()}()->getQuery()->getModel()::class;
-
-        try {
-            return authorize('viewAny', $model, static::shouldCheckPolicyExistence())->allowed();
-        } catch (AuthorizationException $exception) {
-            return $exception->toResponse()->allowed();
-        }
-    }
-
-    public static function checkPolicyExistence(bool $condition = true): void
-    {
-        static::$shouldCheckPolicyExistence = $condition;
-    }
-
-    public static function skipAuthorization(bool $condition = true): void
-    {
-        static::$shouldSkipAuthorization = $condition;
-    }
-
-    public static function shouldCheckPolicyExistence(): bool
-    {
-        return static::$shouldCheckPolicyExistence;
-    }
-
-    public static function shouldSkipAuthorization(): bool
-    {
-        return static::$shouldSkipAuthorization;
-    }
-
     public function form(Form $form): Form
     {
         return $form;
@@ -286,97 +325,23 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         return $infolist;
     }
 
-    public function getInverseRelationshipName(): ?string
+    public function isReadOnly(): bool
     {
-        return static::$inverseRelationship;
-    }
+        if (blank($this->getPageClass())) {
+            return false;
+        }
 
-    public function getOwnerRecord(): Model
-    {
-        return $this->ownerRecord;
-    }
+        $panel = Filament::getCurrentPanel();
 
-    public function getRelationship(): Relation | Builder
-    {
-        return $this->getOwnerRecord()->{static::getRelationshipName()}();
-    }
+        if (! $panel) {
+            return false;
+        }
 
-    public function table(Table $table): Table
-    {
-        return $table;
-    }
+        if (! $panel->hasReadOnlyRelationManagersOnResourceViewPagesByDefault()) {
+            return false;
+        }
 
-    public static function getIcon(Model $ownerRecord, string $pageClass): ?string
-    {
-        return static::$icon;
-    }
-
-    public static function getIconPosition(Model $ownerRecord, string $pageClass): IconPosition
-    {
-        return static::$iconPosition;
-    }
-
-    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
-    {
-        return static::$badge;
-    }
-
-    public static function getRelationshipName(): string
-    {
-        return static::$relationship;
-    }
-
-    public static function getTitle(Model $ownerRecord, string $pageClass): string
-    {
-        return static::$title ?? (string) str(static::getRelationshipName())
-            ->kebab()
-            ->replace('-', ' ')
-            ->headline();
-    }
-
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    public static function getRecordTitleAttribute(): ?string
-    {
-        return static::$recordTitleAttribute;
-    }
-
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected static function getRecordLabel(): ?string
-    {
-        return static::$label;
-    }
-
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected static function getModelLabel(): ?string
-    {
-        return static::$modelLabel ?? static::getRecordLabel();
-    }
-
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected static function getPluralRecordLabel(): ?string
-    {
-        return static::$pluralLabel;
-    }
-
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected static function getPluralModelLabel(): ?string
-    {
-        return static::$pluralModelLabel ?? static::getPluralRecordLabel();
-    }
-
-    public function render(): View
-    {
-        return view(static::$view, $this->getViewData());
+        return is_subclass_of($this->getPageClass(), ViewRecord::class);
     }
 
     protected function canAssociate(): bool
@@ -465,104 +430,99 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     }
 
     /**
-     * @return array<string, mixed>
+     * @deprecated Override the `table()` method to configure the table.
      */
-    protected function getViewData(): array
+    public static function getRecordTitleAttribute(): ?string
     {
-        return [];
+        return static::$recordTitleAttribute;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected static function getRecordLabel(): ?string
+    {
+        return static::$label;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected static function getModelLabel(): ?string
+    {
+        return static::$modelLabel ?? static::getRecordLabel();
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected static function getPluralRecordLabel(): ?string
+    {
+        return static::$pluralLabel;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected static function getPluralModelLabel(): ?string
+    {
+        return static::$pluralModelLabel ?? static::getPluralRecordLabel();
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    public function getInverseRelationshipName(): ?string
+    {
+        return static::$inverseRelationship;
+    }
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        if (static::shouldSkipAuthorization()) {
+            return true;
+        }
+
+        $model = $ownerRecord->{static::getRelationshipName()}()->getQuery()->getModel()::class;
+
+        try {
+            return authorize('viewAny', $model, static::shouldCheckPolicyExistence())->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
+        }
     }
 
     protected function makeTable(): Table
     {
-        return $this->makeBaseTable()
+        return $this->makeBaseRelationshipTable()
             ->query($this->getTableQuery())
-            ->relationship(fn (): Relation | Builder => $this->getRelationship())
             ->inverseRelationship(static::getInverseRelationshipName())
-            ->heading($this->getTableHeading() ?? static::getTitle($this->getOwnerRecord(), $this->pageClass))
             ->modelLabel(static::getModelLabel())
             ->pluralModelLabel(static::getPluralModelLabel())
-            ->queryStringIdentifier(Str::lcfirst(class_basename(static::class)))
-            ->recordAction(function (Model $record, Table $table): ?string {
-                foreach (['view', 'edit'] as $action) {
-                    $action = $table->getAction($action);
-
-                    if (! $action) {
-                        continue;
-                    }
-
-                    $action->record($record);
-
-                    if ($action->isHidden()) {
-                        continue;
-                    }
-
-                    if ($action->getUrl()) {
-                        continue;
-                    }
-
-                    return $action->getName();
-                }
-
-                return null;
-            })
             ->recordTitleAttribute(static::getRecordTitleAttribute())
-            ->recordUrl($this->getTableRecordUrlUsing() ?? function (Model $record, Table $table): ?string {
-                foreach (['view', 'edit'] as $action) {
-                    $action = $table->getAction($action);
-
-                    if (! $action) {
-                        continue;
-                    }
-
-                    $action->record($record);
-
-                    if ($action->isHidden()) {
-                        continue;
-                    }
-
-                    $url = $action->getUrl();
-
-                    if (! $url) {
-                        continue;
-                    }
-
-                    return $url;
-                }
-
-                return null;
-            })
-            ->reorderable(condition: fn (): bool => $this->canReorder());
+            ->heading($this->getTableHeading() ?? static::getTitle($this->getOwnerRecord(), $this->getPageClass()))
+            ->when(
+                $this->getTableRecordUrlUsing(),
+                fn (Table $table, ?Closure $using) => $table->recordUrl($using),
+            );
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<string, mixed>
      */
-    protected function getForms(): array
+    public static function getDefaultProperties(): array
     {
-        return [];
+        $properties = [];
+
+        if (static::isLazy()) {
+            $properties['lazy'] = true;
+        }
+
+        return $properties;
     }
 
-    /**
-     * @param  array<string, mixed>  $properties
-     */
-    public static function make(array $properties = []): RelationManagerConfiguration
+    public static function isLazy(): bool
     {
-        return app(RelationManagerConfiguration::class, ['relationManager' => static::class, 'properties' => $properties]);
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getRenderHookScopes(): array
-    {
-        return [
-            static::class,
-            $this->pageClass,
-        ];
-    }
-
-    public function placeholder(): View
-    {
-        return view('filament::components.loading-section');
+        return static::$isLazy;
     }
 }

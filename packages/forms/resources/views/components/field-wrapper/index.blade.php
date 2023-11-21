@@ -1,7 +1,7 @@
 @props([
     'field' => null,
     'hasInlineLabel' => null,
-    'hasNestedRecursiveValidationRules' => false,
+    'hasNestedRecursiveValidationRules' => null,
     'helperText' => null,
     'hint' => null,
     'hintActions' => null,
@@ -43,7 +43,7 @@
         fn (\Filament\Forms\Components\Actions\Action $hintAction): bool => $hintAction->isVisible(),
     );
 
-    $hasError = $errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*"));
+    $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
 @endphp
 
 <div {{ $attributes->class(['fi-fo-field-wrp']) }}>
@@ -69,7 +69,7 @@
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
                         :for="$id"
-                        :error="$errors->has($statePath)"
+                        :error="$hasError"
                         :is-disabled="$isDisabled"
                         :is-marked-as-required="$isMarkedAsRequired"
                         :prefix="$labelPrefix"
@@ -108,7 +108,7 @@
 
                 @if ($hasError)
                     <x-filament-forms::field-wrapper.error-message>
-                        {{ $errors->first($statePath) ?? ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
+                        {{ $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
                     </x-filament-forms::field-wrapper.error-message>
                 @endif
 

@@ -12,7 +12,7 @@ The link component is used to render a clickable link that can perform an action
 </x-filament::link>
 ```
 
-## Using a link as an anchor link
+## Using a link as a button
 
 By default, a link's underlying HTML tag is `<a>`. You can change it to be a `<button>` tag by using the `tag` attribute:
 

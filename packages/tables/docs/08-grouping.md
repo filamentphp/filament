@@ -110,6 +110,24 @@ public function table(Table $table): Table
 }
 ```
 
+### Disabling the title label prefix
+
+By default, the title is prefixed with the label of the group. To disable this prefix, utilize the `titlePrefixedWithLabel(false)` method:
+
+```php
+use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            Group::make('status')
+                ->titlePrefixedWithLabel(false),
+        ]);
+}
+```
+
 ## Setting a group description
 
 You may also set a description for a group, which will be displayed underneath the group title. To do this, use the `getDescriptionFromRecordUsing()` method on a `Group` object:
@@ -288,9 +306,9 @@ public function table(Table $table): Table
 }
 ```
 
-## Enabling the groups dropdown on desktop
+## Using the grouping settings dropdown on desktop
 
-By default, the groups dropdown will only be shown on mobile devices. On desktop devices, the group select field is in the header of the time. You can enable the dropdown on desktop devices too by using the `groupsInDropdownOnDesktop()` method:
+By default, the grouping settings dropdown will only be shown on mobile devices. On desktop devices, the grouping settings are in the header of the time. You can enable the dropdown on desktop devices too by using the `groupingSettingsInDropdownOnDesktop()` method:
 
 ```php
 use Filament\Tables\Table;
@@ -301,6 +319,21 @@ public function table(Table $table): Table
         ->groups([
             // ...
         ])
-        ->groupsInDropdownOnDesktop();
+        ->groupingSettingsInDropdownOnDesktop();
+}
+```
+
+## Hiding the grouping settings
+
+You can hide the grouping settings interface using the `groupingSettingsHidden()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+		->defaultGroup('status');
+        ->groupingSettingsHidden();
 }
 ```

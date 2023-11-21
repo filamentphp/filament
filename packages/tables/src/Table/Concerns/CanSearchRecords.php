@@ -3,12 +3,17 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Tables\Filters\Indicator;
 
 trait CanSearchRecords
 {
+    protected ?bool $isSearchable = null;
+
     protected bool | Closure | null $persistsSearchInSession = false;
 
     protected bool | Closure | null $persistsColumnSearchesInSession = false;
+
+    protected string | Closure | null $searchPlaceholder = null;
 
     public function persistSearchInSession(bool | Closure $condition = true): static
     {
@@ -24,8 +29,19 @@ trait CanSearchRecords
         return $this;
     }
 
+    public function searchable(?bool $condition = true): static
+    {
+        $this->isSearchable = $condition;
+
+        return $this;
+    }
+
     public function isSearchable(): bool
     {
+        if (is_bool($this->isSearchable)) {
+            return $this->isSearchable;
+        }
+
         foreach ($this->getColumns() as $column) {
             if (! $column->isGloballySearchable()) {
                 continue;
@@ -60,18 +76,30 @@ trait CanSearchRecords
         return (bool) $this->evaluate($this->persistsColumnSearchesInSession);
     }
 
+    public function searchPlaceholder(string | Closure | null $searchPlaceholder): static
+    {
+        $this->searchPlaceholder = $searchPlaceholder;
+
+        return $this;
+    }
+
+    public function getSearchPlaceholder(): ?string
+    {
+        return $this->evaluate($this->searchPlaceholder);
+    }
+
     public function hasSearch(): bool
     {
         return $this->getLivewire()->hasTableSearch();
     }
 
-    public function getSearchIndicator(): string
+    public function getSearchIndicator(): Indicator
     {
         return $this->getLivewire()->getTableSearchIndicator();
     }
 
     /**
-     * @return array<string, string>
+     * @return array<Indicator> | array<string, string>
      */
     public function getColumnSearchIndicators(): array
     {

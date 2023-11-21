@@ -38,6 +38,8 @@ FilamentView::registerRenderHook(
 
 - `panels::auth.login.form.before` - Before login form
 - `panels::auth.login.form.after` - After login form
+- `panels::auth.register.form.before` - Before register form
+- `panels::auth.register.form.after` - After register form
 - `panels::body.start` - After `<body>`
 - `panels::body.end` - Before `</body>`
 - `panels::content.end` - After page content, inside `<main>`
@@ -52,6 +54,8 @@ FilamentView::registerRenderHook(
 - `panels::page.end` - End of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.footer-widgets.after` - After the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.footer-widgets.before` - Before the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `panels::page.header.actions.after` - After the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `panels::page.header.actions.before` - Before the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.header-widgets.after` - After the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.header-widgets.before` - Before the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.start` - Start of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
@@ -76,6 +80,26 @@ FilamentView::registerRenderHook(
 - `panels::user-menu.before` - Before the [user menu](../panels/navigation#customizing-the-user-menu)
 - `panels::user-menu.profile.after` - After the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
 - `panels::user-menu.profile.before` - Before the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
+
+### Table Builder render hooks
+
+All these render hooks [can be scoped](#scoping-render-hooks) to any table Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager. Table widgets are also Livewire component classes.
+
+- `tables::toolbar.end` - The end of the toolbar
+- `tables::toolbar.grouping-selector.after` - After the [grouping](../tables/grouping) selector
+- `tables::toolbar.grouping-selector.before` - Before the [grouping](../tables/grouping) selector
+- `tables::toolbar.reorder-trigger.after` - After the [reorder](../tables/advanced#reordering-records) trigger
+- `tables::toolbar.reorder-trigger.before` - Before the [reorder](../tables/advanced#reordering-records) trigger
+- `tables::toolbar.search.after` - After the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.search.before` - Before the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.start` - The start of the toolbar
+- `tables::toolbar.toggle-column-trigger.after` - After the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+- `tables::toolbar.toggle-column-trigger.before` - Before the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+
+### Widgets render hooks
+
+- `widgets::table-widget.end` - End of the [table widget](../panels/dashboard#table-widgets), after the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+- `widgets::table-widget.start` - Start of the [table widget](../panels/dashboard#table-widgets), before the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
 
 ## Scoping render hooks
 

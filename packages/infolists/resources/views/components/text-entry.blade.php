@@ -69,6 +69,7 @@
                                 $copyMessageDuration = $getCopyMessageDuration($state);
                                 $fontFamily = $getFontFamily($state);
                                 $icon = $getIcon($state);
+                                $iconColor = $getIconColor($state);
                                 $itemIsCopyable = $isCopyable($state);
                                 $size = $getSize($state);
                                 $weight = $getWeight($state);
@@ -87,14 +88,17 @@
 
                                 $iconClasses = \Illuminate\Support\Arr::toCssClasses([
                                     'fi-in-text-item-icon h-5 w-5 shrink-0',
-                                    match ($color) {
+                                    match ($iconColor) {
                                         'gray', null => 'text-gray-400 dark:text-gray-500',
                                         default => 'text-custom-500',
                                     },
                                 ]);
 
                                 $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-                                    \Filament\Support\get_color_css_variables($color, shades: [500]) => $color !== 'gray',
+                                    \Filament\Support\get_color_css_variables(
+                                        $iconColor,
+                                        shades: [500],
+                                    ) => $iconColor !== 'gray',
                                 ]);
                             @endphp
 
@@ -103,7 +107,10 @@
                                     x-data="{}"
                                     x-on:click="
                                         window.navigator.clipboard.writeText(@js($copyableState))
-                                        $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
+                                        $tooltip(@js($copyMessage), {
+                                            theme: $store.theme,
+                                            timeout: @js($copyMessageDuration),
+                                        })
                                     "
                                     class="cursor-pointer max-w-max"
                                 @endif
@@ -120,7 +127,7 @@
                                     <div
                                         @class([
                                             'fi-in-text-item inline-flex items-center gap-1.5',
-                                            'transition duration-75 hover:underline focus:underline' => $url,
+                                            'transition duration-75 hover:underline focus-visible:underline' => $url,
                                             match ($size) {
                                                 TextEntrySize::ExtraSmall, 'xs' => 'text-xs',
                                                 TextEntrySize::Small, 'sm', null => 'text-sm leading-6',
@@ -130,8 +137,8 @@
                                             },
                                             match ($color) {
                                                 null => 'text-gray-950 dark:text-white',
-                                                'gray' => 'text-gray-500 dark:text-gray-400',
-                                                default => 'text-custom-600 dark:text-custom-400',
+                                                'gray' => 'fi-color-gray text-gray-500 dark:text-gray-400',
+                                                default => 'fi-color-custom text-custom-600 dark:text-custom-400',
                                             },
                                             match ($weight) {
                                                 FontWeight::Thin, 'thin' => 'font-thin',
@@ -152,7 +159,10 @@
                                             },
                                         ])
                                         @style([
-                                            \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! in_array($color, [null, 'gray']),
+                                            \Filament\Support\get_color_css_variables(
+                                                $color,
+                                                shades: [400, 600],
+                                            ) => ! in_array($color, [null, 'gray']),
                                         ])
                                     >
                                         @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))

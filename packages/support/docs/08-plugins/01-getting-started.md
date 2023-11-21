@@ -1,6 +1,13 @@
 ---
 title: Getting started
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
+
+<LaracastsBanner
+    title="Setting up a Plugin"
+    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to get started with your plugin. The text-based guide on this page can also give a good overview."
+    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/12"
+/>
 
 ## Overview
 
@@ -76,6 +83,6 @@ Please read this guide in its entirety before upgrading your plugin. It will hel
 
 1. [Filament Asset Management](/docs/3.x/support/assets)
 2. [Panel Plugin Development](/docs/3.x/panels/plugins)
-3. [Icon Management](docs/3.x/support/icons)
-4. [Colors Management](docs/3.x/support/colors)
-5. [Stying Customization](docs/3.x/support/style-customization)
+3. [Icon Management](/docs/3.x/support/icons)
+4. [Colors Management](/docs/3.x/support/colors)
+5. [Style Customization](/docs/3.x/support/style-customization)

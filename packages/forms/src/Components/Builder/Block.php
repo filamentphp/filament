@@ -15,11 +15,6 @@ class Block extends Component
 
     protected string | Closure | null $icon = null;
 
-    /**
-     * @var array<string, mixed> | null
-     */
-    protected ?array $labelState = null;
-
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -40,26 +35,19 @@ class Block extends Component
         return $this;
     }
 
-    /**
-     * @param  array<string, mixed> | null  $state
-     */
-    public function labelState(?array $state): static
-    {
-        $this->labelState = $state;
-
-        return $this;
-    }
-
     public function getIcon(): ?string
     {
         return $this->evaluate($this->icon);
     }
 
-    public function getLabel(): string | Htmlable
+    /**
+     * @param  array<string, mixed> | null  $state
+     */
+    public function getLabel(?array $state = null, ?string $uuid = null): string | Htmlable
     {
         return $this->evaluate(
             $this->label,
-            $this->labelState ? ['state' => $this->labelState] : [],
+            ['state' => $state, 'uuid' => $uuid],
         ) ?? $this->getDefaultLabel();
     }
 }

@@ -11,6 +11,7 @@ use Filament\Actions\RestoreAction;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,6 +33,13 @@ class ViewRecord extends Page
      * @var array<string, mixed> | null
      */
     public ?array $data = [];
+
+    public static function getNavigationIcon(): ?string
+    {
+        return static::$navigationIcon
+            ?? FilamentIcon::resolve('panels::resources.pages.view-record.navigation-item')
+            ?? 'heroicon-o-eye';
+    }
 
     public function getBreadcrumb(): string
     {
@@ -210,12 +218,15 @@ class ViewRecord extends Page
 
     public function infolist(Infolist $infolist): Infolist
     {
-        return static::getResource()::infolist(
-            $infolist
-                ->record($this->getRecord())
-                ->columns($this->hasInlineLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineLabels()),
-        );
+        return static::getResource()::infolist($infolist);
+    }
+
+    protected function makeInfolist(): Infolist
+    {
+        return parent::makeInfolist()
+            ->record($this->getRecord())
+            ->columns($this->hasInlineLabels() ? 1 : 2)
+            ->inlineLabel($this->hasInlineLabels());
     }
 
     protected function getMountedActionFormModel(): Model
@@ -231,5 +242,25 @@ class ViewRecord extends Page
         return [
             'record' => $this->getRecord(),
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSubNavigationParameters(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
+    }
+
+    public function getSubNavigation(): array
+    {
+        return static::getResource()::getRecordSubNavigation($this);
+    }
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        return parent::shouldRegisterNavigation($parameters) && static::getResource()::canView($parameters['record']);
     }
 }

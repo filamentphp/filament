@@ -1,8 +1,10 @@
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $statePath = $getStatePath();
-    @endphp
+@php
+    use Filament\Support\Facades\FilamentView;
 
+    $statePath = $getStatePath();
+@endphp
+
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @if ($isDisabled())
         <div
             class="fi-fo-markdown-editor fi-disabled prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert dark:bg-transparent dark:text-gray-400 dark:ring-white/10 sm:text-sm"
@@ -22,7 +24,11 @@
             }}
         >
             <div
-                ax-load="visible"
+                @if (FilamentView::hasSpaMode())
+                    ax-load="visible"
+                @else
+                    ax-load
+                @endif
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
                 x-data="markdownEditorFormComponent({
                             isLiveDebounced: @js($isLiveDebounced()),

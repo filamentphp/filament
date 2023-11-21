@@ -14,7 +14,7 @@
         fn (\Filament\Infolists\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
     );
 
-    $affixActionsClasses = '-mx-1.5 flex items-center self-stretch';
+    $affixActionsClasses = 'flex items-center gap-3 self-stretch';
 @endphp
 
 <div
