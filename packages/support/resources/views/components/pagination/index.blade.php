@@ -20,27 +20,24 @@
     }}
 >
     @if (! $paginator->onFirstPage())
-        @if (method_exists($paginator,'getCursorName'))
-            <x-filament::button
-                color="gray"
-                rel="prev"
-                :wire:click="'setPage(\'' . $paginator->previousCursor()->encode()  . '\',\'' . $paginator->getCursorName()  . '\')'"
-                :wire:key="$this->getId() . '.pagination.previous'"
-                class="fi-pagination-previous-btn justify-self-start"
-            >
-                {{ __('filament::components/pagination.actions.previous.label') }}
-            </x-filament::button>
-        @else
-            <x-filament::button
-                color="gray"
-                rel="prev"
-                :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
-                :wire:key="$this->getId() . '.pagination.previous'"
-                class="fi-pagination-previous-btn justify-self-start"
-            >
-                {{ __('filament::components/pagination.actions.previous.label') }}
-            </x-filament::button>
-        @endif
+
+        @php
+            if (method_exists($paginator,'getCursorName')) {
+                $wireClickAction = 'setPage(\'' . $paginator->previousCursor()->encode()  . '\',\'' . $paginator->getCursorName()  . '\')';
+            } else {
+                $wireClickAction = 'previousPage(\'' . $paginator->getPageName() . '\')';
+            }
+        @endphp
+
+        <x-filament::button
+            color="gray"
+            rel="prev"
+            :wire:click="$wireClickAction"
+            :wire:key="$this->getId() . '.pagination.previous'"
+            class="fi-pagination-previous-btn justify-self-start"
+        >
+            {{ __('filament::components/pagination.actions.previous.label') }}
+        </x-filament::button>
 
     @endif
 
@@ -101,27 +98,24 @@
     @endif
 
     @if ($paginator->hasMorePages())
-        @if (method_exists($paginator,'getCursorName'))
-            <x-filament::button
-                color="gray"
-                rel="next"
-                :wire:click="'setPage(\'' . $paginator->nextCursor()->encode()  . '\',\'' . $paginator->getCursorName()  . '\')'"
-                :wire:key="$this->getId() . '.pagination.next'"
-                class="fi-pagination-next-btn col-start-3 justify-self-end"
-            >
-                {{ __('filament::components/pagination.actions.next.label') }}
-            </x-filament::button>
-        @else
-            <x-filament::button
-                color="gray"
-                rel="next"
-                :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
-                :wire:key="$this->getId() . '.pagination.next'"
-                class="fi-pagination-next-btn col-start-3 justify-self-end"
-            >
-                {{ __('filament::components/pagination.actions.next.label') }}
-            </x-filament::button>
-        @endif
+
+        @php
+            if (method_exists($paginator,'getCursorName')) {
+                $wireClickAction = 'setPage(\'' . $paginator->nextCursor()->encode()  . '\',\'' . $paginator->getCursorName()  . '\')';
+            } else {
+                $wireClickAction = 'nextPage(\'' . $paginator->getPageName() . '\')';
+            }
+        @endphp
+
+        <x-filament::button
+            color="gray"
+            rel="next"
+            :wire:click="$wireClickAction"
+            :wire:key="$this->getId() . '.pagination.next'"
+            class="fi-pagination-next-btn col-start-3 justify-self-end"
+        >
+            {{ __('filament::components/pagination.actions.next.label') }}
+        </x-filament::button>
 
     @endif
 
