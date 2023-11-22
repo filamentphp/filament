@@ -119,12 +119,6 @@ trait Translatable
 
         // Fill translatable data
         foreach ($data as $locale => $localeData) {
-            if ($locale === $this->activeLocale) {
-                $localeData = Arr::only(
-                    $localeData,
-                    app(static::getModel())->getTranslatableAttributes(),
-                );
-            }
             $localeData = Arr::only(
                 $localeData,
                 app(static::getModel())->getTranslatableAttributes(),
