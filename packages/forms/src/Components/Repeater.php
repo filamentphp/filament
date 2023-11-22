@@ -1038,6 +1038,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
         $relatedKeyName = $relationship->getRelated()->getKeyName();
 
+        if(!is_null($relationship->getParent()->{$this->statePath})){
+            return $this->cachedExistingRecords = $relationship->getParent()->{$this->statePath}->mapWithKeys(
+                fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
+            );
+        }
+        
         return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
             fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
         );
