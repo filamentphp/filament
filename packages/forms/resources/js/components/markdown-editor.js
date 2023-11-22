@@ -99,8 +99,8 @@ export default function markdownEditorFormComponent({
 
         init: async function () {
             if (this.$root._editor) {
-                this.$root._editor.toTextArea();
-                this.$root._editor = null;
+                this.$root._editor.toTextArea()
+                this.$root._editor = null
             }
 
             this.$root._editor = this.editor = new EasyMDE({
