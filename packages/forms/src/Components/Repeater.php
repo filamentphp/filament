@@ -1017,6 +1017,22 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         }
 
         $relationship = $this->getRelationship();
+
+        $relationshipName = $this->getRelationshipName();
+        $relatedKeyName = $relationship->getRelated()->getKeyName();
+        $orderColumn = $this->getOrderColumn();
+
+        if (
+            $this->getModelInstance()->relationLoaded($relationshipName) &&
+            (! $this->modifyRelationshipQueryUsing) &&
+            blank($orderColumn)
+            
+        ) {
+            return $this->cachedExistingRecords = $this->getRecord()->{$relationshipName}->mapWithKeys(
+                fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
+            );
+        }
+        
         $relationshipQuery = $relationship->getQuery();
 
         if ($relationship instanceof BelongsToMany) {
@@ -1032,16 +1048,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ]) ?? $relationshipQuery;
         }
 
-        if ($orderColumn = $this->getOrderColumn()) {
+        if (filled($orderColumn)) {
             $relationshipQuery->orderBy($orderColumn);
-        }
-
-        $relatedKeyName = $relationship->getRelated()->getKeyName();
-
-        if(!is_null($relationship->getParent()->{$this->statePath})){
-            return $this->cachedExistingRecords = $relationship->getParent()->{$this->statePath}->mapWithKeys(
-                fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
-            );
         }
         
         return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
