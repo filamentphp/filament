@@ -1031,6 +1031,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             return $this->cachedExistingRecords = $this->getRecord()->{$relationshipName}->mapWithKeys(
                 fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
             );
+        } elseif (
+            $this->getModelInstance()->relationLoaded($relationshipName) &&
+            (! $this->modifyRelationshipQueryUsing) &&
+            filled($orderColumn)
+        ){
+            return $this->cachedExistingRecords = $this->getRecord()->{$relationshipName}->sortBy($orderColumn)->mapWithKeys(
+                fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
+            );
         }
         
         $relationshipQuery = $relationship->getQuery();
