@@ -12,7 +12,7 @@ php artisan make:filament-resource User --view
 
 ## Using an infolist instead of a disabled form
 
-By default, the View page will display a disabled form with the record's data. If you preferred to display the record's data in an "infolist", you can use define an `infolist()` method on the resource class:
+By default, the View page will display a disabled form with the record's data. If you preferred to display the record's data in an "infolist", you can define an `infolist()` method on the resource class:
 
 ```php
 use Filament\Infolists;

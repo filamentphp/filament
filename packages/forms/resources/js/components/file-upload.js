@@ -9,7 +9,6 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
 import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
-import FilePondPluginPdfPreview from 'filepond-plugin-pdf-preview'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -20,7 +19,6 @@ FilePond.registerPlugin(FilePondPluginImagePreview)
 FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
 FilePond.registerPlugin(FilePondPluginMediaPreview)
-FilePond.registerPlugin(FilePondPluginPdfPreview)
 
 window.FilePond = FilePond
 
@@ -57,8 +55,6 @@ export default function fileUploadFormComponent({
     minSize,
     panelAspectRatio,
     panelLayout,
-    pdfPreviewHeight,
-    pdfPreviewParams,
     placeholder,
     removeUploadedFileButtonPosition,
     removeUploadedFileUsing,
@@ -105,7 +101,6 @@ export default function fileUploadFormComponent({
                 allowVideoPreview: isPreviewable,
                 allowAudioPreview: isPreviewable,
                 allowImageTransform: shouldTransformImage,
-                allowPdfPreview: isPreviewable,
                 credits: false,
                 files: await this.getFiles(),
                 imageCropAspectRatio,
@@ -124,8 +119,6 @@ export default function fileUploadFormComponent({
                 stylePanelAspectRatio: panelAspectRatio,
                 stylePanelLayout: panelLayout,
                 styleProgressIndicatorPosition: uploadProgressIndicatorPosition,
-                pdfPreviewHeight,
-                pdfComponentExtraParams: pdfPreviewParams,
                 server: {
                     load: async (source, load) => {
                         let response = await fetch(source, {

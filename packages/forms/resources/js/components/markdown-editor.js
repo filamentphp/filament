@@ -98,7 +98,12 @@ export default function markdownEditorFormComponent({
         state,
 
         init: async function () {
-            this.editor = new EasyMDE({
+            if (this.$root._editor) {
+                this.$root._editor.toTextArea();
+                this.$root._editor = null;
+            }
+
+            this.$root._editor = this.editor = new EasyMDE({
                 autoDownloadFontAwesome: false,
                 autoRefresh: true,
                 autoSave: false,

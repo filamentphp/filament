@@ -68,8 +68,6 @@
                     locale: @js(app()->getLocale()),
                     panelAspectRatio: @js($getPanelAspectRatio()),
                     panelLayout: @js($getPanelLayout()),
-                    pdfPreviewHeight: @js($getPdfPreviewHeight()),
-                    pdfPreviewParams: @js($getPdfPreviewParams()),
                     placeholder: @js($getPlaceholder()),
                     maxSize: @js(($size = $getMaxSize()) ? "'{$size} KB'" : null),
                     minSize: @js(($size = $getMinSize()) ? "'{$size} KB'" : null),

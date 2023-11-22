@@ -216,7 +216,6 @@ use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachment')
     ->imagePreviewHeight('250')
-    ->pdfPreviewHeight('250')
     ->loadingIndicatorPosition('left')
     ->panelAspectRatio('2:1')
     ->panelLayout('integrated')
@@ -332,7 +331,7 @@ FileUpload::make('attachment')
 
 ## Prevent file information fetching
 
-While the form is loaded, it will automatically detect whether the files exist, what its size they are, and what type of files they are. This is all done on the backend. When using remote storage with many files, this can be time-consuming. You can use the `fetchFileInformation(false)` method to disable this feature:
+While the form is loaded, it will automatically detect whether the files exist, what size they are, and what type of files they are. This is all done on the backend. When using remote storage with many files, this can be time-consuming. You can use the `fetchFileInformation(false)` method to disable this feature:
 
 ```php
 use Filament\Forms\Components\FileUpload;
