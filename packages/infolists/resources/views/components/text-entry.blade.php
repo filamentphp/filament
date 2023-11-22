@@ -128,7 +128,7 @@
                                     <div
                                         @class([
                                             'fi-in-text-item inline-flex items-center gap-1.5',
-                                            'transition duration-75 hover:underline focus-visible:underline' => $url,
+                                            'group/item' => $url,
                                             match ($color) {
                                                 null => null,
                                                 'gray' => 'fi-color-gray',
@@ -146,6 +146,7 @@
 
                                         <div
                                             @class([
+                                                'group-hover/item:underline group-focus-visible/item:underline' => $url,
                                                 $proseClasses => $isProse || $isMarkdown,
                                                 match ($size) {
                                                     TextEntrySize::ExtraSmall, 'xs' => 'text-xs',

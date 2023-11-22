@@ -43,7 +43,7 @@
     }
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-link relative inline-flex items-center justify-center outline-none transition duration-75 hover:underline focus-visible:underline',
+        'fi-link group/link relative inline-flex items-center justify-center outline-none',
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         "fi-size-{$size->value}" => $size instanceof ActionSize,
@@ -64,7 +64,7 @@
     ]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
-        'font-semibold',
+        'font-semibold group-hover/link:underline group-focus-visible/link:underline',
         match ($size) {
             ActionSize::ExtraSmall => 'text-xs',
             ActionSize::Small => 'text-sm',
