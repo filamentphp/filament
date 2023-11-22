@@ -1025,7 +1025,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         if (
             $this->getModelInstance()->relationLoaded($relationshipName) &&
             (! $this->modifyRelationshipQueryUsing)
-            
+
         ) {
             return $this->cachedExistingRecords = $this->getRecord()->getRelationValue($relationshipName)
                 ->when(filled($orderColumn), fn (Collection $records) => $records->sortBy($orderColumn))
@@ -1033,7 +1033,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                     fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
                 );
         }
-        
+
         $relationshipQuery = $relationship->getQuery();
 
         if ($relationship instanceof BelongsToMany) {
@@ -1052,7 +1052,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         if (filled($orderColumn)) {
             $relationshipQuery->orderBy($orderColumn);
         }
-        
+
         return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
             fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
         );

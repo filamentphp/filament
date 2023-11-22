@@ -235,6 +235,7 @@
                                             \Filament\Support\get_color_css_variables(
                                                 $iconColor,
                                                 shades: [100, 400, 500, 600],
+                                                alias: 'modal.icon',
                                             ) => $iconColor !== 'gray',
                                         ])
                                     >

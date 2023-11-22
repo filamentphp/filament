@@ -94,6 +94,7 @@
                             \Filament\Support\get_color_css_variables(
                                 $iconColor,
                                 shades: [500],
+                                alias: 'tables::columns.text-column.item.icon',
                             ) => $iconColor !== 'gray',
                         ]);
                     @endphp
@@ -127,42 +128,12 @@
                             <div
                                 @class([
                                     'fi-ta-text-item inline-flex items-center gap-1.5',
-                                    'transition duration-75 hover:underline focus-visible:underline' => $url,
-                                    match ($size) {
-                                        TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
-                                        TextColumnSize::Small, 'sm', null => 'text-sm',
-                                        TextColumnSize::Medium, 'base', 'md' => 'text-base',
-                                        TextColumnSize::Large, 'lg' => 'text-lg',
-                                        default => $size,
-                                    },
+                                    'group/item' => $url,
                                     match ($color) {
-                                        null => 'text-gray-950 dark:text-white',
-                                        'gray' => 'fi-color-gray text-gray-500 dark:text-gray-400',
-                                        default => 'fi-color-custom text-custom-600 dark:text-custom-400',
+                                        null => null,
+                                        'gray' => 'fi-color-gray',
+                                        default => 'fi-color-custom',
                                     },
-                                    match ($weight) {
-                                        FontWeight::Thin, 'thin' => 'font-thin',
-                                        FontWeight::ExtraLight, 'extralight' => 'font-extralight',
-                                        FontWeight::Light, 'light' => 'font-light',
-                                        FontWeight::Medium, 'medium' => 'font-medium',
-                                        FontWeight::SemiBold, 'semibold' => 'font-semibold',
-                                        FontWeight::Bold, 'bold' => 'font-bold',
-                                        FontWeight::ExtraBold, 'extrabold' => 'font-extrabold',
-                                        FontWeight::Black, 'black' => 'font-black',
-                                        default => $weight,
-                                    },
-                                    match ($fontFamily) {
-                                        FontFamily::Sans, 'sans' => 'font-sans',
-                                        FontFamily::Serif, 'serif' => 'font-serif',
-                                        FontFamily::Mono, 'mono' => 'font-mono',
-                                        default => $fontFamily,
-                                    },
-                                ])
-                                @style([
-                                    \Filament\Support\get_color_css_variables(
-                                        $color,
-                                        shades: [400, 600],
-                                    ) => ! in_array($color, [null, 'gray']),
                                 ])
                             >
                                 @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
@@ -173,9 +144,50 @@
                                     />
                                 @endif
 
-                                <div>
+                                <span
+                                    @class([
+                                        'fi-ta-text-item-label',
+                                        'group-hover/item:underline group-focus-visible/item:underline' => $url,
+                                        match ($size) {
+                                            TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
+                                            TextColumnSize::Small, 'sm', null => 'text-sm',
+                                            TextColumnSize::Medium, 'base', 'md' => 'text-base',
+                                            TextColumnSize::Large, 'lg' => 'text-lg',
+                                            default => $size,
+                                        },
+                                        match ($color) {
+                                            null => 'text-gray-950 dark:text-white',
+                                            'gray' => 'text-gray-500 dark:text-gray-400',
+                                            default => 'text-custom-600 dark:text-custom-400',
+                                        },
+                                        match ($weight) {
+                                            FontWeight::Thin, 'thin' => 'font-thin',
+                                            FontWeight::ExtraLight, 'extralight' => 'font-extralight',
+                                            FontWeight::Light, 'light' => 'font-light',
+                                            FontWeight::Medium, 'medium' => 'font-medium',
+                                            FontWeight::SemiBold, 'semibold' => 'font-semibold',
+                                            FontWeight::Bold, 'bold' => 'font-bold',
+                                            FontWeight::ExtraBold, 'extrabold' => 'font-extrabold',
+                                            FontWeight::Black, 'black' => 'font-black',
+                                            default => $weight,
+                                        },
+                                        match ($fontFamily) {
+                                            FontFamily::Sans, 'sans' => 'font-sans',
+                                            FontFamily::Serif, 'serif' => 'font-serif',
+                                            FontFamily::Mono, 'mono' => 'font-mono',
+                                            default => $fontFamily,
+                                        },
+                                    ])
+                                    @style([
+                                        \Filament\Support\get_color_css_variables(
+                                            $color,
+                                            shades: [400, 600],
+                                            alias: 'tables::columns.text-column.item.label',
+                                        ) => ! in_array($color, [null, 'gray']),
+                                    ])
+                                >
                                     {{ $formattedState }}
-                                </div>
+                                </span>
 
                                 @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
                                     <x-filament::icon

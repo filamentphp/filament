@@ -92,6 +92,7 @@
     $buttonStyles = \Filament\Support\get_color_css_variables(
         $color,
         shades: [300, 400, 500, 600],
+        alias: 'icon-button',
     );
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
