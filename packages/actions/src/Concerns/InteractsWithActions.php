@@ -148,8 +148,6 @@ trait InteractsWithActions
             return null;
         }
 
-        $action->arguments($arguments);
-
         $this->cacheMountedActionForm();
 
         try {
@@ -336,11 +334,21 @@ trait InteractsWithActions
      */
     protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName): ?Action
     {
+        $arguments = $this->mountedActionsArguments;
+
+        if (($actionArguments = array_shift($arguments)) !== null) {
+            $action->arguments($actionArguments);
+        }
+
         foreach ($modalActionNames as $modalActionName) {
             $action = $action->getMountableModalAction($modalActionName);
 
             if (! $action) {
                 return null;
+            }
+
+            if (($actionArguments = array_shift($arguments)) !== null) {
+                $action->arguments($actionArguments);
             }
 
             $parentActionName = $modalActionName;
