@@ -1017,9 +1017,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         }
 
         $relationship = $this->getRelationship();
+        $relatedKeyName = $relationship->getRelated()->getKeyName();
 
         $relationshipName = $this->getRelationshipName();
-        $relatedKeyName = $relationship->getRelated()->getKeyName();
         $orderColumn = $this->getOrderColumn();
 
         if (
