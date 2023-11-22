@@ -1024,21 +1024,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
         if (
             $this->getModelInstance()->relationLoaded($relationshipName) &&
-            (! $this->modifyRelationshipQueryUsing) &&
-            blank($orderColumn)
+            (! $this->modifyRelationshipQueryUsing)
             
         ) {
-            return $this->cachedExistingRecords = $this->getRecord()->{$relationshipName}->mapWithKeys(
-                fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
-            );
-        } elseif (
-            $this->getModelInstance()->relationLoaded($relationshipName) &&
-            (! $this->modifyRelationshipQueryUsing) &&
-            filled($orderColumn)
-        ){
-            return $this->cachedExistingRecords = $this->getRecord()->{$relationshipName}->sortBy($orderColumn)->mapWithKeys(
-                fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
-            );
+            return $this->cachedExistingRecords = $this->getRecord()->getRelationValue($relationshipName)
+                ->when(filled($orderColumn), fn (Collection $records) => $records->sortBy($orderColumn))
+                ->mapWithKeys(
+                    fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
+                );
         }
         
         $relationshipQuery = $relationship->getQuery();
