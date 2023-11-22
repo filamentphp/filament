@@ -151,12 +151,14 @@ class ImageColumn extends Column
         /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
-        try {
-            if ($this->shouldFetchFileExistence() && ! $storage->exists($state)) {
+        if ($this->shouldFetchFileExistence()) {
+            try {
+                if (! $storage->exists($state)) {
+                    return null;
+                }
+            } catch (UnableToCheckFileExistence $exception) {
                 return null;
             }
-        } catch (UnableToCheckFileExistence $exception) {
-            return null;
         }
 
         if ($this->getVisibility() === 'private') {
