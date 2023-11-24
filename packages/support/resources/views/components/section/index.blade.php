@@ -75,7 +75,7 @@
                 x-on:click="isCollapsed = ! isCollapsed"
             @endif
             @class([
-                'fi-section-header flex items-center gap-x-3 overflow-hidden',
+                'fi-section-header sm:flex items-center gap-x-3 overflow-hidden',
                 'cursor-pointer' => $collapsible,
                 match ($compact) {
                     true => 'px-4 py-2.5',
