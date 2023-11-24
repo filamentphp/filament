@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages\Concerns;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use Illuminate\View\View;
 use Livewire\Attributes\Url;
 
 trait HasRelationManagers
@@ -53,6 +54,16 @@ trait HasRelationManagers
         }
 
         $this->activeRelationManager = array_key_first($this->getRelationManagers()) ?? null;
+    }
+
+    public function renderingHasRelationManagers(View $view): void
+    {
+        $managers = $this->getRelationManagers();
+
+        if (!array_key_exists($this->activeRelationManager, $managers) && !$this->hasCombinedRelationManagerTabsWithContent()) {
+            $this->activeRelationManager = array_key_first($this->getRelationManagers()) ?? null;
+            $view->with('activeRelationManager', $this->activeRelationManager);
+        }
     }
 
     public function hasCombinedRelationManagerTabsWithContent(): bool
