@@ -5,7 +5,6 @@ namespace Filament\Resources\Pages\Concerns;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
-use Illuminate\View\View;
 use Livewire\Attributes\Url;
 
 trait HasRelationManagers
