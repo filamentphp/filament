@@ -9,7 +9,7 @@
     'icon' => null,
     'shouldOpenUrlInNewTab' => false,
     'url',
-    'subnavigation' => false,
+    'sidebarCollapsible' => true,
 ])
 
 <li
@@ -22,7 +22,7 @@
     <a
         {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
-        @if (filament()->isSidebarCollapsibleOnDesktop() && ! $subnavigation)
+        @if (filament()->isSidebarCollapsibleOnDesktop() && $sidebarCollapsible)
             x-data="{ tooltip: false }"
             x-effect="
                 tooltip = $store.sidebar.isOpen
@@ -76,7 +76,7 @@
         @endif
 
         <span
-            @if (filament()->isSidebarCollapsibleOnDesktop() && ! $subnavigation)
+            @if (filament()->isSidebarCollapsibleOnDesktop() && $sidebarCollapsible)
                 x-show="$store.sidebar.isOpen"
                 x-transition:enter="lg:transition lg:delay-100"
                 x-transition:enter-start="opacity-0"
@@ -95,7 +95,7 @@
 
         @if (filled($badge))
             <span
-                @if (filament()->isSidebarCollapsibleOnDesktop() && ! $subnavigation)
+                @if (filament()->isSidebarCollapsibleOnDesktop() && $sidebarCollapsible)
                     x-show="$store.sidebar.isOpen"
                     x-transition:enter="lg:transition lg:delay-100"
                     x-transition:enter-start="opacity-0"
