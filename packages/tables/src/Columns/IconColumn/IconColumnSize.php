@@ -14,5 +14,7 @@ enum IconColumnSize
 
     case ExtraLarge;
 
+    case TwoExtraLarge;
+
     case ExtraExtraLarge;
 }

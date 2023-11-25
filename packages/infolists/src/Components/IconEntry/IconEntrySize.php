@@ -14,5 +14,7 @@ enum IconEntrySize
 
     case ExtraLarge;
 
+    case TwoExtraLarge;
+
     case ExtraExtraLarge;
 }
