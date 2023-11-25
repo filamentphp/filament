@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
@@ -38,6 +39,7 @@ class Column extends ViewComponent
     use Conditionable;
     use HasAlignment;
     use HasExtraAttributes;
+    use HasPlaceholder;
 
     protected string $evaluationIdentifier = 'column';
 

@@ -391,7 +391,7 @@ Select::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
-If you want to retrieve the options that have not been disabled, e.g., for validation purposes, you can do so using `getEnabledOptions()`:
+If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -433,6 +433,18 @@ Select::make('domain')
 ```
 
 <AutoScreenshot name="forms/fields/select/suffix-icon" alt="Select with suffix icon" version="3.x" />
+
+#### Setting the affix icon's color
+
+Affix icons are gray by default, but you may set a different color using the `prefixIconColor()` and `suffixIconColor()` methods:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('domain')
+    ->suffixIcon('heroicon-m-check-circle')
+    ->suffixIconColor('success')
+```
 
 ## Setting a custom loading message
 

@@ -44,7 +44,7 @@ In the function, `$state` is the value of the entry, and `$record` can be used t
 
 ## Customizing the size
 
-The default icon size is `IconEntrySize::Large`, but you may customize the size to be either `IconEntrySize::ExtraSmall`, `IconEntrySize::Small`, `IconEntrySize::Medium` or `IconEntrySize::ExtraLarge`:
+The default icon size is `IconEntrySize::Large`, but you may customize the size to be either `IconEntrySize::ExtraSmall`, `IconEntrySize::Small`, `IconEntrySize::Medium`, `IconEntrySize::ExtraLarge` or `IconEntrySize::ExtraExtraLarge`:
 
 ```php
 use Filament\Infolists\Components\IconEntry;

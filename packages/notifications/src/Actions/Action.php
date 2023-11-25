@@ -6,8 +6,6 @@ use Closure;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\StaticAction;
 use Filament\Support\Enums\ActionSize;
-use Filament\Support\Enums\IconPosition;
-use Filament\Support\Enums\IconSize;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
 
@@ -56,17 +54,8 @@ class Action extends StaticAction implements Arrayable, Groupable
             'dispatchToComponent' => $this->getDispatchToComponent(),
             'extraAttributes' => $this->getExtraAttributes(),
             'icon' => $this->getIcon(),
-            'iconPosition' => match ($iconPosition = $this->getIconPosition()) {
-                IconPosition::After => 'after',
-                IconPosition::Before => 'before',
-                default => $iconPosition,
-            },
-            'iconSize' => match ($iconSize = $this->getIconSize()) {
-                IconSize::Small => 'sm',
-                IconSize::Medium => 'md',
-                IconSize::Large => 'lg',
-                default => $iconSize,
-            },
+            'iconPosition' => $this->getIconPosition(),
+            'iconSize' => $this->getIconSize(),
             'isOutlined' => $this->isOutlined(),
             'isDisabled' => $this->isDisabled(),
             'label' => $this->getLabel(),
@@ -74,14 +63,8 @@ class Action extends StaticAction implements Arrayable, Groupable
             'shouldMarkAsRead' => $this->shouldMarkAsRead(),
             'shouldMarkAsUnread' => $this->shouldMarkAsUnread(),
             'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
-            'size' => match ($size = $this->getSize()) {
-                ActionSize::ExtraSmall => 'xs',
-                ActionSize::Small => 'sm',
-                ActionSize::Medium => 'md',
-                ActionSize::Large => 'lg',
-                ActionSize::ExtraLarge => 'xl',
-                default => $size,
-            },
+            'size' => $this->getSize(),
+            'tooltip' => $this->getTooltip(),
             'url' => $this->getUrl(),
             'view' => $this->getView(),
         ];
@@ -123,6 +106,7 @@ class Action extends StaticAction implements Arrayable, Groupable
         $static->markAsUnread($data['shouldMarkAsUnread'] ?? false);
         $static->outlined($data['isOutlined'] ?? false);
         $static->url($data['url'] ?? null, $data['shouldOpenUrlInNewTab'] ?? false);
+        $static->tooltip($data['tooltip'] ?? null);
 
         return $static;
     }

@@ -155,12 +155,13 @@ CreateAction::make()
 At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire creation process:
 
 ```php
+use App\Models\Post;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 
 CreateAction::make()
-    ->before(function (CreateAction $action) {
-        if (! $this->record->team->subscribed()) {
+    ->before(function (CreateAction $action, Post $record) {
+        if (! $record->team->subscribed()) {
             Notification::make()
                 ->warning()
                 ->title('You don\'t have an active subscription!')

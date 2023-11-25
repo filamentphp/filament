@@ -13,7 +13,7 @@ return [
             ],
 
             'mark_all_as_read' => [
-                'label' => '全て既読にする',
+                'label' => 'すべて既読にする',
             ],
 
         ],

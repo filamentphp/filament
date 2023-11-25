@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -30,11 +31,11 @@ class DetachAction extends Action
 
         $this->color('danger');
 
-        $this->icon('heroicon-m-x-mark');
+        $this->icon(FilamentIcon::resolve('actions::detach-action') ?? 'heroicon-m-x-mark');
 
         $this->requiresConfirmation();
 
-        $this->modalIcon('heroicon-o-x-mark');
+        $this->modalIcon(FilamentIcon::resolve('actions::detach-action.modal') ?? 'heroicon-o-x-mark');
 
         $this->action(function (): void {
             $this->process(function (Model $record, Table $table): void {

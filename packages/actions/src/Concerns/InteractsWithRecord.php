@@ -108,6 +108,16 @@ trait InteractsWithRecord
         return $this->evaluate($this->recordTitleAttribute);
     }
 
+    public function hasCustomRecordTitle(): bool
+    {
+        return $this->recordTitle !== null;
+    }
+
+    public function hasCustomRecordTitleAttribute(): bool
+    {
+        return $this->recordTitleAttribute !== null;
+    }
+
     public function getModel(): ?string
     {
         $model = $this->getCustomModel();

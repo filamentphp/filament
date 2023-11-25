@@ -2,6 +2,7 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
 use Filament\Livewire\DatabaseNotifications;
 use Filament\Livewire\GlobalSearch;
 use Filament\Livewire\Notifications;
@@ -71,6 +72,8 @@ trait HasComponents
      * @var array<string>
      */
     protected array $widgetNamespaces = [];
+
+    protected bool | Closure $hasReadOnlyRelationManagersOnResourceViewPagesByDefault = true;
 
     /**
      * @param  array<class-string>  $pages
@@ -345,6 +348,18 @@ trait HasComponents
         }
     }
 
+    /**
+     * @param  array<string, class-string<Component>>  $components
+     */
+    public function livewireComponents(array $components): static
+    {
+        foreach ($components as $component) {
+            $this->queueLivewireComponentForRegistration($component);
+        }
+
+        return $this;
+    }
+
     protected function registerLivewireComponents(): void
     {
         $this->queueLivewireComponentForRegistration(DatabaseNotifications::class);
@@ -421,5 +436,17 @@ trait HasComponents
         $componentName = app(ComponentRegistry::class)->getName($component);
 
         $this->livewireComponents[$componentName] = $component;
+    }
+
+    public function readOnlyRelationManagersOnResourceViewPagesByDefault(bool | Closure $condition = true): static
+    {
+        $this->hasReadOnlyRelationManagersOnResourceViewPagesByDefault = $condition;
+
+        return $this;
+    }
+
+    public function hasReadOnlyRelationManagersOnResourceViewPagesByDefault(): bool
+    {
+        return (bool) $this->evaluate($this->hasReadOnlyRelationManagersOnResourceViewPagesByDefault);
     }
 }

@@ -82,7 +82,6 @@ abstract class Widget extends Component
      */
     public static function make(array $properties = []): WidgetConfiguration
     {
-
         return app(WidgetConfiguration::class, ['widget' => static::class, 'properties' => $properties]);
     }
 

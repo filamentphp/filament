@@ -21,9 +21,9 @@
             inline-prefix
             :placeholder="__('filament-panels::global-search.field.placeholder')"
             type="search"
+            wire:key="global-search.field.input"
             wire:model.live.debounce.500ms="search"
             x-bind:id="$id('input')"
-            wire:key="global-search.field.input"
             x-data="{}"
             :attributes="
                 \Filament\Support\prepare_inherited_attributes(

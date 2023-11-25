@@ -6,8 +6,10 @@ use Filament\Forms\Form;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -57,7 +59,7 @@ interface HasTable
 
     public function getTableFiltersForm(): Form;
 
-    public function getTableRecords(): Collection | Paginator;
+    public function getTableRecords(): Collection | Paginator | CursorPaginator;
 
     public function getTableRecordsPerPage(): int | string | null;
 
@@ -93,10 +95,10 @@ interface HasTable
 
     public function resetTableColumnSearch(string $column): void;
 
-    public function getTableSearchIndicator(): string;
+    public function getTableSearchIndicator(): Indicator;
 
     /**
-     * @return array<string, string>
+     * @return array<Indicator>
      */
     public function getTableColumnSearchIndicators(): array;
 

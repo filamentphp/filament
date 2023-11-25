@@ -19,29 +19,32 @@
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-data="{}"
                 x-bind:class="{
-                    'lg:ps-[--collapsed-sidebar-width]': ! $store.sidebar.isOpen,
-                    'fi-main-ctn-sidebar-open lg:ps-[--sidebar-width]': $store.sidebar.isOpen,
+                    'fi-main-ctn-sidebar-open': $store.sidebar.isOpen,
                 }"
-                x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
+                x-bind:style="'display: flex; opacity:1;'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @elseif (filament()->isSidebarFullyCollapsibleOnDesktop())
                 x-data="{}"
                 x-bind:class="{
-                    'fi-main-ctn-sidebar-open lg:ps-[--sidebar-width]': $store.sidebar.isOpen,
+                    'fi-main-ctn-sidebar-open': $store.sidebar.isOpen,
                 }"
-                x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
+                x-bind:style="'display: flex; opacity:1;'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
+            @elseif (! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()))
+                x-data="{}"
+                x-bind:style="'display: flex; opacity:1;'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @endif
             @class([
                 'fi-main-ctn w-screen flex-1 flex-col',
-                'hidden h-full transition-all' => filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop(),
-                'flex lg:ps-[--sidebar-width]' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
+                'h-full opacity-0 transition-all' => filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop(),
+                'opacity-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
+                'flex' => filament()->hasTopNavigation(),
             ])
         >
             <x-filament-panels::topbar :navigation="$navigation" />
 
             <main
                 @class([
-                    'fi-main mx-auto w-full px-4 md:px-6 lg:px-8',
-                    match ($maxContentWidth ?? filament()->getMaxContentWidth() ?? '7xl') {
+                    'fi-main mx-auto h-full w-full px-4 md:px-6 lg:px-8',
+                    match ($maxContentWidth ??= (filament()->getMaxContentWidth() ?? '7xl')) {
                         'xl' => 'max-w-xl',
                         '2xl' => 'max-w-2xl',
                         '3xl' => 'max-w-3xl',

@@ -8,8 +8,6 @@ use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasColor;
-use Filament\Support\Concerns\HasIcon;
-use Filament\Support\Concerns\HasIconColor;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -27,11 +25,12 @@ class Notification extends ViewComponent implements Arrayable
     use Concerns\HasBody;
     use Concerns\HasDate;
     use Concerns\HasDuration;
+    use Concerns\HasIcon;
+    use Concerns\HasIconColor;
     use Concerns\HasId;
+    use Concerns\HasStatus;
     use Concerns\HasTitle;
     use HasColor;
-    use HasIcon;
-    use HasIconColor;
 
     /**
      * @var view-string
@@ -76,6 +75,7 @@ class Notification extends ViewComponent implements Arrayable
             'duration' => $this->getDuration(),
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
+            'status' => $this->getStatus(),
             'title' => $this->getTitle(),
             'view' => $this->getView(),
             'viewData' => $this->getViewData(),
@@ -88,6 +88,17 @@ class Notification extends ViewComponent implements Arrayable
     public static function fromArray(array $data): static
     {
         $static = static::make($data['id'] ?? Str::random());
+
+        // If the container constructs an instance of child class
+        // instead of the current class, we should run `fromArray()`
+        // on the child class instead.
+        if (
+            ($static::class !== self::class) &&
+            (get_called_class() === self::class)
+        ) {
+            return $static::fromArray($data);
+        }
+
         $static->actions(
             array_map(
                 fn (array $action): Action | ActionGroup => match (array_key_exists('actions', $action)) {
@@ -108,7 +119,8 @@ class Notification extends ViewComponent implements Arrayable
         $static->body($data['body'] ?? null);
         $static->color($data['color'] ?? null);
         $static->duration($data['duration'] ?? $static->getDuration());
-        $static->icon($data['icon'] ?? null);
+        $static->status($data['status'] ?? $static->getStatus());
+        $static->icon($data['icon'] ?? $static->getIcon());
         $static->iconColor($data['iconColor'] ?? $static->getIconColor());
         $static->title($data['title'] ?? null);
 
@@ -213,49 +225,6 @@ class Notification extends ViewComponent implements Arrayable
         return $data;
     }
 
-    public function status(string $status): static
-    {
-        return match ($status) {
-            'danger' => $this->danger(),
-            'info' => $this->info(),
-            'success' => $this->success(),
-            'warning' => $this->warning(),
-            default => $this,
-        };
-    }
-
-    public function danger(): static
-    {
-        $this->icon('heroicon-o-x-circle');
-        $this->iconColor('danger');
-
-        return $this;
-    }
-
-    public function info(): static
-    {
-        $this->icon('heroicon-o-information-circle');
-        $this->iconColor('info');
-
-        return $this;
-    }
-
-    public function success(): static
-    {
-        $this->icon('heroicon-o-check-circle');
-        $this->iconColor('success');
-
-        return $this;
-    }
-
-    public function warning(): static
-    {
-        $this->icon('heroicon-o-exclamation-circle');
-        $this->iconColor('warning');
-
-        return $this;
-    }
-
     public static function fromDatabase(DatabaseNotificationModel $notification): static
     {
         /** @phpstan-ignore-next-line */
@@ -299,5 +268,46 @@ class Notification extends ViewComponent implements Arrayable
         }
 
         Assert::assertSame($expectedNotification->title, $notification);
+    }
+
+    public static function assertNotNotified(Notification | string | null $notification = null): void
+    {
+        $notificationsLivewireComponent = new Notifications();
+        $notificationsLivewireComponent->mount();
+        $notifications = $notificationsLivewireComponent->notifications;
+
+        $expectedNotification = null;
+
+        Assert::assertIsArray($notifications->toArray());
+
+        if (is_string($notification)) {
+            $expectedNotification = $notifications->first(fn (Notification $mountedNotification): bool => $mountedNotification->title === $notification);
+        }
+
+        if ($notification instanceof Notification) {
+            $expectedNotification = $notifications->first(fn (Notification $mountedNotification, string $key): bool => $mountedNotification->id === $key);
+        }
+
+        if (blank($notification)) {
+            return;
+        }
+
+        if ($notification instanceof Notification) {
+            Assert::assertNotSame(
+                collect($expectedNotification)->except(['id'])->toArray(),
+                collect($notification->toArray())->except(['id'])->toArray(),
+                'The notification with the given configration was sent'
+            );
+
+            return;
+        }
+
+        if ($expectedNotification instanceof Notification) {
+            Assert::assertNotSame(
+                $expectedNotification->title,
+                $notification,
+                'The notification with the given title was sent'
+            );
+        }
     }
 }

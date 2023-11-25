@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\Filters\Indicator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use RecursiveArrayIterator;
@@ -87,7 +88,7 @@ trait CanSearchRecords
                 continue;
             }
 
-            foreach (explode(' ', $search) as $searchWord) {
+            foreach ($this->extractTableSearchWords($search) as $searchWord) {
                 $query->where(function (Builder $query) use ($column, $searchWord) {
                     $isFirst = true;
 
@@ -103,15 +104,26 @@ trait CanSearchRecords
         return $query;
     }
 
+    /**
+     * @return array<string>
+     */
+    protected function extractTableSearchWords(string $search): array
+    {
+        return array_filter(
+            str_getcsv(preg_replace('/\s+/', ' ', $search), ' '),
+            fn ($word): bool => filled($word),
+        );
+    }
+
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
     {
-        $search = trim($this->getTableSearch());
+        $search = $this->getTableSearch();
 
         if (blank($search)) {
             return $query;
         }
 
-        foreach (explode(' ', $search) as $searchWord) {
+        foreach ($this->extractTableSearchWords($search) as $searchWord) {
             $query->where(function (Builder $query) use ($searchWord) {
                 $isFirst = true;
 
@@ -136,12 +148,9 @@ trait CanSearchRecords
         return $query;
     }
 
-    /**
-     * @return ?string
-     */
-    public function getTableSearch()
+    public function getTableSearch(): ?string
     {
-        return $this->tableSearch;
+        return filled($this->tableSearch) ? trim(strval($this->tableSearch)) : null;
     }
 
     public function hasTableSearch(): bool
@@ -166,13 +175,14 @@ trait CanSearchRecords
         $this->updatedTableColumnSearches();
     }
 
-    public function getTableSearchIndicator(): string
+    public function getTableSearchIndicator(): Indicator
     {
-        return __('filament-tables::table.fields.search.indicator') . ': ' . $this->getTableSearch();
+        return Indicator::make(__('filament-tables::table.fields.search.indicator') . ': ' . $this->getTableSearch())
+            ->removeLivewireClickHandler('resetTableSearch');
     }
 
     /**
-     * @return array<string, string>
+     * @return array<Indicator>
      */
     public function getTableColumnSearchIndicators(): array
     {
@@ -195,7 +205,8 @@ trait CanSearchRecords
                 continue;
             }
 
-            $indicators[$columnName] = "{$column->getLabel()}: {$search}";
+            $indicators[] = Indicator::make("{$column->getLabel()}: {$search}")
+                ->removeLivewireClickHandler("resetTableColumnSearch('{$columnName}')");
         }
 
         return $indicators;
@@ -248,7 +259,7 @@ trait CanSearchRecords
             // Nested array keys are flattened into `dot.syntax`.
             $searches[
                 implode('.', array_slice($path, 0, $iterator->getDepth() + 1))
-            ] = trim($value);
+            ] = trim(strval($value));
         }
 
         return $searches;

@@ -6,6 +6,19 @@ return [
 
     'heading' => '로그인하세요',
 
+    'actions' => [
+
+        'register' => [
+            'before' => '또는',
+            'label' => '회원 가입',
+        ],
+
+        'request_password_reset' => [
+            'label' => '비밀번호를 잊어버리셨나요?',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [
@@ -39,7 +52,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => '로그인 시도가 너무 많이 발생했습니다. :seconds 초 후에 다시 시도 해주세요.',
+            'title' => '너무 많이 시도했습니다',
+            'body' => ':seconds 초 후에 다시 시도해 주세요.',
         ],
 
     ],

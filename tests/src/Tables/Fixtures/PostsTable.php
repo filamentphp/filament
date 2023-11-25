@@ -83,6 +83,10 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                         'red' => 'Red',
                         'blue' => 'Blue',
                     ]),
+                Tables\Columns\TextColumn::make('title2')
+                    ->sortable()
+                    ->searchable()
+                    ->prefix(fn (Post $record): string => $record->is_published ? 'published' : 'unpublished'),
             ])
             ->filters([
                 Tables\Filters\Filter::make('is_published')

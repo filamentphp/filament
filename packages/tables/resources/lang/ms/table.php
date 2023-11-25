@@ -26,6 +26,10 @@ return [
             'label' => 'Pilih/nyahpilih item :key untuk tindakan pukal.',
         ],
 
+        'bulk_select_group' => [
+            'label' => 'Pilih/nyahpilih kumpulan :title untuk tindakan pukal.',
+        ],
+
         'search' => [
             'label' => 'Cari',
             'placeholder' => 'Carian',

@@ -8,12 +8,12 @@ use Illuminate\View\ComponentAttributeBag;
 trait HasExtraHeaderAttributes
 {
     /**
-     * @var array<mixed>
+     * @var array<array<mixed> | Closure>
      */
     protected array $extraHeaderAttributes = [];
 
     /**
-     * @param  array<array<mixed> | Closure>  $attributes
+     * @param  array<mixed> | Closure  $attributes
      */
     public function extraHeaderAttributes(array | Closure $attributes, bool $merge = false): static
     {

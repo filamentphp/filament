@@ -1,4 +1,6 @@
 @php
+    use Filament\Support\Facades\FilamentView;
+
     $datalistOptions = $getDatalistOptions();
     $extraAlpineAttributes = $getExtraAlpineAttributes();
     $id = $getId();
@@ -22,9 +24,11 @@
         :prefix="$prefixLabel"
         :prefix-actions="$prefixActions"
         :prefix-icon="$prefixIcon"
+        :prefix-icon-color="$getPrefixIconColor()"
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
+        :suffix-icon-color="$getSuffixIconColor()"
         :valid="! $errors->has($statePath)"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
@@ -55,7 +59,11 @@
         @else
             <div
                 x-ignore
-                ax-load
+                @if (FilamentView::hasSpaMode())
+                    ax-load="visible"
+                @else
+                    ax-load
+                @endif
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
                 x-data="dateTimePickerFormComponent({
                             displayFormat:
@@ -137,7 +145,7 @@
                     wire:ignore
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.panel"
                     @class([
-                        'absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
+                        'fi-fo-date-time-picker-panel absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                     ])
                 >
                     <div class="grid gap-y-3">
@@ -145,7 +153,7 @@
                             <div class="flex items-center justify-between">
                                 <select
                                     x-model="focusedMonth"
-                                    class="grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:ring-0 dark:text-white"
+                                    class="grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:ring-0 dark:bg-gray-900 dark:text-white"
                                 >
                                     <template
                                         x-for="(month, index) in months"

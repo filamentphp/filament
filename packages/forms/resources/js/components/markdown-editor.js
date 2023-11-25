@@ -98,7 +98,12 @@ export default function markdownEditorFormComponent({
         state,
 
         init: async function () {
-            this.editor = new EasyMDE({
+            if (this.$root._editor) {
+                this.$root._editor.toTextArea()
+                this.$root._editor = null
+            }
+
+            this.$root._editor = this.editor = new EasyMDE({
                 autoDownloadFontAwesome: false,
                 autoRefresh: true,
                 autoSave: false,
@@ -119,6 +124,11 @@ export default function markdownEditorFormComponent({
                 toolbar: this.getToolbar(),
                 uploadImage: true,
             })
+
+            this.editor.codemirror.setOption(
+                'direction',
+                document.documentElement?.dir ?? 'ltr',
+            )
 
             // When creating a link, highlight the URL instead of the label:
             this.editor.codemirror.on('changes', (instance, changes) => {

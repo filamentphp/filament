@@ -41,8 +41,16 @@
         };
     @endphp
 
-    @if (count($limitedState))
-        <div class="fi-in-image flex items-center gap-x-2.5">
+    <div
+        {{
+            $attributes
+                ->merge($getExtraAttributes(), escape: false)
+                ->class([
+                    'fi-in-image flex items-center gap-x-2.5',
+                ])
+        }}
+    >
+        @if (count($limitedState))
             <div
                 @class([
                     'flex',
@@ -112,6 +120,10 @@
                     +{{ count($state) - count($limitedState) }}
                 </div>
             @endif
-        </div>
-    @endif
+        @elseif (($placeholder = $getPlaceholder()) !== null)
+            <x-filament-infolists::entries.placeholder>
+                {{ $placeholder }}
+            </x-filament-infolists::entries.placeholder>
+        @endif
+    </div>
 </x-dynamic-component>

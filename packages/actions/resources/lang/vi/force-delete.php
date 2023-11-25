@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Xóa vĩnh viễn :label đã chọn',
+            'heading' => 'Xóa vĩnh viễn các mục :label đã chọn',
 
             'actions' => [
 

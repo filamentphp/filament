@@ -2,19 +2,62 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Stulpeliai',
+
+    ],
+
     'columns' => [
 
         'text' => [
-            'more_list_items' => 'ir :count daugiau',
+            'more_list_items' => 'ir dar :count',
         ],
 
     ],
 
     'fields' => [
 
-        'search_query' => [
+        'bulk_select_page' => [
+            'label' => 'Pažymėti/atžymėti visus įrašus masiniam veiksmui.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Pažymėti/atžymėti įrašą :key masiniam veiksmui.',
+        ],
+
+        'search' => [
             'label' => 'Paieška',
             'placeholder' => 'Paieška',
+            'indicator' => 'Paieška',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Santrauka',
+
+        'subheadings' => [
+            'all' => 'Viso :label',
+            'group' => ':group santrauka',
+            'page' => 'Šis puslapis',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Vidurkis',
+            ],
+
+            'count' => [
+                'label' => 'Viso',
+            ],
+
+            'sum' => [
+                'label' => 'Suma',
+            ],
+
         ],
 
     ],
@@ -22,7 +65,7 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Finish reordering records',
+            'label' => 'Pabaik pertvarkyti įrašus',
         ],
 
         'enable_reordering' => [
@@ -33,18 +76,26 @@ return [
             'label' => 'Filtras',
         ],
 
+        'group' => [
+            'label' => 'Grupė',
+        ],
+
         'open_bulk_actions' => [
             'label' => 'Atidaryti veiksmus',
         ],
 
         'toggle_columns' => [
-            'label' => 'Toggle columns',
+            'label' => 'Perjungti stulpelius',
         ],
 
     ],
 
     'empty' => [
+
         'heading' => 'Nerasta įrašų',
+
+        'description' => 'Norėdami pradėti, sukurkite :model.',
+
     ],
 
     'filters' => [
@@ -66,6 +117,8 @@ return [
 
         ],
 
+        'heading' => 'Filtrai',
+
         'indicator' => 'Aktyvūs filtrai',
 
         'multi_select' => [
@@ -78,7 +131,7 @@ return [
 
         'trashed' => [
 
-            'label' => 'Ištrinti įrašaų',
+            'label' => 'Ištrinti įrašai',
 
             'only_trashed' => 'Tik ištrinti įrašai',
 
@@ -90,7 +143,31 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Vilk ir paleisk pakeisti įrašų eiliškumui.',
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Grupuoti pagal',
+                'placeholder' => 'Grupuoti pagal',
+            ],
+
+            'direction' => [
+
+                'label' => 'Grupės kryptis',
+
+                'options' => [
+                    'asc' => 'Didėjančia tvarka',
+                    'desc' => 'Mažėjančia tvarka',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
+    'reorder_indicator' => 'Vilkite ir paleiskite įrašų rikiavimui.',
 
     'selection_indicator' => [
 

@@ -69,17 +69,27 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 ### Panel Builder icon aliases
 
 - `panels::global-search.field` - Global search field
-- `panels::pages.dashboard.navigation-item` - Dashboard navigation item
-- `panels::pages.tenancy.register-tenant.open-tenant-button` - Button to open a tenant from the tenant registration page
+- `panels::pages.dashboard.navigation-item` - Dashboard page navigation item
+- `panels::resources.pages.edit-record.navigation-item` - Resource edit record page navigation item
+- `panels::resources.pages.manage-related-records.navigation-item` - Resource manage related records page navigation item
+- `panels::resources.pages.view-record.navigation-item` - Resource view record page navigation item
+- `panels::pages.password-reset.request-password-reset.actions.login` - Trigger button of the login action on the request password reset page
+- `panels::pages.password-reset.request-password-reset.actions.login.rtl` - Trigger button of the login action on the request password reset page (right-to-left direction)
 - `panels::sidebar.collapse-button` - Button to collapse the sidebar
+- `panels::sidebar.collapse-button.rtl` - Button to collapse the sidebar (right-to-left direction)
 - `panels::sidebar.expand-button` - Button to expand the sidebar
+- `panels::sidebar.expand-button.rtl` - Button to expand the sidebar (right-to-left direction)
 - `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
+- `panels::tenant-menu.billing-button` - Billing button in the tenant menu
+- `panels::tenant-menu.profile-button` - Profile button in the tenant menu
+- `panels::tenant-menu.registration-button` - Registration button in the tenant menu
 - `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
 - `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
 - `panels::theme-switcher.dark-button` - Button to switch to the dark theme from the theme switcher
 - `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
 - `panels::topbar.close-sidebar-button` - Button to close the sidebar
 - `panels::topbar.open-sidebar-button` - Button to open the sidebar
+- `panels::topbar.group.toggle-button` - Toggle button for a topbar group
 - `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
 - `panels::user-menu.profile-item` - Profile item in the user menu
 - `panels::user-menu.logout-button` - Button in the user menu to log out
@@ -89,12 +99,52 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 ### Form Builder icon aliases
 
-- `forms:components.checkbox-list.search-field` - Search input in a checkbox list
+- `forms::components.builder.actions.clone` - Trigger button of a clone action in a builder item
+- `forms::components.builder.actions.collapse` - Trigger button of a collapse action in a builder item
+- `forms::components.builder.actions.delete` - Trigger button of a delete action in a builder item
+- `forms::components.builder.actions.expand` - Trigger button of an expand action in a builder item
+- `forms::components.builder.actions.move-down` - Trigger button of a move down action in a builder item
+- `forms::components.builder.actions.move-up` - Trigger button of a move up action in a builder item
+- `forms::components.builder.actions.reorder` - Trigger button of a reorder action in a builder item
+- `forms::components.checkbox-list.search-field` - Search input in a checkbox list
+- `forms::components.file-upload.editor.actions.drag-crop` - Trigger button of a drag crop action in a file upload editor
+- `forms::components.file-upload.editor.actions.drag-move` - Trigger button of a drag move action in a file upload editor
+- `forms::components.file-upload.editor.actions.flip-horizontal` - Trigger button of a flip horizontal action in a file upload editor
+- `forms::components.file-upload.editor.actions.flip-vertical` - Trigger button of a flip vertical action in a file upload editor
+- `forms::components.file-upload.editor.actions.move-down` - Trigger button of a move down action in a file upload editor
+- `forms::components.file-upload.editor.actions.move-left` - Trigger button of a move left action in a file upload editor
+- `forms::components.file-upload.editor.actions.move-right` - Trigger button of a move right action in a file upload editor
+- `forms::components.file-upload.editor.actions.move-up` - Trigger button of a move up action in a file upload editor
+- `forms::components.file-upload.editor.actions.rotate-left` - Trigger button of a rotate left action in a file upload editor
+- `forms::components.file-upload.editor.actions.rotate-right` - Trigger button of a rotate right action in a file upload editor
+- `forms::components.file-upload.editor.actions.zoom-100` - Trigger button of a zoom 100 action in a file upload editor
+- `forms::components.file-upload.editor.actions.zoom-in` - Trigger button of a zoom in action in a file upload editor
+- `forms::components.file-upload.editor.actions.zoom-out` - Trigger button of a zoom out action in a file upload editor
+- `forms::components.key-value.actions.delete` - Trigger button of a delete action in a key-value field item
+- `forms::components.key-value.actions.reorder` - Trigger button of a reorder action in a key-value field item
+- `forms::components.repeater.actions.clone` - Trigger button of a clone action in a repeater item
+- `forms::components.repeater.actions.collapse` - Trigger button of a collapse action in a repeater item
+- `forms::components.repeater.actions.delete` - Trigger button of a delete action in a repeater item
+- `forms::components.repeater.actions.expand` - Trigger button of an expand action in a repeater item
+- `forms::components.repeater.actions.move-down` - Trigger button of a move down action in a repeater item
+- `forms::components.repeater.actions.move-up` - Trigger button of a move up action in a repeater item
+- `forms::components.repeater.actions.reorder` - Trigger button of a reorder action in a repeater item
+- `forms::components.select.actions.create-option` - Trigger button of a create option action in a select field
+- `forms::components.select.actions.edit-option` - Trigger button of an edit option action in a select field
 - `forms::components.wizard.completed-step` - Completed step in a wizard
 
 ### Table Builder icon aliases
 
-- `tables::columns.collapse-button`
+- `tables::actions.disable-reordering` - Trigger button of the disable reordering action
+- `tables::actions.enable-reordering` - Trigger button of the enable reordering action
+- `tables::actions.filter` - Trigger button of the filter action
+- `tables::actions.group` - Trigger button of a group records action
+- `tables::actions.open-bulk-actions` - Trigger button of an open bulk actions action
+- `tables::actions.toggle-columns` - Trigger button of the toggle columns action
+- `tables::columns.collapse-button` - Button to collapse a column
+- `tables::columns.icon-column.false` - Falsy state of an icon column
+- `tables::columns.icon-column.true` - Truthy state of an icon column
+- `tables::empty-state` - Empty state icon
 - `tables::filters.remove-all-button` - Button to remove all filters
 - `tables::grouping.collapse-button` - Button to collapse a group of records
 - `tables::header-cell.sort-asc-button` - Sort button of a column sorted in ascending order
@@ -106,12 +156,49 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 - `notifications::database.modal.empty-state` - Empty state of the database notifications modal
 - `notifications::notification.close-button` - Button to close a notification
+- `notifications::notification.danger` - Danger notification
+- `notifications::notification.info` - Info notification
+- `notifications::notification.success` - Success notification
+- `notifications::notification.warning` - Warning notification
+
+### Actions icon aliases
+
+- `actions::action-group` - Trigger button of an action group
+- `actions::create-action.grouped` - Trigger button of a grouped create action
+- `actions::delete-action` - Trigger button of a delete action
+- `actions::delete-action.grouped` - Trigger button of a grouped delete action
+- `actions::delete-action.modal` - Modal of a delete action
+- `actions::detach-action` - Trigger button of a detach action
+- `actions::detach-action.modal` - Modal of a detach action
+- `actions::dissociate-action` - Trigger button of a dissociate action
+- `actions::dissociate-action.modal` - Modal of a dissociate action
+- `actions::edit-action` - Trigger button of an edit action
+- `actions::edit-action.grouped` - Trigger button of a grouped edit action
+- `actions::force-delete-action` - Trigger button of a force delete action
+- `actions::force-delete-action.grouped` - Trigger button of a grouped force delete action
+- `actions::force-delete-action.modal` - Modal of a force delete action
+- `actions::modal.confirmation` - Modal of an action that requires confirmation
+- `actions::replicate-action` - Trigger button of a replicate action
+- `actions::replicate-action.grouped` - Trigger button of a grouped replicate action
+- `actions::restore-action` - Trigger button of a restore action
+- `actions::restore-action.grouped` - Trigger button of a grouped restore action
+- `actions::restore-action.modal` - Modal of a restore action
+- `actions::view-action` - Trigger button of a view action
+- `actions::view-action.grouped` - Trigger button of a grouped view action
+
+### Infolist Builder icon aliases
+
+- `infolists::components.icon-entry.false` - Falsy state of an icon entry
+- `infolists::components.icon-entry.true` - Truthy state of an icon entry
 
 ### UI components icon aliases
 
 - `badge.delete-button` - Button to delete a badge
 - `breadcrumbs.separator` - Separator between breadcrumbs
+- `breadcrumbs.separator.rtl` - Separator between breadcrumbs (right-to-left direction)
 - `modal.close-button` - Button to close a modal
 - `pagination.previous-button` - Button to go to the previous page
+- `pagination.previous-button.rtl` - Button to go to the previous page (right-to-left direction)
 - `pagination.next-button` - Button to go to the next page
+- `pagination.next-button.rtl` - Button to go to the next page (right-to-left direction)
 - `section.collapse-button` - Button to collapse a section

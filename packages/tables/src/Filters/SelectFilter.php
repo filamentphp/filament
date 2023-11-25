@@ -49,6 +49,10 @@ class SelectFilter extends BaseFilter
                     $relationshipQuery = $filter->getRelationshipQuery();
 
                     $labels = $relationshipQuery
+                        ->when(
+                            $filter->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough,
+                            fn (Builder $query) => $query->distinct(),
+                        )
                         ->whereKey($state['values'])
                         ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
                         ->all();
@@ -62,7 +66,13 @@ class SelectFilter extends BaseFilter
 
                 $labels = collect($labels)->join(', ', ' & ');
 
-                return ["{$filter->getIndicator()}: {$labels}"];
+                $indicator = $filter->getIndicator();
+
+                if (! $indicator instanceof Indicator) {
+                    $indicator = Indicator::make("{$indicator}: {$labels}");
+                }
+
+                return [$indicator];
             }
 
             if (blank($state['value'] ?? null)) {
@@ -82,7 +92,13 @@ class SelectFilter extends BaseFilter
                 return [];
             }
 
-            return ["{$filter->getIndicator()}: {$label}"];
+            $indicator = $filter->getIndicator();
+
+            if (! $indicator instanceof Indicator) {
+                $indicator = Indicator::make("{$indicator}: {$label}");
+            }
+
+            return [$indicator];
         });
 
         $this->resetState(['value' => null]);

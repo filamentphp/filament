@@ -68,11 +68,12 @@ protected function getHeaderActions(): array
 If you're using actions on an [Edit](resources/editing-records) or [View](resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
 
 ```php
+use App\Models\Post;
 use Filament\Actions\Action;
 
 Action::make('approve')
-    ->action(function () {
-        $this->getRecord()->approve();
+    ->action(function (Post $record) {
+        $record->approve();
 
         $this->refreshFormData([
             'status',
@@ -110,7 +111,7 @@ You may change how many grid columns are used to display widgets.
 You may override the `getHeaderWidgetsColumns()` or `getFooterWidgetsColumns()` methods to return a number of grid columns to use:
 
 ```php
-protected function getHeaderWidgetsColumns(): int | array
+public function getHeaderWidgetsColumns(): int | array
 {
     return 3;
 }
@@ -121,7 +122,7 @@ protected function getHeaderWidgetsColumns(): int | array
 You may wish to change the number of widget grid columns based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. You can do this using an array that contains the number of columns that should be used at each breakpoint:
 
 ```php
-protected function getHeaderWidgetsColumns(): int | array
+public function getHeaderWidgetsColumns(): int | array
 {
     return [
         'md' => 4,
@@ -137,7 +138,7 @@ This pairs well with [responsive widget widths](dashboard#responsive-widget-widt
 You may pass data to widgets from the page using the `getWidgetsData()` method:
 
 ```php
-protected function getWidgetsData(): array
+public function getWidgetData(): array
 {
     return [
         'stats' => [
