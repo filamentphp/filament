@@ -460,7 +460,7 @@ You can opt to switch the position of the sub-navigation to the opposite side of
 You can customize this by setting the `$subNavigationAlignedEnd` property on the resource:
 
 ```php
-protected static bool $subNavigationAlignedEnd = false;
+protected static bool $subNavigationAlignedEnd = true;
 ```
 
 ## Deleting resource pages
