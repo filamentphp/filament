@@ -2,14 +2,19 @@
 
 return [
 
-    'title' => 'Pieteikties',
+    'title' => 'Pieteikšanās',
 
     'heading' => 'Pierakstīties savā kontā',
 
     'actions' => [
 
-        'submit' => [
-            'label' => 'Pierakstīties',
+        'register' => [
+            'before' => 'vai',
+            'label' => 'reģistrēties',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Aizmirsāt paroli?',
         ],
 
     ],
@@ -28,6 +33,14 @@ return [
             'label' => 'Atcerēties mani',
         ],
 
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Pierakstīties',
+            ],
+
+        ],
+
     ],
 
     'messages' => [
@@ -39,7 +52,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Pārāk daudz pieteikšanās mēģinājumu. Lūdzu, mēģiniet vēlreiz pēc :seconds sekundēm.',
+            'title' => 'Pārāk daudz pieteikšanās mēģinājumu.',
+            'body' => 'Lūdzu, mēģiniet vēlreiz pēc :seconds sekundēm.',
         ],
 
     ],

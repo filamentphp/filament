@@ -7,29 +7,29 @@ return [
     'actions' => [
 
         'billing' => [
-            'label' => 'Pārvaldīt abonementu',
+            'label' => 'Menaxho abonimin',
         ],
 
         'logout' => [
-            'label' => 'Iziet',
+            'label' => 'Dil',
         ],
 
         'open_database_notifications' => [
-            'label' => 'Atvērt paziņojumus',
+            'label' => 'Hap njoftimet',
         ],
 
         'open_user_menu' => [
-            'label' => 'Lietotāja izvēlne',
+            'label' => 'Menuja e përdoruesit',
         ],
 
         'sidebar' => [
 
             'collapse' => [
-                'label' => 'Sakļaut sānjoslu',
+                'label' => 'Mbyll menunë',
             ],
 
             'expand' => [
-                'label' => 'Izvērst sānjoslu',
+                'label' => 'Hap menunë',
             ],
 
         ],
@@ -37,15 +37,15 @@ return [
         'theme_switcher' => [
 
             'dark' => [
-                'label' => 'Pārslēgt uz tumšo režīmu',
+                'label' => 'Aktivizo template-in e errët',
             ],
 
             'light' => [
-                'label' => 'Pārslēgt uz gaišo režīmu',
+                'label' => 'Aktivizo template-in e shndritshëm',
             ],
 
             'system' => [
-                'label' => 'Pārslēgt uz sistēmas režīmu',
+                'label' => 'Aktivizo template-in e sistemit',
             ],
 
         ],

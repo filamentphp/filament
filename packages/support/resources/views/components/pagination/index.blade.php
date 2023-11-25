@@ -5,6 +5,8 @@
 ])
 
 @php
+    use Illuminate\Contracts\Pagination\CursorPaginator;
+
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
     $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
 @endphp
@@ -20,10 +22,18 @@
     }}
 >
     @if (! $paginator->onFirstPage())
+        @php
+            if ($paginator instanceof CursorPaginator) {
+                $wireClickAction = "setPage('{$paginator->previousCursor()->encode()}', '{$paginator->getCursorName()}')";
+            } else {
+                $wireClickAction = "previousPage('{$paginator->getPageName()}')";
+            }
+        @endphp
+
         <x-filament::button
             color="gray"
             rel="prev"
-            :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
+            :wire:click="$wireClickAction"
             :wire:key="$this->getId() . '.pagination.previous'"
             class="fi-pagination-previous-btn justify-self-start"
         >
@@ -88,10 +98,18 @@
     @endif
 
     @if ($paginator->hasMorePages())
+        @php
+            if ($paginator instanceof CursorPaginator) {
+                $wireClickAction = "setPage('{$paginator->nextCursor()->encode()}', '{$paginator->getCursorName()}')";
+            } else {
+                $wireClickAction = "nextPage('{$paginator->getPageName()}')";
+            }
+        @endphp
+
         <x-filament::button
             color="gray"
             rel="next"
-            :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
+            :wire:click="$wireClickAction"
             :wire:key="$this->getId() . '.pagination.next'"
             class="fi-pagination-next-btn col-start-3 justify-self-end"
         >
