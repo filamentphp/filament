@@ -111,11 +111,11 @@ return [
                 'move_up' => [
                     'label' => 'Pārvietot uz augšu',
                 ],
-š
+
                 'reset' => [
                     'label' => 'Atiestatīt',
                 ],
-š
+
                 'rotate_left' => [
                     'label' => 'Pagriezt pa kreisi',
                 ],
