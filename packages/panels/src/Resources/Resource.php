@@ -110,6 +110,8 @@ abstract class Resource
 
     protected static ?bool $isGlobalSearchForcedCaseInsensitive = null;
 
+    protected static bool $subNavigationAlignedEnd = false;
+
     public static function form(Form $form): Form
     {
         return $form;
@@ -149,6 +151,14 @@ abstract class Resource
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
+    }
+
+    /**
+     * @return bool
+     */
+    public static function getSubNavigationAlignedEnd(): bool
+    {
+        return static::$subNavigationAlignedEnd;
     }
 
     public static function table(Table $table): Table

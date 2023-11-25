@@ -67,6 +67,14 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
             ?? 'heroicon-o-rectangle-stack';
     }
 
+    /**
+     * @return bool
+     */
+    public function getSubNavigationAlignedEnd(): bool
+    {
+        return static::getResource()::getSubNavigationAlignedEnd();
+    }
+
     public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);

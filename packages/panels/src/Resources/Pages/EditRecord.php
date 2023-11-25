@@ -59,6 +59,14 @@ class EditRecord extends Page
         return __('filament-panels::resources/pages/edit-record.content.tab.label');
     }
 
+    /**
+     * @return bool
+     */
+    public function getSubNavigationAlignedEnd(): bool
+    {
+        return static::getResource()::getSubNavigationAlignedEnd();
+    }
+
     public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);
