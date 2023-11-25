@@ -5,6 +5,7 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Forms\Form;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Actions\Action;
 
@@ -17,7 +18,7 @@ trait CanToggleColumns
 
     protected string | Closure | null $columnToggleFormMaxHeight = null;
 
-    protected string | Closure | null $columnToggleFormWidth = null;
+    protected MaxWidth | string | Closure | null $columnToggleFormWidth = null;
 
     protected ?Closure $modifyToggleColumnsTriggerActionUsing = null;
 
@@ -45,7 +46,7 @@ trait CanToggleColumns
         return $this;
     }
 
-    public function columnToggleFormWidth(string | Closure | null $width): static
+    public function columnToggleFormWidth(MaxWidth | string | Closure | null $width): static
     {
         $this->columnToggleFormWidth = $width;
 
@@ -93,12 +94,12 @@ trait CanToggleColumns
         return $this->evaluate($this->columnToggleFormMaxHeight);
     }
 
-    public function getColumnToggleFormWidth(): ?string
+    public function getColumnToggleFormWidth(): MaxWidth | string | null
     {
         return $this->evaluate($this->columnToggleFormWidth) ?? match ($this->getColumnToggleFormColumns()) {
-            2 => '2xl',
-            3 => '4xl',
-            4 => '6xl',
+            2 => MaxWidth::TwoExtraLarge,
+            3 => MaxWidth::FourExtraLarge,
+            4 => MaxWidth::SixExtraLarge,
             default => null,
         };
     }
