@@ -11,7 +11,7 @@ return [
         'register' => [
             'before' => 'vai',
             'label' => 'reģistrēties',
-        ],š
+        ],
 
         'request_password_reset' => [
             'label' => 'Aizmirsāt paroli?',
