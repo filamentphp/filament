@@ -20,7 +20,6 @@
     }}
 >
     @if (! $paginator->onFirstPage())
-
         @php
             if (method_exists($paginator,'getCursorName')) {
                 $wireClickAction = 'setPage(\'' . $paginator->previousCursor()->encode()  . '\',\'' . $paginator->getCursorName()  . '\')';
@@ -38,7 +37,6 @@
         >
             {{ __('filament::components/pagination.actions.previous.label') }}
         </x-filament::button>
-
     @endif
 
     @if (! $isSimple)
@@ -98,7 +96,6 @@
     @endif
 
     @if ($paginator->hasMorePages())
-
         @php
             if (method_exists($paginator,'getCursorName')) {
                 $wireClickAction = 'setPage(\'' . $paginator->nextCursor()->encode()  . '\',\'' . $paginator->getCursorName()  . '\')';
@@ -116,7 +113,6 @@
         >
             {{ __('filament::components/pagination.actions.next.label') }}
         </x-filament::button>
-
     @endif
 
     @if ((! $isSimple) && $paginator->hasPages())
