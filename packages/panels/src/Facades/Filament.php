@@ -13,6 +13,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\Support\Assets\Theme;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -48,7 +49,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getHomeUrl()
  * @method static string | null getLoginUrl(array $parameters = [])
  * @method static string getLogoutUrl(array $parameters = [])
- * @method static string | null getMaxContentWidth()
+ * @method static MaxWidth | string | null getMaxContentWidth()
  * @method static string | null getModelResource(string | Model $model)
  * @method static string getNameForDefaultAvatar(Model | Authenticatable $user)
  * @method static array<NavigationGroup> getNavigation()

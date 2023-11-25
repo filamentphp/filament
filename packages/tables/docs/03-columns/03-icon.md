@@ -44,7 +44,7 @@ In the function, `$state` is the value of the column, and `$record` can be used 
 
 ## Customizing the size
 
-The default icon size is `IconColumnSize::Large`, but you may customize the size to be either `IconColumnSize::ExtraSmall`, `IconColumnSize::Small`, `IconColumnSize::Medium`, `IconColumnSize::ExtraLarge` or `IconColumnSize::ExtraExtraLarge`:
+The default icon size is `IconColumnSize::Large`, but you may customize the size to be either `IconColumnSize::ExtraSmall`, `IconColumnSize::Small`, `IconColumnSize::Medium`, `IconColumnSize::ExtraLarge` or `IconColumnSize::TwoExtraLarge`:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
