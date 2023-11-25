@@ -159,6 +159,7 @@ Select::make('technologies')
     ->multiple()
     ->relationship(titleAttribute: 'name')
 ```
+> Note that `multiple()` must be called before `relationship()` so that the `dehydrated()` function, which is called in the `relationship()`, is correctly defined.
 
 ### Searching relationship options across multiple columns
 
