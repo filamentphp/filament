@@ -14,12 +14,22 @@ trait HasSubNavigation
      */
     protected array $cachedSubNavigation;
 
+    protected static bool $subNavigationAlignRight = false;
+
     /**
      * @return array<NavigationItem | NavigationGroup>
      */
     public function getSubNavigation(): array
     {
         return [];
+    }
+
+    /**
+     * @return bool
+     */
+    public function getSubNavigationAlignRight(): bool
+    {
+        return static::$subNavigationAlignRight;
     }
 
     /**
