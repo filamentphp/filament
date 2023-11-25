@@ -77,7 +77,7 @@
                 :last="$loop->last"
                 :url="$item->getUrl()"
                 :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
-                :sidebarCollapsible="$sidebarCollapsible"
+                :sidebar-collapsible="$sidebarCollapsible"
             >
                 {{ $item->getLabel() }}
             </x-filament-panels::sidebar.item>
