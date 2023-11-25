@@ -286,7 +286,7 @@ trait HasAuth
      */
     public function getRegistrationRouteAction(): string | Closure | array | null
     {
-        return $this->registrationRouteAction;
+        return $this->evaluate($this->registrationRouteAction);
     }
 
     /**
