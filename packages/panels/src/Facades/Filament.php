@@ -121,11 +121,11 @@ class Filament extends Facade
         return 'filament';
     }
 
-    public static function registerPanel(Panel $panel): void
+    public static function registerPanel(Panel | Closure $panel): void
     {
         static::getFacadeApplication()->resolving(
             static::getFacadeAccessor(),
-            fn (FilamentManager $filamentManager) => $filamentManager->registerPanel($panel),
+            fn (FilamentManager $filamentManager) => $filamentManager->registerPanel(value($panel)),
         );
     }
 }
