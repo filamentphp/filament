@@ -453,6 +453,16 @@ public static function getRecordSubNavigation(Page $page): array
 
 Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
 
+### Aligning sub-navigation to the right
+
+You can opt to switch the position of the sub-navigation on the page. This can be preferred as it keeps the content area of the screen in a consistent position.
+
+You can customize this by setting the `$subNavigationAlignRight` property on the resource pages:
+
+```php
+protected static bool $subNavigationAlignRight = false;
+```
+
 ## Deleting resource pages
 
 If you'd like to delete a page from your resource, you can just delete the page file from the `Pages` directory of your resource, and its entry in the `getPages()` method.
