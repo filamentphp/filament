@@ -297,7 +297,7 @@ Here's a basic example of what that view might contain:
 
     @if (count($relationManagers = $this->getRelationManagers()))
         <x-filament-panels::resources.relation-managers
-            :active-manager="$activeRelationManager"
+            :active-manager="$this->activeRelationManager"
             :managers="$relationManagers"
             :owner-record="$record"
             :page-class="static::class"
