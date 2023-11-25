@@ -2,6 +2,8 @@
 
 namespace Filament\Pages;
 
+use Filament\Support\Enums\MaxWidth;
+
 abstract class SimplePage extends BasePage
 {
     protected static string $layout = 'filament-panels::components.layout.simple';
@@ -15,7 +17,7 @@ abstract class SimplePage extends BasePage
         ];
     }
 
-    public function getMaxWidth(): ?string
+    public function getMaxWidth(): MaxWidth | string | null
     {
         return $this->maxWidth;
     }

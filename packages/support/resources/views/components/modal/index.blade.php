@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\MaxWidth;
 @endphp
 
 @props([
@@ -159,18 +160,18 @@
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
                     match ($width) {
-                        'xs', \Filament\Support\Enums\MaxWidth::ExtraSmall => 'max-w-xs',
-                        'sm', \Filament\Support\Enums\MaxWidth::Small => 'max-w-sm',
-                        'md', \Filament\Support\Enums\MaxWidth::Medium => 'max-w-md',
-                        'lg', \Filament\Support\Enums\MaxWidth::Large => 'max-w-lg',
-                        'xl', \Filament\Support\Enums\MaxWidth::ExtraLarge => 'max-w-xl',
-                        '2xl', \Filament\Support\Enums\MaxWidth::TwoXl => 'max-w-2xl',
-                        '3xl', \Filament\Support\Enums\MaxWidth::ThreeXl => 'max-w-3xl',
-                        '4xl', \Filament\Support\Enums\MaxWidth::FourXl => 'max-w-4xl',
-                        '5xl', \Filament\Support\Enums\MaxWidth::FiveXl => 'max-w-5xl',
-                        '6xl', \Filament\Support\Enums\MaxWidth::SixXl => 'max-w-6xl',
-                        '7xl', \Filament\Support\Enums\MaxWidth::SevenXl => 'max-w-7xl',
-                        'screen', \Filament\Support\Enums\MaxWidth::Screen => 'fixed inset-0',
+                        MaxWidth::ExtraSmall, 'xs' => 'max-w-xs',
+                        MaxWidth::Small, 'sm' => 'max-w-sm',
+                        MaxWidth::Medium, 'md' => 'max-w-md',
+                        MaxWidth::Large, 'lg' => 'max-w-lg',
+                        MaxWidth::ExtraLarge, 'xl' => 'max-w-xl',
+                        MaxWidth::TwoExtraLarge, '2xl' => 'max-w-2xl',
+                        MaxWidth::ThreeExtraLarge, '3xl' => 'max-w-3xl',
+                        MaxWidth::FourExtraLarge, '4xl' => 'max-w-4xl',
+                        MaxWidth::FiveExtraLarge, '5xl' => 'max-w-5xl',
+                        MaxWidth::SixExtraLarge, '6xl' => 'max-w-6xl',
+                        MaxWidth::SevenExtraLarge, '7xl' => 'max-w-7xl',
+                        MaxWidth::Screen, 'screen' => 'fixed inset-0',
                         default => $width,
                     },
                 ])

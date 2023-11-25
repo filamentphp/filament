@@ -70,7 +70,7 @@ trait CanOpenModal
 
     protected string | Htmlable | Closure | null $modalDescription = null;
 
-    protected string | MaxWidth | Closure | null $modalWidth = null;
+    protected MaxWidth | string | Closure | null $modalWidth = null;
 
     protected bool | Closure | null $isModalHidden = false;
 
@@ -290,7 +290,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalWidth(string | MaxWidth | Closure | null $width = null): static
+    public function modalWidth(MaxWidth | string | Closure | null $width = null): static
     {
         $this->modalWidth = $width;
 
@@ -485,7 +485,7 @@ trait CanOpenModal
 
     public function getModalAlignment(): Alignment | string
     {
-        return $this->evaluate($this->modalAlignment) ?? (in_array($this->getModalWidth(), ['xs', 'sm']) ? Alignment::Center : Alignment::Start);
+        return $this->evaluate($this->modalAlignment) ?? (in_array($this->getModalWidth(), [MaxWidth::ExtraSmall, MaxWidth::Small, 'xs', 'sm'])) ? Alignment::Center : Alignment::Start;
     }
 
     public function getModalSubmitActionLabel(): string
@@ -523,9 +523,9 @@ trait CanOpenModal
         return $this->evaluate($this->modalDescription);
     }
 
-    public function getModalWidth(): string | MaxWidth
+    public function getModalWidth(): MaxWidth | string
     {
-        return $this->evaluate($this->modalWidth) ?? '4xl';
+        return $this->evaluate($this->modalWidth) ?? MaxWidth::FourExtraLarge;
     }
 
     public function isModalFooterSticky(): bool

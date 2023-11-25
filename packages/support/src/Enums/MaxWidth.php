@@ -1,6 +1,7 @@
 <?php
 
 namespace Filament\Support\Enums;
+
 enum MaxWidth
 {
     case ExtraSmall;
@@ -13,18 +14,31 @@ enum MaxWidth
 
     case ExtraLarge;
 
-    case TwoXl;
+    case TwoExtraLarge;
 
-    case ThreeXl;
+    case ThreeExtraLarge;
 
-    case FourXl;
+    case FourExtraLarge;
 
-    case FiveXl;
+    case FiveExtraLarge;
 
-    case SixXl;
+    case SixExtraLarge;
 
-    case SevenXl;
+    case SevenExtraLarge;
+
+    case Prose;
 
     case Screen;
 
+    case ScreenSmall;
+
+    case ScreenMedium;
+
+    case ScreenLarge;
+
+    case ScreenExtraLarge;
+
+    case ScreenTwoExtraLarge;
+
+    case Full;
 }
