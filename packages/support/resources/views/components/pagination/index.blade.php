@@ -5,6 +5,8 @@
 ])
 
 @php
+    use Illuminate\Pagination\CursorPaginator;
+
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
     $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
 @endphp
@@ -21,7 +23,7 @@
 >
     @if (! $paginator->onFirstPage())
         @php
-            if (method_exists($paginator,'getCursorName')) {
+            if ($paginator instanceof CursorPaginator) {
                 $wireClickAction = 'setPage(\'' . $paginator->previousCursor()->encode()  . '\',\'' . $paginator->getCursorName()  . '\')';
             } else {
                 $wireClickAction = 'previousPage(\'' . $paginator->getPageName() . '\')';
@@ -97,7 +99,7 @@
 
     @if ($paginator->hasMorePages())
         @php
-            if (method_exists($paginator,'getCursorName')) {
+            if ($paginator instanceof CursorPaginator) {
                 $wireClickAction = 'setPage(\'' . $paginator->nextCursor()->encode()  . '\',\'' . $paginator->getCursorName()  . '\')';
             } else {
                 $wireClickAction = 'nextPage(\'' . $paginator->getPageName() . '\')';
