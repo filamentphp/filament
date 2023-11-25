@@ -5,7 +5,7 @@
 @php
     $widgetData = $this->getWidgetData();
     $subNavigation = $this->getCachedSubNavigation();
-    $subNavigationAlignRight = $this->getSubNavigationAlignRight();
+    $subNavigationAlignedEnd = $this->getSubNavigationAlignedEnd();
 @endphp
 
 <div
@@ -41,7 +41,7 @@
                 'h-full' => $fullHeight,
             ])
         >
-            @if ($subNavigation && ! $subNavigationAlignRight)
+            @if ($subNavigation && ! $subNavigationAlignedEnd)
                 <x-filament-panels::sidebar.subnavigation
                     :subNavigation="$subNavigation"
                 />
@@ -83,7 +83,7 @@
                 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.footer-widgets.after', scopes: $this->getRenderHookScopes()) }}
             </div>
 
-            @if ($subNavigation && $subNavigationAlignRight)
+            @if ($subNavigation && $subNavigationAlignedEnd)
                 <x-filament-panels::sidebar.subnavigation
                     :subNavigation="$subNavigation"
                 />

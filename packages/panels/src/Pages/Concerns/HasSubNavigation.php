@@ -14,7 +14,7 @@ trait HasSubNavigation
      */
     protected array $cachedSubNavigation;
 
-    protected static bool $subNavigationAlignRight = false;
+    protected static bool $subNavigationAlignedEnd = false;
 
     /**
      * @return array<NavigationItem | NavigationGroup>
@@ -27,9 +27,9 @@ trait HasSubNavigation
     /**
      * @return bool
      */
-    public function getSubNavigationAlignRight(): bool
+    public function getSubNavigationAlignedEnd(): bool
     {
-        return static::$subNavigationAlignRight;
+        return static::$subNavigationAlignedEnd;
     }
 
     /**
