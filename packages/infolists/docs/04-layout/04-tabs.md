@@ -120,7 +120,7 @@ Tabs::make('Label')
     ])
 ```
 
-<AutoScreenshot name="forms/layout/tabs/icons" alt="Tabs with icons" version="3.x" />
+<AutoScreenshot name="infolists/layout/tabs/icons" alt="Tabs with icons" version="3.x" />
 
 ### Setting the tab icon position
 
@@ -163,6 +163,23 @@ Tabs::make('Label')
 ```
 
 <AutoScreenshot name="infolists/layout/tabs/badges" alt="Tabs with badges" version="3.x" />
+
+If you'd like to change the color for a badge, you can use the `badgeColor()` method:
+
+```php
+use Filament\Infolists\Components\Tabs;
+
+Tabs::make('Label')
+    ->tabs([
+        Tabs\Tab::make('Notifications')
+            ->badge(5)
+            ->badgeColor('success')
+            ->schema([
+                // ...
+            ]),
+        // ...
+    ])
+```
 
 ## Using grid columns within a tab
 

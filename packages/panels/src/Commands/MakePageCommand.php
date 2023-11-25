@@ -4,16 +4,20 @@ namespace Filament\Commands;
 
 use Filament\Facades\Filament;
 use Filament\Panel;
+use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+use function Laravel\Prompts\confirm;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\text;
+
 class MakePageCommand extends Command
 {
+    use CanIndentStrings;
     use CanManipulateFiles;
-    use CanValidateInput;
 
     protected $description = 'Create a new Filament page class and view';
 
@@ -21,7 +25,14 @@ class MakePageCommand extends Command
 
     public function handle(): int
     {
-        $page = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
+        $page = (string) str(
+            $this->argument('name') ??
+            text(
+                label: 'What is the page name?',
+                placeholder: 'EditSettings',
+                required: true,
+            ),
+        )
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -35,9 +46,12 @@ class MakePageCommand extends Command
         $resourceClass = null;
         $resourcePage = null;
 
-        $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `UserResource`)');
+        $resourceInput = $this->option('resource') ?? text(
+            label: 'What is the resource you would like to create this in?',
+            placeholder: '[Optional] UserResource',
+        );
 
-        if ($resourceInput !== null) {
+        if (filled($resourceInput)) {
             $resource = (string) str($resourceInput)
                 ->studly()
                 ->trim('/')
@@ -52,18 +66,97 @@ class MakePageCommand extends Command
             $resourceClass = (string) str($resource)
                 ->afterLast('\\');
 
-            $resourcePage = $this->option('type') ?? $this->choice(
-                'Which type of page would you like to create?',
-                [
+            $resourcePage = $this->option('type') ?? select(
+                label: 'Which type of page would you like to create?',
+                options: [
                     'custom' => 'Custom',
                     'ListRecords' => 'List',
                     'CreateRecord' => 'Create',
                     'EditRecord' => 'Edit',
                     'ViewRecord' => 'View',
+                    'ManageRelatedRecords' => 'Relationship',
                     'ManageRecords' => 'Manage',
                 ],
-                'custom',
+                default: 'custom'
             );
+
+            if ($resourcePage === 'ManageRelatedRecords') {
+                $relationship = (string) str(text(
+                    label: 'What is the relationship?',
+                    placeholder: 'members',
+                    required: true,
+                ))
+                    ->trim(' ');
+
+                $recordTitleAttribute = (string) str(text(
+                    label: 'What is the title attribute?',
+                    placeholder: 'name',
+                    required: true,
+                ))
+                    ->trim(' ');
+
+                $tableHeaderActions = [];
+
+                $tableHeaderActions[] = 'Tables\Actions\CreateAction::make(),';
+
+                if ($hasAssociateAction = confirm('Is this a one-to-many relationship where the related records can be associated?')) {
+                    $tableHeaderActions[] = 'Tables\Actions\AssociateAction::make(),';
+                } elseif ($hasAttachAction = confirm('Is this a many-to-many relationship where the related records can be attached?')) {
+                    $tableHeaderActions[] = 'Tables\Actions\AttachAction::make(),';
+                }
+
+                $tableHeaderActions = implode(PHP_EOL, $tableHeaderActions);
+
+                $tableActions = [];
+
+                if (confirm('Would you like an action to open each record in a read-only View modal?')) {
+                    $tableActions[] = 'Tables\Actions\ViewAction::make(),';
+                }
+
+                $tableActions[] = 'Tables\Actions\EditAction::make(),';
+
+                if ($hasAssociateAction) {
+                    $tableActions[] = 'Tables\Actions\DissociateAction::make(),';
+                }
+
+                if ($hasAttachAction ?? false) {
+                    $tableActions[] = 'Tables\Actions\DetachAction::make(),';
+                }
+
+                $tableActions[] = 'Tables\Actions\DeleteAction::make(),';
+
+                if ($hasSoftDeletes = confirm('Can the related records be soft deleted?')) {
+                    $tableActions[] = 'Tables\Actions\ForceDeleteAction::make(),';
+                    $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
+                }
+
+                $tableActions = implode(PHP_EOL, $tableActions);
+
+                $tableBulkActions = [];
+
+                if ($hasAssociateAction) {
+                    $tableBulkActions[] = 'Tables\Actions\DissociateBulkAction::make(),';
+                }
+
+                if ($hasAttachAction ?? false) {
+                    $tableBulkActions[] = 'Tables\Actions\DetachBulkAction::make(),';
+                }
+
+                $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
+
+                $modifyQueryUsing = '';
+
+                if ($hasSoftDeletes) {
+                    $modifyQueryUsing .= '->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([';
+                    $modifyQueryUsing .= PHP_EOL . '    SoftDeletingScope::class,';
+                    $modifyQueryUsing .= PHP_EOL . ']))';
+
+                    $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
+                    $tableBulkActions[] = 'Tables\Actions\ForceDeleteBulkAction::make(),';
+                }
+
+                $tableBulkActions = implode(PHP_EOL, $tableBulkActions);
+            }
         }
 
         $panel = $this->option('panel');
@@ -76,24 +169,24 @@ class MakePageCommand extends Command
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
-            $panel = (count($panels) > 1) ? $panels[$this->choice(
-                'Which panel would you like to create this in?',
-                array_map(
+            $panel = (count($panels) > 1) ? $panels[select(
+                label: 'Which panel would you like to create this in?',
+                options: array_map(
                     fn (Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
-                Filament::getDefaultPanel()->getId(),
+                default: Filament::getDefaultPanel()->getId()
             )] : Arr::first($panels);
         }
 
-        if ($resource === null) {
+        if (empty($resource)) {
             $pageDirectories = $panel->getPageDirectories();
             $pageNamespaces = $panel->getPageNamespaces();
 
             $namespace = (count($pageNamespaces) > 1) ?
-                $this->choice(
-                    'Which namespace would you like to create this in?',
-                    $pageNamespaces,
+                select(
+                    label: 'Which namespace would you like to create this in?',
+                    options: $pageNamespaces
                 ) :
                 (Arr::first($pageNamespaces) ?? 'App\\Filament\\Pages');
             $path = (count($pageDirectories) > 1) ?
@@ -104,9 +197,9 @@ class MakePageCommand extends Command
             $resourceNamespaces = $panel->getResourceNamespaces();
 
             $resourceNamespace = (count($resourceNamespaces) > 1) ?
-                $this->choice(
-                    'Which namespace would you like to create this in?',
-                    $resourceNamespaces,
+                select(
+                    label: 'Which namespace would you like to create this in?',
+                    options: $resourceNamespaces
                 ) :
                 (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
             $resourcePath = (count($resourceDirectories) > 1) ?
@@ -116,7 +209,7 @@ class MakePageCommand extends Command
 
         $view = str($page)
             ->prepend(
-                (string) str($resource === null ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\pages\\")
+                (string) str(empty($resource) ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\pages\\")
                     ->replaceFirst('App\\', '')
             )
             ->replace('\\', '/')
@@ -126,7 +219,7 @@ class MakePageCommand extends Command
 
         $path = (string) str($page)
             ->prepend('/')
-            ->prepend($resource === null ? $path : "{$resourcePath}\\{$resource}\\Pages\\")
+            ->prepend(empty($resource) ? ($path ?? '') : ($resourcePath ?? '') . "\\{$resource}\\Pages\\")
             ->replace('\\', '/')
             ->replace('//', '/')
             ->append('.php');
@@ -147,29 +240,50 @@ class MakePageCommand extends Command
             return static::INVALID;
         }
 
-        if ($resource === null) {
+        if (empty($resource)) {
             $this->copyStubToApp('Page', $path, [
                 'class' => $pageClass,
-                'namespace' => $namespace . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'namespace' => str($namespace ?? '') . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'view' => $view,
+            ]);
+        } elseif ($resourcePage === 'ManageRelatedRecords') {
+            $this->copyStubToApp('ResourceManageRelatedRecordsPage', $path, [
+                'baseResourcePage' => "Filament\\Resources\\Pages\\{$resourcePage}",
+                'baseResourcePageClass' => $resourcePage,
+                'modifyQueryUsing' => filled($modifyQueryUsing ?? null) ? PHP_EOL . $this->indentString($modifyQueryUsing ?? '', 3) : $modifyQueryUsing ?? '',
+                'namespace' => ($resourceNamespace ?? '') . "\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'recordTitleAttribute' => $recordTitleAttribute ?? null,
+                'relationship' => $relationship ?? null,
+                'resource' => ($resourceNamespace ?? '') . "\\{$resource}",
+                'resourceClass' => $resourceClass,
+                'resourcePageClass' => $pageClass,
+                'tableActions' => $this->indentString($tableActions ?? '', 4),
+                'tableBulkActions' => $this->indentString($tableBulkActions ?? '', 5),
+                'tableFilters' => $this->indentString(
+                    ($hasSoftDeletes ?? false) ? 'Tables\Filters\TrashedFilter::make()' : '//',
+                    4,
+                ),
+                'tableHeaderActions' => $this->indentString($tableHeaderActions ?? '', 4),
+                'title' => Str::headline($relationship ?? ''),
                 'view' => $view,
             ]);
         } else {
             $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . ($resourcePage === 'custom' ? 'Page' : $resourcePage),
                 'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' : $resourcePage,
-                'namespace' => "{$resourceNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
-                'resource' => "{$resourceNamespace}\\{$resource}",
+                'namespace' => ($resourceNamespace ?? '') . "\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'resource' => ($resourceNamespace ?? '') . "\\{$resource}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
                 'view' => $view,
             ]);
         }
 
-        if ($resource === null || $resourcePage === 'custom') {
+        if (empty($resource) || $resourcePage === 'custom') {
             $this->copyStubToApp('PageView', $viewPath);
         }
 
-        $this->components->info("Successfully created {$page}!");
+        $this->components->info("Filament page [{$path}] created successfully.");
 
         if ($resource !== null) {
             $this->components->info("Make sure to register the page in `{$resourceClass}::getPages()`.");

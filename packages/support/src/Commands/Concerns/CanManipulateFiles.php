@@ -5,6 +5,8 @@ namespace Filament\Support\Commands\Concerns;
 use Illuminate\Filesystem\Filesystem;
 use ReflectionClass;
 
+use function Laravel\Prompts\confirm;
+
 trait CanManipulateFiles
 {
     /**
@@ -13,11 +15,17 @@ trait CanManipulateFiles
     protected function checkForCollision(array $paths): bool
     {
         foreach ($paths as $path) {
-            if ($this->fileExists($path)) {
+            if (! $this->fileExists($path)) {
+                continue;
+            }
+
+            if (! confirm(basename($path) . ' already exists, do you want to overwrite it?')) {
                 $this->components->error("{$path} already exists, aborting.");
 
                 return true;
             }
+
+            unlink($path);
         }
 
         return false;
@@ -57,8 +65,7 @@ trait CanManipulateFiles
         $filesystem = app(Filesystem::class);
 
         $filesystem->ensureDirectoryExists(
-            (string) str($path)
-                ->beforeLast('/'),
+            pathinfo($path, PATHINFO_DIRNAME),
         );
 
         $filesystem->put($path, $contents);

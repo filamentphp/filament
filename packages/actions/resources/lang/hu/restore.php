@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Kiválasztottak visszaállítása',
+        'label' => 'Kijelöltek visszaállítása',
 
         'modal' => [
 
-            'heading' => 'Kiválasztott :label visszaállítása',
+            'heading' => 'Kijelölt :label visszaállítása',
 
             'actions' => [
 

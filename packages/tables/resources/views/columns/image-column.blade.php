@@ -122,5 +122,9 @@
                 </div>
             @endif
         </div>
+    @elseif (($placeholder = $getPlaceholder()) !== null)
+        <x-filament-tables::columns.placeholder>
+            {{ $placeholder }}
+        </x-filament-tables::columns.placeholder>
     @endif
 </div>

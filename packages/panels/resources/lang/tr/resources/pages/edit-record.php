@@ -15,10 +15,14 @@ return [
             ],
 
             'save' => [
-                'label' => 'Kaydet',
+                'label' => 'Değişiklikleri kaydet',
             ],
 
         ],
+
+    ],
+
+    'content' => [
 
         'tab' => [
             'label' => 'Düzenle',

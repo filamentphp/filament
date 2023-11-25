@@ -131,7 +131,7 @@ ImageColumn::make('colleagues.avatar')
 
 ## Setting a limit
 
-You may set a limit of the maximum number of images you want to display by passing `limit()`:
+You may limit the maximum number of images you want to display by passing `limit()`:
 
 ```php
 use Filament\Tables\Columns\ImageColumn;
@@ -162,7 +162,7 @@ ImageColumn::make('colleagues.avatar')
 
 #### Showing the limited remaining text separately
 
-By default, `limitedRemainingText()` will display the count of remaining images as a number stacked on the other images. If you prefer to show the count as a number after the images you may use the `isSeparate: true` parameter:
+By default, `limitedRemainingText()` will display the count of remaining images as a number stacked on the other images. If you prefer to show the count as a number after the images, you may use the `isSeparate: true` parameter:
 
 ```php
 use Filament\Tables\Columns\ImageColumn;
@@ -210,4 +210,15 @@ ImageColumn::make('logo')
     ->extraImgAttributes(fn (Company $record): array => [
         'alt' => "{$record->name} logo",
     ]),
+```
+
+## Prevent file existence checks
+
+When the table is loaded, it will automatically detect whether the images exist. This is all done on the backend. When using remote storage with many images, this can be time-consuming. You can use the `checkFileExistence(false)` method to disable this feature:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('attachment')
+    ->checkFileExistence(false)
 ```

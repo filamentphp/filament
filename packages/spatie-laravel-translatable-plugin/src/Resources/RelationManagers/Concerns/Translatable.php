@@ -20,7 +20,7 @@ trait Translatable
 
     public function getTranslatableLocales(): array
     {
-        return $this->translatableLocales ?? filament('spatie-laravel-translatable')->getDefaultLocales();
+        return filament('spatie-laravel-translatable')->getDefaultLocales();
     }
 
     public function getDefaultTranslatableLocale(): string

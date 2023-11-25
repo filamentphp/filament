@@ -18,17 +18,17 @@ trait HasVerticalAlignment
 
     public function verticallyAlignStart(bool | Closure $condition = true): static
     {
-        return $this->verticalAlignment(static fn (): ?VerticalAlignment => $condition ? VerticalAlignment::Start : null);
+        return $this->verticalAlignment(fn (): ?VerticalAlignment => $this->evaluate($condition) ? VerticalAlignment::Start : null);
     }
 
     public function verticallyAlignCenter(bool | Closure $condition = true): static
     {
-        return $this->verticalAlignment(static fn (): ?VerticalAlignment => $condition ? VerticalAlignment::Center : null);
+        return $this->verticalAlignment(fn (): ?VerticalAlignment => $this->evaluate($condition) ? VerticalAlignment::Center : null);
     }
 
     public function verticallyAlignEnd(bool | Closure $condition = true): static
     {
-        return $this->verticalAlignment(static fn (): ?VerticalAlignment => $condition ? VerticalAlignment::End : null);
+        return $this->verticalAlignment(fn (): ?VerticalAlignment => $this->evaluate($condition) ? VerticalAlignment::End : null);
     }
 
     public function getVerticalAlignment(): VerticalAlignment | string | null

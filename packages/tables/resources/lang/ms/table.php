@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Kolum',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -18,6 +24,10 @@ return [
 
         'bulk_select_record' => [
             'label' => 'Pilih/nyahpilih item :key untuk tindakan pukal.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Pilih/nyahpilih kumpulan :title untuk tindakan pukal.',
         ],
 
         'search' => [
@@ -88,6 +98,8 @@ return [
 
         'heading' => 'Tiada rekod dijumpai',
 
+        'description' => 'Cipta :model untuk bermula.',
+
     ],
 
     'filters' => [
@@ -108,6 +120,8 @@ return [
             ],
 
         ],
+
+        'heading' => 'Penapis',
 
         'indicator' => 'Penapis aktif',
 

@@ -2,23 +2,40 @@
 
 namespace Filament\Support\Colors;
 
+use Closure;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Spatie\Color\Hex;
 
 class ColorManager
 {
+    use EvaluatesClosures;
+
     /**
-     * @var array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}>
+     * @var array<array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure>
      */
     protected array $colors = [];
 
     /**
-     * @param  array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string>  $colors
+     * @var array<string,array<int>>
      */
-    public function register(array $colors): static
+    protected array $overridingShades = [];
+
+    /**
+     * @var array<string,array<int>>
+     */
+    protected array $addedShades = [];
+
+    /**
+     * @var array<string,array<int>>
+     */
+    protected array $removedShades = [];
+
+    /**
+     * @param  array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string> | Closure  $colors
+     */
+    public function register(array | Closure $colors): static
     {
-        foreach ($colors as $name => $color) {
-            $this->colors[$name] = $this->processColor($color);
-        }
+        $this->colors[] = $colors;
 
         return $this;
     }
@@ -63,14 +80,71 @@ class ColorManager
      */
     public function getColors(): array
     {
-        return [
+        $colors = [
             'danger' => Color::Red,
             'gray' => Color::Zinc,
             'info' => Color::Blue,
             'primary' => Color::Amber,
             'success' => Color::Green,
             'warning' => Color::Amber,
-            ...$this->colors,
         ];
+
+        foreach ($this->colors as $set) {
+            $set = $this->evaluate($set);
+
+            foreach ($set as $name => $color) {
+                $colors[$name] = $this->processColor($color);
+            }
+        }
+
+        return $colors;
+    }
+
+    /**
+     * @param  array<int>  $shades
+     */
+    public function overrideShades(string $alias, array $shades): void
+    {
+        $this->overridingShades[$alias] = $shades;
+    }
+
+    /**
+     * @return array<int> | null
+     */
+    public function getOverridingShades(string $alias): ?array
+    {
+        return $this->overridingShades[$alias] ?? null;
+    }
+
+    /**
+     * @param  array<int>  $shades
+     */
+    public function addShades(string $alias, array $shades): void
+    {
+        $this->addedShades[$alias] = $shades;
+    }
+
+    /**
+     * @return array<int> | null
+     */
+    public function getAddedShades(string $alias): ?array
+    {
+        return $this->addedShades[$alias] ?? null;
+    }
+
+    /**
+     * @param  array<int>  $shades
+     */
+    public function removeShades(string $alias, array $shades): void
+    {
+        $this->removedShades[$alias] = $shades;
+    }
+
+    /**
+     * @return array<int> | null
+     */
+    public function getRemovedShades(string $alias): ?array
+    {
+        return $this->removedShades[$alias] ?? null;
     }
 }

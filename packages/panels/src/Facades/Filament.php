@@ -27,9 +27,12 @@ use Illuminate\Support\Facades\Facade;
  * @method static array<NavigationGroup> buildNavigation()
  * @method static string getAuthGuard()
  * @method static string | null getAuthPasswordBroker()
- * @method static string getBrandName()
+ * @method static string | Htmlable getBrandName()
+ * @method static string | Htmlable | null getBrandLogo()
+ * @method static string | null getBrandLogoHeight()
  * @method static string getCollapsedSidebarWidth()
  * @method static Panel | null getCurrentPanel()
+ * @method static string | Htmlable | null getDarkModeBrandLogo()
  * @method static string | null getDatabaseNotificationsPollingInterval()
  * @method static string getDefaultAvatarProvider()
  * @method static Panel getDefaultPanel()
@@ -103,7 +106,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool isSidebarCollapsibleOnDesktop()
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
  * @method static void mountNavigation()
- * @method static void registerPanel(Panel $panel)
  * @method static void serving(Closure $callback)
  * @method static void setCurrentPanel(Panel | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)
@@ -116,5 +118,13 @@ class Filament extends Facade
     protected static function getFacadeAccessor(): string
     {
         return 'filament';
+    }
+
+    public static function registerPanel(Panel $panel): void
+    {
+        static::getFacadeApplication()->resolving(
+            static::getFacadeAccessor(),
+            fn (FilamentManager $filamentManager) => $filamentManager->registerPanel($panel),
+        );
     }
 }

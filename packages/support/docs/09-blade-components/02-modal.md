@@ -86,7 +86,7 @@ You can add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to a mo
 </x-filament::modal>
 ```
 
-By default, the color of a icon is "primary". You can change it to be `danger`, `gray`, `info`, `success` or `warning` by using the `icon-color` attribute:
+By default, the color of an icon is "primary". You can change it to be `danger`, `gray`, `info`, `success` or `warning` by using the `icon-color` attribute:
 
 ```blade
 <x-filament::modal
@@ -111,6 +111,18 @@ You can add a footer to a modal by using the `footer` slot:
     
     <x-slot name="footer">
         {{-- Modal footer content --}}
+    </x-slot>
+</x-filament::modal>
+```
+
+Alternatively, you can add actions into the footer by using the `footerActions` slot:
+
+```blade
+<x-filament::modal>
+    {{-- Modal content --}}
+    
+    <x-slot name="footerActions">
+        {{-- Modal footer actions --}}
     </x-slot>
 </x-filament::modal>
 ```
@@ -143,7 +155,7 @@ The header of a modal scrolls out of view with the modal content when it overflo
 <x-filament::modal sticky-header>
     <x-slot name="heading">
         Modal heading
-    </slot>
+    </x-slot>
 
     {{-- Modal content --}}
 </x-filament::modal>

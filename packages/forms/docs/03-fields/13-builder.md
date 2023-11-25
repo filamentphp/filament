@@ -100,7 +100,7 @@ Builder\Block::make('heading')
             ->live(onBlur: true)
             ->required(),
         // ...
-    ]),
+    ])
     ->label(function (?array $state): string {
         if ($state === null) {
             return 'Heading';

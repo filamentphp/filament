@@ -29,7 +29,7 @@ public static function shouldRegisterNavigation(): bool
 }
 ```
 
-Please be aware that all users will still be able to visit this page through its direct URL, so to fully limit access you must also also check in the `mount()` method of the page:
+Please be aware that all users will still be able to visit this page through its direct URL, so to fully limit access, you must also check in the `mount()` method of the page:
 
 ```php
 public function mount(): void
@@ -68,11 +68,12 @@ protected function getHeaderActions(): array
 If you're using actions on an [Edit](resources/editing-records) or [View](resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
 
 ```php
+use App\Models\Post;
 use Filament\Actions\Action;
 
 Action::make('approve')
-    ->action(function () {
-        $this->getRecord()->approve();
+    ->action(function (Post $record) {
+        $record->approve();
 
         $this->refreshFormData([
             'status',
@@ -103,14 +104,14 @@ protected function getHeaderWidgets(): array
 
 If you'd like to learn how to build and customize widgets, check out the [Dashboard](dashboard) documentation section.
 
-### Customizing the widgets grid
+### Customizing the widgets' grid
 
 You may change how many grid columns are used to display widgets.
 
 You may override the `getHeaderWidgetsColumns()` or `getFooterWidgetsColumns()` methods to return a number of grid columns to use:
 
 ```php
-protected function getHeaderWidgetsColumns(): int | array
+public function getHeaderWidgetsColumns(): int | array
 {
     return 3;
 }
@@ -121,7 +122,7 @@ protected function getHeaderWidgetsColumns(): int | array
 You may wish to change the number of widget grid columns based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. You can do this using an array that contains the number of columns that should be used at each breakpoint:
 
 ```php
-protected function getHeaderWidgetsColumns(): int | array
+public function getHeaderWidgetsColumns(): int | array
 {
     return [
         'md' => 4,
@@ -137,7 +138,7 @@ This pairs well with [responsive widget widths](dashboard#responsive-widget-widt
 You may pass data to widgets from the page using the `getWidgetsData()` method:
 
 ```php
-protected function getWidgetsData(): array
+public function getWidgetData(): array
 {
     return [
         'stats' => [
@@ -295,10 +296,10 @@ This example assumes you have a Blade view at `resources/views/filament/settings
 
 ## Customizing the maximum content width
 
-By default, Filament will restrict the width of the content on the page so it doesn't become too wide on large screens. To change this, you may override the `getContentMaxWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, and `full`. The default is `7xl`:
+By default, Filament will restrict the width of the content on the page, so it doesn't become too wide on large screens. To change this, you may override the `getMaxContentWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, `prose`, `screen-sm`, `screen-md`, `screen-lg`, `screen-xl`, `screen-2xl` and `full`. The default is `7xl`:
 
 ```php
-public function getContentMaxWidth(): ?string
+public function getMaxContentWidth(): ?string
 {
     return 'full';
 }

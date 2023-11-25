@@ -23,6 +23,11 @@ trait CanBeValidated
      */
     protected array $rules = [];
 
+    /**
+     * @var array<string, string | Closure>
+     */
+    protected array $validationMessages = [];
+
     protected string | Closure | null $validationAttribute = null;
 
     public function activeUrl(bool | Closure $condition = true): static
@@ -70,7 +75,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function doesntStartWith(array | Arrayable | string | Closure $values): static
+    public function doesntStartWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -84,15 +89,7 @@ trait CanBeValidated
             }
 
             return 'doesnt_start_with:' . $values;
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -100,7 +97,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function doesntEndWith(array | Arrayable | string | Closure $values): static
+    public function doesntEndWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -114,15 +111,7 @@ trait CanBeValidated
             }
 
             return 'doesnt_end_with:' . $values;
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -130,7 +119,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function endsWith(array | Arrayable | string | Closure $values): static
+    public function endsWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -144,15 +133,7 @@ trait CanBeValidated
             }
 
             return 'ends_with:' . $values;
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -198,7 +179,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function in(array | Arrayable | string | Closure $values): static
+    public function in(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -212,15 +193,7 @@ trait CanBeValidated
             }
 
             return Rule::in($values);
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -272,7 +245,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function notIn(array | Arrayable | string | Closure $values): static
+    public function notIn(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -286,15 +259,7 @@ trait CanBeValidated
             }
 
             return Rule::notIn($values);
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -322,6 +287,24 @@ trait CanBeValidated
         $this->rule('prohibited', $condition);
 
         return $this;
+    }
+
+    public function prohibitedIf(string | Closure $statePath, mixed $stateValues, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldValueComparisonRule('prohibited_if', $statePath, $stateValues, $isStatePathAbsolute);
+    }
+
+    public function prohibitedUnless(string | Closure $statePath, mixed $stateValues, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldValueComparisonRule('prohibited_unless', $statePath, $stateValues, $isStatePathAbsolute);
+    }
+
+    /**
+     * @param  array<string> | string | Closure  $statePaths
+     */
+    public function prohibits(array | string | Closure $statePaths, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldComparisonRule('prohibits', $statePaths, $isStatePathAbsolute);
     }
 
     public function required(bool | Closure $condition = true): static
@@ -383,7 +366,7 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function startsWith(array | Arrayable | string | Closure $values): static
+    public function startsWith(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
             $values = $component->evaluate($values);
@@ -397,15 +380,7 @@ trait CanBeValidated
             }
 
             return 'starts_with:' . $values;
-        }, static function (Field $component) use ($values): bool {
-            $values = $component->evaluate($values);
-
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
-
-            return is_array($values) ? count($values) : filled($values);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -538,6 +513,16 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @param  array<string, string | Closure>  $messages
+     */
+    public function validationMessages(array $messages): static
+    {
+        $this->validationMessages = $messages;
+
+        return $this;
+    }
+
     public function getRegexPattern(): ?string
     {
         return $this->evaluate($this->regexPattern);
@@ -551,6 +536,20 @@ trait CanBeValidated
     public function getValidationAttribute(): string
     {
         return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getValidationMessages(): array
+    {
+        $messages = [];
+
+        foreach ($this->validationMessages as $rule => $message) {
+            $messages[$rule] = $this->evaluate($message);
+        }
+
+        return array_filter($messages);
     }
 
     /**
@@ -575,6 +574,20 @@ trait CanBeValidated
         }
 
         return $rules;
+    }
+
+    /**
+     * @param  array<string, array<string, string>>  $messages
+     */
+    public function dehydrateValidationMessages(array &$messages): void
+    {
+        $statePath = $this->getStatePath();
+
+        if (count($componentMessages = $this->getValidationMessages())) {
+            foreach ($componentMessages as $rule => $message) {
+                $messages["{$statePath}.{$rule}"] = $message;
+            }
+        }
     }
 
     /**

@@ -4,7 +4,7 @@ title: Customizing notifications
 
 ## Overview
 
-Notifications come fully styled out of the box. However, if you want to apply your own styling or use a custom view to render notifications, there's multiple options.
+Notifications come fully styled out of the box. However, if you want to apply your own styling or use a custom view to render notifications, there are multiple options.
 
 ## Styling notifications
 
@@ -84,7 +84,7 @@ class Notification extends BaseNotification
 
     public static function fromArray(array $data): static
     {
-        return parent::fromArray()->size($data['size']);
+        return parent::fromArray($data)->size($data['size']);
     }
 
     public function size(string $size): static

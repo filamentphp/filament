@@ -5,6 +5,9 @@ namespace Filament\Support\Commands\Concerns;
 use Closure;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @deprecated Please refactor to use Laravel Prompts.
+ */
 trait CanValidateInput
 {
     protected function askRequired(string $question, string $field, ?string $default = null): string

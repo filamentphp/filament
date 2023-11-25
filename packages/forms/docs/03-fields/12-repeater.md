@@ -282,6 +282,8 @@ class OrderProduct extends Pivot
 }
 ```
 
+> Please ensure that your pivot model has a primary key column, like `id`, to allow Filament to keep track of which repeater items have been created, updated and deleted.
+
 Now you can use the `orderProducts` relationship with the repeater, and it will save the data to the `order_product` pivot table:
 
 ```php
@@ -310,7 +312,7 @@ Repeater::make('qualifications')
     ->schema([
         // ...
     ])
-    ->mutateRelationshipDataBeforeFillUsing(fn (array $data): array {
+    ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
 
         return $data;
@@ -319,7 +321,7 @@ Repeater::make('qualifications')
 
 ### Mutating related item data before creating
 
-You may mutate the data for a new related item before it is created in the database using the `mutateRelationshipDataBeforeCreateUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You must return the modified array of data:
+You may mutate the data for a new related item before it is created in the database using the `mutateRelationshipDataBeforeCreateUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You can choose to return either the modified array of data, or `null` to prevent the item from being created:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -329,7 +331,7 @@ Repeater::make('qualifications')
     ->schema([
         // ...
     ])
-    ->mutateRelationshipDataBeforeCreateUsing(fn (array $data): array {
+    ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
 
         return $data;
@@ -338,7 +340,7 @@ Repeater::make('qualifications')
 
 ### Mutating related item data before saving
 
-You may mutate the data for an existing related item before it is saved in the database using the `mutateRelationshipDataBeforeSaveUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You must return the modified array of data:
+You may mutate the data for an existing related item before it is saved in the database using the `mutateRelationshipDataBeforeSaveUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You can choose to return either the modified array of data, or `null` to prevent the item from being saved:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -348,7 +350,7 @@ Repeater::make('qualifications')
     ->schema([
         // ...
     ])
-    ->mutateRelationshipDataBeforeSaveUsing(fn (array $data): array {
+    ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
 
         return $data;
@@ -386,7 +388,7 @@ Repeater::make('members')
     ->schema([
         TextInput::make('name')
             ->required()
-            ->blur(),
+            ->live(onBlur: true),
         Select::make('role')
             ->options([
                 'member' => 'Member',
@@ -403,13 +405,42 @@ Any fields that you use from `$state` should be `live()` if you wish to see the 
 
 <AutoScreenshot name="forms/fields/repeater/labelled" alt="Repeater with item labels" version="3.x" />
 
+## Simple repeaters with one field
+
+You can use the `simple()` method to create a repeater with a single field, using a minimal design
+
+```php
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
+
+Repeater::make('invitations')
+    ->simple(
+        TextInput::make('email')
+            ->email()
+            ->required(),
+    )
+```
+
+<AutoScreenshot name="forms/fields/repeater/simple-one-field" alt="Simple repeater design with only one field" version="3.x" />
+
+Instead of using a nested array to store data, simple repeaters use a flat array of values. This means that the data structure for the above example could look like this:
+
+```php
+[
+    'invitations' => [
+        'dan@filamentphp.com',
+        'ryan@filamentphp.com',
+    ],
+],
+```
+
 ## Using `$get()` to access parent field values
 
 All form components are able to [use `$get()` and `$set()`](../advanced) to access another field's value. However, you might experience unexpected behaviour when using this inside the repeater's schema.
 
 This is because `$get()` and `$set()`, by default, are scoped to the current repeater item. This means that you are able to interact with another field inside that repeater item easily without knowing which repeater item the current form component belongs to.
 
-The consequence of this, is that you may be confused when you are unable to interact with a field outside the repeater. We use `../` syntax to solve this problem - `$get('../../parent_field_name')`.
+The consequence of this is that you may be confused when you are unable to interact with a field outside the repeater. We use `../` syntax to solve this problem - `$get('../../parent_field_name')`.
 
 Consider your form has this data structure:
 

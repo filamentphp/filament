@@ -32,7 +32,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 > These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
 
-All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), [Section](../../forms/layout/section), etc) have a `relationship()` method. When you use this, all fields within that layout are saved to the related model instead of the owner's model:
+All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), etc.) have a `relationship()` method. When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
 use Filament\Forms\Components\Fieldset;
@@ -103,6 +103,30 @@ public static function getRelations(): array
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
+### Read-only mode
+
+Relation managers are usually displayed on either the Edit or View page of a resource. On the View page, Filament will automatically hide all actions that modify the relationship, such as create, edit, and delete. We call this "read-only mode", and it is there by default to preserve the read-only behaviour of the View page. However, you can disable this behaviour, by overriding the `isReadOnly()` method on the relation manager class to return `false` all the time:
+
+```php
+public function isReadOnly(): bool
+{
+    return false;
+}
+```
+
+Alternatively, if you hate this functionality, you can disable it for all relation managers at once in the panel [configuration](../configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->readOnlyRelationManagersOnResourceViewPagesByDefault(false);
+}
+```
+
 ### Unconventional inverse relationship names
 
 For inverse relationships that do not follow Laravel's naming guidelines, you may wish to use the `inverseRelationship()` method on the table:
@@ -134,9 +158,9 @@ You can find out more about soft deleting [here](#deleting-records).
 
 ## Listing related records
 
-Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-records), [edit](#editing-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
+Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-related-records), [edit](#editing-related-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
 
-You may may use any of the features of the [table builder](../../tables) to customize relation managers.
+You may use any features of the [Table Builder](../../tables) to customize relation managers.
 
 ### Listing with pivot attributes
 
@@ -182,7 +206,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ### Customizing the `CreateAction`
 
-To learn how to customize the `CreateAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/create).
+To learn how to customize the `CreateAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/create).
 
 ## Editing related records
 
@@ -209,7 +233,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ### Customizing the `EditAction`
 
-To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/edit).
+To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/edit).
 
 ## Attaching and detaching records
 
@@ -289,7 +313,7 @@ use Filament\Tables\Actions\AttachAction;
 use Illuminate\Database\Eloquent\Builder;
 
 AttachAction::make()
-    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
 ```
 
 ### Searching the options to attach across multiple columns
@@ -303,16 +327,16 @@ AttachAction::make()
     ->recordSelectSearchColumns(['title', 'description'])
 ```
 
-### Customizing the select field in the attach modal
+### Customizing the select field in the attached modal
 
-You may customize the select field object that is used during attachment by passing a function to the `modifyRecordSelectUsing()` method:
+You may customize the select field object that is used during attachment by passing a function to the `recordSelect()` method:
 
 ```php
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\AttachAction;
 
 AttachAction::make()
-    ->modifyRecordSelectUsing(
+    ->recordSelect(
         fn (Select $select) => $select->placeholder('Select a post'),
     )
 ```
@@ -323,10 +347,14 @@ By default, you will not be allowed to attach a record more than once. This is b
 
 Please ensure that the `id` attribute is listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-Finally, add the `$allowsDuplicates` property to the relation manager:
+Finally, add the `allowDuplicates()` method to the table:
 
 ```php
-protected bool $allowsDuplicates = true;
+public function table(Table $table): Table
+{
+    return $table
+        ->allowDuplicates();
+}
 ```
 
 ## Associating and dissociating records
@@ -388,7 +416,7 @@ use Filament\Tables\Actions\AssociateAction;
 use Illuminate\Database\Eloquent\Builder;
 
 AssociateAction::make()
-    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
 ```
 
 ### Searching the options to associate across multiple columns
@@ -404,14 +432,14 @@ AssociateAction::make()
 
 ### Customizing the select field in the associate modal
 
-You may customize the select field object that is used during association by passing a function to the `modifyRecordSelectUsing()` method:
+You may customize the select field object that is used during association by passing a function to the `recordSelect()` method:
 
 ```php
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\AssociateAction;
 
 AssociateAction::make()
-    ->modifyRecordSelectUsing(
+    ->recordSelect(
         fn (Select $select) => $select->placeholder('Select a post'),
     )
 ```
@@ -491,17 +519,17 @@ public function table(Table $table): Table
 
 ### Customizing the `DeleteAction`
 
-To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/delete).
+To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/delete).
 
 ## Accessing the relationship's owner record
 
-Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is mounted in a public `$ownerRecord` property. Thus, you may access the owner record using:
+Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is saved into a property. You can read this property using:
 
 ```php
-$this->ownerRecord
+$this->getOwnerRecord()
 ```
 
-However, in you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#form-component-utility-injection) to access the `$livewire` instance:
+However, if you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#form-component-utility-injection) to access the `$livewire` instance:
 
 ```php
 use Filament\Forms;
@@ -514,7 +542,7 @@ public function form(Form $form): Form
         ->schema([
             Forms\Components\Select::make('store_id')
                 ->options(function (RelationManager $livewire): array {
-                    return $livewire->ownerRecord->stores()
+                    return $livewire->getOwnerRecord()->stores()
                         ->pluck('name', 'id')
                         ->toArray();
                 }),
@@ -720,17 +748,6 @@ AttachAction::make()
     ->recordSelectSearchColumns(['title', 'id'])
 ```
 
-## Read-only mode
-
-Relation managers are usually displayed on either the Edit or View page of a resource. On the View page, Filament will automatically hide all actions that modify the relationship, such as create, edit and delete. However, you can disable this behaviour, by overriding the `isReadOnly()` method on the relation manager class to return `false` all the time:
-
-```php
-public function isReadOnly(): bool
-{
-    return false;
-}
-```
-
 ## Passing properties to relation managers
 
 When registering a relation manager in a resource, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
@@ -762,3 +779,13 @@ class CommentsRelationManager extends RelationManager
 ```
 
 Now, you can access the `status` in the relation manager class using `$this->status`.
+
+## Disabling lazy loading
+
+By default, relation managers are lazy-loaded. This means that they will only be loaded when they are visible on the page.
+
+To disable this behavior, you may override the `$isLazy` property on the relation manager class:
+
+```php
+protected static bool $isLazy = false;
+```

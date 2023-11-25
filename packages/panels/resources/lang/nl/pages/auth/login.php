@@ -30,7 +30,7 @@ return [
         ],
 
         'remember' => [
-            'label' => 'Herinner mij',
+            'label' => 'Onthoud mij',
         ],
 
         'actions' => [
@@ -52,7 +52,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Te veel inlogpogingen. Probeer opnieuw over :seconds seconden.',
+            'title' => 'Te veel inlogpogingen',
+            'body' => 'Probeer het opnieuw over :seconds seconden.',
         ],
 
     ],

@@ -1,4 +1,3 @@
-import { mutateDom } from 'alpinejs/src/mutation'
 import { once } from 'alpinejs/src/utils/once'
 
 export default (Alpine) => {
@@ -7,8 +6,17 @@ export default (Alpine) => {
 
         computedStyle: null,
 
+        transitionDuration: null,
+
+        transitionEasing: null,
+
         init: function () {
             this.computedStyle = window.getComputedStyle(this.$el)
+
+            this.transitionDuration =
+                parseFloat(this.computedStyle.transitionDuration) * 1000
+
+            this.transitionEasing = this.computedStyle.transitionTimingFunction
 
             this.configureTransitions()
             this.configureAnimations()
@@ -27,7 +35,7 @@ export default (Alpine) => {
             const display = this.computedStyle.display
 
             const show = () => {
-                mutateDom(() => {
+                Alpine.mutateDom(() => {
                     this.$el.style.setProperty('display', display)
                     this.$el.style.setProperty('visibility', 'visible')
                 })
@@ -35,7 +43,7 @@ export default (Alpine) => {
             }
 
             const hide = () => {
-                mutateDom(() => {
+                Alpine.mutateDom(() => {
                     this.$el._x_isShown
                         ? this.$el.style.setProperty('visibility', 'hidden')
                         : this.$el.style.setProperty('display', 'none')
@@ -63,19 +71,22 @@ export default (Alpine) => {
             Livewire.hook(
                 'commit',
                 ({ component, commit, succeed, fail, respond }) => {
+                    if (
+                        !component.snapshot.data
+                            .isFilamentNotificationsComponent
+                    ) {
+                        return
+                    }
+
+                    const getTop = () => this.$el.getBoundingClientRect().top
+                    const oldTop = getTop()
+
                     respond(() => {
-                        if (
-                            !component.snapshot.data
-                                .isFilamentNotificationsComponent
-                        ) {
-                            return
-                        }
-
-                        const getTop = () =>
-                            this.$el.getBoundingClientRect().top
-                        const oldTop = getTop()
-
                         animation = () => {
+                            if (!this.isShown) {
+                                return
+                            }
+
                             this.$el.animate(
                                 [
                                     {
@@ -86,9 +97,8 @@ export default (Alpine) => {
                                     { transform: 'translateY(0px)' },
                                 ],
                                 {
-                                    duration: this.getTransitionDuration(),
-                                    easing: this.computedStyle
-                                        .transitionTimingFunction,
+                                    duration: this.transitionDuration,
+                                    easing: this.transitionEasing,
                                 },
                             )
                         }
@@ -99,17 +109,6 @@ export default (Alpine) => {
                     })
 
                     succeed(({ snapshot, effect }) => {
-                        if (
-                            !component.snapshot.data
-                                .isFilamentNotificationsComponent
-                        ) {
-                            return
-                        }
-
-                        if (!this.isShown) {
-                            return
-                        }
-
                         animation()
                     })
                 },
@@ -128,7 +127,7 @@ export default (Alpine) => {
                             },
                         }),
                     ),
-                this.getTransitionDuration(),
+                this.transitionDuration,
             )
         },
 
@@ -150,10 +149,6 @@ export default (Alpine) => {
                     },
                 }),
             )
-        },
-
-        getTransitionDuration: function () {
-            return parseFloat(this.computedStyle.transitionDuration) * 1000
         },
     }))
 }

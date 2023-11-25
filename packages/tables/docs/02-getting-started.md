@@ -5,15 +5,15 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-Filament's table package allows you to [add an interactive datatable to any Livewire component](adding-a-table-to-a-livewire-component). It's also used within other Filament packages, such as the [panel builder](../panels) for displaying [resources](../panels/resources/getting-started) and [relation managers](../panels/resources/relation-managers), as well as for the [table widget](../panels/dashboard#table-widgets). Learning the features of the table builder will be incredibly time-saving when both building your own custom Livewire tables and using Filament's other packages.
+Filament's Table Builder package allows you to [add an interactive datatable to any Livewire component](adding-a-table-to-a-livewire-component). It's also used within other Filament packages, such as the [Panel Builder](../panels) for displaying [resources](../panels/resources/getting-started) and [relation managers](../panels/resources/relation-managers), as well as for the [table widget](../panels/dashboard#table-widgets). Learning the features of the Table Builder will be incredibly time-saving when both building your own custom Livewire tables and using Filament's other packages.
 
 This guide will walk you through the basics of building tables with Filament's table package. If you're planning to add a new table to your own Livewire component, you should [do that first](adding-a-table-to-a-livewire-component) and then come back. If you're adding a table to an [app resource](../panels/resources/getting-started), or another Filament package, you're ready to go!
 
 ## Defining table columns
 
-The basis of any table are rows and columns. Filament uses Eloquent to get the data for rows in the table, and you are responsible for defining the columns that are used in that row.
+The basis of any table is rows and columns. Filament uses Eloquent to get the data for rows in the table, and you are responsible for defining the columns that are used in that row.
 
-Filament includes many column types prebuilt for you, and you can [view a full list here](columns/getting-started#available-columns). You can even [create your own custom column types](columns/custom) to display data however you need.
+Filament includes many column types prebuilt for you, and you can [view a full list here](columns/getting-started#available-columns). You can even [create your own custom column types](columns/custom) to display data in whatever way you need.
 
 Columns are stored in an array, as objects within the `$table->columns()` method:
 
@@ -76,7 +76,7 @@ TextColumn::make('author.name')
 
 <AutoScreenshot name="tables/getting-started/relationship-columns" alt="Table with relationship column" version="3.x" />
 
-In this case, Filament will search for an `author` relationship on the `Post` model, and then display the `name` attribute of that relationship. We call this "dot notation" - you can use it to display any attribute of any relationship, even nested distant relationships. This dot notation is used by Filament to eager-load the results of that relationship for you.
+In this case, Filament will search for an `author` relationship on the `Post` model, and then display the `name` attribute of that relationship. We call this "dot notation" - you can use it to display any attribute of any relationship, even nested distant relationships. Filament uses this dot notation to eager-load the results of that relationship for you.
 
 ## Defining table filters
 
@@ -115,11 +115,11 @@ The first filter is rendered as a checkbox. When it's checked, only featured row
 
 The second filter is rendered as a select dropdown. When a user selects an option, only rows with that status will be displayed. When no option is selected, all rows will be displayed.
 
-It's possible to define as many filters as you need, and use any component from the [forms package](../forms) to create a UI. For example, you could create [a custom date range filter](../filters#custom-filter-forms).
+It's possible to define as many filters as you need, and use any component from the [Form Builder package](../forms) to create a UI. For example, you could create [a custom date range filter](../filters#custom-filter-forms).
 
 ## Defining table actions
 
-Filament's tables can use [actions](../actions/overview). They are buttons that can be added to the [end of any table row](actions#row-actions), or even in the [header](actions#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](actions#bulk-actions) can be used to execute code when records in the table are selected.
+Filament's tables can use [Actions](../actions/overview). They are buttons that can be added to the [end of any table row](actions#row-actions), or even in the [header](actions#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](actions#bulk-actions) can be used to execute code when records in the table are selected.
 
 ```php
 use App\Models\Post;
@@ -163,15 +163,15 @@ We also define a bulk action. When bulk actions are defined, each row in the tab
 
 <AutoScreenshot name="tables/getting-started/actions-modal" alt="Table with action modal open" version="3.x" />
 
-Actions can also open modals to request confirmation from the user, as well as render forms inside to collect extra data. It's a good idea to read the [actions documentation](../actions/overview) to learn more about their extensive capabilities throughout Filament.
+Actions can also open modals to request confirmation from the user, as well as render forms inside to collect extra data. It's a good idea to read the [Actions documentation](../actions/overview) to learn more about their extensive capabilities throughout Filament.
 
-## Next steps with the tables package
+## Next steps with the Table Builder package
 
 Now you've finished reading this guide, where to next? Here are some suggestions:
 
 - [Explore the available columns to display data in your table.](columns/getting-started#available-columns)
 - [Deep dive into table actions and start using modals.](actions)
 - [Discover how to build complex, responsive table layouts without touching CSS.](layout)
-- [Add summaries to your tables, which give an overview of the data inside of them.](summaries)
+- [Add summaries to your tables, which give an overview of the data inside them.](summaries)
 - [Find out about all advanced techniques that you can customize tables to your needs.](advanced)
 - [Write automated tests for your tables using our suite of helper methods.](testing)

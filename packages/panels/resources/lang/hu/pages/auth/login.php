@@ -4,7 +4,7 @@ return [
 
     'title' => 'Bejelentkezés',
 
-    'heading' => 'Bejelentkezés a fiókba',
+    'heading' => 'Jelentkezz be a fiókodba',
 
     'actions' => [
 
@@ -22,7 +22,7 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'E-mail cím',
+            'label' => 'Email cím',
         ],
 
         'password' => [
@@ -45,15 +45,15 @@ return [
 
     'messages' => [
 
-        'failed' => 'Hibás e-mail cím vagy jelszó.',
+        'failed' => 'Hibás email cím vagy jelszó.',
 
     ],
 
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Túl sok próbálkozás',
-            'body' => 'Kérjük, próbálja meg újra :second másodperc múlva.',
+            'title' => 'Túl sok bejelentkezési kísérlet',
+            'body' => 'Kérjük, próbáld meg újra :second másodperc múlva.',
         ],
 
     ],

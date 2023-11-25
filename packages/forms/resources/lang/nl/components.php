@@ -27,11 +27,11 @@ return [
             ],
 
             'move_down' => [
-                'label' => 'Naar beneden',
+                'label' => 'Omlaag verplaatsen',
             ],
 
             'move_up' => [
-                'label' => 'Naar boven',
+                'label' => 'Omhoog verplaatsen',
             ],
 
             'collapse' => [
@@ -64,6 +64,134 @@ return [
 
             'select_all' => [
                 'label' => 'Alles selecteren',
+            ],
+
+        ],
+
+    ],
+
+    'file_upload' => [
+
+        'editor' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'Annuleren',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'Sleepmodus "bijsnijden"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'Sleepmodus "verplaatsen"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'Afbeelding horizontaal spiegelen',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'Afbeelding verticaal spiegelen',
+                ],
+
+                'move_down' => [
+                    'label' => 'Afbeelding naar beneden verplaatsen',
+                ],
+
+                'move_left' => [
+                    'label' => 'Afbeelding naar links verplaatsen',
+                ],
+
+                'move_right' => [
+                    'label' => 'Afbeelding naar rechts verplaatsen',
+                ],
+
+                'move_up' => [
+                    'label' => 'Afbeelding naar boven verplaatsen',
+                ],
+
+                'reset' => [
+                    'label' => 'Resetten',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'Afbeelding naar links draaien',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'Afbeelding naar rechts draaien',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'Beeldverhouding instellen op :ratio',
+                ],
+
+                'save' => [
+                    'label' => 'Opslaan',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'Afbeelding uitzoomen naar 100%',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'Inzoomen',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'Uitzoomen',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'Hoogte',
+                    'unit' => 'px',
+                ],
+
+                'rotation' => [
+                    'label' => 'Rotatie',
+                    'unit' => 'gr',
+                ],
+
+                'width' => [
+                    'label' => 'Breedte',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'Beeldverhoudingen',
+
+                'no_fixed' => [
+                    'label' => 'Geen',
+                ],
+
+            ],
+
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Het bewerken van SVG-bestanden wordt niet aanbevolen, omdat dit kan leiden tot kwaliteitsverlies bij het schalen.\n Weet je zeker dat je door wilt gaan?',
+                    'disabled' => 'Het bewerken van SVG-bestanden is uitgeschakeld omdat dit kan leiden tot kwaliteitsverlies bij het schalen.',
+                ],
+
             ],
 
         ],
@@ -130,6 +258,10 @@ return [
                 'label' => 'Toevoegen aan :label',
             ],
 
+            'add_between' => [
+                'label' => 'Invoegen',
+            ],
+
             'delete' => [
                 'label' => 'Verwijderen',
             ],
@@ -143,11 +275,11 @@ return [
             ],
 
             'move_down' => [
-                'label' => 'Naar beneden',
+                'label' => 'Omlaag verplaatsen',
             ],
 
             'move_up' => [
-                'label' => 'Naar boven',
+                'label' => 'Omhoog verplaatsen',
             ],
 
             'collapse' => [

@@ -9,7 +9,7 @@
     {{ $attributes->class(['fi-global-search-result transition duration-75 focus-within:bg-gray-50 hover:bg-gray-50 dark:focus-within:bg-white/5 dark:hover:bg-white/5']) }}
 >
     <a
-        href="{{ $url }}"
+        {{ \Filament\Support\generate_href_html($url) }}
         @class([
             'block outline-none',
             'pe-4 ps-4 pt-4' => $actions,

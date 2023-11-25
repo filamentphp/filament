@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;
@@ -16,9 +17,9 @@ use Livewire\WithFileUploads;
 
 trait InteractsWithForms
 {
-    use WithFileUploads;
     use HasFormComponentActions;
     use ResolvesDynamicLivewireProperties;
+    use WithFileUploads;
 
     /**
      * @var array <string, TemporaryUploadedFile | null>
@@ -228,12 +229,14 @@ trait InteractsWithForms
 
     public function updatingInteractsWithForms(string $statePath): void
     {
+        $statePath = (string) str($statePath)->before('.');
+
         $this->oldFormState[$statePath] = data_get($this, $statePath);
     }
 
     public function getOldFormState(string $statePath): mixed
     {
-        return $this->oldFormState[$statePath] ?? null;
+        return data_get($this->oldFormState, $statePath);
     }
 
     public function updatedInteractsWithForms(string $statePath): void
@@ -439,5 +442,10 @@ trait InteractsWithForms
     public function isCachingForms(): bool
     {
         return $this->isCachingForms;
+    }
+
+    public function mountedFormComponentActionInfolist(): Infolist
+    {
+        return $this->getMountedFormComponentAction()->getInfolist();
     }
 }

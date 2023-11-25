@@ -111,7 +111,7 @@ class Range extends Summarizer
                 $from .= ($isFromLonger ? $originalFromCharacters[$characterIndex] : $character);
                 $to .= ($isFromLonger ? $character : $originalToCharacters[$characterIndex]);
 
-                if (strtolower($from) !== strtolower($to)) {
+                if (Str::lower($from) !== Str::lower($to)) {
                     break;
                 }
             }

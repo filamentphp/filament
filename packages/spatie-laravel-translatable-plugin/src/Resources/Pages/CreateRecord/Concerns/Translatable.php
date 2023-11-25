@@ -28,13 +28,13 @@ trait Translatable
 
     public function getTranslatableLocales(): array
     {
-        return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
+        return static::getResource()::getTranslatableLocales();
     }
 
     protected function setActiveLocale(?string $locale = null): void
     {
         $this->activeLocale = filled($locale) ? $locale : static::getResource()::getDefaultTranslatableLocale();
-        $this->cacheForm('form', $this->form($this->makeForm()));
+        $this->cacheForm('form', $this->getForms()['form']);
     }
 
     public function create(bool $another = false): void
@@ -54,6 +54,11 @@ trait Translatable
 
             $translatableAttributes = app(static::getModel())->getTranslatableAttributes();
 
+            $nonTranslatableData = Arr::except(
+                $this->data[$originalActiveLocale] ?? [],
+                $translatableAttributes,
+            );
+
             foreach ($this->getTranslatableLocales() as $locale) {
                 if ($locale === $originalActiveLocale) {
                     continue;
@@ -62,15 +67,12 @@ trait Translatable
                 try {
                     $this->setActiveLocale($locale);
 
-                    $this->callHook('beforeValidate');
-
                     $this->data[$locale] = array_merge(
                         $this->data[$locale] ?? [],
-                        Arr::except(
-                            $this->data[$originalActiveLocale] ?? [],
-                            $translatableAttributes,
-                        ),
+                        $nonTranslatableData,
                     );
+
+                    $this->callHook('beforeValidate');
 
                     $data[$locale] = $this->form->getState();
 
@@ -112,17 +114,12 @@ trait Translatable
 
         $translatableAttributes = $record->getTranslatableAttributes();
 
-        $record->fill(Arr::except(Arr::first($data), $translatableAttributes));
-
         foreach ($data as $locale => $localeData) {
             if ($locale === $this->activeLocale) {
-                $localeData = Arr::only(
-                    $localeData,
-                    app(static::getModel())->getTranslatableAttributes(),
-                );
+                $record->fill(Arr::except($localeData, $translatableAttributes));
             }
 
-            foreach ($localeData as $key => $value) {
+            foreach (Arr::only($localeData, $translatableAttributes) as $key => $value) {
                 $record->setTranslation($key, $locale, $value);
             }
         }

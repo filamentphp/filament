@@ -8,7 +8,7 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 
-if (! function_exists('authorize')) {
+if (! function_exists('Filament\authorize')) {
     /**
      * @throws AuthorizationException
      */
@@ -27,7 +27,7 @@ if (! function_exists('authorize')) {
             (! method_exists($policy, $action))
         ) {
             /** @var bool | Response | null $response */
-            $response = invade(Gate::forUser($user))->callBeforeCallbacks(
+            $response = invade(Gate::forUser($user))->callBeforeCallbacks( /** @phpstan-ignore-line */
                 $user,
                 $action,
                 [$model],

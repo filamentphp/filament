@@ -41,9 +41,13 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Preparing your model class
+
+You need to make your model translatable. You can read how to do this in [Spatie's documentation](https://spatie.be/docs/laravel-translatable/installation-setup#content-making-a-model-translatable).
+
 ## Preparing your resource class
 
-First, you must apply the `Filament\Resources\Concerns\Translatable` trait to your resource class:
+You must apply the `Filament\Resources\Concerns\Translatable` trait to your resource class:
 
 ```php
 use Filament\Resources\Concerns\Translatable;

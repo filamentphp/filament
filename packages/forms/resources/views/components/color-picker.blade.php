@@ -1,4 +1,6 @@
 @php
+    use Filament\Support\Facades\FilamentView;
+
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
@@ -19,22 +21,30 @@
         :prefix="$prefixLabel"
         :prefix-actions="$prefixActions"
         :prefix-icon="$prefixIcon"
+        :prefix-icon-color="$getPrefixIconColor()"
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
+        :suffix-icon-color="$getSuffixIconColor()"
         :valid="! $errors->has($statePath)"
-        class="fi-fo-color-picker"
-        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
+        :attributes="
+            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+                ->class('fi-fo-color-picker')
+        "
     >
         <div
             x-ignore
-            ax-load
+            @if (FilamentView::hasSpaMode())
+                ax-load="visible"
+            @else
+                ax-load
+            @endif
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('color-picker', 'filament/forms') }}"
             x-data="colorPickerFormComponent({
                         isAutofocused: @js($isAutofocused()),
                         isDisabled: @js($isDisabled),
                         isLiveOnPickerClose: @js($isLiveOnBlur() || $isLiveDebounced()),
-                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                        state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     })"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
             {{ $getExtraAlpineAttributeBag()->class(['flex']) }}
@@ -79,7 +89,7 @@
                 x-cloak
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 x-ref="panel"
-                class="absolute z-10 hidden rounded-lg shadow-lg"
+                class="fi-fo-color-picker-panel absolute z-10 hidden rounded-lg shadow-lg"
             >
                 @php
                     $tag = match ($getFormat()) {

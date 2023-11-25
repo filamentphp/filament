@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## The problem with traditional table layouts
 
-Traditional tables are notorious for having bad responsivity. On mobile, there is only so much flexibility you have when rending content that is horizontally long:
+Traditional tables are notorious for having bad responsiveness. On mobile, there is only so much flexibility you have when rendering content that is horizontally long:
 
 - Allow the user to scroll horizontally to see more table content
 - Hide non-important columns on smaller devices
@@ -149,7 +149,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 
 Split::make([
-    ImageColumn::make('avatar') 
+    ImageColumn::make('avatar')
         ->circular(),
     TextColumn::make('name')
         ->weight(FontWeight::Bold)
@@ -350,23 +350,6 @@ Panel::make([
 
 <AutoScreenshot name="tables/layout/collapsible/mobile" alt="Table with collapsible content on mobile" version="3.x" />
 
-### Adding a collapse animation
-
-If you're not using the table builder within the panel builder, you may find that there is no animation when collapsing or expanding the content. You can enable this by installing the [Alpine.js Collapse Plugin](https://alpinejs.dev/plugins/collapse):
-
-```bash
-npm install @alpinejs/collapse --save-dev
-```
-
-Finally, import `@alpinejs/collapse` as an Alpine.js plugin in your JavaScript file:
-
-```js
-import Alpine from 'alpinejs'
-import Collapse from '@alpinejs/collapse'
-
-Alpine.plugin(Collapse)
-```
-
 ## Arranging records into a grid
 
 Sometimes, you may find that your data fits into a grid format better than a list. Filament can handle that too!
@@ -430,7 +413,7 @@ Now, create a `/resources/views/users/table/collapsible-row-content.blade.php` f
     <span class="font-medium">
         Email address:
     </span>
-    
+
     <span>
         {{ $getRecord()->email }}
     </span>

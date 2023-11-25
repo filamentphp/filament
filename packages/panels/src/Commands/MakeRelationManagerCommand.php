@@ -6,15 +6,16 @@ use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\text;
 
 class MakeRelationManagerCommand extends Command
 {
     use CanIndentStrings;
     use CanManipulateFiles;
-    use CanValidateInput;
 
     protected $description = 'Create a new Filament relation manager class for a resource';
 
@@ -22,7 +23,13 @@ class MakeRelationManagerCommand extends Command
 
     public function handle(): int
     {
-        $resource = (string) str($this->argument('resource') ?? $this->askRequired('Resource (e.g. `DepartmentResource`)', 'resource'))
+        $resource = (string) str(
+            $this->argument('resource') ?? text(
+                label: 'What is the resource you would like to create this in?',
+                placeholder: 'DepartmentResource',
+                required: true,
+            ),
+        )
             ->studly()
             ->trim('/')
             ->trim('\\')
@@ -33,13 +40,21 @@ class MakeRelationManagerCommand extends Command
             $resource .= 'Resource';
         }
 
-        $relationship = (string) str($this->argument('relationship') ?? $this->askRequired('Relationship (e.g. `members`)', 'relationship'))
+        $relationship = (string) str($this->argument('relationship') ?? text(
+            label: 'What is the relationship?',
+            placeholder: 'members',
+            required: true,
+        ))
             ->trim(' ');
         $managerClass = (string) str($relationship)
             ->studly()
             ->append('RelationManager');
 
-        $recordTitleAttribute = (string) str($this->argument('recordTitleAttribute') ?? $this->askRequired('Title attribute (e.g. `name`)', 'title attribute'))
+        $recordTitleAttribute = (string) str($this->argument('recordTitleAttribute') ?? text(
+            label: 'What is the title attribute?',
+            placeholder: 'name',
+            required: true,
+        ))
             ->trim(' ');
 
         $panel = $this->option('panel');
@@ -52,13 +67,13 @@ class MakeRelationManagerCommand extends Command
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
-            $panel = (count($panels) > 1) ? $panels[$this->choice(
-                'Which panel would you like to create this in?',
-                array_map(
+            $panel = (count($panels) > 1) ? $panels[select(
+                label: 'Which panel would you like to create this in?',
+                options: array_map(
                     fn (Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
-                Filament::getDefaultPanel()->getId(),
+                default: Filament::getDefaultPanel()->getId()
             )] : Arr::first($panels);
         }
 
@@ -66,9 +81,9 @@ class MakeRelationManagerCommand extends Command
         $resourceNamespaces = $panel->getResourceNamespaces();
 
         $resourceNamespace = (count($resourceNamespaces) > 1) ?
-            $this->choice(
-                'Which namespace would you like to create this in?',
-                $resourceNamespaces,
+            select(
+                label: 'Which namespace would you like to create this in?',
+                options: $resourceNamespaces
             ) :
             (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
         $resourcePath = (count($resourceDirectories) > 1) ?
@@ -86,19 +101,19 @@ class MakeRelationManagerCommand extends Command
             return static::INVALID;
         }
 
-        $tableHeaderAndEmptyStateActions = [];
+        $tableHeaderActions = [];
 
-        $tableHeaderAndEmptyStateActions[] = 'Tables\Actions\CreateAction::make(),';
+        $tableHeaderActions[] = 'Tables\Actions\CreateAction::make(),';
 
         if ($this->option('associate')) {
-            $tableHeaderAndEmptyStateActions[] = 'Tables\Actions\AssociateAction::make(),';
+            $tableHeaderActions[] = 'Tables\Actions\AssociateAction::make(),';
         }
 
         if ($this->option('attach')) {
-            $tableHeaderAndEmptyStateActions[] = 'Tables\Actions\AttachAction::make(),';
+            $tableHeaderActions[] = 'Tables\Actions\AttachAction::make(),';
         }
 
-        $tableHeaderAndEmptyStateActions = implode(PHP_EOL, $tableHeaderAndEmptyStateActions);
+        $tableHeaderActions = implode(PHP_EOL, $tableHeaderActions);
 
         $tableActions = [];
 
@@ -158,15 +173,14 @@ class MakeRelationManagerCommand extends Command
             'relationship' => $relationship,
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 5),
-            'tableEmptyStateActions' => $this->indentString($tableHeaderAndEmptyStateActions, 4),
             'tableFilters' => $this->indentString(
                 $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make()' : '//',
                 4,
             ),
-            'tableHeaderActions' => $this->indentString($tableHeaderAndEmptyStateActions, 4),
+            'tableHeaderActions' => $this->indentString($tableHeaderActions, 4),
         ]);
 
-        $this->components->info("Successfully created {$managerClass}!");
+        $this->components->info("Filament relation manager [{$path}] created successfully.");
 
         $this->components->info("Make sure to register the relation in `{$resource}::getRelations()`.");
 

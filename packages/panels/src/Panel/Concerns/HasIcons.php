@@ -21,4 +21,12 @@ trait HasIcons
 
         return $this;
     }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getIcons(): array
+    {
+        return $this->icons;
+    }
 }

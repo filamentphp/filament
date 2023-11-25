@@ -15,6 +15,7 @@ use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Password;
@@ -103,11 +104,23 @@ class RequestPasswordReset extends SimplePage
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                $this->getEmailFormComponent(),
-            ])
-            ->statePath('data');
+        return $form;
+    }
+
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(
+                $this->makeForm()
+                    ->schema([
+                        $this->getEmailFormComponent(),
+                    ])
+                    ->statePath('data'),
+            ),
+        ];
     }
 
     protected function getEmailFormComponent(): Component
@@ -126,8 +139,8 @@ class RequestPasswordReset extends SimplePage
             ->link()
             ->label(__('filament-panels::pages/auth/password-reset/request-password-reset.actions.login.label'))
             ->icon(match (__('filament-panels::layout.direction')) {
-                'rtl' => 'heroicon-m-arrow-right',
-                default => 'heroicon-m-arrow-left',
+                'rtl' => FilamentIcon::resolve('panels::pages.password-reset.request-password-reset.actions.login.rtl') ?? 'heroicon-m-arrow-right',
+                default => FilamentIcon::resolve('panels::pages.password-reset.request-password-reset.actions.login') ?? 'heroicon-m-arrow-left',
             })
             ->url(filament()->getLoginUrl());
     }

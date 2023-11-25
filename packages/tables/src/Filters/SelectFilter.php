@@ -25,7 +25,9 @@ class SelectFilter extends BaseFilter
 
     protected int | Closure $optionsLimit = 50;
 
-    protected bool | Closure $isSearchForcedCaseInsensitive = false;
+    protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
+
+    protected ?Closure $getOptionLabelFromRecordUsing = null;
 
     protected function setUp(): void
     {
@@ -47,6 +49,10 @@ class SelectFilter extends BaseFilter
                     $relationshipQuery = $filter->getRelationshipQuery();
 
                     $labels = $relationshipQuery
+                        ->when(
+                            $filter->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough,
+                            fn (Builder $query) => $query->distinct(),
+                        )
                         ->whereKey($state['values'])
                         ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
                         ->all();
@@ -60,7 +66,13 @@ class SelectFilter extends BaseFilter
 
                 $labels = collect($labels)->join(', ', ' & ');
 
-                return ["{$filter->getIndicator()}: {$labels}"];
+                $indicator = $filter->getIndicator();
+
+                if (! $indicator instanceof Indicator) {
+                    $indicator = Indicator::make("{$indicator}: {$labels}");
+                }
+
+                return [$indicator];
             }
 
             if (blank($state['value'] ?? null)) {
@@ -80,7 +92,13 @@ class SelectFilter extends BaseFilter
                 return [];
             }
 
-            return ["{$filter->getIndicator()}: {$label}"];
+            $indicator = $filter->getIndicator();
+
+            if (! $indicator instanceof Indicator) {
+                $indicator = Indicator::make("{$indicator}: {$label}");
+            }
+
+            return [$indicator];
         });
 
         $this->resetState(['value' => null]);
@@ -184,16 +202,16 @@ class SelectFilter extends BaseFilter
         return $this->getAttribute();
     }
 
-    public function forceSearchCaseInsensitive(bool | Closure $condition = true): static
+    public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
     {
         $this->isSearchForcedCaseInsensitive = $condition;
 
         return $this;
     }
 
-    public function isSearchForcedCaseInsensitive(): bool
+    public function isSearchForcedCaseInsensitive(): ?bool
     {
-        return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
+        return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
     public function getFormField(): Select
@@ -225,6 +243,10 @@ class SelectFilter extends BaseFilter
 
         if ($this->getOptionLabelsUsing) {
             $field->getOptionLabelsUsing($this->getOptionLabelsUsing);
+        }
+
+        if ($this->getOptionLabelFromRecordUsing) {
+            $field->getOptionLabelFromRecordUsing($this->getOptionLabelFromRecordUsing);
         }
 
         if ($this->getSearchResultsUsing) {
@@ -270,5 +292,12 @@ class SelectFilter extends BaseFilter
     public function isNative(): bool
     {
         return (bool) $this->evaluate($this->isNative);
+    }
+
+    public function getOptionLabelFromRecordUsing(?Closure $callback): static
+    {
+        $this->getOptionLabelFromRecordUsing = $callback;
+
+        return $this;
     }
 }
