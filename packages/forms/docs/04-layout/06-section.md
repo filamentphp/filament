@@ -98,7 +98,7 @@ Section::make('Cart')
 
 ### Persisting collapsed sections
 
-You can persist whether a section is collapsed in local storage using the `persistCollapsedState()` method, so it will remain collapsed when the user refreshes the page:
+You can persist whether a section is collapsed in local storage using the `persistCollapsed()` method, so it will remain collapsed when the user refreshes the page:
 
 ```php
 use Filament\Infolists\Components\Section;
@@ -109,7 +109,7 @@ Section::make('Cart')
         // ...
     ])
     ->collapsible()
-    ->persistCollapsedState()
+    ->persistCollapsed()
 ```
 
 To persist the collapse state, the local storage needs a unique ID to store the state. This ID is generated based on the heading of the section. If your section does not have a heading, or if you have multiple sections with the same heading that you do not want to collapse together, you can manually specify the `id()` of that section to prevent an ID conflict:
@@ -123,7 +123,7 @@ Section::make('Cart')
         // ...
     ])
     ->collapsible()
-    ->persistCollapsedState()
+    ->persistCollapsed()
     ->id('order-cart')
 ```
 
