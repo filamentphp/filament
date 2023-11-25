@@ -455,7 +455,7 @@ Each item in the sub-navigation can be customized using the [same navigation met
 
 ### Aligning sub-navigation to the right
 
-You can opt to switch the position of the sub-navigation on the page. This can be preferred as it keeps the content area of the screen in a consistent position.
+You can opt to switch the position of the sub-navigation to the opposite side of the screen. This can be preferred as it keeps the content area of the screen in a consistent position.
 
 You can customize this by setting the `$subNavigationAlignRight` property on the resource pages:
 
