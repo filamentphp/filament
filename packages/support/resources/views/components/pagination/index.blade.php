@@ -24,9 +24,9 @@
     @if (! $paginator->onFirstPage())
         @php
             if ($paginator instanceof CursorPaginator) {
-                $wireClickAction = 'setPage(\'' . $paginator->previousCursor()->encode()  . '\',\'' . $paginator->getCursorName()  . '\')';
+                $wireClickAction = "setPage('{$paginator->previousCursor()->encode()}', '{$paginator->getCursorName()}')";
             } else {
-                $wireClickAction = 'previousPage(\'' . $paginator->getPageName() . '\')';
+                $wireClickAction = "previousPage('{$paginator->getPageName()}')";
             }
         @endphp
 
@@ -100,9 +100,9 @@
     @if ($paginator->hasMorePages())
         @php
             if ($paginator instanceof CursorPaginator) {
-                $wireClickAction = 'setPage(\'' . $paginator->nextCursor()->encode()  . '\',\'' . $paginator->getCursorName()  . '\')';
+                $wireClickAction = "setPage('{$paginator->nextCursor()->encode()}', '{$paginator->getCursorName()}')";
             } else {
-                $wireClickAction = 'nextPage(\'' . $paginator->getPageName() . '\')';
+                $wireClickAction = "nextPage('{$paginator->getPageName()}')";
             }
         @endphp
 
