@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Pārvaldīt abonementu',
+        ],
+
         'logout' => [
             'label' => 'Iziet',
         ],
@@ -38,6 +42,10 @@ return [
 
             'light' => [
                 'label' => 'Pārslēgt uz gaišo režīmu',
+            ],
+
+            'system' => [
+                'label' => 'Pārslēgt uz sistēmas režīmu',
             ],
 
         ],

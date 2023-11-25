@@ -29,6 +29,7 @@
                 \Filament\Support\get_color_css_variables(
                     $color,
                     shades: [400],
+                    alias: 'notifications::notification.icon',
                 ),
             ])
     "
