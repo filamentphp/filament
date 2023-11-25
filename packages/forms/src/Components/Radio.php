@@ -20,15 +20,39 @@ class Radio extends Field
     protected bool | Closure $isInline = false;
 
     /**
+     * @var array<string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null> | Arrayable | Closure
+     */
+    protected array | Arrayable | Closure $colors = [];
+
+    /**
      * @var array<string | Htmlable> | Arrayable | Closure
      */
     protected array | Arrayable | Closure $descriptions = [];
+
+    /**
+     * @var array<string | Htmlable | null> | Arrayable | Closure
+     */
+    protected array | Arrayable | Closure $icons = [];
+
+    protected bool | Closure $isButtonGroup = false;
 
     protected bool | Closure | null $isOptionDisabled = null;
 
     protected function setUp(): void
     {
         parent::setUp();
+    }
+
+    public function buttonGroup(bool | Closure $condition = true): static
+    {
+        $this->isButtonGroup = $condition;
+
+        return $this;
+    }
+
+    public function isButtonGroup(): bool
+    {
+        return (bool) $this->evaluate($this->isButtonGroup);
     }
 
     public function boolean(string $trueLabel = 'Yes', string $falseLabel = 'No'): static
@@ -41,11 +65,72 @@ class Radio extends Field
         return $this;
     }
 
+    /**
+     * @param  array<string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null> | Arrayable | Closure  $colors
+     */
+    public function colors(array | Arrayable | Closure $colors): static
+    {
+        $this->colors = $colors;
+
+        return $this;
+    }
+
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getColor($value): string | array | null
+    {
+        return $this->getColors()[$value] ?? null;
+    }
+
+    /**
+     * @return array<string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null>
+     */
+    public function getColors(): array
+    {
+        $colors = $this->evaluate($this->colors);
+
+        if ($colors instanceof Arrayable) {
+            $colors = $colors->toArray();
+        }
+
+        return $colors;
+    }
+
     public function disableOptionWhen(bool | Closure $callback): static
     {
         $this->isOptionDisabled = $callback;
 
         return $this;
+    }
+
+    /**
+     * @param  array<string | Htmlable | null> | Arrayable | Closure  $icons
+     */
+    public function icons(array | Arrayable | Closure $icons): static
+    {
+        $this->icons = $icons;
+
+        return $this;
+    }
+
+    public function getIcon($value): string | Htmlable | null
+    {
+        return $this->getIcons()[$value] ?? null;
+    }
+
+    /**
+     * @return array<string | Htmlable | null>
+     */
+    public function getIcons(): array
+    {
+        $icons = $this->evaluate($this->icons);
+
+        if ($icons instanceof Arrayable) {
+            $icons = $icons->toArray();
+        }
+
+        return $icons;
     }
 
     public function inline(bool | Closure $condition = true): static
