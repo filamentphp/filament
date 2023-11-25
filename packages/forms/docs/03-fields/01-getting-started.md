@@ -237,6 +237,7 @@ Toggle::make('is_admin')
     ->disabled()
     ->dehydrated()
 ```
+> When using `disabled($someCondition)` with `relationship()`, ensure that `disabled(...)` is defined before `relationship()`. This ensures that the `dehydrated()` function, called within `relationship()`, is not overridden by the one called in `disabled(...)`.
 
 > If you choose to dehydrate the field, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
 
