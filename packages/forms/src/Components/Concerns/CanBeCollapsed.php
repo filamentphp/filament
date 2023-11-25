@@ -11,7 +11,7 @@ trait CanBeCollapsed
 
     protected bool | Closure | null $isCollapsible = null;
 
-    protected bool | Closure | null $shouldPersistCollapseState = null;
+    protected bool | Closure | null $shouldPersistCollapsedState = null;
 
     public function collapsed(bool | Closure $condition = true, bool $shouldMakeComponentCollapsible = true): static
     {
@@ -41,15 +41,15 @@ trait CanBeCollapsed
         return (bool) ($this->evaluate($this->isCollapsible) ?? false);
     }
 
-    public function persistCollapseState(bool | Closure | null $condition = true): static
+    public function persistCollapsedState(bool | Closure | null $condition = true): static
     {
-        $this->shouldPersistCollapseState = $condition;
+        $this->shouldPersistCollapsedState = $condition;
 
         return $this;
     }
 
-    public function shouldPersistCollapseState(): bool
+    public function shouldPersistCollapsedState(): bool
     {
-        return (bool) ($this->evaluate($this->shouldPersistCollapseState) ?? false);
+        return (bool) ($this->evaluate($this->shouldPersistCollapsedState) ?? false);
     }
 }

@@ -81,7 +81,7 @@ Section::make('Cart')
     ->collapsible()
 ```
 
-Sections collapse state may be persisted to local storage `persistCollapseState()`:
+Sections collapse state may be persisted to local storage `persistCollapsedState()`:
 
 ```php
 use Filament\Infolists\Components\Section;
@@ -92,7 +92,7 @@ Section::make('Cart')
         // ...
     ])
     ->collapsible()
-    ->persistCollapseState()
+    ->persistCollapsedState()
 ```
 
 To persist the collapse state, the storage keys use the component's ID, which is generated using the section heading. If, for some reason, two or more of your sections have the same headings, you can add unique IDs using id() to avoid conflicts.
@@ -107,7 +107,7 @@ Section::make('Cart')
         // ...
     ])
     ->collapsible()
-    ->persistCollapseState()
+    ->persistCollapsedState()
 ```
 
 Your sections may be `collapsed()` by default:
