@@ -3,6 +3,7 @@
     'icon' => null,
     'items' => [],
     'label' => null,
+    'sidebarCollapsible' => true,
 ])
 
 <li
@@ -76,6 +77,7 @@
                 :last="$loop->last"
                 :url="$item->getUrl()"
                 :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
+                :sidebar-collapsible="$sidebarCollapsible"
             >
                 {{ $item->getLabel() }}
             </x-filament-panels::sidebar.item>
