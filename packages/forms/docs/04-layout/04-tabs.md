@@ -102,6 +102,33 @@ Tabs::make('Label')
     ->persistTabInQueryString('settings-tab')
 ```
 
+## Persisting the current tab in the session
+
+To save the current tab in the session instead of relying on the URL's query string, you can change this behavior using the `persistTabInSession()` method:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Label')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->persistTabInSession()
+```
+
+The session name is dynamically generated based on the Filament Page Type, the associated Model's database table, and the Model's Primary Key. This ensures uniqueness and prevents conflicts between different sessions.
+
 ## Setting a tab icon
 
 Tabs may have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), which you can set using the `icon()` method:
