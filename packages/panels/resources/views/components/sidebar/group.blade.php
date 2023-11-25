@@ -3,6 +3,7 @@
     'icon' => null,
     'items' => [],
     'label' => null,
+    'subnavigation' => false,
 ])
 
 <li
@@ -76,6 +77,7 @@
                 :last="$loop->last"
                 :url="$item->getUrl()"
                 :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
+                :subnavigation="$subnavigation"
             >
                 {{ $item->getLabel() }}
             </x-filament-panels::sidebar.item>
