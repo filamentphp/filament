@@ -90,7 +90,7 @@
                                 :icon="$subNavigationGroup->getIcon()"
                                 :items="$subNavigationGroup->getItems()"
                                 :label="$subNavigationGroup->getLabel()"
-                                :sidebarCollapsible="false"
+                                :sidebar-collapsible="false"
                             />
                         @endforeach
                     </div>
