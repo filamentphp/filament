@@ -446,34 +446,34 @@ trait CanBeValidated
         return $this->dateComparisonRule('before_or_equal', $date, $isStatePathAbsolute);
     }
 
-    public function different(string | Closure $statePath, bool $isStatePathAbsolute = false): static
+    public function different(string | Closure $statePath, bool $isStatePathAbsolute = false, bool | Closure $condition = true): static
     {
-        return $this->fieldComparisonRule('different', $statePath, $isStatePathAbsolute);
+        return $this->fieldComparisonRule('different', $statePath, $isStatePathAbsolute, $condition);
     }
 
-    public function gt(string | Closure $statePath, bool $isStatePathAbsolute = false): static
+    public function gt(string | Closure $statePath, bool $isStatePathAbsolute = false, bool | Closure $condition = true): static
     {
-        return $this->fieldComparisonRule('gt', $statePath, $isStatePathAbsolute);
+        return $this->fieldComparisonRule('gt', $statePath, $isStatePathAbsolute, $condition);
     }
 
-    public function gte(string | Closure $statePath, bool $isStatePathAbsolute = false): static
+    public function gte(string | Closure $statePath, bool $isStatePathAbsolute = false, bool | Closure $condition = true): static
     {
-        return $this->fieldComparisonRule('gte', $statePath, $isStatePathAbsolute);
+        return $this->fieldComparisonRule('gte', $statePath, $isStatePathAbsolute, $condition);
     }
 
-    public function lt(string | Closure $statePath, bool $isStatePathAbsolute = false): static
+    public function lt(string | Closure $statePath, bool $isStatePathAbsolute = false, bool | Closure $condition = true): static
     {
-        return $this->fieldComparisonRule('lt', $statePath, $isStatePathAbsolute);
+        return $this->fieldComparisonRule('lt', $statePath, $isStatePathAbsolute, $condition);
     }
 
-    public function lte(string | Closure $statePath, bool $isStatePathAbsolute = false): static
+    public function lte(string | Closure $statePath, bool $isStatePathAbsolute = false, bool | Closure $condition = true): static
     {
-        return $this->fieldComparisonRule('lte', $statePath, $isStatePathAbsolute);
+        return $this->fieldComparisonRule('lte', $statePath, $isStatePathAbsolute, $condition);
     }
 
-    public function same(string | Closure $statePath, bool $isStatePathAbsolute = false): static
+    public function same(string | Closure $statePath, bool $isStatePathAbsolute = false, bool | Closure $condition = true): static
     {
-        return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute);
+        return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute, $condition);
     }
 
     public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, bool $ignoreRecord = false, ?Closure $modifyRuleUsing = null): static
@@ -643,21 +643,25 @@ trait CanBeValidated
         return $this;
     }
 
-    public function fieldComparisonRule(string $rule, string | Closure $statePath, bool $isStatePathAbsolute = false): static
+    public function fieldComparisonRule(string $rule, string | Closure $statePath, bool $isStatePathAbsolute = false, bool | Closure $condition = true): static
     {
-        $this->rule(static function (Field $component) use ($isStatePathAbsolute, $rule, $statePath): string {
-            $statePath = $component->evaluate($statePath);
+        $this->rule(
+            static function (Field $component) use ($isStatePathAbsolute, $rule, $statePath): string {
+                $statePath = $component->evaluate($statePath);
 
-            if (! $isStatePathAbsolute) {
-                $containerStatePath = $component->getContainer()->getStatePath();
+                if (! $isStatePathAbsolute) {
+                    $containerStatePath = $component->getContainer()->getStatePath();
 
-                if ($containerStatePath) {
-                    $statePath = "{$containerStatePath}.{$statePath}";
+                    if ($containerStatePath) {
+                        $statePath = "{$containerStatePath}.{$statePath}";
+                    }
                 }
-            }
 
-            return "{$rule}:{$statePath}";
-        }, fn (Field $component): bool => (bool) $component->evaluate($statePath));
+                return "{$rule}:{$statePath}";
+            },
+            fn (Field $component): bool => (bool) $component->evaluate($statePath)
+                && $condition
+        );
 
         return $this;
     }

@@ -914,3 +914,231 @@ test('the `doesntEndWith()` rule can be conditionally validated', function () {
     expect($fails)
         ->toBeEmpty();
 });
+
+test('fields can be conditionally validated using the `same()` rule', function (string $comparedField, bool $condition, Closure $expectation) {
+    $fails = [];
+
+    try {
+        ComponentContainer::make(Livewire::make()->data([
+            'foo' => 'foo',
+            'bar' => 'bar',
+        ]))
+            ->statePath('data')
+            ->components([
+                $field = (new Field('foo'))
+                    ->same($comparedField, condition: $condition),
+                new Field('bar'),
+            ])
+            ->validate();
+    } catch (ValidationException $exception) {
+        $fails = array_keys($exception->validator->failed()[$field->getStatePath()]);
+    }
+
+    $expectation($fails);
+})->with([
+    [
+        'comparedField' => 'bar',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toContain('Same'),
+    ],
+    [
+        'comparedField' => '',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+    [
+        'comparedField' => 'bar',
+        'condition' => false,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+])->group('dev');
+
+test('fields can be conditionally validated using the `different()` rule', function (string $comparedField, bool $condition, Closure $expectation) {
+    $fails = [];
+
+    try {
+        ComponentContainer::make(Livewire::make()->data([
+            'foo' => 'foo',
+            'bar' => 'foo',
+        ]))
+            ->statePath('data')
+            ->components([
+                $field = (new Field('foo'))
+                    ->different($comparedField, condition: $condition),
+                new Field('bar'),
+            ])
+            ->validate();
+    } catch (ValidationException $exception) {
+        $fails = array_keys($exception->validator->failed()[$field->getStatePath()]);
+    }
+
+    $expectation($fails);
+})->with([
+    [
+        'comparedField' => 'bar',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toContain('Different'),
+    ],
+    [
+        'comparedField' => '',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+    [
+        'comparedField' => 'bar',
+        'condition' => false,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+])->group('dev');
+
+test('fields can be conditionally validated using the `gt()` rule', function (string $comparedField, bool $condition, Closure $expectation) {
+    $fails = [];
+
+    try {
+        ComponentContainer::make(Livewire::make()->data([
+            'foo' => 2,
+            'bar' => 2,
+        ]))
+            ->statePath('data')
+            ->components([
+                $field = (new Field('foo'))
+                    ->gt($comparedField, condition: $condition),
+                new Field('bar'),
+            ])
+            ->validate();
+    } catch (ValidationException $exception) {
+        $fails = array_keys($exception->validator->failed()[$field->getStatePath()]);
+    }
+
+    $expectation($fails);
+})->with([
+    [
+        'comparedField' => 'bar',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toContain('Gt'),
+    ],
+    [
+        'comparedField' => '',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+    [
+        'comparedField' => 'bar',
+        'condition' => false,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+])->group('dev');
+
+test('fields can be conditionally validated using the `gte()` rule', function (string $comparedField, bool $condition, Closure $expectation) {
+    $fails = [];
+
+    try {
+        ComponentContainer::make(Livewire::make()->data([
+            'foo' => 1,
+            'bar' => 2,
+        ]))
+            ->statePath('data')
+            ->components([
+                $field = (new Field('foo'))
+                    ->gte($comparedField, condition: $condition),
+                new Field('bar'),
+            ])
+            ->validate();
+    } catch (ValidationException $exception) {
+        $fails = array_keys($exception->validator->failed()[$field->getStatePath()]);
+    }
+
+    $expectation($fails);
+})->with([
+    [
+        'comparedField' => 'bar',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toContain('Gte'),
+    ],
+    [
+        'comparedField' => '',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+    [
+        'comparedField' => 'bar',
+        'condition' => false,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+])->group('dev');
+
+test('fields can be conditionally validated using the `lt()` rule', function (string $comparedField, bool $condition, Closure $expectation) {
+    $fails = [];
+
+    try {
+        ComponentContainer::make(Livewire::make()->data([
+            'foo' => 2,
+            'bar' => 2,
+        ]))
+            ->statePath('data')
+            ->components([
+                $field = (new Field('foo'))
+                    ->lt($comparedField, condition: $condition),
+                new Field('bar'),
+            ])
+            ->validate();
+    } catch (ValidationException $exception) {
+        $fails = array_keys($exception->validator->failed()[$field->getStatePath()]);
+    }
+
+    $expectation($fails);
+})->with([
+    [
+        'comparedField' => 'bar',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toContain('Lt'),
+    ],
+    [
+        'comparedField' => '',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+    [
+        'comparedField' => 'bar',
+        'condition' => false,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+])->group('dev')->only();
+
+test('fields can be conditionally validated using the `lte()` rule', function (string $comparedField, bool $condition, Closure $expectation) {
+    $fails = [];
+
+    try {
+        ComponentContainer::make(Livewire::make()->data([
+            'foo' => 3,
+            'bar' => 2,
+        ]))
+            ->statePath('data')
+            ->components([
+                $field = (new Field('foo'))
+                    ->lte($comparedField, condition: $condition),
+                new Field('bar'),
+            ])
+            ->validate();
+    } catch (ValidationException $exception) {
+        $fails = array_keys($exception->validator->failed()[$field->getStatePath()]);
+    }
+
+    $expectation($fails);
+})->with([
+    [
+        'comparedField' => 'bar',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toContain('Lte'),
+    ],
+    [
+        'comparedField' => '',
+        'condition' => true,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+    [
+        'comparedField' => 'bar',
+        'condition' => false,
+        'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
+    ],
+])->group('dev')->only();
