@@ -219,7 +219,7 @@ Repeater::make('qualifications')
     ])
 ```
 
-> When using `disabled()` with `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`.
+When using `disabled()` with `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
 
 ```php
 use Filament\Forms\Components\Repeater;
