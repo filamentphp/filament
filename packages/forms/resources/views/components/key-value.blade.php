@@ -86,7 +86,7 @@
                     @if ($isReorderable)
                         x-on:end="reorderRows($event)"
                         x-sortable
-                        :data-sortable-animation-duration="$getReorderAnimationDuration()"
+                        data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                     @endif
                     class="divide-y divide-gray-200 dark:divide-white/5"
                 >

@@ -666,7 +666,10 @@
                     </x-filament-tables::table>
                 @endif
             @elseif (($records !== null) && count($records))
-                <x-filament-tables::table :reorderable="$isReorderable">
+                <x-filament-tables::table
+                    :reorderable="$isReorderable"
+                    :reorder-animation-duration="$getReorderAnimationDuration()"
+                >
                     <x-slot name="header">
                         @if ($isReordering)
                             <th></th>

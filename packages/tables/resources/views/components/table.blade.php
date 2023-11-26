@@ -2,6 +2,7 @@
     'footer' => null,
     'header' => null,
     'reorderable' => false,
+    'reorderAnimationDuration' => 300,
 ])
 
 <table
@@ -17,9 +18,9 @@
 
     <tbody
         @if ($reorderable)
-            x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
             x-sortable
-            :data-sortable-animation-duration="$getReorderAnimationDuration()"
+            data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
+            x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
         @endif
         class="divide-y divide-gray-200 whitespace-nowrap dark:divide-white/5"
     >
