@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables\Table;
 use Illuminate\Database\Connection;
@@ -52,7 +53,7 @@ class AttachAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::attach.single.modal.actions.attach.label'));
 
-        $this->modalWidth('lg');
+        $this->modalWidth(MaxWidth::Large);
 
         $this->extraModalFooterActions(function (): array {
             return $this->canAttachAnother() ? [

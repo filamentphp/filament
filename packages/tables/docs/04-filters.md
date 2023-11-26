@@ -389,9 +389,10 @@ public function table(Table $table): Table
 
 ## Controlling the width of the filters dropdown
 
-To customize the dropdown width, you may use the `filtersFormWidth()` method, and specify a width - `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, or `7xl`. By default, the width is `xs`:
+To customize the dropdown width, you may use the `filtersFormWidth()` method, and specify a width - `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge` or `SevenExtraLarge`. By default, the width is `ExtraSmall`:
 
 ```php
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -400,7 +401,7 @@ public function table(Table $table): Table
         ->filters([
             // ...
         ])
-        ->filtersFormWidth('4xl');
+        ->filtersFormWidth(MaxWidth::FourExtraLarge);
 }
 ```
 
