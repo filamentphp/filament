@@ -653,6 +653,22 @@ By default, all resources within a panel with tenancy will be scoped to the curr
 protected static bool $isScopedToTenant = false;
 ```
 
+## Disabling tenancy scope for all resource
+
+If you wish to manually customize tenancy scope for your resources you can disable it globally in your panel provider.
+
+```php
+use App\Models\Team;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenant(Team::class, applyResourceScope:false);
+}
+```
+
 ## Tenancy security
 
 It's important to understand the security implications of multi-tenancy and how to properly implement it. If implemented partially or incorrectly, data belonging to one tenant may be exposed to another tenant. Filament provides a set of tools to help you implement multi-tenancy in your application, but it is up to you to understand how to use them. Filament does not provide any guarantees about the security of your application. It is your responsibility to ensure that your application is secure.

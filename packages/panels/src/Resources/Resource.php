@@ -311,6 +311,7 @@ abstract class Resource
         $query = static::getModel()::query();
 
         if (
+            Filament::shouldApplyTenantResourceScope() &&
             static::isScopedToTenant() &&
             ($tenant = Filament::getTenant())
         ) {

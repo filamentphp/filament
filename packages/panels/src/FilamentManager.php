@@ -364,6 +364,11 @@ class FilamentManager
         return $this->getCurrentPanel()->getTenantModel();
     }
 
+    public function shouldApplyTenantResourceScope():bool
+    {
+        return $this->getCurrentPanel()->shouldApplyTenantResourceScope();
+    }
+
     public function getTenantName(Model $tenant): string
     {
         if ($tenant instanceof HasName) {
