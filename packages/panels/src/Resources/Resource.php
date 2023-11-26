@@ -155,7 +155,7 @@ abstract class Resource
     }
 
     /**
-     * @return bool
+     * @return Alignment
      */
     public static function getSubNavigationAlignment(): Alignment
     {
