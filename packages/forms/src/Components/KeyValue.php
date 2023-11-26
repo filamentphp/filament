@@ -5,11 +5,13 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 
 class KeyValue extends Field
 {
     use HasExtraAlpineAttributes;
+    use HasReorderAnimationDuration;
 
     /**
      * @var view-string
@@ -39,8 +41,6 @@ class KeyValue extends Field
     protected string | Closure | null $valuePlaceholder = null;
 
     protected bool | Closure $isReorderable = false;
-
-    protected int | Closure $reorderAnimationDuration = 300;
 
     protected ?Closure $modifyAddActionUsing = null;
 
@@ -314,18 +314,6 @@ class KeyValue extends Field
         $this->isReorderable = $condition;
 
         return $this;
-    }
-
-    public function reorderAnimationDuration(int | Closure $animation): static
-    {
-        $this->reorderAnimationDuration = $animation;
-
-        return $this;
-    }
-
-    public function getReorderAnimationDuration(): int
-    {
-        return $this->evaluate($this->reorderAnimationDuration);
     }
 
     public function isAddable(): bool

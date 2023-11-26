@@ -5,6 +5,7 @@ import Tooltip from '@ryangjchandler/alpine-tooltip'
 
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/themes/light.css'
+import '../css/sortable.css'
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(AlpineFloatingUI)

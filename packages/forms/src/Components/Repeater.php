@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
@@ -23,6 +24,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
     use Concerns\CanBeCloned;
+    use HasReorderAnimationDuration;
 
     protected string | Closure | null $addActionLabel = null;
 
@@ -31,8 +33,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     protected bool | Closure $isDeletable = true;
 
     protected bool | Closure $isReorderable = true;
-
-    protected int | Closure $reorderAnimationDuration = 300;
 
     protected bool | Closure $isReorderableWithDragAndDrop = true;
 
@@ -606,18 +606,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->reorderable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
         return $this;
-    }
-
-    public function reorderAnimationDuration(int | Closure $animation): static
-    {
-        $this->reorderAnimationDuration = $animation;
-
-        return $this;
-    }
-
-    public function getReorderAnimationDuration(): int
-    {
-        return $this->evaluate($this->reorderAnimationDuration);
     }
 
     public function reorderableWithDragAndDrop(bool | Closure $condition = true): static

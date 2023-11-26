@@ -3,13 +3,14 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Tables\Actions\Action;
 
 trait CanReorderRecords
 {
-    protected bool | Closure $isReorderable = true;
+    use HasReorderAnimationDuration;
 
-    protected int | Closure $reorderAnimationDuration = 300;
+    protected bool | Closure $isReorderable = true;
 
     protected string | Closure | null $reorderColumn = null;
 
@@ -31,18 +32,6 @@ trait CanReorderRecords
         }
 
         return $this;
-    }
-
-    public function reorderAnimationDuration(int | Closure $animation): static
-    {
-        $this->reorderAnimationDuration = $animation;
-
-        return $this;
-    }
-
-    public function getReorderAnimationDuration(): int
-    {
-        return $this->evaluate($this->reorderAnimationDuration);
     }
 
     public function getReorderRecordsTriggerAction(bool $isReordering): Action

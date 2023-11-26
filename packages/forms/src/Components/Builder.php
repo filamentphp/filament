@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
+use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -18,6 +19,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     use Concerns\CanBeCollapsed;
     use Concerns\CanLimitItemsLength;
     use Concerns\CanBeCloned;
+    use HasReorderAnimationDuration;
 
     /**
      * @var view-string
@@ -29,8 +31,6 @@ class Builder extends Field implements Contracts\CanConcealComponents
     protected string | Closure | null $addActionLabel = null;
 
     protected bool | Closure $isReorderable = true;
-
-    protected int | Closure $reorderAnimationDuration = 300;
 
     protected bool | Closure $isReorderableWithDragAndDrop = true;
 
@@ -589,18 +589,6 @@ class Builder extends Field implements Contracts\CanConcealComponents
         $this->isReorderable = $condition;
 
         return $this;
-    }
-
-    public function reorderAnimationDuration(int | Closure $animation = 300): static
-    {
-        $this->reorderAnimationDuration = $animation;
-
-        return $this;
-    }
-
-    public function getReorderAnimationDuration()
-    {
-        return (string) $this->evaluate($this->reorderAnimationDuration);
     }
 
     /**
