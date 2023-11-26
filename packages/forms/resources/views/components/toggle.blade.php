@@ -1,4 +1,8 @@
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+>
     @php
         $offColor = $getOffColor() ?? 'gray';
         $onColor = $getOnColor() ?? 'primary';
