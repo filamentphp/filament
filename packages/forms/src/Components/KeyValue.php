@@ -316,16 +316,16 @@ class KeyValue extends Field
         return $this;
     }
 
-    public function reorderAnimationDuration(int | Closure $animation = 300): static
+    public function reorderAnimationDuration(int | Closure $animation): static
     {
         $this->reorderAnimationDuration = $animation;
 
         return $this;
     }
 
-    public function getReorderAnimationDuration()
+    public function getReorderAnimationDuration(): int
     {
-        return (string) $this->evaluate($this->reorderAnimationDuration);
+        return $this->evaluate($this->reorderAnimationDuration);
     }
 
     public function isAddable(): bool
