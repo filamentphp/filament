@@ -141,6 +141,24 @@ FilamentAsset::register([
 ]);
 ```
 
+### Registering CSS variables
+
+Sometimes, you may wish to use dynamic data from the backend in CSS files. To do this, you can use the `FilamentAsset::registerCssVariables()` method in the `boot()` method of a service provider:
+
+```php
+use Filament\Support\Facades\FilamentAsset;
+
+FilamentAsset::registerCssVariables([
+    'background-image' => asset('images/background.jpg'),
+]);
+```
+
+Now, you can access these variables from any CSS file:
+
+```css
+background-image: var(--background-image);
+```
+
 ## Registering JavaScript files
 
 To register a JavaScript file with the asset system, use the `FilamentAsset::register()` method in the `boot()` method of a service provider. You must pass in an array of `Js` objects, which each represents a JavaScript file that should be registered in the asset system.

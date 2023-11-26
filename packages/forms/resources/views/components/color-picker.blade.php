@@ -1,4 +1,6 @@
 @php
+    use Filament\Support\Facades\FilamentView;
+
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
@@ -19,9 +21,11 @@
         :prefix="$prefixLabel"
         :prefix-actions="$prefixActions"
         :prefix-icon="$prefixIcon"
+        :prefix-icon-color="$getPrefixIconColor()"
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
+        :suffix-icon-color="$getSuffixIconColor()"
         :valid="! $errors->has($statePath)"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
@@ -30,7 +34,11 @@
     >
         <div
             x-ignore
-            ax-load
+            @if (FilamentView::hasSpaMode())
+                ax-load="visible"
+            @else
+                ax-load
+            @endif
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('color-picker', 'filament/forms') }}"
             x-data="colorPickerFormComponent({
                         isAutofocused: @js($isAutofocused()),

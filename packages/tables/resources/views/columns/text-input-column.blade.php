@@ -4,6 +4,12 @@
     $isDisabled = $isDisabled();
     $state = $getState();
     $type = $getType();
+
+    $alignment = $getAlignment() ?? Alignment::Start;
+
+    if (! $alignment instanceof Alignment) {
+        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+    }
 @endphp
 
 <div
@@ -110,12 +116,13 @@
                             ',
                         ])
                         ->class([
-                            match ($getAlignment()) {
-                                Alignment::Center, 'center' => 'text-center',
-                                Alignment::End, 'end' => 'text-end',
-                                Alignment::Left, 'left' => 'text-left',
-                                Alignment::Right, 'right' => 'text-right',
-                                Alignment::Start, 'start', null => 'text-start',
+                            match ($alignment) {
+                                Alignment::Start => 'text-start',
+                                Alignment::Center => 'text-center',
+                                Alignment::End => 'text-end',
+                                Alignment::Left => 'text-left',
+                                Alignment::Right => 'text-right',
+                                default => $alignment,
                             },
                         ])
                 )

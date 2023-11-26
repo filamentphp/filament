@@ -1,5 +1,11 @@
 @php
     use Filament\Support\Enums\Alignment;
+
+    $alignment = $getAlignment() ?? Alignment::Start;
+
+    if (! $alignment instanceof Alignment) {
+        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+    }
 @endphp
 
 <div
@@ -8,10 +14,11 @@
             ->merge($getExtraAttributes(), escape: false)
             ->class([
                 'flex flex-col',
-                match ($getAlignment()) {
-                    Alignment::Center, 'center' => 'items-center',
-                    Alignment::End, Alignment::Right, 'end', 'right' => 'items-end',
-                    default => 'items-start',
+                match ($alignment) {
+                    Alignment::Start => 'items-start',
+                    Alignment::Center => 'items-center',
+                    Alignment::End, Alignment::Right => 'items-end',
+                    default => $alignment,
                 },
                 match ($space = $getSpace()) {
                     1 => 'space-y-1',

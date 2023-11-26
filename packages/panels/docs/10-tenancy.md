@@ -342,7 +342,7 @@ public function panel(Panel $panel): Panel
         ->tenantMenuItems([
             MenuItem::make()
                 ->label('Settings')
-                ->url(fn (): string => Settings::getUrl()),
+                ->url(fn (): string => Settings::getUrl())
                 ->icon('heroicon-m-cog-8-tooth'),
             // ...
         ]);
@@ -363,6 +363,25 @@ public function panel(Panel $panel): Panel
         // ...
         ->tenantMenuItems([
             'register' => MenuItem::make()->label('Register new team'),
+            // ...
+        ]);
+}
+```
+
+### Customizing the profile link
+
+To customize the profile link on the tenant menu, register a new item with the `profile` array key:
+
+```php
+use Filament\Navigation\MenuItem;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMenuItems([
+            'profile' => MenuItem::make()->label('Edit team profile'),
             // ...
         ]);
 }
@@ -625,6 +644,14 @@ public function panel(Panel $panel): Panel
 ```
 
 Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1`.
+
+## Disabling tenancy for a resource
+
+By default, all resources within a panel with tenancy will be scoped to the current tenant. If you have resources that are shared between tenants, you can disable tenancy for them by setting the `$isScopedToTenant` static property to `false` on the resource class:
+
+```php
+protected static bool $isScopedToTenant = false;
+```
 
 ## Tenancy security
 

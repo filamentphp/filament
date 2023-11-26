@@ -25,7 +25,7 @@ return [
                 ],
 
                 'attach_another' => [
-                    'label' => 'Csatolás és új csatolása',
+                    'label' => 'Mentés és új csatolása',
                 ],
 
             ],

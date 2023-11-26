@@ -11,7 +11,7 @@ import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## View components
 
-Aside from [building custom layout components](custom), you may create "view" components which allow you to create custom layouts without extra PHP classes.
+Aside from [building custom layout components](#custom-layout-classes), you may create "view" components which allow you to create custom layouts without extra PHP classes.
 
 ```php
 use Filament\Infolists\Components\View;

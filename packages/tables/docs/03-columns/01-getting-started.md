@@ -171,8 +171,25 @@ TextColumn::make('full_name')
     ->searchable(query: function (Builder $query, string $search): Builder {
         return $query
             ->where('first_name', 'like', "%{$search}%")
-            ->where('last_name', 'like', "%{$search}%");
+            ->orWhere('last_name', 'like', "%{$search}%");
     })
+```
+
+#### Customizing the table search field placeholder
+
+You may customize the placeholder in the search field using the `searchPlaceholder()` method on the `$table`:
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchPlaceholder('Search (ID, Name)');
+}
 ```
 
 ### Searching individually

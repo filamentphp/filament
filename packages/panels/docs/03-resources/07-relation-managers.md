@@ -32,7 +32,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 > These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
 
-All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), [Section](../../forms/layout/section), etc.) have a `relationship()` method. When you use this, all fields within that layout are saved to the related model instead of the owner's model:
+All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), etc.) have a `relationship()` method. When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
 use Filament\Forms\Components\Fieldset;
@@ -313,7 +313,7 @@ use Filament\Tables\Actions\AttachAction;
 use Illuminate\Database\Eloquent\Builder;
 
 AttachAction::make()
-    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
 ```
 
 ### Searching the options to attach across multiple columns
@@ -347,10 +347,14 @@ By default, you will not be allowed to attach a record more than once. This is b
 
 Please ensure that the `id` attribute is listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-Finally, add the `$allowsDuplicates` property to the relation manager:
+Finally, add the `allowDuplicates()` method to the table:
 
 ```php
-protected bool $allowsDuplicates = true;
+public function table(Table $table): Table
+{
+    return $table
+        ->allowDuplicates();
+}
 ```
 
 ## Associating and dissociating records
@@ -412,7 +416,7 @@ use Filament\Tables\Actions\AssociateAction;
 use Illuminate\Database\Eloquent\Builder;
 
 AssociateAction::make()
-    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
 ```
 
 ### Searching the options to associate across multiple columns
@@ -775,3 +779,13 @@ class CommentsRelationManager extends RelationManager
 ```
 
 Now, you can access the `status` in the relation manager class using `$this->status`.
+
+## Disabling lazy loading
+
+By default, relation managers are lazy-loaded. This means that they will only be loaded when they are visible on the page.
+
+To disable this behavior, you may override the `$isLazy` property on the relation manager class:
+
+```php
+protected static bool $isLazy = false;
+```

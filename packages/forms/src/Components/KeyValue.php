@@ -7,6 +7,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Facades\FilamentIcon;
 
 class KeyValue extends Field
 {
@@ -102,7 +103,7 @@ class KeyValue extends Field
     {
         $action = Action::make($this->getDeleteActionName())
             ->label(__('filament-forms::components.key_value.actions.delete.label'))
-            ->icon('heroicon-m-trash')
+            ->icon(FilamentIcon::resolve('forms::components.key-value.actions.delete') ?? 'heroicon-m-trash')
             ->color('danger')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -134,7 +135,7 @@ class KeyValue extends Field
     {
         $action = Action::make($this->getReorderActionName())
             ->label(__('filament-forms::components.key_value.actions.reorder.label'))
-            ->icon('heroicon-m-arrows-up-down')
+            ->icon(FilamentIcon::resolve('forms::components.key-value.actions.reorder') ?? 'heroicon-m-arrows-up-down')
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()

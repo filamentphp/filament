@@ -26,6 +26,10 @@ return [
             'label' => 'Item :key selecteren/deselecteren voor bulkacties.',
         ],
 
+        'bulk_select_group' => [
+            'label' => 'Groep :title selecteren/deselecteren voor bulkacties.',
+        ],
+
         'search' => [
             'label' => 'Zoeken',
             'placeholder' => 'Zoeken',

@@ -5,6 +5,8 @@
 ])
 
 @php
+    use Illuminate\Contracts\Pagination\CursorPaginator;
+
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
     $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
 @endphp
@@ -12,18 +14,28 @@
 <nav
     aria-label="{{ __('filament::components/pagination.label') }}"
     role="navigation"
-    {{ $attributes->class(['fi-pagination grid grid-cols-3 items-center']) }}
+    {{
+        $attributes->class([
+            'fi-pagination grid grid-cols-[1fr_auto_1fr] items-center gap-x-3',
+            'fi-simple' => $isSimple,
+        ])
+    }}
 >
     @if (! $paginator->onFirstPage())
+        @php
+            if ($paginator instanceof CursorPaginator) {
+                $wireClickAction = "setPage('{$paginator->previousCursor()->encode()}', '{$paginator->getCursorName()}')";
+            } else {
+                $wireClickAction = "previousPage('{$paginator->getPageName()}')";
+            }
+        @endphp
+
         <x-filament::button
             color="gray"
             rel="prev"
-            :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
-            @class([
-                'justify-self-start',
-                'inline-grid md:hidden' => ! $isSimple,
-            ])
+            :wire:click="$wireClickAction"
             :wire:key="$this->getId() . '.pagination.previous'"
+            class="fi-pagination-previous-btn justify-self-start"
         >
             {{ __('filament::components/pagination.actions.previous.label') }}
         </x-filament::button>
@@ -31,7 +43,7 @@
 
     @if (! $isSimple)
         <span
-            class="hidden text-sm font-medium text-gray-700 dark:text-gray-200 md:inline"
+            class="fi-pagination-overview text-sm font-medium text-gray-700 dark:text-gray-200"
         >
             {{
                 trans_choice(
@@ -49,7 +61,7 @@
 
     @if (count($pageOptions) > 1)
         <div class="col-start-2 justify-self-center">
-            <label class="sm:hidden">
+            <label class="fi-pagination-records-per-page-select fi-compact">
                 <x-filament::input.wrapper>
                     <x-filament::input.select
                         :wire:model.live="$currentPageOptionProperty"
@@ -67,7 +79,7 @@
                 </span>
             </label>
 
-            <label class="hidden sm:inline">
+            <label class="fi-pagination-records-per-page-select">
                 <x-filament::input.wrapper
                     :prefix="__('filament::components/pagination.fields.records_per_page.label')"
                 >
@@ -86,15 +98,20 @@
     @endif
 
     @if ($paginator->hasMorePages())
+        @php
+            if ($paginator instanceof CursorPaginator) {
+                $wireClickAction = "setPage('{$paginator->nextCursor()->encode()}', '{$paginator->getCursorName()}')";
+            } else {
+                $wireClickAction = "nextPage('{$paginator->getPageName()}')";
+            }
+        @endphp
+
         <x-filament::button
             color="gray"
             rel="next"
-            :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
+            :wire:click="$wireClickAction"
             :wire:key="$this->getId() . '.pagination.next'"
-            @class([
-                'col-start-3 justify-self-end',
-                'inline-grid md:hidden' => ! $isSimple,
-            ])
+            class="fi-pagination-next-btn col-start-3 justify-self-end"
         >
             {{ __('filament::components/pagination.actions.next.label') }}
         </x-filament::button>
@@ -102,13 +119,14 @@
 
     @if ((! $isSimple) && $paginator->hasPages())
         <ol
-            class="fi-pagination-items hidden justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 md:flex"
+            class="fi-pagination-items justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20"
         >
             @if (! $paginator->onFirstPage())
                 <x-filament::pagination.item
                     :aria-label="__('filament::components/pagination.actions.previous.label')"
                     :icon="$isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left'"
-                    icon-alias="pagination.previous-button"
+                    {{-- @deprecated Use `pagination.previous-button.rtl` instead of `pagination.previous-button` for RTL. --}}
+                    :icon-alias="$isRtl ? ['pagination.previous-button.rtl', 'pagination.previous-button'] : 'pagination.previous-button'"
                     rel="prev"
                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                     :wire:key="$this->getId() . '.pagination.previous'"
@@ -137,7 +155,8 @@
                 <x-filament::pagination.item
                     :aria-label="__('filament::components/pagination.actions.next.label')"
                     :icon="$isRtl ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right'"
-                    icon-alias="pagination.next-button"
+                    {{-- @deprecated Use `pagination.next-button.rtl` instead of `pagination.next-button` for RTL. --}}
+                    :icon-alias="$isRtl ? ['pagination.next-button.rtl', 'pagination.next-button'] : 'pagination.next-button'"
                     rel="next"
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                     :wire:key="$this->getId() . '.pagination.next'"

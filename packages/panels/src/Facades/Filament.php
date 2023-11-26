@@ -13,6 +13,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\Support\Assets\Theme;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -28,9 +29,11 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getAuthGuard()
  * @method static string | null getAuthPasswordBroker()
  * @method static string | Htmlable getBrandName()
- * @method static string | null getBrandLogo()
+ * @method static string | Htmlable | null getBrandLogo()
+ * @method static string | null getBrandLogoHeight()
  * @method static string getCollapsedSidebarWidth()
  * @method static Panel | null getCurrentPanel()
+ * @method static string | Htmlable | null getDarkModeBrandLogo()
  * @method static string | null getDatabaseNotificationsPollingInterval()
  * @method static string getDefaultAvatarProvider()
  * @method static Panel getDefaultPanel()
@@ -46,7 +49,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getHomeUrl()
  * @method static string | null getLoginUrl(array $parameters = [])
  * @method static string getLogoutUrl(array $parameters = [])
- * @method static string | null getMaxContentWidth()
+ * @method static MaxWidth | string | null getMaxContentWidth()
  * @method static string | null getModelResource(string | Model $model)
  * @method static string getNameForDefaultAvatar(Model | Authenticatable $user)
  * @method static array<NavigationGroup> getNavigation()
@@ -118,11 +121,11 @@ class Filament extends Facade
         return 'filament';
     }
 
-    public static function registerPanel(Panel $panel): void
+    public static function registerPanel(Panel | Closure $panel): void
     {
         static::getFacadeApplication()->resolving(
             static::getFacadeAccessor(),
-            fn (FilamentManager $filamentManager) => $filamentManager->registerPanel($panel),
+            fn (FilamentManager $filamentManager) => $filamentManager->registerPanel(value($panel)),
         );
     }
 }

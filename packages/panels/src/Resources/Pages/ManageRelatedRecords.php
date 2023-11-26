@@ -8,6 +8,7 @@ use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -59,7 +60,12 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     #[Url]
     public ?string $activeTab = null;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationIcon(): ?string
+    {
+        return static::$navigationIcon
+            ?? FilamentIcon::resolve('panels::resources.pages.manage-related-records.navigation-item')
+            ?? 'heroicon-o-rectangle-stack';
+    }
 
     public function mount(int | string $record): void
     {

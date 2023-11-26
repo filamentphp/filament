@@ -63,14 +63,14 @@
             <x-filament::icon-button
                 color="gray"
                 :icon="$isRtl ? 'heroicon-o-chevron-left' : 'heroicon-o-chevron-right'"
-                icon-alias="panels::sidebar.expand-button"
+                {{-- @deprecated Use `panels::sidebar.expand-button.rtl` instead of `panels::sidebar.expand-button` for RTL. --}}
+                :icon-alias="$isRtl ? ['panels::sidebar.expand-button.rtl', 'panels::sidebar.expand-button'] : 'panels::sidebar.expand-button'"
                 icon-size="lg"
                 :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                 x-cloak
                 x-data="{}"
                 x-on:click="$store.sidebar.open()"
                 x-show="! $store.sidebar.isOpen"
-                class="-mx-1.5"
             />
         @endif
 
@@ -78,14 +78,15 @@
             <x-filament::icon-button
                 color="gray"
                 :icon="$isRtl ? 'heroicon-o-chevron-right' : 'heroicon-o-chevron-left'"
-                icon-alias="panels::sidebar.collapse-button"
+                {{-- @deprecated Use `panels::sidebar.collapse-button.rtl` instead of `panels::sidebar.collapse-button` for RTL. --}}
+                :icon-alias="$isRtl ? ['panels::sidebar.collapse-button.rtl', 'panels::sidebar.collapse-button'] : 'panels::sidebar.collapse-button'"
                 icon-size="lg"
                 :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
                 x-cloak
                 x-data="{}"
                 x-on:click="$store.sidebar.close()"
                 x-show="$store.sidebar.isOpen"
-                class="-mx-1.5 ms-auto hidden lg:flex"
+                class="ms-auto hidden lg:flex"
             />
         @endif
     </header>
@@ -122,7 +123,7 @@
             </ul>
 
             <script>
-                let collapsedGroups = JSON.parse(
+                var collapsedGroups = JSON.parse(
                     localStorage.getItem('collapsedGroups'),
                 )
 

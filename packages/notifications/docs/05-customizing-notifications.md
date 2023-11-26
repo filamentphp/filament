@@ -84,7 +84,7 @@ class Notification extends BaseNotification
 
     public static function fromArray(array $data): static
     {
-        return parent::fromArray()->size($data['size']);
+        return parent::fromArray($data)->size($data['size']);
     }
 
     public function size(string $size): static

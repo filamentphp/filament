@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -24,7 +25,7 @@ trait CanPaginateRecords
         $this->resetPage();
     }
 
-    protected function paginateTableQuery(Builder $query): Paginator
+    protected function paginateTableQuery(Builder $query): Paginator | CursorPaginator
     {
         $perPage = $this->getTableRecordsPerPage();
 
@@ -35,7 +36,7 @@ trait CanPaginateRecords
             $this->getTablePaginationPageName(),
         );
 
-        return $records->onEachSide(1);
+        return $records->onEachSide(0);
     }
 
     public function getTableRecordsPerPage(): int | string | null

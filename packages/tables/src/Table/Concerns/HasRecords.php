@@ -2,7 +2,10 @@
 
 namespace Filament\Tables\Table\Concerns;
 
+use BackedEnum;
 use Closure;
+use Filament\Support\Contracts\HasLabel;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -58,7 +61,7 @@ trait HasRecords
         return $this;
     }
 
-    public function getRecords(): Collection | Paginator
+    public function getRecords(): Collection | Paginator | CursorPaginator
     {
         return $this->getLivewire()->getTableRecords();
     }
@@ -109,15 +112,22 @@ trait HasRecords
                 Model::class => $record,
                 $record::class => $record,
             ],
-        );
+        ) ?? $record->getAttributeValue($this->getRecordTitleAttribute()) ?? $this->getModelLabel();
 
-        if (filled($title)) {
-            return $title;
+        if ($title instanceof HasLabel) {
+            return $title->getLabel();
         }
 
-        $titleAttribute = $this->getRecordTitleAttribute();
+        if ($title instanceof BackedEnum) {
+            return $title->value;
+        }
 
-        return $record->getAttributeValue($titleAttribute) ?? $this->getModelLabel();
+        return $title;
+    }
+
+    public function hasCustomRecordTitle(): bool
+    {
+        return $this->recordTitle !== null;
     }
 
     public function getRecordTitleAttribute(): ?string

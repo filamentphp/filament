@@ -4,6 +4,7 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Grouping\Group;
 
@@ -18,7 +19,9 @@ trait CanGroupRecords
 
     protected bool | Closure $isGroupsOnly = false;
 
-    protected bool | Closure $areGroupsInDropdownOnDesktop = false;
+    protected bool | Closure $areGroupingSettingsInDropdownOnDesktop = false;
+
+    protected bool | Closure $areGroupingSettingsHidden = false;
 
     protected ?Closure $modifyGroupRecordsTriggerActionUsing = null;
 
@@ -29,9 +32,26 @@ trait CanGroupRecords
         return $this;
     }
 
+    public function groupingSettingsInDropdownOnDesktop(bool | Closure $condition = true): static
+    {
+        $this->areGroupingSettingsInDropdownOnDesktop = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use the `groupingSettingsInDropdownOnDesktop()` method instead.
+     */
     public function groupsInDropdownOnDesktop(bool | Closure $condition = true): static
     {
-        $this->areGroupsInDropdownOnDesktop = $condition;
+        $this->groupingSettingsInDropdownOnDesktop($condition);
+
+        return $this;
+    }
+
+    public function groupingSettingsHidden(bool | Closure $condition = true): static
+    {
+        $this->areGroupingSettingsHidden = $condition;
 
         return $this;
     }
@@ -71,7 +91,7 @@ trait CanGroupRecords
         $action = Action::make('groupRecords')
             ->label(__('filament-tables::table.actions.group.label'))
             ->iconButton()
-            ->icon('heroicon-m-rectangle-stack')
+            ->icon(FilamentIcon::resolve('tables::actions.group') ?? 'heroicon-m-rectangle-stack')
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->table($this);
@@ -100,9 +120,14 @@ trait CanGroupRecords
         return $this->getGroup($defaultGroup->getId()) !== null;
     }
 
-    public function areGroupsInDropdownOnDesktop(): bool
+    public function areGroupingSettingsInDropdownOnDesktop(): bool
     {
-        return (bool) $this->evaluate($this->areGroupsInDropdownOnDesktop);
+        return (bool) $this->evaluate($this->areGroupingSettingsInDropdownOnDesktop);
+    }
+
+    public function areGroupingSettingsHidden(): bool
+    {
+        return (bool) $this->evaluate($this->areGroupingSettingsHidden);
     }
 
     public function getDefaultGroup(): ?Group
