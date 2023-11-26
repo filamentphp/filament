@@ -1,14 +1,14 @@
+@php
+    $offColor = $getOffColor() ?? 'gray';
+    $onColor = $getOnColor() ?? 'primary';
+    $statePath = $getStatePath();
+@endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
     :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
 >
-    @php
-        $offColor = $getOffColor() ?? 'gray';
-        $onColor = $getOnColor() ?? 'primary';
-        $statePath = $getStatePath();
-    @endphp
-
     @capture($content)
         <button
             x-data="{

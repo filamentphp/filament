@@ -1,12 +1,12 @@
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $gridDirection = $getGridDirection() ?? 'column';
-        $id = $getId();
-        $isDisabled = $isDisabled();
-        $isInline = $isInline();
-        $statePath = $getStatePath();
-    @endphp
+@php
+    $gridDirection = $getGridDirection() ?? 'column';
+    $id = $getId();
+    $isDisabled = $isDisabled();
+    $isInline = $isInline();
+    $statePath = $getStatePath();
+@endphp
 
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament::grid
         :default="$getColumns('default')"
         :sm="$getColumns('sm')"

@@ -1,12 +1,12 @@
+@php
+    $statePath = $getStatePath();
+@endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
     :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
 >
-    @php
-        $statePath = $getStatePath();
-    @endphp
-
     @capture($content)
         <x-filament::input.checkbox
             :error="$errors->has($statePath)"
