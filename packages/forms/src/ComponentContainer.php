@@ -2,9 +2,9 @@
 
 namespace Filament\Forms;
 
-use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Model;
 
 class ComponentContainer extends ViewComponent

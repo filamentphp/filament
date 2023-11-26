@@ -12,7 +12,7 @@
     class="fi-fo-component-ctn"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
-                ->class(['gap-6'])
+            ->class(['gap-6'])
     "
 >
     @foreach ($getComponents(withHidden: true) as $formComponent)
