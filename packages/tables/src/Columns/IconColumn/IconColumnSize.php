@@ -16,5 +16,5 @@ enum IconColumnSize
 
     case TwoExtraLarge;
 
-    case ExtraExtraLarge;
+    public const ExtraExtraLarge = self::TwoExtraLarge;
 }
