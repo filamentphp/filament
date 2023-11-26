@@ -2,7 +2,6 @@
     use Filament\Support\Facades\FilamentView;
 
     $canSelectPlaceholder = $canSelectPlaceholder();
-    $hasInlineLabel = $hasInlineLabel();
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
@@ -18,17 +17,8 @@
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
-    :has-inline-label="$hasInlineLabel"
+    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
 >
-    <x-slot
-        name="label"
-        @class([
-            'sm:pt-1.5' => $hasInlineLabel,
-        ])
-    >
-        {{ $getLabel() }}
-    </x-slot>
-
     <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"

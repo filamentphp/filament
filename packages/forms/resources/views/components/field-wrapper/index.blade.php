@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\VerticalAlignment;
+@endphp
+
 @props([
     'field' => null,
     'hasInlineLabel' => null,
@@ -9,6 +13,7 @@
     'hintIcon' => null,
     'hintIconTooltip' => null,
     'id' => null,
+    'inlineLabelVerticalAlignment' => VerticalAlignment::Start,
     'isDisabled' => null,
     'isMarkedAsRequired' => null,
     'label' => null,
@@ -56,7 +61,12 @@
     <div
         @class([
             'grid gap-y-2',
-            'sm:grid-cols-3 sm:items-start sm:gap-x-4' => $hasInlineLabel,
+            'sm:grid-cols-3 sm:gap-x-4' => $hasInlineLabel,
+            match ($inlineLabelVerticalAlignment) {
+                VerticalAlignment::Start => 'sm:items-start',
+                VerticalAlignment::Center => 'sm:items-center',
+                VerticalAlignment::End => 'sm:items-end',
+            } => $hasInlineLabel,
         ])
     >
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon || count($hintActions))
