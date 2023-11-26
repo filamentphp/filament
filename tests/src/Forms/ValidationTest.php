@@ -951,7 +951,7 @@ test('fields can be conditionally validated using the `same()` rule', function (
         'condition' => false,
         'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
     ],
-])->group('dev');
+]);
 
 test('fields can be conditionally validated using the `different()` rule', function (string $comparedField, bool $condition, Closure $expectation) {
     $fails = [];
@@ -989,7 +989,7 @@ test('fields can be conditionally validated using the `different()` rule', funct
         'condition' => false,
         'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
     ],
-])->group('dev');
+]);
 
 test('fields can be conditionally validated using the `gt()` rule', function (string $comparedField, bool $condition, Closure $expectation) {
     $fails = [];
@@ -1027,7 +1027,7 @@ test('fields can be conditionally validated using the `gt()` rule', function (st
         'condition' => false,
         'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
     ],
-])->group('dev');
+]);
 
 test('fields can be conditionally validated using the `gte()` rule', function (string $comparedField, bool $condition, Closure $expectation) {
     $fails = [];
@@ -1065,7 +1065,7 @@ test('fields can be conditionally validated using the `gte()` rule', function (s
         'condition' => false,
         'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
     ],
-])->group('dev');
+]);
 
 test('fields can be conditionally validated using the `lt()` rule', function (string $comparedField, bool $condition, Closure $expectation) {
     $fails = [];
@@ -1103,7 +1103,7 @@ test('fields can be conditionally validated using the `lt()` rule', function (st
         'condition' => false,
         'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
     ],
-])->group('dev')->only();
+]);
 
 test('fields can be conditionally validated using the `lte()` rule', function (string $comparedField, bool $condition, Closure $expectation) {
     $fails = [];
@@ -1141,4 +1141,4 @@ test('fields can be conditionally validated using the `lte()` rule', function (s
         'condition' => false,
         'expectation' => fn ($fails) => expect($fails)->toBeEmpty(),
     ],
-])->group('dev')->only();
+]);
