@@ -26,7 +26,7 @@ trait HasSubNavigation
     }
 
     /**
-     * @return bool
+     * @return Alignment
      */
     public function getSubNavigationAlignment(): Alignment
     {
