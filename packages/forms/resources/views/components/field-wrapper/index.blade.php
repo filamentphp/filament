@@ -60,7 +60,12 @@
         ])
     >
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon || count($hintActions))
-            <div class="flex items-center justify-between gap-x-3">
+            <div
+                @class([
+                    'flex items-center justify-between gap-x-3',
+                    ($label instanceof \Illuminate\View\ComponentSlot) ? $label->attributes->get('class') : null,
+                ])
+            >
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
                         :error="$hasError"
@@ -70,7 +75,6 @@
                         :prefix="$labelPrefix"
                         :required="$required"
                         :suffix="$labelSuffix"
-                        :attributes="($label instanceof \Illuminate\View\ComponentSlot) ? \Filament\Support\prepare_inherited_attributes($label->attributes) : (new \Illuminate\View\ComponentAttributeBag())"
                     >
                         {{ $label }}
                     </x-filament-forms::field-wrapper.label>
