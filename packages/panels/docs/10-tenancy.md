@@ -653,9 +653,9 @@ By default, all resources within a panel with tenancy will be scoped to the curr
 protected static bool $isScopedToTenant = false;
 ```
 
-## Disabling tenancy scope for all resource
+## Disabling tenancy scope for all resources
 
-If you wish to manually customize tenancy scope for your resources you can disable it globally in your panel provider.
+If you wish to manually customize tenancy scope for all resources you can disable it globally in your panel provider.
 
 ```php
 use App\Models\Team;
