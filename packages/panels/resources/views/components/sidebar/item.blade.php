@@ -3,13 +3,13 @@
     'activeIcon' => null,
     'badge' => null,
     'badgeColor' => null,
-    'grouped' => false,
-    'last' => false,
     'first' => false,
+    'grouped' => false,
     'icon' => null,
+    'last' => false,
     'shouldOpenUrlInNewTab' => false,
-    'url',
     'sidebarCollapsible' => true,
+    'url',
 ])
 
 <li
