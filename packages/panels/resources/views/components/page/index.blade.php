@@ -45,7 +45,7 @@
         >
             @if ($subNavigation && $subNavigationAlignment === Alignment::Start)
                 <x-filament-panels::sidebar.sub-navigation
-                    :subNavigation="$subNavigation"
+                    :sub-navigation="$subNavigation"
                 />
             @endif
 
@@ -87,7 +87,7 @@
 
             @if ($subNavigation && $subNavigationAlignment === Alignment::End)
                 <x-filament-panels::sidebar.sub-navigation
-                    :subNavigation="$subNavigation"
+                    :sub-navigation="$subNavigation"
                 />
             @endif
         </div>
