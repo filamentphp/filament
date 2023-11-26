@@ -457,10 +457,12 @@ Each item in the sub-navigation can be customized using the [same navigation met
 
 You can opt to switch the position of the sub-navigation to the opposite side of the screen. This can be preferred as it keeps the content area of the screen in a consistent position.
 
-You can customize this by setting the `$subNavigationAlignedEnd` property on the resource:
+You can customize this by setting the `$subNavigationAlignment` property on the resource:
 
 ```php
-protected static bool $subNavigationAlignedEnd = true;
+use Filament\Support\Enums\Alignment;
+
+protected static Alignment $subNavigationAlignment = Alignment::End;
 ```
 
 ## Deleting resource pages

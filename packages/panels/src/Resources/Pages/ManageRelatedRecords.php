@@ -8,6 +8,7 @@ use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -68,11 +69,11 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     }
 
     /**
-     * @return bool
+     * @return Alignment
      */
-    public function getSubNavigationAlignedEnd(): bool
+    public function getSubNavigationAlignment(): Alignment
     {
-        return static::getResource()::getSubNavigationAlignedEnd();
+        return static::getResource()::getSubNavigationAlignment();
     }
 
     public function mount(int | string $record): void

@@ -6,6 +6,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\Page as ResourcePage;
+use Filament\Support\Enums\Alignment;
 
 trait HasSubNavigation
 {
@@ -14,7 +15,7 @@ trait HasSubNavigation
      */
     protected array $cachedSubNavigation;
 
-    protected static bool $subNavigationAlignedEnd = false;
+    protected static Alignment $subNavigationAlignment = Alignment::Start;
 
     /**
      * @return array<NavigationItem | NavigationGroup>
@@ -27,9 +28,9 @@ trait HasSubNavigation
     /**
      * @return bool
      */
-    public function getSubNavigationAlignedEnd(): bool
+    public function getSubNavigationAlignment(): Alignment
     {
-        return static::$subNavigationAlignedEnd;
+        return static::$subNavigationAlignment;
     }
 
     /**

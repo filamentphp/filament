@@ -11,6 +11,7 @@ use Filament\Actions\RestoreAction;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -52,11 +53,11 @@ class ViewRecord extends Page
     }
 
     /**
-     * @return bool
+     * @return Alignment
      */
-    public function getSubNavigationAlignedEnd(): bool
+    public function getSubNavigationAlignment(): Alignment
     {
-        return static::getResource()::getSubNavigationAlignedEnd();
+        return static::getResource()::getSubNavigationAlignment();
     }
 
     public function mount(int | string $record): void

@@ -16,6 +16,7 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables\Table;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -110,7 +111,7 @@ abstract class Resource
 
     protected static ?bool $isGlobalSearchForcedCaseInsensitive = null;
 
-    protected static bool $subNavigationAlignedEnd = false;
+    protected static Alignment $subNavigationAlignment = Alignment::Start;
 
     public static function form(Form $form): Form
     {
@@ -156,9 +157,9 @@ abstract class Resource
     /**
      * @return bool
      */
-    public static function getSubNavigationAlignedEnd(): bool
+    public static function getSubNavigationAlignment(): Alignment
     {
-        return static::$subNavigationAlignedEnd;
+        return static::$subNavigationAlignment;
     }
 
     public static function table(Table $table): Table

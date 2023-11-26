@@ -13,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
@@ -60,11 +61,11 @@ class EditRecord extends Page
     }
 
     /**
-     * @return bool
+     * @return Alignment
      */
-    public function getSubNavigationAlignedEnd(): bool
+    public function getSubNavigationAlignment(): Alignment
     {
-        return static::getResource()::getSubNavigationAlignedEnd();
+        return static::getResource()::getSubNavigationAlignment();
     }
 
     public function mount(int | string $record): void
