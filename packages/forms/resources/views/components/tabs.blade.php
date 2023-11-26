@@ -6,25 +6,18 @@
     wire:ignore.self
     x-cloak
     x-data="{
-        tab: null,
+        tab: @if($isTabPersistedInLocalStorage()) $persist(null).as('{{ $getTabLocalStorageName() }}')  @else null @endif,
 
         init: function () {
             this.$watch('tab', () => this.updateQueryString())
-            this.$watch('tab', () => this.updateSession())
 
-            this.tab = this.getTabs()[@js($getActiveTab()) - 1]
+            @unless($isTabPersistedInLocalStorage())
+                this.tab = this.getTabs()[@js($getActiveTab()) - 1]
+            @endunless
         },
 
         getTabs: function () {
             return JSON.parse(this.$refs.tabsData.value)
-        },
-
-        updateSession: function () {
-            $wire.dispatchFormEvent(
-                'tab::selectTab',
-                '{{ $getStatePath() }}',
-                this.getTabs().indexOf(this.tab),
-            )
         },
 
         updateQueryString: function () {

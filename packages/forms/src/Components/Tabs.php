@@ -5,7 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Support\Concerns;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\LocalStorage;
 
 class Tabs extends Component
 {
@@ -21,25 +21,11 @@ class Tabs extends Component
 
     protected string | Closure | null $tabQueryStringKey = null;
 
-    protected bool $persitTabInSession = false;
+    protected bool $persitTabInLocalStorage = false;
 
     final public function __construct(?string $label = null)
     {
         $this->label($label);
-    }
-
-    protected function setUp(): void
-    {
-        $this->registerListeners([
-            'tab::selectTab' => [
-                function (Tabs $component, string $statePath, int $tab): void {
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-                    Session::put($this->getTabSessionName(), $tab);
-                },
-            ],
-        ]);
     }
 
     public static function make(?string $label = null): static
@@ -74,9 +60,9 @@ class Tabs extends Component
         return $this;
     }
 
-    public function persistTabInSession(): static
+    public function persistTabInLocalStorage(): static
     {
-        $this->persitTabInSession = true;
+        $this->persitTabInLocalStorage = true;
 
         return $this;
     }
@@ -95,14 +81,10 @@ class Tabs extends Component
             }
         }
 
-        if ($this->isTabPersistedInSession()) {
-            return Session::get($this->getTabSessionName()) + 1;
-        }
-
         return $this->evaluate($this->activeTab);
     }
 
-    protected function getTabSessionName(): string
+    public function getTabLocalStorageName(): string
     {
         return str_slug(class_basename($this->getLivewire()).'-'.$this->getModelInstance()->getTable().'-'.$this->getModelInstance()->getKey().'-activeTab');
     }
@@ -117,8 +99,8 @@ class Tabs extends Component
         return filled($this->getTabQueryStringKey());
     }
 
-    public function isTabPersistedInSession(): bool
+    public function isTabPersistedInLocalStorage(): bool
     {
-        return $this->persitTabInSession && Session::has($this->getTabSessionName());
+        return $this->persitTabInLocalStorage;
     }
 }

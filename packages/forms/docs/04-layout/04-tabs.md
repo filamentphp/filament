@@ -102,9 +102,9 @@ Tabs::make('Label')
     ->persistTabInQueryString('settings-tab')
 ```
 
-## Persisting the current tab in the session
+## Persisting the current tab in the LocalStorage
 
-To save the current tab in the session instead of relying on the URL's query string, you can change this behavior using the `persistTabInSession()` method:
+To save the current tab in the LocalStorage instead of relying on the URL's query string, you can change this behavior using the `persistTabInLocalStorage()` method:
 
 ```php
 use Filament\Forms\Components\Tabs;
@@ -124,7 +124,7 @@ Tabs::make('Label')
                 // ...
             ]),
     ])
-    ->persistTabInSession()
+    ->persistTabInLocalStorage()
 ```
 
 The session name is dynamically generated based on the Filament Page Type, the associated Model's database table, and the Model's Primary Key. This ensures uniqueness and prevents conflicts between different sessions.
