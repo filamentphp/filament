@@ -665,7 +665,7 @@ trait CanBeValidated
 
             return "{$rule}:{$statePath}";
         }, fn (Field $component): bool => (bool) $component->evaluate($statePath)
-            && $condition);
+            && (bool) $component->evaluate($condition));
 
         return $this;
     }
