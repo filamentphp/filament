@@ -652,23 +652,20 @@ trait CanBeValidated
 
     public function fieldComparisonRule(string $rule, string | Closure $statePath, bool $isStatePathAbsolute = false, bool | Closure $condition = true): static
     {
-        $this->rule(
-            static function (Field $component) use ($isStatePathAbsolute, $rule, $statePath): string {
-                $statePath = $component->evaluate($statePath);
+        $this->rule(static function (Field $component) use ($isStatePathAbsolute, $rule, $statePath): string {
+            $statePath = $component->evaluate($statePath);
 
-                if (! $isStatePathAbsolute) {
-                    $containerStatePath = $component->getContainer()->getStatePath();
+            if (! $isStatePathAbsolute) {
+                $containerStatePath = $component->getContainer()->getStatePath();
 
-                    if ($containerStatePath) {
-                        $statePath = "{$containerStatePath}.{$statePath}";
-                    }
+                if ($containerStatePath) {
+                    $statePath = "{$containerStatePath}.{$statePath}";
                 }
+            }
 
-                return "{$rule}:{$statePath}";
-            },
-            fn (Field $component): bool => (bool) $component->evaluate($statePath)
-                && $condition
-        );
+            return "{$rule}:{$statePath}";
+        }, fn (Field $component): bool => (bool) $component->evaluate($statePath)
+            && $condition);
 
         return $this;
     }
