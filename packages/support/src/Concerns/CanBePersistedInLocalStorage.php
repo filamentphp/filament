@@ -6,7 +6,7 @@ trait CanBePersistedInLocalStorage
 {
     protected bool | Closure | null $persistTabInLocalStorage = false;
 
-    public ?string $tablocalStorageName = null;
+    public ?string $tabLocalStorageName = null;
 
     public function persistTabInLocalStorage(Closure | bool $value = true): static
     {
@@ -17,14 +17,14 @@ trait CanBePersistedInLocalStorage
 
     public function tabLocalStorageName(string $name): static
     {
-        $this->tablocalStorageName = $name;
+        $this->tabLocalStorageName = $name;
 
         return $this;
     }
 
     public function getTabLocalStorageName(): string
     {
-        return str_slug(class_basename($this->getLivewire()).'-'.$this->getContainer()->getRecord()->getTable().'-'. ($this->tablocalStorageName ?? $this->getContainer()->getRecord()->getKey()));
+        return str_slug(class_basename($this->getLivewire()).'-'.$this->getContainer()->getRecord()->getTable().'-'. ($this->tabLocalStorageName ?? $this->getContainer()->getRecord()->getKey()));
     }
 
     public function isTabPersistedInLocalStorage(): bool
