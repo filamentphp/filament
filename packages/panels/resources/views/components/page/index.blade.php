@@ -3,8 +3,8 @@
 ])
 
 @php
-    $widgetData = $this->getWidgetData();
     $subNavigation = $this->getCachedSubNavigation();
+    $widgetData = $this->getWidgetData();
 @endphp
 
 <div
@@ -36,12 +36,12 @@
 
         <div
             @class([
-                'grid grid-cols-1 gap-6 md:grid-cols-4' => $subNavigation,
+                'flex flex-col gap-8 md:flex-row' => $subNavigation,
                 'h-full' => $fullHeight,
             ])
         >
             @if ($subNavigation)
-                <div wire:ignore class="col-span-1">
+                <div wire:ignore>
                     <x-filament::input.wrapper class="md:hidden">
                         <x-filament::input.select
                             x-data="{}"
@@ -83,7 +83,7 @@
                         </x-filament::input.select>
                     </x-filament::input.wrapper>
 
-                    <div class="hidden md:block">
+                    <div class="hidden w-72 md:block">
                         @foreach ($subNavigation as $subNavigationGroup)
                             <x-filament-panels::sidebar.group
                                 :collapsible="$subNavigationGroup->isCollapsible()"
@@ -99,8 +99,7 @@
 
             <div
                 @class([
-                    'grid auto-cols-fr gap-y-8',
-                    'col-span-1 md:col-span-3' => $subNavigation,
+                    'grid flex-1 auto-cols-fr gap-y-8',
                     'h-full' => $fullHeight,
                 ])
             >
