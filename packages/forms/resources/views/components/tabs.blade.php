@@ -11,9 +11,9 @@
         init: function () {
             this.$watch('tab', () => this.updateQueryString())
 
-            @unless($isTabPersistedInLocalStorage())
+            if(this.tab === null) {
                 this.tab = this.getTabs()[@js($getActiveTab()) - 1]
-            @endunless
+            }
         },
 
         getTabs: function () {
