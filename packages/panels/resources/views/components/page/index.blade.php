@@ -43,10 +43,53 @@
                 'h-full' => $fullHeight,
             ])
         >
-            @if ($subNavigation && $subNavigationAlignment === Alignment::Start)
-                <x-filament-panels::sidebar.sub-navigation
-                    :sub-navigation="$subNavigation"
-                />
+            @if ($subNavigation)
+                <x-filament::input.wrapper class="md:hidden" wire:ignore>
+                    <x-filament::input.select
+                        x-data="{}"
+                        x-on:change="window.location = $event.target.value"
+                    >
+                        @foreach ($subNavigation as $subNavigationGroup)
+                            @php
+                                $subNavigationGroupLabel = $subNavigationGroup->getLabel();
+                            @endphp
+
+                            @if (filled($subNavigationGroupLabel))
+                                <optgroup
+                                    label="{{ $subNavigationGroupLabel }}"
+                                >
+                                    @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
+                                        <option
+                                            @if ($subNavigationItem->isActive())
+                                                selected
+                                            @endif
+                                            value="{{ $subNavigationItem->getUrl() }}"
+                                        >
+                                            {{ $subNavigationItem->getLabel() }}
+                                        </option>
+                                    @endforeach
+                                </optgroup>
+                            @else
+                                @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
+                                    <option
+                                        @if ($subNavigationItem->isActive())
+                                            selected
+                                        @endif
+                                        value="{{ $subNavigationItem->getUrl() }}"
+                                    >
+                                        {{ $subNavigationItem->getLabel() }}
+                                    </option>
+                                @endforeach
+                            @endif
+                        @endforeach
+                    </x-filament::input.select>
+                </x-filament::input.wrapper>
+
+                @if ($subNavigationAlignment === Alignment::Start)
+                    <x-filament-panels::sidebar.sub-navigation
+                        :navigation="$subNavigation"
+                    />
+                @endif
             @endif
 
             <div
@@ -86,7 +129,7 @@
 
             @if ($subNavigation && $subNavigationAlignment === Alignment::End)
                 <x-filament-panels::sidebar.sub-navigation
-                    :sub-navigation="$subNavigation"
+                    :navigation="$subNavigation"
                 />
             @endif
         </div>
