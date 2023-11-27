@@ -21,7 +21,7 @@ class Tabs extends Component
 
     protected string | Closure | null $tabQueryStringKey = null;
 
-    protected bool $persitTabInLocalStorage = false;
+    protected bool | Closure | null $persistTabInLocalStorage = false;
 
     final public function __construct(?string $label = null)
     {
@@ -60,9 +60,9 @@ class Tabs extends Component
         return $this;
     }
 
-    public function persistTabInLocalStorage(): static
+    public function persistTabInLocalStorage(Closure | bool $value = true): static
     {
-        $this->persitTabInLocalStorage = true;
+        $this->persistTabInLocalStorage = $value;
 
         return $this;
     }
@@ -101,6 +101,6 @@ class Tabs extends Component
 
     public function isTabPersistedInLocalStorage(): bool
     {
-        return $this->persitTabInLocalStorage;
+        return $this->evaluate($this->persistTabInLocalStorage);
     }
 }
