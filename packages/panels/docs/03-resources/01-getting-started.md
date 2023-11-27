@@ -455,7 +455,7 @@ Each item in the sub-navigation can be customized using the [same navigation met
 
 ### Sub-navigation position
 
-The sub-navigation is rendered at the start of the page by default. You may change the position by setting the `$subNavigationPosition` property on the resource. The value may be `SubNavigationPosition::Start` or `SubNavigationPosition::End`:
+The sub-navigation is rendered at the start of the page by default. You may change the position by setting the `$subNavigationPosition` property on the resource. The value may be `SubNavigationPosition::Start`, `SubNavigationPosition::End`, or `SubNavigationPosition::Top` to render the sub-navigation as tabs:
 
 ```php
 use Filament\Pages\SubNavigationPosition;
