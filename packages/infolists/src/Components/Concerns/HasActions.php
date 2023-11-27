@@ -5,6 +5,7 @@ namespace Filament\Infolists\Components\Concerns;
 use Closure;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Contracts\HasAffixActions;
+use Filament\Infolists\Components\Contracts\HasHeaderActions;
 use Filament\Infolists\Components\Contracts\HasHintActions;
 use Illuminate\Support\Arr;
 
@@ -111,6 +112,13 @@ trait HasActions
                 ...$this->cachedActions,
                 ...$this->getPrefixActions(),
                 ...$this->getSuffixActions(),
+            ];
+        }
+
+        if ($this instanceof HasHeaderActions) {
+            $this->cachedActions = [
+                ...$this->cachedActions,
+                ...$this->getHeaderActions(),
             ];
         }
 

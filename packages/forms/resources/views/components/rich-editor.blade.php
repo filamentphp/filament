@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Facades\FilamentView;
+@endphp
+
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @php
         $id = $getId();
@@ -25,7 +29,11 @@
             }}
         >
             <div
-                ax-load
+                @if (FilamentView::hasSpaMode())
+                    ax-load="visible"
+                @else
+                    ax-load
+                @endif
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
                 x-data="richEditorFormComponent({
                             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},

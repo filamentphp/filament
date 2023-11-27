@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -65,6 +66,11 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.manage-related-records.navigation-item')
             ?? 'heroicon-o-rectangle-stack';
+    }
+
+    public function getSubNavigationPosition(): SubNavigationPosition
+    {
+        return static::getResource()::getSubNavigationPosition();
     }
 
     public function mount(int | string $record): void

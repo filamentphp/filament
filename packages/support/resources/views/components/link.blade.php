@@ -43,30 +43,47 @@
     }
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-link relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus-visible:underline',
+        'fi-link group/link relative inline-flex items-center justify-center outline-none',
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         "fi-size-{$size->value}" => $size instanceof ActionSize,
         // @deprecated `fi-link-size-*` has been replaced by `fi-size-*`.
         "fi-link-size-{$size->value}" => $size instanceof ActionSize,
         match ($size) {
-            ActionSize::ExtraSmall => 'gap-1 text-xs',
-            ActionSize::Small => 'gap-1 text-sm',
-            ActionSize::Medium => 'gap-1.5 text-sm',
-            ActionSize::Large => 'gap-1.5 text-sm',
-            ActionSize::ExtraLarge => 'gap-1.5 text-sm',
+            ActionSize::ExtraSmall => 'gap-1',
+            ActionSize::Small => 'gap-1',
+            ActionSize::Medium => 'gap-1.5',
+            ActionSize::Large => 'gap-1.5',
+            ActionSize::ExtraLarge => 'gap-1.5',
             default => $size,
         },
         match ($color) {
-            'gray' => 'fi-color-gray text-gray-700 dark:text-gray-200',
-            default => 'fi-color-custom text-custom-600 dark:text-custom-400',
+            'gray' => 'fi-color-gray',
+            default => 'fi-color-custom',
         },
     ]);
 
-    $linkStyles = \Illuminate\Support\Arr::toCssStyles([
+    $labelClasses = \Illuminate\Support\Arr::toCssClasses([
+        'font-semibold group-hover/link:underline group-focus-visible/link:underline',
+        match ($size) {
+            ActionSize::ExtraSmall => 'text-xs',
+            ActionSize::Small => 'text-sm',
+            ActionSize::Medium => 'text-sm',
+            ActionSize::Large => 'text-sm',
+            ActionSize::ExtraLarge => 'text-sm',
+            default => null,
+        },
+        match ($color) {
+            'gray' => 'text-gray-700 dark:text-gray-200',
+            default => 'text-custom-600 dark:text-custom-400',
+        },
+    ]);
+
+    $labelStyles = \Illuminate\Support\Arr::toCssStyles([
         \Filament\Support\get_color_css_variables(
             $color,
-            shades: [300, 400, 500, 600],
+            shades: [400, 600],
+            alias: 'link.label',
         ) => $color !== 'gray',
     ]);
 
@@ -87,7 +104,8 @@
     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
         \Filament\Support\get_color_css_variables(
             $color,
-            shades: [500],
+            shades: [400, 600],
+            alias: 'link.icon',
         ) => $color !== 'gray',
     ]);
 
@@ -119,11 +137,7 @@
                 theme: $store.theme,
             }"
         @endif
-        {{
-            $attributes
-                ->class([$linkClasses])
-                ->style([$linkStyles])
-        }}
+        {{ $attributes->class([$linkClasses]) }}
     >
         @if ($icon && $iconPosition === IconPosition::Before)
             <x-filament::icon
@@ -134,7 +148,9 @@
             />
         @endif
 
-        {{ $slot }}
+        <span class="{{ $labelClasses }}" style="{{ $labelStyles }}">
+            {{ $slot }}
+        </span>
 
         @if ($icon && $iconPosition === IconPosition::After)
             <x-filament::icon
@@ -177,7 +193,6 @@
                     'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 ], escape: false)
                 ->class([$linkClasses])
-                ->style([$linkStyles])
         }}
     >
         @if ($iconPosition === IconPosition::Before)
@@ -191,7 +206,9 @@
                                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                             ])
-                        )->class([$iconClasses])
+                        )
+                            ->class([$iconClasses])
+                            ->style([$iconStyles])
                     "
                 />
             @endif
@@ -210,7 +227,9 @@
             @endif
         @endif
 
-        {{ $slot }}
+        <span class="{{ $labelClasses }}" style="{{ $labelStyles }}">
+            {{ $slot }}
+        </span>
 
         @if ($iconPosition === IconPosition::After)
             @if ($icon)
@@ -223,9 +242,10 @@
                                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                                 'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                             ])
-                        )->class([$iconClasses])
+                        )
+                            ->class([$iconClasses])
+                            ->style([$iconStyles])
                     "
-                    :style="$iconStyles"
                 />
             @endif
 
@@ -237,9 +257,10 @@
                                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                                 'wire:target' => $loadingIndicatorTarget,
                             ])
-                        )->class([$iconClasses])
+                        )
+                            ->class([$iconClasses])
+                            ->style([$iconStyles])
                     "
-                    :style="$iconStyles"
                 />
             @endif
         @endif

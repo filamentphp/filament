@@ -111,7 +111,7 @@
         @endif
 
         @if (filament()->hasNavigation())
-            <ul class="-mx-2 flex flex-col gap-y-1">
+            <ul class="-mx-2 flex flex-col gap-y-7">
                 @foreach ($navigation as $group)
                     <x-filament-panels::sidebar.group
                         :collapsible="$group->isCollapsible()"
@@ -123,7 +123,7 @@
             </ul>
 
             <script>
-                let collapsedGroups = JSON.parse(
+                var collapsedGroups = JSON.parse(
                     localStorage.getItem('collapsedGroups'),
                 )
 

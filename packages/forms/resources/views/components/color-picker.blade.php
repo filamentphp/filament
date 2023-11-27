@@ -1,4 +1,6 @@
 @php
+    use Filament\Support\Facades\FilamentView;
+
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
@@ -32,7 +34,11 @@
     >
         <div
             x-ignore
-            ax-load
+            @if (FilamentView::hasSpaMode())
+                ax-load="visible"
+            @else
+                ax-load
+            @endif
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('color-picker', 'filament/forms') }}"
             x-data="colorPickerFormComponent({
                         isAutofocused: @js($isAutofocused()),

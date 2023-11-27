@@ -5,14 +5,19 @@
     'badge' => null,
     'badgeColor' => null,
     'childItems' => [],
-    'grouped' => false,
-    'subGrouped' => false,
-    'last' => false,
     'first' => false,
+    'grouped' => false,
     'icon' => null,
+    'last' => false,
     'shouldOpenUrlInNewTab' => false,
+    'sidebarCollapsible' => true,
+    'subGrouped' => false,
     'url',
 ])
+
+@php
+    $sidebarCollapsible = $sidebarCollapsible && filament()->isSidebarCollapsibleOnDesktop();
+@endphp
 
 <li
     {{
@@ -27,7 +32,7 @@
     <a
         {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
-        @if (filament()->isSidebarCollapsibleOnDesktop())
+        @if ($sidebarCollapsible)
             x-data="{ tooltip: false }"
             x-effect="
                 tooltip = $store.sidebar.isOpen
@@ -87,7 +92,7 @@
         @endif
 
         <span
-            @if (filament()->isSidebarCollapsibleOnDesktop())
+            @if ($sidebarCollapsible)
                 x-show="$store.sidebar.isOpen"
                 x-transition:enter="lg:transition lg:delay-100"
                 x-transition:enter-start="opacity-0"
@@ -106,7 +111,7 @@
 
         @if (filled($badge))
             <span
-                @if (filament()->isSidebarCollapsibleOnDesktop())
+                @if ($sidebarCollapsible)
                     x-show="$store.sidebar.isOpen"
                     x-transition:enter="lg:transition lg:delay-100"
                     x-transition:enter-start="opacity-0"

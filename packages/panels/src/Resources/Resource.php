@@ -10,6 +10,7 @@ use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Infolists\Infolist;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Panel;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
@@ -112,6 +113,8 @@ abstract class Resource
 
     protected static ?bool $isGlobalSearchForcedCaseInsensitive = null;
 
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
+
     public static function form(Form $form): Form
     {
         return $form;
@@ -152,6 +155,11 @@ abstract class Resource
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
+    }
+
+    public static function getSubNavigationPosition(): SubNavigationPosition
+    {
+        return static::$subNavigationPosition;
     }
 
     public static function table(Table $table): Table

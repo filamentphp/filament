@@ -1,4 +1,6 @@
 @php
+    use Filament\Support\Facades\FilamentView;
+
     $canSelectPlaceholder = $canSelectPlaceholder();
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
@@ -89,7 +91,11 @@
         @else
             <div
                 x-ignore
-                ax-load
+                @if (FilamentView::hasSpaMode())
+                    ax-load="visible"
+                @else
+                    ax-load
+                @endif
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
                             canSelectPlaceholder: @js($canSelectPlaceholder),

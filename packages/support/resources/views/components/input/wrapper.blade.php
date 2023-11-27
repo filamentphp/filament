@@ -2,7 +2,6 @@
     'alpineDisabled' => null,
     'alpineValid' => null,
     'disabled' => false,
-    'end' => null,
     'inlinePrefix' => false,
     'inlineSuffix' => false,
     'prefix' => null,
@@ -10,7 +9,6 @@
     'prefixIcon' => null,
     'prefixIconColor' => 'gray',
     'prefixIconAlias' => null,
-    'start' => null,
     'suffix' => null,
     'suffixActions' => [],
     'suffixIcon' => null,
@@ -59,8 +57,8 @@
     $getIconStyles = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssStyles([
         \Filament\Support\get_color_css_variables(
             $color,
-            shades: [400, 500],
-            alias: 'input-wrapper-icon',
+            shades: [500],
+            alias: 'input-wrapper.icon',
         ) => $color !== 'gray',
     ]);
 
@@ -100,8 +98,6 @@
             ])
     }}
 >
-    {{ $start }}
-
     @if ($hasPrefix || $hasLoadingIndicator)
         <div
             @if (! $hasPrefix)
@@ -213,6 +209,4 @@
             @endif
         </div>
     @endif
-
-    {{ $end }}
 </div>

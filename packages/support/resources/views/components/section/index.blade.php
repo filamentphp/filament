@@ -9,24 +9,31 @@
     'compact' => false,
     'contentBefore' => false,
     'description' => null,
+    'headerActions' => [],
     'headerEnd' => null,
     'heading' => null,
     'icon' => null,
     'iconColor' => 'gray',
     'iconSize' => IconSize::Large,
+    'persistCollapsed' => false,
 ])
 
 @php
+    $headerActions = array_filter(
+        $headerActions,
+        fn ($headerAction): bool => $headerAction->isVisible(),
+    );
+    $hasHeaderActions = filled($headerActions);
     $hasDescription = filled((string) $description);
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
-    $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || filled((string) $headerEnd);
+    $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || $hasHeaderActions || filled((string) $headerEnd);
 @endphp
 
 <section
     {{-- TODO: Investigate Livewire bug - https://github.com/filamentphp/filament/pull/8511 --}}
     x-data="{
-        isCollapsed: @js($collapsed),
+        isCollapsed: @if ($persistCollapsed) $persist(@js($collapsed)).as(`section-${$el.id}-isCollapsed`) @else @js($collapsed) @endif,
     }"
     @if ($collapsible)
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
@@ -103,6 +110,7 @@
                         \Filament\Support\get_color_css_variables(
                             $iconColor,
                             shades: [400, 500],
+                            alias: 'section.header.icon',
                         ) => $iconColor !== 'gray',
                     ])
                 />
@@ -124,6 +132,13 @@
                 </div>
             @endif
 
+            @if ($hasHeaderActions)
+                <x-filament-actions::actions
+                    :actions="$headerActions"
+                    :alignment="\Filament\Support\Enums\Alignment::End"
+                />
+            @endif
+
             {{ $headerEnd }}
 
             @if ($collapsible)
@@ -141,7 +156,7 @@
     <div
         @if ($collapsible)
             x-bind:aria-expanded="(! isCollapsed).toString()"
-            @if ($collapsed)
+            @if ($collapsed || $persistCollapsed)
                 x-cloak
             @endif
             x-bind:class="{ 'invisible h-0 overflow-y-hidden border-none': isCollapsed }"

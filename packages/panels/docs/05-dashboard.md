@@ -109,6 +109,107 @@ php artisan make:filament-widget BlogPostsOverview
 
 This command will create two files - a widget class in the `/Widgets` directory of the Filament directory, and a view in the `/widgets` directory of the Filament views directory.
 
+## Filtering widget data
+
+You may add a form to the dashboard that allows the user to filter the data displayed across all widgets. When the filters are updated, the widgets will be reloaded with the new data.
+
+Firstly, you must [replace the original Dashboard page](#customizing-the-dashboard-page).
+
+Now, in your new `app/Filament/Pages/Dashboard.php` file, you may add the `HasFiltersForm` trait, and add the `filtersForm()` method to return form components:
+
+```php
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Form;
+use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
+
+class Dashboard extends BaseDashboard
+{
+    use HasFiltersForm;
+
+    public function filtersForm(Form $form): Form
+    {
+        return $form
+            ->schema([
+                DatePicker::make('start_date'),
+                DatePicker::make('end_date'),
+                // ...
+            ]);
+    }
+}
+```
+
+In widget classes that require data from the filters, you need to add the `InteractsWithPageFilters` trait, which will allow you to use the `$this->filters` property to access the raw data from the filters form:
+
+```php
+use App\Models\BlogPost;
+use Carbon\CarbonImmutable;
+use Filament\Widgets\StatsOverviewWidget;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Illuminate\Database\Eloquent\Builder;
+
+class BlogPostsOverview extends StatsOverviewWidget
+{
+    use InteractsWithPageFilters;
+
+    public function getStats(): array
+    {
+        $startDate = $this->filters['start_date'] ?? null;
+        $endDate = $this->filters['end_date'] ?? null;
+
+        return [
+            StatsOverviewWidget\Stat::make(
+                label: 'Total posts',
+                value: BlogPost::query()
+                    ->when($startDate, fn (Builder $query) => $query->whereDate('created_at', '>=', $startDate))
+                    ->when($endDate, fn (Builder $query) => $query->whereDate('created_at', '<=', $endDate))
+                    ->count(),
+            ),
+            // ...
+        ];
+    }
+}
+```
+
+The `$this->filters` array will always reflect the current form data. Please note that this data is not validated, as it is available live and not intended to be used for anything other than querying the database. You must ensure that the data is valid before using it. In this example, we check if the start date is set before using it in the query.
+
+### Filtering widget data using an action modal
+
+Alternatively, you can swap out the filters form for an action modal, that can be opened by clicking a button in the header of the page. There are many benefits to using this approach:
+
+- The filters form is not always visible, which allows you to use the full height of the page for widgets.
+- The filters do not update the widgets until the user clicks the "Apply" button, which means that the widgets are not reloaded until the user is ready. This can improve performance if the widgets are expensive to load.
+- Validation can be performed on the filters form, which means that the widgets can rely on the fact that the data is valid - the user cannot submit the form until it is. Canceling the modal will discard the user's changes.
+
+To use an action modal instead of a filters form, you can use the `HasFiltersAction` trait instead of `HasFiltersForm`. Then, register the `FilterAction` class as an action in `getHeaderActions()`:
+
+```php
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Form;
+use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Pages\Dashboard\Actions\FilterAction;
+use Filament\Pages\Dashboard\Concerns\HasFiltersAction;
+
+class Dashboard extends BaseDashboard
+{
+    use HasFiltersAction;
+    
+    protected function getHeaderActions(): array
+    {
+        return [
+            FilterAction::make()
+                ->form([
+                    DatePicker::make('start_date'),
+                    DatePicker::make('end_date'),
+                    // ...
+                ]),
+        ];
+    }
+}
+```
+
+Handling data from the filter action is the same as handling data from the filters header form, except that the data is validated before being passed to the widget. The `InteractsWithPageFilters` trait still applies.
+
 ## Disabling the default widgets
 
 By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets()` array of the [configuration](configuration):

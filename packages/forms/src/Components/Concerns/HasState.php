@@ -80,8 +80,10 @@ trait HasState
         foreach ($this->afterStateUpdated as $callback) {
             $callbackId = spl_object_id($callback);
 
-            if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $callbackId)) {
-                return $this;
+            // TODO: Revert to `store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $callbackId)`
+            // when https://github.com/livewire/livewire/pull/7327 is merged.
+            if (store($this)->get('executedAfterStateUpdatedCallbacks')[$callbackId] ?? false) {
+                continue;
             }
 
             $this->callAfterStateUpdatedHook($callback);

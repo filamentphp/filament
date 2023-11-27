@@ -13,6 +13,7 @@ use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
@@ -57,6 +58,11 @@ class EditRecord extends Page
     public function getContentTabLabel(): ?string
     {
         return __('filament-panels::resources/pages/edit-record.content.tab.label');
+    }
+
+    public function getSubNavigationPosition(): SubNavigationPosition
+    {
+        return static::getResource()::getSubNavigationPosition();
     }
 
     public function mount(int | string $record): void
