@@ -39,7 +39,11 @@
 
         <div
             @class([
-                'flex flex-col gap-8 md:flex-row' => $subNavigation,
+                'flex flex-col gap-8' => $subNavigation,
+                match ($subNavigationPosition) {
+                    SubNavigationPosition::Start, SubNavigationPosition::End => 'md:flex-row',
+                    default => null,
+                } => $subNavigation,
                 'h-full' => $fullHeight,
             ])
         >
@@ -89,6 +93,62 @@
                     <x-filament-panels::sidebar.sub-navigation
                         :navigation="$subNavigation"
                     />
+                @endif
+
+                @if ($subNavigationPosition === SubNavigationPosition::Top)
+                    <x-filament::tabs>
+                        @foreach ($subNavigation as $subNavigationGroup)
+                            @if ($subNavigationGroupLabel = $subNavigationGroup->getLabel())
+                                <x-filament::dropdown placement="bottom-start">
+                                    <x-slot name="trigger">
+                                        <x-filament::tabs.item
+                                            :active="$subNavigationGroup->isActive()"
+                                            :icon="$subNavigationGroup->getIcon()"
+                                        >
+                                            {{ $subNavigationGroupLabel }}
+                                        </x-filament::tabs.item>
+                                    </x-slot>
+
+                                    <x-filament::dropdown.list>
+                                        @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
+                                            @php
+                                                $icon = $subNavigationItem->getIcon();
+                                            @endphp
+
+                                            <x-filament::dropdown.list.item
+                                                :badge="$subNavigationItem->getBadge()"
+                                                :badge-color="$subNavigationItem->getBadgeColor()"
+                                                :href="$subNavigationItem->getUrl()"
+                                                :icon="$subNavigationItem->isActive() ? ($subNavigationItem->getActiveIcon() ?? $icon) : $icon"
+                                                tag="a"
+                                                :target="$subNavigationItem->shouldOpenUrlInNewTab() ? '_blank' : null"
+                                            >
+                                                {{ $subNavigationItem->getLabel() }}
+                                            </x-filament::dropdown.list.item>
+                                        @endforeach
+                                    </x-filament::dropdown.list>
+                                </x-filament::dropdown>
+                            @else
+                                @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
+                                    @php
+                                        $icon = $subNavigationItem->getIcon();
+                                    @endphp
+
+                                    <x-filament::tabs.item
+                                        :active="$subNavigationItem->isActive()"
+                                        :badge="$subNavigationItem->getBadge()"
+                                        :badge-color="$subNavigationItem->getBadgeColor()"
+                                        :href="$subNavigationItem->getUrl()"
+                                        :icon="$subNavigationItem->isActive() ? ($subNavigationItem->getActiveIcon() ?? $icon) : $icon"
+                                        tag="a"
+                                        :target="$subNavigationItem->shouldOpenUrlInNewTab() ? '_blank' : null"
+                                    >
+                                        {{ $subNavigationItem->getLabel() }}
+                                    </x-filament::tabs.item>
+                                @endforeach
+                            @endif
+                        @endforeach
+                    </x-filament::tabs>
                 @endif
             @endif
 

@@ -79,7 +79,6 @@
                                     @foreach ($group->getItems() as $item)
                                         @php
                                             $icon = $item->getIcon();
-                                            $shouldOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
                                         @endphp
 
                                         <x-filament::dropdown.list.item
@@ -88,7 +87,7 @@
                                             :href="$item->getUrl()"
                                             :icon="$item->isActive() ? ($item->getActiveIcon() ?? $icon) : $icon"
                                             tag="a"
-                                            :target="$shouldOpenUrlInNewTab ? '_blank' : null"
+                                            :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
                                         >
                                             {{ $item->getLabel() }}
                                         </x-filament::dropdown.list.item>
