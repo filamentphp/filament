@@ -10,13 +10,13 @@ use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Infolists\Infolist;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Panel;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
-use Filament\Support\Enums\Alignment;
 use Filament\Tables\Table;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -111,7 +111,7 @@ abstract class Resource
 
     protected static ?bool $isGlobalSearchForcedCaseInsensitive = null;
 
-    protected static Alignment $subNavigationAlignment = Alignment::Start;
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
 
     public static function form(Form $form): Form
     {
@@ -154,12 +154,9 @@ abstract class Resource
         ];
     }
 
-    /**
-     * @return Alignment
-     */
-    public static function getSubNavigationAlignment(): Alignment
+    public static function getSubNavigationPosition(): SubNavigationPosition
     {
-        return static::$subNavigationAlignment;
+        return static::$subNavigationPosition;
     }
 
     public static function table(Table $table): Table

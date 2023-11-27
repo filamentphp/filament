@@ -4,11 +4,11 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
-use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -68,12 +68,9 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
             ?? 'heroicon-o-rectangle-stack';
     }
 
-    /**
-     * @return Alignment
-     */
-    public function getSubNavigationAlignment(): Alignment
+    public function getSubNavigationPosition(): SubNavigationPosition
     {
-        return static::getResource()::getSubNavigationAlignment();
+        return static::getResource()::getSubNavigationPosition();
     }
 
     public function mount(int | string $record): void

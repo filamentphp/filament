@@ -11,7 +11,7 @@ use Filament\Actions\RestoreAction;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Support\Enums\Alignment;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -52,12 +52,9 @@ class ViewRecord extends Page
         return __('filament-panels::resources/pages/view-record.content.tab.label');
     }
 
-    /**
-     * @return Alignment
-     */
-    public function getSubNavigationAlignment(): Alignment
+    public function getSubNavigationPosition(): SubNavigationPosition
     {
-        return static::getResource()::getSubNavigationAlignment();
+        return static::getResource()::getSubNavigationPosition();
     }
 
     public function mount(int | string $record): void

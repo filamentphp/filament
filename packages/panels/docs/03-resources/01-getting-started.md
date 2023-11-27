@@ -453,16 +453,14 @@ public static function getRecordSubNavigation(Page $page): array
 
 Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
 
-### Aligning sub-navigation
+### Sub-navigation position
 
-You can opt to switch the position of the sub-navigation to the opposite side of the screen. This can be preferred as it keeps the content area of the screen in a consistent position.
-
-You can customize this by setting the `$subNavigationAlignment` property on the resource:
+The sub-navigation is rendered at the start of the page by default. You may change the position by setting the `$subNavigationPosition` property on the resource. The value may be `SubNavigationPosition::Start` or `SubNavigationPosition::End`:
 
 ```php
-use Filament\Support\Enums\Alignment;
+use Filament\Pages\SubNavigationPosition;
 
-protected static Alignment $subNavigationAlignment = Alignment::End;
+protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
 
 ## Deleting resource pages

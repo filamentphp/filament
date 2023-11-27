@@ -3,10 +3,10 @@
 ])
 
 @php
-    use Filament\Support\Enums\Alignment;
+    use Filament\Pages\SubNavigationPosition;
 
     $subNavigation = $this->getCachedSubNavigation();
-    $subNavigationAlignment = $this->getSubNavigationAlignment();
+    $subNavigationPosition = $this->getSubNavigationPosition();
     $widgetData = $this->getWidgetData();
 @endphp
 
@@ -85,7 +85,7 @@
                     </x-filament::input.select>
                 </x-filament::input.wrapper>
 
-                @if ($subNavigationAlignment === Alignment::Start)
+                @if ($subNavigationPosition === SubNavigationPosition::Start)
                     <x-filament-panels::sidebar.sub-navigation
                         :navigation="$subNavigation"
                     />
@@ -127,7 +127,7 @@
                 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.footer-widgets.after', scopes: $this->getRenderHookScopes()) }}
             </div>
 
-            @if ($subNavigation && $subNavigationAlignment === Alignment::End)
+            @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
                 <x-filament-panels::sidebar.sub-navigation
                     :navigation="$subNavigation"
                 />
