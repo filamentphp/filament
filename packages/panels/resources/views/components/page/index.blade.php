@@ -5,9 +5,9 @@
 @php
     use Filament\Support\Enums\Alignment;
 
-    $widgetData = $this->getWidgetData();
     $subNavigation = $this->getCachedSubNavigation();
     $subNavigationAlignment = $this->getSubNavigationAlignment();
+    $widgetData = $this->getWidgetData();
 @endphp
 
 <div
@@ -39,7 +39,7 @@
 
         <div
             @class([
-                'grid grid-cols-1 gap-6 md:grid-cols-4' => $subNavigation,
+                'flex flex-col gap-8 md:flex-row' => $subNavigation,
                 'h-full' => $fullHeight,
             ])
         >
@@ -51,8 +51,7 @@
 
             <div
                 @class([
-                    'grid auto-cols-fr gap-y-8',
-                    'col-span-1 md:col-span-3' => $subNavigation,
+                    'grid flex-1 auto-cols-fr gap-y-8',
                     'h-full' => $fullHeight,
                 ])
             >

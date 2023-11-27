@@ -21,16 +21,6 @@
                 // @deprecated `fi-dropdown-header-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
                 is_string($color) ? "fi-dropdown-header-color-{$color}" : null,
             ])
-            ->style([
-                \Filament\Support\get_color_css_variables(
-                    $color,
-                    shades: [
-                        400,
-                        ...(filled($icon) ? [500] : []),
-                        600,
-                    ],
-                ) => $color !== 'gray',
-            ])
     }}
 >
     @if (filled($icon))
@@ -49,6 +39,13 @@
                     default => 'text-custom-500 dark:text-custom-400',
                 },
             ])
+            @style([
+                \Filament\Support\get_color_css_variables(
+                    $color,
+                    shades: [400, 500],
+                    alias: 'dropdown.header.icon',
+                ) => $color !== 'gray',
+            ])
         />
     @endif
 
@@ -59,6 +56,13 @@
                 'gray' => 'text-gray-700 dark:text-gray-200',
                 default => 'text-custom-600 dark:text-custom-400',
             },
+        ])
+        @style([
+            \Filament\Support\get_color_css_variables(
+                $color,
+                shades: [400, 600],
+                alias: 'dropdown.header.label',
+            ) => $color !== 'gray',
         ])
     >
         {{ $slot }}

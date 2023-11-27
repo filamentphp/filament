@@ -7,6 +7,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -76,7 +77,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
      */
     protected ?array $blockPickerColumns = [];
 
-    protected string | Closure | null $blockPickerWidth = null;
+    protected MaxWidth | string | Closure | null $blockPickerWidth = null;
 
     protected function setUp(): void
     {
@@ -871,14 +872,14 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
         return $columns;
     }
 
-    public function blockPickerWidth(string | Closure | null $width): static
+    public function blockPickerWidth(MaxWidth | string | Closure | null $width): static
     {
         $this->blockPickerWidth = $width;
 
         return $this;
     }
 
-    public function getBlockPickerWidth(): ?string
+    public function getBlockPickerWidth(): MaxWidth | string | null
     {
         $width = $this->evaluate($this->blockPickerWidth);
 

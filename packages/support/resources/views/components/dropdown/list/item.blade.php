@@ -38,7 +38,8 @@
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
         \Filament\Support\get_color_css_variables(
             $color,
-            shades: [50, 400, 500, 600],
+            shades: [50, 400],
+            alias: 'dropdown.list.item',
         ) => $color !== 'gray',
     ]);
 
@@ -56,6 +57,14 @@
         },
     ]);
 
+    $iconStyles = \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [400, 500],
+            alias: 'dropdown.list.item.icon',
+        ) => $color !== 'gray',
+    ]);
+
     $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 rounded-full bg-cover bg-center';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -64,6 +73,14 @@
             'gray' => 'text-gray-700 dark:text-gray-200',
             default => 'text-custom-600 dark:text-custom-400 ',
         },
+    ]);
+
+    $labelStyles = \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [400, 600],
+            alias: 'dropdown.list.item.label',
+        ) => $color !== 'gray',
     ]);
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
@@ -113,7 +130,9 @@
                             'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                         ])
-                    )->class([$iconClasses])
+                    )
+                        ->class([$iconClasses])
+                        ->style([$iconStyles])
                 "
             />
         @endif
@@ -133,12 +152,14 @@
                             'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                             'wire:target' => $loadingIndicatorTarget,
                         ])
-                    )->class([$iconClasses])
+                    )
+                        ->class([$iconClasses])
+                        ->style([$iconStyles])
                 "
             />
         @endif
 
-        <span class="{{ $labelClasses }}">
+        <span class="{{ $labelClasses }}" style="{{ $labelStyles }}">
             {{ $slot }}
         </span>
 
@@ -174,6 +195,7 @@
                 :alias="$iconAlias"
                 :icon="$icon"
                 :class="$iconClasses"
+                :style="$iconStyles"
             />
         @endif
 
@@ -184,7 +206,7 @@
             ></div>
         @endif
 
-        <span class="{{ $labelClasses }}">
+        <span class="{{ $labelClasses }}" style="{{ $labelStyles }}">
             {{ $slot }}
         </span>
 
@@ -226,10 +248,11 @@
                     :alias="$iconAlias"
                     :icon="$icon"
                     :class="$iconClasses"
+                    :style="$iconStyles"
                 />
             @endif
 
-            <span class="{{ $labelClasses }}">
+            <span class="{{ $labelClasses }}" style="{{ $labelStyles }}">
                 {{ $slot }}
             </span>
 

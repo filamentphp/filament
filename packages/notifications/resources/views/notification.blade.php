@@ -49,6 +49,7 @@
         \Filament\Support\get_color_css_variables(
             $color,
             shades: [50, 400, 600],
+            alias: 'notifications::notification',
         ) => ! ($isInline || $color === 'gray'),
     ])
 >

@@ -31,7 +31,7 @@
                             IconColumnSize::Medium, 'md' => 'fi-ta-icon-item-size-md h-5 w-5',
                             IconColumnSize::Large, 'lg' => 'fi-ta-icon-item-size-lg h-6 w-6',
                             IconColumnSize::ExtraLarge, 'xl' => 'fi-ta-icon-item-size-xl h-7 w-7',
-                            IconColumnSize::ExtraExtraLarge, '2xl' => 'fi-ta-icon-item-size-2xl h-8 w-8',
+                            IconColumnSize::TwoExtraLarge, IconColumnSize::ExtraExtraLarge, '2xl' => 'fi-ta-icon-item-size-2xl h-8 w-8',
                             default => $size,
                         },
                         match ($color) {
@@ -43,6 +43,7 @@
                         \Filament\Support\get_color_css_variables(
                             $color,
                             shades: [400, 500],
+                            alias: 'tables::columns.icon-column.item',
                         ) => $color !== 'gray',
                     ])
                 />

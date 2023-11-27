@@ -142,6 +142,25 @@ You can make a section collapsed by default by using the `collapsed` attribute:
 </x-filament::section>
 ```
 
+### Persisting collapsed sections
+
+You can persist whether a section is collapsed in local storage using the `persist-collapsed` attribute, so it will remain collapsed when the user refreshes the page. You will also need a unique `id` attribute to identify the section from others, so that each section can persist its own collapse state:
+
+```blade
+<x-filament::section
+    collapsible
+    collapsed
+    persist-collapsed
+    id="user-details"
+>
+    <x-slot name="heading">
+        User details
+    </x-slot>
+
+    {{-- Content --}}
+</x-filament::section>
+```
+
 ## Adding the section header aside the content instead of above it
 
 You can change the position of the section header to be aside the content instead of above it by using the `aside` attribute:

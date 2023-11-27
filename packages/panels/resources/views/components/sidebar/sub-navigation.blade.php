@@ -2,7 +2,7 @@
     'subNavigation',
 ])
 
-<div wire:ignore class="col-span-1">
+<div wire:ignore>
     <x-filament::input.wrapper class="md:hidden">
         <x-filament::input.select
             x-data="{}"
@@ -14,9 +14,7 @@
                 @endphp
 
                 @if (filled($subNavigationGroupLabel))
-                    <optgroup
-                        label="{{ $subNavigationGroupLabel }}"
-                    >
+                    <optgroup label="{{ $subNavigationGroupLabel }}">
                         @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
                             <option
                                 @if ($subNavigationItem->isActive())
@@ -44,7 +42,7 @@
         </x-filament::input.select>
     </x-filament::input.wrapper>
 
-    <div class="hidden md:block">
+    <ul class="hidden w-72 flex-col gap-y-7 md:flex">
         @foreach ($subNavigation as $subNavigationGroup)
             <x-filament-panels::sidebar.group
                 :collapsible="$subNavigationGroup->isCollapsible()"
@@ -54,5 +52,5 @@
                 :sidebar-collapsible="false"
             />
         @endforeach
-    </div>
+    </ul>
 </div>
