@@ -102,6 +102,32 @@ Tabs::make('Label')
     ->persistTabInQueryString('settings-tab')
 ```
 
+## Persisting the current tab in the LocalStorage
+
+By default, the current tab is not persisted in the browser's Local Storage. You can change this behavior using the `persistTabInLocalStorage()` method, to which you pass etiher a boolean or a Closure.  
+If you choose to persist the current tab into the browser's Local Storage, Filament will always use Local Storage first before the eventual URL's query string from `persistTabInQueryString()`.
+
+```php
+use Filament\Infolists\Components\Tabs;
+
+Tabs::make('Label')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->persistTabInLocalStorage()
+```
+
 ## Setting a tab icon
 
 Tabs may have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), which you can set using the `icon()` method:
