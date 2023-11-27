@@ -83,7 +83,7 @@
                         </x-filament::input.select>
                     </x-filament::input.wrapper>
 
-                    <div class="hidden w-72 md:block">
+                    <ul class="hidden w-72 flex-col gap-y-7 md:flex">
                         @foreach ($subNavigation as $subNavigationGroup)
                             <x-filament-panels::sidebar.group
                                 :collapsible="$subNavigationGroup->isCollapsible()"
@@ -93,7 +93,7 @@
                                 :sidebar-collapsible="false"
                             />
                         @endforeach
-                    </div>
+                    </ul>
                 </div>
             @endif
 
