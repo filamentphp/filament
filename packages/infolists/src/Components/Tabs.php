@@ -10,6 +10,7 @@ class Tabs extends Component
 {
     use Concerns\CanBeContained;
     use Concerns\HasExtraAlpineAttributes;
+    use Concerns\CanBePersistedInLocalStorage;
 
     /**
      * @var view-string

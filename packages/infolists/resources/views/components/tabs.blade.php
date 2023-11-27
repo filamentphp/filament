@@ -5,16 +5,18 @@
 <div
     x-cloak
     x-data="{
-        tab: null,
+        tab: @if($isTabPersistedInLocalStorage()) $persist(null).as('{{ $getTabLocalStorageName() }}')  @else null @endif,
 
         init: function () {
             this.$watch('tab', () => this.updateQueryString())
 
-            this.tab = @js(collect($getChildComponentContainer()->getComponents())
-                        ->filter(static fn (\Filament\Infolists\Components\Tabs\Tab $tab): bool => $tab->isVisible())
-                        ->map(static fn (\Filament\Infolists\Components\Tabs\Tab $tab) => $tab->getId())
-                        ->values()
-                        ->get($getActiveTab() - 1))
+            if(this.tab === null) {
+                this.tab = @js(collect($getChildComponentContainer()->getComponents())
+                            ->filter(static fn (\Filament\Infolists\Components\Tabs\Tab $tab): bool => $tab->isVisible())
+                            ->map(static fn (\Filament\Infolists\Components\Tabs\Tab $tab) => $tab->getId())
+                            ->values()
+                            ->get($getActiveTab() - 1))
+            }
         },
 
         updateQueryString: function () {
