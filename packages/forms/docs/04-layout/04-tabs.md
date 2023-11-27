@@ -104,8 +104,7 @@ Tabs::make('Label')
 
 ## Persisting the current tab in the LocalStorage
 
-By default, the current tab is not persisted in the browser's Local Storage. You can change this behavior using the `persistTabInLocalStorage()` method, to which you pass etiher a boolean or a Closure.  
-If you choose to persist the current tab into the browser's Local Storage, Filament will always use Local Storage first before the eventual URL's query string from `persistTabInQueryString()`.
+By default, the current tab is not persisted in the browser's Local Storage. You can change this behavior using the `persistTabInLocalStorage()` method, to which you pass etiher a boolean or a Closure.
 
 ```php
 use Filament\Forms\Components\Tabs;
@@ -126,6 +125,32 @@ Tabs::make('Label')
             ]),
     ])
     ->persistTabInLocalStorage()
+
+```
+To persist the current tab, the local storage needs a unique ID to store the state. This ID is generated based on the Filament Page Type, the associated model's database table, and the model's primary key. If your have multiple tabs on your page that you do not want to tie together, you can manually specify the `tabLocalStorageName()` of that tab to prevent an ID conflict:
+
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Label')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->persistTabInLocalStorage()
+    ->tabLocalStorageName('order-tab'),
+
 ```
 
 ## Setting a tab icon
