@@ -5,12 +5,12 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Support\Concerns;
-use Illuminate\Support\Facades\LocalStorage;
 
 class Tabs extends Component
 {
     use Concerns\CanBeContained;
     use Concerns\HasExtraAlpineAttributes;
+    use Concerns\CanBePersistedInLocalStorage;
 
     /**
      * @var view-string
@@ -20,8 +20,6 @@ class Tabs extends Component
     protected int | Closure $activeTab = 1;
 
     protected string | Closure | null $tabQueryStringKey = null;
-
-    protected bool | Closure | null $persistTabInLocalStorage = false;
 
     final public function __construct(?string $label = null)
     {
@@ -60,13 +58,6 @@ class Tabs extends Component
         return $this;
     }
 
-    public function persistTabInLocalStorage(Closure | bool $value = true): static
-    {
-        $this->persistTabInLocalStorage = $value;
-
-        return $this;
-    }
-
     public function getActiveTab(): int
     {
         if ($this->isTabPersistedInQueryString()) {
@@ -84,11 +75,6 @@ class Tabs extends Component
         return $this->evaluate($this->activeTab);
     }
 
-    public function getTabLocalStorageName(): string
-    {
-        return str_slug(class_basename($this->getLivewire()).'-'.$this->getModelInstance()->getTable().'-'.$this->getModelInstance()->getKey().'-activeTab');
-    }
-
     public function getTabQueryStringKey(): ?string
     {
         return $this->evaluate($this->tabQueryStringKey);
@@ -97,10 +83,5 @@ class Tabs extends Component
     public function isTabPersistedInQueryString(): bool
     {
         return filled($this->getTabQueryStringKey());
-    }
-
-    public function isTabPersistedInLocalStorage(): bool
-    {
-        return $this->evaluate($this->persistTabInLocalStorage);
     }
 }
