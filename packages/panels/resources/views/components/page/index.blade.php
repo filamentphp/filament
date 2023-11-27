@@ -3,7 +3,10 @@
 ])
 
 @php
+    use Filament\Pages\SubNavigationPosition;
+
     $subNavigation = $this->getCachedSubNavigation();
+    $subNavigationPosition = $this->getSubNavigationPosition();
     $widgetData = $this->getWidgetData();
 @endphp
 
@@ -41,33 +44,20 @@
             ])
         >
             @if ($subNavigation)
-                <div wire:ignore>
-                    <x-filament::input.wrapper class="md:hidden">
-                        <x-filament::input.select
-                            x-data="{}"
-                            x-on:change="window.location = $event.target.value"
-                        >
-                            @foreach ($subNavigation as $subNavigationGroup)
-                                @php
-                                    $subNavigationGroupLabel = $subNavigationGroup->getLabel();
-                                @endphp
+                <x-filament::input.wrapper class="md:hidden" wire:ignore>
+                    <x-filament::input.select
+                        x-data="{}"
+                        x-on:change="window.location = $event.target.value"
+                    >
+                        @foreach ($subNavigation as $subNavigationGroup)
+                            @php
+                                $subNavigationGroupLabel = $subNavigationGroup->getLabel();
+                            @endphp
 
-                                @if (filled($subNavigationGroupLabel))
-                                    <optgroup
-                                        label="{{ $subNavigationGroupLabel }}"
-                                    >
-                                        @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
-                                            <option
-                                                @if ($subNavigationItem->isActive())
-                                                    selected
-                                                @endif
-                                                value="{{ $subNavigationItem->getUrl() }}"
-                                            >
-                                                {{ $subNavigationItem->getLabel() }}
-                                            </option>
-                                        @endforeach
-                                    </optgroup>
-                                @else
+                            @if (filled($subNavigationGroupLabel))
+                                <optgroup
+                                    label="{{ $subNavigationGroupLabel }}"
+                                >
                                     @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
                                         <option
                                             @if ($subNavigationItem->isActive())
@@ -78,23 +68,28 @@
                                             {{ $subNavigationItem->getLabel() }}
                                         </option>
                                     @endforeach
-                                @endif
-                            @endforeach
-                        </x-filament::input.select>
-                    </x-filament::input.wrapper>
-
-                    <ul class="hidden w-72 flex-col gap-y-7 md:flex">
-                        @foreach ($subNavigation as $subNavigationGroup)
-                            <x-filament-panels::sidebar.group
-                                :collapsible="$subNavigationGroup->isCollapsible()"
-                                :icon="$subNavigationGroup->getIcon()"
-                                :items="$subNavigationGroup->getItems()"
-                                :label="$subNavigationGroup->getLabel()"
-                                :sidebar-collapsible="false"
-                            />
+                                </optgroup>
+                            @else
+                                @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
+                                    <option
+                                        @if ($subNavigationItem->isActive())
+                                            selected
+                                        @endif
+                                        value="{{ $subNavigationItem->getUrl() }}"
+                                    >
+                                        {{ $subNavigationItem->getLabel() }}
+                                    </option>
+                                @endforeach
+                            @endif
                         @endforeach
-                    </ul>
-                </div>
+                    </x-filament::input.select>
+                </x-filament::input.wrapper>
+
+                @if ($subNavigationPosition === SubNavigationPosition::Start)
+                    <x-filament-panels::sidebar.sub-navigation
+                        :navigation="$subNavigation"
+                    />
+                @endif
             @endif
 
             <div
@@ -131,6 +126,12 @@
 
                 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.footer-widgets.after', scopes: $this->getRenderHookScopes()) }}
             </div>
+
+            @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
+                <x-filament-panels::sidebar.sub-navigation
+                    :navigation="$subNavigation"
+                />
+            @endif
         </div>
 
         @if ($footer = $this->getFooter())
