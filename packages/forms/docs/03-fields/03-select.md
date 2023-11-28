@@ -237,6 +237,7 @@ use Illuminate\Database\Eloquent\Model;
 Select::make('author_id')
     ->relationship(
         name: 'author',
+        titleAttribute: 'name',
         modifyQueryUsing: fn (Builder $query) => $query->orderBy('first_name')->orderBy('last_name'),
     )
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
