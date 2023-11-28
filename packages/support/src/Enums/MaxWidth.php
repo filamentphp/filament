@@ -45,4 +45,6 @@ enum MaxWidth
     case ScreenExtraLarge;
 
     case ScreenTwoExtraLarge;
+
+    case Screen;
 }
