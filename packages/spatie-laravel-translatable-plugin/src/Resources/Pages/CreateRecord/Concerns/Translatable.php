@@ -125,9 +125,13 @@ trait Translatable
             }
         }
 
-        if ($tenant = Filament::getTenant()) {
+        if (
+            static::getResource()::isScopedToTenant() &&
+            ($tenant = Filament::getTenant())
+        ) {
             return $this->associateRecordWithTenant($record, $tenant);
         }
+        
         $record->save();
 
         return $record;
