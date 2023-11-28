@@ -131,7 +131,7 @@ trait Translatable
         ) {
             return $this->associateRecordWithTenant($record, $tenant);
         }
-        
+
         $record->save();
 
         return $record;

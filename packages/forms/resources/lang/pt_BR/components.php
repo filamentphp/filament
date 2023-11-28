@@ -430,5 +430,5 @@ return [
         'true' => 'Sim',
         'false' => 'Não',
     ],
-    
+
 ];

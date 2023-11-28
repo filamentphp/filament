@@ -2,8 +2,8 @@
 
 namespace Filament\Infolists;
 
-use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 
