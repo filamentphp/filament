@@ -141,7 +141,7 @@ Builder\Block::make('paragraph')
 
 <AutoScreenshot name="forms/fields/builder/icons" alt="Builder with block icons in the dropdown" version="3.x" />
 
-### Limiting the amount of times a block can be added
+### Limiting the number of times a block can be added
 
 By default, each block can be added to the builder an unlimited number of times. You may limit this using the `maxItems()` method:
 
