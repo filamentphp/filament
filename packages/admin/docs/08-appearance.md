@@ -49,7 +49,7 @@ By default, the sidebar is only collapsible on mobile. You may make it collapsib
 
 You must [publish the configuration](installation#publishing-configuration) in order to access this feature.
 
-In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to `true`:
+In `config/filament.php`, set the `layout.sidebar.is_collapsible_on_desktop` to `true`:
 
 ```php
 'layout' => [
