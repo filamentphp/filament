@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\MaxWidth;
 @endphp
 
 @props([
@@ -159,18 +160,18 @@
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
                     match ($width) {
-                        'xs' => 'max-w-xs',
-                        'sm' => 'max-w-sm',
-                        'md' => 'max-w-md',
-                        'lg' => 'max-w-lg',
-                        'xl' => 'max-w-xl',
-                        '2xl' => 'max-w-2xl',
-                        '3xl' => 'max-w-3xl',
-                        '4xl' => 'max-w-4xl',
-                        '5xl' => 'max-w-5xl',
-                        '6xl' => 'max-w-6xl',
-                        '7xl' => 'max-w-7xl',
-                        'screen' => 'fixed inset-0',
+                        MaxWidth::ExtraSmall, 'xs' => 'max-w-xs',
+                        MaxWidth::Small, 'sm' => 'max-w-sm',
+                        MaxWidth::Medium, 'md' => 'max-w-md',
+                        MaxWidth::Large, 'lg' => 'max-w-lg',
+                        MaxWidth::ExtraLarge, 'xl' => 'max-w-xl',
+                        MaxWidth::TwoExtraLarge, '2xl' => 'max-w-2xl',
+                        MaxWidth::ThreeExtraLarge, '3xl' => 'max-w-3xl',
+                        MaxWidth::FourExtraLarge, '4xl' => 'max-w-4xl',
+                        MaxWidth::FiveExtraLarge, '5xl' => 'max-w-5xl',
+                        MaxWidth::SixExtraLarge, '6xl' => 'max-w-6xl',
+                        MaxWidth::SevenExtraLarge, '7xl' => 'max-w-7xl',
+                        MaxWidth::Screen, 'screen' => 'fixed inset-0',
                         default => $width,
                     },
                 ])
@@ -235,6 +236,7 @@
                                             \Filament\Support\get_color_css_variables(
                                                 $iconColor,
                                                 shades: [100, 400, 500, 600],
+                                                alias: 'modal.icon',
                                             ) => $iconColor !== 'gray',
                                         ])
                                     >

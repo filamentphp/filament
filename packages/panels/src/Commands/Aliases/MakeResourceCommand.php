@@ -8,5 +8,5 @@ class MakeResourceCommand extends Commands\MakeResourceCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'filament:resource {name?} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--F|force}';
+    protected $signature = 'filament:resource {name?} {--model-namespace=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--F|force}';
 }

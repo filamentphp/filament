@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Facades\FilamentView;
 @endphp
 
 <x-dynamic-component
@@ -24,7 +25,11 @@
     @endphp
 
     <div
-        ax-load
+        @if (FilamentView::hasSpaMode())
+            ax-load="visible"
+        @else
+            ax-load
+        @endif
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
