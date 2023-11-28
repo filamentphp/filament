@@ -982,6 +982,7 @@
                                             :attributes="
                                                 \Filament\Support\prepare_inherited_attributes($column->getExtraCellAttributeBag())
                                                     ->class([
+                                                        $column->canGrow() ? 'w-full flex-1' : null,
                                                         'fi-table-cell-' . str($column->getName())->camel()->kebab(),
                                                         $getHiddenClasses($column),
                                                     ])
