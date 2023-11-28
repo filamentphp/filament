@@ -62,35 +62,28 @@
                                 <optgroup
                                     label="{{ $subNavigationGroupLabel }}"
                                 >
+                            @endif
                                     @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
-                                        <option
-                                            @if ($subNavigationItem->isActive())
-                                                selected
-                                            @endif
-                                            value="{{ $subNavigationItem->getUrl() }}"
-                                        >
-                                            {{ $subNavigationItem->getLabel() }}
-                                        </option>
+                                        @foreach ([$subNavigationItem, ...$subNavigationItem->getChildItems()] as $subNavigationItemChild)
+                                            <option
+                                                @if ($subNavigationItem->isActive())
+                                                    selected
+                                                @endif
+                                                value="{{ $subNavigationItem->getUrl() }}"
+                                            >
+                                                @if ($loop->index)&ensp;&ensp;@endif{{ $subNavigationItem->getLabel() }}
+                                            </option>
+                                        @endforeach
                                     @endforeach
+                            @if (filled($subNavigationGroupLabel))
                                 </optgroup>
-                            @else
-                                @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
-                                    <option
-                                        @if ($subNavigationItem->isActive())
-                                            selected
-                                        @endif
-                                        value="{{ $subNavigationItem->getUrl() }}"
-                                    >
-                                        {{ $subNavigationItem->getLabel() }}
-                                    </option>
-                                @endforeach
                             @endif
                         @endforeach
                     </x-filament::input.select>
                 </x-filament::input.wrapper>
 
                 @if ($subNavigationPosition === SubNavigationPosition::Start)
-                    <x-filament-panels::sidebar.sub-navigation
+                    <x-filament-panels::page.sub-navigation
                         :navigation="$subNavigation"
                     />
                 @endif
@@ -188,7 +181,7 @@
             </div>
 
             @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
-                <x-filament-panels::sidebar.sub-navigation
+                <x-filament-panels::page.sub-navigation
                     :navigation="$subNavigation"
                 />
             @endif
