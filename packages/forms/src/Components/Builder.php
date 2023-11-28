@@ -831,11 +831,15 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return (bool) $this->evaluate($this->isBlockLabelTruncated);
     }
 
+    /**
+     * @return Component[]
+     */    
     public function getBlockPickerBlocks(): array
     {
         $state = $this->getState();
     
         return array_filter($this->getBlocks(), function ($block) use ($state) {
+            /** @var Block $block */
             $count = collect($state)->filter(function ($item) use ($block) {
                 return $item['type'] === $block->getName();
             })->count();
