@@ -543,3 +543,28 @@ Repeater::make('members')
 ```
 
 > The `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.
+
+### Adding an extra repeater actions to the header
+
+You can provide an array of additional actions to be displayed in the repeater's header, positioned between the default actions, by utilizing the `extraHeaderActions()` method:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Repeater;
+ 
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->extraHeaderActions([
+        Action::make('reset')
+            ->icon('heroicon-s-arrow-path')
+            ->iconButton()
+            ->color('warning')
+            ->requiresConfirmation()
+            ->action(function () {
+                 // ...
+            }),
+        // ...
+    ])
+```

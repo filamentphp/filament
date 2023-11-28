@@ -11,6 +11,7 @@
         $moveDownAction = $getAction($getMoveDownActionName());
         $moveUpAction = $getAction($getMoveUpActionName());
         $reorderAction = $getAction($getReorderActionName());
+        $extraHeaderActions = $getAction($getExtraHeaderActionName());
 
         $isAddable = $isAddable();
         $isCloneable = $isCloneable();
@@ -106,12 +107,12 @@
                             x-on:repeater-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                             x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                             x-sortable-item="{{ $uuid }}"
-                            class="fi-fo-repeater-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
+                            class="bg-white shadow-sm fi-fo-repeater-item rounded-xl ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                             x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                         >
                             @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible)
                                 <div
-                                    class="fi-fo-repeater-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3"
+                                    class="flex items-center px-4 py-3 overflow-hidden fi-fo-repeater-item-header gap-x-3"
                                 >
                                     @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
                                         <ul class="flex items-center gap-x-3">
@@ -154,7 +155,7 @@
 
                                     @if ($isCloneable || $isDeletable || $isCollapsible)
                                         <ul
-                                            class="ms-auto flex items-center gap-x-3"
+                                            class="flex items-center ms-auto gap-x-3"
                                         >
                                             @if ($isCloneable)
                                                 <li>
@@ -167,6 +168,12 @@
                                                     {{ $deleteAction(['item' => $uuid]) }}
                                                 </li>
                                             @endif
+
+                                            @foreach ($getExtraHeaderActions() as $action)
+                                                <li>
+                                                    {{ $action }}
+                                                </li>
+                                            @endforeach
 
                                             @if ($isCollapsible)
                                                 <li
@@ -182,7 +189,7 @@
                                                     </div>
 
                                                     <div
-                                                        class="absolute inset-0 rotate-180 transition"
+                                                        class="absolute inset-0 transition rotate-180"
                                                         x-bind:class="{ 'opacity-0 pointer-events-none': ! isCollapsed }"
                                                     >
                                                         {{ $getAction('expand') }}
@@ -196,7 +203,7 @@
 
                             <div
                                 x-show="! isCollapsed"
-                                class="fi-fo-repeater-item-content border-t border-gray-100 p-4 dark:border-white/10"
+                                class="p-4 border-t border-gray-100 fi-fo-repeater-item-content dark:border-white/10"
                             >
                                 {{ $item }}
                             </div>
@@ -204,9 +211,9 @@
 
                         @if (! $loop->last)
                             @if ($isAddable && $addBetweenAction->isVisible())
-                                <li class="flex w-full justify-center">
+                                <li class="flex justify-center w-full">
                                     <div
-                                        class="rounded-lg bg-white dark:bg-gray-900"
+                                        class="bg-white rounded-lg dark:bg-gray-900"
                                     >
                                         {{ $addBetweenAction(['afterItem' => $uuid]) }}
                                     </div>
@@ -216,7 +223,7 @@
                                     class="relative border-t border-gray-200 dark:border-white/10"
                                 >
                                     <span
-                                        class="absolute -top-3 left-3 bg-white px-1 text-sm font-medium dark:bg-gray-900"
+                                        class="absolute px-1 text-sm font-medium bg-white -top-3 left-3 dark:bg-gray-900"
                                     >
                                         {{ $labelBetweenItems }}
                                     </span>

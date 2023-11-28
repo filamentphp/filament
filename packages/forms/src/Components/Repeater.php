@@ -91,6 +91,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected bool | Closure $isItemLabelTruncated = true;
 
+    protected array $cachedExtraHeaderActions;
+
+    protected array $extraHeaderActions = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -129,6 +133,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             fn (Repeater $component): Action => $component->getMoveDownAction(),
             fn (Repeater $component): Action => $component->getMoveUpAction(),
             fn (Repeater $component): Action => $component->getReorderAction(),
+            fn (Repeater $component): array => $component->getExtraHeaderActions(),
         ]);
 
         $this->mutateDehydratedStateUsing(static function (Repeater $component, ?array $state): array {
@@ -570,6 +575,33 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function getExpandAllActionName(): string
     {
         return 'expandAll';
+    }
+
+    public function extraHeaderActions(array $actions): static
+    {
+        $this->extraHeaderActions = $actions;
+
+        return $this;
+    }
+
+    public function getExtraHeaderActionName(): string
+    {
+        return 'extra';
+    }
+
+    public function getExtraHeaderActions(): array
+    {
+        if (isset($this->cachedExtraHeaderActions)) {
+            return $this->cachedExtraHeaderActions;
+        }
+
+        $actions = [];
+
+        foreach ($this->evaluate($this->extraHeaderActions) as $action) {
+            $actions[$action->getName()] = $action;
+        }
+
+        return $this->cachedExtraHeaderActions = $actions;
     }
 
     public function addActionLabel(string | Closure | null $label): static

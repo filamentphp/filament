@@ -78,6 +78,10 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     protected MaxWidth | string | Closure | null $blockPickerWidth = null;
 
+    protected array $cachedExtraHeaderActions;
+
+    protected array $extraHeaderActions = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -106,6 +110,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             fn (Builder $component): Action => $component->getMoveDownAction(),
             fn (Builder $component): Action => $component->getMoveUpAction(),
             fn (Builder $component): Action => $component->getReorderAction(),
+            fn (Builder $component): array => $component->getExtraHeaderActions(),
         ]);
 
         $this->mutateDehydratedStateUsing(static function (?array $state): array {
@@ -553,6 +558,33 @@ class Builder extends Field implements Contracts\CanConcealComponents
     public function getExpandAllActionName(): string
     {
         return 'expandAll';
+    }
+
+    public function extraHeaderActions(array $actions): static
+    {
+        $this->extraHeaderActions = $actions;
+
+        return $this;
+    }
+
+    public function getExtraHeaderActionName(): string
+    {
+        return 'extra';
+    }
+
+    public function getExtraHeaderActions(): array
+    {
+        if (isset($this->cachedExtraHeaderActions)) {
+            return $this->cachedExtraHeaderActions;
+        }
+
+        $actions = [];
+
+        foreach ($this->evaluate($this->extraHeaderActions) as $action) {
+            $actions[$action->getName()] = $action;
+        }
+
+        return $this->cachedExtraHeaderActions = $actions;
     }
 
     public function truncateBlockLabel(bool | Closure $condition = true): static
