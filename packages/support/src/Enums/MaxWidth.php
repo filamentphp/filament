@@ -4,10 +4,6 @@ namespace Filament\Support\Enums;
 
 enum MaxWidth
 {
-    case Zero;
-
-    case None;
-
     case ExtraSmall;
 
     case Small;
