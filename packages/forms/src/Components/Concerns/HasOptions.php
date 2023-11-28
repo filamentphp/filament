@@ -5,7 +5,6 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Collection;
 
 trait HasOptions
 {
