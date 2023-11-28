@@ -426,4 +426,9 @@ return [
 
     ],
 
+    'radio' => [
+        'true' => 'Sim',
+        'false' => 'Não',
+    ],
+    
 ];
