@@ -27,8 +27,6 @@ class Radio extends Field implements Contracts\CanDisableOptions
      */
     protected array | Arrayable | Closure $descriptions = [];
 
-    protected bool | Closure | null $isOptionDisabled = null;
-
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
     {
         $this->options([
