@@ -141,6 +141,22 @@ Builder\Block::make('paragraph')
 
 <AutoScreenshot name="forms/fields/builder/icons" alt="Builder with block icons in the dropdown" version="3.x" />
 
+### Limiting the amount of times a block can be added
+
+By default, each block can be added to the builder an unlimited number of times. You may limit this using the `maxItems()` method:
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\TextInput;
+
+Builder\Block::make('heading')
+    ->schema([
+        TextInput::make('content')
+            ->maxItems(1),
+        // ...
+    ])
+```
+
 ## Adding items
 
 An action button is displayed below the builder to allow the user to add a new item.
