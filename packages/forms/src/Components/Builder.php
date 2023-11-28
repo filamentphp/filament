@@ -832,7 +832,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     }
 
     /**
-     * @return Component[]
+     * @return array<Block>
      */    
     public function getBlockPickerBlocks(): array
     {
@@ -840,11 +840,17 @@ class Builder extends Field implements Contracts\CanConcealComponents
     
         return array_filter($this->getBlocks(), function ($block) use ($state) {
             /** @var Block $block */
+            $maxItems = $block->getMaxItems();
+
+            if (is_null($maxItems)) {
+                return true;
+            }
+    
             $count = collect($state)->filter(function ($item) use ($block) {
                 return $item['type'] === $block->getName();
             })->count();
-
-            return is_null($block->getMaxItems()) || $count < $block->getMaxItems();
+    
+            return $count < $maxItems;
         });
     }
 
