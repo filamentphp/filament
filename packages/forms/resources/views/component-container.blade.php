@@ -9,7 +9,10 @@
     :lg="$getColumns('lg')"
     :xl="$getColumns('xl')"
     :two-xl="$getColumns('2xl')"
-    class="fi-fo-component-ctn gap-6"
+    :attributes="
+        \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+            ->class(['fi-fo-component-ctn gap-6'])
+    "
 >
     @foreach ($getComponents(withHidden: true) as $formComponent)
         @php

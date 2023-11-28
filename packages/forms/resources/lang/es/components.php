@@ -70,6 +70,134 @@ return [
 
     ],
 
+    'file_upload' => [
+
+        'editor' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'Cancelar',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'Modo de arrastre "recortar"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'Modo de arrastre "mover"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'Voltear imagen horizontalmente',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'Voltear imagen verticalmente',
+                ],
+
+                'move_down' => [
+                    'label' => 'Mover imagen hacia abajo',
+                ],
+
+                'move_left' => [
+                    'label' => 'Mover imagen a la izquierda',
+                ],
+
+                'move_right' => [
+                    'label' => 'Mover imagen a la derecha',
+                ],
+
+                'move_up' => [
+                    'label' => 'Mover imagen hacia arriba',
+                ],
+
+                'reset' => [
+                    'label' => 'Reiniciar',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'Girar imagen a la izquierda',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'Girar imagen a la derecha',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'Establecer relación de aspecto a :ratio',
+                ],
+
+                'save' => [
+                    'label' => 'Guardar',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'Ampliar imagen al 100%',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'Acercarse',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'Alejarse',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'Altura',
+                    'unit' => 'px',
+                ],
+
+                'rotation' => [
+                    'label' => 'Rotación',
+                    'unit' => 'grados',
+                ],
+
+                'width' => [
+                    'label' => 'Ancho',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'Relaciones de aspecto',
+
+                'no_fixed' => [
+                    'label' => 'Libre',
+                ],
+
+            ],
+
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'No se recomienda editar archivos SVG ya que puede provocar una pérdida de calidad al escalar.\n ¿Está seguro de que desea continuar?',
+                    'disabled' => 'La edición de archivos SVG está deshabilitada ya que puede provocar una pérdida de calidad al escalar.',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'actions' => [
@@ -111,11 +239,9 @@ return [
             'bullet_list' => 'Viñetas',
             'code_block' => 'Bloque de código',
             'heading' => 'Encabezado',
-            'edit' => 'Escribir',
             'italic' => 'Cursiva',
             'link' => 'Enlace',
             'ordered_list' => 'Lista numerada',
-            'preview' => 'Vista previa',
             'strike' => 'Tachado',
             'redo' => 'Rehacer',
             'table' => 'Tabla',
@@ -130,6 +256,10 @@ return [
 
             'add' => [
                 'label' => 'Añadir a :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Insertar entre',
             ],
 
             'delete' => [

@@ -177,6 +177,13 @@ trait CanBeValidated
         return $this;
     }
 
+    public function hexColor(bool | Closure $condition = true): static
+    {
+        $this->rule('hex_color', $condition);
+
+        return $this;
+    }
+
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */

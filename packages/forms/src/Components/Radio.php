@@ -27,11 +27,13 @@ class Radio extends Field implements Contracts\CanDisableOptions
      */
     protected array | Arrayable | Closure $descriptions = [];
 
-    public function boolean(string $trueLabel = 'Yes', string $falseLabel = 'No'): static
+    protected bool | Closure | null $isOptionDisabled = null;
+
+    public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
     {
         $this->options([
-            1 => $trueLabel,
-            0 => $falseLabel,
+            1 => $trueLabel ?? __('filament-forms::components.radio.true'),
+            0 => $falseLabel ?? __('filament-forms::components.radio.false'),
         ]);
 
         return $this;
