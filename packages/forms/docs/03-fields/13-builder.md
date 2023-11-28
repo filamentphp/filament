@@ -152,9 +152,9 @@ use Filament\Forms\Components\TextInput;
 Builder\Block::make('heading')
     ->schema([
         TextInput::make('content')
-            ->maxItems(1),
         // ...
     ])
+    ->maxItems(1),
 ```
 
 ## Adding items
