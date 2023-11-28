@@ -54,7 +54,7 @@ return [
 
         'max_rows' => [
             'title' => 'Uploaded CSV file is too large',
-            'body' => 'You may not import more than :count row at once.|You may not import more than :count rows at once.',
+            'body' => 'You may not import more than 1 row at once.|You may not import more than :count rows at once.',
         ],
 
         'started' => [

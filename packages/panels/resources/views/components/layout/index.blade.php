@@ -47,6 +47,10 @@
                 @class([
                     'fi-main mx-auto h-full w-full px-4 md:px-6 lg:px-8',
                     match ($maxContentWidth ??= (filament()->getMaxContentWidth() ?? MaxWidth::SevenExtraLarge)) {
+                        MaxWidth::ExtraSmall, 'xs' => 'max-w-xs',
+                        MaxWidth::Small, 'sm' => 'max-w-sm',
+                        MaxWidth::Medium, 'md' => 'max-w-md',
+                        MaxWidth::Large, 'lg' => 'max-w-lg',
                         MaxWidth::ExtraLarge, 'xl' => 'max-w-xl',
                         MaxWidth::TwoExtraLarge, '2xl' => 'max-w-2xl',
                         MaxWidth::ThreeExtraLarge, '3xl' => 'max-w-3xl',
@@ -54,13 +58,16 @@
                         MaxWidth::FiveExtraLarge, '5xl' => 'max-w-5xl',
                         MaxWidth::SixExtraLarge, '6xl' => 'max-w-6xl',
                         MaxWidth::SevenExtraLarge, '7xl' => 'max-w-7xl',
+                        MaxWidth::Full, 'full' => 'max-w-full',
+                        MaxWidth::MinContent, 'min' => 'max-w-min',
+                        MaxWidth::MaxContent, 'max' => 'max-w-max',
+                        MaxWidth::FitContent, 'fit' => 'max-w-fit',
                         MaxWidth::Prose, 'prose' => 'max-w-prose',
                         MaxWidth::ScreenSmall, 'screen-sm' => 'max-w-screen-sm',
                         MaxWidth::ScreenMedium, 'screen-md' => 'max-w-screen-md',
                         MaxWidth::ScreenLarge, 'screen-lg' => 'max-w-screen-lg',
                         MaxWidth::ScreenExtraLarge, 'screen-xl' => 'max-w-screen-xl',
                         MaxWidth::ScreenTwoExtraLarge, 'screen-2xl' => 'max-w-screen-2xl',
-                        MaxWidth::Full, 'full' => 'max-w-full',
                         default => $maxContentWidth,
                     },
                 ])

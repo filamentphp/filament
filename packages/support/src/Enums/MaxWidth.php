@@ -26,9 +26,15 @@ enum MaxWidth
 
     case SevenExtraLarge;
 
-    case Prose;
+    case Full;
 
-    case Screen;
+    case MinContent;
+
+    case MaxContent;
+
+    case FitContent;
+
+    case Prose;
 
     case ScreenSmall;
 
@@ -40,5 +46,5 @@ enum MaxWidth
 
     case ScreenTwoExtraLarge;
 
-    case Full;
+    case Screen;
 }
