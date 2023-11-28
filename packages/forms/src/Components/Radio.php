@@ -34,8 +34,8 @@ class Radio extends Field
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
     {
         $this->options([
-            1 => $trueLabel ?? __('filament-forms::components.select.boolean.true'),
-            0 => $falseLabel ?? __('filament-forms::components.select.boolean.false'),
+            1 => $trueLabel ?? __('filament-forms::components.radio.true'),
+            0 => $falseLabel ?? __('filament-forms::components.radio.false'),
         ]);
 
         return $this;

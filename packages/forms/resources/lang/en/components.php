@@ -425,5 +425,10 @@ return [
         ],
 
     ],
+    
+    'radio' => [
+        'true' => 'Yes',
+        'false' => 'No',
+    ],
 
 ];
