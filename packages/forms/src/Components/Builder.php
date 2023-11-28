@@ -832,7 +832,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     }
 
     /**
-     * @return array<Block>
+     * @return array<Component>
      */    
     public function getBlockPickerBlocks(): array
     {
