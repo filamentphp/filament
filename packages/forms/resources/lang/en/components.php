@@ -250,6 +250,15 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Yes',
+            'false' => 'No',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
@@ -424,11 +433,6 @@ return [
 
         ],
 
-    ],
-
-    'radio' => [
-        'true' => 'Yes',
-        'false' => 'No',
     ],
 
 ];
