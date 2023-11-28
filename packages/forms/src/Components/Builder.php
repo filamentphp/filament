@@ -831,6 +831,19 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return (bool) $this->evaluate($this->isBlockLabelTruncated);
     }
 
+    public function getBlockPickerBlocks()
+    {
+        $state = $this->getState();
+    
+        return array_filter($this->getBlocks(), function ($block) use ($state) {
+            $count = collect($state)->filter(function ($item) use ($block) {
+                return $item['type'] === $block->getName();
+            })->count();
+
+            return is_null($block->getMaxItems()) || $count < $block->getMaxItems();
+        });
+    }
+
     /**
      * @param  array<string, int | string | null> | int | string | null  $columns
      */
