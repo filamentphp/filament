@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
@@ -25,6 +26,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
+    use HasReorderAnimationDuration;
 
     protected string | Closure | null $addActionLabel = null;
 
