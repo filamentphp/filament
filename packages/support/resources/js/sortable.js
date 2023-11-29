@@ -6,7 +6,7 @@ export default (Alpine) => {
     Alpine.directive('sortable', (el) => {
         let animation = parseInt(el.dataset?.sortableAnimationDuration)
 
-        if ((animation !== 0) && (! animation)) {
+        if (animation !== 0 && !animation) {
             animation = 300
         }
 

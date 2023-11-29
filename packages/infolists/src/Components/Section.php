@@ -3,8 +3,8 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Filament\Support\Concerns\HasAsideStickyHeader;
 use Filament\Infolists\Components\Concerns\HasHeaderActions;
+use Filament\Support\Concerns\HasAsideStickyHeader;
 use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasHeading;
