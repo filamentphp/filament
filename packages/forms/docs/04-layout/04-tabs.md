@@ -10,7 +10,7 @@ Some forms can be long and complex. You may want to use tabs to reduce the numbe
 ```php
 use Filament\Forms\Components\Tabs;
 
-Tabs::make('Label')
+Tabs::make('Tabs')
     ->tabs([
         Tabs\Tab::make('Tab 1')
             ->schema([
@@ -29,39 +29,27 @@ Tabs::make('Label')
 
 <AutoScreenshot name="forms/layout/tabs/simple" alt="Tabs" version="3.x" />
 
-## Setting the default active tab
+## Persisting the current tab
 
-The first tab will be open by default. You can change the default open tab using the `activeTab()` method:
+By default, the current tab is not persisted in the browser's local storage. You can change this behavior using the `persistTab()` method. You must also pass in a unique `id()` for the tabs component, to distinguish it from all other sets of tabs in the app. This ID will be used as the key in the local storage to store the current tab:
 
 ```php
 use Filament\Forms\Components\Tabs;
 
-Tabs::make('Label')
+Tabs::make('Tabs')
     ->tabs([
-        Tabs\Tab::make('Tab 1')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Tab 2')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Tab 3')
-            ->schema([
-                // ...
-            ]),
+        // ...
     ])
-    ->activeTab(2)
+    ->persistTab()
+    ->id('order-tabs')
 ```
 
-## Persisting the current tab in the URL's query string
-
-By default, the current tab is not persisted in the URL's query string. You can change this behavior using the `persistTabInQueryString()` method:
+### Persisting the current tab in the URL's query string
 
 ```php
 use Filament\Forms\Components\Tabs;
 
-Tabs::make('Label')
+Tabs::make('Tabs')
     ->tabs([
         Tabs\Tab::make('Tab 1')
             ->schema([
@@ -84,7 +72,7 @@ By default, the current tab is persisted in the URL's query string using the `ta
 ```php
 use Filament\Forms\Components\Tabs;
 
-Tabs::make('Label')
+Tabs::make('Tabs')
     ->tabs([
         Tabs\Tab::make('Tab 1')
             ->schema([
@@ -102,6 +90,57 @@ Tabs::make('Label')
     ->persistTabInQueryString('settings-tab')
 ```
 
+## Persisting the current tab in the LocalStorage
+
+By default, the current tab is not persisted in the browser's Local Storage. You can change this behavior using the `persistTabInLocalStorage()` method, to which you pass etiher a boolean or a Closure.
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Tabs')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->persistTabInLocalStorage()
+
+```
+To persist the current tab, the local storage needs a unique ID to store the state. This ID is generated based on the Filament Page Type, the associated model's database table, and the model's primary key. If your have multiple tabs on your page that you do not want to tie together, you can manually specify the `tabLocalStorageName()` of that tab to prevent an ID conflict:
+
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Tabs')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->persistTabInLocalStorage()
+    ->tabLocalStorageName('order-tab'),
+
+```
+
 ## Setting a tab icon
 
 Tabs may have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), which you can set using the `icon()` method:
@@ -109,7 +148,7 @@ Tabs may have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), whic
 ```php
 use Filament\Forms\Components\Tabs;
 
-Tabs::make('Label')
+Tabs::make('Tabs')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->icon('heroicon-m-bell')
@@ -130,7 +169,7 @@ The icon of the tab may be positioned before or after the label using the `iconP
 use Filament\Forms\Components\Tabs;
 use Filament\Support\Enums\IconPosition;
 
-Tabs::make('Label')
+Tabs::make('Tabs')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->icon('heroicon-m-bell')
@@ -151,7 +190,7 @@ Tabs may have a badge, which you can set using the `badge()` method:
 ```php
 use Filament\Forms\Components\Tabs;
 
-Tabs::make('Label')
+Tabs::make('Tabs')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->badge(5)
@@ -169,7 +208,7 @@ If you'd like to change the color for a badge, you can use the `badgeColor()` me
 ```php
 use Filament\Forms\Components\Tabs;
 
-Tabs::make('Label')
+Tabs::make('Tabs')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->badge(5)
@@ -188,7 +227,7 @@ You may use the `columns()` method to customize the [grid](grid) within the tab:
 ```php
 use Filament\Forms\Components\Tabs;
 
-Tabs::make('Label')
+Tabs::make('Tabs')
     ->tabs([
         Tabs\Tab::make('Tab 1')
             ->schema([
@@ -206,7 +245,7 @@ By default, tabs and their content are wrapped in a container styled as a card. 
 ```php
 use Filament\Forms\Components\Tabs;
 
-Tabs::make('Label')
+Tabs::make('Tabs')
     ->tabs([
         Tabs\Tab::make('Tab 1')
             ->schema([

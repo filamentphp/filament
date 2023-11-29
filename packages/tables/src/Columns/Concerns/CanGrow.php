@@ -6,17 +6,17 @@ use Closure;
 
 trait CanGrow
 {
-    protected bool | Closure $canGrow = true;
+    protected bool | Closure | null $canGrow = null;
 
-    public function grow(bool | Closure $condition = true): static
+    public function grow(bool | Closure | null $condition = true): static
     {
         $this->canGrow = $condition;
 
         return $this;
     }
 
-    public function canGrow(): bool
+    public function canGrow(bool $default = false): bool
     {
-        return (bool) $this->evaluate($this->canGrow);
+        return (bool) ($this->evaluate($this->canGrow) ?? $default);
     }
 }
