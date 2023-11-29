@@ -3,6 +3,7 @@
 namespace Filament\Navigation;
 
 use Closure;
+use Exception;
 use Filament\Support\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
 
@@ -171,7 +172,13 @@ class NavigationItem extends Component
 
     public function getIcon(): ?string
     {
-        return $this->evaluate($this->icon);
+        $icon = $this->evaluate($this->icon);
+
+        if (blank($icon) && $this->getChildItems()) {
+            throw new Exception("Navigation item [{$this->getLabel()}] has child items but no icon. Parent items must have an icon to ensure a proper user experience.");
+        }
+
+        return $icon;
     }
 
     public function isVisible(): bool
