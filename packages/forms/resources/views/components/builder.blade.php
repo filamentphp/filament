@@ -1,31 +1,31 @@
+@php
+    $containers = $getChildComponentContainers();
+    $blockPickerBlocks = $getBlockPickerBlocks();
+    $blockPickerColumns = $getBlockPickerColumns();
+    $blockPickerWidth = $getBlockPickerWidth();
+    $blocks = $getBlocks();
+
+    $addAction = $getAction($getAddActionName());
+    $addBetweenAction = $getAction($getAddBetweenActionName());
+    $cloneAction = $getAction($getCloneActionName());
+    $collapseAllAction = $getAction($getCollapseAllActionName());
+    $expandAllAction = $getAction($getExpandAllActionName());
+    $deleteAction = $getAction($getDeleteActionName());
+    $moveDownAction = $getAction($getMoveDownActionName());
+    $moveUpAction = $getAction($getMoveUpActionName());
+    $reorderAction = $getAction($getReorderActionName());
+
+    $isAddable = $isAddable();
+    $isCloneable = $isCloneable();
+    $isCollapsible = $isCollapsible();
+    $isDeletable = $isDeletable();
+    $isReorderableWithButtons = $isReorderableWithButtons();
+    $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
+
+    $statePath = $getStatePath();
+@endphp
+
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $containers = $getChildComponentContainers();
-        $blockPickerBlocks = $getBlockPickerBlocks();
-        $blockPickerColumns = $getBlockPickerColumns();
-        $blockPickerWidth = $getBlockPickerWidth();
-        $blocks = $getBlocks();
-
-        $addAction = $getAction($getAddActionName());
-        $addBetweenAction = $getAction($getAddBetweenActionName());
-        $cloneAction = $getAction($getCloneActionName());
-        $collapseAllAction = $getAction($getCollapseAllActionName());
-        $expandAllAction = $getAction($getExpandAllActionName());
-        $deleteAction = $getAction($getDeleteActionName());
-        $moveDownAction = $getAction($getMoveDownActionName());
-        $moveUpAction = $getAction($getMoveUpActionName());
-        $reorderAction = $getAction($getReorderActionName());
-
-        $isAddable = $isAddable();
-        $isCloneable = $isCloneable();
-        $isCollapsible = $isCollapsible();
-        $isDeletable = $isDeletable();
-        $isReorderableWithButtons = $isReorderableWithButtons();
-        $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
-
-        $statePath = $getStatePath();
-    @endphp
-
     <div
         x-data="{}"
         {{

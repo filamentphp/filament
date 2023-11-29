@@ -34,8 +34,8 @@ class Radio extends Field
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
     {
         $this->options([
-            1 => $trueLabel ?? __('filament-forms::components.radio.true'),
-            0 => $falseLabel ?? __('filament-forms::components.radio.false'),
+            1 => $trueLabel ?? __('filament-forms::components.radio.boolean.true'),
+            0 => $falseLabel ?? __('filament-forms::components.radio.boolean.false'),
         ]);
 
         return $this;
@@ -51,6 +51,7 @@ class Radio extends Field
     public function inline(bool | Closure $condition = true): static
     {
         $this->isInline = $condition;
+        $this->inlineLabel(fn (Radio $component): ?bool => $component->evaluate($condition) ? true : null);
 
         return $this;
     }
