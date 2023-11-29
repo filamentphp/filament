@@ -45,7 +45,7 @@ class Block extends Component
     public function maxItems(int | Closure | null $maxItems): static
     {
         $this->maxItems = $maxItems;
-    
+
         return $this;
     }
 
