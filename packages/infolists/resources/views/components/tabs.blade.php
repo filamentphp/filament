@@ -1,21 +1,24 @@
 @php
+    use Filament\Infolists\Components\Tabs\Tab;
+
     $isContained = $isContained();
 @endphp
 
 <div
     x-cloak
     x-data="{
-        tab: @if($isTabPersistedInLocalStorage()) $persist(null).as('{{ $getTabLocalStorageName() }}')  @else null @endif,
+        tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
 
         init: function () {
             this.$watch('tab', () => this.updateQueryString())
 
-            if(this.tab === null) {
-                this.tab = @js(collect($getChildComponentContainer()->getComponents())
-                            ->filter(static fn (\Filament\Infolists\Components\Tabs\Tab $tab): bool => $tab->isVisible())
-                            ->map(static fn (\Filament\Infolists\Components\Tabs\Tab $tab) => $tab->getId())
-                            ->values()
-                            ->get($getActiveTab() - 1))
+            const tabs = @js(collect($getChildComponentContainer()->getComponents())
+                ->filter(static fn (Tab $tab): bool => $tab->isVisible())
+                ->map(static fn (Tab $tab) => $tab->getId())
+                ->values())
+
+            if ((! this.tab) || (! tabs.includes(this.tab))) {
+                 this.tab = tabs[@js($getActiveTab()) - 1]
             }
         },
 
