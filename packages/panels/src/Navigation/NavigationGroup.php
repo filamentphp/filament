@@ -63,15 +63,6 @@ class NavigationGroup extends Component
      */
     public function items(array | Arrayable $items): static
     {
-        foreach ($items as $item) {
-            if ($item instanceof NavigationItem) {
-                continue;
-            }
-
-            /** @phpstan-ignore-next-line */
-            throw new Exception("Navigation group [{$this->getLabel()}] has a nested group, which is not supported in the sidebar design at the moment.");
-        }
-
         $this->items = $items;
 
         return $this;
