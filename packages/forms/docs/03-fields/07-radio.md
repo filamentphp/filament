@@ -50,7 +50,7 @@ If you want a simple boolean radio button group, with "Yes" and "No" options, yo
 
 ```php
 Radio::make('feedback')
-    ->label('Do you like this post?')
+    ->label('Like this post??')
     ->boolean()
 ```
 
@@ -62,12 +62,26 @@ You may wish to display the options `inline()` with the label instead of below i
 
 ```php
 Radio::make('feedback')
-    ->label('Do you like this post?')
+    ->label('Like this post??')
     ->boolean()
     ->inline()
 ```
 
 <AutoScreenshot name="forms/fields/radio/inline" alt="Inline radio" version="3.x" />
+
+## Positioning the options inline with each other but below the label
+
+You may wish to display the options `inline()` with each other but below the label:
+
+```php
+Radio::make('feedback')
+    ->label('Like this post??')
+    ->boolean()
+    ->inline()
+    ->inlineLabel(false)
+```
+
+<AutoScreenshot name="forms/fields/radio/inline-under-label" alt="Inline radio under label" version="3.x" />
 
 ## Disabling specific options
 
