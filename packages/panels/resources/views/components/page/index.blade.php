@@ -48,100 +48,20 @@
             ])
         >
             @if ($subNavigation)
-                <x-filament::input.wrapper class="md:hidden" wire:ignore>
-                    <x-filament::input.select
-                        x-data="{}"
-                        x-on:change="window.location = $event.target.value"
-                    >
-                        @foreach ($subNavigation as $subNavigationGroup)
-                            @php
-                                $subNavigationGroupLabel = $subNavigationGroup->getLabel();
-                            @endphp
-
-                            @if (filled($subNavigationGroupLabel))
-                                <optgroup
-                                    label="{{ $subNavigationGroupLabel }}"
-                                >
-                            @endif
-                                    @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
-                                        @foreach ([$subNavigationItem, ...$subNavigationItem->getChildItems()] as $subNavigationItemChild)
-                                            <option
-                                                @if ($subNavigationItem->isActive())
-                                                    selected
-                                                @endif
-                                                value="{{ $subNavigationItem->getUrl() }}"
-                                            >
-                                                @if ($loop->index)&ensp;&ensp;@endif{{ $subNavigationItem->getLabel() }}
-                                            </option>
-                                        @endforeach
-                                    @endforeach
-                            @if (filled($subNavigationGroupLabel))
-                                </optgroup>
-                            @endif
-                        @endforeach
-                    </x-filament::input.select>
-                </x-filament::input.wrapper>
+                <x-filament-panels::page.sub-navigation.select
+                    :navigation="$subNavigation"
+                />
 
                 @if ($subNavigationPosition === SubNavigationPosition::Start)
-                    <x-filament-panels::page.sub-navigation
+                    <x-filament-panels::page.sub-navigation.sidebar
                         :navigation="$subNavigation"
                     />
                 @endif
 
                 @if ($subNavigationPosition === SubNavigationPosition::Top)
-                    <x-filament::tabs>
-                        @foreach ($subNavigation as $subNavigationGroup)
-                            @if ($subNavigationGroupLabel = $subNavigationGroup->getLabel())
-                                <x-filament::dropdown placement="bottom-start">
-                                    <x-slot name="trigger">
-                                        <x-filament::tabs.item
-                                            :active="$subNavigationGroup->isActive()"
-                                            :icon="$subNavigationGroup->getIcon()"
-                                        >
-                                            {{ $subNavigationGroupLabel }}
-                                        </x-filament::tabs.item>
-                                    </x-slot>
-
-                                    <x-filament::dropdown.list>
-                                        @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
-                                            @php
-                                                $icon = $subNavigationItem->getIcon();
-                                            @endphp
-
-                                            <x-filament::dropdown.list.item
-                                                :badge="$subNavigationItem->getBadge()"
-                                                :badge-color="$subNavigationItem->getBadgeColor()"
-                                                :href="$subNavigationItem->getUrl()"
-                                                :icon="$subNavigationItem->isActive() ? ($subNavigationItem->getActiveIcon() ?? $icon) : $icon"
-                                                tag="a"
-                                                :target="$subNavigationItem->shouldOpenUrlInNewTab() ? '_blank' : null"
-                                            >
-                                                {{ $subNavigationItem->getLabel() }}
-                                            </x-filament::dropdown.list.item>
-                                        @endforeach
-                                    </x-filament::dropdown.list>
-                                </x-filament::dropdown>
-                            @else
-                                @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
-                                    @php
-                                        $icon = $subNavigationItem->getIcon();
-                                    @endphp
-
-                                    <x-filament::tabs.item
-                                        :active="$subNavigationItem->isActive()"
-                                        :badge="$subNavigationItem->getBadge()"
-                                        :badge-color="$subNavigationItem->getBadgeColor()"
-                                        :href="$subNavigationItem->getUrl()"
-                                        :icon="$subNavigationItem->isActive() ? ($subNavigationItem->getActiveIcon() ?? $icon) : $icon"
-                                        tag="a"
-                                        :target="$subNavigationItem->shouldOpenUrlInNewTab() ? '_blank' : null"
-                                    >
-                                        {{ $subNavigationItem->getLabel() }}
-                                    </x-filament::tabs.item>
-                                @endforeach
-                            @endif
-                        @endforeach
-                    </x-filament::tabs>
+                    <x-filament-panels::page.sub-navigation.tabs
+                        :navigation="$subNavigation"
+                    />
                 @endif
             @endif
 
@@ -181,7 +101,7 @@
             </div>
 
             @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
-                <x-filament-panels::page.sub-navigation
+                <x-filament-panels::page.sub-navigation.sidebar
                     :navigation="$subNavigation"
                 />
             @endif
