@@ -1,7 +1,7 @@
 @props([
     'active' => false,
-    'activeIcon' => null,
     'activeChildItems' => false,
+    'activeIcon' => null,
     'badge' => null,
     'badgeColor' => null,
     'childItems' => [],
