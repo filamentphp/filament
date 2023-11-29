@@ -26,6 +26,10 @@ return [
             'label' => 'Seleccionar/deseleccionar el elemento :key para las acciones masivas.',
         ],
 
+        'bulk_select_group' => [
+            'label' => 'Seleccionar/deseleccionar grupo :title para acciones masivas.',
+        ],
+
         'search' => [
             'label' => 'Búsqueda',
             'placeholder' => 'Buscar',

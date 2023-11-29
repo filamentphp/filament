@@ -1,23 +1,23 @@
+@php
+    $containers = $getChildComponentContainers();
+
+    $addAction = $getAction($getAddActionName());
+    $cloneAction = $getAction($getCloneActionName());
+    $deleteAction = $getAction($getDeleteActionName());
+    $moveDownAction = $getAction($getMoveDownActionName());
+    $moveUpAction = $getAction($getMoveUpActionName());
+    $reorderAction = $getAction($getReorderActionName());
+
+    $isAddable = $isAddable();
+    $isCloneable = $isCloneable();
+    $isDeletable = $isDeletable();
+    $isReorderableWithButtons = $isReorderableWithButtons();
+    $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
+
+    $statePath = $getStatePath();
+@endphp
+
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $containers = $getChildComponentContainers();
-
-        $addAction = $getAction($getAddActionName());
-        $cloneAction = $getAction($getCloneActionName());
-        $deleteAction = $getAction($getDeleteActionName());
-        $moveDownAction = $getAction($getMoveDownActionName());
-        $moveUpAction = $getAction($getMoveUpActionName());
-        $reorderAction = $getAction($getReorderActionName());
-
-        $isAddable = $isAddable();
-        $isCloneable = $isCloneable();
-        $isDeletable = $isDeletable();
-        $isReorderableWithButtons = $isReorderableWithButtons();
-        $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
-
-        $statePath = $getStatePath();
-    @endphp
-
     <div
         x-data="{}"
         {{

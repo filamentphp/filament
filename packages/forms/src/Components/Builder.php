@@ -7,6 +7,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -75,7 +76,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
      */
     protected ?array $blockPickerColumns = [];
 
-    protected string | Closure | null $blockPickerWidth = null;
+    protected MaxWidth | string | Closure | null $blockPickerWidth = null;
 
     protected function setUp(): void
     {
@@ -721,11 +722,14 @@ class Builder extends Field implements Contracts\CanConcealComponents
     }
 
     /**
-     * @return array<Component>
+     * @return array<Block>
      */
     public function getBlocks(): array
     {
-        return $this->getChildComponentContainer()->getComponents();
+        /** @var array<Block> $blocks */
+        $blocks = $this->getChildComponentContainer()->getComponents();
+
+        return $blocks;
     }
 
     public function getChildComponentContainers(bool $withHidden = false): array
@@ -831,6 +835,32 @@ class Builder extends Field implements Contracts\CanConcealComponents
     }
 
     /**
+     * @return array<Block>
+     */
+    public function getBlockPickerBlocks(): array
+    {
+        $state = $this->getState();
+
+        /** @var array<Block> $blocks */
+        $blocks = array_filter($this->getBlocks(), function (Block $block) use ($state): bool {
+            /** @var Block $block */
+            $maxItems = $block->getMaxItems();
+
+            if ($maxItems === null) {
+                return true;
+            }
+
+            $count = count(array_filter($state, function (array $item) use ($block): bool {
+                return $item['type'] === $block->getName();
+            }));
+
+            return $count < $maxItems;
+        });
+
+        return $blocks;
+    }
+
+    /**
      * @param  array<string, int | string | null> | int | string | null  $columns
      */
     public function blockPickerColumns(array | int | string | null $columns = 2): static
@@ -870,14 +900,14 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $columns;
     }
 
-    public function blockPickerWidth(string | Closure | null $width): static
+    public function blockPickerWidth(MaxWidth | string | Closure | null $width): static
     {
         $this->blockPickerWidth = $width;
 
         return $this;
     }
 
-    public function getBlockPickerWidth(): ?string
+    public function getBlockPickerWidth(): MaxWidth | string | null
     {
         return $this->evaluate($this->blockPickerWidth);
     }

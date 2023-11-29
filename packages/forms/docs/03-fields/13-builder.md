@@ -283,6 +283,20 @@ Builder::make('content')
 
 <AutoScreenshot name="forms/fields/builder/cloneable" alt="Builder repeater" version="3.x" />
 
+## Limiting the number of times a block can be used
+
+By default, each block can be used in the builder an unlimited number of times. You may limit this using the `maxItems()` method on a block:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder\Block::make('heading')
+    ->schema([
+        // ...
+    ])
+    ->maxItems(1)
+```
+
 ## Builder validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to builders.

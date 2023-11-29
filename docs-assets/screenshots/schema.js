@@ -697,6 +697,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/radio/inline-under-label': {
+        url: 'forms/fields',
+        selector: '#inlineRadioUnderLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/radio/disabled-option': {
         url: 'forms/fields',
         selector: '#disabledOptionRadio',

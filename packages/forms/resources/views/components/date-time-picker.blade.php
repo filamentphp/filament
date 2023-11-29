@@ -16,7 +16,11 @@
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+>
     <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
@@ -44,11 +48,11 @@
                             'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
                             'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                             'list' => $datalistOptions ? $id . '-list' : null,
-                            'max' => (! $isConcealed) ? $getMaxDate() : null,
-                            'min' => (! $isConcealed) ? $getMinDate() : null,
+                            'max' => $getMaxDate(),
+                            'min' => $getMinDate(),
                             'placeholder' => $getPlaceholder(),
                             'readonly' => $isReadOnly(),
-                            'required' => $isRequired() && (! $isConcealed),
+                            'required' => $isRequired() && (! $isConcealed()),
                             'step' => $getStep(),
                             'type' => $getType(),
                             $applyStateBindingModifiers('wire:model') => $statePath,
