@@ -9,8 +9,8 @@ use Filament\Support\Concerns;
 class Tabs extends Component
 {
     use Concerns\CanBeContained;
-    use Concerns\HasExtraAlpineAttributes;
     use Concerns\CanPersistTab;
+    use Concerns\HasExtraAlpineAttributes;
 
     /**
      * @var view-string

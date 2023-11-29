@@ -55,7 +55,7 @@ trait HasTenancy
         $this->tenantModel = $model;
         $this->tenantSlugAttribute = $slugAttribute;
         $this->tenantOwnershipRelationshipName = $ownershipRelationship;
-        
+
         return $this;
     }
 
