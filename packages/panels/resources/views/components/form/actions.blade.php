@@ -10,11 +10,19 @@
             x-data="{
                 isSticky: false,
 
+                getInitialPosition: function () {
+                    this.initialPosition = $el.getBoundingClientRect().top + window.scrollY;
+                },
+
                 evaluatePageScrollPosition: function () {
-                    this.isSticky = window.pageYOffset > 0
+                    var currentScroll = window.scrollY;
+                    var initialPosition = this.initialPosition;
+
+                    this.isSticky = (currentScroll >= initialPosition) ? false : true;
+                    
                 },
             }"
-            x-init="evaluatePageScrollPosition"
+            x-init="getInitialPosition"
             x-on:scroll.window="evaluatePageScrollPosition"
             x-bind:class="{
                 'fi-sticky sticky bottom-0 -mx-4 transform bg-white p-4 shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10 md:bottom-4 md:rounded-xl':
