@@ -311,7 +311,6 @@ abstract class Resource
         $query = static::getModel()::query();
 
         if (
-            Filament::shouldApplyTenantResourceScope() &&
             static::isScopedToTenant() &&
             ($tenant = Filament::getTenant())
         ) {
@@ -751,6 +750,11 @@ abstract class Resource
     public static function isDiscovered(): bool
     {
         return static::$isDiscovered;
+    }
+
+    public static function scopeToTenant(bool $condition = true): void
+    {
+        static::$isScopedToTenant = $condition;
     }
 
     public static function isScopedToTenant(): bool

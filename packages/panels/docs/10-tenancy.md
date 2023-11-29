@@ -653,20 +653,20 @@ By default, all resources within a panel with tenancy will be scoped to the curr
 protected static bool $isScopedToTenant = false;
 ```
 
-## Disabling tenancy scope for all resources
+### Disabling tenancy for all resources
 
-If you wish to manually customize tenancy scope for all resources you can disable it globally in your panel provider.
+If you wish to opt-in to tenancy for each resource instead of opting-out, you can call `Resource::scopeToTenant(false)` inside a service provider's `boot()` method or a middleware:
 
 ```php
-use App\Models\Team;
-use Filament\Panel;
+use Filament\Resources\Resource;
 
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->tenant(Team::class, applyResourceScope:false);
-}
+Resource::scopeToTenant(false);
+```
+
+Now, you can opt-in to tenancy for each resource by setting the `$isScopedToTenant` static property to `true` on a resource class:
+
+```php
+protected static bool $isScopedToTenant = true;
 ```
 
 ## Tenancy security

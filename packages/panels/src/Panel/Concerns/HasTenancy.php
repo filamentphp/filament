@@ -23,8 +23,6 @@ trait HasTenancy
 
     protected ?string $tenantOwnershipRelationshipName = null;
 
-    protected bool $tenantApplyResourceScope = true;
-
     /**
      * @var array<MenuItem>
      */
@@ -52,12 +50,11 @@ trait HasTenancy
         return $this;
     }
 
-    public function tenant(?string $model, ?string $slugAttribute = null, ?string $ownershipRelationship = null, bool $applyResourceScope=true): static
+    public function tenant(?string $model, ?string $slugAttribute = null, ?string $ownershipRelationship = null): static
     {
         $this->tenantModel = $model;
         $this->tenantSlugAttribute = $slugAttribute;
         $this->tenantOwnershipRelationshipName = $ownershipRelationship;
-        $this->tenantApplyResourceScope = $applyResourceScope;
         return $this;
     }
 
@@ -231,10 +228,5 @@ trait HasTenancy
         return (string) str($this->getTenantModel())
             ->classBasename()
             ->camel();
-    }
-
-    public function shouldApplyTenantResourceScope():bool
-    {
-        return $this->tenantApplyResourceScope;
     }
 }
