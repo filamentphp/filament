@@ -158,7 +158,7 @@ jobs:
                 Hey @${user}! We're sorry to hear that you've hit this issue. 💛
             `.trim()
 
-            const NO_REPRO_URL = ((! url.includes('https://github.com/')) || url.includes('https://github.com/filamentphp/') || url === 'https://github.com/filamentphp') && (! url.includes('https://github.com/filamentphp/demo'))
+            const NO_REPRO_URL = ((! url) || (! url.includes('https://github.com/')) || (url.includes('https://github.com/filamentphp') && (! url.includes('https://github.com/filamentphp/demo'))))
             const NO_REPRO_STEPS = reproSteps.length < 25
 
             if (NO_REPRO_URL || NO_REPRO_STEPS) {

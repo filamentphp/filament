@@ -88,7 +88,7 @@ class NavigationGroup extends Component
     {
         $icon = $this->evaluate($this->icon);
 
-        if (filled($icon) && $this->hasItemIcons()) {
+        if ($this->hasItemIcons() && filled($icon)) {
             throw new Exception("Navigation group [{$this->getLabel()}] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.");
         }
 
