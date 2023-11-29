@@ -9,11 +9,8 @@
         @if ($this->areFormActionsSticky())
             x-data="{
                 isSticky: false,
-
-                evaluatePageScrollPosition: function () {
-                    this.isSticky =
-                        document.body.scrollHeight >=
-                        window.scrollY + window.innerHeight * 2
+                evaluatePageScrollPosition() {
+                    this.isSticky = window.pageYOffset > 0
                 },
             }"
             x-init="evaluatePageScrollPosition"
