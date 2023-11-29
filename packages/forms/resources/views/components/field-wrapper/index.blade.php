@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\VerticalAlignment;
+@endphp
+
 @props([
     'field' => null,
     'hasInlineLabel' => null,
@@ -9,6 +13,7 @@
     'hintIcon' => null,
     'hintIconTooltip' => null,
     'id' => null,
+    'inlineLabelVerticalAlignment' => VerticalAlignment::Start,
     'isDisabled' => null,
     'isMarkedAsRequired' => null,
     'label' => null,
@@ -56,25 +61,30 @@
     <div
         @class([
             'grid gap-y-2',
-            'sm:grid-cols-3 sm:items-start sm:gap-x-4' => $hasInlineLabel,
+            'sm:grid-cols-3 sm:gap-x-4' => $hasInlineLabel,
+            match ($inlineLabelVerticalAlignment) {
+                VerticalAlignment::Start => 'sm:items-start',
+                VerticalAlignment::Center => 'sm:items-center',
+                VerticalAlignment::End => 'sm:items-end',
+            } => $hasInlineLabel,
         ])
     >
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon || count($hintActions))
             <div
                 @class([
                     'flex items-center justify-between gap-x-3',
-                    'sm:pt-1.5' => $hasInlineLabel,
+                    ($label instanceof \Illuminate\View\ComponentSlot) ? $label->attributes->get('class') : null,
                 ])
             >
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
-                        :for="$id"
                         :error="$hasError"
+                        :for="$id"
                         :is-disabled="$isDisabled"
                         :is-marked-as-required="$isMarkedAsRequired"
                         :prefix="$labelPrefix"
-                        :suffix="$labelSuffix"
                         :required="$required"
+                        :suffix="$labelSuffix"
                     >
                         {{ $label }}
                     </x-filament-forms::field-wrapper.label>

@@ -8,6 +8,10 @@
     'width' => null,
 ])
 
+@php
+    use Filament\Support\Enums\MaxWidth;
+@endphp
+
 <div
     x-data="{
         toggle: function (event) {
@@ -44,17 +48,17 @@
         @class([
             'fi-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10',
             match ($width) {
-                'xs' => 'max-w-xs',
-                'sm' => 'max-w-sm',
-                'md' => 'max-w-md',
-                'lg' => 'max-w-lg',
-                'xl' => 'max-w-xl',
-                '2xl' => 'max-w-2xl',
-                '3xl' => 'max-w-3xl',
-                '4xl' => 'max-w-4xl',
-                '5xl' => 'max-w-5xl',
-                '6xl' => 'max-w-6xl',
-                '7xl' => 'max-w-7xl',
+                MaxWidth::ExtraSmall, 'xs' => 'max-w-xs',
+                MaxWidth::Small, 'sm' => 'max-w-sm',
+                MaxWidth::Medium, 'md' => 'max-w-md',
+                MaxWidth::Large, 'lg' => 'max-w-lg',
+                MaxWidth::ExtraLarge, 'xl' => 'max-w-xl',
+                MaxWidth::TwoExtraLarge, '2xl' => 'max-w-2xl',
+                MaxWidth::ThreeExtraLarge, '3xl' => 'max-w-3xl',
+                MaxWidth::FourExtraLarge, '4xl' => 'max-w-4xl',
+                MaxWidth::FiveExtraLarge, '5xl' => 'max-w-5xl',
+                MaxWidth::SixExtraLarge, '6xl' => 'max-w-6xl',
+                MaxWidth::SevenExtraLarge, '7xl' => 'max-w-7xl',
                 null => 'max-w-[14rem]',
                 default => $width,
             },

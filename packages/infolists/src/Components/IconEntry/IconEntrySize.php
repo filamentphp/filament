@@ -14,5 +14,10 @@ enum IconEntrySize
 
     case ExtraLarge;
 
-    case ExtraExtraLarge;
+    case TwoExtraLarge;
+
+    /**
+     * @deprecated Use `TwoExtraLarge` instead.
+     */
+    public const ExtraExtraLarge = self::TwoExtraLarge;
 }

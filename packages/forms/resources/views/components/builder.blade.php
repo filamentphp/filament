@@ -1,30 +1,30 @@
+@php
+    $containers = $getChildComponentContainers();
+    $blockPickerBlocks = $getBlockPickerBlocks();
+    $blockPickerColumns = $getBlockPickerColumns();
+    $blockPickerWidth = $getBlockPickerWidth();
+
+    $addAction = $getAction($getAddActionName());
+    $addBetweenAction = $getAction($getAddBetweenActionName());
+    $cloneAction = $getAction($getCloneActionName());
+    $collapseAllAction = $getAction($getCollapseAllActionName());
+    $expandAllAction = $getAction($getExpandAllActionName());
+    $deleteAction = $getAction($getDeleteActionName());
+    $moveDownAction = $getAction($getMoveDownActionName());
+    $moveUpAction = $getAction($getMoveUpActionName());
+    $reorderAction = $getAction($getReorderActionName());
+
+    $isAddable = $isAddable();
+    $isCloneable = $isCloneable();
+    $isCollapsible = $isCollapsible();
+    $isDeletable = $isDeletable();
+    $isReorderableWithButtons = $isReorderableWithButtons();
+    $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
+
+    $statePath = $getStatePath();
+@endphp
+
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $containers = $getChildComponentContainers();
-        $blockPickerColumns = $getBlockPickerColumns();
-        $blockPickerWidth = $getBlockPickerWidth();
-        $blocks = $getBlocks();
-
-        $addAction = $getAction($getAddActionName());
-        $addBetweenAction = $getAction($getAddBetweenActionName());
-        $cloneAction = $getAction($getCloneActionName());
-        $collapseAllAction = $getAction($getCollapseAllActionName());
-        $expandAllAction = $getAction($getExpandAllActionName());
-        $deleteAction = $getAction($getDeleteActionName());
-        $moveDownAction = $getAction($getMoveDownActionName());
-        $moveUpAction = $getAction($getMoveUpActionName());
-        $reorderAction = $getAction($getReorderActionName());
-
-        $isAddable = $isAddable();
-        $isCloneable = $isCloneable();
-        $isCollapsible = $isCollapsible();
-        $isDeletable = $isDeletable();
-        $isReorderableWithButtons = $isReorderableWithButtons();
-        $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
-
-        $statePath = $getStatePath();
-    @endphp
-
     <div
         x-data="{}"
         {{
@@ -212,7 +212,7 @@
                                             :action="$addBetweenAction"
                                             :after-item="$uuid"
                                             :columns="$blockPickerColumns"
-                                            :blocks="$blocks"
+                                            :blocks="$blockPickerBlocks"
                                             :state-path="$statePath"
                                             :width="$blockPickerWidth"
                                         >
@@ -242,7 +242,7 @@
         @if ($isAddable)
             <x-filament-forms::builder.block-picker
                 :action="$addAction"
-                :blocks="$blocks"
+                :blocks="$blockPickerBlocks"
                 :columns="$blockPickerColumns"
                 :state-path="$statePath"
                 :width="$blockPickerWidth"

@@ -530,7 +530,7 @@ class FieldsDemo extends Component implements HasForms
                     ])
                     ->schema([
                         Radio::make('booleanRadio')
-                            ->label('Do you like this post?')
+                            ->label('Like this post?')
                             ->boolean()
                             ->default(true),
                     ]),
@@ -541,9 +541,22 @@ class FieldsDemo extends Component implements HasForms
                     ])
                     ->schema([
                         Radio::make('inlineRadio')
-                            ->label('Do you like this post?')
+                            ->label('Like this post?')
                             ->boolean()
                             ->inline()
+                            ->default(true),
+                    ]),
+                Group::make()
+                    ->id('inlineRadioUnderLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Radio::make('inlineRadioUnderLabel')
+                            ->label('Like this post?')
+                            ->boolean()
+                            ->inline()
+                            ->inlineLabel(false)
                             ->default(true),
                     ]),
                 Group::make()
