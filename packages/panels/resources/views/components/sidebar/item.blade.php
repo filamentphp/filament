@@ -52,8 +52,8 @@
     >
         @if (filled($icon) && ((! $subGrouped) || filament()->isSidebarCollapsibleOnDesktop()))
             <x-filament::icon
-                :x-show="($subGrouped && filament()->isSidebarCollapsibleOnDesktop()) ? '! $store.sidebar.isOpen' : false"
                 :icon="($active && $activeIcon) ? $activeIcon : $icon"
+                :x-show="($subGrouped && filament()->isSidebarCollapsibleOnDesktop()) ? '! $store.sidebar.isOpen' : false"
                 @class([
                     'fi-sidebar-item-icon h-6 w-6',
                     'text-gray-400 dark:text-gray-500' => ! $active,
@@ -99,11 +99,9 @@
                 x-transition:enter-end="opacity-100"
             @endif
             @class([
-                'fi-sidebar-item-label flex-1 truncate',
+                'fi-sidebar-item-label flex-1 truncate font-medium',
                 'text-gray-700 dark:text-gray-200' => ! $active,
                 'text-primary-600 dark:text-primary-400' => $active,
-                'font-semibold' => ! $grouped,
-                'font-medium' => $grouped,
             ])
         >
             {{ $slot }}
@@ -129,17 +127,18 @@
         <ul class="fi-sidebar-sub-group-items flex flex-col gap-y-1">
             @foreach ($childItems as $childItem)
                 <x-filament-panels::sidebar.item
+                    :active="$childItem->isActive()"
                     :active-child-items="$childItem->isChildItemsActive()"
                     :active-icon="$childItem->getActiveIcon()"
-                    :active="$childItem->isActive()"
-                    :badge-color="$childItem->getBadgeColor()"
                     :badge="$childItem->getBadge()"
+                    :badge-color="$childItem->getBadgeColor()"
+                    :first="$loop->first"
                     grouped
-                    sub-grouped
                     :icon="$childItem->getIcon()"
                     :last="$loop->last"
-                    :url="$childItem->getUrl()"
                     :should-open-url-in-new-tab="$childItem->shouldOpenUrlInNewTab()"
+                    sub-grouped
+                    :url="$childItem->getUrl()"
                 >
                     {{ $childItem->getLabel() }}
                 </x-filament-panels::sidebar.item>

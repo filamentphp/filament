@@ -35,7 +35,7 @@
             @endif
 
             <span
-                class="fi-sidebar-group-label flex-1 text-sm font-semibold leading-6 text-gray-700 dark:text-gray-200"
+                class="fi-sidebar-group-label flex-1 text-sm font-medium leading-6 text-gray-500 dark:text-gray-400"
             >
                 {{ $label }}
             </span>
@@ -67,19 +67,19 @@
     >
         @foreach ($items as $item)
             <x-filament-panels::sidebar.item
+                :active="$item->isActive()"
                 :active-child-items="$item->isChildItemsActive()"
                 :active-icon="$item->getActiveIcon()"
-                :active="$item->isActive()"
-                :badge-color="$item->getBadgeColor()"
                 :badge="$item->getBadge()"
+                :badge-color="$item->getBadgeColor()"
                 :child-items="$item->getChildItems()"
                 :first="$loop->first"
                 :grouped="filled($label)"
                 :icon="$item->getIcon()"
                 :last="$loop->last"
-                :url="$item->getUrl()"
                 :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
                 :sidebar-collapsible="$sidebarCollapsible"
+                :url="$item->getUrl()"
             >
                 {{ $item->getLabel() }}
             </x-filament-panels::sidebar.item>
