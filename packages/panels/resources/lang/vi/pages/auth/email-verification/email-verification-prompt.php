@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Xác thực địa chỉ email',
+    'title' => 'Xác minh địa chỉ email',
 
-    'heading' => 'Xác thực địa chỉ email',
+    'heading' => 'Xác minh địa chỉ email',
 
     'actions' => [
 
@@ -16,13 +16,13 @@ return [
 
     'messages' => [
         'notification_not_received' => 'Chưa nhận được email?',
-        'notification_sent' => 'Chúng tôi đã gửi một email đến :email chứa hướng dẫn về cách xác thực địa chỉ email của bạn.',
+        'notification_sent' => 'Chúng tôi đã gửi một email đến :email chứa hướng dẫn về cách xác minh địa chỉ email của bạn.',
     ],
 
     'notifications' => [
 
         'notification_resent' => [
-            'title' => 'Đã gửi lại email',
+            'title' => 'Chúng tôi đã gửi lại email.',
         ],
 
         'notification_resend_throttled' => [

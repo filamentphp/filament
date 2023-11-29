@@ -21,12 +21,12 @@ class Component extends ViewComponent
     use BelongsToLayout;
     use BelongsToTable;
     use CanBeHidden;
-    use CanSpanColumns;
     use CanGrow;
-    use HasRecord;
-    use HasRowLoopObject;
+    use CanSpanColumns;
     use Conditionable;
     use HasExtraAttributes;
+    use HasRecord;
+    use HasRowLoopObject;
 
     protected string $evaluationIdentifier = 'layout';
 

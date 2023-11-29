@@ -29,6 +29,15 @@ export default {
             await page.hover('#iconButtonAction button')
         },
     },
+    'actions/trigger-button/badge': {
+        url: 'actions',
+        selector: '#badgeAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'actions/trigger-button/danger': {
         url: 'actions',
         selector: '#dangerAction',
@@ -65,28 +74,28 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'actions/trigger-button/badge': {
+    'actions/trigger-button/badged': {
         url: 'actions',
-        selector: '#badgeAction',
+        selector: '#badgedAction',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('#badgeAction button')
+            await page.hover('#badgedAction button')
         },
     },
-    'actions/trigger-button/success-badge': {
+    'actions/trigger-button/success-badged': {
         url: 'actions',
-        selector: '#successBadgeAction',
+        selector: '#successBadgedAction',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('#successBadgeAction button')
+            await page.hover('#successBadgedAction button')
         },
     },
     'actions/trigger-button/outlined': {
@@ -688,6 +697,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/radio/inline-under-label': {
+        url: 'forms/fields',
+        selector: '#inlineRadioUnderLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/radio/disabled-option': {
         url: 'forms/fields',
         selector: '#disabledOptionRadio',
@@ -867,6 +885,15 @@ export default {
     'forms/fields/repeater/labelled': {
         url: 'forms/fields',
         selector: '#labelledRepeater',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/repeater/simple-one-field': {
+        url: 'forms/fields',
+        selector: '#simpleRepeater',
         viewport: {
             width: 1920,
             height: 640,
@@ -1076,6 +1103,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/layout/section/actions': {
+        url: 'forms/layout',
+        selector: '#sectionHeaderActions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/layout/section/icons': {
         url: 'forms/layout',
         selector: '#sectionIcons',
@@ -1169,6 +1205,15 @@ export default {
     'infolists/entries/simple': {
         url: 'infolists/entries',
         selector: '#simple',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/placeholder': {
+        url: 'infolists/entries',
+        selector: '#placeholder',
         viewport: {
             width: 1920,
             height: 640,
@@ -1282,6 +1327,15 @@ export default {
     'infolists/entries/text/icon-after': {
         url: 'infolists/entries',
         selector: '#textIconAfter',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/icon-color': {
+        url: 'infolists/entries',
+        selector: '#textIconColor',
         viewport: {
             width: 1920,
             height: 640,
@@ -1559,6 +1613,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/layout/section/actions': {
+        url: 'infolists/layout',
+        selector: '#sectionHeaderActions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/layout/section/icons': {
         url: 'infolists/layout',
         selector: '#sectionIcons',
@@ -1823,6 +1886,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'tables/columns/placeholder': {
+        url: 'tables?table=placeholderColumns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'tables/columns/toggleable': {
         url: 'tables?table=toggleableColumns',
         selector: 'body',
@@ -1916,6 +1988,15 @@ export default {
     },
     'tables/columns/text/icon-after': {
         url: 'tables?table=textColumnIconAfter',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/icon-color': {
+        url: 'tables?table=textColumnIconColor',
         selector: 'body',
         viewport: {
             width: 1080,

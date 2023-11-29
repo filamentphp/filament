@@ -45,7 +45,7 @@ return [
             ],
 
             'system' => [
-                'label' => 'Bật chế độ theo hệ thống',
+                'label' => 'Bật chế độ hệ thống',
             ],
 
         ],

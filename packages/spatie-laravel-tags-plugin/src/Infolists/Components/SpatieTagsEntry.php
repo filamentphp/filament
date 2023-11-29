@@ -2,15 +2,19 @@
 
 namespace Filament\Infolists\Components;
 
-use Illuminate\Support\Collection;
+use Closure;
+use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
+use Illuminate\Database\Eloquent\Collection;
 
 class SpatieTagsEntry extends TextEntry
 {
-    protected ?string $type = null;
+    protected string | Closure | AllTagTypes | null $type;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->type(new AllTagTypes());
 
         $this->badge();
     }
@@ -38,25 +42,36 @@ class SpatieTagsEntry extends TextEntry
             $record = $record->getRelationValue($relationshipName);
         }
 
-        if (! method_exists($record, 'tagsWithType')) {
+        if (! (method_exists($record, 'tags') && method_exists($record, 'tagsWithType'))) {
             return [];
         }
 
         $type = $this->getType();
-        $tags = $record->tagsWithType($type);
 
-        return $tags->pluck('name')->toArray();
+        if ($this->isAnyTagTypeAllowed()) {
+            /** @phpstan-ignore-next-line */
+            $tags = $record->tags;
+        } else {
+            $tags = $record->tagsWithType($type);
+        }
+
+        return $tags->pluck('name')->all();
     }
 
-    public function type(?string $type): static
+    public function type(string | Closure | AllTagTypes | null $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): string | AllTagTypes | null
     {
-        return $this->type;
+        return $this->evaluate($this->type);
+    }
+
+    public function isAnyTagTypeAllowed(): bool
+    {
+        return $this->getType() instanceof AllTagTypes;
     }
 }

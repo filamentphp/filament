@@ -34,7 +34,7 @@ return [
 
         'throttled' => [
             'title' => 'Demasiadas solicitudes',
-            'label' => 'Por favor, inténtelo de nuevo en :seconds segundos.',
+            'body' => 'Por favor, inténtelo de nuevo en :seconds segundos.',
         ],
 
     ],

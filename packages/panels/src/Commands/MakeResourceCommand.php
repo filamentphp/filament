@@ -11,6 +11,7 @@ use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
@@ -24,7 +25,7 @@ class MakeResourceCommand extends Command
 
     protected $description = 'Create a new Filament resource class and default page classes';
 
-    protected $signature = 'make:filament-resource {name?} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--F|force}';
+    protected $signature = 'make:filament-resource {name?} {--model-namespace=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--F|force}';
 
     public function handle(): int
     {
@@ -46,10 +47,12 @@ class MakeResourceCommand extends Command
         }
 
         $modelClass = (string) str($model)->afterLast('\\');
-        $modelNamespace = str($model)->contains('\\') ?
+        $modelSubNamespace = str($model)->contains('\\') ?
             (string) str($model)->beforeLast('\\') :
             '';
+        $modelNamespace = $this->option('model-namespace') ?? 'App\\Models';
         $pluralModelClass = (string) str($modelClass)->pluralStudly();
+        $needsAlias = $modelClass === 'Record';
 
         $panel = $this->option('panel');
 
@@ -86,7 +89,7 @@ class MakeResourceCommand extends Command
 
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";
-        $resourceNamespace = $modelNamespace;
+        $resourceNamespace = $modelSubNamespace;
         $namespace .= $resourceNamespace !== '' ? "\\{$resourceNamespace}" : '';
         $listResourcePageClass = "List{$pluralModelClass}";
         $manageResourcePageClass = "Manage{$pluralModelClass}";
@@ -161,12 +164,6 @@ class MakeResourceCommand extends Command
 
         $tableActions = implode(PHP_EOL, $tableActions);
 
-        $tableEmptyStateActions = [];
-
-        $tableEmptyStateActions[] = 'Tables\Actions\CreateAction::make(),';
-
-        $tableEmptyStateActions = implode(PHP_EOL, $tableEmptyStateActions);
-
         $tableBulkActions = [];
 
         $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
@@ -191,10 +188,10 @@ class MakeResourceCommand extends Command
         $this->copyStubToApp('Resource', $resourcePath, [
             'eloquentQuery' => $this->indentString($eloquentQuery, 1),
             'formSchema' => $this->indentString($this->option('generate') ? $this->getResourceFormSchema(
-                'App\\Models' . ($modelNamespace !== '' ? "\\{$modelNamespace}" : '') . '\\' . $modelClass,
+                $modelNamespace . ($modelSubNamespace !== '' ? "\\{$modelSubNamespace}" : '') . '\\' . $modelClass,
             ) : '//', 4),
-            'model' => $model === 'Resource' ? 'Resource as ResourceModel' : $model,
-            'modelClass' => $model === 'Resource' ? 'ResourceModel' : $modelClass,
+            'model' => ($model === 'Resource') ? "{$modelNamespace}\\Resource as ResourceModel" : "{$modelNamespace}\\{$model}",
+            'modelClass' => ($model === 'Resource') ? 'ResourceModel' : $modelClass,
             'namespace' => $namespace,
             'pages' => $this->indentString($pages, 3),
             'relations' => $this->indentString($relations, 1),
@@ -202,9 +199,8 @@ class MakeResourceCommand extends Command
             'resourceClass' => $resourceClass,
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 5),
-            'tableEmptyStateActions' => $this->indentString($tableEmptyStateActions, 4),
             'tableColumns' => $this->indentString($this->option('generate') ? $this->getResourceTableColumns(
-                'App\Models' . ($modelNamespace !== '' ? "\\{$modelNamespace}" : '') . '\\' . $modelClass,
+                $modelNamespace . ($modelSubNamespace !== '' ? "\\{$modelSubNamespace}" : '') . '\\' . $modelClass,
             ) : '//', 4),
             'tableFilters' => $this->indentString(
                 $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make(),' : '//',
@@ -214,6 +210,8 @@ class MakeResourceCommand extends Command
 
         if ($this->option('simple')) {
             $this->copyStubToApp('ResourceManagePage', $manageResourcePagePath, [
+                'baseResourcePage' => 'Filament\\Resources\\Pages\\ManageRecords' . ($needsAlias ? ' as BaseManageRecords' : ''),
+                'baseResourcePageClass' => $needsAlias ? 'BaseManageRecords' : 'ManageRecords',
                 'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
                 'resource' => "{$namespace}\\{$resourceClass}",
                 'resourceClass' => $resourceClass,
@@ -221,6 +219,8 @@ class MakeResourceCommand extends Command
             ]);
         } else {
             $this->copyStubToApp('ResourceListPage', $listResourcePagePath, [
+                'baseResourcePage' => 'Filament\\Resources\\Pages\\ListRecords' . ($needsAlias ? ' as BaseListRecords' : ''),
+                'baseResourcePageClass' => $needsAlias ? 'BaseListRecords' : 'ListRecords',
                 'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
                 'resource' => "{$namespace}\\{$resourceClass}",
                 'resourceClass' => $resourceClass,
@@ -228,8 +228,8 @@ class MakeResourceCommand extends Command
             ]);
 
             $this->copyStubToApp('ResourcePage', $createResourcePagePath, [
-                'baseResourcePage' => 'Filament\\Resources\\Pages\\CreateRecord',
-                'baseResourcePageClass' => 'CreateRecord',
+                'baseResourcePage' => 'Filament\\Resources\\Pages\\CreateRecord' . ($needsAlias ? ' as BaseCreateRecord' : ''),
+                'baseResourcePageClass' => $needsAlias ? 'BaseCreateRecord' : 'CreateRecord',
                 'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
                 'resource' => "{$namespace}\\{$resourceClass}",
                 'resourceClass' => $resourceClass,
@@ -240,6 +240,8 @@ class MakeResourceCommand extends Command
 
             if ($this->option('view')) {
                 $this->copyStubToApp('ResourceViewPage', $viewResourcePagePath, [
+                    'baseResourcePage' => 'Filament\\Resources\\Pages\\ViewRecord' . ($needsAlias ? ' as BaseViewRecord' : ''),
+                    'baseResourcePageClass' => $needsAlias ? 'BaseViewRecord' : 'ViewRecord',
                     'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
                     'resource' => "{$namespace}\\{$resourceClass}",
                     'resourceClass' => $resourceClass,
@@ -259,6 +261,8 @@ class MakeResourceCommand extends Command
             $editPageActions = implode(PHP_EOL, $editPageActions);
 
             $this->copyStubToApp('ResourceEditPage', $editResourcePagePath, [
+                'baseResourcePage' => 'Filament\\Resources\\Pages\\EditRecord' . ($needsAlias ? ' as BaseEditRecord' : ''),
+                'baseResourcePageClass' => $needsAlias ? 'BaseEditRecord' : 'EditRecord',
                 'actions' => $this->indentString($editPageActions, 3),
                 'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
                 'resource' => "{$namespace}\\{$resourceClass}",
@@ -267,7 +271,7 @@ class MakeResourceCommand extends Command
             ]);
         }
 
-        $this->components->info("Successfully created {$resource}!");
+        $this->components->info("Filament resource [{$resourcePath}] created successfully.");
 
         return static::SUCCESS;
     }

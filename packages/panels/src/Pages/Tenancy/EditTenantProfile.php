@@ -4,7 +4,6 @@ namespace Filament\Pages\Tenancy;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use function Filament\authorize;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -15,8 +14,11 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\Locked;
+
+use function Filament\authorize;
 
 /**
  * @property Form $form
@@ -52,6 +54,7 @@ abstract class EditTenantProfile extends Page
 
         Route::get("/{$slug}", static::class)
             ->middleware(static::getRouteMiddleware($panel))
+            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->name('profile');
     }
 
@@ -62,7 +65,7 @@ abstract class EditTenantProfile extends Page
     {
         return [
             ...(static::isEmailVerificationRequired($panel) ? [static::getEmailVerifiedMiddleware($panel)] : []),
-            ...static::$routeMiddleware,
+            ...Arr::wrap(static::$routeMiddleware),
         ];
     }
 
@@ -164,6 +167,11 @@ abstract class EditTenantProfile extends Page
     protected function getRedirectUrl(): ?string
     {
         return null;
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form;
     }
 
     /**

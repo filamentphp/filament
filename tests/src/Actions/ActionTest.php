@@ -3,8 +3,9 @@
 use Filament\Notifications\Notification;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\Actions\TestCase;
-use function Filament\Tests\livewire;
 use Illuminate\Support\Str;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
@@ -49,6 +50,26 @@ it('can mount an action with arguments', function () {
         ])
         ->callMountedAction()
         ->assertDispatched('arguments-called', arguments: [
+            'payload' => $payload,
+        ]);
+});
+
+it('can mount a nested action with parent arguments', function () {
+    livewire(Actions::class)
+        ->mountAction('arguments.nested', arguments: [
+            'arguments' => ['payload' => Str::random()],
+        ])
+        ->callMountedAction()
+        ->assertDispatched('nested-called', arguments: []);
+});
+
+it('can mount a nested action with nested arguments', function () {
+    livewire(Actions::class)
+        ->mountAction('arguments.nested', arguments: [
+            'nested' => ['payload' => $payload = Str::random()],
+        ])
+        ->callMountedAction()
+        ->assertDispatched('nested-called', arguments: [
             'payload' => $payload,
         ]);
 });
@@ -243,4 +264,41 @@ test('can assert that notifications are sent in any order', function () {
     livewire(Actions::class)
         ->callAction('two-notifications')
         ->assertNotified('Third notification');
+});
+
+it('will assert that a notification was not sent', function () {
+
+    livewire(Actions::class)
+        ->callAction('does-not-show-notification')
+        ->assertNotNotified();
+
+    livewire(Actions::class)
+        ->callAction('shows-notification-with-id')
+        ->assertNotNotified(
+            Notification::make()
+                ->title('An incorrect notification')
+                ->success()
+        );
+
+    livewire(Actions::class)
+        ->callAction('shows-notification-with-id')
+        ->assertNotNotified('An incorrect notification');
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('The notification with the given configration was sent');
+
+    livewire(Actions::class)
+        ->callAction('shows-notification-with-id')
+        ->assertNotNotified(
+            Notification::make()
+                ->title('A notification')
+                ->success()
+        );
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('The notification with the given title was sent');
+
+    livewire(Actions::class)
+        ->callAction('shows-notification-with-id')
+        ->assertNotNotified('A notification');
 });

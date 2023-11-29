@@ -15,6 +15,7 @@ class TextEntry extends Entry implements HasAffixActions
     use Concerns\HasColor;
     use Concerns\HasFontFamily;
     use Concerns\HasIcon;
+    use Concerns\HasIconColor;
     use Concerns\HasWeight;
 
     /**
@@ -33,6 +34,8 @@ class TextEntry extends Entry implements HasAffixActions
     protected int | Closure | null $listLimit = null;
 
     protected TextEntrySize | string | Closure | null $size = null;
+
+    protected bool | Closure $isLimitedListExpandable = false;
 
     public function badge(bool | Closure $condition = true): static
     {
@@ -106,5 +109,17 @@ class TextEntry extends Entry implements HasAffixActions
     public function getListLimit(): ?int
     {
         return $this->evaluate($this->listLimit);
+    }
+
+    public function expandableLimitedList(bool | Closure $condition = true): static
+    {
+        $this->isLimitedListExpandable = $condition;
+
+        return $this;
+    }
+
+    public function isLimitedListExpandable(): bool
+    {
+        return (bool) $this->evaluate($this->isLimitedListExpandable);
     }
 }

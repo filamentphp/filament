@@ -5,7 +5,7 @@ namespace Filament\Resources\Pages\Concerns;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
-use Livewire\Features\SupportQueryString\Url;
+use Livewire\Attributes\Url;
 
 trait HasRelationManagers
 {
@@ -44,15 +44,19 @@ trait HasRelationManagers
         return $manager;
     }
 
-    public function mountHasRelationManagers(): void
+    public function renderingHasRelationManagers(): void
     {
         $managers = $this->getRelationManagers();
 
-        if (array_key_exists($this->activeRelationManager, $managers) || $this->hasCombinedRelationManagerTabsWithContent()) {
+        if (array_key_exists($this->activeRelationManager, $managers)) {
             return;
         }
 
-        $this->activeRelationManager = array_key_first($this->getRelationManagers()) ?? null;
+        if ($this->hasCombinedRelationManagerTabsWithContent()) {
+            return;
+        }
+
+        $this->activeRelationManager = array_key_first($managers);
     }
 
     public function hasCombinedRelationManagerTabsWithContent(): bool

@@ -6,12 +6,13 @@ use Closure;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+
+use function Filament\Support\format_money;
+use function Filament\Support\format_number;
 
 trait CanFormatState
 {
@@ -35,7 +36,15 @@ trait CanFormatState
 
     protected bool | Closure $isMarkdown = false;
 
-    protected string | Closure | null $placeholder = null;
+    protected bool $isDate = false;
+
+    protected bool $isDateTime = false;
+
+    protected bool $isMoney = false;
+
+    protected bool $isNumeric = false;
+
+    protected bool $isTime = false;
 
     public function markdown(bool | Closure $condition = true): static
     {
@@ -46,6 +55,8 @@ trait CanFormatState
 
     public function date(?string $format = null, ?string $timezone = null): static
     {
+        $this->isDate = true;
+
         $format ??= Infolist::$defaultDateDisplayFormat;
 
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($format, $timezone): ?string {
@@ -63,6 +74,8 @@ trait CanFormatState
 
     public function dateTime(?string $format = null, ?string $timezone = null): static
     {
+        $this->isDateTime = true;
+
         $format ??= Infolist::$defaultDateTimeDisplayFormat;
 
         $this->date($format, $timezone);
@@ -72,6 +85,8 @@ trait CanFormatState
 
     public function since(?string $timezone = null): static
     {
+        $this->isDateTime = true;
+
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($timezone): ?string {
             if (blank($state)) {
                 return null;
@@ -87,6 +102,8 @@ trait CanFormatState
 
     public function money(string | Closure | null $currency = null, int $divideBy = 0): static
     {
+        $this->isMoney = true;
+
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($currency, $divideBy): ?string {
             if (blank($state)) {
                 return null;
@@ -102,6 +119,8 @@ trait CanFormatState
 
     public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
     {
+        $this->isNumeric = true;
+
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
             if (blank($state)) {
                 return null;
@@ -128,6 +147,8 @@ trait CanFormatState
 
     public function time(?string $format = null, ?string $timezone = null): static
     {
+        $this->isTime = true;
+
         $format ??= Infolist::$defaultTimeDisplayFormat;
 
         $this->date($format, $timezone);
@@ -138,13 +159,6 @@ trait CanFormatState
     public function timezone(string | Closure | null $timezone): static
     {
         $this->timezone = $timezone;
-
-        return $this;
-    }
-
-    public function placeholder(string | Closure | null $placeholder): static
-    {
-        $this->placeholder = $placeholder;
 
         return $this;
     }
@@ -195,13 +209,13 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
-        if ($state instanceof LabelInterface) {
-            $state = $state->getLabel();
-        }
-
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
         ]);
+
+        if ($state instanceof LabelInterface) {
+            $state = $state->getLabel();
+        }
 
         if ($characterLimit = $this->getCharacterLimit()) {
             $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());
@@ -221,10 +235,6 @@ trait CanFormatState
 
         if ($state instanceof HtmlString) {
             return $state;
-        }
-
-        if (blank($state)) {
-            $state = $this->evaluate($this->placeholder);
         }
 
         if ($this->isHtml()) {
@@ -280,5 +290,30 @@ trait CanFormatState
     public function isMarkdown(): bool
     {
         return (bool) $this->evaluate($this->isMarkdown);
+    }
+
+    public function isDate(): bool
+    {
+        return $this->isDate;
+    }
+
+    public function isDateTime(): bool
+    {
+        return $this->isDateTime;
+    }
+
+    public function isMoney(): bool
+    {
+        return $this->isMoney;
+    }
+
+    public function isNumeric(): bool
+    {
+        return $this->isNumeric;
+    }
+
+    public function isTime(): bool
+    {
+        return $this->isTime;
     }
 }

@@ -40,13 +40,13 @@ ActionGroup::make([
 
 ## Setting the placement of the dropdown
 
-The dropdown may be positioned relative to the trigger button by using the `placement()` method:
+The dropdown may be positioned relative to the trigger button by using the `dropdownPlacement()` method:
 
 ```php
 ActionGroup::make([
     // Array of actions
 ])
-    ->placement('top-start')
+    ->dropdownPlacement('top-start')
 ```
 
 <AutoScreenshot name="actions/group/placement" alt="Action group with top placement style" version="3.x" />
@@ -70,13 +70,15 @@ The `dropdown(false)` method puts the actions inside the parent dropdown, instea
 
 ## Setting the width of the dropdown
 
-The dropdown may be set to a width by using the `width()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl` and `7xl`:
+The dropdown may be set to a width by using the `dropdownWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge` and `SevenExtraLarge`:
 
 ```php
+use Filament\Support\Enums\MaxWidth;
+
 ActionGroup::make([
     // Array of actions
 ])
-    ->width('xs')
+    ->dropdownWidth(MaxWidth::ExtraSmall)
 ```
 
 ## Controlling the maximum height of the dropdown

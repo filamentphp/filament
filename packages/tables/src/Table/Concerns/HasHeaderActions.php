@@ -29,7 +29,22 @@ trait HasHeaderActions
     /**
      * @param  array<Action | BulkAction | ActionGroup> | ActionGroup  $actions
      */
-    public function headerActions(array | ActionGroup $actions, string | Closure | null $position = null): static
+    public function headerActions(array | ActionGroup $actions, HeaderActionsPosition | Closure | null $position = null): static
+    {
+        $this->headerActions = [];
+        $this->pushHeaderActions($actions);
+
+        if ($position) {
+            $this->headerActionsPosition($position);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Action | BulkAction | ActionGroup> | ActionGroup  $actions
+     */
+    public function pushHeaderActions(array | ActionGroup $actions): static
     {
         foreach (Arr::wrap($actions) as $action) {
             $action->table($this);
@@ -52,8 +67,6 @@ trait HasHeaderActions
 
             $this->headerActions[] = $action;
         }
-
-        $this->headerActionsPosition($position);
 
         return $this;
     }

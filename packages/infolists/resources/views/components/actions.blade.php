@@ -1,5 +1,11 @@
 @php
     use Filament\Support\Enums\VerticalAlignment;
+
+    $verticalAlignment = $getVerticalAlignment();
+
+    if (! $verticalAlignment instanceof VerticalAlignment) {
+        $verticalAlignment = VerticalAlignment::tryFrom($verticalAlignment) ?? $verticalAlignment;
+    }
 @endphp
 
 <div
@@ -11,10 +17,10 @@
             ->merge($getExtraAttributes(), escape: false)
             ->class([
                 'fi-in-actions flex h-full flex-col',
-                match ($verticalAlignment = $getVerticalAlignment()) {
-                    VerticalAlignment::Center, 'center' => 'justify-center',
-                    VerticalAlignment::End, 'end' => 'justify-end',
-                    VerticalAlignment::Start, 'start' => 'justify-start',
+                match ($verticalAlignment) {
+                    VerticalAlignment::Start => 'justify-start',
+                    VerticalAlignment::Center => 'justify-center',
+                    VerticalAlignment::End => 'justify-end',
                     default => $verticalAlignment,
                 },
             ])

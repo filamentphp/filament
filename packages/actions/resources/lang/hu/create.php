@@ -13,11 +13,11 @@ return [
             'actions' => [
 
                 'create' => [
-                    'label' => 'Hozzáadás',
+                    'label' => 'Létrehozás',
                 ],
 
                 'create_another' => [
-                    'label' => 'Hozzáadás és új hozzáadása',
+                    'label' => 'Mentés és új létrehozása',
                 ],
 
             ],
@@ -27,7 +27,7 @@ return [
         'notifications' => [
 
             'created' => [
-                'title' => 'Hozzáadva',
+                'title' => 'Létrehozva',
             ],
 
         ],

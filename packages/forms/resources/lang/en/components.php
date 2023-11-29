@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Editing SVG files is not recommended as it can result in quality loss when scaling.\n Are you sure you want to continue?',
+                    'disabled' => 'Editing SVG files is disabled as it can result in quality loss when scaling.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -241,12 +250,25 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Yes',
+            'false' => 'No',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
 
             'add' => [
                 'label' => 'Add to :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Insert between',
             ],
 
             'delete' => [

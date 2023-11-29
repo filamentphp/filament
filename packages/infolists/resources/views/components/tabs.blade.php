@@ -1,20 +1,25 @@
 @php
+    use Filament\Infolists\Components\Tabs\Tab;
+
     $isContained = $isContained();
 @endphp
 
 <div
     x-cloak
     x-data="{
-        tab: null,
+        tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
 
         init: function () {
             this.$watch('tab', () => this.updateQueryString())
 
-            this.tab = @js(collect($getChildComponentContainer()->getComponents())
-                        ->filter(static fn (\Filament\Infolists\Components\Tabs\Tab $tab): bool => $tab->isVisible())
-                        ->map(static fn (\Filament\Infolists\Components\Tabs\Tab $tab) => $tab->getId())
-                        ->values()
-                        ->get($getActiveTab() - 1))
+            const tabs = @js(collect($getChildComponentContainer()->getComponents())
+                ->filter(static fn (Tab $tab): bool => $tab->isVisible())
+                ->map(static fn (Tab $tab) => $tab->getId())
+                ->values())
+
+            if ((! this.tab) || (! tabs.includes(this.tab))) {
+                 this.tab = tabs[@js($getActiveTab()) - 1]
+            }
         },
 
         updateQueryString: function () {
@@ -37,7 +42,7 @@
             ->merge($getExtraAlpineAttributes(), escape: false)
             ->class([
                 'fi-in-tabs flex flex-col',
-                'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $isContained,
+                'fi-contained rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $isContained,
             ])
     }}
 >
@@ -50,6 +55,7 @@
             <x-filament::tabs.item
                 :alpine-active="'tab === \'' . $tabId . '\''"
                 :badge="$tab->getBadge()"
+                :badge-color="$tab->getBadgeColor()"
                 :icon="$tab->getIcon()"
                 :icon-position="$tab->getIconPosition()"
                 :x-on:click="'tab = \'' . $tabId . '\''"

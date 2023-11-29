@@ -120,12 +120,13 @@ ReplicateAction::make()
 At any time, you may call `$action->halt()` from inside a lifecycle hook, which will halt the entire replication process:
 
 ```php
+use App\Models\Post;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 
 ReplicateAction::make()
-    ->before(function (ReplicateAction $action) {
-        if (! $this->record->team->subscribed()) {
+    ->before(function (ReplicateAction $action, Post $record) {
+        if (! $record->team->subscribed()) {
             Notification::make()
                 ->warning()
                 ->title('You don\'t have an active subscription!')

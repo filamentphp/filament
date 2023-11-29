@@ -3,29 +3,30 @@
     'activeIcon' => null,
     'badge' => null,
     'badgeColor' => null,
-    'grouped' => false,
-    'last' => false,
     'first' => false,
+    'grouped' => false,
     'icon' => null,
+    'last' => false,
     'shouldOpenUrlInNewTab' => false,
+    'sidebarCollapsible' => true,
     'url',
 ])
+
+@php
+    $sidebarCollapsible = $sidebarCollapsible && filament()->isSidebarCollapsibleOnDesktop();
+@endphp
 
 <li
     @class([
         'fi-sidebar-item',
-        'fi-sidebar-item-active' => $active,
+        // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
+        'fi-active fi-sidebar-item-active' => $active,
     ])
 >
     <a
-        href="{{ $url }}"
-        @if ($shouldOpenUrlInNewTab)
-            target="_blank"
-        @else
-            {{-- wire:navigate --}}
-        @endif
+        {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
-        @if (filament()->isSidebarCollapsibleOnDesktop())
+        @if ($sidebarCollapsible)
             x-data="{ tooltip: false }"
             x-effect="
                 tooltip = $store.sidebar.isOpen
@@ -39,10 +40,8 @@
             x-tooltip.html="tooltip"
         @endif
         @class([
-            'relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 text-sm text-gray-700 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5 dark:focus:bg-white/5',
-            'font-semibold' => ! $grouped,
-            'font-medium' => $grouped,
-            'bg-gray-100 text-primary-600 dark:bg-white/5 dark:text-primary-400' => $active,
+            'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 text-sm outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
+            'bg-gray-100 dark:bg-white/5' => $active,
         ])
     >
         @if (filled($icon))
@@ -81,20 +80,26 @@
         @endif
 
         <span
-            @if (filament()->isSidebarCollapsibleOnDesktop())
+            @if ($sidebarCollapsible)
                 x-show="$store.sidebar.isOpen"
                 x-transition:enter="lg:transition lg:delay-100"
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             @endif
-            class="flex-1 truncate"
+            @class([
+                'fi-sidebar-item-label flex-1 truncate',
+                'text-gray-700 dark:text-gray-200' => ! $active,
+                'text-primary-600 dark:text-primary-400' => $active,
+                'font-semibold' => ! $grouped,
+                'font-medium' => $grouped,
+            ])
         >
             {{ $slot }}
         </span>
 
         @if (filled($badge))
             <span
-                @if (filament()->isSidebarCollapsibleOnDesktop())
+                @if ($sidebarCollapsible)
                     x-show="$store.sidebar.isOpen"
                     x-transition:enter="lg:transition lg:delay-100"
                     x-transition:enter-start="opacity-0"

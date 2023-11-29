@@ -115,7 +115,7 @@ The first filter is rendered as a checkbox. When it's checked, only featured row
 
 The second filter is rendered as a select dropdown. When a user selects an option, only rows with that status will be displayed. When no option is selected, all rows will be displayed.
 
-It's possible to define as many filters as you need, and use any component from the [Form Builder package](../forms) to create a UI. For example, you could create [a custom date range filter](../filters#custom-filter-forms).
+It's possible to define as many filters as you need, and use any component from the [Form Builder package](../forms) to create a UI. For example, you could create [a custom date range filter](../filters/custom).
 
 ## Defining table actions
 

@@ -39,6 +39,15 @@ class EntriesDemo extends Component implements HasInfolists
                             ->state('Dan Harrin'),
                     ]),
                 Group::make()
+                    ->id('placeholder')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('title')
+                            ->placeholder('Dan Harrin'),
+                    ]),
+                Group::make()
                     ->id('helperText')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -46,7 +55,7 @@ class EntriesDemo extends Component implements HasInfolists
                     ->schema([
                         TextEntry::make('name')
                             ->state('Dan Harrin')
-                            ->helperText(str('Your **full name** here, including any middle names.')->markdown()->toHtmlString()),
+                            ->helperText(str('Your **full name** here, including any middle names.')->inlineMarkdown()->toHtmlString()),
                     ]),
                 Group::make()
                     ->id('hint')
@@ -57,7 +66,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('apiKey')
                             ->label('API key')
                             ->state('HGA3CH5AB345JD9MQ3')
-                            ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString()),
+                            ->hint(str('[Documentation](/documentation)')->inlineMarkdown()->toHtmlString()),
                     ]),
                 Group::make()
                     ->id('hintColor')
@@ -68,7 +77,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('apiKey')
                             ->label('API key')
                             ->state('HGA3CH5AB345JD9MQ3')
-                            ->hint('[Documentation](/documentation)')
+                            ->hint(str('[Documentation](/documentation)')->inlineMarkdown()->toHtmlString())
                             ->hintColor('primary'),
                     ]),
                 Group::make()
@@ -80,7 +89,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('apiKey')
                             ->label('API key')
                             ->state('HGA3CH5AB345JD9MQ3')
-                            ->hint('[Documentation](/documentation)')
+                            ->hint(str('[Documentation](/documentation)')->inlineMarkdown()->toHtmlString())
                             ->hintIcon('heroicon-m-question-mark-circle'),
                     ]),
                 Group::make()
@@ -169,6 +178,17 @@ class EntriesDemo extends Component implements HasInfolists
                             ->state('dan@filamentphp.com')
                             ->icon('heroicon-m-envelope')
                             ->iconPosition(IconPosition::After),
+                    ]),
+                Group::make()
+                    ->id('textIconColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('email')
+                            ->state('dan@filamentphp.com')
+                            ->icon('heroicon-m-envelope')
+                            ->iconColor('primary'),
                     ]),
                 Group::make()
                     ->id('textLarge')

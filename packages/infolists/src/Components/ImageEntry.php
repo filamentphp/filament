@@ -50,6 +50,8 @@ class ImageEntry extends Entry
 
     protected string | Closure | null $limitedRemainingTextSize = null;
 
+    protected bool | Closure $shouldCheckFileExistence = true;
+
     public function disk(string | Closure | null $disk): static
     {
         $this->disk = $disk;
@@ -134,19 +136,21 @@ class ImageEntry extends Entry
 
     public function getImageUrl(?string $state = null): ?string
     {
-        if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
+        if ((filter_var($state, FILTER_VALIDATE_URL) !== false) || str($state)->startsWith('data:')) {
             return $state;
         }
 
         /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
-        try {
-            if (! $storage->exists($state)) {
+        if ($this->shouldCheckFileExistence()) {
+            try {
+                if (! $storage->exists($state)) {
+                    return null;
+                }
+            } catch (UnableToCheckFileExistence $exception) {
                 return null;
             }
-        } catch (UnableToCheckFileExistence $exception) {
-            return null;
         }
 
         if ($this->getVisibility() === 'private') {
@@ -305,5 +309,17 @@ class ImageEntry extends Entry
     public function getLimitedRemainingTextSize(): ?string
     {
         return $this->evaluate($this->limitedRemainingTextSize);
+    }
+
+    public function checkFileExistence(bool | Closure $condition = true): static
+    {
+        $this->shouldCheckFileExistence = $condition;
+
+        return $this;
+    }
+
+    public function shouldCheckFileExistence(): bool
+    {
+        return (bool) $this->evaluate($this->shouldCheckFileExistence);
     }
 }

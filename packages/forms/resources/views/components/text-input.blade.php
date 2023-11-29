@@ -16,7 +16,11 @@
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+>
     <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
@@ -24,9 +28,11 @@
         :prefix="$prefixLabel"
         :prefix-actions="$prefixActions"
         :prefix-icon="$prefixIcon"
+        :prefix-icon-color="$getPrefixIconColor()"
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
+        :suffix-icon-color="$getSuffixIconColor()"
         :valid="! $errors->has($statePath)"
         class="fi-fo-text-input"
         :attributes="

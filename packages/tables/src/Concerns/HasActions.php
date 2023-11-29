@@ -3,11 +3,15 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Url;
+
 use function Livewire\store;
 
 /**
@@ -25,11 +29,26 @@ trait HasActions
      */
     public ?array $mountedTableActionsData = [];
 
-    public int | string | null $mountedTableActionRecord = null;
+    /**
+     * @var int | string | null
+     */
+    public $mountedTableActionRecord = null;
 
     protected ?Model $cachedMountedTableActionRecord = null;
 
     protected int | string | null $cachedMountedTableActionRecordKey = null;
+
+    /**
+     * @var mixed
+     */
+    #[Url(as: 'tableAction')]
+    public $defaultTableAction = null;
+
+    /**
+     * @var mixed
+     */
+    #[Url(as: 'tableActionRecord')]
+    public $defaultTableActionRecord = null;
 
     protected function configureTableAction(Action $action): void
     {
@@ -79,14 +98,23 @@ trait HasActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-        }
+        } catch (ValidationException $exception) {
+            if (! $this->mountedTableActionShouldOpenModal()) {
+                $action->resetArguments();
+                $action->resetFormData();
 
-        $action->resetArguments();
-        $action->resetFormData();
+                $this->unmountTableAction();
+            }
+
+            throw $exception;
+        }
 
         if (store($this)->has('redirect')) {
             return $result;
         }
+
+        $action->resetArguments();
+        $action->resetFormData();
 
         $this->unmountTableAction();
 
@@ -273,6 +301,11 @@ trait HasActions
             $action?->record(null);
             $this->mountedTableActionRecord(null);
 
+            // Setting these to `null` creates a bug where the properties are
+            // actually set to `'null'` strings and remain in the URL.
+            $this->defaultTableAction = [];
+            $this->defaultTableActionRecord = [];
+
             return;
         }
 
@@ -317,5 +350,10 @@ trait HasActions
     protected function getTableActionsColumnLabel(): ?string
     {
         return null;
+    }
+
+    public function mountedTableActionInfolist(): Infolist
+    {
+        return $this->getMountedTableAction()->getInfolist();
     }
 }

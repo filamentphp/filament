@@ -8,7 +8,7 @@ use Filament\Forms\Components\Toggle;
 
 class Filter extends BaseFilter
 {
-    public string $formComponent = Checkbox::class;
+    protected string $formComponent = Checkbox::class;
 
     protected function setUp(): void
     {
@@ -19,7 +19,13 @@ class Filter extends BaseFilter
                 return [];
             }
 
-            return [$this->getIndicator()];
+            $indicator = $this->getIndicator();
+
+            if (! $indicator instanceof Indicator) {
+                $indicator = Indicator::make($indicator);
+            }
+
+            return [$indicator];
         });
     }
 

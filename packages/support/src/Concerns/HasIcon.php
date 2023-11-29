@@ -14,7 +14,7 @@ trait HasIcon
 
     protected IconSize | string | Closure | null $iconSize = null;
 
-    public function icon(IconSize | string | Closure | null $icon): static
+    public function icon(string | Closure | null $icon): static
     {
         $this->icon = $icon;
 

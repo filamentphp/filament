@@ -1,13 +1,14 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Pages\Auth\Register;
-use function Filament\Tests\livewire;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
@@ -17,7 +18,7 @@ it('can render page', function () {
 });
 
 it('can register', function () {
-    Event::fake();
+    Notification::fake();
 
     $this->assertGuest();
 
@@ -35,7 +36,7 @@ it('can register', function () {
         ->call('register')
         ->assertRedirect(Filament::getUrl());
 
-    Event::assertDispatched(Registered::class);
+    Notification::assertSentTimes(VerifyEmail::class, expectedCount: 1);
 
     $this->assertAuthenticated();
 
@@ -46,6 +47,8 @@ it('can register', function () {
 });
 
 it('can register and redirect user to their intended URL', function () {
+    Notification::fake();
+
     session()->put('url.intended', $intendedUrl = Str::random());
 
     Filament::getCurrentPanel()->requiresEmailVerification(false);
@@ -64,7 +67,7 @@ it('can register and redirect user to their intended URL', function () {
 });
 
 it('can throttle registration attempts', function () {
-    Event::fake();
+    Notification::fake();
 
     $this->assertGuest();
 
@@ -86,7 +89,7 @@ it('can throttle registration attempts', function () {
         auth()->logout();
     }
 
-    Event::assertDispatchedTimes(Registered::class, times: 2);
+    Notification::assertSentTimes(VerifyEmail::class, expectedCount: 2);
 
     livewire(Register::class)
         ->fillForm([
@@ -99,7 +102,7 @@ it('can throttle registration attempts', function () {
         ->assertNotified()
         ->assertNoRedirect();
 
-    Event::assertDispatchedTimes(Registered::class, times: 2);
+    Notification::assertSentTimes(VerifyEmail::class, expectedCount: 2);
 
     $this->assertGuest();
 });

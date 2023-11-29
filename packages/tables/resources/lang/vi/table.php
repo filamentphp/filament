@@ -11,7 +11,7 @@ return [
     'columns' => [
 
         'text' => [
-            'more_list_items' => 'và còn :count',
+            'more_list_items' => 'và :count cột khác',
         ],
 
     ],
@@ -19,11 +19,11 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Chọn/bỏ chọn tất cả các mục cho tác vụ hàng loạt.',
+            'label' => 'Chọn/bỏ chọn tất cả các mục để thực hiện tác vụ hàng loạt.',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Chọn/bỏ chọn mục :key cho các tác vụ hàng loạt.',
+            'label' => 'Chọn/bỏ chọn mục :key để thực hiện tác vụ hàng loạt.',
         ],
 
         'search' => [
@@ -51,11 +51,11 @@ return [
             ],
 
             'count' => [
-                'label' => 'Đếm',
+                'label' => 'Số lượng',
             ],
 
             'sum' => [
-                'label' => 'Tổng',
+                'label' => 'Tổng cộng',
             ],
 
         ],
@@ -65,7 +65,7 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Sắp xếp lại bản ghi thành công',
+            'label' => 'Hoàn thành việc sắp xếp lại bản ghi',
         ],
 
         'enable_reordering' => [
@@ -81,7 +81,7 @@ return [
         ],
 
         'open_bulk_actions' => [
-            'label' => 'Xem thao tác',
+            'label' => 'Tác vụ hàng loạt',
         ],
 
         'toggle_columns' => [
@@ -92,9 +92,10 @@ return [
 
     'empty' => [
 
-        'heading' => 'Không có dữ liệu nào',
+        'heading' => 'Không có :model nào',
 
         'description' => 'Tạo một :model để bắt đầu.',
+
     ],
 
     'filters' => [
@@ -111,14 +112,14 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Đặt lại bộ lọc',
+                'label' => 'Đặt lại',
             ],
 
         ],
 
         'heading' => 'Bộ lọc',
 
-        'indicator' => 'Bộ lọc đang kích hoạt',
+        'indicator' => 'Bộ lọc hoạt động',
 
         'multi_select' => [
             'placeholder' => 'Tất cả',
@@ -130,13 +131,13 @@ return [
 
         'trashed' => [
 
-            'label' => 'Các bản ghi đã xoá',
+            'label' => 'Bản ghi đã xoá',
 
-            'only_trashed' => 'Chỉ các bản ghi đã xoá',
+            'only_trashed' => 'Chỉ bản ghi đã xoá',
 
-            'with_trashed' => 'Bao gồm các bản ghi đã xóa',
+            'with_trashed' => 'Bao gồm bản ghi đã xóa',
 
-            'without_trashed' => 'Không bao gồm các bản ghi bị xóa',
+            'without_trashed' => 'Không bao gồm bản ghi đã xóa',
 
         ],
 
@@ -166,11 +167,11 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Kéo và thả các bản ghi vào thứ tự.',
+    'reorder_indicator' => 'Kéo và thả các bản ghi để sắp xếp lại.',
 
     'selection_indicator' => [
 
-        'selected_count' => 'đã chọn 1 bản ghi|đã chọn :count bản ghi',
+        'selected_count' => '1 bản ghi đã chọn|:count bản ghi đã chọn',
 
         'actions' => [
 
@@ -196,7 +197,7 @@ return [
 
             'direction' => [
 
-                'label' => 'Thứ tự sắp xếp',
+                'label' => 'Hướng sắp xếp',
 
                 'options' => [
                     'asc' => 'Tăng dần',

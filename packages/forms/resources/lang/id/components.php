@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Mengedit file SVG tidak disarankan karena dapat mengakibatkan penurunan kualitas saat melakukan penskalaan.\n Apakah Anda yakin ingin melanjutkan?',
+                    'disabled' => 'Pengeditan file SVG dinonaktifkan karena dapat mengakibatkan penurunan kualitas saat melakukan penskalaan.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -247,6 +256,10 @@ return [
 
             'add' => [
                 'label' => 'Tambahkan :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Sisipkan',
             ],
 
             'delete' => [

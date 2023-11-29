@@ -3,14 +3,13 @@
     'icon' => null,
     'items' => [],
     'label' => null,
+    'sidebarCollapsible' => true,
 ])
 
 <li
     x-data="{ label: @js($label) }"
     data-group-label="{{ $label }}"
-    @class([
-        'fi-sidebar-group grid gap-y-1',
-    ])
+    class="fi-sidebar-group flex flex-col gap-y-1"
 >
     @if ($label)
         <div
@@ -36,7 +35,7 @@
             @endif
 
             <span
-                class="flex-1 text-sm font-semibold text-gray-700 dark:text-gray-200"
+                class="fi-sidebar-group-label flex-1 text-sm font-semibold leading-6 text-gray-700 dark:text-gray-200"
             >
                 {{ $label }}
             </span>
@@ -46,9 +45,11 @@
                     color="gray"
                     icon="heroicon-m-chevron-up"
                     icon-alias="panels::sidebar.group.collapse-button"
+                    :label="$label"
+                    x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)"
                     x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)"
-                    x-bind:class="{ 'rotate-180': $store.sidebar.groupIsCollapsed(label) }"
-                    class="fi-sidebar-group-collapse-button -my-2 -me-2"
+                    class="fi-sidebar-group-collapse-button"
+                    x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
                 />
             @endif
         </div>
@@ -62,25 +63,24 @@
             x-transition:enter-end="opacity-100"
         @endif
         x-collapse.duration.200ms
-        class="fi-sidebar-group-items grid gap-y-1"
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
     >
         @foreach ($items as $item)
-            @if ($item->isVisible())
-                <x-filament-panels::sidebar.item
-                    :active-icon="$item->getActiveIcon()"
-                    :active="$item->isActive()"
-                    :badge-color="$item->getBadgeColor()"
-                    :badge="$item->getBadge()"
-                    :first="$loop->first"
-                    :grouped="filled($label)"
-                    :icon="$item->getIcon()"
-                    :last="$loop->last"
-                    :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
-                    :url="$item->getUrl()"
-                >
-                    {{ $item->getLabel() }}
-                </x-filament-panels::sidebar.item>
-            @endif
+            <x-filament-panels::sidebar.item
+                :active-icon="$item->getActiveIcon()"
+                :active="$item->isActive()"
+                :badge-color="$item->getBadgeColor()"
+                :badge="$item->getBadge()"
+                :first="$loop->first"
+                :grouped="filled($label)"
+                :icon="$item->getIcon()"
+                :last="$loop->last"
+                :url="$item->getUrl()"
+                :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
+                :sidebar-collapsible="$sidebarCollapsible"
+            >
+                {{ $item->getLabel() }}
+            </x-filament-panels::sidebar.item>
         @endforeach
     </ul>
 </li>

@@ -9,6 +9,7 @@ use Filament\Support\Concerns;
 class Tabs extends Component
 {
     use Concerns\CanBeContained;
+    use Concerns\CanPersistTab;
     use Concerns\HasExtraAlpineAttributes;
 
     /**
@@ -16,7 +17,7 @@ class Tabs extends Component
      */
     protected string $view = 'filament-forms::components.tabs';
 
-    public int | Closure $activeTab = 1;
+    protected int | Closure $activeTab = 1;
 
     protected string | Closure | null $tabQueryStringKey = null;
 

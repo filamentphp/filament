@@ -17,6 +17,7 @@ use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Assets\Theme;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\Widgets\Widget;
@@ -79,9 +80,19 @@ class FilamentManager
         return $this->getCurrentPanel()->getAuthPasswordBroker();
     }
 
-    public function getBrandName(): string
+    public function getBrandName(): string | Htmlable
     {
         return $this->getCurrentPanel()->getBrandName();
+    }
+
+    public function getBrandLogo(): string | Htmlable | null
+    {
+        return $this->getCurrentPanel()->getBrandLogo();
+    }
+
+    public function getBrandLogoHeight(): ?string
+    {
+        return $this->getCurrentPanel()->getBrandLogoHeight();
     }
 
     public function getCollapsedSidebarWidth(): string
@@ -92,6 +103,11 @@ class FilamentManager
     public function getCurrentPanel(): ?Panel
     {
         return $this->currentPanel ?? null;
+    }
+
+    public function getDarkModeBrandLogo(): string | Htmlable | null
+    {
+        return $this->getCurrentPanel()->getDarkModeBrandLogo();
     }
 
     public function getDatabaseNotificationsPollingInterval(): ?string
@@ -188,7 +204,7 @@ class FilamentManager
         return $this->getCurrentPanel()->getLogoutUrl($parameters);
     }
 
-    public function getMaxContentWidth(): ?string
+    public function getMaxContentWidth(): MaxWidth | string | null
     {
         return $this->getCurrentPanel()->getMaxContentWidth();
     }
@@ -608,6 +624,8 @@ class FilamentManager
     public function registerPanel(Panel $panel): void
     {
         $this->panels[$panel->getId()] = $panel;
+
+        $panel->register();
 
         if ($panel->isDefault()) {
             $this->setCurrentPanel($panel);

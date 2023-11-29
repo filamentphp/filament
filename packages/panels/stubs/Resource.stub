@@ -4,7 +4,7 @@ namespace {{ namespace }};
 
 use {{ resource }}\Pages;
 use {{ resource }}\RelationManagers;
-use App\Models\{{ model }};
+use {{ model }};
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -43,9 +43,6 @@ class {{ resourceClass }} extends Resource
                 Tables\Actions\BulkActionGroup::make([
 {{ tableBulkActions }}
                 ]),
-            ])
-            ->emptyStateActions([
-{{ tableEmptyStateActions }}
             ]);
     }
 {{ relations }}
