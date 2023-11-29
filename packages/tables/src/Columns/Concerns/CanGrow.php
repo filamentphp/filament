@@ -17,6 +17,6 @@ trait CanGrow
 
     public function canGrow(bool $default = false): bool
     {
-        return (bool) $this->evaluate($this->canGrow) ?? $default;
+        return (bool) ($this->evaluate($this->canGrow) ?? $default);
     }
 }
