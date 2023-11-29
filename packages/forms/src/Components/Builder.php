@@ -723,11 +723,14 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     }
 
     /**
-     * @return array<Component>
+     * @return array<Block>
      */
     public function getBlocks(): array
     {
-        return $this->getChildComponentContainer()->getComponents();
+        /** @var array<Block> $blocks */
+        $blocks = $this->getChildComponentContainer()->getComponents();
+
+        return $blocks;
     }
 
     public function getChildComponentContainers(bool $withHidden = false): array
@@ -830,6 +833,32 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     public function isBlockLabelTruncated(): bool
     {
         return (bool) $this->evaluate($this->isBlockLabelTruncated);
+    }
+
+    /**
+     * @return array<Block>
+     */
+    public function getBlockPickerBlocks(): array
+    {
+        $state = $this->getState();
+
+        /** @var array<Block> $blocks */
+        $blocks = array_filter($this->getBlocks(), function (Block $block) use ($state): bool {
+            /** @var Block $block */
+            $maxItems = $block->getMaxItems();
+
+            if ($maxItems === null) {
+                return true;
+            }
+
+            $count = count(array_filter($state, function (array $item) use ($block): bool {
+                return $item['type'] === $block->getName();
+            }));
+
+            return $count < $maxItems;
+        });
+
+        return $blocks;
     }
 
     /**

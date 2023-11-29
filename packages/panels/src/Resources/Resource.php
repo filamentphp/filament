@@ -791,6 +791,11 @@ abstract class Resource
         return static::$isDiscovered;
     }
 
+    public static function scopeToTenant(bool $condition = true): void
+    {
+        static::$isScopedToTenant = $condition;
+    }
+
     public static function isScopedToTenant(): bool
     {
         return static::$isScopedToTenant;

@@ -2,9 +2,9 @@
     use Filament\Forms\Components\Actions\Action;
 
     $containers = $getChildComponentContainers();
+    $blockPickerBlocks = $getBlockPickerBlocks();
     $blockPickerColumns = $getBlockPickerColumns();
     $blockPickerWidth = $getBlockPickerWidth();
-    $blocks = $getBlocks();
 
     $addAction = $getAction($getAddActionName());
     $addBetweenAction = $getAction($getAddBetweenActionName());
@@ -228,7 +228,7 @@
                                             :action="$addBetweenAction"
                                             :after-item="$uuid"
                                             :columns="$blockPickerColumns"
-                                            :blocks="$blocks"
+                                            :blocks="$blockPickerBlocks"
                                             :state-path="$statePath"
                                             :width="$blockPickerWidth"
                                         >
@@ -258,7 +258,7 @@
         @if ($isAddable)
             <x-filament-forms::builder.block-picker
                 :action="$addAction"
-                :blocks="$blocks"
+                :blocks="$blockPickerBlocks"
                 :columns="$blockPickerColumns"
                 :state-path="$statePath"
                 :width="$blockPickerWidth"

@@ -653,6 +653,22 @@ By default, all resources within a panel with tenancy will be scoped to the curr
 protected static bool $isScopedToTenant = false;
 ```
 
+### Disabling tenancy for all resources
+
+If you wish to opt-in to tenancy for each resource instead of opting-out, you can call `Resource::scopeToTenant(false)` inside a service provider's `boot()` method or a middleware:
+
+```php
+use Filament\Resources\Resource;
+
+Resource::scopeToTenant(false);
+```
+
+Now, you can opt-in to tenancy for each resource by setting the `$isScopedToTenant` static property to `true` on a resource class:
+
+```php
+protected static bool $isScopedToTenant = true;
+```
+
 ## Tenancy security
 
 It's important to understand the security implications of multi-tenancy and how to properly implement it. If implemented partially or incorrectly, data belonging to one tenant may be exposed to another tenant. Filament provides a set of tools to help you implement multi-tenancy in your application, but it is up to you to understand how to use them. Filament does not provide any guarantees about the security of your application. It is your responsibility to ensure that your application is secure.
