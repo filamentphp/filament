@@ -1,12 +1,12 @@
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $gridDirection = $getGridDirection() ?? 'column';
-        $isBulkToggleable = $isBulkToggleable();
-        $isDisabled = $isDisabled();
-        $isSearchable = $isSearchable();
-        $statePath = $getStatePath();
-    @endphp
+@php
+    $gridDirection = $getGridDirection() ?? 'column';
+    $isBulkToggleable = $isBulkToggleable();
+    $isDisabled = $isDisabled();
+    $isSearchable = $isSearchable();
+    $statePath = $getStatePath();
+@endphp
 
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div
         x-data="{
             areAllCheckboxesChecked: false,

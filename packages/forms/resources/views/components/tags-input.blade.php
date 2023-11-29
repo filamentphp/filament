@@ -1,13 +1,25 @@
 @php
     use Filament\Support\Facades\FilamentView;
+
+    $hasInlineLabel = $hasInlineLabel();
+    $id = $getId();
+    $isDisabled = $isDisabled();
+    $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $id = $getId();
-        $isDisabled = $isDisabled();
-        $statePath = $getStatePath();
-    @endphp
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    :has-inline-label="$hasInlineLabel"
+>
+    <x-slot
+        name="label"
+        @class([
+            'sm:pt-1.5' => $hasInlineLabel,
+        ])
+    >
+        {{ $getLabel() }}
+    </x-slot>
 
     <div
         @if (FilamentView::hasSpaMode())
