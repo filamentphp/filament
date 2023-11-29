@@ -10,7 +10,6 @@
             x-data="{
         
                 isSticky: false,
-        
                 evaluatePageScrollPosition: function () {
                     this.isSticky = window.pageYOffset > 0
                 },
