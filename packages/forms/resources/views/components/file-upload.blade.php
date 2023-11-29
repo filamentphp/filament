@@ -1,6 +1,21 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Facades\FilamentView;
+
+    $imageCropAspectRatio = $getImageCropAspectRatio();
+    $imageResizeTargetHeight = $getImageResizeTargetHeight();
+    $imageResizeTargetWidth = $getImageResizeTargetWidth();
+    $isAvatar = $isAvatar();
+    $statePath = $getStatePath();
+    $isDisabled = $isDisabled();
+    $hasImageEditor = $hasImageEditor();
+    $hasCircleCropper = $hasCircleCropper();
+
+    $alignment = $getAlignment() ?? Alignment::Start;
+
+    if (! $alignment instanceof Alignment) {
+        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+    }
 @endphp
 
 <x-dynamic-component
@@ -8,23 +23,6 @@
     :field="$field"
     :label-sr-only="$isLabelHidden()"
 >
-    @php
-        $imageCropAspectRatio = $getImageCropAspectRatio();
-        $imageResizeTargetHeight = $getImageResizeTargetHeight();
-        $imageResizeTargetWidth = $getImageResizeTargetWidth();
-        $isAvatar = $isAvatar();
-        $statePath = $getStatePath();
-        $isDisabled = $isDisabled();
-        $hasImageEditor = $hasImageEditor();
-        $hasCircleCropper = $hasCircleCropper();
-
-        $alignment = $getAlignment() ?? Alignment::Start;
-
-        if (! $alignment instanceof Alignment) {
-            $alignment = Alignment::tryFrom($alignment) ?? $alignment;
-        }
-    @endphp
-
     <div
         @if (FilamentView::hasSpaMode())
             ax-load="visible"
