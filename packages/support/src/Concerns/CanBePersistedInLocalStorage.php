@@ -2,6 +2,9 @@
 
 namespace Filament\Support\Concerns;
 
+use Closure;
+use Illuminate\Support\Str;
+
 trait CanBePersistedInLocalStorage
 {
     protected bool | Closure | null $persistTabInLocalStorage = false;
@@ -24,7 +27,7 @@ trait CanBePersistedInLocalStorage
 
     public function getTabLocalStorageName(): string
     {
-        return str_slug(class_basename($this->getLivewire()).'-'.$this->getContainer()->getRecord()->getTable().'-'. ($this->tabLocalStorageName ?? $this->getContainer()->getRecord()->getKey()));
+        return Str::slug(class_basename($this->getLivewire()).'-'.$this->getContainer()->getRecord()->getTable().'-'. ($this->tabLocalStorageName ?? $this->getContainer()->getRecord()->getKey()));
     }
 
     public function isTabPersistedInLocalStorage(): bool
