@@ -724,8 +724,8 @@
                                 :attributes="
                                     \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
                                         ->class([
-                                            $column->canGrow() ? 'w-full' : null,
                                             'fi-table-header-cell-' . str($column->getName())->camel()->kebab(),
+                                            $column->canGrow() ? 'w-full' : null,
                                             $getHiddenClasses($column),
                                         ])
                                 "
