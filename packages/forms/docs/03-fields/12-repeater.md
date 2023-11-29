@@ -631,7 +631,7 @@ Repeater::make('members')
     ])
     ->extraItemActions([
         Action::make('sendEmail')
-            ->icon('heroicon-m-square-2-stack')
+            ->icon('heroicon-m-envelope')
             ->action(function (array $arguments, Repeater $component): void {
                 $itemData = $component->getItemState($arguments['item']);
                 

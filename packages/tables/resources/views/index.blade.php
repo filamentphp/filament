@@ -137,6 +137,12 @@
                         'grid gap-y-3 px-4 py-4 sm:px-6',
                     ])
                 >
+                    <x-filament-tables::filters
+                        :form="$getFiltersForm()"
+                        x-cloak
+                        x-show="areFiltersOpen"
+                    />
+
                     @if ($hasFiltersAboveContentCollapsible)
                         <span
                             x-on:click="areFiltersOpen = ! areFiltersOpen"
@@ -145,12 +151,6 @@
                             {{ $filtersTriggerAction->badge(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
                         </span>
                     @endif
-
-                    <x-filament-tables::filters
-                        :form="$getFiltersForm()"
-                        x-cloak
-                        x-show="areFiltersOpen"
-                    />
                 </div>
             @endif
 

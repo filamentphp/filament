@@ -131,8 +131,8 @@ class Dashboard extends BaseDashboard
     {
         return $form
             ->schema([
-                DatePicker::make('start_date'),
-                DatePicker::make('end_date'),
+                DatePicker::make('startDate'),
+                DatePicker::make('endDate'),
                 // ...
             ]);
     }
@@ -154,8 +154,8 @@ class BlogPostsOverview extends StatsOverviewWidget
 
     public function getStats(): array
     {
-        $startDate = $this->filters['start_date'] ?? null;
-        $endDate = $this->filters['end_date'] ?? null;
+        $startDate = $this->filters['startDate'] ?? null;
+        $endDate = $this->filters['endDate'] ?? null;
 
         return [
             StatsOverviewWidget\Stat::make(
@@ -199,8 +199,8 @@ class Dashboard extends BaseDashboard
         return [
             FilterAction::make()
                 ->form([
-                    DatePicker::make('start_date'),
-                    DatePicker::make('end_date'),
+                    DatePicker::make('startDate'),
+                    DatePicker::make('endDate'),
                     // ...
                 ]),
         ];

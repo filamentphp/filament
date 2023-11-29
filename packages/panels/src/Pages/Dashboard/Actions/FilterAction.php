@@ -29,7 +29,7 @@ class FilterAction extends Action
 
         $this->color('gray');
 
-        $this->fillForm(function (Component $livewire): array {
+        $this->fillForm(function (Component $livewire): ?array {
             if (! property_exists($livewire, 'filters')) {
                 throw new Exception('The [' . $livewire::class . '] page must implement the [' . Dashboard\Concerns\HasFilters::class . '] trait.');
             }
