@@ -18,13 +18,14 @@
                 @foreach ($navigationGroup->getItems() as $navigationItem)
                     @foreach ([$navigationItem, ...$navigationItem->getChildItems()] as $navigationItemChild)
                         <option
-                            @if ($navigationItem->isActive())
-                                selected
-                            @endif
-                            value="{{ $navigationItem->getUrl() }}"
+                            @selected($navigationItemChild->isActive())
+                            value="{{ $navigationItemChild->getUrl() }}"
                         >
-                            {{ $loop->index ? '&ensp;&ensp;' : null }}
-                            {{ $navigationItem->getLabel() }}
+                            @if ($loop->index)
+                                    &ensp;&ensp;
+                            @endif
+
+                            {{ $navigationItemChild->getLabel() }}
                         </option>
                     @endforeach
                 @endforeach
