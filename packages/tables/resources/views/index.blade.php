@@ -729,7 +729,7 @@
                                     \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
                                         ->class([
                                             'fi-table-header-cell-' . str($column->getName())->camel()->kebab(),
-                                            $column->canGrow() ? 'w-full' : null,
+                                            'w-full' => $column->canGrow(),
                                             $getHiddenClasses($column),
                                         ])
                                 "
