@@ -1,13 +1,11 @@
 @php
     use Filament\Support\Facades\FilamentView;
+
+    $id = $getId();
+    $statePath = $getStatePath();
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $id = $getId();
-        $statePath = $getStatePath();
-    @endphp
-
     @if ($isDisabled())
         <div
             x-data="{
