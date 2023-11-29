@@ -12,7 +12,6 @@
                 evaluatePageScrollPosition: function () {
                     this.isSticky = window.pageYOffset > 0
                 },
-        
             }"
             x-init="evaluatePageScrollPosition"
             x-on:scroll.window="evaluatePageScrollPosition"
