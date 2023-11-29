@@ -3,7 +3,7 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Filament\Support\Concerns\CanBeSticky;
+use Filament\Support\Concerns\HasAsideStickyHeader;
 use Filament\Infolists\Components\Concerns\HasHeaderActions;
 use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
@@ -18,7 +18,7 @@ class Section extends Component implements Contracts\HasHeaderActions
     use Concerns\CanBeCollapsed;
     use Concerns\CanBeCompacted;
     use Concerns\EntanglesStateWithSingularRelationship;
-    use CanBeSticky;
+    use HasAsideStickyHeader;
     use HasDescription;
     use HasExtraAlpineAttributes;
     use HasHeaderActions;
