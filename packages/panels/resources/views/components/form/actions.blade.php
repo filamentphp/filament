@@ -9,7 +9,7 @@
         @if ($this->areFormActionsSticky())
             x-data="{
                 isSticky: false,
-                evaluatePageScrollPosition() {
+                evaluatePageScrollPosition: function () {
                     this.isSticky = window.pageYOffset > 0
                 },
             }"
