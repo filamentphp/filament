@@ -4,6 +4,7 @@
     $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
+    $isReorderable = $isReorderable();
     $statePath = $getStatePath();
 @endphp
 
@@ -74,43 +75,44 @@
         <div wire:ignore>
             <template x-cloak x-if="state?.length">
                 <div
-                    @if ($isReorderable())
+                    @if ($isReorderable)
                         x-on:end="reorderTags($event)"
                         x-sortable
                         data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                     @endif
-
                     @class([
                         'flex w-full flex-wrap gap-1.5 p-2',
                         'border-t border-t-gray-200 dark:border-t-white/10',
                     ])
                 >
                     <template
-                        x-for="(tag, i) in state"
-                        x-bind:key="`${tag}-${i}`"
+                        x-for="(tag, index) in state"
+                        x-bind:key="`${tag}-${index}`"
                         class="hidden"
                     >
-                        <div
-                            @if($isReorderable())
-                                x-bind:x-sortable-item="i"
-                                x-sortable-handle
-                            @endif
+                        <x-filament::badge
+                            :x-bind:x-sortable-item="$isReorderable ? 'index' : null"
+                            :x-sortable-handle="$isReorderable ? '' : null"
+                            @class([
+                                'cursor-move' => $isReorderable,
+                            ])
                         >
-                            <x-filament::badge>
-                                {{ $getTagPrefix() }}
+                            {{ $getTagPrefix() }}
 
-                                <span class="text-start select-none" x-text="tag"></span>
+                            <span
+                                class="select-none text-start"
+                                x-text="tag"
+                            ></span>
 
-                                {{ $getTagSuffix() }}
+                            {{ $getTagSuffix() }}
 
-                                @if (! $isDisabled)
-                                    <x-slot
-                                        name="deleteButton"
-                                        x-on:click="deleteTag(tag)"
-                                    ></x-slot>
-                                @endif
-                            </x-filament::badge>
-                        </div>
+                            @if (! $isDisabled)
+                                <x-slot
+                                    name="deleteButton"
+                                    x-on:click="deleteTag(tag)"
+                                ></x-slot>
+                            @endif
+                        </x-filament::badge>
                     </template>
                 </div>
             </template>

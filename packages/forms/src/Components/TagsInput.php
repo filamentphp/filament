@@ -12,8 +12,8 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasPlaceholder;
-    use HasReorderAnimationDuration;
     use HasExtraAlpineAttributes;
+    use HasReorderAnimationDuration;
 
     /**
      * @var view-string
@@ -73,6 +73,8 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         });
 
         $this->placeholder(__('filament-forms::components.tags_input.placeholder'));
+
+        $this->reorderAnimationDuration(100);
     }
 
     public function tagPrefix(string | Closure | null $prefix): static
