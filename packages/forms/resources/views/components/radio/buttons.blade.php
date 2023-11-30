@@ -54,7 +54,6 @@
                     :for="$inputId"
                     :icon="$getIcon($value)"
                     tag="label"
-                    class="cursor-pointer"
                 >
                     {{ $label }}
                 </x-filament::button>
