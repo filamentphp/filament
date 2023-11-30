@@ -273,6 +273,15 @@ class AttachAction extends Action
 
                 return $this->getRecordTitle($relationshipQuery->find($value));
             })
+            ->getOptionLabelsUsing(function (array $values) use ($table): array {
+                $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+
+                $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+
+                return $relationshipQuery->find($values)
+                    ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
+                    ->all();
+            })
             ->options(fn (Select $component): array => $this->isRecordSelectPreloaded() ? $getOptions(optionsLimit: $component->getOptionsLimit()) : [])
             ->hiddenLabel();
 

@@ -268,7 +268,18 @@ class AssociateAction extends Action
             ->required()
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(optionsLimit: $component->getOptionsLimit(), search: $search, searchColumns: $component->getSearchColumns()))
-            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle(Relation::noConstraints(fn () => $table->getRelationship())->getQuery()->find($value)))
+            ->getOptionLabelUsing(function ($value) use ($table): string {
+                $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+
+                return $this->getRecordTitle($relationship->getQuery()->find($value));
+            })
+            ->getOptionLabelsUsing(function (array $values) use ($table): array {
+                $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+
+                return $relationship->getQuery()->find($values)
+                    ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
+                    ->all();
+            })
             ->options(fn (Select $component): array => $this->isRecordSelectPreloaded() ? $getOptions(optionsLimit: $component->getOptionsLimit()) : [])
             ->hiddenLabel();
 
