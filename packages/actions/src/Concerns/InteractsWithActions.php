@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
+use Livewire\Attributes\Url;
 
 use function Livewire\store;
 
@@ -35,6 +36,18 @@ trait InteractsWithActions
      * @var array<string, array<string, mixed>> | null
      */
     public ?array $mountedActionsData = [];
+
+    /**
+     * @var mixed
+     */
+    #[Url(as: 'action')]
+    public $defaultAction = null;
+
+    /**
+     * @var mixed
+     */
+    #[Url(as: 'actionArguments')]
+    public $defaultActionArguments = null;
 
     /**
      * @var array<string, Action>
@@ -405,6 +418,11 @@ trait InteractsWithActions
             $this->closeActionModal();
 
             $action?->clearRecordAfter();
+
+            // Setting these to `null` creates a bug where the properties are
+            // actually set to `'null'` strings and remain in the URL.
+            $this->defaultAction = [];
+            $this->defaultActionArguments = [];
 
             return;
         }

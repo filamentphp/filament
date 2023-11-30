@@ -1,27 +1,30 @@
+@php
+    use Filament\Forms\Components\Actions\Action;
+
+    $containers = $getChildComponentContainers();
+
+    $addAction = $getAction($getAddActionName());
+    $addBetweenAction = $getAction($getAddBetweenActionName());
+    $cloneAction = $getAction($getCloneActionName());
+    $collapseAllAction = $getAction($getCollapseAllActionName());
+    $expandAllAction = $getAction($getExpandAllActionName());
+    $deleteAction = $getAction($getDeleteActionName());
+    $moveDownAction = $getAction($getMoveDownActionName());
+    $moveUpAction = $getAction($getMoveUpActionName());
+    $reorderAction = $getAction($getReorderActionName());
+    $extraItemActions = $getExtraItemActions();
+
+    $isAddable = $isAddable();
+    $isCloneable = $isCloneable();
+    $isCollapsible = $isCollapsible();
+    $isDeletable = $isDeletable();
+    $isReorderableWithButtons = $isReorderableWithButtons();
+    $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
+
+    $statePath = $getStatePath();
+@endphp
+
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $containers = $getChildComponentContainers();
-
-        $addAction = $getAction($getAddActionName());
-        $addBetweenAction = $getAction($getAddBetweenActionName());
-        $cloneAction = $getAction($getCloneActionName());
-        $collapseAllAction = $getAction($getCollapseAllActionName());
-        $expandAllAction = $getAction($getExpandAllActionName());
-        $deleteAction = $getAction($getDeleteActionName());
-        $moveDownAction = $getAction($getMoveDownActionName());
-        $moveUpAction = $getAction($getMoveUpActionName());
-        $reorderAction = $getAction($getReorderActionName());
-
-        $isAddable = $isAddable();
-        $isCloneable = $isCloneable();
-        $isCollapsible = $isCollapsible();
-        $isDeletable = $isDeletable();
-        $isReorderableWithButtons = $isReorderableWithButtons();
-        $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
-
-        $statePath = $getStatePath();
-    @endphp
-
     <div
         x-data="{}"
         {{
@@ -66,11 +69,16 @@
                     :two-xl="$getGridColumns('2xl')"
                     :wire:end.stop="'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })'"
                     x-sortable
+                    :data-sortable-animation-duration="$getReorderAnimationDuration()"
                     class="gap-4"
                 >
                     @foreach ($containers as $uuid => $item)
                         @php
                             $itemLabel = $getItemLabel($uuid);
+                            $visibleExtraItemActions = array_filter(
+                                $extraItemActions,
+                                fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
+                            );
                         @endphp
 
                         <li
@@ -109,7 +117,7 @@
                             class="fi-fo-repeater-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                             x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                         >
-                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible)
+                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
                                 <div
                                     class="fi-fo-repeater-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3"
                                 >
@@ -152,10 +160,16 @@
                                         </h4>
                                     @endif
 
-                                    @if ($isCloneable || $isDeletable || $isCollapsible)
+                                    @if ($isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
                                         <ul
                                             class="ms-auto flex items-center gap-x-3"
                                         >
+                                            @foreach ($visibleExtraItemActions as $extraItemAction)
+                                                <li>
+                                                    {{ $extraItemAction(['item' => $uuid]) }}
+                                                </li>
+                                            @endforeach
+
                                             @if ($isCloneable)
                                                 <li>
                                                     {{ $cloneAction(['item' => $uuid]) }}
@@ -216,7 +230,7 @@
                                     class="relative border-t border-gray-200 dark:border-white/10"
                                 >
                                     <span
-                                        class="absolute -top-3 left-3 bg-white px-1 text-sm font-medium dark:bg-gray-900"
+                                        class="absolute -top-3 left-3 px-1 text-sm font-medium"
                                     >
                                         {{ $labelBetweenItems }}
                                     </span>

@@ -11,6 +11,7 @@ use Filament\Actions\RestoreAction;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -49,6 +50,11 @@ class ViewRecord extends Page
     public function getContentTabLabel(): ?string
     {
         return __('filament-panels::resources/pages/view-record.content.tab.label');
+    }
+
+    public function getSubNavigationPosition(): SubNavigationPosition
+    {
+        return static::getResource()::getSubNavigationPosition();
     }
 
     public function mount(int | string $record): void

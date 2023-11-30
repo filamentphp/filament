@@ -4,6 +4,7 @@ namespace Filament\Pages\Auth;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
@@ -11,13 +12,15 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
+use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Illuminate\Auth\EloquentUserProvider;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\SessionGuard;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -74,17 +77,35 @@ class Register extends SimplePage
 
         $user = $this->getUserModel()::create($data);
 
-        app()->bind(
-            \Illuminate\Auth\Listeners\SendEmailVerificationNotification::class,
-            \Filament\Listeners\Auth\SendEmailVerificationNotification::class,
-        );
-        event(new Registered($user));
+        $this->sendEmailVerificationNotification($user);
 
         Filament::auth()->login($user);
 
         session()->regenerate();
 
         return app(RegistrationResponse::class);
+    }
+
+    protected function sendEmailVerificationNotification(Model $user): void
+    {
+        if (! $user instanceof MustVerifyEmail) {
+            return;
+        }
+
+        if ($user->hasVerifiedEmail()) {
+            return;
+        }
+
+        if (! method_exists($user, 'notify')) {
+            $userClass = $user::class;
+
+            throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
+        }
+
+        $notification = new VerifyEmail();
+        $notification->url = Filament::getVerifyEmailUrl($user);
+
+        $user->notify($notification);
     }
 
     public function form(Form $form): Form

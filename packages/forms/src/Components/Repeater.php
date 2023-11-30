@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
@@ -18,13 +19,15 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Repeater extends Field implements Contracts\CanConcealComponents
+class Repeater extends Field implements Contracts\CanConcealComponents, Contracts\HasExtraItemActions
 {
     use Concerns\CanBeCloned;
     use Concerns\CanBeCollapsed;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
+    use Concerns\HasExtraItemActions;
+    use HasReorderAnimationDuration;
 
     protected string | Closure | null $addActionLabel = null;
 
@@ -156,7 +159,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
                 $component->state($items);
 
-                $component->getChildComponentContainers()[$newUuid]->fill();
+                $component->getChildComponentContainer($newUuid)->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -207,7 +210,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
                 $component->state($items);
 
-                $component->getChildComponentContainers()[$newUuid]->fill();
+                $component->getChildComponentContainer($newUuid)->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -1205,5 +1208,21 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function isItemLabelTruncated(): bool
     {
         return (bool) $this->evaluate($this->isItemLabelTruncated);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getItemState(string $uuid): array
+    {
+        return $this->getChildComponentContainer($uuid)->getState(shouldCallHooksBefore: false);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getRawItemState(string $uuid): array
+    {
+        return $this->getChildComponentContainer($uuid)->getRawState();
     }
 }

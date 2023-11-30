@@ -3,11 +3,14 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Actions\Action;
 
 trait CanReorderRecords
 {
+    use HasReorderAnimationDuration;
+
     protected bool | Closure $isReorderable = true;
 
     protected string | Closure | null $reorderColumn = null;

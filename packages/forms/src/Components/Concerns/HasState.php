@@ -17,7 +17,10 @@ trait HasState
 {
     protected ?Closure $afterStateHydrated = null;
 
-    protected ?Closure $afterStateUpdated = null;
+    /**
+     * @var array<Closure>
+     */
+    protected array $afterStateUpdated = [];
 
     protected ?Closure $beforeStateDehydrated = null;
 
@@ -42,9 +45,16 @@ trait HasState
         return $this;
     }
 
+    public function clearAfterStateUpdatedHooks(): static
+    {
+        $this->afterStateUpdated = [];
+
+        return $this;
+    }
+
     public function afterStateUpdated(?Closure $callback): static
     {
-        $this->afterStateUpdated = $callback;
+        $this->afterStateUpdated[] = $callback;
 
         return $this;
     }
@@ -67,25 +77,28 @@ trait HasState
 
     public function callAfterStateUpdated(): static
     {
-        $callback = $this->afterStateUpdated;
+        foreach ($this->afterStateUpdated as $callback) {
+            $callbackId = spl_object_id($callback);
 
-        if (! $callback) {
-            return $this;
+            // TODO: Revert to `store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $callbackId)`
+            // when https://github.com/livewire/livewire/pull/7327 is merged.
+            if (store($this)->get('executedAfterStateUpdatedCallbacks')[$callbackId] ?? false) {
+                continue;
+            }
+
+            $this->callAfterStateUpdatedHook($callback);
+
+            store($this)->push('executedAfterStateUpdatedCallbacks', value: $callbackId, iKey: $callbackId);
         }
-
-        $callbackId = spl_object_id($callback);
-
-        if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $callbackId)) {
-            return $this;
-        }
-
-        $this->evaluate($callback, [
-            'old' => $this->getOldState(),
-        ]);
-
-        store($this)->push('executedAfterStateUpdatedCallbacks', value: $callbackId, iKey: $callbackId);
 
         return $this;
+    }
+
+    protected function callAfterStateUpdatedHook(Closure $hook): void
+    {
+        $this->evaluate($hook, [
+            'old' => $this->getOldState(),
+        ]);
     }
 
     public function callBeforeStateDehydrated(): static

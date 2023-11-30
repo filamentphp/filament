@@ -2,6 +2,7 @@
 
 namespace Filament\Infolists\Components\Actions;
 
+use Exception;
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Illuminate\Database\Eloquent\Model;
@@ -25,13 +26,21 @@ class Action extends MountableAction
             return $this->action;
         }
 
-        $infolistComponent = $this->getInfolistComponent();
+        $component = $this->getComponent();
 
-        if (! $infolistComponent) {
+        if (! $component) {
             return "mountInfolistAction('{$this->getName()}')";
         }
 
-        return "mountInfolistAction('{$this->getName()}', '{$infolistComponent->getKey()}', '{$infolistComponent->getInfolist()->getName()}')";
+        $componentKey = $component->getKey();
+
+        if (blank($componentKey)) {
+            $componentClass = $this->getComponent()::class;
+
+            throw new Exception("The infolist component [{$componentClass}] must have a [key()] set in order to use actions. This [key()] must be a unique identifier for the component.");
+        }
+
+        return "mountInfolistAction('{$this->getName()}', '{$componentKey}', '{$component->getInfolist()->getName()}')";
     }
 
     public function toInfolistComponent(): ActionContainer
@@ -45,9 +54,9 @@ class Action extends MountableAction
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
-            'record' => [$this->getInfolistComponent()->getRecord()],
+            'component', 'infolistComponent' => [$this->getComponent()],
+            'record' => [$this->getComponent()->getRecord()],
             'infolist' => [$this->getInfolist()],
-            'infolistComponent' => [$this->getInfolistComponent()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
@@ -77,7 +86,7 @@ class Action extends MountableAction
             return $action;
         }
 
-        return $action->component($this->getInfolistComponent());
+        return $action->component($this->getComponent());
     }
 
     public function getInfolistName(): string

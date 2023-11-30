@@ -9,6 +9,7 @@ use Filament\Support\Concerns;
 class Tabs extends Component
 {
     use Concerns\CanBeContained;
+    use Concerns\CanPersistTab;
     use Concerns\HasExtraAlpineAttributes;
 
     /**

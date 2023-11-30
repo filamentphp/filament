@@ -11,7 +11,14 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Mostrar :count menos',
+                'expand_list' => 'Mostrar :count más',
+            ],
+
             'more_list_items' => 'y :count más',
+
         ],
 
     ],
@@ -24,6 +31,10 @@ return [
 
         'bulk_select_record' => [
             'label' => 'Seleccionar/deseleccionar el elemento :key para las acciones masivas.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Seleccionar/deseleccionar grupo :title para acciones masivas.',
         ],
 
         'search' => [

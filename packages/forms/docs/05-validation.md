@@ -220,6 +220,14 @@ The field value must be greater than or equal to another. [See the Laravel docum
 Field::make('newNumber')->gte('oldNumber')
 ```
 
+### Hex color
+
+The field value must be a valid color in hexadecimal format. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-hex-color)
+
+```php
+Field::make('color')->hexColor()
+```
+
 ### In
 The field must be included in the given list of values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-in)
 
@@ -522,7 +530,7 @@ TextInput::make('slug')->rules([
 ])
 ```
 
-## Validation attributes
+## Customizing validation attributes
 
 When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
 

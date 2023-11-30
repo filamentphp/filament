@@ -3,8 +3,11 @@
 ])
 
 @php
-    $widgetData = $this->getWidgetData();
+    use Filament\Pages\SubNavigationPosition;
+
     $subNavigation = $this->getCachedSubNavigation();
+    $subNavigationPosition = $this->getSubNavigationPosition();
+    $widgetData = $this->getWidgetData();
 @endphp
 
 <div
@@ -36,72 +39,35 @@
 
         <div
             @class([
-                'grid grid-cols-1 gap-6 md:grid-cols-4' => $subNavigation,
+                'flex flex-col gap-8' => $subNavigation,
+                match ($subNavigationPosition) {
+                    SubNavigationPosition::Start, SubNavigationPosition::End => 'md:flex-row',
+                    default => null,
+                } => $subNavigation,
                 'h-full' => $fullHeight,
             ])
         >
             @if ($subNavigation)
-                <div wire:ignore class="col-span-1">
-                    <x-filament::input.wrapper class="md:hidden">
-                        <x-filament::input.select
-                            x-data="{}"
-                            x-on:change="window.location = $event.target.value"
-                        >
-                            @foreach ($subNavigation as $subNavigationGroup)
-                                @php
-                                    $subNavigationGroupLabel = $subNavigationGroup->getLabel();
-                                @endphp
+                <x-filament-panels::page.sub-navigation.select
+                    :navigation="$subNavigation"
+                />
 
-                                @if (filled($subNavigationGroupLabel))
-                                    <optgroup
-                                        label="{{ $subNavigationGroupLabel }}"
-                                    >
-                                        @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
-                                            <option
-                                                @if ($subNavigationItem->isActive())
-                                                    selected
-                                                @endif
-                                                value="{{ $subNavigationItem->getUrl() }}"
-                                            >
-                                                {{ $subNavigationItem->getLabel() }}
-                                            </option>
-                                        @endforeach
-                                    </optgroup>
-                                @else
-                                    @foreach ($subNavigationGroup->getItems() as $subNavigationItem)
-                                        <option
-                                            @if ($subNavigationItem->isActive())
-                                                selected
-                                            @endif
-                                            value="{{ $subNavigationItem->getUrl() }}"
-                                        >
-                                            {{ $subNavigationItem->getLabel() }}
-                                        </option>
-                                    @endforeach
-                                @endif
-                            @endforeach
-                        </x-filament::input.select>
-                    </x-filament::input.wrapper>
+                @if ($subNavigationPosition === SubNavigationPosition::Start)
+                    <x-filament-panels::page.sub-navigation.sidebar
+                        :navigation="$subNavigation"
+                    />
+                @endif
 
-                    <div
-                        class="hidden rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:block"
-                    >
-                        @foreach ($subNavigation as $subNavigationGroup)
-                            <x-filament-panels::sidebar.group
-                                :collapsible="$subNavigationGroup->isCollapsible()"
-                                :icon="$subNavigationGroup->getIcon()"
-                                :items="$subNavigationGroup->getItems()"
-                                :label="$subNavigationGroup->getLabel()"
-                            />
-                        @endforeach
-                    </div>
-                </div>
+                @if ($subNavigationPosition === SubNavigationPosition::Top)
+                    <x-filament-panels::page.sub-navigation.tabs
+                        :navigation="$subNavigation"
+                    />
+                @endif
             @endif
 
             <div
                 @class([
-                    'grid auto-cols-fr gap-y-8',
-                    'col-span-1 md:col-span-3' => $subNavigation,
+                    'grid flex-1 auto-cols-fr gap-y-8',
                     'h-full' => $fullHeight,
                 ])
             >
@@ -133,6 +99,12 @@
 
                 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.footer-widgets.after', scopes: $this->getRenderHookScopes()) }}
             </div>
+
+            @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
+                <x-filament-panels::page.sub-navigation.sidebar
+                    :navigation="$subNavigation"
+                />
+            @endif
         </div>
 
         @if ($footer = $this->getFooter())
@@ -140,8 +112,20 @@
         @endif
     </section>
 
-    @if (! $this instanceof \Filament\Tables\Contracts\HasTable)
+    @if (! ($this instanceof \Filament\Tables\Contracts\HasTable))
         <x-filament-actions::modals />
+    @elseif ($this->isTableLoaded() &&
+             filled($this->defaultTableAction) &&
+             filled($this->defaultTableActionRecord))
+        <div
+            wire:init="mountTableAction(@js($this->defaultTableAction), @js($this->defaultTableActionRecord))"
+        ></div>
+    @endif
+
+    @if (filled($this->defaultAction))
+        <div
+            wire:init="mountAction(@js($this->defaultAction) @if (filled($this->defaultActionArguments)) , @js($this->defaultActionArguments) @endif)"
+        ></div>
     @endif
 
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.end', scopes: $this->getRenderHookScopes()) }}

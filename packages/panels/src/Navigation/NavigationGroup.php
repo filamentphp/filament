@@ -63,15 +63,6 @@ class NavigationGroup extends Component
      */
     public function items(array | Arrayable $items): static
     {
-        foreach ($items as $item) {
-            if ($item instanceof NavigationItem) {
-                continue;
-            }
-
-            /** @phpstan-ignore-next-line */
-            throw new Exception("Navigation group [{$this->getLabel()}] has a nested group, which is not supported in the sidebar design at the moment.");
-        }
-
         $this->items = $items;
 
         return $this;
@@ -88,7 +79,7 @@ class NavigationGroup extends Component
     {
         $icon = $this->evaluate($this->icon);
 
-        if (filled($icon) && $this->hasItemIcons()) {
+        if ($this->hasItemIcons() && filled($icon)) {
             throw new Exception("Navigation group [{$this->getLabel()}] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.");
         }
 

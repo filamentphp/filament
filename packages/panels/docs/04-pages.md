@@ -296,11 +296,43 @@ This example assumes you have a Blade view at `resources/views/filament/settings
 
 ## Customizing the maximum content width
 
-By default, Filament will restrict the width of the content on the page, so it doesn't become too wide on large screens. To change this, you may override the `getMaxContentWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, `prose`, `screen-sm`, `screen-md`, `screen-lg`, `screen-xl`, `screen-2xl` and `full`. The default is `7xl`:
+By default, Filament will restrict the width of the content on the page, so it doesn't become too wide on large screens. To change this, you may override the `getMaxContentWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge`, `SevenExtraLarge`, `Full`, `MinContent`, `MaxContent`, `FitContent`,  `Prose`, `ScreenSmall`, `ScreenMedium`, `ScreenLarge`, `ScreenExtraLarge` and `ScreenTwoExtraLarge`. The default is `SevenExtraLarge`:
 
 ```php
-public function getMaxContentWidth(): ?string
+use Filament\Support\Enums\MaxWidth;
+
+public function getMaxContentWidth(): MaxWidth
 {
-    return 'full';
+    return MaxWidth::Full;
 }
+```
+
+## Generating URLs to pages
+
+Filament provides `getUrl()` static method on page classes to generate URLs to them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the page's slug or route naming conventions.
+
+The `getUrl()` method, without any arguments, will generate a URL:
+
+```php
+use App\Filament\Pages\Settings;
+
+Settings::getUrl(); // /admin/settings
+```
+
+If your page uses URL / query parameters, you should use the argument:
+
+```php
+use App\Filament\Pages\Settings;
+
+Settings:::getUrl(['section' => 'notifications']); // /admin/settings?section=notifications
+```
+
+### Generating URLs to pages in other panels
+
+If you have multiple panels in your app, `getUrl()` will generate a URL within the current panel. You can also indicate which panel the page is associated with, by passing the panel ID to the `panel` argument:
+
+```php
+use App\Filament\Pages\Settings;
+
+Settings::getUrl(panel: 'marketing');
 ```

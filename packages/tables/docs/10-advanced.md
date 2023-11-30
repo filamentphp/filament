@@ -75,7 +75,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 protected function paginateTableQuery(Builder $query): Paginator
 {
-    return $query->simplePaginate($this->getTableRecordsPerPage() == 'all' ? $query->count() : $this->getTableRecordsPerPage());
+    return $query->simplePaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
 }
 ```
 
@@ -91,7 +91,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 protected function paginateTableQuery(Builder $query): CursorPaginator
 {
-    return $query->cursorPaginate($this->getTableRecordsPerPage() == 'all' ? $query->count() : $this->getTableRecordsPerPage());
+    return $query->cursorPaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
 }
 ```
 

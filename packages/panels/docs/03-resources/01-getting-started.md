@@ -311,6 +311,27 @@ public static function getNavigationGroup(): ?string
 }
 ```
 
+#### Grouping resource navigation items under other items
+
+You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationParentItem`:
+
+```php
+protected static ?string $navigationParentItem = 'Products';
+
+protected static ?string $navigationGroup = 'Shop';
+```
+
+As seen above, if the parent item has a navigation group, that navigation group must also be defined, so the correct parent item can be identified.
+
+You may also use the `getNavigationParentItem()` method to set a dynamic parent item label:
+
+```php
+public static function getNavigationParentItem(): ?string
+{
+    return __('filament/navigation.groups.shop.items.products');
+}
+```
+
 ## Generating URLs to resource pages
 
 Filament provides `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
@@ -340,6 +361,35 @@ CustomerResource::getUrl('edit', ['record' => $customer]); // /admin/customers/e
 ```
 
 In this example, `$customer` can be an Eloquent model object, or an ID.
+
+### Generating URLs to resource modals
+
+This can be especially useful if you are using [simple resources](#simple-modal-resources) with only one page.
+
+To generate a URL for an action in the resource's table, you should pass the `tableAction` and `tableActionRecord` as URL parameters:
+
+```php
+use App\Filament\Resources\CustomerResource;
+use Filament\Tables\Actions\EditAction;
+
+CustomerResource::getUrl(parameters: [
+    'tableAction' => EditAction::getDefaultName(),
+    'tableActionRecord' => $customer,
+]); // /admin/customers?tableAction=edit&tableActionRecord=1
+```
+
+Or if you want to generate a URL for an action on the page like a `CreateAction` in the header, you can pass it in to the `action` parameter:
+
+```php
+use App\Filament\Resources\CustomerResource;
+use Filament\Actions\CreateAction;
+
+CustomerResource::getUrl(parameters: [
+    'action' => CreateAction::getDefaultName(),
+]); // /admin/customers?action=create
+```
+
+### Generating URLs to resources in other panels
 
 If you have multiple panels in your app, `getUrl()` will generate a URL within the current panel. You can also indicate which panel the resource is associated with, by passing the panel ID to the `panel` argument:
 
@@ -392,6 +442,46 @@ By default, Filament will generate a URL based on the name of the resource. You 
 
 ```php
 protected static ?string $slug = 'pending-orders';
+```
+
+## Resource sub-navigation
+
+Sub-navigation allows the user to navigate between different pages within a resource. Typically, all pages in the sub-navigation will be related to the same record in the resource. For example, in a Customer resource, you may have a sub-navigation with the following pages:
+
+- View customer, a [`ViewRecord` page](viewing-records) that provides a read-only view of the customer's details.
+- Edit customer, an [`EditRecord` page](editing-records) that allows the user to edit the customer's details.
+- Edit customer contact, an [`EditRecord` page](editing-records) that allows the user to edit the customer's contact details. You can [learn how to create more than one Edit page](editing-records#creating-another-edit-page).
+- Manage addresses, a [`ManageRelatedRecords` page](relation-managers#relation-pages) that allows the user to manage the customer's addresses.
+- Manage payments, a [`ManageRelatedRecords` page](relation-managers#relation-pages) that allows the user to manage the customer's payments.
+
+To add a sub-navigation to each "singular record" page in the resource, you can add the `getRecordSubNavigation()` method to the resource class:
+
+```php
+use App\Filament\Resources\CustomerResource\Pages;
+use Filament\Resources\Pages\Page;
+
+public static function getRecordSubNavigation(Page $page): array
+{
+    return $page->generateNavigationItems([
+        Pages\ViewCustomer::class,
+        Pages\EditCustomer::class,
+        Pages\EditCustomerContact::class,
+        Pages\ManageCustomerAddresses::class,
+        Pages\ManageCustomerPayments::class,
+    ]);
+}
+```
+
+Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
+
+### Sub-navigation position
+
+The sub-navigation is rendered at the start of the page by default. You may change the position by setting the `$subNavigationPosition` property on the resource. The value may be `SubNavigationPosition::Start`, `SubNavigationPosition::End`, or `SubNavigationPosition::Top` to render the sub-navigation as tabs:
+
+```php
+use Filament\Pages\SubNavigationPosition;
+
+protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
 
 ## Deleting resource pages

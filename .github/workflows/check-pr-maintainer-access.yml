@@ -52,7 +52,7 @@ jobs:
                         issue_number: pullNumber,
                         owner: 'filamentphp',
                         repo: 'filament',
-                        body: 'Thanks for submitting a PR!\n\nIn order to review and merge PRs most efficiently, we require that all PRs grant maintainer edit access before we review them. For information on how to do this, [see the GitHub documentation](https://docs.github.com/en/github/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork).'
+                        body: 'Thanks for submitting a PR!\n\nIn order to review and merge PRs most efficiently, we require that all PRs grant maintainer edit access before we review them. If your fork belongs to a GitHub organization, please move the repository to your personal account and try again. If you\'re already using a personal fork, you can learn how to enable maintainer access [in the GitHub documentation](https://docs.github.com/en/github/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork).'
                     })
 
                     await github.issues.update({

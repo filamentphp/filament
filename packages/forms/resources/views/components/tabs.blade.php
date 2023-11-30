@@ -1,4 +1,6 @@
 @php
+    use Filament\Forms\Components\Tabs\Tab;
+
     $isContained = $isContained();
 @endphp
 
@@ -6,12 +8,16 @@
     wire:ignore.self
     x-cloak
     x-data="{
-        tab: null,
+        tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
 
         init: function () {
             this.$watch('tab', () => this.updateQueryString())
 
-            this.tab = this.getTabs()[@js($getActiveTab()) - 1]
+            const tabs = this.getTabs()
+
+            if ((! this.tab) || (! tabs.includes(this.tab))) {
+                 this.tab = tabs[@js($getActiveTab()) - 1]
+            }
         },
 
         getTabs: function () {
@@ -47,8 +53,8 @@
         type="hidden"
         value="{{
             collect($getChildComponentContainer()->getComponents())
-                ->filter(static fn (\Filament\Forms\Components\Tabs\Tab $tab): bool => $tab->isVisible())
-                ->map(static fn (\Filament\Forms\Components\Tabs\Tab $tab) => $tab->getId())
+                ->filter(static fn (Tab $tab): bool => $tab->isVisible())
+                ->map(static fn (Tab $tab) => $tab->getId())
                 ->values()
                 ->toJson()
         }}"

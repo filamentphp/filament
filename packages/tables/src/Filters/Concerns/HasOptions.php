@@ -5,7 +5,6 @@ namespace Filament\Tables\Filters\Concerns;
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Collection;
 
 trait HasOptions
 {
@@ -42,18 +41,18 @@ trait HasOptions
             is_string($enum) &&
             enum_exists($enum)
         ) {
+            if (is_a($enum, LabelInterface::class, allow_string: true)) {
+                return collect($enum::cases())
+                    ->mapWithKeys(fn ($case) => [
+                        ($case?->value ?? $case->name) => $case->getLabel() ?? $case->name,
+                    ])
+                    ->all();
+            }
+
             return collect($enum::cases())
-                ->when(
-                    is_a($enum, LabelInterface::class, allow_string: true),
-                    fn (Collection $options): Collection => $options
-                        ->mapWithKeys(fn ($case) => [
-                            ($case?->value ?? $case->name) => $case->getLabel() ?? $case->name,
-                        ]),
-                    fn (Collection $options): Collection => $options
-                        ->mapWithKeys(fn ($case) => [
-                            ($case?->value ?? $case->name) => $case->name,
-                        ]),
-                )
+                ->mapWithKeys(fn ($case) => [
+                    ($case?->value ?? $case->name) => $case->name,
+                ])
                 ->all();
         }
 
@@ -83,5 +82,20 @@ trait HasOptions
         $this->getSearchResultsUsing = $callback;
 
         return $this;
+    }
+
+    public function getOptionLabelUsingCallback(): ?Closure
+    {
+        return $this->getOptionLabelUsing;
+    }
+
+    public function getOptionLabelsUsingCallback(): ?Closure
+    {
+        return $this->getOptionLabelsUsing;
+    }
+
+    public function getSearchResultsUsingCallback(): ?Closure
+    {
+        return $this->getSearchResultsUsing;
     }
 }
