@@ -13,7 +13,7 @@ trait HasDropdown
 
     protected string | Closure | null $dropdownMaxHeight = null;
 
-    protected int | Closure | null $dropdownOffset = 8;
+    protected int | Closure | null $dropdownOffset = null;
 
     protected MaxWidth | string | Closure | null $dropdownWidth = null;
 
