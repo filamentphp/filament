@@ -90,16 +90,12 @@
                 ] :
                 [
                     'shadow-sm' => ! $grouped,
-                    ...match ($color) {
-                        'gray' => [
-                            'bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:hover:bg-white/10',
-                            'ring-1 ring-gray-950/10 dark:ring-white/20' => ! $grouped,
-                        ],
-                        default => [
-                            'bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400',
-                            'focus-visible:ring-custom-500/50 dark:focus-visible:ring-custom-400/50' => ! $grouped,
-                        ],
-                    },
+                    'bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:hover:bg-white/10' => ($color === 'gray') || ($tag === 'label'),
+                    'ring-1 ring-gray-950/10 dark:ring-white/20' => (($color === 'gray') || ($tag === 'label')) && (! $grouped),
+                    'bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400' => ($color !== 'gray') && ($tag !== 'label'),
+                    'peer-checked:ring-0 peer-checked:bg-custom-600 peer-checked:text-white peer-checked:hover:bg-custom-500 dark:peer-checked:bg-custom-500 dark:peer-checked:hover:bg-custom-400' => ($color !== 'gray') && ($tag === 'label'),
+                    'focus-visible:ring-custom-500/50 dark:focus-visible:ring-custom-400/50' => ($color !== 'gray') && (! $grouped) && ($tag !== 'label'),
+                    'peer-focus-visible:ring-2 peer-checked:peer-focus-visible:ring-custom-500/50 dark:peer-checked:peer-focus-visible:ring-custom-400/50' => ($color !== 'gray') && (! $grouped) && ($tag === 'label'),
                 ]
         ),
     ]);
@@ -113,17 +109,16 @@
     ]);
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-btn-icon',
+        'fi-btn-icon transition duration-75',
         match ($iconSize) {
             IconSize::Small => 'h-4 w-4',
             IconSize::Medium => 'h-5 w-5',
             IconSize::Large => 'h-6 w-6',
             default => $iconSize,
         },
-        match ($color) {
-            'gray' => 'text-gray-400 dark:text-gray-500',
-            default => null,
-        },
+        'text-gray-400 dark:text-gray-500' => ($color === 'gray') || ($tag === 'label'),
+        'text-white' => ($color !== 'gray') && ($tag !== 'label'),
+        '[:checked+*>&]:text-white' => $tag === 'label',
     ]);
 
     $badgeContainerClasses = 'fi-btn-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
