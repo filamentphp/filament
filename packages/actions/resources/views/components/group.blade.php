@@ -5,9 +5,9 @@
     'button' => false,
     'color' => null,
     'dropdownMaxHeight' => null,
+    'dropdownOffset' => null,
     'dropdownPlacement' => null,
     'dropdownWidth' => null,
-    'dropdownOffset' => 8,
     'dynamicComponent' => null,
     'group' => null,
     'icon' => null,
@@ -27,9 +27,9 @@
             ->badgeColor($badgeColor)
             ->color($color)
             ->dropdownMaxHeight($dropdownMaxHeight)
+            ->dropdownOffset($dropdownOffset)
             ->dropdownPlacement($dropdownPlacement)
             ->dropdownWidth($dropdownWidth)
-            ->dropdownOffset($dropdownOffset)
             ->icon($icon)
             ->iconPosition($iconPosition)
             ->iconSize($iconSize)
@@ -94,9 +94,9 @@
 
     <x-filament::dropdown
         :max-height="$group->getDropdownMaxHeight()"
+        :offset="$group->getDropdownOffset()"
         :placement="$group->getDropdownPlacement() ?? 'bottom-start'"
         :width="$group->getDropdownWidth()"
-        :offset="$group->getDropdownOffset()"
         teleport
     >
         <x-slot name="trigger">
