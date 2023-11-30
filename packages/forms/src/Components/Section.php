@@ -93,7 +93,7 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
 
     public function getKey(): ?string
     {
-        return parent::getKey() ?? $this->getId();
+        return parent::getKey() ?? ($this->getActions() ? $this->getId() : null);
     }
 
     public function canConcealComponents(): bool

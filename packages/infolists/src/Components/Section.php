@@ -93,7 +93,7 @@ class Section extends Component implements Contracts\HasHeaderActions
 
     public function getKey(): ?string
     {
-        return parent::getKey() ?? $this->getId();
+        return parent::getKey() ?? ($this->getActions() ? $this->getId() : null);
     }
 
     public function isAside(): bool
