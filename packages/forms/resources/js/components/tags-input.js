@@ -30,7 +30,7 @@ export default function tagsInputFormComponent({ state, splitKeys }) {
             const reordered = this.state.splice(event.oldIndex, 1)[0]
             this.state.splice(event.newIndex, 0, reordered)
 
-            this.state = [...this.state];
+            this.state = [...this.state]
         },
 
         input: {
