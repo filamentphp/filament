@@ -25,15 +25,15 @@
 
 @php
     if (! $iconPosition instanceof IconPosition) {
-        $iconPosition = $iconPosition ? IconPosition::tryFrom($iconPosition) : null;
+        $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }
 
     if (! $size instanceof ActionSize) {
-        $size = ActionSize::tryFrom($size) ?? $size;
+        $size = filled($size) ? (ActionSize::tryFrom($size) ?? $size) : null;
     }
 
     if (! $iconSize instanceof IconSize) {
-        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+        $iconSize = filled($iconSize) ? (IconSize::tryFrom($iconSize) ?? $iconSize) : null;
     }
 
     $isDeletable = count($deleteButton?->attributes->getAttributes() ?? []) > 0;

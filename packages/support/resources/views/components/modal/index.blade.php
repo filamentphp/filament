@@ -31,11 +31,11 @@
 
 @php
     if (! $alignment instanceof Alignment) {
-        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
     }
 
     if (! $footerActionsAlignment instanceof Alignment) {
-        $footerActionsAlignment = Alignment::tryFrom($footerActionsAlignment) ?? $footerActionsAlignment;
+        $footerActionsAlignment = filled($footerActionsAlignment) ? (Alignment::tryFrom($footerActionsAlignment) ?? $footerActionsAlignment) : null;
     }
 
     if ($width === 'screen') {
