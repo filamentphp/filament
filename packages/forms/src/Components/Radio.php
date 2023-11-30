@@ -103,7 +103,7 @@ class Radio extends Field implements Contracts\CanDisableOptions
     /**
      * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
      */
-    public function getColor($value): string | array | null
+    public function getColor(mixed $value): string | array | null
     {
         return $this->getColors()[$value] ?? null;
     }
@@ -139,7 +139,7 @@ class Radio extends Field implements Contracts\CanDisableOptions
         return $this;
     }
 
-    public function getIcon($value): string | Htmlable | null
+    public function getIcon(mixed $value): string | Htmlable | null
     {
         return $this->getIcons()[$value] ?? null;
     }
