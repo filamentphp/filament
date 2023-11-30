@@ -175,197 +175,149 @@
     />
 @endif
 
-@if ($tag === 'button')
-    <button
-        @if (($keyBindings || $hasTooltip) && (! $hasFileUploadLoadingIndicator))
-            x-data="{}"
-        @endif
-        @if ($keyBindings)
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
-        @endif
-        @if ($hasTooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
-        @endif
-        @if ($hasFileUploadLoadingIndicator)
-            x-data="{
-                form: null,
-                isUploadingFile: false,
-            }"
-            x-init="
-                form = $el.closest('form')
-
-                form?.addEventListener('file-upload-started', () => {
-                    isUploadingFile = true
-                })
-
-                form?.addEventListener('file-upload-finished', () => {
-                    isUploadingFile = false
-                })
-            "
-            x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
-        @endif
-        {{
-            $attributes
-                ->merge([
-                    'disabled' => $disabled,
-                    'type' => $type,
-                    'wire:loading.attr' => 'disabled',
-                    'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-                    'x-bind:disabled' => $hasFileUploadLoadingIndicator ? 'isUploadingFile' : false,
-                ], escape: false)
-                ->class([$buttonClasses])
-                ->style([$buttonStyles])
-        }}
-    >
-        @if ($iconPosition === IconPosition::Before)
-            @if ($icon)
-                <x-filament::icon
-                    :attributes="
-                        \Filament\Support\prepare_inherited_attributes(
-                            new \Illuminate\View\ComponentAttributeBag([
-                                'alias' => $iconAlias,
-                                'icon' => $icon,
-                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
-                            ])
-                        )->class([$iconClasses])
-                    "
-                />
-            @endif
-
-            @if ($hasLoadingIndicator)
-                <x-filament::loading-indicator
-                    :attributes="
-                        \Filament\Support\prepare_inherited_attributes(
-                            new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                                'wire:target' => $loadingIndicatorTarget,
-                            ])
-                        )->class([$iconClasses])
-                    "
-                />
-            @endif
-
-            @if ($hasFileUploadLoadingIndicator)
-                <x-filament::loading-indicator
-                    x-show="isUploadingFile"
-                    x-cloak="x-cloak"
-                    :class="$iconClasses"
-                />
-            @endif
-        @endif
-
-        <span
-            @if ($hasFileUploadLoadingIndicator)
-                x-show="! isUploadingFile"
-            @endif
-            class="{{ $labelClasses }}"
-        >
-            {{ $slot }}
-        </span>
-
-        @if ($hasFileUploadLoadingIndicator)
-            <span x-show="isUploadingFile" x-cloak>
-                {{ __('filament::components/button.messages.uploading_file') }}
-            </span>
-        @endif
-
-        @if ($iconPosition === IconPosition::After)
-            @if ($icon)
-                <x-filament::icon
-                    :attributes="
-                        \Filament\Support\prepare_inherited_attributes(
-                            new \Illuminate\View\ComponentAttributeBag([
-                                'alias' => $iconAlias,
-                                'icon' => $icon,
-                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
-                            ])
-                        )->class([$iconClasses])
-                    "
-                />
-            @endif
-
-            @if ($hasLoadingIndicator)
-                <x-filament::loading-indicator
-                    :attributes="
-                        \Filament\Support\prepare_inherited_attributes(
-                            new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                                'wire:target' => $loadingIndicatorTarget,
-                            ])
-                        )->class([$iconClasses])
-                    "
-                />
-            @endif
-
-            @if ($hasFileUploadLoadingIndicator)
-                <x-filament::loading-indicator
-                    x-show="isUploadingFile"
-                    x-cloak="x-cloak"
-                    :class="$iconClasses"
-                />
-            @endif
-        @endif
-
-        @if (filled($badge))
-            <div class="{{ $badgeContainerClasses }}">
-                <x-filament::badge :color="$badgeColor" size="xs">
-                    {{ $badge }}
-                </x-filament::badge>
-            </div>
-        @endif
-    </button>
-@elseif ($tag === 'a')
-    <a
+<{{ $tag }}
+    @if ($tag === 'a')
         {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
-        @if ($keyBindings || $hasTooltip)
-            x-data="{}"
+    @endif
+    @if (($keyBindings || $hasTooltip) && (! $hasFileUploadLoadingIndicator))
+        x-data="{}"
+    @endif
+    @if ($keyBindings)
+        x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+    @endif
+    @if ($hasTooltip)
+        x-tooltip="{
+            content: @js($tooltip),
+            theme: $store.theme,
+        }"
+    @endif
+    @if ($hasFileUploadLoadingIndicator)
+        x-data="{
+            form: null,
+            isUploadingFile: false,
+        }"
+        x-init="
+            form = $el.closest('form')
+
+            form?.addEventListener('file-upload-started', () => {
+                isUploadingFile = true
+            })
+
+            form?.addEventListener('file-upload-finished', () => {
+                isUploadingFile = false
+            })
+        "
+        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
+    @endif
+    {{
+        $attributes
+            ->merge([
+                'disabled' => $disabled,
+                'type' => $tag === 'button' ? $type : null,
+                'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
+                'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+                'x-bind:disabled' => $hasFileUploadLoadingIndicator ? 'isUploadingFile' : null,
+            ], escape: false)
+            ->class([$buttonClasses])
+            ->style([$buttonStyles])
+    }}
+>
+    @if ($iconPosition === IconPosition::Before)
+        @if ($icon)
+            <x-filament::icon
+                :attributes="
+                    \Filament\Support\prepare_inherited_attributes(
+                        new \Illuminate\View\ComponentAttributeBag([
+                            'alias' => $iconAlias,
+                            'icon' => $icon,
+                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                        ])
+                    )->class([$iconClasses])
+                "
+            />
         @endif
-        @if ($keyBindings)
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+
+        @if ($hasLoadingIndicator)
+            <x-filament::loading-indicator
+                :attributes="
+                    \Filament\Support\prepare_inherited_attributes(
+                        new \Illuminate\View\ComponentAttributeBag([
+                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                            'wire:target' => $loadingIndicatorTarget,
+                        ])
+                    )->class([$iconClasses])
+                "
+            />
         @endif
-        @if ($hasTooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
+
+        @if ($hasFileUploadLoadingIndicator)
+            <x-filament::loading-indicator
+                x-cloak="x-cloak"
+                x-show="isUploadingFile"
+                :class="$iconClasses"
+            />
         @endif
-        {{
-            $attributes
-                ->class([$buttonClasses])
-                ->style([$buttonStyles])
-        }}
+    @endif
+
+    <span
+        @if ($hasFileUploadLoadingIndicator)
+            x-show="! isUploadingFile"
+        @endif
+        class="{{ $labelClasses }}"
     >
-        @if ($icon && $iconPosition === IconPosition::Before)
-            <x-filament::icon
-                :alias="$iconAlias"
-                :icon="$icon"
-                :class="$iconClasses"
-            />
-        @endif
+        {{ $slot }}
+    </span>
 
-        <span class="{{ $labelClasses }}">
-            {{ $slot }}
+    @if ($hasFileUploadLoadingIndicator)
+        <span x-cloak x-show="isUploadingFile" class="{{ $labelClasses }}">
+            {{ __('filament::components/button.messages.uploading_file') }}
         </span>
+    @endif
 
-        @if ($icon && $iconPosition === IconPosition::After)
+    @if ($iconPosition === IconPosition::After)
+        @if ($icon)
             <x-filament::icon
-                :alias="$iconAlias"
-                :icon="$icon"
-                :class="$iconClasses"
+                :attributes="
+                    \Filament\Support\prepare_inherited_attributes(
+                        new \Illuminate\View\ComponentAttributeBag([
+                            'alias' => $iconAlias,
+                            'icon' => $icon,
+                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                        ])
+                    )->class([$iconClasses])
+                "
             />
         @endif
 
-        @if (filled($badge))
-            <div class="{{ $badgeContainerClasses }}">
-                <x-filament::badge :color="$badgeColor" size="xs">
-                    {{ $badge }}
-                </x-filament::badge>
-            </div>
+        @if ($hasLoadingIndicator)
+            <x-filament::loading-indicator
+                :attributes="
+                    \Filament\Support\prepare_inherited_attributes(
+                        new \Illuminate\View\ComponentAttributeBag([
+                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                            'wire:target' => $loadingIndicatorTarget,
+                        ])
+                    )->class([$iconClasses])
+                "
+            />
         @endif
-    </a>
-@endif
+
+        @if ($hasFileUploadLoadingIndicator)
+            <x-filament::loading-indicator
+                x-cloak="x-cloak"
+                x-show="isUploadingFile"
+                :class="$iconClasses"
+            />
+        @endif
+    @endif
+
+    @if (filled($badge))
+        <div class="{{ $badgeContainerClasses }}">
+            <x-filament::badge :color="$badgeColor" size="xs">
+                {{ $badge }}
+            </x-filament::badge>
+        </div>
+    @endif
+</{{ $tag }}>
