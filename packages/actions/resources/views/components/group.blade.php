@@ -7,6 +7,7 @@
     'dropdownMaxHeight' => null,
     'dropdownPlacement' => null,
     'dropdownWidth' => null,
+    'dropdownOffset' => 8,
     'dynamicComponent' => null,
     'group' => null,
     'icon' => null,
@@ -28,6 +29,7 @@
             ->dropdownMaxHeight($dropdownMaxHeight)
             ->dropdownPlacement($dropdownPlacement)
             ->dropdownWidth($dropdownWidth)
+            ->dropdownOffset($dropdownOffset)
             ->icon($icon)
             ->iconPosition($iconPosition)
             ->iconSize($iconSize)
@@ -94,6 +96,7 @@
         :max-height="$group->getDropdownMaxHeight()"
         :placement="$group->getDropdownPlacement() ?? 'bottom-start'"
         :width="$group->getDropdownWidth()"
+        :offset="$group->getDropdownOffset()"
         teleport
     >
         <x-slot name="trigger">

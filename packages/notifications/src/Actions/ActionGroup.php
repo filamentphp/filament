@@ -22,6 +22,7 @@ class ActionGroup extends BaseActionGroup implements Arrayable
             'dropdownMaxHeight' => $this->getDropdownMaxHeight(),
             'dropdownPlacement' => $this->getDropdownPlacement(),
             'dropdownWidth' => $this->getDropdownWidth(),
+            'dropdownOffset' => $this->getDropdownOffset(),
             'extraAttributes' => $this->getExtraAttributes(),
             'hasDropdown' => $this->hasDropdown(),
             'icon' => $this->getIcon(),
@@ -65,6 +66,7 @@ class ActionGroup extends BaseActionGroup implements Arrayable
         $static->dropdownMaxHeight($data['dropdownMaxHeight'] ?? null);
         $static->dropdownPlacement($data['dropdownPlacement'] ?? null);
         $static->dropdownWidth($data['dropdownWidth'] ?? null);
+        $static->dropdownOffset($data['dropdownOffset'] ?? null);
         $static->extraAttributes($data['extraAttributes'] ?? []);
         $static->icon($data['icon'] ?? null);
         $static->iconPosition($data['iconPosition'] ?? null);
