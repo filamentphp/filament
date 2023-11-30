@@ -74,30 +74,43 @@
         <div wire:ignore>
             <template x-cloak x-if="state?.length">
                 <div
+                    @if($isReorderable())
+                        x-on:end="reorderTags($event)"
+                        x-sortable
+                        data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
+                    @endif
+
                     @class([
                         'flex w-full flex-wrap gap-1.5 p-2',
                         'border-t border-t-gray-200 dark:border-t-white/10',
                     ])
                 >
                     <template
-                        x-for="tag in state"
-                        x-bind:key="tag"
+                        x-for="(tag, i) in state"
+                        x-bind:key="`${tag}-${i}`"
                         class="hidden"
                     >
-                        <x-filament::badge>
-                            {{ $getTagPrefix() }}
-
-                            <span class="text-start" x-text="tag"></span>
-
-                            {{ $getTagSuffix() }}
-
-                            @if (! $isDisabled)
-                                <x-slot
-                                    name="deleteButton"
-                                    x-on:click="deleteTag(tag)"
-                                ></x-slot>
+                        <div
+                            @if($isReorderable())
+                                x-bind:x-sortable-item="i"
+                                x-sortable-handle
                             @endif
-                        </x-filament::badge>
+                        >
+                            <x-filament::badge>
+                                {{ $getTagPrefix() }}
+
+                                <span class="text-start select-none" x-text="tag"></span>
+
+                                {{ $getTagSuffix() }}
+
+                                @if (! $isDisabled)
+                                    <x-slot
+                                        name="deleteButton"
+                                        x-on:click="deleteTag(tag)"
+                                    ></x-slot>
+                                @endif
+                            </x-filament::badge>
+                        </div>
                     </template>
                 </div>
             </template>

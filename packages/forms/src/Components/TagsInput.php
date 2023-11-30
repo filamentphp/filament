@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Illuminate\Contracts\Support\Arrayable;
 
 class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationRules
@@ -11,12 +12,15 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasPlaceholder;
+    use HasReorderAnimationDuration;
     use HasExtraAlpineAttributes;
 
     /**
      * @var view-string
      */
     protected string $view = 'filament-forms::components.tags-input';
+
+    protected bool | Closure $isReorderable = false;
 
     protected string | Closure | null $separator = null;
 
@@ -85,6 +89,13 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         return $this;
     }
 
+    public function reorderable(bool | Closure $condition = true): static
+    {
+        $this->isReorderable = $condition;
+
+        return $this;
+    }
+
     public function separator(string | Closure | null $separator = ','): static
     {
         $this->separator = $separator;
@@ -147,5 +158,10 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         }
 
         return $suggestions;
+    }
+
+    public function isReorderable(): bool
+    {
+        return (bool) $this->evaluate($this->isReorderable);
     }
 }
