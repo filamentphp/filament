@@ -127,26 +127,8 @@ class StaticAction extends ViewComponent
             return $this->action;
         }
 
-        if ($event = $this->getEvent()) {
-            $arguments = '';
-
-            if ($component = $this->getDispatchToComponent()) {
-                $arguments .= Js::from($component)->toHtml();
-                $arguments .= ', ';
-            }
-
-            $arguments .= Js::from($event)->toHtml();
-
-            if ($this->getEventData()) {
-                $arguments .= ', ';
-                $arguments .= Js::from($this->getEventData())->toHtml();
-            }
-
-            return match ($this->getDispatchDirection()) {
-                'self' => "\$dispatchSelf($arguments)",
-                'to' => "\$dispatchTo($arguments)",
-                default => "\$dispatch($arguments)"
-            };
+        if ($event = $this->getLivewireEventClickHandler()) {
+            return $event;
         }
 
         if ($handler = $this->getParentActionCallLivewireClickHandler()) {
@@ -158,6 +140,35 @@ class StaticAction extends ViewComponent
         }
 
         return null;
+    }
+
+    public function getLivewireEventClickHandler(): ?string
+    {
+        $event = $this->getEvent();
+
+        if (blank($event)) {
+            return null;
+        }
+
+        $arguments = '';
+
+        if ($component = $this->getDispatchToComponent()) {
+            $arguments .= Js::from($component)->toHtml();
+            $arguments .= ', ';
+        }
+
+        $arguments .= Js::from($event)->toHtml();
+
+        if ($this->getEventData()) {
+            $arguments .= ', ';
+            $arguments .= Js::from($this->getEventData())->toHtml();
+        }
+
+        return match ($this->getDispatchDirection()) {
+            'self' => "\$dispatchSelf($arguments)",
+            'to' => "\$dispatchTo($arguments)",
+            default => "\$dispatch($arguments)"
+        };
     }
 
     public function getAlpineClickHandler(): ?string

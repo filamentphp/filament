@@ -28,6 +28,10 @@ class Action extends MountableAction
             return $this->action;
         }
 
+        if ($event = $this->getLivewireEventClickHandler()) {
+            return $event;
+        }
+
         $argumentsParameter = '';
 
         if (count($arguments = $this->getArguments())) {
