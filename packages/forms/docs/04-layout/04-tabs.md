@@ -29,22 +29,9 @@ Tabs::make('Tabs')
 
 <AutoScreenshot name="forms/layout/tabs/simple" alt="Tabs" version="3.x" />
 
-## Persisting the current tab
+## Setting the default active tab
 
-By default, the current tab is not persisted in the browser's local storage. You can change this behavior using the `persistTab()` method. You must also pass in a unique `id()` for the tabs component, to distinguish it from all other sets of tabs in the app. This ID will be used as the key in the local storage to store the current tab:
-
-```php
-use Filament\Forms\Components\Tabs;
-
-Tabs::make('Tabs')
-    ->tabs([
-        // ...
-    ])
-    ->persistTab()
-    ->id('order-tabs')
-```
-
-### Persisting the current tab in the URL's query string
+The first tab will be open by default. You can change the default open tab using the `activeTab()` method:
 
 ```php
 use Filament\Forms\Components\Tabs;
@@ -64,81 +51,7 @@ Tabs::make('Tabs')
                 // ...
             ]),
     ])
-    ->persistTabInQueryString()
-```
-
-By default, the current tab is persisted in the URL's query string using the `tab` key. You can change this key by passing it to the `persistTabInQueryString()` method:
-
-```php
-use Filament\Forms\Components\Tabs;
-
-Tabs::make('Tabs')
-    ->tabs([
-        Tabs\Tab::make('Tab 1')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Tab 2')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Tab 3')
-            ->schema([
-                // ...
-            ]),
-    ])
-    ->persistTabInQueryString('settings-tab')
-```
-
-## Persisting the current tab in the LocalStorage
-
-By default, the current tab is not persisted in the browser's Local Storage. You can change this behavior using the `persistTabInLocalStorage()` method, to which you pass etiher a boolean or a Closure.
-
-```php
-use Filament\Forms\Components\Tabs;
-
-Tabs::make('Tabs')
-    ->tabs([
-        Tabs\Tab::make('Tab 1')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Tab 2')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Tab 3')
-            ->schema([
-                // ...
-            ]),
-    ])
-    ->persistTabInLocalStorage()
-
-```
-To persist the current tab, the local storage needs a unique ID to store the state. This ID is generated based on the Filament Page Type, the associated model's database table, and the model's primary key. If your have multiple tabs on your page that you do not want to tie together, you can manually specify the `tabLocalStorageName()` of that tab to prevent an ID conflict:
-
-
-```php
-use Filament\Forms\Components\Tabs;
-
-Tabs::make('Tabs')
-    ->tabs([
-        Tabs\Tab::make('Tab 1')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Tab 2')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Tab 3')
-            ->schema([
-                // ...
-            ]),
-    ])
-    ->persistTabInLocalStorage()
-    ->tabLocalStorageName('order-tab'),
-
+    ->activeTab(2)
 ```
 
 ## Setting a tab icon
@@ -261,5 +174,68 @@ Tabs::make('Tabs')
             ]),
     ])
     ->contained(false)
+```
+
+## Persisting the current tab
+
+By default, the current tab is not persisted in the browser's local storage. You can change this behavior using the `persistTab()` method. You must also pass in a unique `id()` for the tabs component, to distinguish it from all other sets of tabs in the app. This ID will be used as the key in the local storage to store the current tab:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Tabs')
+    ->tabs([
+        // ...
+    ])
+    ->persistTab()
+    ->id('order-tabs')
+```
+
+### Persisting the current tab in the URL's query string
+
+By default, the current tab is not persisted in the URL's query string. You can change this behavior using the `persistTabInQueryString()` method:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Tabs')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->persistTabInQueryString()
+```
+
+By default, the current tab is persisted in the URL's query string using the `tab` key. You can change this key by passing it to the `persistTabInQueryString()` method:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Tabs')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->persistTabInQueryString('settings-tab')
 ```
 
