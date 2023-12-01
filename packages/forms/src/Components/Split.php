@@ -1,18 +1,19 @@
 <?php
 
-namespace Filament\Infolists\Components;
+namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Support\Concerns\HasFromBreakpoint;
 
 class Split extends Component
 {
+    use Concerns\EntanglesStateWithSingularRelationship;
     use HasFromBreakpoint;
 
     /**
      * @var view-string
      */
-    protected string $view = 'filament-infolists::components.split';
+    protected string $view = 'filament-forms::components.split';
 
     /**
      * @param  array<Component> | Closure  $schema

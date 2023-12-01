@@ -54,7 +54,7 @@
             :xlStart="$layoutComponent->getColumnStart('xl')"
             :twoXlStart="$layoutComponent->getColumnStart('2xl')"
             @class([
-                'flex-1 w-full' => $layoutComponent->canGrow(default: true),
+                'flex-1 w-full' => $layoutComponent->canGrow(),
                 $getHiddenClasses($layoutComponent),
             ])
         >
