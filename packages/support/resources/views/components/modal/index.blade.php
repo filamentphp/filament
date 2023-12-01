@@ -38,8 +38,8 @@
         $footerActionsAlignment = filled($footerActionsAlignment) ? (Alignment::tryFrom($footerActionsAlignment) ?? $footerActionsAlignment) : null;
     }
 
-    if ($width === 'screen') {
-        $width = MaxWidth::Screen;
+    if (! $width instanceof MaxWidth) {
+        $width = filled($width) ? (MaxWidth::tryFrom($width) ?? $width) : null;
     }
 @endphp
 
@@ -164,17 +164,27 @@
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === MaxWidth::Screen)),
                     'hidden' => ! $visible,
                     match ($width) {
-                        MaxWidth::ExtraSmall, 'xs' => 'max-w-xs',
-                        MaxWidth::Small, 'sm' => 'max-w-sm',
-                        MaxWidth::Medium, 'md' => 'max-w-md',
-                        MaxWidth::Large, 'lg' => 'max-w-lg',
-                        MaxWidth::ExtraLarge, 'xl' => 'max-w-xl',
-                        MaxWidth::TwoExtraLarge, '2xl' => 'max-w-2xl',
-                        MaxWidth::ThreeExtraLarge, '3xl' => 'max-w-3xl',
-                        MaxWidth::FourExtraLarge, '4xl' => 'max-w-4xl',
-                        MaxWidth::FiveExtraLarge, '5xl' => 'max-w-5xl',
-                        MaxWidth::SixExtraLarge, '6xl' => 'max-w-6xl',
-                        MaxWidth::SevenExtraLarge, '7xl' => 'max-w-7xl',
+                        MaxWidth::ExtraSmall => 'max-w-xs',
+                        MaxWidth::Small => 'max-w-sm',
+                        MaxWidth::Medium => 'max-w-md',
+                        MaxWidth::Large => 'max-w-lg',
+                        MaxWidth::ExtraLarge => 'max-w-xl',
+                        MaxWidth::TwoExtraLarge => 'max-w-2xl',
+                        MaxWidth::ThreeExtraLarge => 'max-w-3xl',
+                        MaxWidth::FourExtraLarge => 'max-w-4xl',
+                        MaxWidth::FiveExtraLarge => 'max-w-5xl',
+                        MaxWidth::SixExtraLarge => 'max-w-6xl',
+                        MaxWidth::SevenExtraLarge => 'max-w-7xl',
+                        MaxWidth::Full => 'max-w-full',
+                        MaxWidth::MinContent => 'max-w-min',
+                        MaxWidth::MaxContent => 'max-w-max',
+                        MaxWidth::FitContent => 'max-w-fit',
+                        MaxWidth::Prose => 'max-w-prose',
+                        MaxWidth::ScreenSmall => 'max-w-screen-sm',
+                        MaxWidth::ScreenMedium => 'max-w-screen-md',
+                        MaxWidth::ScreenLarge => 'max-w-screen-lg',
+                        MaxWidth::ScreenExtraLarge => 'max-w-screen-xl',
+                        MaxWidth::ScreenTwoExtraLarge => 'max-w-screen-2xl',
                         MaxWidth::Screen => 'fixed inset-0',
                         default => $width,
                     },
