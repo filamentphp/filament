@@ -347,6 +347,25 @@ TextConstraint::make('author')
     ->icon('heroicon-m-user')
 ```
 
+## Overriding the default operators
+
+Each constraint type has a set of default operators, which you can customize by using the `operators()`method:
+
+```php
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+use Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EqualsOperator;
+
+TextConstraint::make('author')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->operators([
+        EqualsOperator::make() // or a custom operator
+    ], keepDefault: true)
+```
+
+This will add the `EqualsOperator` to the existing/default operators.
+
+If you'd like to remove the default operators and show only the EqualsOperator, use `keepDefault: false`.
+
 ## Creating custom constraints
 
 Custom constraints can be created "inline" with other constraints using the `Constraint::make()` method. You should also pass an [icon](#customizing-the-constraint-icon) to the `icon()` method:
