@@ -92,7 +92,7 @@ ActionGroup::make([
     ->maxHeight('400px')
 ```
 
-### Controlling the dropdown offset
+## Controlling the dropdown offset
 
 You may control the offset of the dropdown using the `dropdownOffset()` method, by default the offset is set to `8`.
 
