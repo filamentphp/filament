@@ -71,4 +71,16 @@ return [
 
     'livewire_loading_delay' => 'default',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Translate Labels By Deafult
+    |--------------------------------------------------------------------------
+    |
+    | This determines if labels should be translate by default.
+    |
+    | Setting this to true makes labels translated, without using
+    | 'translateLabel' label method on each form component.
+    |
+    */
+    'should_translate_labels_by_default' => false,
 ];

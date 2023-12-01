@@ -48,7 +48,7 @@ trait HasLabel
     {
         $label = $this->evaluate($this->label);
 
-        return (is_string($label) && $this->shouldTranslateLabel) ?
+        return (is_string($label) && ($this->shouldTranslateLabel || config('filament.should_translate_labels_by_default'))) ?
             __($label) :
             $label;
     }
