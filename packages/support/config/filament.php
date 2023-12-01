@@ -82,5 +82,6 @@ return [
     | 'translateLabel' label method on each form component.
     |
     */
+    
     'should_translate_labels_by_default' => false,
 ];
