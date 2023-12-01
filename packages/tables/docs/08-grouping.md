@@ -308,7 +308,7 @@ public function table(Table $table): Table
 
 ## Using the grouping settings dropdown on desktop
 
-By default, the grouping settings dropdown will only be shown on mobile devices. On desktop devices, the grouping settings are in the header of the time. You can enable the dropdown on desktop devices too by using the `groupingSettingsInDropdownOnDesktop()` method:
+By default, the grouping settings dropdown will only be shown on mobile devices. On desktop devices, the grouping settings are in the header of the table. You can enable the dropdown on desktop devices too by using the `groupingSettingsInDropdownOnDesktop()` method:
 
 ```php
 use Filament\Tables\Table;
