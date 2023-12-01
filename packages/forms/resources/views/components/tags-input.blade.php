@@ -100,8 +100,8 @@
                             {{ $getTagPrefix() }}
 
                             <span
-                                class="select-none text-start"
                                 x-text="tag"
+                                class="select-none text-start"
                             ></span>
 
                             {{ $getTagSuffix() }}
