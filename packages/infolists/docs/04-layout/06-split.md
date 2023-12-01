@@ -20,13 +20,13 @@ Split::make([
         TextEntry::make('content')
             ->markdown()
             ->prose(),
-    ])->grow(),
+    ]),
     Section::make([
         TextEntry::make('created_at')
             ->dateTime(),
         TextEntry::make('published_at')
             ->dateTime(),
-    ]),
+    ])->grow(false),
 ])->from('md')
 ```
 
