@@ -91,7 +91,7 @@
                 wire:ignore.self
                 wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.panel"
                 x-cloak
-                x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
+                x-float.placement.bottom-start.offset.autoPlacement.shift="{ offset: 8 }"
                 x-ref="panel"
                 class="fi-fo-color-picker-panel absolute z-10 hidden rounded-lg shadow-lg"
             >
