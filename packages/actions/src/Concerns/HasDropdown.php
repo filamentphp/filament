@@ -17,7 +17,6 @@ trait HasDropdown
 
     protected MaxWidth | string | Closure | null $dropdownWidth = null;
 
-
     public function dropdown(bool | Closure $condition = true): static
     {
         $this->hasDropdown = $condition;
