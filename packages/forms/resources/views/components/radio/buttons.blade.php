@@ -1,12 +1,26 @@
 @php
     $gridDirection = $getGridDirection() ?? 'column';
+    $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
     $isInline = $isInline();
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    :has-inline-label="$hasInlineLabel"
+>
+    <x-slot
+        name="label"
+        @class([
+            'sm:pt-1.5' => $hasInlineLabel,
+        ])
+    >
+        {{ $getLabel() }}
+    </x-slot>
+
     <x-filament::grid
         :default="$getColumns('default')"
         :sm="$getColumns('sm')"
@@ -21,7 +35,7 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
                     'fi-fo-radio gap-3',
-                    '-mt-2' => (! $isInline) && ($gridDirection === 'column'),
+                    '-mt-3' => (! $isInline) && ($gridDirection === 'column'),
                     'flex flex-wrap' => $isInline,
                 ])
         "
