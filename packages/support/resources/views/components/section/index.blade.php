@@ -136,6 +136,7 @@
                 <x-filament-actions::actions
                     :actions="$headerActions"
                     :alignment="\Filament\Support\Enums\Alignment::End"
+                    x-on:click.stop
                 />
             @endif
 

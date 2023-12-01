@@ -4,6 +4,7 @@
     $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
+    $isReorderable = $isReorderable();
     $statePath = $getStatePath();
 @endphp
 
@@ -74,20 +75,34 @@
         <div wire:ignore>
             <template x-cloak x-if="state?.length">
                 <div
+                    @if ($isReorderable)
+                        x-on:end="reorderTags($event)"
+                        x-sortable
+                        data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
+                    @endif
                     @class([
                         'flex w-full flex-wrap gap-1.5 p-2',
                         'border-t border-t-gray-200 dark:border-t-white/10',
                     ])
                 >
                     <template
-                        x-for="tag in state"
-                        x-bind:key="tag"
+                        x-for="(tag, index) in state"
+                        x-bind:key="`${tag}-${index}`"
                         class="hidden"
                     >
-                        <x-filament::badge>
+                        <x-filament::badge
+                            :x-bind:x-sortable-item="$isReorderable ? 'index' : null"
+                            :x-sortable-handle="$isReorderable ? '' : null"
+                            @class([
+                                'cursor-move' => $isReorderable,
+                            ])
+                        >
                             {{ $getTagPrefix() }}
 
-                            <span class="text-start" x-text="tag"></span>
+                            <span
+                                class="select-none text-start"
+                                x-text="tag"
+                            ></span>
 
                             {{ $getTagSuffix() }}
 
