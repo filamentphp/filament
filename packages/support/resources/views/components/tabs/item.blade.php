@@ -18,7 +18,7 @@
 
 @php
     if (! $iconPosition instanceof IconPosition) {
-        $iconPosition = $iconPosition ? IconPosition::tryFrom($iconPosition) : null;
+        $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }
 
     $hasAlpineActiveClasses = filled($alpineActive);
