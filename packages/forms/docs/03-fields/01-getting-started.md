@@ -63,6 +63,18 @@ TextInput::make('name')
     ->translateLabel() // Equivalent to `label(__('Name'))`
 ```
 
+Also, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) without explicitly calling the `translateLabel()` method on each field by settings the `filament.should_translate_labels_by_default` config key to `true`:
+
+```php
+// config/filament.php
+'should_translate_labels_by_default' => true,
+```
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name') // Equivalent to `label(__('Name'))` because 'should_translate_labels_by_default' is set to true
+```
 ## Setting an ID
 
 In the same way as labels, field IDs are also automatically determined based on their names. To override a field ID, use the `id()` method:
