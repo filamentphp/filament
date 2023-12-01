@@ -14,6 +14,7 @@ KeyValue::make('meta')
 ```
 
 <AutoScreenshot name="forms/fields/key-value/simple" alt="Key-value" version="3.x" />
+We recommend that you store meta data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
 ## Adding rows
 
