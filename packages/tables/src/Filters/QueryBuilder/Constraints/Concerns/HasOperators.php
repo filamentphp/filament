@@ -37,8 +37,12 @@ trait HasOperators
     /**
      * @param  array<class-string<Operator> | Operator>  $operators
      */
-    public function operators(array $operators): static
+    public function operators(array $operators, bool $keepDefault = true): static
     {
+        if (! $keepDefault) {
+            $this->operators = [];
+        }
+        
         foreach ($operators as $operator) {
             if (is_string($operator)) {
                 $operator = $operator::make();
