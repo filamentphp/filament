@@ -11,10 +11,8 @@ use Filament\Actions\RestoreAction;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Pages\SubNavigationPosition;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property Form $form
@@ -22,7 +20,9 @@ use Illuminate\Database\Eloquent\Model;
 class ViewRecord extends Page
 {
     use Concerns\HasRelationManagers;
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        configureAction as configureActionRecord;
+    }
     use InteractsWithFormActions;
 
     /**
@@ -50,11 +50,6 @@ class ViewRecord extends Page
     public function getContentTabLabel(): ?string
     {
         return __('filament-panels::resources/pages/view-record.content.tab.label');
-    }
-
-    public function getSubNavigationPosition(): SubNavigationPosition
-    {
-        return static::getResource()::getSubNavigationPosition();
     }
 
     public function mount(int | string $record): void
@@ -126,9 +121,7 @@ class ViewRecord extends Page
 
     protected function configureAction(Action $action): void
     {
-        $action
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
+        $this->configureActionRecord($action);
 
         match (true) {
             $action instanceof DeleteAction => $this->configureDeleteAction($action),
@@ -233,36 +226,6 @@ class ViewRecord extends Page
             ->record($this->getRecord())
             ->columns($this->hasInlineLabels() ? 1 : 2)
             ->inlineLabel($this->hasInlineLabels());
-    }
-
-    protected function getMountedActionFormModel(): Model
-    {
-        return $this->getRecord();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getWidgetData(): array
-    {
-        return [
-            'record' => $this->getRecord(),
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getSubNavigationParameters(): array
-    {
-        return [
-            'record' => $this->getRecord(),
-        ];
-    }
-
-    public function getSubNavigation(): array
-    {
-        return static::getResource()::getRecordSubNavigation($this);
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool

@@ -98,3 +98,14 @@ TagsInput::make('tags')
         'max:255',
     ])
 ```
+
+## Reordering tags
+
+You can allow the user to reorder tags within the field using the `reorderable()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->reorderable()
+```

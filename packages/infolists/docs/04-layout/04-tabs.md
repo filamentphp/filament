@@ -63,28 +63,6 @@ use Filament\Infolists\Components\Tabs;
 
 Tabs::make('Tabs')
     ->tabs([
-        Tabs\Tab::make('Tab 1')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Tab 2')
-            ->schema([
-                // ...
-            ]),
-        Tabs\Tab::make('Tab 3')
-            ->schema([
-                // ...
-            ]),
-    ])
-    ->persistTabInLocalStorage()
-    ->id('order-tab')
-```
-
-```php
-use Filament\Infolists\Components\Tabs;
-
-Tabs::make('Tabs')
-    ->tabs([
         Tabs\Tab::make('Notifications')
             ->icon('heroicon-m-bell')
             ->schema([

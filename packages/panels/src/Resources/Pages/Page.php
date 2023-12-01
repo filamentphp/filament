@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages;
 use Exception;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page as BasePage;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
@@ -155,5 +156,10 @@ abstract class Page extends BasePage
             ...parent::getRenderHookScopes(),
             static::getResource(),
         ];
+    }
+
+    public function getSubNavigationPosition(): SubNavigationPosition
+    {
+        return static::getResource()::getSubNavigationPosition();
     }
 }

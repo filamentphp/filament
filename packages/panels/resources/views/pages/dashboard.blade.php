@@ -1,8 +1,6 @@
 <x-filament-panels::page class="fi-dashboard-page">
     @if (method_exists($this, 'filtersForm'))
-        <x-filament::section>
-            {{ $this->filtersForm }}
-        </x-filament::section>
+        {{ $this->filtersForm }}
     @endif
 
     <x-filament-widgets::widgets
