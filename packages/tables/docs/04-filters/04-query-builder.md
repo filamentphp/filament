@@ -352,19 +352,43 @@ TextConstraint::make('author')
 Each constraint type has a set of default operators, which you can customize by using the `operators()`method:
 
 ```php
+use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
-use Tables\Filters\QueryBuilder\Constraints\TextConstraint\Operators\EqualsOperator;
 
 TextConstraint::make('author')
     ->relationship(name: 'author', titleAttribute: 'name')
     ->operators([
-        EqualsOperator::make() // or a custom operator
-    ], keepDefault: true)
+        IsFilledOperator::make(),
+    ])
 ```
 
-This will add the `EqualsOperator` to the existing/default operators.
+This will remove all operators, and register the `EqualsOperator`.
 
-If you'd like to remove the default operators and show only the EqualsOperator, use `keepDefault: false`.
+If you'd like to add an operator to the end of the list, use `pushOperators()` instead:
+
+```php
+use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+
+TextConstraint::make('author')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->pushOperators([
+        IsFilledOperator::class,
+    ])
+```
+
+If you'd like to add an operator to the start of the list, use `unshiftOperators()` instead:
+
+```php
+use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\IsFilledOperator;
+use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
+
+TextConstraint::make('author')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->unshiftOperators([
+        IsFilledOperator::class,
+    ])
+```
 
 ## Creating custom constraints
 

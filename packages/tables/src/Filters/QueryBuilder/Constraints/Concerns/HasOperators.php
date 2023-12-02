@@ -37,12 +37,19 @@ trait HasOperators
     /**
      * @param  array<class-string<Operator> | Operator>  $operators
      */
-    public function operators(array $operators, bool $keepDefault = true): static
+    public function operators(array $operators): static
     {
-        if (! $keepDefault) {
-            $this->operators = [];
-        }
-        
+        $this->operators = [];
+        $this->pushOperators($operators);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<class-string<Operator> | Operator>  $operators
+     */
+    public function pushOperators(array $operators): static
+    {
         foreach ($operators as $operator) {
             if (is_string($operator)) {
                 $operator = $operator::make();
