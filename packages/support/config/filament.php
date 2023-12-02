@@ -73,10 +73,10 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Translate Labels By Deafult
+    | Translate Labels By Default
     |--------------------------------------------------------------------------
     |
-    | This determines if labels should be translate by default.
+    | This determines if labels should be translatable by default.
     |
     | Setting this to true makes labels translated, without using
     | 'translateLabel' label method on each form component.
