@@ -54,7 +54,7 @@ class Import extends Model
         }
 
         if (! class_exists(\App\Models\User::class)) {
-            throw new Exception('No user model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
+            throw new Exception('No [App\\Models\\User] model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
         }
 
         return $this->belongsTo(\App\Models\User::class);
