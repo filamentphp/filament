@@ -234,7 +234,7 @@ trait CanImportRecords
                             $failedRowsCount,
                             fn (Notification $notification) => $notification->actions([
                                 NotificationAction::make('downloadFailedRowsCsv')
-                                    ->label(trans_choice('filament-actions::import.notifications.completed.download_failed_rows_csv.label', $failedRowsCount, [
+                                    ->label(trans_choice('filament-actions::import.notifications.completed.actions.download_failed_rows_csv.label', $failedRowsCount, [
                                         'count' => format_number($failedRowsCount),
                                     ]))
                                     ->color('danger')
