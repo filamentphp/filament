@@ -2,11 +2,11 @@
 
 return [
 
-    'label' => '导入 :label',
+    'label' => '导入:label',
 
     'modal' => [
 
-        'heading' => '导入 :label',
+        'heading' => '导入:label',
 
         'form' => [
 
@@ -42,12 +42,8 @@ return [
 
             'title' => '导入完成',
 
-            'actions' => [
-
-                'download_failed_rows_csv' => [
-                    'label' => '下载失败的行记录导入信息|下载失败的行记录导入信息',
-                ],
-
+            'download_failed_rows_csv' => [
+                'label' => '下载导入失败的记录|下载导入失败的记录',
             ],
 
         ],
