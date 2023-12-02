@@ -182,7 +182,7 @@ return [
                 'no_fixed' => [
                     'label' => 'Vapaa',
                 ],
-                
+
             ],
 
             'svg' => [
@@ -250,7 +250,6 @@ return [
 
     ],
 
-    
     'radio' => [
 
         'boolean' => [
