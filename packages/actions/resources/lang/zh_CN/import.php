@@ -42,7 +42,8 @@ return [
 
             'title' => '导入完成',
 
-            'download_failed_rows_csv' => [
+            'actions' => [
+                'download_failed_rows_csv' => [
                 'label' => '下载导入失败的记录|下载导入失败的记录',
             ],
 
