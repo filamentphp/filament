@@ -203,10 +203,6 @@ trait CanImportRecords
             Bus::batch($importJobs->all())
                 ->allowFailures()
                 ->finally(function () use ($import) {
-                    if ($import->failed_at) {
-                        return;
-                    }
-
                     $import->touch('completed_at');
 
                     if (! $import->user instanceof Authenticatable) {
