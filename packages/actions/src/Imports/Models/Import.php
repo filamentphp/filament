@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property CarbonInterface | null $completed_at
- * @property CarbonInterface | null $failed_at
  * @property string $file_name
  * @property string $file_path
  * @property class-string<Importer> $importer
