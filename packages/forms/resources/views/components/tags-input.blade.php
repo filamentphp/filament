@@ -72,9 +72,11 @@
             @endforeach
         </datalist>
 
-        <div @class([
-            '[&_.fi-badge-delete-button]:hidden' => $isDisabled,
-        ])>
+        <div
+            @class([
+                '[&_.fi-badge-delete-button]:hidden' => $isDisabled,
+            ])
+        >
             <div wire:ignore>
                 <template x-cloak x-if="state?.length">
                     <div
