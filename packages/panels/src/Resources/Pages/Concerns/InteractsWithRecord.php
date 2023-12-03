@@ -109,7 +109,7 @@ trait InteractsWithRecord
         ];
     }
 
-    protected function getMountedActionFormModel(): Model
+    protected function getMountedActionFormModel(): Model | string | null
     {
         return $this->getRecord();
     }
