@@ -231,7 +231,7 @@ trait HasState
 
         $defaultState = $this->getDefaultState();
 
-        $this->state($this->getDefaultState());
+        $this->state($defaultState);
 
         Arr::set($hydratedDefaultState, $statePath, $defaultState);
     }
