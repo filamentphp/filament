@@ -128,8 +128,6 @@ trait HasFormComponentActions
             return null;
         }
 
-        $action->arguments($arguments);
-
         $this->cacheMountedFormComponentActionForm();
 
         try {
@@ -202,7 +200,17 @@ trait HasFormComponentActions
             return null;
         }
 
-        return $this->getMountedFormComponentActionComponent($actionNestingIndex)?->getAction($actionName);
+        $action = $this->getMountedFormComponentActionComponent($actionNestingIndex)?->getAction($actionName);
+
+        if (! $action) {
+            return null;
+        }
+
+        if (($actionArguments = array_shift($this->mountedFormComponentActionsArguments)) !== null) {
+            $action->arguments($actionArguments);
+        }
+
+        return $action;
     }
 
     protected function getMountedFormComponentActionForm(?int $actionNestingIndex = null): ?Form
