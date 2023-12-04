@@ -293,7 +293,7 @@ use App\Models\Product;
 
 ImportColumn::make('sku')
     ->fillRecordUsing(function (Product $record, string $state): void {
-        $record->state = strtoupper($state);
+        $record->sku = strtoupper($state);
     })
 ```
 
