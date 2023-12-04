@@ -145,7 +145,7 @@
                 <div
                     x-ref="panel"
                     x-cloak
-                    x-float.placement.bottom-start.offset.autoPlacement.shift="{ offset: 8 }"
+                    x-float.placement.bottom-start.offset.autoPlacement.shift="{ offset: 8,autoPlacement:{allowedPlacements: ['top', 'bottom']} }"
                     wire:ignore
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.panel"
                     @class([
