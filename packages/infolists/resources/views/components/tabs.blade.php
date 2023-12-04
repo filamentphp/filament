@@ -10,16 +10,33 @@
         tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
 
         init: function () {
-            this.$watch('tab', () => this.updateQueryString())
-
-            const tabs = @js(collect($getChildComponentContainer()->getComponents())
-                ->filter(static fn (Tab $tab): bool => $tab->isVisible())
-                ->map(static fn (Tab $tab) => $tab->getId())
-                ->values())
+            const tabs = this.getTabs()
 
             if ((! this.tab) || (! tabs.includes(this.tab))) {
                  this.tab = tabs[@js($getActiveTab()) - 1]
             }
+
+            this.$watch('tab', () => this.updateQueryString())
+
+            Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
+                succeed(({ snapshot, effect }) => {
+                    $nextTick(() => {
+                        if (component.id !== @js($this->getId())) {
+                            return
+                        }
+
+                        const tabs = this.getTabs()
+
+                        if (! tabs.includes(this.tab)) {
+                             this.tab = tabs[@js($getActiveTab()) - 1]
+                        }
+                    })
+                })
+            })
+        },
+
+        getTabs: function () {
+            return JSON.parse(this.$refs.tabsData.value)
         },
 
         updateQueryString: function () {
@@ -46,6 +63,18 @@
             ])
     }}
 >
+    <input
+        type="hidden"
+        value="{{
+            collect($getChildComponentContainer()->getComponents())
+                ->filter(static fn (Tab $tab): bool => $tab->isVisible())
+                ->map(static fn (Tab $tab) => $tab->getId())
+                ->values()
+                ->toJson()
+        }}"
+        x-ref="tabsData"
+    />
+
     <x-filament::tabs :contained="$isContained" :label="$getLabel()">
         @foreach ($getChildComponentContainer()->getComponents() as $tab)
             @php
