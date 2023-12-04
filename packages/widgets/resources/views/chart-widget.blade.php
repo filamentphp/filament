@@ -14,7 +14,7 @@
                 <x-filament::input.wrapper
                     inline-prefix
                     wire:target="filter"
-                    class="mt-3 sm:-my-2"
+                    class="w-max sm:-my-2"
                 >
                     <x-filament::input.select
                         inline-prefix
