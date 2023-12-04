@@ -98,6 +98,7 @@ export default function fileUploadFormComponent({
                 allowPaste: false,
                 allowRemove: isDeletable,
                 allowReorder: isReorderable,
+                allowReplace: false,
                 allowImagePreview: isPreviewable,
                 allowVideoPreview: isPreviewable,
                 allowAudioPreview: isPreviewable,
