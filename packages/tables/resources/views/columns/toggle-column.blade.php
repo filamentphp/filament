@@ -46,13 +46,17 @@
 
                 isLoading = true
 
-                const response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), updatedState)
+                const response = await $wire.updateTableColumnState(
+                    @js($getName()),
+                    @js($recordKey),
+                    updatedState,
+                )
 
                 error = response?.error ?? undefined
 
                 // The state is only updated on the frontend if the toggle is
                 // being turned off, so we only need to reset it then.
-                if ((! state) && error) {
+                if (! state && error) {
                     state = ! state
                 }
 
