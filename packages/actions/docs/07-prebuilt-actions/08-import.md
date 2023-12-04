@@ -361,7 +361,7 @@ The import action can render extra form components that the user can interact wi
 ```php
 use Filament\Forms\Components\Checkbox;
 
-public function getOptionsFormComponents(): array
+public static function getOptionsFormComponents(): array
 {
     return [
         Checkbox::make('update_existing')
