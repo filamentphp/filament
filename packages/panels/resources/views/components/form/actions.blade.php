@@ -7,20 +7,25 @@
 @if (count($actions))
     <div
         @if ($this->areFormActionsSticky())
-            x-data="{
+        x-data="{
                 isSticky: false,
-
+                isPinned: false,
                 evaluatePageScrollPosition: function () {
-                    this.isSticky =
-                        document.body.scrollHeight >=
-                        window.scrollY + window.innerHeight * 2
+                    this.isSticky = (this.isPinned == false && window.scrollY >= 0);
+                    this.isPinned = $el.getBoundingClientRect().bottom <= window.innerHeight;
                 },
             }"
             x-init="evaluatePageScrollPosition"
+            x-intersect.threshold.100="isPinned = true"
             x-on:scroll.window="evaluatePageScrollPosition"
             x-bind:class="{
-                'fi-sticky sticky bottom-0 -mx-4 transform bg-white p-4 shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10 md:bottom-4 md:rounded-xl':
+                'transform bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10 md:rounded-t-xl -mx-4 md:mx-0':
                     isSticky,
+                'fi-sticky sticky p-4':
+                    true,
+            }"
+            x-bind:style="{
+                bottom: '-1px',
             }"
         @endif
         class="fi-form-actions"
