@@ -10,16 +10,13 @@
         tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
 
         init: function () {
-            // Watcher is first as Alpine.js does not currently
-            // support defining a constant as the first thing in
-            // the function body.
-            this.$watch('tab', () => this.updateQueryString())
-
             const tabs = this.getTabs()
 
             if ((! this.tab) || (! tabs.includes(this.tab))) {
                  this.tab = tabs[@js($getActiveTab()) - 1]
             }
+
+            this.$watch('tab', () => this.updateQueryString())
 
             Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
                 succeed(({ snapshot, effect }) => {
