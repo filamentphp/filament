@@ -10,32 +10,6 @@
     x-data="{
         tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
 
-        init: function () {
-            const tabs = this.getTabs()
-
-            if ((! this.tab) || (! tabs.includes(this.tab))) {
-                 this.tab = tabs[@js($getActiveTab()) - 1]
-            }
-
-            this.$watch('tab', () => this.updateQueryString())
-
-            Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
-                succeed(({ snapshot, effect }) => {
-                    $nextTick(() => {
-                        if (component.id !== @js($this->getId())) {
-                            return
-                        }
-
-                        const tabs = this.getTabs()
-
-                        if (! tabs.includes(this.tab)) {
-                             this.tab = tabs[@js($getActiveTab()) - 1]
-                        }
-                    })
-                })
-            })
-        },
-
         getTabs: function () {
             return JSON.parse(this.$refs.tabsData.value)
         },
@@ -51,6 +25,31 @@
             history.pushState(null, document.title, url.toString())
         },
     }"
+    x-init="
+        const tabs = getTabs()
+
+        if (! tab || ! tabs.includes(tab)) {
+            tab = tabs[@js($getActiveTab()) - 1]
+        }
+
+        $watch('tab', () => updateQueryString())
+
+        Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
+            succeed(({ snapshot, effect }) => {
+                $nextTick(() => {
+                    if (component.id !== @js($this->getId())) {
+                        return
+                    }
+
+                    const tabs = getTabs()
+
+                    if (! tabs.includes(tab)) {
+                        tab = tabs[@js($getActiveTab()) - 1]
+                    }
+                })
+            })
+        })
+    "
     {{
         $attributes
             ->merge([
