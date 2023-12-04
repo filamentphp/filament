@@ -27,7 +27,9 @@ use function Filament\Support\is_app_url;
 class EditRecord extends Page
 {
     use Concerns\HasRelationManagers;
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        configureAction as configureActionRecord;
+    }
     use InteractsWithFormActions;
 
     /**
@@ -219,9 +221,7 @@ class EditRecord extends Page
 
     protected function configureAction(Action $action): void
     {
-        $action
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
+        $this->configureActionRecord($action);
 
         match (true) {
             $action instanceof DeleteAction => $this->configureDeleteAction($action),
@@ -350,36 +350,6 @@ class EditRecord extends Page
     protected function getRedirectUrl(): ?string
     {
         return null;
-    }
-
-    protected function getMountedActionFormModel(): Model
-    {
-        return $this->getRecord();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getWidgetData(): array
-    {
-        return [
-            'record' => $this->getRecord(),
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getSubNavigationParameters(): array
-    {
-        return [
-            'record' => $this->getRecord(),
-        ];
-    }
-
-    public function getSubNavigation(): array
-    {
-        return static::getResource()::getRecordSubNavigation($this);
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool

@@ -7,6 +7,7 @@ use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\View\Components\Modal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -69,7 +70,7 @@ trait CanOpenModal
 
     protected string | Htmlable | Closure | null $modalDescription = null;
 
-    protected string | Closure | null $modalWidth = null;
+    protected MaxWidth | string | Closure | null $modalWidth = null;
 
     protected bool | Closure | null $isModalHidden = false;
 
@@ -289,7 +290,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalWidth(string | Closure | null $width = null): static
+    public function modalWidth(MaxWidth | string | Closure | null $width = null): static
     {
         $this->modalWidth = $width;
 
@@ -484,7 +485,7 @@ trait CanOpenModal
 
     public function getModalAlignment(): Alignment | string
     {
-        return $this->evaluate($this->modalAlignment) ?? (in_array($this->getModalWidth(), ['xs', 'sm']) ? Alignment::Center : Alignment::Start);
+        return $this->evaluate($this->modalAlignment) ?? (in_array($this->getModalWidth(), [MaxWidth::ExtraSmall, MaxWidth::Small, 'xs', 'sm'])) ? Alignment::Center : Alignment::Start;
     }
 
     public function getModalSubmitActionLabel(): string
@@ -522,9 +523,9 @@ trait CanOpenModal
         return $this->evaluate($this->modalDescription);
     }
 
-    public function getModalWidth(): string
+    public function getModalWidth(): MaxWidth | string
     {
-        return $this->evaluate($this->modalWidth) ?? '4xl';
+        return $this->evaluate($this->modalWidth) ?? MaxWidth::FourExtraLarge;
     }
 
     public function isModalFooterSticky(): bool

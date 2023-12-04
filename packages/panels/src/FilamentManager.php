@@ -17,6 +17,7 @@ use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Assets\Theme;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\Widgets\Widget;
@@ -203,7 +204,7 @@ class FilamentManager
         return $this->getCurrentPanel()->getLogoutUrl($parameters);
     }
 
-    public function getMaxContentWidth(): ?string
+    public function getMaxContentWidth(): MaxWidth | string | null
     {
         return $this->getCurrentPanel()->getMaxContentWidth();
     }

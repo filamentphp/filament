@@ -10,6 +10,7 @@ use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Infolists\Infolist;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Panel;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
@@ -63,6 +64,8 @@ abstract class Resource
 
     protected static ?string $navigationGroup = null;
 
+    protected static ?string $navigationParentItem = null;
+
     protected static ?string $navigationIcon = null;
 
     protected static ?string $activeNavigationIcon = null;
@@ -110,6 +113,8 @@ abstract class Resource
 
     protected static ?bool $isGlobalSearchForcedCaseInsensitive = null;
 
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
+
     public static function form(Form $form): Form
     {
         return $form;
@@ -142,6 +147,7 @@ abstract class Resource
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
+                ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*'))
@@ -149,6 +155,11 @@ abstract class Resource
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
+    }
+
+    public static function getSubNavigationPosition(): SubNavigationPosition
+    {
+        return static::$subNavigationPosition;
     }
 
     public static function table(Table $table): Table
@@ -380,12 +391,30 @@ abstract class Resource
 
     public static function getGlobalSearchResultUrl(Model $record): ?string
     {
-        if (static::hasPage('edit') && static::canEdit($record)) {
+        $canEdit = static::canEdit($record);
+
+        if (static::hasPage('edit') && $canEdit) {
             return static::getUrl('edit', ['record' => $record]);
         }
 
-        if (static::hasPage('view') && static::canView($record)) {
+        $canView = static::canView($record);
+
+        if (static::hasPage('view') && $canView) {
             return static::getUrl('view', ['record' => $record]);
+        }
+
+        if ($canEdit) {
+            return static::getUrl(parameters: [
+                'tableAction' => 'edit',
+                'tableActionRecord' => $record,
+            ]);
+        }
+
+        if ($canView) {
+            return static::getUrl(parameters: [
+                'tableAction' => 'view',
+                'tableActionRecord' => $record,
+            ]);
         }
 
         return null;
@@ -689,9 +718,19 @@ abstract class Resource
         return static::$navigationGroup;
     }
 
+    public static function getNavigationParentItem(): ?string
+    {
+        return static::$navigationParentItem;
+    }
+
     public static function navigationGroup(?string $group): void
     {
         static::$navigationGroup = $group;
+    }
+
+    public static function navigationParentItem(?string $group): void
+    {
+        static::$navigationParentItem = $group;
     }
 
     public static function getNavigationIcon(): ?string
@@ -750,6 +789,11 @@ abstract class Resource
     public static function isDiscovered(): bool
     {
         return static::$isDiscovered;
+    }
+
+    public static function scopeToTenant(bool $condition = true): void
+    {
+        static::$isScopedToTenant = $condition;
     }
 
     public static function isScopedToTenant(): bool

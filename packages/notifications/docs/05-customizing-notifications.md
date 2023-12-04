@@ -101,7 +101,7 @@ class Notification extends BaseNotification
 }
 ```
 
-Next, you should bind your custom `Notification` class into the container inside a service provider's `boot()` method:
+Next, you should bind your custom `Notification` class into the container inside a service provider's `register()` method:
 
 ```php
 use App\Notifications\Notification;

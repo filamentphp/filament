@@ -137,6 +137,12 @@
                         'grid gap-y-3 px-4 py-4 sm:px-6',
                     ])
                 >
+                    <x-filament-tables::filters
+                        :form="$getFiltersForm()"
+                        x-cloak
+                        x-show="areFiltersOpen"
+                    />
+
                     @if ($hasFiltersAboveContentCollapsible)
                         <span
                             x-on:click="areFiltersOpen = ! areFiltersOpen"
@@ -145,12 +151,6 @@
                             {{ $filtersTriggerAction->badge(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
                         </span>
                     @endif
-
-                    <x-filament-tables::filters
-                        :form="$getFiltersForm()"
-                        x-cloak
-                        x-show="areFiltersOpen"
-                    />
                 </div>
             @endif
 
@@ -377,6 +377,7 @@
                         :two-xl="$contentGrid['2xl'] ?? null"
                         x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                         x-sortable
+                        :data-sortable-animation-duration="$getReorderAnimationDuration()"
                         @class([
                             'fi-ta-content-grid gap-4 p-4 sm:px-6' => $contentGrid,
                             'pt-0' => $contentGrid && $this->getTableGrouping(),
@@ -665,7 +666,10 @@
                     </x-filament-tables::table>
                 @endif
             @elseif (($records !== null) && count($records))
-                <x-filament-tables::table :reorderable="$isReorderable">
+                <x-filament-tables::table
+                    :reorderable="$isReorderable"
+                    :reorder-animation-duration="$getReorderAnimationDuration()"
+                >
                     <x-slot name="header">
                         @if ($isReordering)
                             <th></th>
@@ -725,6 +729,7 @@
                                     \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
                                         ->class([
                                             'fi-table-header-cell-' . str($column->getName())->camel()->kebab(),
+                                            'w-full' => $column->canGrow(),
                                             $getHiddenClasses($column),
                                         ])
                                 "
@@ -1106,7 +1111,8 @@
             @endif
         </div>
 
-        @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
+        @if ((($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) &&
+             ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
             <x-filament::pagination
                 :page-options="$getPaginationPageOptions()"
                 :paginator="$records"

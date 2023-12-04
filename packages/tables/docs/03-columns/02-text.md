@@ -195,6 +195,21 @@ TextColumn::make('authors.name')
     ->limitList(3)
 ```
 
+#### Expanding the limited list
+
+You can allow the limited items to be expanded and collapsed, using the `expandableLimitedList()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('authors.name')
+    ->listWithLineBreaks()
+    ->limitList(3)
+    ->expandableLimitedList()
+```
+
+Please note that this is only a feature for `listWithLineBreaks()` or `bulleted()`, where each item is on its own line.
+
 ### Using a list separator
 
 If you want to "explode" a text string from your model into multiple list items, you can do so with the `separator()` method. This is useful for displaying comma-separated tags [as badges](#displaying-as-a-badge), for example:

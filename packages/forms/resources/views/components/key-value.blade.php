@@ -1,16 +1,28 @@
 @php
     use Filament\Support\Facades\FilamentView;
+
+    $debounce = $getLiveDebounce();
+    $hasInlineLabel = $hasInlineLabel();
+    $isAddable = $isAddable();
+    $isDeletable = $isDeletable();
+    $isDisabled = $isDisabled();
+    $isReorderable = $isReorderable();
+    $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $debounce = $getLiveDebounce();
-        $isAddable = $isAddable();
-        $isDeletable = $isDeletable();
-        $isDisabled = $isDisabled();
-        $isReorderable = $isReorderable();
-        $statePath = $getStatePath();
-    @endphp
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    :has-inline-label="$hasInlineLabel"
+>
+    <x-slot
+        name="label"
+        @class([
+            'sm:pt-1.5' => $hasInlineLabel,
+        ])
+    >
+        {{ $getLabel() }}
+    </x-slot>
 
     <div
         {{
@@ -86,6 +98,7 @@
                     @if ($isReorderable)
                         x-on:end="reorderRows($event)"
                         x-sortable
+                        data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                     @endif
                     class="divide-y divide-gray-200 dark:divide-white/5"
                 >

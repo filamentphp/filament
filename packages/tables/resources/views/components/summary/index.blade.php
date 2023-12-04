@@ -51,7 +51,7 @@
                     $alignment = $column->getAlignment() ?? Alignment::Start;
 
                     if (! $alignment instanceof Alignment) {
-                        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+                        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
                     }
 
                     $hasColumnHeaderLabel = (! $placeholderColumns) || $column->hasSummary();

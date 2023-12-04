@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Support\Enums\MaxWidth;
 
 trait HasDropdown
 {
@@ -12,7 +13,9 @@ trait HasDropdown
 
     protected string | Closure | null $dropdownMaxHeight = null;
 
-    protected string | Closure | null $dropdownWidth = null;
+    protected int | Closure | null $dropdownOffset = null;
+
+    protected MaxWidth | string | Closure | null $dropdownWidth = null;
 
     public function dropdown(bool | Closure $condition = true): static
     {
@@ -35,7 +38,14 @@ trait HasDropdown
         return $this;
     }
 
-    public function dropdownWidth(string | Closure | null $width): static
+    public function dropdownOffset(int | Closure | null $offset): static
+    {
+        $this->dropdownOffset = $offset;
+
+        return $this;
+    }
+
+    public function dropdownWidth(MaxWidth | string | Closure | null $width): static
     {
         $this->dropdownWidth = $width;
 
@@ -52,7 +62,12 @@ trait HasDropdown
         return $this->evaluate($this->dropdownMaxHeight);
     }
 
-    public function getDropdownWidth(): ?string
+    public function getDropdownOffset(): ?int
+    {
+        return $this->evaluate($this->dropdownOffset);
+    }
+
+    public function getDropdownWidth(): MaxWidth | string | null
     {
         return $this->evaluate($this->dropdownWidth);
     }

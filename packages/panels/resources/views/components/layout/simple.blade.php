@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\MaxWidth;
+@endphp
+
 <x-filament-panels::layout.base :livewire="$livewire">
     @props([
         'after' => null,
@@ -25,17 +29,16 @@
                 @class([
                     'fi-simple-main my-16 w-full bg-white px-6 py-12 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 sm:rounded-xl sm:px-12',
                     match ($maxWidth ?? null) {
-                        'xs' => 'sm:max-w-xs',
-                        'sm' => 'sm:max-w-sm',
-                        'md' => 'sm:max-w-md',
-                        'lg' => 'sm:max-w-lg',
-                        'xl' => 'sm:max-w-xl',
-                        '2xl' => 'sm:max-w-2xl',
-                        '3xl' => 'sm:max-w-3xl',
-                        '4xl' => 'sm:max-w-4xl',
-                        '5xl' => 'sm:max-w-5xl',
-                        '6xl' => 'sm:max-w-6xl',
-                        '7xl' => 'sm:max-w-7xl',
+                        MaxWidth::ExtraSmall, 'xs' => 'sm:max-w-xs',
+                        MaxWidth::Small, 'sm' => 'sm:max-w-sm',
+                        MaxWidth::Medium, 'md' => 'sm:max-w-md',
+                        MaxWidth::ExtraLarge, 'xl' => 'sm:max-w-xl',
+                        MaxWidth::TwoExtraLarge, '2xl' => 'sm:max-w-2xl',
+                        MaxWidth::ThreeExtraLarge, '3xl' => 'sm:max-w-3xl',
+                        MaxWidth::FourExtraLarge, '4xl' => 'sm:max-w-4xl',
+                        MaxWidth::FiveExtraLarge, '5xl' => 'sm:max-w-5xl',
+                        MaxWidth::SixExtraLarge, '6xl' => 'sm:max-w-6xl',
+                        MaxWidth::SevenExtraLarge, '7xl' => 'sm:max-w-7xl',
                         default => 'sm:max-w-lg',
                     },
                 ])

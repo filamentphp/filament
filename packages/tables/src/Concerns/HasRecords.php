@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -18,7 +19,7 @@ trait HasRecords
      */
     protected bool $allowsDuplicates = false;
 
-    protected Collection | Paginator | null $records = null;
+    protected Collection | Paginator | CursorPaginator | null $records = null;
 
     public function getFilteredTableQuery(): Builder
     {
@@ -59,7 +60,7 @@ trait HasRecords
         return $query;
     }
 
-    protected function hydratePivotRelationForTableRecords(Collection | Paginator $records): Collection | Paginator
+    protected function hydratePivotRelationForTableRecords(Collection | Paginator | CursorPaginator $records): Collection | Paginator | CursorPaginator
     {
         $table = $this->getTable();
         $relationship = $table->getRelationship();
@@ -71,16 +72,16 @@ trait HasRecords
         return $records;
     }
 
-    public function getTableRecords(): Collection | Paginator
+    public function getTableRecords(): Collection | Paginator | CursorPaginator
     {
         if ($translatableContentDriver = $this->makeFilamentTranslatableContentDriver()) {
-            $setRecordLocales = function (Collection | Paginator $records) use ($translatableContentDriver): Collection | Paginator {
+            $setRecordLocales = function (Collection | Paginator | CursorPaginator $records) use ($translatableContentDriver): Collection | Paginator | CursorPaginator {
                 $records->transform(fn (Model $record) => $translatableContentDriver->setRecordLocale($record));
 
                 return $records;
             };
         } else {
-            $setRecordLocales = fn (Collection | Paginator $records): Collection | Paginator => $records;
+            $setRecordLocales = fn (Collection | Paginator | CursorPaginator $records): Collection | Paginator | CursorPaginator => $records;
         }
 
         if ($this->records) {

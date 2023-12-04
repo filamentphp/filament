@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
@@ -18,13 +19,15 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Repeater extends Field implements Contracts\CanConcealComponents
+class Repeater extends Field implements Contracts\CanConcealComponents, Contracts\HasExtraItemActions
 {
     use Concerns\CanBeCloned;
     use Concerns\CanBeCollapsed;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
+    use Concerns\HasExtraItemActions;
+    use HasReorderAnimationDuration;
 
     protected string | Closure | null $addActionLabel = null;
 
@@ -87,6 +90,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
      */
     protected ?array $hydratedDefaultState = null;
 
+    protected bool $shouldMergeHydratedDefaultStateWithChildComponentContainerStateAfterStateHydrated = true;
+
     protected string | Closure | null $labelBetweenItems = null;
 
     protected bool | Closure $isItemLabelTruncated = true;
@@ -98,9 +103,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->defaultItems(1);
 
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
-            if (is_array($component->hydratedDefaultState)) {
+            if (
+                is_array($component->hydratedDefaultState) &&
+                $component->shouldMergeHydratedDefaultStateWithChildComponentContainerStateAfterStateHydrated
+            ) {
                 $component->mergeHydratedDefaultStateWithChildComponentContainerState();
+            }
 
+            if (is_array($component->hydratedDefaultState)) {
                 return;
             }
 
@@ -156,7 +166,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
                 $component->state($items);
 
-                $component->getChildComponentContainers()[$newUuid]->fill();
+                $component->getChildComponentContainer($newUuid)->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -207,7 +217,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
                 $component->state($items);
 
-                $component->getChildComponentContainers()[$newUuid]->fill();
+                $component->getChildComponentContainer($newUuid)->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -613,14 +623,16 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             }
 
             return array_fill(0, $count, $component->isSimple() ? null : []);
-        }, shouldPreserveChildState: false);
+        });
+
+        $this->shouldMergeHydratedDefaultStateWithChildComponentContainerStateAfterStateHydrated = false;
 
         return $this;
     }
 
-    public function default(mixed $state, bool $shouldPreserveChildState = true): static
+    public function default(mixed $state): static
     {
-        parent::default(function (Repeater $component) use ($shouldPreserveChildState, $state) {
+        parent::default(function (Repeater $component) use ($state) {
             $state = $component->evaluate($state);
 
             $simpleField = $component->getSimpleField();
@@ -633,12 +645,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                     $itemData;
             }
 
-            if ($shouldPreserveChildState) {
-                $component->hydratedDefaultState = $items;
-            }
+            $component->hydratedDefaultState = $items;
 
             return $items;
         });
+
+        $this->shouldMergeHydratedDefaultStateWithChildComponentContainerStateAfterStateHydrated = true;
 
         return $this;
     }
@@ -1205,5 +1217,21 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function isItemLabelTruncated(): bool
     {
         return (bool) $this->evaluate($this->isItemLabelTruncated);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getItemState(string $uuid): array
+    {
+        return $this->getChildComponentContainer($uuid)->getState(shouldCallHooksBefore: false);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getRawItemState(string $uuid): array
+    {
+        return $this->getChildComponentContainer($uuid)->getRawState();
     }
 }

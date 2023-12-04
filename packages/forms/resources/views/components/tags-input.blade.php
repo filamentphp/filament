@@ -1,13 +1,26 @@
 @php
     use Filament\Support\Facades\FilamentView;
+
+    $hasInlineLabel = $hasInlineLabel();
+    $id = $getId();
+    $isDisabled = $isDisabled();
+    $isReorderable = $isReorderable();
+    $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $id = $getId();
-        $isDisabled = $isDisabled();
-        $statePath = $getStatePath();
-    @endphp
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    :has-inline-label="$hasInlineLabel"
+>
+    <x-slot
+        name="label"
+        @class([
+            'sm:pt-1.5' => $hasInlineLabel,
+        ])
+    >
+        {{ $getLabel() }}
+    </x-slot>
 
     <div
         @if (FilamentView::hasSpaMode())
@@ -59,36 +72,54 @@
             @endforeach
         </datalist>
 
-        <div wire:ignore>
-            <template x-cloak x-if="state?.length">
-                <div
-                    @class([
-                        'flex w-full flex-wrap gap-1.5 p-2',
-                        'border-t border-t-gray-200 dark:border-t-white/10',
-                    ])
-                >
-                    <template
-                        x-for="tag in state"
-                        x-bind:key="tag"
-                        class="hidden"
+        <div
+            @class([
+                '[&_.fi-badge-delete-button]:hidden' => $isDisabled,
+            ])
+        >
+            <div wire:ignore>
+                <template x-cloak x-if="state?.length">
+                    <div
+                        @if ($isReorderable)
+                            x-on:end="reorderTags($event)"
+                            x-sortable
+                            data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
+                        @endif
+                        @class([
+                            'flex w-full flex-wrap gap-1.5 p-2',
+                            'border-t border-t-gray-200 dark:border-t-white/10',
+                        ])
                     >
-                        <x-filament::badge>
-                            {{ $getTagPrefix() }}
+                        <template
+                            x-for="(tag, index) in state"
+                            x-bind:key="`${tag}-${index}`"
+                            class="hidden"
+                        >
+                            <x-filament::badge
+                                :x-bind:x-sortable-item="$isReorderable ? 'index' : null"
+                                :x-sortable-handle="$isReorderable ? '' : null"
+                                @class([
+                                    'cursor-move' => $isReorderable,
+                                ])
+                            >
+                                {{ $getTagPrefix() }}
 
-                            <span class="text-start" x-text="tag"></span>
+                                <span
+                                    x-text="tag"
+                                    class="select-none text-start"
+                                ></span>
 
-                            {{ $getTagSuffix() }}
+                                {{ $getTagSuffix() }}
 
-                            @if (! $isDisabled)
                                 <x-slot
                                     name="deleteButton"
                                     x-on:click="deleteTag(tag)"
                                 ></x-slot>
-                            @endif
-                        </x-filament::badge>
-                    </template>
-                </div>
-            </template>
+                            </x-filament::badge>
+                        </template>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 </x-dynamic-component>

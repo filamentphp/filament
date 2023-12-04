@@ -697,6 +697,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/radio/inline-under-label': {
+        url: 'forms/fields',
+        selector: '#inlineRadioUnderLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/radio/disabled-option': {
         url: 'forms/fields',
         selector: '#disabledOptionRadio',
@@ -1088,6 +1097,15 @@ export default {
     'forms/layout/section/simple': {
         url: 'forms/layout',
         selector: '#section',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/section/actions': {
+        url: 'forms/layout',
+        selector: '#sectionHeaderActions',
         viewport: {
             width: 1920,
             height: 640,
@@ -1589,6 +1607,15 @@ export default {
     'infolists/layout/section/simple': {
         url: 'infolists/layout',
         selector: '#section',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/section/actions': {
+        url: 'infolists/layout',
+        selector: '#sectionHeaderActions',
         viewport: {
             width: 1920,
             height: 640,

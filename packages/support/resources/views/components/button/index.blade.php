@@ -30,11 +30,11 @@
 
 @php
     if (! $iconPosition instanceof IconPosition) {
-        $iconPosition = $iconPosition ? IconPosition::tryFrom($iconPosition) : null;
+        $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }
 
     if (! $size instanceof ActionSize) {
-        $size = ActionSize::tryFrom($size) ?? $size;
+        $size = filled($size) ? (ActionSize::tryFrom($size) ?? $size) : null;
     }
 
     $iconSize ??= match ($size) {
@@ -43,7 +43,7 @@
     };
 
     if (! $iconSize instanceof IconSize) {
-        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+        $iconSize = filled($iconSize) ? (IconSize::tryFrom($iconSize) ?? $iconSize) : null;
     }
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
