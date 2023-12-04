@@ -203,10 +203,6 @@ trait CanImportRecords
             Bus::batch($importJobs->all())
                 ->allowFailures()
                 ->finally(function () use ($import) {
-                    if ($import->failed_at) {
-                        return;
-                    }
-
                     $import->touch('completed_at');
 
                     if (! $import->user instanceof Authenticatable) {
@@ -234,7 +230,7 @@ trait CanImportRecords
                             $failedRowsCount,
                             fn (Notification $notification) => $notification->actions([
                                 NotificationAction::make('downloadFailedRowsCsv')
-                                    ->label(trans_choice('filament-actions::import.notifications.completed.download_failed_rows_csv.label', $failedRowsCount, [
+                                    ->label(trans_choice('filament-actions::import.notifications.completed.actions.download_failed_rows_csv.label', $failedRowsCount, [
                                         'count' => format_number($failedRowsCount),
                                     ]))
                                     ->color('danger')

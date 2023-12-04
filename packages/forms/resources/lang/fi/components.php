@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'SVG-tiedostojen muokkausta ei suositella, koska laatu voi heikentyä kokoa muuttaessa.\n Oletko varma että haluat jatkaa?',
+                    'disabled' => 'SVG-tiedostojen muokkaus on poissa käytöstä koska se voi johtaa laadun heikkenemiseen.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -241,12 +250,25 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Kyllä',
+            'false' => 'Ei',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
 
             'add' => [
                 'label' => 'Lisää :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Lisää väliin',
             ],
 
             'delete' => [
