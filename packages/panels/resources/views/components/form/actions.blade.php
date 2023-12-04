@@ -9,14 +9,14 @@
         @if ($this->areFormActionsSticky())
             x-data="{
                 isSticky: false,
-                isPinned: false,
+                isStuck: false,
                 evaluatePageScrollPosition: function () {
-                    this.isSticky = this.isPinned == false && window.scrollY >= 0
-                    this.isPinned = $el.getBoundingClientRect().bottom <= window.innerHeight
+                    this.isSticky = this.isStuck == false && window.scrollY >= 0
+                    this.isStuck = $el.getBoundingClientRect().bottom <= window.innerHeight
                 },
             }"
             x-init="evaluatePageScrollPosition"
-            x-intersect.threshold.100="isPinned = true"
+            x-intersect.threshold.100="isStuck = true"
             x-on:scroll.window="evaluatePageScrollPosition"
             x-bind:class="{
                 'transform bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10 md:rounded-t-xl -mx-4 md:mx-0':
