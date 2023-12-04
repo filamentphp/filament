@@ -292,7 +292,7 @@ If you want to customize how column state is filled into a record, you can pass 
 use App\Models\Product;
 
 ImportColumn::make('sku')
-    ->fillUsing(function (Product $record, string $state): void {
+    ->fillRecordUsing(function (Product $record, string $state): void {
         $record->state = strtoupper($state);
     })
 ```
