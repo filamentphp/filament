@@ -82,7 +82,7 @@
                 x-on:click="isCollapsed = ! isCollapsed"
             @endif
             @class([
-                'fi-section-header flex items-center gap-x-3 overflow-hidden',
+                'fi-section-header flex flex-col gap-3 overflow-hidden sm:flex-row sm:items-center',
                 'cursor-pointer' => $collapsible,
                 match ($compact) {
                     true => 'px-4 py-2.5',
@@ -135,7 +135,7 @@
             @if ($hasHeaderActions)
                 <x-filament-actions::actions
                     :actions="$headerActions"
-                    :alignment="\Filament\Support\Enums\Alignment::End"
+                    :alignment="\Filament\Support\Enums\Alignment::Start"
                     x-on:click.stop
                 />
             @endif
