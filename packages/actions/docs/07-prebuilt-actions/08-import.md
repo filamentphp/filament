@@ -96,7 +96,7 @@ If you require a column in the database, you also need to make sure that it has 
 
 ### Validating CSV data
 
-You can call the `rules()` method to add validation rules to a column. These rules will check the data in reach row from the CSV before it is saved to the database:
+You can call the `rules()` method to add validation rules to a column. These rules will check the data in each row from the CSV before it is saved to the database:
 
 ```php
 use Filament\Actions\Imports\ImportColumn;
