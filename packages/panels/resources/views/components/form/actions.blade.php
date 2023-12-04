@@ -18,14 +18,14 @@
             x-init="evaluatePageScrollPosition"
             x-intersect.threshold.100="isPinned = true"
             x-on:scroll.window="evaluatePageScrollPosition"
-            x-bind:style="{
-                bottom: '-1px',
-            }"
             x-bind:class="{
                 'transform bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10 md:rounded-t-xl -mx-4 md:mx-0':
                     isSticky,
                 'fi-sticky sticky p-4':
                     true,
+            }"
+            x-bind:style="{
+                bottom: '-1px',
             }"
         @endif
         class="fi-form-actions"
