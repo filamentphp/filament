@@ -71,9 +71,7 @@ class StaticAction extends ViewComponent
 
     public function button(): static
     {
-        $this->view(static::BUTTON_VIEW);
-
-        return $this;
+        return $this->view(static::BUTTON_VIEW);
     }
 
     public function isButton(): bool
@@ -83,16 +81,12 @@ class StaticAction extends ViewComponent
 
     public function grouped(): static
     {
-        $this->view(static::GROUPED_VIEW);
-
-        return $this;
+        return $this->view(static::GROUPED_VIEW);
     }
 
     public function iconButton(): static
     {
-        $this->view(static::ICON_BUTTON_VIEW);
-
-        return $this;
+        return $this->view(static::ICON_BUTTON_VIEW);
     }
 
     public function isIconButton(): bool
@@ -102,9 +96,7 @@ class StaticAction extends ViewComponent
 
     public function link(): static
     {
-        $this->view(static::LINK_VIEW);
-
-        return $this;
+        return $this->view(static::LINK_VIEW);
     }
 
     public function isLink(): bool
