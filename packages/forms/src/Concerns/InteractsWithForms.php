@@ -183,6 +183,19 @@ trait InteractsWithForms
     }
 
     /**
+     * @param  array<string, mixed>  $attributes
+     * @return array<string, mixed>
+     */
+    protected function prepareForValidation($attributes): array
+    {
+        foreach ($this->getCachedForms() as $form) {
+            $attributes = $form->mutateStateForValidation($attributes);
+        }
+
+        return $attributes;
+    }
+
+    /**
      * @param  string  $field
      * @param  array<string, array<mixed>>  $rules
      * @param  array<string, string>  $messages

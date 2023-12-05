@@ -30,6 +30,8 @@ trait HasState
 
     protected ?Closure $mutateDehydratedStateUsing = null;
 
+    protected ?Closure $mutateStateForValidationUsing = null;
+
     protected bool $hasDefaultState = false;
 
     protected bool | Closure $isDehydrated = true;
@@ -37,6 +39,16 @@ trait HasState
     protected ?string $statePath = null;
 
     protected string $cachedAbsoluteStatePath;
+
+    /**
+     * @var string | array<string> | Closure | null
+     */
+    protected string | array | Closure | null $stripCharacters = null;
+
+    /**
+     * @var array<string>
+     */
+    protected array $cachedStripCharacters;
 
     public function afterStateHydrated(?Closure $callback): static
     {
@@ -249,20 +261,72 @@ trait HasState
 
     public function mutateDehydratedState(mixed $state): mixed
     {
+        $state = $this->stripCharactersFromState($state);
+
+        if (! $this->mutateDehydratedStateUsing) {
+            return $state;
+        }
+
         return $this->evaluate(
             $this->mutateDehydratedStateUsing,
             ['state' => $state],
         );
     }
 
+    public function mutateStateForValidation(mixed $state): mixed
+    {
+        $state = $this->stripCharactersFromState($state);
+
+        if (! $this->mutateStateForValidationUsing) {
+            return $state;
+        }
+
+        return $this->evaluate(
+            $this->mutateStateForValidationUsing,
+            ['state' => $state],
+        );
+    }
+
+    protected function stripCharactersFromState(mixed $state): mixed
+    {
+        if (! is_string($state)) {
+            return $state;
+        }
+
+        $stripCharacters = $this->getStripCharacters();
+
+        if (empty($stripCharacters)) {
+            return $state;
+        }
+
+        return str_replace($stripCharacters, '', $state);
+    }
+
     public function mutatesDehydratedState(): bool
     {
-        return $this->mutateDehydratedStateUsing instanceof Closure;
+        return ($this->mutateDehydratedStateUsing instanceof Closure) || $this->hasStripCharacters();
+    }
+
+    public function mutatesStateForValidation(): bool
+    {
+        return ($this->mutateStateForValidationUsing instanceof Closure) || $this->hasStripCharacters();
+    }
+
+    public function hasStripCharacters(): bool
+    {
+        return filled($this->getStripCharacters());
     }
 
     public function mutateDehydratedStateUsing(?Closure $callback): static
     {
         $this->mutateDehydratedStateUsing = $callback;
+
+        return $this;
+    }
+
+    public function mutateStateForValidationUsing(?Closure $callback): static
+    {
+        $this->mutateStateForValidationUsing = $callback;
 
         return $this;
     }
@@ -396,5 +460,23 @@ trait HasState
     protected function flushCachedAbsoluteStatePath(): void
     {
         unset($this->cachedAbsoluteStatePath);
+    }
+
+    /**
+     * @param  string | array<string> | Closure | null  $characters
+     */
+    public function stripCharacters(string | array | Closure | null $characters): static
+    {
+        $this->stripCharacters = $characters;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getStripCharacters(): array
+    {
+        return $this->cachedStripCharacters ??= Arr::wrap($this->evaluate($this->stripCharacters));
     }
 }

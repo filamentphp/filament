@@ -184,6 +184,18 @@ TextInput::make('cardNumber')
     JS))
 ```
 
+Alpine.js will send the entire masked value to the server, so you may need to strip certain characters from the state before validating the field and saving it. You can do this with the `stripCharacters()` method, passing in a character or an array of characters to remove from the masked value:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Support\RawJs;
+
+TextInput::make('amount')
+    ->mask(RawJs::make("\$money(\$input)"))
+    ->stripCharacters(',')
+    ->numeric()
+```
+
 ## Text input validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to text inputs.
