@@ -90,6 +90,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
      */
     protected ?array $hydratedDefaultState = null;
 
+    protected bool $shouldMergeHydratedDefaultStateWithChildComponentContainerStateAfterStateHydrated = true;
+
     protected string | Closure | null $labelBetweenItems = null;
 
     protected bool | Closure $isItemLabelTruncated = true;
@@ -101,9 +103,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         $this->defaultItems(1);
 
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
-            if (is_array($component->hydratedDefaultState)) {
+            if (
+                is_array($component->hydratedDefaultState) &&
+                $component->shouldMergeHydratedDefaultStateWithChildComponentContainerStateAfterStateHydrated
+            ) {
                 $component->mergeHydratedDefaultStateWithChildComponentContainerState();
+            }
 
+            if (is_array($component->hydratedDefaultState)) {
                 return;
             }
 
@@ -616,14 +623,16 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             }
 
             return array_fill(0, $count, $component->isSimple() ? null : []);
-        }, shouldPreserveChildState: false);
+        });
+
+        $this->shouldMergeHydratedDefaultStateWithChildComponentContainerStateAfterStateHydrated = false;
 
         return $this;
     }
 
-    public function default(mixed $state, bool $shouldPreserveChildState = true): static
+    public function default(mixed $state): static
     {
-        parent::default(function (Repeater $component) use ($shouldPreserveChildState, $state) {
+        parent::default(function (Repeater $component) use ($state) {
             $state = $component->evaluate($state);
 
             $simpleField = $component->getSimpleField();
@@ -636,12 +645,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                     $itemData;
             }
 
-            if ($shouldPreserveChildState) {
-                $component->hydratedDefaultState = $items;
-            }
+            $component->hydratedDefaultState = $items;
 
             return $items;
         });
+
+        $this->shouldMergeHydratedDefaultStateWithChildComponentContainerStateAfterStateHydrated = true;
 
         return $this;
     }

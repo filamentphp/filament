@@ -170,7 +170,7 @@
                     ->attributes
                     ->except(['label'])
                     ->class([
-                        '-my-1 -me-2 -ms-1 flex items-center justify-center p-1 outline-none transition duration-75',
+                        'fi-badge-delete-button -my-1 -me-2 -ms-1 flex items-center justify-center p-1 outline-none transition duration-75',
                         match ($color) {
                             'gray' => 'text-gray-700/50 hover:text-gray-700/75 focus-visible:text-gray-700/75 dark:text-gray-300/50 dark:hover:text-gray-300/75 dark:focus-visible:text-gray-300/75',
                             default => 'text-custom-700/50 hover:text-custom-700/75 focus-visible:text-custom-700/75 dark:text-custom-300/50 dark:hover:text-custom-300/75 dark:focus-visible:text-custom-300/75',
