@@ -233,8 +233,11 @@ class AttachAction extends Action
                     fn (Builder $query): Builder => $query->whereDoesntHave(
                         $table->getInverseRelationship(),
                         fn (Builder $query): Builder => $query->where(
-                            $table->getRelationship()->getParent()->getQualifiedKeyName(),
-                            $table->getRelationship()->getParent()->getKey(),
+                            // https://github.com/filamentphp/filament/issues/8067
+                            $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?
+                                $relationship->getParent()->getKeyName() :
+                                $relationship->getParent()->getQualifiedKeyName(),
+                            $relationship->getParent()->getKey(),
                         ),
                     ),
                 );
