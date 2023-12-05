@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
 class IconManager
 {
     /**
-     * @var array<string, string>
+     * @var array<string, string | Htmlable>
      */
     protected array $icons = [];
 
