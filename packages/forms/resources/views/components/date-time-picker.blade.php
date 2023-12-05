@@ -155,7 +155,7 @@
                         'fi-fo-date-time-picker-panel absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                     ])
                 >
-                    <div class=" gap-y-3">
+                    <div class="gap-y-3">
                         @if ($hasDate())
                             <div class="flex items-center justify-between">
                                 <select
@@ -180,7 +180,9 @@
                                 />
                             </div>
 
-                            <div class="grid grid-cols-[repeat(7,minmax(theme(spacing.7),1fr))] gap-1">
+                            <div
+                                class="grid grid-cols-[repeat(7,minmax(theme(spacing.7),1fr))] gap-1"
+                            >
                                 <template
                                     x-for="(day, index) in dayLabels"
                                     x-bind:key="index"
@@ -192,10 +194,7 @@
                                 </template>
                             </div>
 
-                            <div
-                                role="grid"
-                                class="grid grid-cols-7 gap-1"
-                            >
+                            <div role="grid" class="grid grid-cols-7 gap-1">
                                 <template
                                     x-for="day in emptyDaysInFocusedMonth"
                                     x-bind:key="day"
