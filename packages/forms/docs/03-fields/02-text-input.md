@@ -191,7 +191,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Support\RawJs;
 
 TextInput::make('amount')
-    ->mask(RawJs::make("\$money(\$input)"))
+    ->mask(RawJs::make('$money($input)'))
     ->stripCharacters(',')
     ->numeric()
 ```
