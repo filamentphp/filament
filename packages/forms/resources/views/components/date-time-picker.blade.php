@@ -194,7 +194,7 @@
 
                             <div
                                 role="grid"
-                                class="grid grid-cols-[repeat(7,_minmax(theme(spacing.7),1fr))] gap-1"
+                                class="grid grid-cols-[repeat(7,minmax(theme(spacing.7),1fr))] gap-1"
                             >
                                 <template
                                     x-for="day in emptyDaysInFocusedMonth"
