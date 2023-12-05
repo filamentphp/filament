@@ -96,7 +96,7 @@ If you require a column in the database, you also need to make sure that it has 
 
 ### Validating CSV data
 
-You can call the `rules()` method to add validation rules to a column. These rules will check the data in reach row from the CSV before it is saved to the database:
+You can call the `rules()` method to add validation rules to a column. These rules will check the data in each row from the CSV before it is saved to the database:
 
 ```php
 use Filament\Actions\Imports\ImportColumn;
@@ -292,8 +292,8 @@ If you want to customize how column state is filled into a record, you can pass 
 use App\Models\Product;
 
 ImportColumn::make('sku')
-    ->fillUsing(function (Product $record, string $state): void {
-        $product->state = strtoupper($state);
+    ->fillRecordUsing(function (Product $record, string $state): void {
+        $record->sku = strtoupper($state);
     })
 ```
 
@@ -361,7 +361,7 @@ The import action can render extra form components that the user can interact wi
 ```php
 use Filament\Forms\Components\Checkbox;
 
-public function getOptionsFormComponents(): array
+public static function getOptionsFormComponents(): array
 {
     return [
         Checkbox::make('update_existing')
@@ -409,6 +409,45 @@ use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('sku')
     ->example('ABC123')
+```
+
+## Using a custom user model
+
+By default, the `imports` table has a `user_id` column. That column is constrained to the `users` table:
+
+```php
+$table->foreignId('user_id')->constrained()->cascadeOnDelete();
+```
+
+In the `Import` model, the `user()` relationship is defined as a `BelongsTo` relationship to the `App\Models\User` model. If the `App\Models\User` model does not exist, or you want to use a different one, you can bind a new `Authenticatable` model to the container in a service provider's `register()` method:
+
+```php
+use App\Models\Admin;
+use Illuminate\Contracts\Auth\Authenticatable;
+
+$this->app->bind(Authenticatable::class, Admin::class);
+```
+
+If your authenticatable model uses a different table to `users`, you should pass that table name to `constrained()`:
+
+```php
+$table->foreignId('user_id')->constrained('admins')->cascadeOnDelete();
+```
+
+### Using a polymorphic user relationship
+
+If you want to associate imports with multiple user models, you can use a polymorphic `MorphTo` relationship instead. To do this, you need to replace the `user_id` column in the `imports` table:
+
+```php
+$table->morphs('user');
+```
+
+Then, in a service provider's `boot()` method, you should call `Import::polymorphicUserRelationship()` to swap the `user()` relationship on the `Import` model to a `MorphTo` relationship:
+
+```php
+use Filament\Actions\Imports\Models\Import;
+
+Import::polymorphicUserRelationship();
 ```
 
 ## Limiting the maximum number of rows that can be imported

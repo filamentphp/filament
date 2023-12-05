@@ -35,15 +35,28 @@
                     return
                 }
 
-                state = ! state
+                const updatedState = ! state
+
+                // Only update the state if the toggle is being turned off,
+                // otherwise it will flicker on twice when Livewire replaces
+                // the element.
+                if (state) {
+                    state = false
+                }
 
                 isLoading = true
 
-                const response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), state)
+                const response = await $wire.updateTableColumnState(
+                    @js($getName()),
+                    @js($recordKey),
+                    updatedState,
+                )
 
                 error = response?.error ?? undefined
 
-                if (error) {
+                // The state is only updated on the frontend if the toggle is
+                // being turned off, so we only need to reset it then.
+                if (! state && error) {
                     state = ! state
                 }
 

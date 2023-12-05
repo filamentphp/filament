@@ -37,7 +37,10 @@
 
     <div
         x-cloak
-        x-float{{ $placement ? ".placement.{$placement}" : '' }}.flip{{ $shift ? '.shift' : '' }}{{ $teleport ? '.teleport' : '' }}{{ $offset ? '.offset' : '' }}="{ offset: {{ $offset }} }"
+        x-float{{ $placement ? ".placement.{$placement}" : '' }}.autoPlacement{{ $shift ? '.shift' : '' }}{{ $teleport ? '.teleport' : '' }}{{ $offset ? '.offset' : '' }}="{
+            offset: {{ $offset }},
+            autoPlacement: { allowedPlacements: ['top', 'bottom'] },
+        }"
         x-ref="panel"
         x-transition:enter-start="opacity-0"
         x-transition:leave-end="opacity-0"
