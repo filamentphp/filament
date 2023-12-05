@@ -96,7 +96,7 @@ If you require a column in the database, you also need to make sure that it has 
 
 ### Validating CSV data
 
-You can call the `rules()` method to add validation rules to a column. These rules will check the data in reach row from the CSV before it is saved to the database:
+You can call the `rules()` method to add validation rules to a column. These rules will check the data in each row from the CSV before it is saved to the database:
 
 ```php
 use Filament\Actions\Imports\ImportColumn;
@@ -292,8 +292,8 @@ If you want to customize how column state is filled into a record, you can pass 
 use App\Models\Product;
 
 ImportColumn::make('sku')
-    ->fillUsing(function (Product $record, string $state): void {
-        $product->state = strtoupper($state);
+    ->fillRecordUsing(function (Product $record, string $state): void {
+        $record->sku = strtoupper($state);
     })
 ```
 
@@ -361,7 +361,7 @@ The import action can render extra form components that the user can interact wi
 ```php
 use Filament\Forms\Components\Checkbox;
 
-public function getOptionsFormComponents(): array
+public static function getOptionsFormComponents(): array
 {
     return [
         Checkbox::make('update_existing')

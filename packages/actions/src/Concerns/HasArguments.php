@@ -14,7 +14,21 @@ trait HasArguments
      */
     public function arguments(array $arguments): static
     {
-        $this->arguments = $arguments;
+        $this->arguments = [];
+        $this->mergeArguments($arguments);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function mergeArguments(array $arguments): static
+    {
+        $this->arguments = [
+            ...$this->arguments,
+            ...$arguments,
+        ];
 
         return $this;
     }

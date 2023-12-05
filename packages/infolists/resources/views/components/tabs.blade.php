@@ -9,17 +9,8 @@
     x-data="{
         tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
 
-        init: function () {
-            this.$watch('tab', () => this.updateQueryString())
-
-            const tabs = @js(collect($getChildComponentContainer()->getComponents())
-                ->filter(static fn (Tab $tab): bool => $tab->isVisible())
-                ->map(static fn (Tab $tab) => $tab->getId())
-                ->values())
-
-            if ((! this.tab) || (! tabs.includes(this.tab))) {
-                 this.tab = tabs[@js($getActiveTab()) - 1]
-            }
+        getTabs: function () {
+            return JSON.parse(this.$refs.tabsData.value)
         },
 
         updateQueryString: function () {
@@ -33,6 +24,31 @@
             history.pushState(null, document.title, url.toString())
         },
     }"
+    x-init="
+        const tabs = getTabs()
+
+        if (! tab || ! tabs.includes(tab)) {
+            tab = tabs[@js($getActiveTab()) - 1]
+        }
+
+        $watch('tab', () => updateQueryString())
+
+        Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
+            succeed(({ snapshot, effect }) => {
+                $nextTick(() => {
+                    if (component.id !== @js($this->getId())) {
+                        return
+                    }
+
+                    const tabs = getTabs()
+
+                    if (! tabs.includes(tab)) {
+                        tab = tabs[@js($getActiveTab()) - 1]
+                    }
+                })
+            })
+        })
+    "
     {{
         $attributes
             ->merge([
@@ -46,6 +62,18 @@
             ])
     }}
 >
+    <input
+        type="hidden"
+        value="{{
+            collect($getChildComponentContainer()->getComponents())
+                ->filter(static fn (Tab $tab): bool => $tab->isVisible())
+                ->map(static fn (Tab $tab) => $tab->getId())
+                ->values()
+                ->toJson()
+        }}"
+        x-ref="tabsData"
+    />
+
     <x-filament::tabs :contained="$isContained" :label="$getLabel()">
         @foreach ($getChildComponentContainer()->getComponents() as $tab)
             @php

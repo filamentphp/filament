@@ -98,6 +98,7 @@ export default function fileUploadFormComponent({
                 allowPaste: false,
                 allowRemove: isDeletable,
                 allowReorder: isReorderable,
+                allowReplace: false,
                 allowImagePreview: isPreviewable,
                 allowVideoPreview: isPreviewable,
                 allowAudioPreview: isPreviewable,
@@ -197,6 +198,10 @@ export default function fileUploadFormComponent({
                 }
 
                 if (!this.shouldUpdateState) {
+                    return
+                }
+
+                if (this.state === undefined) {
                     return
                 }
 
