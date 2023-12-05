@@ -162,6 +162,16 @@ Related records will be listed in a table. The entire relation manager is based 
 
 You may use any features of the [Table Builder](../../tables) to customize relation managers.
 
+### Changing the table heading
+
+The table heading is derived from the related model's name by default. In version 2 you could change the table heading by overriding `$modelLabel` or `$pluralModelLabel`, but these properties are deprecated in version 3. In version 3, you have a few ways of changing the table heading. One way is to override the `$title` attribute on the `RelationManager`:
+
+```php
+protected static ?string $title = 'Approved Comments';
+```
+
+Another way is to modify the `Table` by passing a string to `heading` or passing a full view to replace the entire header to `header` methods. For more information refer to [Tables](../../tables/getting-started#changing-the-table-heading) section.
+
 ### Listing with pivot attributes
 
 For `BelongsToMany` and `MorphToMany` relationships, you may also add pivot table attributes. For example, if you have a `TeamsRelationManager` for your `UserResource`, and you want to add the `role` pivot attribute to the table, you can use:
