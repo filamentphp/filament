@@ -165,6 +165,38 @@ We also define a bulk action. When bulk actions are defined, each row in the tab
 
 Actions can also open modals to request confirmation from the user, as well as render forms inside to collect extra data. It's a good idea to read the [Actions documentation](../actions/overview) to learn more about their extensive capabilities throughout Filament.
 
+## Changing the table heading
+
+The table heading is derived from the model's name by default. If you need to change the table heading you can use the `heading` method on the table to pass a `string`, or an `Htmlable`, or a `Closure` that returns either of these.
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->heading('Clients')
+        ->columns([
+            // ...
+        ]);
+```
+
+You can also pass a full view to the `header` method, which will replace the whole header, not just the heading label.
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->header(view('partials.table-header', [
+            'heading' => 'Clients',
+        ]))
+        ->columns([
+            // ...
+        ]);
+```
+
 ## Next steps with the Table Builder package
 
 Now you've finished reading this guide, where to next? Here are some suggestions:
