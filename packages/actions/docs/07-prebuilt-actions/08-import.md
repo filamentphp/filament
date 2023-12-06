@@ -25,6 +25,23 @@ ImportAction::make()
     ->importer(ProductImporter::class)
 ```
 
+If you want to add this action to the header of a table instead, you can use `Filament\Tables\Actions\ImportAction`:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Tables\Actions\ImportAction;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->headerActions([
+            ImportAction::make()
+                ->importer(ProductImporter::class)
+        ]);
+}
+```
+
 The ["importer" class needs to be created](#creating-an-importer) to tell Filament how to import each row of the CSV.
 
 ## Creating an importer
