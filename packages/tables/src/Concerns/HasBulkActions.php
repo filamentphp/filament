@@ -300,11 +300,11 @@ trait HasBulkActions
         }
 
         if ($this->getTable()->selectsCurrentPageOnly()) {
-            return $this->records->count();
+            return $this->cachedTableRecords->count();
         }
 
-        if ($this->records instanceof LengthAwarePaginator) {
-            return $this->records->total();
+        if ($this->cachedTableRecords instanceof LengthAwarePaginator) {
+            return $this->cachedTableRecords->total();
         }
 
         return $this->getFilteredTableQuery()->count();

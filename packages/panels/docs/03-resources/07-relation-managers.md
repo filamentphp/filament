@@ -707,6 +707,40 @@ public function table(Table $table): Table
 }
 ```
 
+## Customizing the relation manager title
+
+To set the title of the relation manager, you can use the `$title` property on the relation manager class:
+
+```php
+protected static string $title = 'Posts';
+```
+
+To set the title of the relation manager dynamically, you can override the `getTitle()` method on the relation manager class:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+public static function getTitle(Model $ownerRecord, string $pageClass): string
+{
+    return __('relation-managers.posts.title');
+}
+```
+
+The title will be reflected in the [heading of the table](../../tables/advanced#customizing-the-table-header), as well as the relation manager tab if there is more than one. If you want to customize the table heading independently, you can still use the `$table->heading()` method:
+
+```php
+use Filament\Tables;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->heading('Posts')
+        ->columns([
+            // ...
+        ]);
+}
+```
+
 ## Customizing the relation manager record title
 
 The relation manager uses the concept of a "record title attribute" to determine which attribute of the related model should be used to identify it. When creating a relation manager, this attribute is passed as the third argument to the `make:filament-relation-manager` command:
