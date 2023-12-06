@@ -82,6 +82,8 @@
         $watch('step', () => updateQueryString())
 
         step = getSteps().at({{ $getStartStep() - 1 }})
+        
+        autofocusFields()
     "
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $statePath }}') nextStep()"
     {{
