@@ -728,9 +728,9 @@ abstract class Resource
         static::$navigationGroup = $group;
     }
 
-    public static function navigationParentItem(?string $group): void
+    public static function navigationParentItem(?string $parent): void
     {
-        static::$navigationParentItem = $group;
+        static::$navigationParentItem = $parent;
     }
 
     public static function getNavigationIcon(): ?string
