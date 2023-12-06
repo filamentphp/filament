@@ -10,6 +10,10 @@
         tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
 
         getTabs: function () {
+            if (! this.$refs.tabsData) {
+                return []
+            }
+
             return JSON.parse(this.$refs.tabsData.value)
         },
 
