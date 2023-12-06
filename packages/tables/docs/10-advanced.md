@@ -195,6 +195,53 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/reordering/custom-trigger-action" alt="Table with reorderable rows and a custom trigger action" version="3.x" />
 
+## Customizing the table header
+
+You can add a heading to a table using the `$table->heading()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->heading('Clients')
+        ->columns([
+            // ...
+        ]);
+```
+
+You can also add a description below the heading using the `$table->description()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->heading('Clients')
+        ->description('Manage your clients here.')
+        ->columns([
+            // ...
+        ]);
+```
+
+You can pass a view to the `$table->header()` method to customize the entire header:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->header(view('tables.header', [
+            'heading' => 'Clients',
+        ]))
+        ->columns([
+            // ...
+        ]);
+```
+
 ## Polling table content
 
 You may poll table content so that it refreshes at a set interval, using the `$table->poll()` method:
