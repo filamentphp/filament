@@ -279,5 +279,5 @@ The primary dashboard shown to a user is the first one they have access to (cont
 The default sort order for dashboards is `-2`. You can control the sort order of custom dashboards with `$navigationSort`:
 
 ```php
-    protected static ?int $navigationSort = 15;
+protected static ?int $navigationSort = 15;
 ```
