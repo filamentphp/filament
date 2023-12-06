@@ -14,7 +14,7 @@
             if (! this.$refs.tabsData) {
                 return []
             }
-             
+
             return JSON.parse(this.$refs.tabsData.value)
         },
 
