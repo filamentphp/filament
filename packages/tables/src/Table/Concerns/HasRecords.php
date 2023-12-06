@@ -112,7 +112,7 @@ trait HasRecords
                 Model::class => $record,
                 $record::class => $record,
             ],
-        ) ?? $record->getAttributeValue($this->getRecordTitleAttribute() ?? '') ?? $this->getModelLabel();
+        ) ?? (($titleAttribute = $this->getRecordTitleAttribute()) ? $record->getAttributeValue($titleAttribute) : null) ?? $this->getModelLabel();
 
         if ($title instanceof HasLabel) {
             return $title->getLabel();
