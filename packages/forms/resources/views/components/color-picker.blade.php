@@ -54,7 +54,7 @@
             {{ $getExtraAlpineAttributeBag()->class(['flex']) }}
         >
             <x-filament::input
-                x-on:focus="togglePanelVisibility()"
+                x-on:focus="$refs.panel.open($refs.input)"
                 x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
                 x-ref="input"
                 :attributes="
@@ -76,7 +76,7 @@
 
             <div
                 class="flex min-h-full items-center pe-3"
-                x-on:click="$refs.input.focus()"
+                x-on:click="togglePanelVisibility()"
             >
                 <div
                     x-bind:style="{ 'background-color': state }"
