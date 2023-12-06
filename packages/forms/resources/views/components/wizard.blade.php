@@ -13,6 +13,8 @@
             this.$watch('step', () => this.updateQueryString())
 
             this.step = this.getSteps().at({{ $getStartStep() - 1 }})
+
+            this.autofocusFields()
         },
 
         nextStep: function () {
