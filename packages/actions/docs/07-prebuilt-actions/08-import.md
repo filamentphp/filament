@@ -18,6 +18,7 @@ php artisan migrate
 You may use the `ImportAction` like so:
 
 ```php
+use Filament\Actions\ImportAction;
 use App\Filament\Imports\ProductImporter;
 
 ImportAction::make()
