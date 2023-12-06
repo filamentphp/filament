@@ -29,13 +29,13 @@
         },
     }"
     x-init="
+        $watch('tab', () => updateQueryString())
+
         const tabs = getTabs()
 
         if (! tab || ! tabs.includes(tab)) {
             tab = tabs[@js($getActiveTab()) - 1]
         }
-
-        $watch('tab', () => updateQueryString())
 
         Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
             succeed(({ snapshot, effect }) => {

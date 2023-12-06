@@ -9,12 +9,6 @@
     x-data="{
         step: null,
 
-        init: function () {
-            this.$watch('step', () => this.updateQueryString())
-
-            this.step = this.getSteps().at({{ $getStartStep() - 1 }})
-        },
-
         nextStep: function () {
             let nextStepIndex = this.getStepIndex(this.step) + 1
 
@@ -84,6 +78,11 @@
             history.pushState(null, document.title, url.toString())
         },
     }"
+    x-init="
+        $watch('step', () => updateQueryString())
+
+        step = getSteps().at({{ $getStartStep() - 1 }})
+    "
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $statePath }}') nextStep()"
     {{
         $attributes
