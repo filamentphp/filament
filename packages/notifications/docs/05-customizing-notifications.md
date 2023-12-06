@@ -12,11 +12,15 @@ Notifications have dedicated CSS classes you can hook into to apply your own sty
 
 ## Positioning notifications
 
-You can configure the alignment of the notifications with a service provider, for example adding the below to the boot method on: AppServiceProvider.php would align the notifications top middle of the browser.
+You can configure the alignment of the notifications in a service provider or middleware, by calling `Notifications::alignment()` and `Notifications::verticalAlignment()`. You can pass `Alignment::Start`, `Alignment::Center`, `Alignment::End`, `VerticalAlignment::Start`, `VerticalAlignment::Center` or `VerticalAlignment::End`:
 
 ```php
-        Notifications::alignment(Alignment::Center);
-        Notifications::verticalAlignment(VerticalAlignment::Start);
+use Filament\Notifications\Livewire\Notifications;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\VerticalAlignment;
+
+Notifications::alignment(Alignment::Start);
+Notifications::verticalAlignment(VerticalAlignment::End);
 ```
 
 ## Using a custom notification view
