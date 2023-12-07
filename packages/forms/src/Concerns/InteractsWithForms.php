@@ -183,6 +183,19 @@ trait InteractsWithForms
     }
 
     /**
+     * @param  array<string, mixed>  $attributes
+     * @return array<string, mixed>
+     */
+    protected function prepareForValidation($attributes): array
+    {
+        foreach ($this->getCachedForms() as $form) {
+            $attributes = $form->mutateStateForValidation($attributes);
+        }
+
+        return $attributes;
+    }
+
+    /**
      * @param  string  $field
      * @param  array<string, array<mixed>>  $rules
      * @param  array<string, string>  $messages
@@ -229,12 +242,14 @@ trait InteractsWithForms
 
     public function updatingInteractsWithForms(string $statePath): void
     {
+        $statePath = (string) str($statePath)->before('.');
+
         $this->oldFormState[$statePath] = data_get($this, $statePath);
     }
 
     public function getOldFormState(string $statePath): mixed
     {
-        return $this->oldFormState[$statePath] ?? null;
+        return data_get($this->oldFormState, $statePath);
     }
 
     public function updatedInteractsWithForms(string $statePath): void

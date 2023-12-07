@@ -12,7 +12,7 @@ Start by creating a widget with the command:
 php artisan make:filament-widget BlogPostsChart --chart
 ```
 
-There is a single `ChartWidget` class that is extended for all charts. The type of chart is set by the `getType()` method. In this example, that method returns the string `'line'`.
+There is a single `ChartWidget` class that is used for all charts. The type of chart is set by the `getType()` method. In this example, that method returns the string `'line'`.
 
 The `protected static ?string $heading` variable is used to set the heading that describes the chart. If you need to set the heading dynamically, you can override the `getHeading()` method.
 
@@ -55,14 +55,14 @@ Now, check out your widget in the dashboard.
 
 Below is a list of available chart widget classes which you may extend, and their corresponding [Chart.js](https://www.chartjs.org/docs) documentation page, for inspiration on what to return from `getData()`:
 
-- `Filament\Widgets\BarChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/bar)
-- `Filament\Widgets\BubbleChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/bubble)
-- `Filament\Widgets\DoughnutChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/doughnut)
-- `Filament\Widgets\LineChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/line)
-- `Filament\Widgets\PieChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/doughnut)
-- `Filament\Widgets\PolarAreaChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/polar)
-- `Filament\Widgets\RadarChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/radar)
-- `Filament\Widgets\ScatterChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/scatter)
+- Bar chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/bar)
+- Bubble chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/bubble)
+- Doughnut chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/doughnut)
+- Line chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/line)
+- Pie chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/doughnut)
+- Polar area chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/polar)
+- Radar chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/radar)
+- Scatter chart - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/scatter)
 
 ## Customizing the chart color
 
@@ -184,7 +184,7 @@ protected static ?string $maxHeight = '300px';
 
 ## Setting chart configuration options
 
-You may specify an `$options` variable on the chart class to control the many configuration options that the Chart.js library provides. For instance, you could turn off the [legend](https://www.chartjs.org/docs/latest/configuration/legend.html) for `LineChartWidget` class:
+You may specify an `$options` variable on the chart class to control the many configuration options that the Chart.js library provides. For instance, you could turn off the [legend](https://www.chartjs.org/docs/latest/configuration/legend.html) for a line chart:
 
 ```php
 protected static ?array $options = [

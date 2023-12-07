@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Administrer abonnementer',
+        ],
+
         'logout' => [
             'label' => 'Log ud',
         ],
@@ -18,6 +22,18 @@ return [
             'label' => 'Brugermenu',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Skjul sidebjælken',
+            ],
+
+            'expand' => [
+                'label' => 'Udvid sidebjælken',
+            ],
+
+        ],
+
         'theme_switcher' => [
 
             'dark' => [
@@ -26,6 +42,10 @@ return [
 
             'light' => [
                 'label' => 'Skift til lys tilstand',
+            ],
+
+            'system' => [
+                'label' => 'Skift til systemtilstand',
             ],
 
         ],

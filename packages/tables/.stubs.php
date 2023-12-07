@@ -3,6 +3,7 @@
 namespace Livewire\Features\SupportTesting {
 
     use Illuminate\Support\Collection;
+    use Closure;
 
     class Testable {
         public function mountTableAction(string $name, $record = null): static {}
@@ -117,7 +118,7 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertCanNotRenderTableColumn(string $name): static {}
 
-        public function assertTableColumnExists(string $name): static {}
+        public function assertTableColumnExists(string $name, ?Closure $checkColumnUsing = null, $record = null): static {}
 
         public function assertTableColumnVisible(string $name): static {}
 

@@ -160,6 +160,17 @@ Select::make('technologies')
     ->relationship(titleAttribute: 'name')
 ```
 
+When using `disabled()` with `multiple()` and `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->multiple()
+    ->disabled()
+    ->relationship(titleAttribute: 'name')
+```
+
 ### Searching relationship options across multiple columns
 
 By default, if the select is also searchable, Filament will return search results for the relationship based on the title column of the relationship. If you'd like to search across multiple columns, you can pass an array of columns to the `searchable()` method:

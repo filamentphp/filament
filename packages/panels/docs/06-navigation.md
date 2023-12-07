@@ -79,6 +79,18 @@ protected static ?string $navigationGroup = 'Settings';
 
 All items in the same navigation group will be displayed together under the same group label, "Settings" in this case. Ungrouped items will remain at the top of the sidebar.
 
+#### Grouping navigation items under other items
+
+You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationParentItem`:
+
+```php
+protected static ?string $navigationParentItem = 'Notifications';
+
+protected static ?string $navigationGroup = 'Settings';
+```
+
+As seen above, if the parent item has a navigation group, that navigation group must also be defined, so the correct parent item can be identified.
+
 ### Customizing navigation groups
 
 You may customize navigation groups by calling `navigationGroups()` in the [configuration](configuration), and passing `NavigationGroup` objects in order:

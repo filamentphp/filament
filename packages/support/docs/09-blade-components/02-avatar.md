@@ -27,7 +27,7 @@ Avatars are fully rounded by default, but you may make them square by setting th
 
 ## Setting the size of an avatar
 
-By default, the avatar will be "medium" size. You can make it "large" using the `size` attribute:
+By default, the avatar will be "medium" size. You can set the size to either `sm`, `md`, or `lg` using the `size` attribute:
 
 ```blade
 <x-filament::avatar

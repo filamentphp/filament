@@ -1,5 +1,6 @@
 <x-dynamic-component
     :component="$getFieldWrapperView()"
+    :has-inline-label="$hasInlineLabel()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -14,7 +15,7 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-placeholder sm:text-sm'])
+                ->class(['fi-fo-placeholder text-sm leading-6'])
         }}
     >
         {{ $getContent() }}

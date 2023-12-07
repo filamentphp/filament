@@ -26,6 +26,13 @@ export default function tagsInputFormComponent({ state, splitKeys }) {
             this.state = this.state.filter((tag) => tag !== tagToDelete)
         },
 
+        reorderTags: function (event) {
+            const reordered = this.state.splice(event.oldIndex, 1)[0]
+            this.state.splice(event.newIndex, 0, reordered)
+
+            this.state = [...this.state]
+        },
+
         input: {
             ['x-on:blur']: 'createTag()',
             ['x-model']: 'newTag',

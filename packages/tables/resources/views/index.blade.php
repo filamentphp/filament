@@ -30,13 +30,14 @@
         fn (\Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $groups = $getGroups();
+    $areGroupingSettingsVisible = count($groups) && (! $areGroupingSettingsHidden());
     $description = $getDescription();
     $isGroupsOnly = $isGroupsOnly() && $group;
     $isReorderable = $isReorderable();
     $isReordering = $isReordering();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
-    $isSelectionEnabled = $isSelectionEnabled();
+    $isSelectionEnabled = $isSelectionEnabled() && (! $isGroupsOnly);
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
     $isLoaded = $isLoaded();
@@ -48,8 +49,8 @@
     $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
     $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
     $hasColumnToggleDropdown = $hasToggleableColumns();
-    $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnToggleDropdown;
-    $hasHeaderToolbar = $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown;
+    $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFilters || count($filterIndicators) || $hasColumnToggleDropdown;
+    $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
@@ -136,6 +137,12 @@
                         'grid gap-y-3 px-4 py-4 sm:px-6',
                     ])
                 >
+                    <x-filament-tables::filters
+                        :form="$getFiltersForm()"
+                        x-cloak
+                        x-show="areFiltersOpen"
+                    />
+
                     @if ($hasFiltersAboveContentCollapsible)
                         <span
                             x-on:click="areFiltersOpen = ! areFiltersOpen"
@@ -144,12 +151,6 @@
                             {{ $filtersTriggerAction->badge(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
                         </span>
                     @endif
-
-                    <x-filament-tables::filters
-                        :form="$getFiltersForm()"
-                        x-cloak
-                        x-show="areFiltersOpen"
-                    />
                 </div>
             @endif
 
@@ -181,9 +182,9 @@
 
                     {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.grouping-selector.before', scopes: static::class) }}
 
-                    @if (count($groups))
+                    @if ($areGroupingSettingsVisible)
                         <x-filament-tables::groups
-                            :dropdown-on-desktop="$areGroupsInDropdownOnDesktop()"
+                            :dropdown-on-desktop="$areGroupingSettingsInDropdownOnDesktop()"
                             :groups="$groups"
                             :trigger-action="$getGroupRecordsTriggerAction()"
                         />
@@ -376,6 +377,7 @@
                         :two-xl="$contentGrid['2xl'] ?? null"
                         x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                         x-sortable
+                        :data-sortable-animation-duration="$getReorderAnimationDuration()"
                         @class([
                             'fi-ta-content-grid gap-4 p-4 sm:px-6' => $contentGrid,
                             'pt-0' => $contentGrid && $this->getTableGrouping(),
@@ -664,7 +666,10 @@
                     </x-filament-tables::table>
                 @endif
             @elseif (($records !== null) && count($records))
-                <x-filament-tables::table :reorderable="$isReorderable">
+                <x-filament-tables::table
+                    :reorderable="$isReorderable"
+                    :reorder-animation-duration="$getReorderAnimationDuration()"
+                >
                     <x-slot name="header">
                         @if ($isReordering)
                             <th></th>
@@ -724,6 +729,7 @@
                                     \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
                                         ->class([
                                             'fi-table-header-cell-' . str($column->getName())->camel()->kebab(),
+                                            'w-full' => $column->canGrow(),
                                             $getHiddenClasses($column),
                                         ])
                                 "
@@ -845,6 +851,7 @@
                                         :actions="count($actions)"
                                         :actions-position="$actionsPosition"
                                         :columns="$columns"
+                                        :group-column="$group?->getColumn()"
                                         :groups-only="$isGroupsOnly"
                                         :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                         :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
@@ -1050,6 +1057,7 @@
                                 :actions="count($actions)"
                                 :actions-position="$actionsPosition"
                                 :columns="$columns"
+                                :group-column="$group?->getColumn()"
                                 :groups-only="$isGroupsOnly"
                                 :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                 :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
@@ -1064,6 +1072,7 @@
                                 :actions="count($actions)"
                                 :actions-position="$actionsPosition"
                                 :columns="$columns"
+                                :group-column="$group?->getColumn()"
                                 :groups-only="$isGroupsOnly"
                                 :plural-model-label="$pluralModelLabel"
                                 :record-checkbox-position="$recordCheckboxPosition"
@@ -1102,7 +1111,8 @@
             @endif
         </div>
 
-        @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
+        @if ((($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) &&
+             ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
             <x-filament::pagination
                 :page-options="$getPaginationPageOptions()"
                 :paginator="$records"

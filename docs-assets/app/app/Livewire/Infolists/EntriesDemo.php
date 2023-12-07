@@ -180,6 +180,17 @@ class EntriesDemo extends Component implements HasInfolists
                             ->iconPosition(IconPosition::After),
                     ]),
                 Group::make()
+                    ->id('textIconColor')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('email')
+                            ->state('dan@filamentphp.com')
+                            ->icon('heroicon-m-envelope')
+                            ->iconColor('primary'),
+                    ]),
+                Group::make()
                     ->id('textLarge')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',

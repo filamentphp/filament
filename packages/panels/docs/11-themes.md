@@ -27,6 +27,8 @@ public function panel(Panel $panel): Panel
 
 The `Filament\Support\Colors\Color` class contains color options for all [Tailwind CSS color palettes](https://tailwindcss.com/docs/customizing-colors).
 
+You can also pass in a function to `register()` which will only get called when the app is getting rendered. This is useful if you are calling `register()` from a service provider, and want to access objects like the currently authenticated user, which are initialized later in middleware.
+
 Alternatively, you may pass your own palette in as an array of RGB values:
 
 ```php
@@ -136,16 +138,6 @@ The command will create a CSS file and Tailwind Configuration file in the `/reso
 ```
 
 Please reference the command to see the exact file names that you need to register, they may not be `admin/theme.css`.
-
-## Non-sticky topbar
-
-By default, the topbar sticks to the top of the page. You may make the topbar scroll out of view with the following CSS:
-
-```css
-.fi-topbar {
-    position: relative;
-}
-```
 
 ## Disabling dark mode
 

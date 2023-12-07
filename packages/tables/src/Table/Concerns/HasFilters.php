@@ -5,6 +5,8 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Forms\Form;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
@@ -23,7 +25,7 @@ trait HasFilters
 
     protected string | Closure | null $filtersFormMaxHeight = null;
 
-    protected string | Closure | null $filtersFormWidth = null;
+    protected MaxWidth | string | Closure | null $filtersFormWidth = null;
 
     protected FiltersLayout | Closure | null $filtersLayout = null;
 
@@ -86,7 +88,7 @@ trait HasFilters
         return $this;
     }
 
-    public function filtersFormWidth(string | Closure | null $width): static
+    public function filtersFormWidth(MaxWidth | string | Closure | null $width): static
     {
         $this->filtersFormWidth = $width;
 
@@ -140,7 +142,7 @@ trait HasFilters
         $action = Action::make('openFilters')
             ->label(__('filament-tables::table.actions.filter.label'))
             ->iconButton()
-            ->icon('heroicon-m-funnel')
+            ->icon(FilamentIcon::resolve('tables::actions.filter') ?? 'heroicon-m-funnel')
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->modalSubmitAction(false)
@@ -187,12 +189,12 @@ trait HasFilters
         return $this->evaluate($this->filtersFormMaxHeight);
     }
 
-    public function getFiltersFormWidth(): ?string
+    public function getFiltersFormWidth(): MaxWidth | string | null
     {
         return $this->evaluate($this->filtersFormWidth) ?? match ($this->getFiltersFormColumns()) {
-            2 => '2xl',
-            3 => '4xl',
-            4 => '6xl',
+            2 => MaxWidth::TwoExtraLarge,
+            3 => MaxWidth::FourExtraLarge,
+            4 => MaxWidth::SixExtraLarge,
             default => null,
         };
     }

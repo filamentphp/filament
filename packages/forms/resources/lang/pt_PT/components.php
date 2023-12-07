@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Não é recomendado editar ficheiros SVG, pois pode resultar em perda de qualidade ao redimensionar.\n Tem a certeza de que deseja continuar?',
+                    'disabled' => 'A edição de ficheiros SVG está desativada, pois pode resultar em perda de qualidade ao redimensionar.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -247,6 +256,10 @@ return [
 
             'add' => [
                 'label' => 'Adicionar em :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Adicionar entre',
             ],
 
             'delete' => [

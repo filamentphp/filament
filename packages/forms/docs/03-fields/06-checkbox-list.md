@@ -177,6 +177,16 @@ CheckboxList::make('technologies')
     ->relationship(titleAttribute: 'name')
 ```
 
+When using `disabled()` with `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->disabled()
+    ->relationship(titleAttribute: 'name')
+```
+
 ### Customizing the relationship query
 
 You may customize the database query that retrieves options using the `modifyOptionsQueryUsing` parameter of the `relationship()` method:

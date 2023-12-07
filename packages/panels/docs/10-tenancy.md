@@ -23,13 +23,13 @@ class Post extends Model
 {
     protected static function booted(): void
     {
-        if (auth()->check()) {
-            static::addGlobalScope('team', function (Builder $query) {
+        static::addGlobalScope('team', function (Builder $query) {
+            if (auth()->check()) {
                 $query->where('team_id', auth()->user()->team_id);
                 // or with a `team` relationship defined:
                 $query->whereBelongsTo(auth()->user()->team);
-            });
-        }
+            }
+        });
     }
 }
 ```
@@ -644,6 +644,30 @@ public function panel(Panel $panel): Panel
 ```
 
 Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1`.
+
+## Disabling tenancy for a resource
+
+By default, all resources within a panel with tenancy will be scoped to the current tenant. If you have resources that are shared between tenants, you can disable tenancy for them by setting the `$isScopedToTenant` static property to `false` on the resource class:
+
+```php
+protected static bool $isScopedToTenant = false;
+```
+
+### Disabling tenancy for all resources
+
+If you wish to opt-in to tenancy for each resource instead of opting-out, you can call `Resource::scopeToTenant(false)` inside a service provider's `boot()` method or a middleware:
+
+```php
+use Filament\Resources\Resource;
+
+Resource::scopeToTenant(false);
+```
+
+Now, you can opt-in to tenancy for each resource by setting the `$isScopedToTenant` static property to `true` on a resource class:
+
+```php
+protected static bool $isScopedToTenant = true;
+```
 
 ## Tenancy security
 

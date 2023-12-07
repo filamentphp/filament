@@ -103,16 +103,16 @@ return [
         'actions' => [
 
             'remove' => [
-                'label' => 'Szűrő megszűntetése',
+                'label' => 'Szűrő megszüntetése',
             ],
 
             'remove_all' => [
-                'label' => 'Az összes szűrő megszűntetése',
-                'tooltip' => 'Az összes szűrő megszűntetése',
+                'label' => 'Az összes szűrő megszüntetése',
+                'tooltip' => 'Az összes szűrő megszüntetése',
             ],
 
             'reset' => [
-                'label' => 'Visszaállítása',
+                'label' => 'Visszaállítás',
             ],
 
         ],

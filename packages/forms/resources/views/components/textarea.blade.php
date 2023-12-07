@@ -1,4 +1,7 @@
 @php
+    use Filament\Support\Facades\FilamentView;
+
+    $hasInlineLabel = $hasInlineLabel();
     $isConcealed = $isConcealed();
     $rows = $getRows();
     $shouldAutosize = $shouldAutosize();
@@ -7,10 +10,27 @@
     $initialHeight = (($rows ?? 2) * 1.5) + 0.75;
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    :has-inline-label="$hasInlineLabel"
+>
+    <x-slot
+        name="label"
+        @class([
+            'sm:pt-1.5' => $hasInlineLabel,
+        ])
+    >
+        {{ $getLabel() }}
+    </x-slot>
+
     <textarea
         @if ($shouldAutosize)
-            ax-load
+            @if (FilamentView::hasSpaMode())
+                ax-load="visible"
+            @else
+                ax-load
+            @endif
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms') }}"
             x-data="textareaFormComponent({ initialHeight: @js($initialHeight) })"
             x-ignore

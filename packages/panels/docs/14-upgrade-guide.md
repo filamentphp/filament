@@ -206,3 +206,15 @@ Some Blade components have been moved to different namespaces:
 - `<x-filament::widget>` is now `<x-filament-widgets::widget>`
 
 However, aliases have been set up so that you don't need to change your code.
+
+#### Resource pages without a `$resource` property
+
+Filament v2 allowed for resource pages to be created without a `$resource` property. In v3 you must declare this, else you may end up with the error:
+
+`Typed static property Filament\Resources\Pages\Page::$resource must not be accessed before initialization`
+
+You should ensure that the `$resource` property is set on all resource pages:
+
+```php
+protected static string $resource = PostResource::class;
+```

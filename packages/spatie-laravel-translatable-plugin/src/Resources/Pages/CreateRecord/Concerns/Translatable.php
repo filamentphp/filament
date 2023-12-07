@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Pages\CreateRecord\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Resources\Concerns\HasActiveLocaleSwitcher;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -114,19 +115,21 @@ trait Translatable
 
         $translatableAttributes = $record->getTranslatableAttributes();
 
-        $record->fill(Arr::except(Arr::first($data), $translatableAttributes));
-
         foreach ($data as $locale => $localeData) {
             if ($locale === $this->activeLocale) {
-                $localeData = Arr::only(
-                    $localeData,
-                    app(static::getModel())->getTranslatableAttributes(),
-                );
+                $record->fill(Arr::except($localeData, $translatableAttributes));
             }
 
-            foreach ($localeData as $key => $value) {
+            foreach (Arr::only($localeData, $translatableAttributes) as $key => $value) {
                 $record->setTranslation($key, $locale, $value);
             }
+        }
+
+        if (
+            static::getResource()::isScopedToTenant() &&
+            ($tenant = Filament::getTenant())
+        ) {
+            return $this->associateRecordWithTenant($record, $tenant);
         }
 
         $record->save();

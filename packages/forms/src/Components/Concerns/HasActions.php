@@ -5,6 +5,8 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Contracts\HasAffixActions;
+use Filament\Forms\Components\Contracts\HasExtraItemActions;
+use Filament\Forms\Components\Contracts\HasHeaderActions;
 use Filament\Forms\Components\Contracts\HasHintActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -61,6 +63,20 @@ trait HasActions
                 ...$this->cachedActions,
                 ...$this->getPrefixActions(),
                 ...$this->getSuffixActions(),
+            ];
+        }
+
+        if ($this instanceof HasExtraItemActions) {
+            $this->cachedActions = [
+                ...$this->cachedActions,
+                ...$this->getExtraItemActions(),
+            ];
+        }
+
+        if ($this instanceof HasHeaderActions) {
+            $this->cachedActions = [
+                ...$this->cachedActions,
+                ...$this->getHeaderActions(),
             ];
         }
 
