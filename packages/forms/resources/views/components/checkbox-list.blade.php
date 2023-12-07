@@ -67,28 +67,23 @@
                 checkIfAllCheckboxesAreChecked()
             })
 
-            Livewire.hook(
-                'commit',
-                ({ component, commit, succeed, fail, respond }) => {
-                    succeed(({ snapshot, effect }) => {
-                        $nextTick(() => {
-                            if (component.id !== @js($this->getId())) {
-                                return
-                            }
+            Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
+                succeed(({ snapshot, effect }) => {
+                    $nextTick(() => {
+                        if (component.id !== @js($this->getId())) {
+                            return
+                        }
 
-                            checkboxListOptions = Array.from(
-                                $root.querySelectorAll(
-                                    '.fi-fo-checkbox-list-option-label',
-                                ),
-                            )
+                        checkboxListOptions = Array.from(
+                            $root.querySelectorAll('.fi-fo-checkbox-list-option-label'),
+                        )
 
-                            updateVisibleCheckboxListOptions()
+                        updateVisibleCheckboxListOptions()
 
-                            checkIfAllCheckboxesAreChecked()
-                        })
+                        checkIfAllCheckboxesAreChecked()
                     })
-                },
-            )
+                })
+            })
 
             $watch('search', () => {
                 updateVisibleCheckboxListOptions()
