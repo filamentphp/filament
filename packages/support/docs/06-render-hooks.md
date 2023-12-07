@@ -67,8 +67,8 @@ FilamentView::registerRenderHook(
 - `panels::resource.relation-manager.before` - Before the relation manager table, also [can be scoped](#scoping-render-hooks) to the page or relation manager class
 - `panels::scripts.after` - After scripts are defined
 - `panels::scripts.before` - Before scripts are defined
-- `panels::sidebar.nav.end` - In the [sidebar](../panels/navigation), before `</nav>`
-- `panels::sidebar.nav.start` - In the [sidebar](../panels/navigation), after `<nav>`
+- `panels::sidebar.nav.end` - In the [sidebar](../panels/navigation), after `</nav>`
+- `panels::sidebar.nav.start` - In the [sidebar](../panels/navigation), before `<nav>`
 - `panels::sidebar.footer` - Pinned to the bottom of the sidebar, below the content
 - `panels::styles.after` - After styles are defined
 - `panels::styles.before` - Before styles are defined
