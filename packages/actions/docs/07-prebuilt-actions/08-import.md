@@ -6,27 +6,19 @@ title: Import action
 
 Filament includes a prebuilt action that is able to import rows from a CSV. When the trigger button is clicked, a modal asks the user for a file. Once they upload one, they are able to map each column in the CSV to a real column in the database. If any rows fail validation, they will be compiled into a downloadable CSV for the user to review after the rest of the rows have been imported. Users can also download an example CSV file containing all the columns that can be imported.
 
-This feature uses [database notification](https://filamentphp.com/docs/3.x/notifications/database-notifications) to send the notifications [publish that migration from Laravel](https://laravel.com/docs/10.x/notifications#database-prerequisites) Also, you need to publish the migrations for tables that Filament uses to store information about imports and then enable them in the [configuration](https://filamentphp.com/docs/3.x/panels/configuration): 
-
-```php
-use Filament\Panel;
- 
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->databaseNotifications();
-}
-```
-
-This feature uses job batches, so you need to [publish that migration from Laravel](https://laravel.com/docs/queues#job-batching). Also, you need to publish the migrations for tables that Filament uses to store information about imports:
+This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications#overview), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about imports:
 
 ```bash
 php artisan queue:batches-table
+php artisan notifications:table
 php artisan vendor:publish --tag=filament-actions-migrations
 
 php artisan migrate
 ```
+
+> If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
+
+> If you're using UUIDs for your `User` model, make sure that your `notifiable` column in the notifications migration is using `uuidMorphs()`: `$table->uuidMorphs('notifiable')`.
 
 You may use the `ImportAction` like so:
 
