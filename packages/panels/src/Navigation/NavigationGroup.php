@@ -22,6 +22,8 @@ class NavigationGroup extends Component
 
     protected string | Closure | null $label = null;
 
+    protected bool | Closure | null $hideLabel = null;
+
     final public function __construct(string | Closure | null $label = null)
     {
         $this->label($label);
@@ -75,6 +77,13 @@ class NavigationGroup extends Component
         return $this;
     }
 
+    public function hideLabel(bool | Closure | null $condition = true): static
+    {
+        $this->hideLabel = $condition;
+
+        return $this;
+    }
+
     public function getIcon(): ?string
     {
         $icon = $this->evaluate($this->icon);
@@ -97,6 +106,11 @@ class NavigationGroup extends Component
     public function getLabel(): ?string
     {
         return $this->evaluate($this->label);
+    }
+
+    public function hasHiddenLabel(): bool
+    {
+        return (bool) $this->evaluate($this->hideLabel);
     }
 
     public function isCollapsed(): bool

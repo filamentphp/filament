@@ -174,6 +174,12 @@ trait HasNavigation
 
                 return $sort;
             })
+            ->map(function (NavigationGroup $group): NavigationGroup {
+                if ($group->hasHiddenLabel()) {
+                    $group->label('');
+                }
+                return $group;
+            })
             ->all();
     }
 
