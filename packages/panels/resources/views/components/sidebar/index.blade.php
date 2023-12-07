@@ -113,7 +113,7 @@
         @endif
 
         @if (filament()->hasNavigation())
-            <ul class="-mx-2 flex flex-col gap-y-7">
+            <ul class="-mx-2 flex flex-col {{ filament()->hasCompactSidebarNavigation() ? 'gap-y-1' : 'gap-y-7' }}">
                 @foreach ($navigation as $group)
                     <x-filament-panels::sidebar.group
                         :collapsible="$group->isCollapsible()"

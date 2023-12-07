@@ -14,6 +14,8 @@ trait HasSidebar
 
     protected bool $hasCollapsibleNavigationGroups = true;
 
+    protected bool $hasCompactSidebarNavigation = false;
+
     public function sidebarCollapsibleOnDesktop(bool $condition = true): static
     {
         $this->isSidebarCollapsibleOnDesktop = $condition;
@@ -49,6 +51,13 @@ trait HasSidebar
         return $this;
     }
 
+    public function compactSidebarNavigation(bool $condition = true): static
+    {
+        $this->hasCompactSidebarNavigation = $condition;
+
+        return $this;
+    }    
+
     public function getSidebarWidth(): string
     {
         return $this->sidebarWidth;
@@ -73,4 +82,9 @@ trait HasSidebar
     {
         return $this->hasCollapsibleNavigationGroups;
     }
+
+    public function hasCompactSidebarNavigation(): bool
+    {
+        return $this->hasCompactSidebarNavigation;
+    }    
 }

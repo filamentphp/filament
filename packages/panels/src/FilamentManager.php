@@ -616,6 +616,11 @@ class FilamentManager
         return $this->getCurrentPanel()->isSidebarFullyCollapsibleOnDesktop();
     }
 
+    public function hasCompactSidebarNavigation(): bool
+    {
+        return $this->getCurrentPanel()->hasCompactSidebarNavigation();
+    }
+
     public function mountNavigation(): void
     {
         $this->getCurrentPanel()->mountNavigation();
