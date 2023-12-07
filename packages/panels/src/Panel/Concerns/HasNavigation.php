@@ -175,7 +175,7 @@ trait HasNavigation
                 return $sort;
             })
             ->map(function (NavigationGroup $group): NavigationGroup {
-                if ($group->hasHiddenLabel()) {
+                if ($group->isLabelHidden()) {
                     $group->label('');
                 }
 
