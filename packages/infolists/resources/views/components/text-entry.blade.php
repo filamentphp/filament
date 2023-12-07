@@ -71,7 +71,7 @@
                 >
                     @foreach ($arrayState as $state)
                         @if (filled($formattedState = $formatState($state)) &&
-                            (! ($isListWithLineBreaks && (! $isLimitedListExpandable) && ($loop->iteration > $listLimit))))
+                             (! ($isListWithLineBreaks && (! $isLimitedListExpandable) && ($loop->iteration > $listLimit))))
                             @php
                                 $color = $getColor($state);
                                 $copyableState = $getCopyableState($state) ?? $state;
