@@ -178,6 +178,7 @@ trait HasNavigation
                 if ($group->hasHiddenLabel()) {
                     $group->label('');
                 }
+
                 return $group;
             })
             ->all();
