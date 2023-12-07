@@ -6,6 +6,19 @@ title: Import action
 
 Filament includes a prebuilt action that is able to import rows from a CSV. When the trigger button is clicked, a modal asks the user for a file. Once they upload one, they are able to map each column in the CSV to a real column in the database. If any rows fail validation, they will be compiled into a downloadable CSV for the user to review after the rest of the rows have been imported. Users can also download an example CSV file containing all the columns that can be imported.
 
+This feature uses [database notification](https://filamentphp.com/docs/3.x/notifications/database-notifications) to send the notifications [publish that migration from Laravel](https://laravel.com/docs/10.x/notifications#database-prerequisites) Also, you need to publish the migrations for tables that Filament uses to store information about imports and then enable them in the [configuration](https://filamentphp.com/docs/3.x/panels/configuration): 
+
+```php
+use Filament\Panel;
+ 
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->databaseNotifications();
+}
+```
+
 This feature uses job batches, so you need to [publish that migration from Laravel](https://laravel.com/docs/queues#job-batching). Also, you need to publish the migrations for tables that Filament uses to store information about imports:
 
 ```bash
