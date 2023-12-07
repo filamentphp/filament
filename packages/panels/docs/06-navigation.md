@@ -189,7 +189,7 @@ public function panel(Panel $panel): Panel
 
 ### Using compact sidebar navigation
 
-By default, navigation groups have extra top and bottom padding. You may disable this and make all navigation items evenly spaced using the `compactSidebarNavigation()` method:
+By default, navigation groups have extra top and bottom padding. You may remove this and make all navigation items evenly spaced using the `compactSidebarNavigation()` method:
 
 ```php
 use Filament\Panel;
