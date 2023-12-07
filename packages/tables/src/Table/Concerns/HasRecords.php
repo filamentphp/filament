@@ -113,7 +113,7 @@ trait HasRecords
                 $record::class => $record,
             ],
         );
-        
+
         if (filled($titleAttribute = $this->getRecordTitleAttribute())) {
             $title ??= $record->getAttributeValue($titleAttribute);
         }
