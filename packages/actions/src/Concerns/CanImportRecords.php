@@ -83,7 +83,10 @@ trait CanImportRecords
                     }
 
                     $csvReader = CsvReader::createFromStream($csvStream);
+                    $delimiter = $this->guessDelimiter($csvReader);
+                    $csvReader->setDelimiter($delimiter);
                     $csvReader->setHeaderOffset(0);
+                    $csvResults = Statement::create()->process($csvReader);
 
                     $csvColumns = $csvReader->getHeader();
 
@@ -127,7 +130,10 @@ trait CanImportRecords
                     }
 
                     $csvReader = CsvReader::createFromStream($csvStream);
+                    $delimiter = $this->guessDelimiter($csvReader);
+                    $csvReader->setDelimiter($delimiter);
                     $csvReader->setHeaderOffset(0);
+                    $csvResults = Statement::create()->process($csvReader);
 
                     $csvColumns = $csvReader->getHeader();
                     $csvColumnOptions = array_combine($csvColumns, $csvColumns);
@@ -152,7 +158,11 @@ trait CanImportRecords
             }
 
             $csvReader = CsvReader::createFromStream($csvStream);
+            $delimiter = $this->guessDelimiter($csvReader);
+            $csvReader->setDelimiter($delimiter);
             $csvReader->setHeaderOffset(0);
+            $csvResults = Statement::create()->process($csvReader);
+
             $csvResults = Statement::create()->process($csvReader);
 
             $totalRows = $csvResults->count();
@@ -401,5 +411,20 @@ trait CanImportRecords
     public function getOptions(): array
     {
         return $this->evaluate($this->options);
+    }
+
+    /**
+     * @return string
+     */
+    public function guessDelimiter(CsvReader $csvReader, array $set = [], int $limit = 20): string
+    {
+        if (empty($set)) {
+            $set = [';', ',', '|', "\t"];
+        }
+
+        $delimiterCounts = Info::getDelimiterStats($csvReader, $set, $limit);
+
+        // get the delimiter by the highest count of appearances
+        return array_search(max($delimiterCounts), $delimiterCounts);
     }
 }
