@@ -3,9 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard\Step;
-use Filament\Support\Enums\IconPosition;
 
 trait HasWizard
 {
@@ -15,9 +13,7 @@ trait HasWizard
 
     protected int | Closure $wizardStartStep = 1;
 
-    protected ?Closure $modifyNextActionUsing = null;
-
-    protected ?Closure $modifyPreviousActionUsing = null;
+    protected ?Closure $modifyWizardUsing = null;
 
     /**
      * @param  array<Step> | Closure  $steps
@@ -54,66 +50,11 @@ trait HasWizard
         return (bool) $this->evaluate($this->isWizardSkippable);
     }
 
-    public function getWizardStartStep(): int
+    public function modifyWizardUsing(?Closure $callback): static
     {
-        return $this->evaluate($this->wizardStartStep);
-    }
-
-    public function getWizardNextAction(): Action
-    {
-        $action = Action::make($this->getNextActionName())
-            ->label(__('filament-forms::components.wizard.actions.next_step.label'))
-            ->iconPosition(IconPosition::After)
-            ->livewireClickHandlerEnabled(false)
-            ->button();
-
-        if ($this->modifyNextActionUsing) {
-            $action = $this->evaluate($this->modifyNextActionUsing, [
-                'action' => $action,
-            ]) ?? $action;
-        }
-
-        return $action;
-    }
-
-    public function nextAction($callback): static
-    {
-        $this->modifyNextActionUsing = $callback;
+        $this->isWizard = true;
+        $this->modifyWizardUsing = $callback;
 
         return $this;
-    }
-
-    public function getNextActionName(): string
-    {
-        return 'next';
-    }
-
-        public function getWizardPreviousAction(): Action
-    {
-        $action = Action::make($this->getPreviousActionName())
-            ->label(__('filament-forms::components.wizard.actions.previous_step.label'))
-            ->color('gray')
-            ->livewireClickHandlerEnabled(false)
-            ->button();
-
-        if ($this->modifyPreviousActionUsing) {
-            $action = $this->evaluate($this->modifyPreviousActionUsing, [
-                'action' => $action,
-            ]) ?? $action;
-        }
-
-        return $action;
-    }
-
-    public function previousAction(?Closure $callback): static
-    {
-        $this->modifyPreviousActionUsing = $callback;
-
-        return $this;
-    }
-
-    public function getPreviousActionName(): string
-    {
-        return 'previous';
     }
 }

@@ -65,17 +65,21 @@ trait HasForm
         }
 
         if (is_array($modifiedForm) && $this->isWizard()) {
-            $modifiedForm = [
-                Wizard::make($modifiedForm)
-                    ->contained(false)
-                    ->startOnStep($this->getWizardStartStep())
-                    ->cancelAction($this->getModalCancelAction())
-                    ->submitAction($this->getModalSubmitAction())
-                    ->nextAction(fn () => $this->getWizardNextAction())
-                    ->previousAction(fn () => $this->getWizardPreviousAction())
-                    ->skippable($this->isWizardSkippable())
-                    ->disabled($this->isFormDisabled()),
-            ];
+            $wizard = Wizard::make($modifiedForm)
+                ->contained(false)
+                ->startOnStep($this->getWizardStartStep())
+                ->cancelAction($this->getModalCancelAction())
+                ->submitAction($this->getModalSubmitAction())
+                ->skippable($this->isWizardSkippable())
+                ->disabled($this->isFormDisabled());
+
+            if ($this->modifyWizardUsing) {
+                $this->evaluate($this->modifyWizardUsing, [
+                    'wizard' => $wizard,
+                ]) ?? $wizard;
+            }
+
+            $modifiedForm = [$wizard];
         }
 
         if (is_array($modifiedForm)) {
