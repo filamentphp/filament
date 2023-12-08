@@ -47,7 +47,7 @@ trait CanImportRecords
 
     protected int | Closure | null $maxRows = null;
 
-    private string | Closure | null $csvDelimiter = null;
+    protected string | Closure | null $csvDelimiter = null;
 
     /**
      * @var array<string, mixed> | Closure
@@ -86,7 +86,7 @@ trait CanImportRecords
 
                     $csvReader = CsvReader::createFromStream($csvStream);
 
-                    if (filled($delimiter = $this->getDelimiter())) {
+                    if (filled($delimiter = $this->getCsvDelimiter())) {
                         $csvReader->setDelimiter($delimiter);
                     }
 
@@ -135,7 +135,7 @@ trait CanImportRecords
 
                     $csvReader = CsvReader::createFromStream($csvStream);
 
-                    if (filled($delimiter = $this->getDelimiter())) {
+                    if (filled($delimiter = $this->getCsvDelimiter())) {
                         $csvReader->setDelimiter($delimiter);
                     }
 
@@ -165,7 +165,7 @@ trait CanImportRecords
 
             $csvReader = CsvReader::createFromStream($csvStream);
 
-            if (filled($delimiter = $this->getDelimiter())) {
+            if (filled($delimiter = $this->getCsvDelimiter())) {
                 $csvReader->setDelimiter($delimiter);
             }
 
@@ -279,7 +279,7 @@ trait CanImportRecords
 
                     $csv = Writer::createFromFileObject(new SplTempFileObject());
 
-                    if (filled($delimiter = $this->getDelimiter())) {
+                    if (filled($delimiter = $this->getCsvDelimiter())) {
                         $csv->setDelimiter($delimiter);
                     }
 
@@ -380,7 +380,7 @@ trait CanImportRecords
         return $this;
     }
 
-    public function delimiter(string | Closure | null $delimiter): static
+    public function csvDelimiter(string | Closure | null $delimiter): static
     {
         $this->csvDelimiter = $delimiter;
 
@@ -413,7 +413,7 @@ trait CanImportRecords
         return $this->evaluate($this->maxRows);
     }
 
-    public function getDelimiter(): ?string
+    public function getCsvDelimiter(): ?string
     {
         return $this->evaluate($this->csvDelimiter);
     }
