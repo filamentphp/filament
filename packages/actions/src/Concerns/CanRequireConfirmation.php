@@ -12,6 +12,10 @@ trait CanRequireConfirmation
 {
     public function requiresConfirmation(bool | Closure $condition = true): static
     {
+        if (! $this->evaluate($condition)) {
+            return $this;
+        }
+
         $this->modalAlignment(fn (MountableAction $action): ?Alignment => $action->evaluate($condition) ? Alignment::Center : null);
         $this->modalFooterActionsAlignment(fn (MountableAction $action): ?Alignment => $action->evaluate($condition) ? Alignment::Center : null);
         $this->modalIcon(fn (MountableAction $action): ?string => $action->evaluate($condition) ? (FilamentIcon::resolve('actions::modal.confirmation') ?? 'heroicon-o-exclamation-triangle') : null);
