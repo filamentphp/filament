@@ -71,6 +71,8 @@ trait HasForm
                     ->startOnStep($this->getWizardStartStep())
                     ->cancelAction($this->getModalCancelAction())
                     ->submitAction($this->getModalSubmitAction())
+                    ->nextAction(fn () => $this->getWizardNextAction())
+                    ->previousAction(fn () => $this->getWizardPreviousAction())
                     ->skippable($this->isWizardSkippable())
                     ->disabled($this->isFormDisabled()),
             ];
