@@ -2,6 +2,7 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
 use Filament\Billing\Providers\Contracts\Provider as BillingProvider;
 use Filament\Navigation\MenuItem;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ trait HasTenancy
 {
     protected ?BillingProvider $tenantBillingProvider = null;
 
-    protected bool $showTenantMenu = true;
+    protected bool | Closure | null $hasTenantMenu = true;
 
     protected ?string $tenantRoutePrefix = null;
 
@@ -52,9 +53,9 @@ trait HasTenancy
         return $this;
     }
 
-    public function showTenantMenu(bool $condition = true): static
+    public function tenantMenu(bool | Closure $condition = true): static
     {
-        $this->showTenantMenu = $condition;
+        $this->hasTenantMenu = $condition;
 
         return $this;
     }
@@ -212,9 +213,9 @@ trait HasTenancy
         return route("filament.{$this->getId()}.tenant.registration", $parameters);
     }
 
-    public function getTenantMenuVisible(): bool
+    public function hasTenantMenu(): bool
     {
-        return $this->showTenantMenu;
+        return (bool) $this->evaluate($this->hasTenantMenu);
     }
 
     /**

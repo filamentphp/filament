@@ -406,22 +406,6 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Show or Hide the tenant menu
-
-You can hide or show a tenant menu by using the `showTenantMenu()`
-
-```php
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->tenant(Team::class, slugAttribute: 'slug');
-        ->showTenantMenu(false);
-}
-```
-
 ### Conditionally hiding tenant menu items
 
 You can also conditionally hide a tenant menu item by using the `visible()` or `hidden()` methods, passing in a condition to check. Passing a function will defer condition evaluation until the menu is actually being rendered:
@@ -435,6 +419,23 @@ MenuItem::make()
     // or
     ->hidden(fn (): bool => ! auth()->user()->can('manage-team'))
 ```
+
+### Hiding the tenant menu
+
+You can hide the tenant menu by using the `tenantMenu(false)`
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMenu(false);
+}
+```
+
+However, this is a sign that Filament's tenancy feature is not suitable for your project. If each user only belongs to one tenant, you should stick to [simple one-to-many tenancy](#simple-one-to-many-tenancy).
 
 ## Setting up avatars
 
