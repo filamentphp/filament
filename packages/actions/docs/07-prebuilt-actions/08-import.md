@@ -495,16 +495,17 @@ ImportAction::make()
 
 If you are encountering memory issues when importing large CSV files, you may wish to reduce the chunk size.
 
-## Changing the field delimiter
+## Changing the CSV delimiter
 
-The default delimiter for CSV is the comma (`,`).
-If your import will use a different delimiter, you may call the `delimiter()` method on the action. This also works in conjunction with `example()` when writing a file. NOTE: You must specify only a single character, else an exception will be thrown:
+The default delimiter for CSVs is the comma (`,`). If your import uses a different delimiter, you may call the `csvDelimiter()` method on the action, passing a new one:
 
 ```php
 ImportAction::make()
     ->importer(ProductImporter::class)
-    ->delimiter(';')
+    ->csvDelimiter(';')
 ```
+
+You can only specify a single character, otherwise an exception will be thrown.
 
 ## Customizing the import job
 
