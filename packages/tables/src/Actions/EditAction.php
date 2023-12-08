@@ -62,7 +62,11 @@ class EditAction extends Action
                     $pivotData = Arr::only($data, $pivotColumns);
 
                     if (count($pivotColumns)) {
-                        $translatableContentDriver->updateRecord($pivot, $pivotData);
+                        if ($translatableContentDriver) {
+                            $translatableContentDriver->updateRecord($pivot, $pivotData);
+                        } else {
+                            $pivot->update($pivotData);
+                        }
                     }
 
                     $data = Arr::except($data, $pivotColumns);

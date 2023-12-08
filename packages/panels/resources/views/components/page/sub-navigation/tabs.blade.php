@@ -3,6 +3,7 @@
 ])
 
 <x-filament::tabs
+    wire:ignore
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
 >
     @foreach ($navigation as $navigationGroup)
