@@ -309,7 +309,7 @@ ImportColumn::make('customer_ratings')
 
 ### Customizing how a column is filled into a record
 
-If you want to customize how column state is filled into a record, you can pass a function to the `fillUsing()` method:
+If you want to customize how column state is filled into a record, you can pass a function to the `fillRecordUsing()` method:
 
 ```php
 use App\Models\Product;
