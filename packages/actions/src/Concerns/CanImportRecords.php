@@ -86,12 +86,13 @@ trait CanImportRecords
                         return;
                     }
 
+                    $csvReader = CsvReader::createFromStream($csvStream);
+
                     if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                         $csvReader->setDelimiter($csvDelimiter);
                     }
 
                     $csvReader->setHeaderOffset(0);
-                    $csvResults = Statement::create()->process($csvReader);
 
                     $csvColumns = $csvReader->getHeader();
 
@@ -141,7 +142,6 @@ trait CanImportRecords
                     }
 
                     $csvReader->setHeaderOffset(0);
-                    $csvResults = Statement::create()->process($csvReader);
 
                     $csvColumns = $csvReader->getHeader();
                     $csvColumnOptions = array_combine($csvColumns, $csvColumns);
@@ -172,8 +172,6 @@ trait CanImportRecords
             }
 
             $csvReader->setHeaderOffset(0);
-            $csvResults = Statement::create()->process($csvReader);
-
             $csvResults = Statement::create()->process($csvReader);
 
             $totalRows = $csvResults->count();
