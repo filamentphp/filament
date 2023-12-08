@@ -72,6 +72,7 @@
                     theme: $store.theme,
                 }
         "
+        x-on:click.stop
     >
         <x-filament::input.select
             :disabled="$isDisabled"
