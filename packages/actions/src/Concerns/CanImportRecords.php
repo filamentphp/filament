@@ -86,8 +86,8 @@ trait CanImportRecords
 
                     $csvReader = CsvReader::createFromStream($csvStream);
 
-                    if (filled($delimiter = $this->getCsvDelimiter())) {
-                        $csvReader->setDelimiter($delimiter);
+                    if (filled($csvDelimiter = $this->getCsvDelimiter())) {
+                        $csvReader->setDelimiter($csvDelimiter);
                     }
 
                     $csvReader->setHeaderOffset(0);
@@ -135,8 +135,8 @@ trait CanImportRecords
 
                     $csvReader = CsvReader::createFromStream($csvStream);
 
-                    if (filled($delimiter = $this->getCsvDelimiter())) {
-                        $csvReader->setDelimiter($delimiter);
+                    if (filled($csvDelimiter = $this->getCsvDelimiter())) {
+                        $csvReader->setDelimiter($csvDelimiter);
                     }
 
                     $csvReader->setHeaderOffset(0);
@@ -165,8 +165,8 @@ trait CanImportRecords
 
             $csvReader = CsvReader::createFromStream($csvStream);
 
-            if (filled($delimiter = $this->getCsvDelimiter())) {
-                $csvReader->setDelimiter($delimiter);
+            if (filled($csvDelimiter = $this->getCsvDelimiter())) {
+                $csvReader->setDelimiter($csvDelimiter);
             }
 
             $csvReader->setHeaderOffset(0);
@@ -279,8 +279,8 @@ trait CanImportRecords
 
                     $csv = Writer::createFromFileObject(new SplTempFileObject());
 
-                    if (filled($delimiter = $this->getCsvDelimiter())) {
-                        $csv->setDelimiter($delimiter);
+                    if (filled($csvDelimiter = $this->getCsvDelimiter())) {
+                        $csv->setDelimiter($csvDelimiter);
                     }
 
                     $csv->insertOne(array_map(
