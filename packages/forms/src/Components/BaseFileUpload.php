@@ -192,7 +192,7 @@ class BaseFileUpload extends Field
             ) {
                 $newPath = trim($component->getDirectory() . '/' . $component->getUploadedFileNameForStorage($file), '/');
 
-                $component->getDisk()->move($file->path(), $newPath);
+                $component->getDisk()->move(invade($file)->path, $newPath);
 
                 return $newPath;
             }
