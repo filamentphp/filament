@@ -25,6 +25,8 @@ use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use League\Csv\Info;
+use League\Csv\Reader as CsvReader;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
 use League\Csv\Writer;
@@ -84,10 +86,7 @@ trait CanImportRecords
                         return;
                     }
 
-                    if (filled($csvDelimiter = $this->getCsvDelimiter())) {
-                        $csvReader->setDelimiter($csvDelimiter);
-                    } else {
-                        $csvDelimiter = $this->guessDelimiter($csvReader);
+                    if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                         $csvReader->setDelimiter($csvDelimiter);
                     }
 
@@ -137,10 +136,7 @@ trait CanImportRecords
 
                     $csvReader = CsvReader::createFromStream($csvStream);
 
-                    if (filled($csvDelimiter = $this->getCsvDelimiter())) {
-                        $csvReader->setDelimiter($csvDelimiter);
-                    } else {
-                        $csvDelimiter = $this->guessDelimiter($csvReader);
+                    if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                         $csvReader->setDelimiter($csvDelimiter);
                     }
 
@@ -171,10 +167,7 @@ trait CanImportRecords
 
             $csvReader = CsvReader::createFromStream($csvStream);
 
-            if (filled($csvDelimiter = $this->getCsvDelimiter())) {
-                $csvReader->setDelimiter($csvDelimiter);
-            } else {
-                $csvDelimiter = $this->guessDelimiter($csvReader);
+            if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
                 $csvReader->setDelimiter($csvDelimiter);
             }
 
@@ -424,9 +417,20 @@ trait CanImportRecords
         return $this->evaluate($this->maxRows);
     }
 
-    public function getCsvDelimiter(): ?string
+    public function getCsvDelimiter(?CsvReader $reader = null): ?string
     {
-        return $this->evaluate($this->csvDelimiter);
+        return $this->evaluate($this->csvDelimiter) ?? $this->guessCsvDelimiter($reader);
+    }
+
+    protected function guessCsvDelimiter(?CsvReader $reader = null): ?string
+    {
+        if (! $reader) {
+            return null;
+        }
+
+        $delimiterCounts = Info::getDelimiterStats($reader, delimiters: [',', ';', '|', "\t"], limit: 10);
+
+        return array_search(max($delimiterCounts), $delimiterCounts);
     }
 
     /**
@@ -445,20 +449,5 @@ trait CanImportRecords
     public function getOptions(): array
     {
         return $this->evaluate($this->options);
-    }
-
-    /**
-     * @return string
-     */
-    public function guessDelimiter(CsvReader $csvReader, array $set = [], int $limit = 20): string
-    {
-        if (empty($set)) {
-            $set = [';', ',', '|', "\t"];
-        }
-
-        $delimiterCounts = Info::getDelimiterStats($csvReader, $set, $limit);
-
-        // get the delimiter by the highest count of appearances
-        return array_search(max($delimiterCounts), $delimiterCounts);
     }
 }
