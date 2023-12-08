@@ -73,6 +73,8 @@ Filter::make('is_admin')
 
 If you are using a [custom filter form](#custom-filter-forms), you should use [`indicateUsing()`](#custom-active-indicators) to display an active indicator.
 
+Please note: if you do not have an indicator for your filter, then the badge-count of how many filters are active in the table will not include that filter.
+
 ### Custom active indicators
 
 Not all indicators are simple, so you may need to use `indicateUsing()` to customize which indicators should be shown at any time.
