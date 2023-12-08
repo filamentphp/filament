@@ -4,6 +4,7 @@
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\RecordCheckboxPosition;
+    use Illuminate\Support\Str;
 
     $actions = $getActions();
     $actionsAlignment = $getActionsAlignment();
@@ -278,6 +279,8 @@
                         >
                             @if ($isSelectionEnabled && (! $isReordering))
                                 <x-filament-tables::selection.checkbox
+                                    {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
+                                    :wire:key="$this->getId() . '.table.bulk_select_page.checkbox.' . Str::random()"
                                     :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                     x-bind:checked="
                                         const recordsOnPage = getRecordsOnPage()
@@ -687,6 +690,8 @@
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-filament-tables::selection.cell tag="th">
                                     <x-filament-tables::selection.checkbox
+                                        {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
+                                        :wire:key="$this->getId() . '.table.bulk_select_page.checkbox.' . Str::random()"
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
                                             const recordsOnPage = getRecordsOnPage()
@@ -754,6 +759,8 @@
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                 <x-filament-tables::selection.cell tag="th">
                                     <x-filament-tables::selection.checkbox
+                                        {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
+                                        :wire:key="$this->getId() . '.table.bulk_select_page.checkbox.' . Str::random()"
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
                                             const recordsOnPage = getRecordsOnPage()

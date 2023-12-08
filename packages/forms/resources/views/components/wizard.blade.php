@@ -9,12 +9,6 @@
     x-data="{
         step: null,
 
-        init: function () {
-            this.$watch('step', () => this.updateQueryString())
-
-            this.step = this.getSteps().at({{ $getStartStep() - 1 }})
-        },
-
         nextStep: function () {
             let nextStepIndex = this.getStepIndex(this.step) + 1
 
@@ -84,6 +78,13 @@
             history.pushState(null, document.title, url.toString())
         },
     }"
+    x-init="
+        $watch('step', () => updateQueryString())
+
+        step = getSteps().at({{ $getStartStep() - 1 }})
+
+        autofocusFields()
+    "
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $statePath }}') nextStep()"
     {{
         $attributes
@@ -122,14 +123,20 @@
         ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
-            <li class="fi-fo-wizard-header-step relative flex">
+            <li
+                class="fi-fo-wizard-header-step relative flex"
+                x-bind:class="{
+                    'fi-active': getStepIndex(step) === {{ $loop->index }},
+                    'fi-completed': getStepIndex(step) > {{ $loop->index }},
+                }"
+            >
                 <button
                     type="button"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
                     x-on:click="step = @js($step->getId())"
                     x-bind:disabled="! isStepAccessible(step, {{ $loop->index }})"
                     role="step"
-                    class="flex h-full w-full items-center gap-x-4 px-6 py-4"
+                    class="fi-fo-wizard-header-step-button flex h-full w-full items-center gap-x-4 px-6 py-4"
                 >
                     <div
                         class="fi-fo-wizard-header-step-icon-ctn flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
@@ -165,7 +172,7 @@
                         @else
                             <span
                                 x-show="getStepIndex(step) <= {{ $loop->index }}"
-                                class="text-sm font-medium"
+                                class="fi-fo-wizard-header-step-indicator text-sm font-medium"
                                 x-bind:class="{
                                     'text-gray-500 dark:text-gray-400':
                                         getStepIndex(step) !== {{ $loop->index }},
@@ -196,7 +203,7 @@
 
                         @if (filled($description = $step->getDescription()))
                             <span
-                                class="fi-fo-wizard-header-step-description text-sm text-gray-500 dark:text-gray-400"
+                                class="fi-fo-wizard-header-step-description text-start text-sm text-gray-500 dark:text-gray-400"
                             >
                                 {{ $description }}
                             </span>
@@ -207,7 +214,7 @@
                 @if (! $loop->last)
                     <div
                         aria-hidden="true"
-                        class="absolute end-0 hidden w-5 md:block"
+                        class="fi-fo-wizard-header-step-separator absolute end-0 hidden w-5 md:block"
                     >
                         <svg
                             fill="none"

@@ -71,7 +71,7 @@
                 >
                     @foreach ($arrayState as $state)
                         @if (filled($formattedState = $formatState($state)) &&
-                             (! ($isListWithLineBreaks && (! $isLimitedListExpandable) && ($loop->index > $listLimit))))
+                             (! ($isListWithLineBreaks && (! $isLimitedListExpandable) && ($loop->iteration > $listLimit))))
                             @php
                                 $color = $getColor($state);
                                 $copyableState = $getCopyableState($state) ?? $state;
@@ -125,9 +125,9 @@
                                     "
                                     class="cursor-pointer max-w-max"
                                 @endif
-                                @if ($isListWithLineBreaks && ($loop->index > $listLimit))
-                                    x-show="! isLimited"
+                                @if ($isListWithLineBreaks && ($loop->iteration > $listLimit))
                                     x-cloak
+                                    x-show="! isLimited"
                                     x-transition
                                 @endif
                             >
