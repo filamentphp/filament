@@ -57,4 +57,9 @@ trait HasWizard
 
         return $this;
     }
+
+    public function getWizardStartStep(): int
+    {
+        return $this->evaluate($this->wizardStartStep);
+    }
 }
