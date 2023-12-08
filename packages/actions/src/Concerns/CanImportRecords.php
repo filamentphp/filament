@@ -86,9 +86,7 @@ trait CanImportRecords
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter())) {
                         $csvReader->setDelimiter($csvDelimiter);
-                    }
-
-                    if (blank($csvDelimiter)) {
+                    } else {
                         $csvDelimiter = $this->guessDelimiter($csvReader);
                         $csvReader->setDelimiter($csvDelimiter);
                     }
@@ -141,9 +139,7 @@ trait CanImportRecords
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter())) {
                         $csvReader->setDelimiter($csvDelimiter);
-                    }
-
-                    if (blank($csvDelimiter)) {
+                    } else {
                         $csvDelimiter = $this->guessDelimiter($csvReader);
                         $csvReader->setDelimiter($csvDelimiter);
                     }
@@ -177,9 +173,7 @@ trait CanImportRecords
 
             if (filled($csvDelimiter = $this->getCsvDelimiter())) {
                 $csvReader->setDelimiter($csvDelimiter);
-            }
-
-            if (blank($csvDelimiter)) {
+            } else {
                 $csvDelimiter = $this->guessDelimiter($csvReader);
                 $csvReader->setDelimiter($csvDelimiter);
             }
@@ -358,7 +352,7 @@ trait CanImportRecords
         ]));
     }
 
-    public static function getfaultName(): ?string
+    public static function getDefaultName(): ?string
     {
         return 'import';
     }
