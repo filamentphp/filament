@@ -47,6 +47,8 @@ trait CanImportRecords
 
     protected int | Closure | null $maxRows = null;
 
+    private string | Closure | null $csvDelimiter = null;
+
     /**
      * @var array<string, mixed> | Closure
      */
@@ -83,6 +85,11 @@ trait CanImportRecords
                     }
 
                     $csvReader = CsvReader::createFromStream($csvStream);
+
+                    if (filled($delimiter = $this->getDelimiter())) {
+                        $csvReader->setDelimiter($delimiter);
+                    }
+
                     $csvReader->setHeaderOffset(0);
 
                     $csvColumns = $csvReader->getHeader();
@@ -127,6 +134,11 @@ trait CanImportRecords
                     }
 
                     $csvReader = CsvReader::createFromStream($csvStream);
+
+                    if (filled($delimiter = $this->getDelimiter())) {
+                        $csvReader->setDelimiter($delimiter);
+                    }
+
                     $csvReader->setHeaderOffset(0);
 
                     $csvColumns = $csvReader->getHeader();
@@ -152,6 +164,11 @@ trait CanImportRecords
             }
 
             $csvReader = CsvReader::createFromStream($csvStream);
+
+            if (filled($delimiter = $this->getDelimiter())) {
+                $csvReader->setDelimiter($delimiter);
+            }
+
             $csvReader->setHeaderOffset(0);
             $csvResults = Statement::create()->process($csvReader);
 
@@ -262,6 +279,10 @@ trait CanImportRecords
 
                     $csv = Writer::createFromFileObject(new SplTempFileObject());
 
+                    if (filled($delimiter = $this->getDelimiter())) {
+                        $csv->setDelimiter($delimiter);
+                    }
+
                     $csv->insertOne(array_map(
                         fn (ImportColumn $column): string => $column->getName(),
                         $columns,
@@ -359,6 +380,13 @@ trait CanImportRecords
         return $this;
     }
 
+    public function delimiter(string | Closure | null $delimiter): static
+    {
+        $this->csvDelimiter = $delimiter;
+
+        return $this;
+    }
+
     /**
      * @return class-string<Importer>
      */
@@ -383,6 +411,11 @@ trait CanImportRecords
     public function getMaxRows(): ?int
     {
         return $this->evaluate($this->maxRows);
+    }
+
+    public function getDelimiter(): ?string
+    {
+        return $this->evaluate($this->csvDelimiter);
     }
 
     /**
