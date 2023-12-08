@@ -100,6 +100,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasRegistration()
  * @method static bool hasTenancy()
  * @method static bool hasTenantBilling()
+ * @method static bool hasTenantMenu()
  * @method static bool hasTenantProfile()
  * @method static bool hasTenantRegistration()
  * @method static bool hasTopNavigation()

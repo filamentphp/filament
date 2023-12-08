@@ -81,7 +81,7 @@
                 <template x-cloak x-if="state?.length">
                     <div
                         @if ($isReorderable)
-                            x-on:end="reorderTags($event)"
+                            x-on:end.stop="reorderTags($event)"
                             x-sortable
                             data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                         @endif

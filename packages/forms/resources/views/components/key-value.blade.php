@@ -96,7 +96,7 @@
 
                 <tbody
                     @if ($isReorderable)
-                        x-on:end="reorderRows($event)"
+                        x-on:end.stop="reorderRows($event)"
                         x-sortable
                         data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                     @endif

@@ -54,7 +54,7 @@
                 @endif
             </div>
 
-            @if (filament()->hasTenancy())
+            @if (filament()->hasTenancy() && filament()->hasTenantMenu())
                 <x-filament-panels::tenant-menu class="hidden lg:block" />
             @endif
 

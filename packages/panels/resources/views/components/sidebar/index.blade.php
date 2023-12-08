@@ -59,7 +59,7 @@
                     <x-filament-panels::logo />
                 @endif
             </div>
-    
+
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 <x-filament::icon-button
                     color="gray"
@@ -74,7 +74,7 @@
                     x-show="! $store.sidebar.isOpen"
                 />
             @endif
-    
+
             @if (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop())
                 <x-filament::icon-button
                     color="gray"
@@ -99,7 +99,7 @@
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.start') }}
 
-        @if (filament()->hasTenancy())
+        @if (filament()->hasTenancy() && filament()->hasTenantMenu())
             <div
                 @class([
                     '-mx-2' => ! filament()->isSidebarCollapsibleOnDesktop(),
