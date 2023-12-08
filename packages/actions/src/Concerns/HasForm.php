@@ -74,7 +74,7 @@ trait HasForm
                 ->disabled($this->isFormDisabled());
 
             if ($this->modifyWizardUsing) {
-                $this->evaluate($this->modifyWizardUsing, [
+                $wizard = $this->evaluate($this->modifyWizardUsing, [
                     'wizard' => $wizard,
                 ]) ?? $wizard;
             }
