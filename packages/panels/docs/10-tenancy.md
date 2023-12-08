@@ -406,6 +406,22 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Show or Hide the tenant menu
+
+You can hide or show a tenant menu by using the `showTenantMenu()`
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenant(Team::class, slugAttribute: 'slug');
+        ->showTenantMenu(false);
+}
+```
+
 ### Conditionally hiding tenant menu items
 
 You can also conditionally hide a tenant menu item by using the `visible()` or `hidden()` methods, passing in a condition to check. Passing a function will defer condition evaluation until the menu is actually being rendered:

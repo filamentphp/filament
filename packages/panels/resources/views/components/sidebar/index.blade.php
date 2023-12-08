@@ -99,7 +99,7 @@
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.start') }}
 
-        @if (filament()->hasTenancy())
+        @if (filament()->hasTenancy() && filament()->getCurrentPanel()->getTenantMenuVisible())
             <div
                 @class([
                     '-mx-2' => ! filament()->isSidebarCollapsibleOnDesktop(),

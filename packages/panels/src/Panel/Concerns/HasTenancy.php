@@ -11,6 +11,8 @@ trait HasTenancy
 {
     protected ?BillingProvider $tenantBillingProvider = null;
 
+    protected bool $showTenantMenu = true;
+
     protected ?string $tenantRoutePrefix = null;
 
     protected ?string $tenantModel = null;
@@ -46,6 +48,13 @@ trait HasTenancy
             ...$this->tenantMenuItems,
             ...$items,
         ];
+
+        return $this;
+    }
+
+    public function showTenantMenu(bool $condition = true): static
+    {
+        $this->showTenantMenu = $condition;
 
         return $this;
     }
@@ -201,6 +210,11 @@ trait HasTenancy
         }
 
         return route("filament.{$this->getId()}.tenant.registration", $parameters);
+    }
+
+    public function getTenantMenuVisible(): bool
+    {
+        return $this->showTenantMenu;
     }
 
     /**
