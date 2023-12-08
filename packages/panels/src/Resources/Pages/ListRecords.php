@@ -308,7 +308,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
                 return null;
             })
-            ->reorderable(condition: static::getResource()::canReorder());
+            ->authorizeReorder(static::getResource()::canReorder());
     }
 
     /**
