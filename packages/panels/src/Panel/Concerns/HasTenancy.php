@@ -12,7 +12,7 @@ trait HasTenancy
 {
     protected ?BillingProvider $tenantBillingProvider = null;
 
-    protected bool | Closure | null $hasTenantMenu = true;
+    protected bool | Closure $hasTenantMenu = true;
 
     protected ?string $tenantRoutePrefix = null;
 
