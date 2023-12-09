@@ -65,7 +65,7 @@
             @foreach ($getSuggestions() as $suggestion)
                 <template
                     x-bind:key="@js($suggestion)"
-                    x-if="! state.includes(@js($suggestion))"
+                    x-if="state !== undefined && ! state.includes(@js($suggestion))"
                 >
                     <option value="{{ $suggestion }}" />
                 </template>
