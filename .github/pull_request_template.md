@@ -1,4 +1,4 @@
-<!-- Please fill the entire template, or your pull request may be closed. -->
+<!-- Please fill the entire template and make sure that all checkboxes are checked. -->
 
 ## Description
 
