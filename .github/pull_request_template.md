@@ -4,7 +4,7 @@
 
 <!-- Explain the goal of this pull request by describing the issue it fixes or the need for the new or updated functionality. -->
 
-*Replace this with your description.*
+<!-- Replace this comment with your description. -->
 
 - [ ] Visual changes (if any) are shown using screenshots/recordings of before and after.
 
