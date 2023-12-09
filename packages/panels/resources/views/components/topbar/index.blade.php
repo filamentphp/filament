@@ -127,7 +127,7 @@
             {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.after') }}
 
             @if (filament()->auth()->check())
-                @if (filament()->hasDatabaseNotifications())
+                @if (filament()->hasDatabaseNotifications() && count(auth()->user()->notifications))
                     @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
                 @endif
 
