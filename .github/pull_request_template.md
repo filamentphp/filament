@@ -1,3 +1,27 @@
-- [ ] Changes have been thoroughly tested to not break existing functionality.
-- [ ] New functionality has been documented or existing documentation has been updated to reflect changes.
-- [ ] Visual changes are explained in the PR description using a screenshot/recording of before and after.
+<!-- Please fill the entire template, or your pull request may be closed. -->
+
+## Description
+
+<!-- Explain the goal of this pull request by describing the issue it fixes or the need for the new or updated functionality. -->
+
+*Replace this with your description.*
+
+- [ ] Visual changes (if any) are shown using screenshots/recordings of before and after.
+
+## Code style
+
+<!-- Make sure code style follows the rest of the codebase. -->
+
+- [ ] `composer cs` command has been run.
+
+## Testing
+
+<!-- Ensure changes in this PR don't break existing functionality by testing it properly, either manually or by adding software tests. -->
+
+- [ ] Changes have been tested.
+
+## Documentation
+
+<!-- If new functionality has been added or existing functionality changed, please update the documentation. -->
+
+- [ ] Documentation is up-to-date.
