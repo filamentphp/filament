@@ -188,11 +188,11 @@ class BaseFileUpload extends Field
 
             if (
                 $component->shouldMoveFiles() &&
-                ($component->getDiskName() == invade($file)->disk) /** @phpstan-ignore-line */
+                ($component->getDiskName() == (fn (): string => $this->disk)->call($file))
             ) {
                 $newPath = trim($component->getDirectory() . '/' . $component->getUploadedFileNameForStorage($file), '/');
 
-                $component->getDisk()->move(invade($file)->path, $newPath);
+                $component->getDisk()->move((fn (): string => $this->path)->call($file), $newPath);
 
                 return $newPath;
             }
