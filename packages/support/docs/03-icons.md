@@ -82,7 +82,9 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `panels::sidebar.expand-button.rtl` - Button to expand the sidebar (right-to-left direction)
 - `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
 - `panels::tenant-menu.billing-button` - Billing button in the tenant menu
+- `panels::tenant-menu.billing-button.active` - Billing button in the tenant menu when it's active
 - `panels::tenant-menu.profile-button` - Profile button in the tenant menu
+- `panels::tenant-menu.profile-button.active` - Profile button in the tenant menu when it's active
 - `panels::tenant-menu.registration-button` - Registration button in the tenant menu
 - `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
 - `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
