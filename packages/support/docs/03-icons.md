@@ -46,7 +46,7 @@ If you have built a Filament plugin, your users may want to be able to customize
     alias="panels::topbar.global-search.field"
     icon="heroicon-m-magnifying-glass"
     wire:target="search"
-    class="h-5 w-5 text-gray-500 dark:text-gray-400"
+    class="w-5 h-5 text-gray-500 dark:text-gray-400"
 />
 ```
 
@@ -56,7 +56,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 <x-filament::icon
     alias="panels::topbar.global-search.field"
     wire:target="search"
-    class="h-5 w-5 text-gray-500 dark:text-gray-400"
+    class="w-5 h-5 text-gray-500 dark:text-gray-400"
 >
     <svg>
         <!-- ... -->
@@ -93,6 +93,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `panels::topbar.group.toggle-button` - Toggle button for a topbar group
 - `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
 - `panels::user-menu.profile-item` - Profile item in the user menu
+- `panels::user-menu.profile-item.active` - Profile item in the user menu when it's active
 - `panels::user-menu.logout-button` - Button in the user menu to log out
 - `panels::widgets.account.logout-button` - Button in the account widget to log out
 - `panels::widgets.filament-info.open-documentation-button` - Button to open the documentation from the Filament info widget
