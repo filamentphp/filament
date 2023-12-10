@@ -7,10 +7,12 @@
     'badgeColor' => null,
     'color' => 'gray',
     'disabled' => false,
+    'active' => false,
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
     'iconSize' => IconSize::Medium,
+    'activeIcon' => null,
     'image' => null,
     'keyBindings' => null,
     'loadingIndicator' => true,
@@ -45,6 +47,7 @@
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item-icon',
+        'text-primary-600 dark:text-primary-400' => $active,
         match ($iconSize) {
             IconSize::Small, 'sm' => 'h-4 w-4',
             IconSize::Medium, 'md' => 'h-5 w-5',
@@ -69,6 +72,7 @@
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item-label flex-1 truncate text-start',
+        'text-primary-600 dark:text-primary-400 font-semibold' => $active,
         match ($color) {
             'gray' => 'text-gray-700 dark:text-gray-200',
             default => 'text-custom-600 dark:text-custom-400 ',
@@ -193,7 +197,7 @@
         @if ($icon)
             <x-filament::icon
                 :alias="$iconAlias"
-                :icon="$icon"
+                :icon="($active && $activeIcon) ? $activeIcon : $icon"
                 :class="$iconClasses"
                 :style="$iconStyles"
             />
@@ -246,7 +250,7 @@
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
-                    :icon="$icon"
+                    :icon="($active && $activeIcon) ? $activeIcon : $icon"
                     :class="$iconClasses"
                     :style="$iconStyles"
                 />

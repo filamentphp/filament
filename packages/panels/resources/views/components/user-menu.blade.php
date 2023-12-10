@@ -70,8 +70,10 @@
             <x-filament::dropdown.list.item
                 :color="$item->getColor()"
                 :href="$item->getUrl()"
+                :active="$item->isActive()"
                 :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
                 :icon="$item->getIcon()"
+                :active-icon="$item->getActiveIcon()"
                 tag="a"
             >
                 {{ $item->getLabel() }}
