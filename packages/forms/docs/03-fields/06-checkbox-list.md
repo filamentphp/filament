@@ -2,8 +2,17 @@
 title: Checkbox list
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Checkbox List"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding checkbox list fields to Filament forms."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/5"
+    series="rapid-laravel-development"
+/>
+
 
 The checkbox list component allows you to select multiple values from a list of predefined options:
 

@@ -2,8 +2,16 @@
 title: Getting started
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Table Filters"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding filters to Filament resource tables."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/10"
+    series="rapid-laravel-development"
+/>
 
 Filters allow you to define certain constraints on your data, and allow users to scope it to find the information they need. You put them in the `$table->filters()` method:
 

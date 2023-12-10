@@ -1,6 +1,7 @@
 ---
 title: Getting started
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
 
@@ -100,6 +101,13 @@ This is required for features like [global search](global-search) to work.
 
 ## Resource forms
 
+<LaracastsBanner
+    title="Basic Form Inputs"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding a form to your resource."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/3"
+    series="rapid-laravel-development"
+/>
+
 Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages:
 
 ```php
@@ -148,6 +156,13 @@ Forms\Components\TextInput::make('password')
 ```
 
 ## Resource tables
+
+<LaracastsBanner
+    title="Table Columns"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding a table to your resource."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/9"
+    series="rapid-laravel-development"
+/>
 
 Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records):
 
