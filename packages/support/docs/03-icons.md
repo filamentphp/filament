@@ -46,7 +46,7 @@ If you have built a Filament plugin, your users may want to be able to customize
     alias="panels::topbar.global-search.field"
     icon="heroicon-m-magnifying-glass"
     wire:target="search"
-    class="w-5 h-5 text-gray-500 dark:text-gray-400"
+    class="h-5 w-5 text-gray-500 dark:text-gray-400"
 />
 ```
 
@@ -56,7 +56,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 <x-filament::icon
     alias="panels::topbar.global-search.field"
     wire:target="search"
-    class="w-5 h-5 text-gray-500 dark:text-gray-400"
+    class="h-5 w-5 text-gray-500 dark:text-gray-400"
 >
     <svg>
         <!-- ... -->
