@@ -60,7 +60,7 @@ class User extends Authenticatable implements FilamentUser
 
 ## Authorizing access to Resources
 
-See the [Authorization](resources/getting-started#authorization) in the Resource documentation for controlling access to Resource pages and their data.
+See the [Authorization](resources/getting-started#authorization) section in the Resource documentation for controlling access to Resource pages and their data records.
 
 ## Setting up user avatars
 
