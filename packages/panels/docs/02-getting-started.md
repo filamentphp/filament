@@ -1,6 +1,7 @@
 ---
 title: Getting started
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
 
