@@ -112,50 +112,59 @@
             </div>
         @endif
 
-        <ul class="-mx-2 flex flex-col gap-y-7">
-            @foreach ($navigation as $group)
-        </ul>
+        @if (filament()->hasNavigation())
+            <ul class="-mx-2 flex flex-col gap-y-7">
+                @foreach ($navigation as $group)
+                    <x-filament-panels::sidebar.group
+                        :collapsible="$group->isCollapsible()"
+                        :icon="$group->getIcon()"
+                        :items="$group->getItems()"
+                        :label="$group->getLabel()"
+                    />
+                @endforeach
+            </ul>
 
-        <script>
-            var collapsedGroups = JSON.parse(
-                localStorage.getItem('collapsedGroups'),
-            )
-
-            if (collapsedGroups === null || collapsedGroups === 'null') {
-                localStorage.setItem(
-                    'collapsedGroups',
-                    JSON.stringify(@js(
-                        collect($navigation)
-                            ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
-                            ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
-                            ->values()
-                    )),
+            <script>
+                var collapsedGroups = JSON.parse(
+                    localStorage.getItem('collapsedGroups'),
                 )
-            }
 
-            collapsedGroups = JSON.parse(
-                localStorage.getItem('collapsedGroups'),
-            )
+                if (collapsedGroups === null || collapsedGroups === 'null') {
+                    localStorage.setItem(
+                        'collapsedGroups',
+                        JSON.stringify(@js(
+                            collect($navigation)
+                                ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
+                                ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
+                                ->values()
+                        )),
+                    )
+                }
 
-            document
-                .querySelectorAll('.fi-sidebar-group')
-                .forEach((group) => {
-                    if (
-                        !collapsedGroups.includes(group.dataset.groupLabel)
-                    ) {
-                        return
-                    }
+                collapsedGroups = JSON.parse(
+                    localStorage.getItem('collapsedGroups'),
+                )
 
-                    // Alpine.js loads too slow, so attempt to hide a
-                    // collapsed sidebar group earlier.
-                    group.querySelector(
-                        '.fi-sidebar-group-items',
-                    ).style.display = 'none'
-                    group
-                        .querySelector('.fi-sidebar-group-collapse-button')
-                        .classList.add('rotate-180')
-                })
-        </script>
+                document
+                    .querySelectorAll('.fi-sidebar-group')
+                    .forEach((group) => {
+                        if (
+                            !collapsedGroups.includes(group.dataset.groupLabel)
+                        ) {
+                            return
+                        }
+
+                        // Alpine.js loads too slow, so attempt to hide a
+                        // collapsed sidebar group earlier.
+                        group.querySelector(
+                            '.fi-sidebar-group-items',
+                        ).style.display = 'none'
+                        group
+                            .querySelector('.fi-sidebar-group-collapse-button')
+                            .classList.add('rotate-180')
+                    })
+            </script>
+        @endif
 
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.end') }}
     </nav>
