@@ -23,7 +23,7 @@
                         window.navigator.clipboard.writeText(@js($copyableState))
                         $tooltip(@js($copyMessage), {
                             theme: $store.theme,
-                            timeout: @js($copyMessageDuration),
+                            duration: @js($copyMessageDuration),
                         })
                     "
                 @endif
