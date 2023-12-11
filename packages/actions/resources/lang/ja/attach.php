@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':labelの紐付ける',
+            'heading' => ':labelを紐付ける',
 
             'fields' => [
 
