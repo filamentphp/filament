@@ -265,7 +265,7 @@ class CreateRecord extends Page
         }
 
         return __('filament-panels::resources/pages/create-record.title', [
-            'label' => Str::headline(static::getResource()::getModelLabel()),
+            'label' => static::getResource()::getTitleCaseModelLabel(),
         ]);
     }
 
