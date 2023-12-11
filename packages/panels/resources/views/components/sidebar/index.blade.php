@@ -114,13 +114,6 @@
 
         <ul class="-mx-2 flex flex-col gap-y-7">
             @foreach ($navigation as $group)
-                <x-filament-panels::sidebar.group
-                    :collapsible="$group->isCollapsible()"
-                    :icon="$group->getIcon()"
-                    :items="$group->getItems()"
-                    :label="$group->getLabel()"
-                />
-            @endforeach
         </ul>
 
         <script>
