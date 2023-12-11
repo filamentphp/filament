@@ -526,6 +526,11 @@ abstract class Resource
         return Str::ucwords(static::getPluralModelLabel());
     }
 
+    public static function titleCaseModelLabel(bool $condition = true): void
+    {
+        static::$hasTitleCaseModelLabel = $condition;
+    }
+
     public static function hasTitleCaseModelLabel(): bool
     {
         return static::$hasTitleCaseModelLabel;
@@ -794,6 +799,11 @@ abstract class Resource
     public static function getNavigationSort(): ?int
     {
         return static::$navigationSort;
+    }
+
+    public static function navigationLabel(?string $label): void
+    {
+        static::$navigationLabel = $label;
     }
 
     public static function navigationSort(?int $sort): void
