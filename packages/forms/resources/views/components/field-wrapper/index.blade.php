@@ -78,7 +78,6 @@
             >
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
-                        :error="$hasError"
                         :for="$id"
                         :is-disabled="$isDisabled"
                         :is-marked-as-required="$isMarkedAsRequired"
