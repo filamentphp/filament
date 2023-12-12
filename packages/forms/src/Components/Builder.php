@@ -742,7 +742,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
         }
 
         return collect($this->getState())
-            ->filter(fn (array $itemData): bool => $this->hasBlock($itemData['type']))
+            ->filter(fn (array $itemData): bool => filled($itemData['type'] ?? null) && $this->hasBlock($itemData['type']))
             ->map(
                 fn (array $itemData, $itemIndex): ComponentContainer => $this
                     ->getBlock($itemData['type'])
