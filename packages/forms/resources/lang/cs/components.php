@@ -412,7 +412,7 @@ return [
         'searching_message' => 'Hledání...',
 
         'search_prompt' => 'Zadejte hledaný výraz...',
-        
+
     ],
 
     'tags_input' => [
