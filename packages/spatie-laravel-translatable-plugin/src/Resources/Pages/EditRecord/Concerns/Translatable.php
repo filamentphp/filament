@@ -5,7 +5,6 @@ namespace Filament\Resources\Pages\EditRecord\Concerns;
 use Filament\Resources\Concerns\HasActiveLocaleSwitcher;
 use Filament\Resources\Pages\Concerns\HasTranslatableFormWithExistingRecordData;
 use Filament\Resources\Pages\Concerns\HasTranslatableRecord;
-use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
@@ -23,51 +22,38 @@ trait Translatable
         return static::getResource()::getTranslatableLocales();
     }
 
-    public function save(bool $shouldRedirect = true): void
-    {
-        $this->authorizeAccess();
-
-        $originalActiveLocale = $this->activeLocale;
-
-        try {
-            /** @internal Read the DocBlock above the following method. */
-            $this->validateFormAndUpdateRecordAndCallHooks();
-
-            $nonTranslatableData = Arr::except(
-                $this->data[$originalActiveLocale] ?? [],
-                $this->getRecord()->getTranslatableAttributes(),
-            );
-
-            $otherTranslatableLocales = Arr::except($this->getTranslatableLocales(), $originalActiveLocale);
-
-            foreach ($otherTranslatableLocales as $locale) {
-                $this->setActiveLocale($locale);
-
-                $this->data[$locale] = array_merge(
-                    $this->data[$locale] ?? [],
-                    $nonTranslatableData,
-                );
-
-                /** @internal Read the DocBlock above the following method. */
-                $this->validateFormAndUpdateRecordAndCallHooks();
-            }
-        } catch (Halt $exception) {
-            return;
-        }
-
-        $this->setActiveLocale($originalActiveLocale);
-
-        /** @internal Read the DocBlock above the following method. */
-        $this->sendSavedNotificationAndRedirect(shouldRedirect: $shouldRedirect);
-    }
-
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $record->fill(Arr::except($data, $record->getTranslatableAttributes()));
+        $translatableAttributes = static::getResource()::getTranslatableAttributes();
 
-        foreach (Arr::only($data, $record->getTranslatableAttributes()) as $key => $value) {
+        $record->fill(Arr::except($data, $translatableAttributes));
+
+        foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
             $record->setTranslation($key, $this->activeLocale, $value);
         }
+
+        $originalData = $this->data;
+
+        foreach ($this->otherLocaleData as $locale => $localeData) {
+            $this->data = [
+                ...$this->data,
+                ...$localeData,
+            ];
+
+            try {
+                $this->form->validate();
+            } catch (ValidationException $exception) {
+                continue;
+            }
+
+            $localeData = $this->mutateFormDataBeforeSave($localeData);
+
+            foreach (Arr::only($localeData, $translatableAttributes) as $key => $value) {
+                $record->setTranslation($key, $locale, $value);
+            }
+        }
+
+        $this->data = $originalData;
 
         $record->save();
 
@@ -85,8 +71,6 @@ trait Translatable
             return;
         }
 
-        $this->setActiveLocale($this->oldActiveLocale);
-
         try {
             $this->form->validate();
         } catch (ValidationException $exception) {
@@ -95,25 +79,15 @@ trait Translatable
             throw $exception;
         }
 
-        $this->setActiveLocale($newActiveLocale);
+        $translatableAttributes = static::getResource()::getTranslatableAttributes();
 
-        if (blank($this->oldActiveLocale)) {
-            return;
-        }
+        $this->otherLocaleData[$this->oldActiveLocale] = Arr::only($this->data, $translatableAttributes);
 
-        $translatableAttributes = app(static::getModel())->getTranslatableAttributes();
+        $this->data = [
+            ...Arr::except($this->data, $translatableAttributes),
+            ...$this->otherLocaleData[$this->activeLocale] ?? [],
+        ];
 
-        $this->data[$newActiveLocale] = array_merge(
-            $this->data[$newActiveLocale] ?? [],
-            Arr::except(
-                $this->data[$this->oldActiveLocale] ?? [],
-                $translatableAttributes,
-            ),
-        );
-
-        $this->data[$this->oldActiveLocale] = Arr::only(
-            $this->data[$this->oldActiveLocale] ?? [],
-            $translatableAttributes,
-        );
+        unset($this->otherLocaleData[$this->activeLocale]);
     }
 }
