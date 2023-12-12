@@ -160,6 +160,22 @@ public function table(Table $table): Table
 }
 ```
 
+Whenever the table is reordered, a 'reorder-table' event is dispatched. You can listen to this event within your Livewire component:
+
+```php
+use Livewire\Attributes\On;
+use Filament\Resources\Resource;
+
+class UserResource extends Resource
+{
+    #[On('reorder-table')]
+    public function reorderTable()
+    {
+        // ...
+    }
+}
+```
+
 ### Enabling pagination while reordering
 
 Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally bad UX to re-enable pagination while reordering, but if you are sure then you can use `$table->paginatedWhileReordering()`:
@@ -283,7 +299,7 @@ use Illuminate\Database\Eloquent\Builder;
 protected function applySearchToTableQuery(Builder $query): Builder
 {
     $this->applyColumnSearchesToTableQuery($query);
-    
+
     if (filled($search = $this->getTableSearch())) {
         $query->whereIn('id', Post::search($search)->keys());
     }
