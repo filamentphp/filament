@@ -142,7 +142,7 @@
             <div
                 x-show="isEditorOpen"
                 x-cloak
-                x-on:click.stop
+                x-on:click.stop=""
                 x-trap.noscroll="isEditorOpen"
                 x-on:keydown.escape.window="closeEditor"
                 @class([
