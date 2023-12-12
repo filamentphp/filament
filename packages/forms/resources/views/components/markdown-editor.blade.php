@@ -15,8 +15,7 @@
         <x-filament::input.wrapper
             :valid="! $errors->has($statePath)"
             :attributes="
-                \Filament\Support\prepare_inherited_attributes($attributes)
-                    ->merge($getExtraAttributes(), escape: false)
+                \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
                     ->class(['fi-fo-markdown-editor max-w-full overflow-hidden font-mono text-base text-gray-950 dark:text-white sm:text-sm'])
             "
         >

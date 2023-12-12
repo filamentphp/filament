@@ -18,8 +18,7 @@
         <x-filament::input.wrapper
             :valid="! $errors->has($statePath)"
             :attributes="
-                \Filament\Support\prepare_inherited_attributes($attributes)
-                    ->merge($getExtraAttributes(), escape: false)
+                \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
                     ->class(['fi-fo-rich-editor max-w-full overflow-x-auto'])
             "
         >
