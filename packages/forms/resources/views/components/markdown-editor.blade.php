@@ -17,9 +17,7 @@
             :attributes="
                 \Filament\Support\prepare_inherited_attributes($attributes)
                     ->merge($getExtraAttributes(), escape: false)
-                    ->class([
-                        'fi-fo-markdown-editor max-w-full overflow-hidden font-mono text-base text-gray-950 dark:text-white sm:text-sm',
-                    ])
+                    ->class(['fi-fo-markdown-editor max-w-full overflow-hidden font-mono text-base text-gray-950 dark:text-white sm:text-sm'])
             "
         >
             <div
