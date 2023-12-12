@@ -17,7 +17,6 @@ return [
                 'expand_list' => 'Zobrazit o :count více',
             ],
 
-            
             'more_list_items' => 'a 1 další|a :count další| a :count dalších',
         ],
 
@@ -105,8 +104,8 @@ return [
 
         'heading' => 'Žádné záznamy nenalezeny',
 
-        'description' => 'Začněte vytvořením :modelu.', 
-        
+        'description' => 'Začněte vytvořením :modelu.',
+
     ],
 
     'filters' => [

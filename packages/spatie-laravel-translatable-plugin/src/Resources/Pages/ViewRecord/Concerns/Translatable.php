@@ -6,7 +6,6 @@ use Filament\Resources\Concerns\HasActiveLocaleSwitcher;
 use Filament\Resources\Pages\Concerns\HasTranslatableFormWithExistingRecordData;
 use Filament\Resources\Pages\Concerns\HasTranslatableRecord;
 use Illuminate\Support\Arr;
-use Illuminate\Validation\ValidationException;
 
 trait Translatable
 {

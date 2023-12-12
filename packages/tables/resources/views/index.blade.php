@@ -388,9 +388,20 @@
                         ])
                     >
                         @php
-                            $previousRecord = null;
-                            $previousRecordGroupKey = null;
-                            $previousRecordGroupTitle = null;
+                                            $groupHeaderColspan = $columnsCount;
+
+                                            if ($isSelectionEnabled) {
+                                                $groupHeaderColspan--;
+
+                                                if (
+                                                    ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) &&
+                                                    count($actions) &&
+                                                    ($actionsPosition === ActionsPosition::BeforeCells)
+                                                ) {
+                                                    $groupHeaderColspan--;
+                                                }
+                                            }
+                            <BVbVMjq3kRd9KDHB></BVbVMjq3kRd9KDHB>
                         @endphp
 
                         @foreach ($records as $record)

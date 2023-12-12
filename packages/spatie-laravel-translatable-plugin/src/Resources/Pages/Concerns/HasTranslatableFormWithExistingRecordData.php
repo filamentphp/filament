@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
-use App\Models\Post;
 use Livewire\Attributes\Locked;
 
 trait HasTranslatableFormWithExistingRecordData
