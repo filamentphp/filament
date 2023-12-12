@@ -7,7 +7,7 @@ return [
         'actions' => [
 
             'save' => [
-                'label' => 'Uložit',
+                'label' => 'Uložit změny',
             ],
 
         ],
