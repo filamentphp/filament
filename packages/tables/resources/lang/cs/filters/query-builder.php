@@ -410,7 +410,7 @@ return [
                     'direct' => ':attribute obsahuje :text',
                     'inverse' => ':attribute neobsahuje :text',
                 ],
-                
+
             ],
 
             'ends_with' => [
@@ -433,12 +433,12 @@ return [
                     'direct' => 'Rovná se',
                     'inverse' => 'Nerovná se',
                 ],
-        
+
                 'summary' => [
                     'direct' => ':attribute se rovná :text',
                     'inverse' => ':attribute se nerovná :text',
                 ],
-        
+
             ],
 
             'starts_with' => [
@@ -447,12 +447,12 @@ return [
                     'direct' => 'Začíná na',
                     'inverse' => 'Nezačíná na',
                 ],
-        
+
                 'summary' => [
                     'direct' => ':attribute začíná na :text',
                     'inverse' => ':attribute nezačíná na :text',
                 ],
-        
+
             ],
 
             'form' => [
@@ -460,7 +460,7 @@ return [
                 'text' => [
                     'label' => 'Text',
                 ],
-        
+
             ],
 
         ],
