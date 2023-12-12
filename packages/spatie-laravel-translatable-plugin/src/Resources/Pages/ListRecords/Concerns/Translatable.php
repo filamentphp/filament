@@ -10,7 +10,7 @@ trait Translatable
 
     public function mountTranslatable(): void
     {
-        $this->setActiveLocale();
+        $this->activeLocale = static::getResource()::getDefaultTranslatableLocale();
     }
 
     public function getTranslatableLocales(): array
@@ -21,10 +21,5 @@ trait Translatable
     public function getActiveTableLocale(): ?string
     {
         return $this->activeLocale;
-    }
-
-    protected function setActiveLocale(): void
-    {
-        $this->activeLocale = static::getResource()::getDefaultTranslatableLocale();
     }
 }
