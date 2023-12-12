@@ -297,7 +297,7 @@ trait InteractsWithForms
                 if (! method_exists($this, $form)) {
                     $livewireClass = $this::class;
 
-                    throw new Exception("Form configuration method [{$formName}()] is missing from Livewire component [{$livewireClass}].");
+                    throw new Exception("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
                 }
 
                 return [$form => $this->{$form}($this->makeForm())];
