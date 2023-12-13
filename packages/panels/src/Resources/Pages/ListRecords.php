@@ -15,7 +15,6 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 
 class ListRecords extends Page implements Tables\Contracts\HasTable
@@ -84,7 +83,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     public function getTitle(): string | Htmlable
     {
-        return static::$title ?? Str::headline(static::getResource()::getPluralModelLabel());
+        return static::$title ?? static::getResource()::getTitleCasePluralModelLabel();
     }
 
     protected function configureAction(Action $action): void

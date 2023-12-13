@@ -1,6 +1,7 @@
 ---
 title: Managing relationships
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Choosing the right tool for the job
 
@@ -52,6 +53,13 @@ Fieldset::make('Metadata')
 In this example, the `title`, `description` and `image` are automatically loaded from the `metadata` relationship, and saved again when the form is submitted. If the `metadata` record does not exist, it is automatically created.
 
 ## Creating a relation manager
+
+<LaracastsBanner
+    title="Relation Managers"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding relation managers to Filament resources."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/13"
+    series="rapid-laravel-development"
+/>
 
 To create a relation manager, you can use the `make:filament-relation-manager` command:
 

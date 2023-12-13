@@ -15,35 +15,37 @@
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.start') }}
 
-        <x-filament::icon-button
-            color="gray"
-            icon="heroicon-o-bars-3"
-            icon-alias="panels::topbar.open-sidebar-button"
-            icon-size="lg"
-            :label="__('filament-panels::layout.actions.sidebar.expand.label')"
-            x-cloak
-            x-data="{}"
-            x-on:click="$store.sidebar.open()"
-            x-show="! $store.sidebar.isOpen"
-            @class([
-                'lg:hidden' => (! filament()->isSidebarFullyCollapsibleOnDesktop()) || filament()->isSidebarCollapsibleOnDesktop(),
-            ])
-        />
+        @if (filament()->hasNavigation())
+            <x-filament::icon-button
+                color="gray"
+                icon="heroicon-o-bars-3"
+                icon-alias="panels::topbar.open-sidebar-button"
+                icon-size="lg"
+                :label="__('filament-panels::layout.actions.sidebar.expand.label')"
+                x-cloak
+                x-data="{}"
+                x-on:click="$store.sidebar.open()"
+                x-show="! $store.sidebar.isOpen"
+                @class([
+                    'lg:hidden' => (! filament()->isSidebarFullyCollapsibleOnDesktop()) || filament()->isSidebarCollapsibleOnDesktop(),
+                ])
+            />
 
-        <x-filament::icon-button
-            color="gray"
-            icon="heroicon-o-x-mark"
-            icon-alias="panels::topbar.close-sidebar-button"
-            icon-size="lg"
-            :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
-            x-cloak
-            x-data="{}"
-            x-on:click="$store.sidebar.close()"
-            x-show="$store.sidebar.isOpen"
-            class="lg:hidden"
-        />
+            <x-filament::icon-button
+                color="gray"
+                icon="heroicon-o-x-mark"
+                icon-alias="panels::topbar.close-sidebar-button"
+                icon-size="lg"
+                :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
+                x-cloak
+                x-data="{}"
+                x-on:click="$store.sidebar.close()"
+                x-show="$store.sidebar.isOpen"
+                class="lg:hidden"
+            />
+        @endif
 
-        @if (filament()->hasTopNavigation())
+        @if (filament()->hasTopNavigation() || (! filament()->hasNavigation()))
             <div class="me-6 hidden lg:flex">
                 @if ($homeUrl = filament()->getHomeUrl())
                     <a {{ \Filament\Support\generate_href_html($homeUrl) }}>

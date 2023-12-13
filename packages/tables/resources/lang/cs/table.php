@@ -2,9 +2,21 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Sloupce',
+
+    ],
+
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Zobrazit o :count méně',
+                'expand_list' => 'Zobrazit o :count více',
+            ],
+
             'more_list_items' => 'a 1 další|a :count další| a :count dalších',
         ],
 
@@ -20,9 +32,42 @@ return [
             'label' => 'Vybrat/odznačit položku :key pro hromadné akce.',
         ],
 
+        'bulk_select_group' => [
+            'label' => 'Vybrat/zrušit výběr skupiny :title pro hromadné akce.',
+        ],
+
         'search' => [
             'label' => 'Vyhledávání',
             'placeholder' => 'Hledat',
+            'indicator' => 'Hledat',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Shrnutí',
+
+        'subheadings' => [
+            'all' => 'Všechny :label',
+            'group' => ':group shrnutí',
+            'page' => 'Tato stránka',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Průměr',
+            ],
+
+            'count' => [
+                'label' => 'Počet',
+            ],
+
+            'sum' => [
+                'label' => 'Součet',
+            ],
+
         ],
 
     ],
@@ -41,6 +86,10 @@ return [
             'label' => 'Filtrovat',
         ],
 
+        'group' => [
+            'label' => 'Seskupit',
+        ],
+
         'open_bulk_actions' => [
             'label' => 'Otevřít panel akcí',
         ],
@@ -52,7 +101,11 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'Žádné záznamy nenalezeny',
+
+        'description' => 'Začněte vytvořením :modelu.',
+
     ],
 
     'filters' => [
@@ -74,6 +127,8 @@ return [
 
         ],
 
+        'heading' => 'Filtrovat',
+
         'indicator' => 'Aktivní filtry',
 
         'multi_select' => [
@@ -93,6 +148,30 @@ return [
             'with_trashed' => 'Včetně smazaných položek',
 
             'without_trashed' => 'Bez smazaných položek',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Seskupit podle',
+                'placeholder' => 'Seskupit podle',
+            ],
+
+            'direction' => [
+
+                'label' => 'Směr seskupení',
+
+                'options' => [
+                    'asc' => 'Vzestupně',
+                    'desc' => 'Sestupně',
+                ],
+
+            ],
 
         ],
 

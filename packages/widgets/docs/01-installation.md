@@ -20,7 +20,7 @@ Filament requires the following to run:
 Require the Widgets package using Composer:
 
 ```bash
-composer require filament/widgets:"^3.0-stable" -W
+composer require filament/widgets:"^3.1" -W
 ```
 
 ## New Laravel projects

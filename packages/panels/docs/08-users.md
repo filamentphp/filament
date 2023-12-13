@@ -58,6 +58,10 @@ class User extends Authenticatable implements FilamentUser
 }
 ```
 
+## Authorizing access to Resources
+
+See the [Authorization](resources/getting-started#authorization) section in the Resource documentation for controlling access to Resource pages and their data records.
+
 ## Setting up user avatars
 
 Out of the box, Filament uses [ui-avatars.com](https://ui-avatars.com) to generate avatars based on a user's name. However, if you user model has an `avatar_url` attribute, that will be used instead. To customize how Filament gets a user's avatar URL, you can implement the `HasAvatar` contract:

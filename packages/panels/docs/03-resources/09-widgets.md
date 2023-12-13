@@ -1,8 +1,16 @@
 ---
 title: Widgets
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Widgets"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding widgets to Filament resources."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/15"
+    series="rapid-laravel-development"
+/>
 
 Filament allows you to display widgets inside pages, below the header and above the footer.
 

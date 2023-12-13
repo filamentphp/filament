@@ -2,8 +2,16 @@
 title: Actions
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Table Actions"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding actions to Filament resource tables."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/11"
+    series="rapid-laravel-development"
+/>
 
 Filament's tables can use [Actions](../actions). They are buttons that can be added to the [end of any table row](#row-actions), or even in the [header](#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](#bulk-actions) can be used to execute code when records in the table are selected. Additionally, actions can be added to any [table column](#column-actions), such that each cell in that column is a trigger for your action.
 

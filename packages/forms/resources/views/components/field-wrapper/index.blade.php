@@ -51,7 +51,7 @@
     $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
 @endphp
 
-<div {{ $attributes->class(['fi-fo-field-wrp']) }}>
+<div data-field-wrapper {{ $attributes->class(['fi-fo-field-wrp']) }}>
     @if ($label && $labelSrOnly)
         <label for="{{ $id }}" class="sr-only">
             {{ $label }}
@@ -78,7 +78,6 @@
             >
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
-                        :error="$hasError"
                         :for="$id"
                         :is-disabled="$isDisabled"
                         :is-marked-as-required="$isMarkedAsRequired"

@@ -172,7 +172,28 @@ trait InteractsWithForms
         } catch (ValidationException $exception) {
             $this->onValidationError($exception);
 
-            $this->dispatch('expand-concealing-component');
+            $this->dispatch('form-validation-error', livewireId: $this->getId());
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param  string  $field
+     * @param  array<string, array<mixed>>  $rules
+     * @param  array<string, string>  $messages
+     * @param  array<string, string>  $attributes
+     * @param  array<string, string>  $dataOverrides
+     * @return array<string, mixed>
+     */
+    public function validateOnly($field, $rules = null, $messages = [], $attributes = [], $dataOverrides = [])
+    {
+        try {
+            return parent::validateOnly($field, $rules, $messages, $attributes, $dataOverrides);
+        } catch (ValidationException $exception) {
+            $this->onValidationError($exception);
+
+            $this->dispatch('form-validation-error', livewireId: $this->getId());
 
             throw $exception;
         }
@@ -193,27 +214,6 @@ trait InteractsWithForms
         }
 
         return $attributes;
-    }
-
-    /**
-     * @param  string  $field
-     * @param  array<string, array<mixed>>  $rules
-     * @param  array<string, string>  $messages
-     * @param  array<string, string>  $attributes
-     * @param  array<string, string>  $dataOverrides
-     * @return array<string, mixed>
-     */
-    public function validateOnly($field, $rules = null, $messages = [], $attributes = [], $dataOverrides = [])
-    {
-        try {
-            return parent::validateOnly($field, $rules, $messages, $attributes, $dataOverrides);
-        } catch (ValidationException $exception) {
-            $this->onValidationError($exception);
-
-            $this->dispatch('expand-concealing-component');
-
-            throw $exception;
-        }
     }
 
     /**
@@ -297,7 +297,7 @@ trait InteractsWithForms
                 if (! method_exists($this, $form)) {
                     $livewireClass = $this::class;
 
-                    throw new Exception("Form configuration method [{$formName}()] is missing from Livewire component [{$livewireClass}].");
+                    throw new Exception("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
                 }
 
                 return [$form => $this->{$form}($this->makeForm())];
