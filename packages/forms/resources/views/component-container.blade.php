@@ -8,8 +8,7 @@
 <x-filament::grid
     :x-data="$isRoot ? '{}' : null"
     :x-on:form-validation-error.window="
-        $isRoot ? ('
-                if ($event.detail.livewireId !== ' . Js::from($this->getId()) . ') {
+        $isRoot ? ('if ($event.detail.livewireId !== ' . Js::from($this->getId()) . ') {
                     return
                 }
 
@@ -37,8 +36,7 @@
                             }),
                         200,
                     )
-                })
-            ') : null
+                })') : null
     "
     :default="$getColumns('default')"
     :sm="$getColumns('sm')"
