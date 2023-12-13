@@ -1,8 +1,45 @@
 @php
     use Filament\Support\Enums\MaxWidth;
+    use Illuminate\Support\Js;
+
+    $isRoot = $isRoot();
 @endphp
 
 <x-filament::grid
+    :x-data="$isRoot ? '{}' : null"
+    :x-on:expand-concealing-component.window="
+        $isRoot ? ('
+                if ($event.detail.livewireId !== ' . Js::from($this->getId()) . ') {
+                    return
+                }
+
+                $nextTick(() => {
+                    error = $el.querySelector(\'[data-validation-error]\')
+
+                    if (! error) {
+                        return
+                    }
+
+                    elementToExpand = error
+
+                    while (elementToExpand) {
+                        elementToExpand.dispatchEvent(new CustomEvent(\'expand\'))
+
+                        elementToExpand = elementToExpand.parentNode
+                    }
+
+                    setTimeout(
+                        () =>
+                            error.scrollIntoView({
+                                behavior: \'smooth\',
+                                block: \'start\',
+                                inline: \'start\',
+                            }),
+                        200,
+                    )
+                })
+            ') : null
+    "
     :default="$getColumns('default')"
     :sm="$getColumns('sm')"
     :md="$getColumns('md')"
