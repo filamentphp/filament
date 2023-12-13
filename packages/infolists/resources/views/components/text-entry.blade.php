@@ -10,6 +10,7 @@
     @php
         $alignment = $getAlignment();
         $isBadge = $isBadge();
+        $isBulleted = $isBulleted();
         $iconPosition = $getIconPosition();
         $isListWithLineBreaks = $isListWithLineBreaks();
         $isLimitedListExpandable = $isLimitedListExpandable();
@@ -66,24 +67,34 @@
             >
                 <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
                     @class([
-                        'list-inside list-disc' => $isBulleted(),
-                        'flex gap-1.5' => $isBadge,
+                        'flex' => ! $isBulleted,
+                        'flex-col' => (! $isBulleted) && $isListWithLineBreaks,
+                        'list-inside list-disc' => $isBulleted,
+                        'gap-1.5' => $isBadge,
                         'flex-wrap' => $isBadge && (! $isListWithLineBreaks),
-                        'flex-col' => $isBadge && $isListWithLineBreaks,
+                        match ($alignment) {
+                            Alignment::Start => 'text-start',
+                            Alignment::Center => 'text-center',
+                            Alignment::End => 'text-end',
+                            Alignment::Left => 'text-left',
+                            Alignment::Right => 'text-right',
+                            Alignment::Justify, Alignment::Between => 'text-justify',
+                            default => $alignment,
+                        },
                         match ($alignment) {
                             Alignment::Start, Alignment::Left => 'justify-start',
                             Alignment::Center => 'justify-center',
                             Alignment::End, Alignment::Right => 'justify-end',
                             Alignment::Between, Alignment::Justify => 'justify-between',
-                            default => $alignment,
-                        } => ($isListWithLineBreaks && (! $isBadge)) || ((! $isListWithLineBreaks) && $isBadge),
+                            default => null,
+                        } => $isBulleted || (! $isListWithLineBreaks),
                         match ($alignment) {
                             Alignment::Start, Alignment::Left => 'items-start',
                             Alignment::Center => 'items-center',
                             Alignment::End, Alignment::Right => 'items-end',
                             Alignment::Between, Alignment::Justify => 'items-stretch',
-                            default => $alignment,
-                        } => $isListWithLineBreaks && $isBadge,
+                            default => null,
+                        } => $isListWithLineBreaks && (! $isBulleted),
                     ])
                     @if ($isListWithLineBreaks && $isLimitedListExpandable)
                         x-data="{ isLimited: true }"
@@ -135,7 +146,6 @@
 
                             <{{ $isListWithLineBreaks ? 'li' : 'div' }}
                                 @if ($itemIsCopyable)
-                                    x-data="{}"
                                     x-on:click="
                                         window.navigator.clipboard.writeText(@js($copyableState))
                                         $tooltip(@js($copyMessage), {
@@ -143,13 +153,18 @@
                                             duration: @js($copyMessageDuration),
                                         })
                                     "
-                                    class="cursor-pointer max-w-max"
                                 @endif
                                 @if ($isListWithLineBreaks && ($loop->iteration > $listLimit))
                                     x-cloak
                                     x-show="! isLimited"
                                     x-transition
                                 @endif
+                                @class([
+                                    'flex' => ! $isBulleted,
+                                    'max-w-max' => ! ($isBulleted || $isBadge),
+                                    'w-max' => $isBadge,
+                                    'cursor-pointer' => $itemIsCopyable,
+                                ])
                             >
                                 @if ($isBadge)
                                     <x-filament::badge

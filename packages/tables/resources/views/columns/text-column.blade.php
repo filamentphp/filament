@@ -75,19 +75,34 @@
 
         <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
             @class([
-                'flex flex-wrap items-center' => ! $isListWithLineBreaks,
-                'gap-1.5' => $isBadge,
+                'flex' => ! $isBulleted,
+                'flex-col' => (! $isBulleted) && $isListWithLineBreaks,
                 'list-inside list-disc' => $isBulleted,
-                'whitespace-normal' => $canWrap,
+                'gap-1.5' => $isBadge,
+                'flex-wrap' => $isBadge && (! $isListWithLineBreaks),
                 match ($alignment) {
-                    Alignment::Start => 'justify-start text-start',
-                    Alignment::Center => 'justify-center text-center',
-                    Alignment::End => 'justify-end text-end',
-                    Alignment::Justify, Alignment::Between => 'justify-between text-justify',
-                    Alignment::Left => 'justify-start text-left',
-                    Alignment::Right => 'justify-end text-right',
+                    Alignment::Start => 'text-start',
+                    Alignment::Center => 'text-center',
+                    Alignment::End => 'text-end',
+                    Alignment::Left => 'text-left',
+                    Alignment::Right => 'text-right',
+                    Alignment::Justify, Alignment::Between => 'text-justify',
                     default => $alignment,
                 },
+                match ($alignment) {
+                    Alignment::Start, Alignment::Left => 'justify-start',
+                    Alignment::Center => 'justify-center',
+                    Alignment::End, Alignment::Right => 'justify-end',
+                    Alignment::Between, Alignment::Justify => 'justify-between',
+                    default => null,
+                } => $isBulleted || (! $isListWithLineBreaks),
+                match ($alignment) {
+                    Alignment::Start, Alignment::Left => 'items-start',
+                    Alignment::Center => 'items-center',
+                    Alignment::End, Alignment::Right => 'items-end',
+                    Alignment::Between, Alignment::Justify => 'items-stretch',
+                    default => null,
+                } => $isListWithLineBreaks && (! $isBulleted),
             ])
             @if ($isListWithLineBreaks && $isLimitedListExpandable)
                 x-data="{ isLimited: true }"
@@ -142,7 +157,7 @@
                         @endif
                         @class([
                             'flex' => ! $isBulleted,
-                            'max-w-max' => ! $isBadge,
+                            'max-w-max' => ! ($isBulleted || $isBadge),
                             'w-max' => $isBadge,
                             'cursor-pointer' => $itemIsCopyable,
                         ])
@@ -181,7 +196,7 @@
                                         'group-hover/item:underline group-focus-visible/item:underline' => $url,
                                         match ($size) {
                                             TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
-                                            TextColumnSize::Small, 'sm', null => 'text-sm',
+                                            TextColumnSize::Small, 'sm', null => 'text-sm leading-6',
                                             TextColumnSize::Medium, 'base', 'md' => 'text-base',
                                             TextColumnSize::Large, 'lg' => 'text-lg',
                                             default => $size,
