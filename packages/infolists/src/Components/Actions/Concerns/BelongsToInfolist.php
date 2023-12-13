@@ -9,23 +9,23 @@ use Livewire\Component as LivewireComponent;
 
 trait BelongsToInfolist
 {
-    protected ?Component $infolistComponent = null;
+    protected ?Component $component = null;
 
     public function component(?Component $component): static
     {
-        $this->infolistComponent = $component;
+        $this->component = $component;
 
         return $this;
     }
 
-    public function getInfolistComponent(): ?Component
+    public function getComponent(): ?Component
     {
-        return $this->infolistComponent;
+        return $this->component;
     }
 
     public function getLivewire(): LivewireComponent
     {
-        $livewire = $this->getInfolistComponent()->getInfolist()->getLivewire();
+        $livewire = $this->getComponent()->getInfolist()->getLivewire();
 
         if (! $livewire) {
             throw new Exception('An infolist tried to mount an action but was not mounted to Livewire.');
@@ -36,6 +36,6 @@ trait BelongsToInfolist
 
     public function getRecord(): ?Model
     {
-        return $this->getInfolistComponent()->getInfolist()->getRecord();
+        return $this->getComponent()->getInfolist()->getRecord();
     }
 }

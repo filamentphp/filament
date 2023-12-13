@@ -7,7 +7,7 @@ return [
         'actions' => [
 
             'save' => [
-                'label' => 'Mentés',
+                'label' => 'Változtatások mentése',
             ],
 
         ],

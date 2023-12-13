@@ -50,13 +50,17 @@ class User extends Authenticatable implements FilamentUser
     public function canAccessPanel(Panel $panel): bool
     {
         if ($panel->getId() === 'admin') {
-            return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail()
+            return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
         }
 
         return true;
     }
 }
 ```
+
+## Authorizing access to Resources
+
+See the [Authorization](resources/getting-started#authorization) section in the Resource documentation for controlling access to Resource pages and their data records.
 
 ## Setting up user avatars
 

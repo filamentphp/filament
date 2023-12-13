@@ -28,12 +28,13 @@ class ListUsers extends Component
 <x-filament::pagination :paginator="$users" />
 ```
 
-Alternatively, you can use simple pagination, which will just render a "previous" and "next" button:
+Alternatively, you can use simple pagination or cursor pagination, which will just render a "previous" and "next" button:
 
 ```php
 use App\Models\User;
 
 User::query()->simplePaginate(10)
+User::query()->cursorPaginate(10)
 ```
 
 ## Allowing the user to customize the number of items per page

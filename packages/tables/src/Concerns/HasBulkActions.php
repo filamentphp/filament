@@ -181,19 +181,21 @@ trait HasBulkActions
             return false;
         }
 
-        return $action->getModalDescription() ||
-            $action->getModalContent() ||
-            $action->getModalContentFooter() ||
+        return $action->hasModalDescription() ||
+            $action->hasModalContent() ||
+            $action->hasModalContentFooter() ||
             $action->getInfolist() ||
             $this->mountedTableBulkActionHasForm();
     }
 
-    public function unmountTableBulkAction(): void
+    public function unmountTableBulkAction(bool $shouldCloseModal = true): void
     {
         $this->mountedTableBulkAction = null;
         $this->selectedTableRecords = [];
 
-        $this->closeTableBulkActionModal();
+        if ($shouldCloseModal) {
+            $this->closeTableBulkActionModal();
+        }
     }
 
     public function mountedTableBulkActionHasForm(): bool
@@ -300,11 +302,11 @@ trait HasBulkActions
         }
 
         if ($this->getTable()->selectsCurrentPageOnly()) {
-            return $this->records->count();
+            return $this->cachedTableRecords->count();
         }
 
-        if ($this->records instanceof LengthAwarePaginator) {
-            return $this->records->total();
+        if ($this->cachedTableRecords instanceof LengthAwarePaginator) {
+            return $this->cachedTableRecords->total();
         }
 
         return $this->getFilteredTableQuery()->count();

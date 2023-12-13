@@ -14,3 +14,17 @@ CheckboxColumn::make('is_admin')
 ```
 
 <AutoScreenshot name="tables/columns/checkbox/simple" alt="Checkbox column" version="3.x" />
+
+## Lifecycle hooks
+
+Hooks may be used to execute code at various points within the checkbox's lifecycle:
+
+```php
+CheckboxColumn::make()
+    ->beforeStateUpdated(function ($record, $state) {
+        // Runs before the state is saved to the database.
+    })
+    ->afterStateUpdated(function ($record, $state) {
+        // Runs after the state is saved to the database.
+    })
+```

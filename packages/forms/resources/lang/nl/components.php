@@ -27,11 +27,11 @@ return [
             ],
 
             'move_down' => [
-                'label' => 'Naar beneden',
+                'label' => 'Omlaag verplaatsen',
             ],
 
             'move_up' => [
-                'label' => 'Naar boven',
+                'label' => 'Omhoog verplaatsen',
             ],
 
             'collapse' => [
@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Het bewerken van SVG-bestanden wordt niet aanbevolen, omdat dit kan leiden tot kwaliteitsverlies bij het schalen.\n Weet je zeker dat je door wilt gaan?',
+                    'disabled' => 'Het bewerken van SVG-bestanden is uitgeschakeld omdat dit kan leiden tot kwaliteitsverlies bij het schalen.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -241,12 +250,25 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Ja',
+            'false' => 'Nee',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
 
             'add' => [
                 'label' => 'Toevoegen aan :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Invoegen',
             ],
 
             'delete' => [
@@ -262,11 +284,11 @@ return [
             ],
 
             'move_down' => [
-                'label' => 'Naar beneden',
+                'label' => 'Omlaag verplaatsen',
             ],
 
             'move_up' => [
-                'label' => 'Naar boven',
+                'label' => 'Omhoog verplaatsen',
             ],
 
             'collapse' => [

@@ -2,7 +2,7 @@
 
 return [
 
-    'confirmation' => 'Biztos, hogy végre akarod hajtani?',
+    'confirmation' => 'Biztos, hogy ezt akarod csinálni?',
 
     'actions' => [
 
@@ -15,7 +15,7 @@ return [
         ],
 
         'submit' => [
-            'label' => 'Végrehajtás',
+            'label' => 'Beküldés',
         ],
 
     ],

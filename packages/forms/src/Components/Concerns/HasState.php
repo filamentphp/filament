@@ -17,7 +17,10 @@ trait HasState
 {
     protected ?Closure $afterStateHydrated = null;
 
-    protected ?Closure $afterStateUpdated = null;
+    /**
+     * @var array<Closure>
+     */
+    protected array $afterStateUpdated = [];
 
     protected ?Closure $beforeStateDehydrated = null;
 
@@ -27,6 +30,8 @@ trait HasState
 
     protected ?Closure $mutateDehydratedStateUsing = null;
 
+    protected ?Closure $mutateStateForValidationUsing = null;
+
     protected bool $hasDefaultState = false;
 
     protected bool | Closure $isDehydrated = true;
@@ -35,6 +40,16 @@ trait HasState
 
     protected string $cachedAbsoluteStatePath;
 
+    /**
+     * @var string | array<string> | Closure | null
+     */
+    protected string | array | Closure | null $stripCharacters = null;
+
+    /**
+     * @var array<string>
+     */
+    protected array $cachedStripCharacters;
+
     public function afterStateHydrated(?Closure $callback): static
     {
         $this->afterStateHydrated = $callback;
@@ -42,9 +57,16 @@ trait HasState
         return $this;
     }
 
+    public function clearAfterStateUpdatedHooks(): static
+    {
+        $this->afterStateUpdated = [];
+
+        return $this;
+    }
+
     public function afterStateUpdated(?Closure $callback): static
     {
-        $this->afterStateUpdated = $callback;
+        $this->afterStateUpdated[] = $callback;
 
         return $this;
     }
@@ -67,25 +89,26 @@ trait HasState
 
     public function callAfterStateUpdated(): static
     {
-        $callback = $this->afterStateUpdated;
+        foreach ($this->afterStateUpdated as $callback) {
+            $callbackId = spl_object_id($callback);
 
-        if (! $callback) {
-            return $this;
+            if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $callbackId)) {
+                continue;
+            }
+
+            $this->callAfterStateUpdatedHook($callback);
+
+            store($this)->push('executedAfterStateUpdatedCallbacks', value: $callbackId, iKey: $callbackId);
         }
-
-        $callbackId = spl_object_id($callback);
-
-        if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $callbackId)) {
-            return $this;
-        }
-
-        $this->evaluate($callback, [
-            'old' => $this->getOldState(),
-        ]);
-
-        store($this)->push('executedAfterStateUpdatedCallbacks', value: $callbackId, iKey: $callbackId);
 
         return $this;
+    }
+
+    protected function callAfterStateUpdatedHook(Closure $hook): void
+    {
+        $this->evaluate($hook, [
+            'old' => $this->getOldState(),
+        ]);
     }
 
     public function callBeforeStateDehydrated(): static
@@ -220,7 +243,7 @@ trait HasState
 
         $defaultState = $this->getDefaultState();
 
-        $this->state($this->getDefaultState());
+        $this->state($defaultState);
 
         Arr::set($hydratedDefaultState, $statePath, $defaultState);
     }
@@ -238,20 +261,72 @@ trait HasState
 
     public function mutateDehydratedState(mixed $state): mixed
     {
+        $state = $this->stripCharactersFromState($state);
+
+        if (! $this->mutateDehydratedStateUsing) {
+            return $state;
+        }
+
         return $this->evaluate(
             $this->mutateDehydratedStateUsing,
             ['state' => $state],
         );
     }
 
+    public function mutateStateForValidation(mixed $state): mixed
+    {
+        $state = $this->stripCharactersFromState($state);
+
+        if (! $this->mutateStateForValidationUsing) {
+            return $state;
+        }
+
+        return $this->evaluate(
+            $this->mutateStateForValidationUsing,
+            ['state' => $state],
+        );
+    }
+
+    protected function stripCharactersFromState(mixed $state): mixed
+    {
+        if (! is_string($state)) {
+            return $state;
+        }
+
+        $stripCharacters = $this->getStripCharacters();
+
+        if (empty($stripCharacters)) {
+            return $state;
+        }
+
+        return str_replace($stripCharacters, '', $state);
+    }
+
     public function mutatesDehydratedState(): bool
     {
-        return $this->mutateDehydratedStateUsing instanceof Closure;
+        return ($this->mutateDehydratedStateUsing instanceof Closure) || $this->hasStripCharacters();
+    }
+
+    public function mutatesStateForValidation(): bool
+    {
+        return ($this->mutateStateForValidationUsing instanceof Closure) || $this->hasStripCharacters();
+    }
+
+    public function hasStripCharacters(): bool
+    {
+        return filled($this->getStripCharacters());
     }
 
     public function mutateDehydratedStateUsing(?Closure $callback): static
     {
         $this->mutateDehydratedStateUsing = $callback;
+
+        return $this;
+    }
+
+    public function mutateStateForValidationUsing(?Closure $callback): static
+    {
+        $this->mutateStateForValidationUsing = $callback;
 
         return $this;
     }
@@ -385,5 +460,23 @@ trait HasState
     protected function flushCachedAbsoluteStatePath(): void
     {
         unset($this->cachedAbsoluteStatePath);
+    }
+
+    /**
+     * @param  string | array<string> | Closure | null  $characters
+     */
+    public function stripCharacters(string | array | Closure | null $characters): static
+    {
+        $this->stripCharacters = $characters;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getStripCharacters(): array
+    {
+        return $this->cachedStripCharacters ??= Arr::wrap($this->evaluate($this->stripCharacters));
     }
 }

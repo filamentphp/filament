@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-tags-plugin:"^3.0-stable" -W
+composer require filament/spatie-laravel-tags-plugin:"^3.1" -W
 ```
 
 If you haven't already done so, you need to publish the migration to create the tags table:

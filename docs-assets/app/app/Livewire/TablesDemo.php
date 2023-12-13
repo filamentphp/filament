@@ -41,6 +41,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -360,6 +361,17 @@ class TablesDemo extends Component implements HasForms, HasTable
                 TextColumn::make('email')
                     ->icon('heroicon-m-envelope')
                     ->iconPosition(IconPosition::After),
+            ]);
+    }
+
+    public function textColumnIconColor(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email')
+                    ->icon('heroicon-m-envelope')
+                    ->iconColor('primary'),
             ]);
     }
 
@@ -709,8 +721,10 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->filters([
                 Filter::make('dummy')
                     ->indicateUsing(fn () => [
-                        'one' => 'Posted by administrator',
-                        'two' => 'Less than 1 year old',
+                        Indicator::make('Posted by administrator')
+                            ->removeField('one'),
+                        Indicator::make('Less than 1 year old')
+                            ->removeField('two'),
                     ]),
             ]);
     }

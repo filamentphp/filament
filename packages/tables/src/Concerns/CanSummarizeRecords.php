@@ -86,7 +86,7 @@ trait CanSummarizeRecords
             $selects[] = "{$group} as \"{$groupSelectAlias}\"";
 
             if (filled($groupingRelationshipName = $this->getTableGrouping()?->getRelationshipName())) {
-                $joins = (new RelationshipJoiner())->getLeftJoinsForRelationship(
+                $joins = app(RelationshipJoiner::class)->getLeftJoinsForRelationship(
                     query: $queryToJoin,
                     relationship: $groupingRelationshipName,
                 );

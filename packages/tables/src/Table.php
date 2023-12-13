@@ -23,6 +23,7 @@ class Table extends ViewComponent
     use Table\Concerns\HasColumns;
     use Table\Concerns\HasContent;
     use Table\Concerns\HasEmptyState;
+    use Table\Concerns\HasFilterIndicators;
     use Table\Concerns\HasFilters;
     use Table\Concerns\HasHeader;
     use Table\Concerns\HasHeaderActions;

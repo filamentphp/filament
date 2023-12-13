@@ -36,14 +36,14 @@ class TrashedFilter extends TernaryFilter
 
         $this->indicateUsing(function (array $state): array {
             if ($state['value'] ?? null) {
-                return [$this->getTrueLabel()];
+                return [Indicator::make($this->getTrueLabel())];
             }
 
             if (blank($state['value'] ?? null)) {
                 return [];
             }
 
-            return [$this->getFalseLabel()];
+            return [Indicator::make($this->getFalseLabel())];
         });
     }
 }

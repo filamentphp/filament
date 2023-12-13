@@ -19,7 +19,13 @@ class Filter extends BaseFilter
                 return [];
             }
 
-            return [$this->getIndicator()];
+            $indicator = $this->getIndicator();
+
+            if (! $indicator instanceof Indicator) {
+                $indicator = Indicator::make($indicator);
+            }
+
+            return [$indicator];
         });
     }
 

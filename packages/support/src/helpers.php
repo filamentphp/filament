@@ -133,14 +133,25 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
     }
 }
 
+if (! function_exists('Filament\Support\is_app_url')) {
+    function is_app_url(string $url): bool
+    {
+        return str($url)->startsWith(request()->root());
+    }
+}
+
 if (! function_exists('Filament\Support\generate_href_html')) {
     function generate_href_html(?string $url, bool $shouldOpenInNewTab = false): Htmlable
     {
+        if (blank($url)) {
+            return new HtmlString('');
+        }
+
         $html = "href=\"{$url}\"";
 
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
-        } elseif (FilamentView::hasSpaMode() && str($url)->startsWith(request()->root())) {
+        } elseif (FilamentView::hasSpaMode() && is_app_url($url)) {
             $html .= ' wire:navigate';
         }
 
@@ -176,7 +187,11 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
             $column = "{$column} collate {$collation}";
         }
 
-        if ($isSearchForcedCaseInsensitive || filled($collation)) {
+        if (
+            str($column)->contains('(') || // This checks if the column name probably contains a raw expression like `json_extract()`.
+            $isSearchForcedCaseInsensitive ||
+            filled($collation)
+        ) {
             return new Expression($column);
         }
 

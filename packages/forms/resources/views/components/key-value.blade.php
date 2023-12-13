@@ -1,30 +1,43 @@
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $debounce = $getLiveDebounce();
-        $isAddable = $isAddable();
-        $isDeletable = $isDeletable();
-        $isDisabled = $isDisabled();
-        $isReorderable = $isReorderable();
-        $statePath = $getStatePath();
-    @endphp
+@php
+    use Filament\Support\Facades\FilamentView;
 
-    <div
-        {{
-            $attributes
-                ->merge($getExtraAttributes(), escape: false)
-                ->class([
-                    'fi-fo-key-value rounded-lg shadow-sm ring-1 transition duration-75 focus-within:ring-2',
-                    'bg-white dark:bg-white/5' => ! $isDisabled,
-                    'bg-gray-50 dark:bg-transparent' => $isDisabled,
-                    'ring-gray-950/10 focus-within:ring-primary-600 dark:focus-within:ring-primary-500' => ! $errors->has($statePath),
-                    'dark:ring-white/20' => (! $errors->has($statePath)) && (! $isDisabled),
-                    'dark:ring-white/10' => (! $errors->has($statePath)) && $isDisabled,
-                    'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-500 dark:focus-within:ring-danger-500' => $errors->has($statePath),
-                ])
-        }}
+    $debounce = $getLiveDebounce();
+    $hasInlineLabel = $hasInlineLabel();
+    $isAddable = $isAddable();
+    $isDeletable = $isDeletable();
+    $isDisabled = $isDisabled();
+    $isReorderable = $isReorderable();
+    $statePath = $getStatePath();
+@endphp
+
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    :has-inline-label="$hasInlineLabel"
+>
+    <x-slot
+        name="label"
+        @class([
+            'sm:pt-1.5' => $hasInlineLabel,
+        ])
+    >
+        {{ $getLabel() }}
+    </x-slot>
+
+    <x-filament::input.wrapper
+        :disabled="$isDisabled"
+        :valid="! $errors->has($statePath)"
+        :attributes="
+            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+                ->class(['fi-fo-key-value'])
+        "
     >
         <div
-            ax-load
+            @if (FilamentView::hasSpaMode())
+                ax-load="visible"
+            @else
+                ax-load
+            @endif
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms') }}"
             wire:ignore
             x-data="keyValueFormComponent({
@@ -76,8 +89,9 @@
 
                 <tbody
                     @if ($isReorderable)
-                        x-on:end="reorderRows($event)"
+                        x-on:end.stop="reorderRows($event)"
                         x-sortable
+                        data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                     @endif
                     class="divide-y divide-gray-200 dark:divide-white/5"
                 >
@@ -153,5 +167,5 @@
                 </div>
             @endif
         </div>
-    </div>
+    </x-filament::input.wrapper>
 </x-dynamic-component>

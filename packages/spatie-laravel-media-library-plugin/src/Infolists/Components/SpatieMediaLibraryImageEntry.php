@@ -2,23 +2,25 @@
 
 namespace Filament\Infolists\Components;
 
+use Closure;
+use Illuminate\Support\Arr;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
 class SpatieMediaLibraryImageEntry extends ImageEntry
 {
-    protected ?string $collection = null;
+    protected string | Closure | null $collection = null;
 
-    protected string $conversion = '';
+    protected string | Closure | null $conversion = null;
 
-    public function collection(string $collection): static
+    public function collection(string | Closure | null $collection): static
     {
         $this->collection = $collection;
 
         return $this;
     }
 
-    public function conversion(string $conversion): static
+    public function conversion(string | Closure | null $conversion): static
     {
         $this->conversion = $conversion;
 
@@ -27,12 +29,12 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
 
     public function getCollection(): ?string
     {
-        return $this->collection ?? 'default';
+        return $this->evaluate($this->collection) ?? 'default';
     }
 
-    public function getConversion(): string
+    public function getConversion(): ?string
     {
-        return $this->conversion ?? '';
+        return $this->evaluate($this->conversion);
     }
 
     public function getImageUrl(?string $state = null): ?string
@@ -56,18 +58,20 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             return null;
         }
 
+        $conversion = $this->getConversion();
+
         if ($this->getVisibility() === 'private') {
             try {
                 return $media->getTemporaryUrl(
                     now()->addMinutes(5),
-                    $this->getConversion(),
+                    $conversion ?? '',
                 );
             } catch (Throwable $exception) {
                 // This driver does not support creating temporary URLs.
             }
         }
 
-        return $media->getAvailableUrl([$this->getConversion()]);
+        return $media->getAvailableUrl(Arr::wrap($conversion));
     }
 
     /**

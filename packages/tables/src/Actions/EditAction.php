@@ -4,6 +4,7 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -32,7 +33,7 @@ class EditAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::edit.single.notifications.saved.title'));
 
-        $this->icon('heroicon-m-pencil-square');
+        $this->icon(FilamentIcon::resolve('actions::edit-action') ?? 'heroicon-m-pencil-square');
 
         $this->fillForm(function (Model $record, Table $table): array {
             if ($translatableContentDriver = $table->makeTranslatableContentDriver()) {
@@ -55,11 +56,17 @@ class EditAction extends Action
                 $translatableContentDriver = $table->makeTranslatableContentDriver();
 
                 if ($relationship instanceof BelongsToMany) {
+                    $pivot = $record->{$relationship->getPivotAccessor()};
+
                     $pivotColumns = $relationship->getPivotColumns();
                     $pivotData = Arr::only($data, $pivotColumns);
 
                     if (count($pivotColumns)) {
-                        $record->{$relationship->getPivotAccessor()}->update($pivotData);
+                        if ($translatableContentDriver) {
+                            $translatableContentDriver->updateRecord($pivot, $pivotData);
+                        } else {
+                            $pivot->update($pivotData);
+                        }
                     }
 
                     $data = Arr::except($data, $pivotColumns);

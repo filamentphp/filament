@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Associera',
+        'label' => 'Koppla',
 
         'modal' => [
 
-            'heading' => 'Associera :label',
+            'heading' => 'Koppla :label',
 
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Rader',
+                    'label' => 'Objekt',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Associera',
+                    'label' => 'Koppla',
                 ],
 
                 'associate_another' => [
-                    'label' => 'Associera & associera en till',
+                    'label' => 'Koppla & koppla en till',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'associated' => [
-                'title' => 'Associerad',
+                'title' => 'Kopplades',
             ],
 
         ],

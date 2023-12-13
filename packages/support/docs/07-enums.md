@@ -42,7 +42,7 @@ enum Status: string implements HasLabel
 
 ### Using the enum label with form field options
 
-The `HasLabel` interface can be used to generate an array of options from an enum, where the enum's value is the key and the enum's label is the value. This applies to Form Builder fields like [`Select`](../forms/fields/select) and [`CheckboxList`](../forms/fields/checkbox-list), as well as the Table Builder's [`SelectColumn`](../tables/columns/select) and [`SelectFilter`](../tables/filters#select-filters):
+The `HasLabel` interface can be used to generate an array of options from an enum, where the enum's value is the key and the enum's label is the value. This applies to Form Builder fields like [`Select`](../forms/fields/select) and [`CheckboxList`](../forms/fields/checkbox-list), as well as the Table Builder's [`SelectColumn`](../tables/columns/select) and [`SelectFilter`](../tables/filters/select):
 
 ```php
 use Filament\Forms\Components\CheckboxList;

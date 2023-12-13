@@ -1,4 +1,6 @@
 @php
+    use Filament\Support\Facades\FilamentView;
+
     $color = $this->getColor();
     $heading = $this->getHeading();
     $description = $this->getDescription();
@@ -12,7 +14,7 @@
                 <x-filament::input.wrapper
                     inline-prefix
                     wire:target="filter"
-                    class="-my-2"
+                    class="w-max sm:-my-2"
                 >
                     <x-filament::input.select
                         inline-prefix
@@ -34,7 +36,11 @@
             @endif
         >
             <div
-                ax-load
+                @if (FilamentView::hasSpaMode())
+                    ax-load="visible"
+                @else
+                    ax-load
+                @endif
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                 wire:ignore
                 x-data="chart({
@@ -48,12 +54,6 @@
                         'gray' => 'fi-color-gray',
                         default => 'fi-color-custom',
                     },
-                ])
-                @style([
-                    \Filament\Support\get_color_css_variables(
-                        $color,
-                        shades: [50, 400, 500],
-                    ) => $color !== 'gray',
                 ])
             >
                 <canvas
@@ -71,6 +71,13 @@
                             default => 'text-custom-50 dark:text-custom-400/10',
                         },
                     ])
+                    @style([
+                        \Filament\Support\get_color_css_variables(
+                            $color,
+                            shades: [50, 400],
+                            alias: 'widgets::chart-widget.background',
+                        ) => $color !== 'gray',
+                    ])
                 ></span>
 
                 <span
@@ -80,6 +87,13 @@
                             'gray' => 'text-gray-400',
                             default => 'text-custom-500 dark:text-custom-400',
                         },
+                    ])
+                    @style([
+                        \Filament\Support\get_color_css_variables(
+                            $color,
+                            shades: [400, 500],
+                            alias: 'widgets::chart-widget.border',
+                        ) => $color !== 'gray',
                     ])
                 ></span>
 

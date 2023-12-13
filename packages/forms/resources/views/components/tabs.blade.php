@@ -1,4 +1,6 @@
 @php
+    use Filament\Forms\Components\Tabs\Tab;
+
     $isContained = $isContained();
 @endphp
 
@@ -6,15 +8,13 @@
     wire:ignore.self
     x-cloak
     x-data="{
-        tab: null,
-
-        init: function () {
-            this.$watch('tab', () => this.updateQueryString())
-
-            this.tab = this.getTabs()[@js($getActiveTab()) - 1]
-        },
+        tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
 
         getTabs: function () {
+            if (! this.$refs.tabsData) {
+                return []
+            }
+
             return JSON.parse(this.$refs.tabsData.value)
         },
 
@@ -29,6 +29,31 @@
             history.pushState(null, document.title, url.toString())
         },
     }"
+    x-init="
+        $watch('tab', () => updateQueryString())
+
+        const tabs = getTabs()
+
+        if (! tab || ! tabs.includes(tab)) {
+            tab = tabs[@js($getActiveTab()) - 1]
+        }
+
+        Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
+            succeed(({ snapshot, effect }) => {
+                $nextTick(() => {
+                    if (component.id !== @js($this->getId())) {
+                        return
+                    }
+
+                    const tabs = getTabs()
+
+                    if (! tabs.includes(tab)) {
+                        tab = tabs[@js($getActiveTab()) - 1]
+                    }
+                })
+            })
+        })
+    "
     {{
         $attributes
             ->merge([
@@ -47,8 +72,8 @@
         type="hidden"
         value="{{
             collect($getChildComponentContainer()->getComponents())
-                ->filter(static fn (\Filament\Forms\Components\Tabs\Tab $tab): bool => $tab->isVisible())
-                ->map(static fn (\Filament\Forms\Components\Tabs\Tab $tab) => $tab->getId())
+                ->filter(static fn (Tab $tab): bool => $tab->isVisible())
+                ->map(static fn (Tab $tab) => $tab->getId())
                 ->values()
                 ->toJson()
         }}"
@@ -64,6 +89,7 @@
             <x-filament::tabs.item
                 :alpine-active="'tab === \'' . $tabId . '\''"
                 :badge="$tab->getBadge()"
+                :badge-color="$tab->getBadgeColor()"
                 :icon="$tab->getIcon()"
                 :icon-position="$tab->getIconPosition()"
                 :x-on:click="'tab = \'' . $tabId . '\''"

@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Koppla loss',
+        'label' => 'Frånkoppla',
 
         'modal' => [
 
-            'heading' => 'Koppla loss :label',
+            'heading' => 'Frånkoppla :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Koppla loss',
+                    'label' => 'Frånkoppla',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Koppling släppt',
+                'title' => 'Frånkopplades',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Koppla loss valda',
+        'label' => 'Frånkoppla valda',
 
         'modal' => [
 
-            'heading' => 'Koppla loss valda :label',
+            'heading' => 'Frånkoppla valda :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Koppla loss valda',
+                    'label' => 'Frånkoppla',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Koppling släppt',
+                'title' => 'Frånkopplades',
             ],
 
         ],

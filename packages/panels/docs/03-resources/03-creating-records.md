@@ -330,6 +330,26 @@ class CreateCategory extends CreateRecord
 }
 ```
 
+## Importing resource records
+
+Filament includes an `ImportAction` that you can add to the `getHeaderActions()` of the [List page](listing-records). It allows users to upload a CSV of data to import into the resource:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions;
+
+protected function getHeaderActions(): array
+{
+    return [
+        Actions\ImportAction::make()
+            ->importer(ProductImporter::class),
+        Actions\CreateAction::make(),
+    ];
+}
+```
+
+The "importer" class [needs to be created](../../actions/prebuilt-actions/import#creating-an-importer) to tell Filament how to import each row of the CSV. You can learn everything about the `ImportAction` in the [Actions documentation](../../actions/prebuilt-actions/import).
+
 ## Custom view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:

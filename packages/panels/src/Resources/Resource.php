@@ -10,6 +10,7 @@ use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Infolists\Infolist;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\SubNavigationPosition;
 use Filament\Panel;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
@@ -63,6 +64,8 @@ abstract class Resource
 
     protected static ?string $navigationGroup = null;
 
+    protected static ?string $navigationParentItem = null;
+
     protected static ?string $navigationIcon = null;
 
     protected static ?string $activeNavigationIcon = null;
@@ -86,6 +89,8 @@ abstract class Resource
 
     protected static ?string $slug = null;
 
+    protected static bool $isScopedToTenant = true;
+
     protected static ?string $tenantOwnershipRelationshipName = null;
 
     protected static ?string $tenantRelationshipName = null;
@@ -107,6 +112,10 @@ abstract class Resource
     protected static bool $shouldSkipAuthorization = false;
 
     protected static ?bool $isGlobalSearchForcedCaseInsensitive = null;
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
+
+    protected static bool $hasTitleCaseModelLabel = true;
 
     public static function form(Form $form): Form
     {
@@ -140,6 +149,7 @@ abstract class Resource
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
+                ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*'))
@@ -147,6 +157,11 @@ abstract class Resource
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
+    }
+
+    public static function getSubNavigationPosition(): SubNavigationPosition
+    {
+        return static::$subNavigationPosition;
     }
 
     public static function table(Table $table): Table
@@ -301,14 +316,17 @@ abstract class Resource
 
     public static function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? Str::headline(static::getPluralModelLabel());
+        return static::$breadcrumb ?? static::getTitleCasePluralModelLabel();
     }
 
     public static function getEloquentQuery(): Builder
     {
         $query = static::getModel()::query();
 
-        if ($tenant = Filament::getTenant()) {
+        if (
+            static::isScopedToTenant() &&
+            ($tenant = Filament::getTenant())
+        ) {
             static::scopeEloquentQueryToTenant($query, $tenant);
         }
 
@@ -375,12 +393,30 @@ abstract class Resource
 
     public static function getGlobalSearchResultUrl(Model $record): ?string
     {
-        if (static::hasPage('edit') && static::canEdit($record)) {
+        $canEdit = static::canEdit($record);
+
+        if (static::hasPage('edit') && $canEdit) {
             return static::getUrl('edit', ['record' => $record]);
         }
 
-        if (static::hasPage('view') && static::canView($record)) {
+        $canView = static::canView($record);
+
+        if (static::hasPage('view') && $canView) {
             return static::getUrl('view', ['record' => $record]);
+        }
+
+        if ($canEdit) {
+            return static::getUrl(parameters: [
+                'tableAction' => 'edit',
+                'tableActionRecord' => $record,
+            ]);
+        }
+
+        if ($canView) {
+            return static::getUrl(parameters: [
+                'tableAction' => 'view',
+                'tableActionRecord' => $record,
+            ]);
         }
 
         return null;
@@ -436,6 +472,15 @@ abstract class Resource
         return static::$modelLabel ?? static::getLabel() ?? get_model_label(static::getModel());
     }
 
+    public static function getTitleCaseModelLabel(): string
+    {
+        if (! static::hasTitleCaseModelLabel()) {
+            return static::getModelLabel();
+        }
+
+        return Str::ucwords(static::getModelLabel());
+    }
+
     public static function getModel(): string
     {
         return static::$model ?? (string) str(class_basename(static::class))
@@ -470,6 +515,25 @@ abstract class Resource
         }
 
         return static::getModelLabel();
+    }
+
+    public static function getTitleCasePluralModelLabel(): string
+    {
+        if (! static::hasTitleCaseModelLabel()) {
+            return static::getPluralModelLabel();
+        }
+
+        return Str::ucwords(static::getPluralModelLabel());
+    }
+
+    public static function titleCaseModelLabel(bool $condition = true): void
+    {
+        static::$hasTitleCaseModelLabel = $condition;
+    }
+
+    public static function hasTitleCaseModelLabel(): bool
+    {
+        return static::$hasTitleCaseModelLabel;
     }
 
     public static function getRecordTitleAttribute(): ?string
@@ -684,9 +748,19 @@ abstract class Resource
         return static::$navigationGroup;
     }
 
+    public static function getNavigationParentItem(): ?string
+    {
+        return static::$navigationParentItem;
+    }
+
     public static function navigationGroup(?string $group): void
     {
         static::$navigationGroup = $group;
+    }
+
+    public static function navigationParentItem(?string $item): void
+    {
+        static::$navigationParentItem = $item;
     }
 
     public static function getNavigationIcon(): ?string
@@ -706,7 +780,7 @@ abstract class Resource
 
     public static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ?? Str::headline(static::getPluralModelLabel());
+        return static::$navigationLabel ?? static::getTitleCasePluralModelLabel();
     }
 
     public static function getNavigationBadge(): ?string
@@ -727,6 +801,11 @@ abstract class Resource
         return static::$navigationSort;
     }
 
+    public static function navigationLabel(?string $label): void
+    {
+        static::$navigationLabel = $label;
+    }
+
     public static function navigationSort(?int $sort): void
     {
         static::$navigationSort = $sort;
@@ -745,6 +824,16 @@ abstract class Resource
     public static function isDiscovered(): bool
     {
         return static::$isDiscovered;
+    }
+
+    public static function scopeToTenant(bool $condition = true): void
+    {
+        static::$isScopedToTenant = $condition;
+    }
+
+    public static function isScopedToTenant(): bool
+    {
+        return static::$isScopedToTenant;
     }
 
     public static function getTenantOwnershipRelationshipName(): string

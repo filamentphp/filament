@@ -8,5 +8,5 @@ class MakeThemeCommand extends Commands\MakeThemeCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'filament:theme {panel?} {--F|force}';
+    protected $signature = 'filament:theme {panel?} {--pm=} {--F|force}';
 }

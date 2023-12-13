@@ -66,3 +66,8 @@
 .cropper-drag-box.cropper-crop.cropper-modal {
     @apply bg-gray-100/50 opacity-100 dark:bg-gray-900/80;
 }
+
+.fi-fo-file-upload-circle-cropper .cropper-view-box,
+.fi-fo-file-upload-circle-cropper .cropper-face {
+    @apply rounded-full;
+}

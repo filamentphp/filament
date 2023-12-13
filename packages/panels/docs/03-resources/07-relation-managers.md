@@ -1,6 +1,7 @@
 ---
 title: Managing relationships
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Choosing the right tool for the job
 
@@ -52,6 +53,13 @@ Fieldset::make('Metadata')
 In this example, the `title`, `description` and `image` are automatically loaded from the `metadata` relationship, and saved again when the form is submitted. If the `metadata` record does not exist, it is automatically created.
 
 ## Creating a relation manager
+
+<LaracastsBanner
+    title="Relation Managers"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding relation managers to Filament resources."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/13"
+    series="rapid-laravel-development"
+/>
 
 To create a relation manager, you can use the `make:filament-relation-manager` command:
 
@@ -313,7 +321,7 @@ use Filament\Tables\Actions\AttachAction;
 use Illuminate\Database\Eloquent\Builder;
 
 AttachAction::make()
-    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
 ```
 
 ### Searching the options to attach across multiple columns
@@ -347,10 +355,14 @@ By default, you will not be allowed to attach a record more than once. This is b
 
 Please ensure that the `id` attribute is listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-Finally, add the `$allowsDuplicates` property to the relation manager:
+Finally, add the `allowDuplicates()` method to the table:
 
 ```php
-protected bool $allowsDuplicates = true;
+public function table(Table $table): Table
+{
+    return $table
+        ->allowDuplicates();
+}
 ```
 
 ## Associating and dissociating records
@@ -412,7 +424,7 @@ use Filament\Tables\Actions\AssociateAction;
 use Illuminate\Database\Eloquent\Builder;
 
 AssociateAction::make()
-    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
 ```
 
 ### Searching the options to associate across multiple columns
@@ -703,6 +715,40 @@ public function table(Table $table): Table
 }
 ```
 
+## Customizing the relation manager title
+
+To set the title of the relation manager, you can use the `$title` property on the relation manager class:
+
+```php
+protected static string $title = 'Posts';
+```
+
+To set the title of the relation manager dynamically, you can override the `getTitle()` method on the relation manager class:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+public static function getTitle(Model $ownerRecord, string $pageClass): string
+{
+    return __('relation-managers.posts.title');
+}
+```
+
+The title will be reflected in the [heading of the table](../../tables/advanced#customizing-the-table-header), as well as the relation manager tab if there is more than one. If you want to customize the table heading independently, you can still use the `$table->heading()` method:
+
+```php
+use Filament\Tables;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->heading('Posts')
+        ->columns([
+            // ...
+        ]);
+}
+```
+
 ## Customizing the relation manager record title
 
 The relation manager uses the concept of a "record title attribute" to determine which attribute of the related model should be used to identify it. When creating a relation manager, this attribute is passed as the third argument to the `make:filament-relation-manager` command:
@@ -742,6 +788,54 @@ AssociateAction::make()
 
 AttachAction::make()
     ->recordSelectSearchColumns(['title', 'id'])
+```
+
+## Relation pages
+
+Using a `ManageRelatedRecords` page is an alternative to using a relation manager, if you want to keep the functionality of managing a relationship separate from editing or viewing the owner record.
+
+This feature is ideal if you are using [resource sub-navigation](getting-started#resource-sub-navigation), as you are easily able to switch between the View or Edit page and the relation page.
+
+To create a relation page, you should use the `make:filament-page` command:
+
+```bash
+php artisan make:filament-page ManageCustomerAddresses --resource=CustomerResource --type=ManageRelatedRecords
+```
+
+When you run this command, you will be asked a series of questions to customize the page, for example, the name of the relationship and its title attribute.
+
+You must register this new page in your resource's `getPages()` method:
+
+```php
+public static function getPages(): array
+{
+    return [
+        'index' => Pages\ListCustomers::route('/'),
+        'create' => Pages\CreateCustomer::route('/create'),
+        'view' => Pages\ViewCustomer::route('/{record}'),
+        'edit' => Pages\EditCustomer::route('/{record}/edit'),
+        'addresses' => Pages\ManageCustomerAddresses::route('/{record}/addresses'),
+    ];
+}
+```
+
+> When using a relation page, you do not need to generate a relation manager with `make:filament-relation-manager`, and you do not need to register it in the `getRelations()` method of the resource.
+
+Now, you can customize the page in exactly the same way as a relation manager, with the same `table()` and `form()`.
+
+If you're using [resource sub-navigation](getting-started#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
+
+```php
+use App\Filament\Resources\CustomerResource\Pages;
+use Filament\Resources\Pages\Page;
+
+public static function getRecordSubNavigation(Page $page): array
+{
+    return $page->generateNavigationItems([
+        // ...
+        Pages\ManageCustomerAddresses::class,
+    ]);
+}
 ```
 
 ## Passing properties to relation managers

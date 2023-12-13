@@ -1,23 +1,23 @@
+@php
+    $containers = $getChildComponentContainers();
+
+    $addAction = $getAction($getAddActionName());
+    $cloneAction = $getAction($getCloneActionName());
+    $deleteAction = $getAction($getDeleteActionName());
+    $moveDownAction = $getAction($getMoveDownActionName());
+    $moveUpAction = $getAction($getMoveUpActionName());
+    $reorderAction = $getAction($getReorderActionName());
+
+    $isAddable = $isAddable();
+    $isCloneable = $isCloneable();
+    $isDeletable = $isDeletable();
+    $isReorderableWithButtons = $isReorderableWithButtons();
+    $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
+
+    $statePath = $getStatePath();
+@endphp
+
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    @php
-        $containers = $getChildComponentContainers();
-
-        $addAction = $getAction($getAddActionName());
-        $cloneAction = $getAction($getCloneActionName());
-        $deleteAction = $getAction($getDeleteActionName());
-        $moveDownAction = $getAction($getMoveDownActionName());
-        $moveUpAction = $getAction($getMoveUpActionName());
-        $reorderAction = $getAction($getReorderActionName());
-
-        $isAddable = $isAddable();
-        $isCloneable = $isCloneable();
-        $isDeletable = $isDeletable();
-        $isReorderableWithButtons = $isReorderableWithButtons();
-        $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
-
-        $statePath = $getStatePath();
-    @endphp
-
     <div
         x-data="{}"
         {{
@@ -37,6 +37,7 @@
                     :two-xl="$getGridColumns('2xl')"
                     :wire:end.stop="'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })'"
                     x-sortable
+                    :data-sortable-animation-duration="$getReorderAnimationDuration()"
                     class="gap-4"
                 >
                     @foreach ($containers as $uuid => $item)

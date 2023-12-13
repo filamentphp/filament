@@ -13,17 +13,19 @@
         </span>
 
         <div class="flex flex-wrap gap-1.5">
-            @foreach ($indicators as $wireClickHandler => $label)
-                <x-filament::badge>
-                    {{ $label }}
+            @foreach ($indicators as $indicator)
+                <x-filament::badge :color="$indicator->getColor()">
+                    {{ $indicator->getLabel() }}
 
-                    <x-slot
-                        name="deleteButton"
-                        :label="__('filament-tables::table.filters.actions.remove.label')"
-                        wire:click="{{ $wireClickHandler }}"
-                        wire:loading.attr="disabled"
-                        wire:target="removeTableFilter"
-                    ></x-slot>
+                    @if ($indicator->isRemovable())
+                        <x-slot
+                            name="deleteButton"
+                            :label="__('filament-tables::table.filters.actions.remove.label')"
+                            wire:click="{{ $indicator->getRemoveLivewireClickHandler() }}"
+                            wire:loading.attr="disabled"
+                            wire:target="removeTableFilter"
+                        ></x-slot>
+                    @endif
                 </x-filament::badge>
             @endforeach
         </div>

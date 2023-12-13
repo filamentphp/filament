@@ -17,21 +17,28 @@ class MakeThemeCommand extends Command
 
     protected $description = 'Create a new Filament panel theme';
 
-    protected $signature = 'make:filament-theme {panel?} {--F|force}';
+    protected $signature = 'make:filament-theme {panel?} {--pm=} {--F|force}';
 
     public function handle(): int
     {
-        exec('npm -v', $npmVersion, $npmVersionExistCode);
+        $pm = $this->option('pm') ?? 'npm';
 
-        if ($npmVersionExistCode !== 0) {
+        exec("{$pm} -v", $pmVersion, $pmVersionExistCode);
+
+        if ($pmVersionExistCode !== 0) {
             $this->error('Node.js is not installed. Please install before continuing.');
 
             return static::FAILURE;
         }
 
-        $this->info("Using NPM v{$npmVersion[0]}");
+        $this->info("Using {$pm} v{$pmVersion[0]}");
 
-        exec('npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev');
+        $installCommand = match ($pm) {
+            'yarn' => 'yarn add',
+            default => "{$pm} install",
+        };
+
+        exec("{$installCommand} tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev");
 
         $panel = $this->argument('panel');
 
@@ -108,7 +115,7 @@ class MakeThemeCommand extends Command
         $this->components->bulletList([
             "First, add a new item to the `input` array of `vite.config.js`: `resources/css/filament/{$panelId}/theme.css`.",
             "Next, register the theme in the {$panelId} panel provider using `->viteTheme('resources/css/filament/{$panelId}/theme.css')`",
-            'Finally, run `npm run build` to compile the theme.',
+            "Finally, run `{$pm} run build` to compile the theme.",
         ]);
 
         return static::SUCCESS;

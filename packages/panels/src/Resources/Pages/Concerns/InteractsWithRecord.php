@@ -2,10 +2,10 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
+use Filament\Actions\Action;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 
 trait InteractsWithRecord
@@ -34,7 +34,7 @@ trait InteractsWithRecord
         $resource = static::getResource();
 
         if (! $resource::hasRecordTitle()) {
-            return Str::headline($resource::getModelLabel());
+            return $resource::getTitleCaseModelLabel();
         }
 
         return $resource::getRecordTitle($this->getRecord());
@@ -81,5 +81,42 @@ trait InteractsWithRecord
         // Ensure that Livewire does not attempt to dehydrate
         // a record that does not exist.
         $this->record = null;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSubNavigationParameters(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
+    }
+
+    public function getSubNavigation(): array
+    {
+        return static::getResource()::getRecordSubNavigation($this);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getWidgetData(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
+    }
+
+    protected function getMountedActionFormModel(): Model | string | null
+    {
+        return $this->getRecord();
+    }
+
+    protected function configureAction(Action $action): void
+    {
+        $action
+            ->record($this->getRecord())
+            ->recordTitle($this->getRecordTitle());
     }
 }

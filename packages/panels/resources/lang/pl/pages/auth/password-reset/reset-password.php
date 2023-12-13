@@ -14,7 +14,7 @@ return [
 
         'password' => [
             'label' => 'Hasło',
-            'validation_attribute' => 'password',
+            'validation_attribute' => 'hasło',
         ],
 
         'password_confirmation' => [

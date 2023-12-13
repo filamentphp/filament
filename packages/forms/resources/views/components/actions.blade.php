@@ -4,7 +4,7 @@
     $verticalAlignment = $getVerticalAlignment();
 
     if (! $verticalAlignment instanceof VerticalAlignment) {
-        $verticalAlignment = VerticalAlignment::tryFrom($verticalAlignment) ?? $verticalAlignment;
+        $verticalAlignment = filled($verticalAlignment) ? (VerticalAlignment::tryFrom($verticalAlignment) ?? $verticalAlignment) : null;
     }
 @endphp
 
