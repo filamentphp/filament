@@ -9,36 +9,36 @@
     :x-data="$isRoot ? '{}' : null"
     :x-on:expand-concealing-component.window="
         $isRoot ? ('
-                if ($event.detail.livewireId !== ' . Js::from($this->getId()) . ') {
-                    return
-                }
+                        if ($event.detail.livewireId !== ' . Js::from($this->getId()) . ') {
+                            return
+                        }
 
-                $nextTick(() => {
-                    error = $el.querySelector(\'[data-validation-error]\')
+                        $nextTick(() => {
+                            error = $el.querySelector(\'[data-validation-error]\')
 
-                    if (! error) {
-                        return
-                    }
+                            if (! error) {
+                                return
+                            }
 
-                    elementToExpand = error
+                            elementToExpand = error
 
-                    while (elementToExpand) {
-                        elementToExpand.dispatchEvent(new CustomEvent(\'expand\'))
+                            while (elementToExpand) {
+                                elementToExpand.dispatchEvent(new CustomEvent(\'expand\'))
 
-                        elementToExpand = elementToExpand.parentNode
-                    }
+                                elementToExpand = elementToExpand.parentNode
+                            }
 
-                    setTimeout(
-                        () =>
-                            error.scrollIntoView({
-                                behavior: \'smooth\',
-                                block: \'start\',
-                                inline: \'start\',
-                            }),
-                        200,
-                    )
-                })
-            ') : null
+                            setTimeout(
+                                () =>
+                                    error.scrollIntoView({
+                                        behavior: \'smooth\',
+                                        block: \'start\',
+                                        inline: \'start\',
+                                    }),
+                                200,
+                            )
+                        })
+                    ') : null
     "
     :default="$getColumns('default')"
     :sm="$getColumns('sm')"
