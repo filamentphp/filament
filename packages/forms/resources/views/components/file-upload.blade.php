@@ -113,6 +113,7 @@
                         Alignment::End => 'justify-end',
                         Alignment::Left => 'justify-left',
                         Alignment::Right => 'justify-right',
+                        Alignment::Between, Alignment::Justify => 'justify-between',
                         default => $alignment,
                     },
                 ])
