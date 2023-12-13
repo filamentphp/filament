@@ -86,6 +86,11 @@ trait HasRoutes
         return $this;
     }
 
+    public function route(string $name, mixed $parameters = [], bool $absolute = true): string
+    {
+        return route("filament.{$this->getId()}.{$name}", $parameters, $absolute);
+    }
+
     public function getRoutes(): ?Closure
     {
         return $this->routes;
