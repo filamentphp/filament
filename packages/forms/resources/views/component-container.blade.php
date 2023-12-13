@@ -7,7 +7,7 @@
 
 <x-filament::grid
     :x-data="$isRoot ? '{}' : null"
-    :x-on:expand-concealing-component.window="
+    :x-on:form-validation-error.window="
         $isRoot ? ('
                 if ($event.detail.livewireId !== ' . Js::from($this->getId()) . ') {
                     return
@@ -30,7 +30,7 @@
 
                     setTimeout(
                         () =>
-                            error.scrollIntoView({
+                            error.closest(\'[data-field-wrapper]\').scrollIntoView({
                                 behavior: \'smooth\',
                                 block: \'start\',
                                 inline: \'start\',

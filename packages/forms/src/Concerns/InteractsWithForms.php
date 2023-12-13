@@ -172,7 +172,7 @@ trait InteractsWithForms
         } catch (ValidationException $exception) {
             $this->onValidationError($exception);
 
-            $this->dispatch('expand-concealing-component', livewireId: $this->getId());
+            $this->dispatch('form-validation-error', livewireId: $this->getId());
 
             throw $exception;
         }
@@ -193,7 +193,7 @@ trait InteractsWithForms
         } catch (ValidationException $exception) {
             $this->onValidationError($exception);
 
-            $this->dispatch('expand-concealing-component', livewireId: $this->getId());
+            $this->dispatch('form-validation-error', livewireId: $this->getId());
 
             throw $exception;
         }
