@@ -191,6 +191,10 @@ class IsRelatedToOperator extends Operator
     {
         $constraint = parent::getConstraint();
 
+        if (! $constraint) {
+            return null;
+        }
+
         if (! ($constraint instanceof RelationshipConstraint)) {
             throw new Exception('Is operator can only be used with relationship constraints.');
         }

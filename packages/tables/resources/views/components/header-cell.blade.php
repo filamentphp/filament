@@ -1,6 +1,10 @@
+@php
+    use Filament\Support\Enums\Alignment;
+@endphp
+
 @props([
     'activelySorted' => false,
-    'alignment' => null,
+    'alignment' => Alignment::Start,
     'name',
     'sortable' => false,
     'sortDirection',
@@ -8,10 +12,6 @@
 ])
 
 @php
-    use Filament\Support\Enums\Alignment;
-
-    $alignment = $alignment ?? Alignment::Start;
-
     if (! $alignment instanceof Alignment) {
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
     }
@@ -35,6 +35,7 @@
                 Alignment::End => 'justify-end',
                 Alignment::Left => 'justify-start rtl:flex-row-reverse',
                 Alignment::Right => 'justify-end rtl:flex-row-reverse',
+                Alignment::Justify, Alignment::Between => 'justify-between',
                 default => $alignment,
             },
         ])

@@ -9,6 +9,7 @@
     :hint-actions="$getHintActions()"
     :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
+    :hint-icon-tooltip="$getHintIconTooltip()"
     :state-path="$getStatePath()"
 >
     <div

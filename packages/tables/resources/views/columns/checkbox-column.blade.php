@@ -77,7 +77,7 @@
                     theme: $store.theme,
                 }
         "
-        x-on:click.stop
+        x-on:click.stop=""
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
                 ->merge($getExtraInputAttributes(), escape: false)
