@@ -56,9 +56,7 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class([
-                    'fi-in-text w-full',
-                ])
+                ->class(['fi-in-text w-full'])
         }}
     >
         @if ($arrayState)
@@ -68,16 +66,24 @@
             >
                 <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
                     @class([
-                        'flex flex-wrap items-center' => ! $isListWithLineBreaks,
-                        'gap-1.5' => $isBadge,
                         'list-inside list-disc' => $isBulleted(),
+                        'flex gap-1.5' => $isBadge,
+                        'flex-wrap' => $isBadge && (! $isListWithLineBreaks),
+                        'flex-col' => $isBadge && $isListWithLineBreaks,
                         match ($alignment) {
                             Alignment::Start, Alignment::Left => 'justify-start',
                             Alignment::Center => 'justify-center',
                             Alignment::End, Alignment::Right => 'justify-end',
                             Alignment::Between, Alignment::Justify => 'justify-between',
                             default => $alignment,
-                        } => ! $isListWithLineBreaks,
+                        } => ($isListWithLineBreaks && (! $isBadge)) || ((! $isListWithLineBreaks) && $isBadge),
+                        match ($alignment) {
+                            Alignment::Start, Alignment::Left => 'items-start',
+                            Alignment::Center => 'items-center',
+                            Alignment::End, Alignment::Right => 'items-end',
+                            Alignment::Between, Alignment::Justify => 'items-stretch',
+                            default => $alignment,
+                        } => $isListWithLineBreaks && $isBadge,
                     ])
                     @if ($isListWithLineBreaks && $isLimitedListExpandable)
                         x-data="{ isLimited: true }"
