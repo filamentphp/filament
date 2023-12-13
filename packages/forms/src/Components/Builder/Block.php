@@ -9,10 +9,10 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class Block extends Component
 {
+    use Concerns\HasIcon;
     use Concerns\HasName {
         getLabel as getDefaultLabel;
     }
-    use Concerns\HasIcon;
 
     protected string | Closure | null $group = null;
 

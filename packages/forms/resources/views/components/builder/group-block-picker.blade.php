@@ -29,11 +29,13 @@
         {{ $trigger }}
     </x-slot>
 
-    <x-filament::dropdown.list x-data="{
+    <x-filament::dropdown.list
+        x-data="{
         group: null,
-    }">
-        <div x-show="group === null">
-            @foreach($groups as $group)
+    }"
+    >
+        <div x-show="=== null group">
+            @foreach ($groups as $group)
                 @php
                     $xOnClickAction = 'group = ' . Js::from($group->getName());
                 @endphp
@@ -49,8 +51,8 @@
                                 {{ $group->getLabel() }}
                             </p>
 
-                            @if($description = $group->getDescription())
-                                <p class="text-gray-600 text-xs">
+                            @if ($description = $group->getDescription())
+                                <p class="text-xs text-gray-600">
                                     {{ $description }}
                                 </p>
                             @endif
@@ -61,16 +63,14 @@
                 </x-filament::dropdown.list.item>
             @endforeach
 
-            @if($hasUngroupedBlocks)
+            @if ($hasUngroupedBlocks)
                 <x-filament::dropdown.list.item
                     icon="heroicon-o-ellipsis-horizontal"
                     :icon-size="Filament\Support\Enums\IconSize::Large"
                     x-on:click="group = ''"
                 >
                     <div class="flex items-center justify-between">
-                        <p class="font-medium">
-                            Other
-                        </p>
+                        <p class="font-medium">Other</p>
 
                         @svg('heroicon-m-chevron-right', 'w-4 h-4 text-gray-400 group-hover:text-gray-600')
                     </div>
@@ -78,19 +78,23 @@
             @endif
         </div>
 
-        @foreach($groups as $group)
+        @foreach ($groups as $group)
             <div x-show="group === @js($group->getName())">
-                <div class="px-1 py-2 flex items-center gap-x-2">
-                    <button type="button" x-on:click="group = null" class="appearance-none text-gray-400 hover:text-gray-600">
+                <div class="flex items-center gap-x-2 px-1 py-2">
+                    <button
+                        type="button"
+                        x-on:click="= null group"
+                        class="appearance-none text-gray-400 hover:text-gray-600"
+                    >
                         @svg('heroicon-m-chevron-left', 'w-4 h-4')
                     </button>
 
-                    <p class="font-medium text-sm">
+                    <p class="text-sm font-medium">
                         {{ $group->getLabel() }}
                     </p>
                 </div>
 
-                @foreach($blocksByGroupName[$group->getName()] as $block)
+                @foreach ($blocksByGroupName[$group->getName()] as $block)
                     @php
                         $wireClickActionArguments = ['block' => $block->getName()];
 
@@ -114,19 +118,21 @@
             </div>
         @endforeach
 
-        @if($hasUngroupedBlocks)
+        @if ($hasUngroupedBlocks)
             <div x-show="group === ''">
-                <div class="px-1 py-2 flex items-center gap-x-2">
-                    <button type="button" x-on:click="group = null" class="appearance-none text-gray-400 hover:text-gray-600">
+                <div class="flex items-center gap-x-2 px-1 py-2">
+                    <button
+                        type="button"
+                        x-on:click="= null group"
+                        class="appearance-none text-gray-400 hover:text-gray-600"
+                    >
                         @svg('heroicon-m-chevron-left', 'w-4 h-4')
                     </button>
 
-                    <p class="font-medium text-sm">
-                        Other
-                    </p>
+                    <p class="text-sm font-medium">Other</p>
                 </div>
 
-                @foreach($blocksByGroupName[''] as $block)
+                @foreach ($blocksByGroupName[''] as $block)
                     @php
                         $wireClickActionArguments = ['block' => $block->getName()];
 
@@ -150,7 +156,8 @@
             </div>
         @endif
 
-        {{-- <x-filament::grid
+        {{--
+            <x-filament::grid
             :default="$columns['default'] ?? 1"
             :sm="$columns['sm'] ?? null"
             :md="$columns['md'] ?? null"
@@ -158,28 +165,29 @@
             :xl="$columns['xl'] ?? null"
             :two-xl="$columns['2xl'] ?? null"
             direction="column"
-        >
+            >
             @foreach ($blocks as $block)
-                @php
-                    $wireClickActionArguments = ['block' => $block->getName()];
-
-                    if ($afterItem) {
-                        $wireClickActionArguments['afterItem'] = $afterItem;
-                    }
-
-                    $wireClickActionArguments = \Illuminate\Support\Js::from($wireClickActionArguments);
-
-                    $wireClickAction = "mountFormComponentAction('{$statePath}', '{$action->getName()}', {$wireClickActionArguments})";
-                @endphp
-
-                <x-filament::dropdown.list.item
-                    :icon="$block->getIcon()"
-                    x-on:click="close"
-                    :wire:click="$wireClickAction"
-                >
-                    {{ $block->getLabel() }}
-                </x-filament::dropdown.list.item>
+            @php
+            $wireClickActionArguments = ['block' => $block->getName()];
+            
+            if ($afterItem) {
+            $wireClickActionArguments['afterItem'] = $afterItem;
+            }
+            
+            $wireClickActionArguments = \Illuminate\Support\Js::from($wireClickActionArguments);
+            
+            $wireClickAction = "mountFormComponentAction('{$statePath}', '{$action->getName()}', {$wireClickActionArguments})";
+            @endphp
+            
+            <x-filament::dropdown.list.item
+            :icon="$block->getIcon()"
+            x-on:click="close"
+            :wire:click="$wireClickAction"
+            >
+            {{ $block->getLabel() }}
+            </x-filament::dropdown.list.item>
             @endforeach
-        </x-filament::grid> --}}
+            </x-filament::grid>
+        --}}
     </x-filament::dropdown.list>
 </x-filament::dropdown>

@@ -204,7 +204,8 @@
                                     <div
                                         class="fi-fo-builder-block-picker-ctn rounded-lg bg-white dark:bg-gray-900"
                                     >
-                                        <x-dynamic-component :component="$blockPickerComponent"
+                                        <x-dynamic-component
+                                            :component="$blockPickerComponent"
                                             :action="$addBetweenAction"
                                             :after-item="$uuid"
                                             :columns="$blockPickerColumns"
@@ -237,7 +238,8 @@
         @endif
 
         @if ($isAddable)
-            <x-dynamic-component :component="$blockPickerComponent"
+            <x-dynamic-component
+                :component="$blockPickerComponent"
                 :action="$addAction"
                 :groups="$blockPickerGroups"
                 :blocks="$blockPickerBlocks"

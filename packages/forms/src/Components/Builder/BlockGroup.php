@@ -15,7 +15,6 @@ class BlockGroup extends Component
 
     protected string | Closure | null $description = null;
 
-
     final public function __construct(string $name)
     {
         $this->name($name);
