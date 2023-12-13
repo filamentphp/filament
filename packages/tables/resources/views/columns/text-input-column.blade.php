@@ -123,7 +123,7 @@
                                 Alignment::End => 'text-end',
                                 Alignment::Left => 'text-left',
                                 Alignment::Right => 'text-right',
-                                Alignment::Justify => null,
+                                Alignment::Justify, Alignment::Between => 'text-justify',
                                 default => $alignment,
                             },
                         ])

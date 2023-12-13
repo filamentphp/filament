@@ -85,7 +85,7 @@
                         Alignment::End => 'text-end',
                         Alignment::Left => 'text-left',
                         Alignment::Right => 'text-right',
-                        Alignment::Justify => 'text-justify',
+                        Alignment::Justify, Alignment::Between => 'text-justify',
                         default => $alignment,
                     },
                 ])

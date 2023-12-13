@@ -35,7 +35,7 @@
                 Alignment::End => 'justify-end',
                 Alignment::Left => 'justify-start rtl:flex-row-reverse',
                 Alignment::Right => 'justify-end rtl:flex-row-reverse',
-                Alignment::Justify => null,
+                Alignment::Justify, Alignment::Between => 'justify-between',
                 default => $alignment,
             },
         ])

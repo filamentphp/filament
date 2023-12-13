@@ -5,7 +5,7 @@
     use Filament\Support\Enums\IconPosition;
     use Filament\Tables\Columns\TextColumn\TextColumnSize;
 
-    $alignment = $column->getAlignment();
+    $alignment = $getAlignment();
     $canWrap = $canWrap();
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
@@ -17,7 +17,7 @@
     $url = $getUrl();
 
     if (! $alignment instanceof Alignment) {
-        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
     }
 
     $arrayState = $getState();
@@ -83,7 +83,7 @@
                     Alignment::Start => 'justify-start text-start',
                     Alignment::Center => 'justify-center text-center',
                     Alignment::End => 'justify-end text-end',
-                    Alignment::Justify => 'justify-between text-justify',
+                    Alignment::Justify, Alignment::Between => 'justify-between text-justify',
                     Alignment::Left => 'justify-start text-left',
                     Alignment::Right => 'justify-end text-right',
                     default => $alignment,

@@ -18,7 +18,7 @@
         $url = $getUrl();
 
         if (! $alignment instanceof Alignment) {
-            $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
         }
 
         $arrayState = $getState();
@@ -72,12 +72,10 @@
                         'gap-1.5' => $isBadge,
                         'list-inside list-disc' => $isBulleted(),
                         match ($alignment) {
-                            Alignment::Start => 'justify-start',
+                            Alignment::Start, Alignment::Left => 'justify-start',
                             Alignment::Center => 'justify-center',
-                            Alignment::End => 'justify-end',
-                            Alignment::Justify => 'justify-between',
-                            Alignment::Left => 'justify-start',
-                            Alignment::Right => 'justify-end',
+                            Alignment::End, Alignment::Right => 'justify-end',
+                            Alignment::Between, Alignment::Justify => 'justify-between',
                             default => $alignment,
                         } => ! $isListWithLineBreaks,
                     ])

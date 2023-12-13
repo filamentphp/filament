@@ -36,6 +36,11 @@ trait HasAlignment
         return $this->alignment(fn (): ?Alignment => $this->evaluate($condition) ? Alignment::Justify : null);
     }
 
+    public function alignBetween(bool | Closure $condition = true): static
+    {
+        return $this->alignment(fn (): ?Alignment => $this->evaluate($condition) ? Alignment::Between : null);
+    }
+
     public function alignLeft(bool | Closure $condition = true): static
     {
         return $this->alignment(fn (): ?Alignment => $this->evaluate($condition) ? Alignment::Left : null);

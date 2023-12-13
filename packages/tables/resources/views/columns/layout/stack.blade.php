@@ -18,7 +18,7 @@
                     Alignment::Start, Alignment::Left => 'items-start',
                     Alignment::Center => 'items-center',
                     Alignment::End, Alignment::Right => 'items-end',
-                    Alignment::Justify => null,
+                    Alignment::Justify, Alignment::Between => null,
                     default => $alignment,
                 },
                 match ($space = $getSpace()) {
