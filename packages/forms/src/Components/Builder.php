@@ -34,6 +34,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
     protected string | Closure | null $addActionLabel = null;
 
+    protected array | Closure $blockGroups = [];
+
     protected bool | Closure $isReorderable = true;
 
     protected bool | Closure $isReorderableWithDragAndDrop = true;
@@ -122,6 +124,16 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     public function blocks(array | Closure $blocks): static
     {
         $this->childComponents($blocks);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<BlockGroup> | Closure  $blocks
+     */
+    public function blockGroups(array | Closure $groups): static
+    {
+        $this->blockGroups = $groups;
 
         return $this;
     }
@@ -733,6 +745,11 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
         $blocks = $this->getChildComponentContainer()->getComponents();
 
         return $blocks;
+    }
+
+    public function getBlockGroups(): array
+    {
+        return $this->evaluate($this->blockGroups ?? []);
     }
 
     public function getChildComponentContainers(bool $withHidden = false): array

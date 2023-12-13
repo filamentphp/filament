@@ -12,8 +12,9 @@ class Block extends Component
     use Concerns\HasName {
         getLabel as getDefaultLabel;
     }
+    use Concerns\HasIcon;
 
-    protected string | Closure | null $icon = null;
+    protected string | Closure | null $group = null;
 
     protected int | Closure | null $maxItems = null;
 
@@ -30,16 +31,16 @@ class Block extends Component
         return $static;
     }
 
-    public function icon(string | Closure | null $icon): static
+    public function group(string | Closure | null $group): static
     {
-        $this->icon = $icon;
+        $this->group = $group;
 
         return $this;
     }
 
-    public function getIcon(): ?string
+    public function getGroup(): ?string
     {
-        return $this->evaluate($this->icon);
+        return $this->evaluate($this->group);
     }
 
     public function maxItems(int | Closure | null $maxItems): static

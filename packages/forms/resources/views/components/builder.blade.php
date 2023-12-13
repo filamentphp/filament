@@ -4,6 +4,7 @@
     $containers = $getChildComponentContainers();
     $blockPickerBlocks = $getBlockPickerBlocks();
     $blockPickerColumns = $getBlockPickerColumns();
+    $blockPickerGroups = $getBlockGroups();
     $blockPickerWidth = $getBlockPickerWidth();
 
     $addAction = $getAction($getAddActionName());
@@ -23,8 +24,10 @@
     $isDeletable = $isDeletable();
     $isReorderableWithButtons = $isReorderableWithButtons();
     $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
+    $hasBlockGroups = count($blockPickerGroups) > 0;
 
     $statePath = $getStatePath();
+    $blockPickerComponent = $hasBlockGroups ? 'filament-forms::builder.group-block-picker' : 'filament-forms::builder.block-picker';
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
@@ -201,10 +204,11 @@
                                     <div
                                         class="fi-fo-builder-block-picker-ctn rounded-lg bg-white dark:bg-gray-900"
                                     >
-                                        <x-filament-forms::builder.block-picker
+                                        <x-dynamic-component :component="$blockPickerComponent"
                                             :action="$addBetweenAction"
                                             :after-item="$uuid"
                                             :columns="$blockPickerColumns"
+                                            :groups="$blockPickerGroups"
                                             :blocks="$blockPickerBlocks"
                                             :state-path="$statePath"
                                             :width="$blockPickerWidth"
@@ -212,7 +216,7 @@
                                             <x-slot name="trigger">
                                                 {{ $addBetweenAction }}
                                             </x-slot>
-                                        </x-filament-forms::builder.block-picker>
+                                        </x-dynamic-component>
                                     </div>
                                 </div>
                             </li>
@@ -233,8 +237,9 @@
         @endif
 
         @if ($isAddable)
-            <x-filament-forms::builder.block-picker
+            <x-dynamic-component :component="$blockPickerComponent"
                 :action="$addAction"
+                :groups="$blockPickerGroups"
                 :blocks="$blockPickerBlocks"
                 :columns="$blockPickerColumns"
                 :state-path="$statePath"
@@ -244,7 +249,7 @@
                 <x-slot name="trigger">
                     {{ $addAction }}
                 </x-slot>
-            </x-filament-forms::builder.block-picker>
+            </x-dynamic-component>
         @endif
     </div>
 </x-dynamic-component>
