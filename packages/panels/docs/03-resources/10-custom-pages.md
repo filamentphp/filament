@@ -37,7 +37,7 @@ use Filament\Resources\Pages\Page;
 
 class ManageUser extends Page
 {
-    use InteractsWithRecord;
+    use Filament\Resources\Pages\Concerns\InteractsWithRecord;
     
     public function mount(int | string $record): void
     {
