@@ -216,7 +216,7 @@
                 @if (! $loop->last)
                     <div
                         aria-hidden="true"
-                        class="fi-fo-wizard-header-step-separator absolute end-0 hidden w-5 md:block"
+                        class="fi-fo-wizard-header-step-separator absolute end-0 hidden h-full w-5 md:block"
                     >
                         <svg
                             fill="none"
