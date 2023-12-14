@@ -154,7 +154,7 @@
                         x-on:click="close(); $nextTick(() => group = null)"
                         :wire:click="$wireClickAction"
                     >
-                        <p class="font-medium">{{ $block->getLabel() }}</p>
+                        <p>{{ $block->getLabel() }}</p>
 
                         @if($description = $block->getDescription())
                             <p class="text-xs text-gray-600">{{ $description }}</p>
