@@ -6,7 +6,6 @@ use Filament\Actions\Action;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 
 trait InteractsWithRecord
@@ -35,7 +34,7 @@ trait InteractsWithRecord
         $resource = static::getResource();
 
         if (! $resource::hasRecordTitle()) {
-            return Str::headline($resource::getModelLabel());
+            return $resource::getTitleCaseModelLabel();
         }
 
         return $resource::getRecordTitle($this->getRecord());

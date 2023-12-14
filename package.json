@@ -12,6 +12,7 @@
         "build:panels-css": "npx tailwindcss -c ./packages/panels/tailwind.config.js -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --minify",
         "build:support-css": "npx tailwindcss -c ./packages/support/tailwind.config.js -i ./packages/support/dist/index.css -o ./packages/support/dist/index.css --minify",
         "build": "npm-run-all build:*",
+        "build-demo": "npm run build && cd ../demo && php artisan filament:upgrade && cd ../filament",
         "prettier": "npx prettier --write ."
     },
     "devDependencies": {

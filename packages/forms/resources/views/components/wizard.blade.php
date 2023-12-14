@@ -63,8 +63,10 @@
             return this.getStepIndex(this.step) + 1 >= this.getSteps().length
         },
 
-        isStepAccessible: function (step, index) {
-            return @js($isSkippable()) || this.getStepIndex(step) > index
+        isStepAccessible: function (stepId) {
+            return (
+                @js($isSkippable()) || this.getStepIndex(this.step) > this.getStepIndex(stepId)
+            )
         },
 
         updateQueryString: function () {
@@ -134,7 +136,7 @@
                     type="button"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
                     x-on:click="step = @js($step->getId())"
-                    x-bind:disabled="! isStepAccessible(step, {{ $loop->index }})"
+                    x-bind:disabled="! isStepAccessible(@js($step->getId()))"
                     role="step"
                     class="fi-fo-wizard-header-step-button flex h-full w-full items-center gap-x-4 px-6 py-4"
                 >

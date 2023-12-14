@@ -37,31 +37,7 @@
     }"
     @if ($collapsible)
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
-        x-on:expand-concealing-component.window="
-            $nextTick(() => {
-                error = $el.querySelector('[data-validation-error]')
-
-                if (! error) {
-                    return
-                }
-
-                isCollapsed = false
-
-                if (document.body.querySelector('[data-validation-error]') !== error) {
-                    return
-                }
-
-                setTimeout(
-                    () =>
-                        $el.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start',
-                            inline: 'start',
-                        }),
-                    200,
-                )
-            })
-        "
+        x-on:expand="isCollapsed = false"
         x-on:open-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:toggle-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
         x-bind:class="isCollapsed && 'fi-collapsed'"
@@ -136,7 +112,7 @@
                 <x-filament-actions::actions
                     :actions="$headerActions"
                     :alignment="\Filament\Support\Enums\Alignment::Start"
-                    x-on:click.stop
+                    x-on:click.stop=""
                 />
             @endif
 

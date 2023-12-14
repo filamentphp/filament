@@ -2,20 +2,22 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
+
 trait HasNotifications
 {
-    protected bool $hasDatabaseNotifications = false;
+    protected bool | Closure $hasDatabaseNotifications = false;
 
-    protected ?string $databaseNotificationsPolling = '30s';
+    protected string | Closure | null $databaseNotificationsPolling = '30s';
 
-    public function databaseNotifications(bool $condition = true): static
+    public function databaseNotifications(bool | Closure $condition = true): static
     {
         $this->hasDatabaseNotifications = $condition;
 
         return $this;
     }
 
-    public function databaseNotificationsPolling(?string $interval): static
+    public function databaseNotificationsPolling(string | Closure | null $interval): static
     {
         $this->databaseNotificationsPolling = $interval;
 
@@ -24,11 +26,11 @@ trait HasNotifications
 
     public function hasDatabaseNotifications(): bool
     {
-        return $this->hasDatabaseNotifications;
+        return (bool) $this->evaluate($this->hasDatabaseNotifications);
     }
 
     public function getDatabaseNotificationsPollingInterval(): ?string
     {
-        return $this->databaseNotificationsPolling;
+        return $this->evaluate($this->databaseNotificationsPolling);
     }
 }

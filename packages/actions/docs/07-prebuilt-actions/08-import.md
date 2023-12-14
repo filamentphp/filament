@@ -309,7 +309,7 @@ ImportColumn::make('customer_ratings')
 
 ### Customizing how a column is filled into a record
 
-If you want to customize how column state is filled into a record, you can pass a function to the `fillUsing()` method:
+If you want to customize how column state is filled into a record, you can pass a function to the `fillRecordUsing()` method:
 
 ```php
 use App\Models\Product;
@@ -494,6 +494,18 @@ ImportAction::make()
 ```
 
 If you are encountering memory issues when importing large CSV files, you may wish to reduce the chunk size.
+
+## Changing the CSV delimiter
+
+The default delimiter for CSVs is the comma (`,`). If your import uses a different delimiter, you may call the `csvDelimiter()` method on the action, passing a new one:
+
+```php
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->csvDelimiter(';')
+```
+
+You can only specify a single character, otherwise an exception will be thrown.
 
 ## Customizing the import job
 

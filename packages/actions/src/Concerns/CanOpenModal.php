@@ -535,7 +535,7 @@ trait CanOpenModal
 
     public function hasModalDescription(): bool
     {
-        return filled($this->modalDescription);
+        return filled($this->getModalDescription());
     }
 
     public function getModalWidth(): MaxWidth | string

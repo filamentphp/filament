@@ -1,8 +1,16 @@
 ---
 title: Getting started
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Introduction to Filament"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you how to get started with the resources."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/2"
+    series="rapid-laravel-development"
+/>
 
 Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app - using tables and forms.
 
@@ -100,6 +108,13 @@ This is required for features like [global search](global-search) to work.
 
 ## Resource forms
 
+<LaracastsBanner
+    title="Basic Form Inputs"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding a form to your resource."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/3"
+    series="rapid-laravel-development"
+/>
+
 Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages:
 
 ```php
@@ -148,6 +163,13 @@ Forms\Components\TextInput::make('password')
 ```
 
 ## Resource tables
+
+<LaracastsBanner
+    title="Table Columns"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding a table to your resource."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/9"
+    series="rapid-laravel-development"
+/>
 
 Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records):
 
@@ -239,6 +261,16 @@ public static function getPluralModelLabel(): string
 {
     return __('filament/resources/customer.plural_label');
 }
+```
+
+### Automatic model label capitalization
+
+By default, Filament will automatically capitalize each word in the model label, for some parts of the UI. For example, in page titles, the navigation menu, and the breadcrumbs.
+
+If you want to disable this behaviour for a resource, you can set `$hasTitleCaseModelLabel` in the resource:
+
+```php
+protected static bool $hasTitleCaseModelLabel = false;
 ```
 
 ## Resource navigation items

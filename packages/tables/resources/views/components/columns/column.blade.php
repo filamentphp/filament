@@ -29,7 +29,7 @@
             Alignment::End => 'justify-end text-end',
             Alignment::Left => 'justify-start text-left',
             Alignment::Right => 'justify-end text-right',
-            Alignment::Justify => 'justify-between text-justify',
+            Alignment::Justify, Alignment::Between => 'justify-between text-justify',
             default => $alignment,
         },
     ]);

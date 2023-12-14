@@ -25,6 +25,7 @@ use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use League\Csv\Info;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
 use League\Csv\Writer;
@@ -46,6 +47,8 @@ trait CanImportRecords
     protected int | Closure $chunkSize = 100;
 
     protected int | Closure | null $maxRows = null;
+
+    protected string | Closure | null $csvDelimiter = null;
 
     /**
      * @var array<string, mixed> | Closure
@@ -83,6 +86,11 @@ trait CanImportRecords
                     }
 
                     $csvReader = CsvReader::createFromStream($csvStream);
+
+                    if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
+                        $csvReader->setDelimiter($csvDelimiter);
+                    }
+
                     $csvReader->setHeaderOffset(0);
 
                     $csvColumns = $csvReader->getHeader();
@@ -127,6 +135,11 @@ trait CanImportRecords
                     }
 
                     $csvReader = CsvReader::createFromStream($csvStream);
+
+                    if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
+                        $csvReader->setDelimiter($csvDelimiter);
+                    }
+
                     $csvReader->setHeaderOffset(0);
 
                     $csvColumns = $csvReader->getHeader();
@@ -152,6 +165,11 @@ trait CanImportRecords
             }
 
             $csvReader = CsvReader::createFromStream($csvStream);
+
+            if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
+                $csvReader->setDelimiter($csvDelimiter);
+            }
+
             $csvReader->setHeaderOffset(0);
             $csvResults = Statement::create()->process($csvReader);
 
@@ -262,6 +280,10 @@ trait CanImportRecords
 
                     $csv = Writer::createFromFileObject(new SplTempFileObject());
 
+                    if (filled($csvDelimiter = $this->getCsvDelimiter())) {
+                        $csv->setDelimiter($csvDelimiter);
+                    }
+
                     $csv->insertOne(array_map(
                         fn (ImportColumn $column): string => $column->getName(),
                         $columns,
@@ -359,6 +381,13 @@ trait CanImportRecords
         return $this;
     }
 
+    public function csvDelimiter(string | Closure | null $delimiter): static
+    {
+        $this->csvDelimiter = $delimiter;
+
+        return $this;
+    }
+
     /**
      * @return class-string<Importer>
      */
@@ -383,6 +412,22 @@ trait CanImportRecords
     public function getMaxRows(): ?int
     {
         return $this->evaluate($this->maxRows);
+    }
+
+    public function getCsvDelimiter(?CsvReader $reader = null): ?string
+    {
+        return $this->evaluate($this->csvDelimiter) ?? $this->guessCsvDelimiter($reader);
+    }
+
+    protected function guessCsvDelimiter(?CsvReader $reader = null): ?string
+    {
+        if (! $reader) {
+            return null;
+        }
+
+        $delimiterCounts = Info::getDelimiterStats($reader, delimiters: [',', ';', '|', "\t"], limit: 10);
+
+        return array_search(max($delimiterCounts), $delimiterCounts);
     }
 
     /**

@@ -32,7 +32,7 @@
                         Alignment::Start, Alignment::Left => 'justify-start',
                         Alignment::Center => 'justify-center',
                         Alignment::End, Alignment::Right => 'flex-row-reverse',
-                        Alignment::Between => 'justify-between',
+                        Alignment::Between, Alignment::Justify => 'justify-between',
                         default => $alignment,
                     } => ! $fullWidth,
                     'grid grid-cols-[repeat(auto-fit,minmax(0,1fr))]' => $fullWidth,

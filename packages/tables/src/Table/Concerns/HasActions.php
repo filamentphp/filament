@@ -132,7 +132,6 @@ trait HasActions
         return $this->getMountableModalActionFromAction(
             $action->record($mountedRecord),
             modalActionNames: $modalActionNames ?? [],
-            parentActionName: $name,
             mountedRecord: $mountedRecord,
         );
     }
@@ -180,7 +179,7 @@ trait HasActions
     /**
      * @param  array<string>  $modalActionNames
      */
-    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName, ?Model $mountedRecord = null): ?Action
+    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, ?Model $mountedRecord = null): ?Action
     {
         foreach ($modalActionNames as $modalActionName) {
             $action = $action->getMountableModalAction($modalActionName);
@@ -192,8 +191,6 @@ trait HasActions
             if ($action instanceof Action) {
                 $action->record($mountedRecord);
             }
-
-            $parentActionName = $modalActionName;
         }
 
         if (! $action instanceof Action) {

@@ -34,6 +34,7 @@ If you'd like to create a page that uses a record similar to the [Edit](editing-
 
 ```php
 use Filament\Resources\Pages\Page;
+use Filament\Resources\Pages\Concerns\InteractsWithRecord;
 
 class ManageUser extends Page
 {

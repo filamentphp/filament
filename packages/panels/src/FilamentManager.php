@@ -566,6 +566,11 @@ class FilamentManager
         return $this->getCurrentPanel()->hasRegistration();
     }
 
+    public function hasTenantMenu(): bool
+    {
+        return $this->getCurrentPanel()->hasTenantMenu();
+    }
+
     public function hasTenancy(): bool
     {
         return $this->getCurrentPanel()->hasTenancy();
