@@ -11,9 +11,8 @@ use Filament\Support\Enums\IconSize;
 class BlockGroup extends Component
 {
     use Concerns\HasName;
+    use Concerns\HasDescription;
     use HasIcon;
-
-    protected string | Closure | null $description = null;
 
     final public function __construct(string $name)
     {
@@ -23,18 +22,6 @@ class BlockGroup extends Component
     protected function setUp(): void
     {
         $this->iconSize(IconSize::Large);
-    }
-
-    public function description(string | Closure | null $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->evaluate($this->description);
     }
 
     public static function make(string $name): static

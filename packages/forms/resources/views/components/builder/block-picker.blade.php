@@ -44,7 +44,11 @@
                     x-on:click="close"
                     :wire:click="$wireClickAction"
                 >
-                    {{ $block->getLabel() }}
+                        <p>{{ $block->getLabel() }}</p>
+
+                        @if($description = $block->getDescription())
+                            <p class="text-xs text-gray-600">{{ $description }}</p>
+                        @endif
                 </x-filament::dropdown.list.item>
             @endforeach
         </x-filament::grid>

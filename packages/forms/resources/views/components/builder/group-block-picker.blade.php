@@ -34,7 +34,7 @@
         group: null,
     }"
     >
-        <div x-show="=== null group">
+        <div x-show="group === null">
             @foreach ($groups as $group)
                 @php
                     $xOnClickAction = 'group = ' . Js::from($group->getName());
@@ -70,7 +70,7 @@
                     x-on:click="group = ''"
                 >
                     <div class="flex items-center justify-between">
-                        <p class="font-medium">Other</p>
+                        <p>Other</p>
 
                         @svg('heroicon-m-chevron-right', 'w-4 h-4 text-gray-400 group-hover:text-gray-600')
                     </div>
@@ -83,7 +83,7 @@
                 <div class="flex items-center gap-x-2 px-1 py-2">
                     <button
                         type="button"
-                        x-on:click="= null group"
+                        x-on:click="group = null"
                         class="appearance-none text-gray-400 hover:text-gray-600"
                     >
                         @svg('heroicon-m-chevron-left', 'w-4 h-4')
@@ -112,7 +112,11 @@
                         x-on:click="close(); $nextTick(() => group = null)"
                         :wire:click="$wireClickAction"
                     >
-                        {{ $block->getLabel() }}
+                        <p>{{ $block->getLabel() }}</p>
+
+                        @if($description = $block->getDescription())
+                            <p class="text-xs text-gray-600">{{ $description }}</p>
+                        @endif
                     </x-filament::dropdown.list.item>
                 @endforeach
             </div>
@@ -123,7 +127,7 @@
                 <div class="flex items-center gap-x-2 px-1 py-2">
                     <button
                         type="button"
-                        x-on:click="= null group"
+                        x-on:click="group = null"
                         class="appearance-none text-gray-400 hover:text-gray-600"
                     >
                         @svg('heroicon-m-chevron-left', 'w-4 h-4')
@@ -150,7 +154,11 @@
                         x-on:click="close(); $nextTick(() => group = null)"
                         :wire:click="$wireClickAction"
                     >
-                        {{ $block->getLabel() }}
+                        <p class="font-medium">{{ $block->getLabel() }}</p>
+
+                        @if($description = $block->getDescription())
+                            <p class="text-xs text-gray-600">{{ $description }}</p>
+                        @endif
                     </x-filament::dropdown.list.item>
                 @endforeach
             </div>
@@ -169,16 +177,16 @@
             @foreach ($blocks as $block)
             @php
             $wireClickActionArguments = ['block' => $block->getName()];
-            
+
             if ($afterItem) {
             $wireClickActionArguments['afterItem'] = $afterItem;
             }
-            
+
             $wireClickActionArguments = \Illuminate\Support\Js::from($wireClickActionArguments);
-            
+
             $wireClickAction = "mountFormComponentAction('{$statePath}', '{$action->getName()}', {$wireClickActionArguments})";
             @endphp
-            
+
             <x-filament::dropdown.list.item
             :icon="$block->getIcon()"
             x-on:click="close"
