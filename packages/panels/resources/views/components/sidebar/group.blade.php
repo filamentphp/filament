@@ -18,9 +18,9 @@
             @endif
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
-                x-transition:enter="delay-100 lg:transition"
-                x-transition:enter-start="opacity-0"
-                x-transition:enter-end="opacity-100"
+            x-transition:enter="delay-100 lg:transition"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
             @endif
             @class([
                 'flex items-center gap-x-3 px-2 py-2',
@@ -59,8 +59,8 @@
         x-show="! ($store.sidebar.groupIsCollapsed(label) && ($store.sidebar.isOpen || @js(! filament()->isSidebarCollapsibleOnDesktop())))"
         @if (filament()->isSidebarCollapsibleOnDesktop())
             x-transition:enter="delay-100 lg:transition"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
         @endif
         x-collapse.duration.200ms
         class="fi-sidebar-group-items flex flex-col gap-y-1"

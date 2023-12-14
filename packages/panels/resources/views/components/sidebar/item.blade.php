@@ -1,29 +1,42 @@
 @props([
     'active' => false,
+    'activeChildItems' => false,
     'activeIcon' => null,
     'badge' => null,
     'badgeColor' => null,
-    'grouped' => false,
-    'last' => false,
+    'childItems' => [],
     'first' => false,
+    'grouped' => false,
     'icon' => null,
+    'last' => false,
     'shouldOpenUrlInNewTab' => false,
+    'sidebarCollapsible' => true,
+    'subGrouped' => false,
     'url',
 ])
 
+@php
+    $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
+    $sidebarCollapsible = $sidebarCollapsible && $isSidebarCollapsibleOnDesktop;
+    $sidebarNavWithText = filament()->hasCollapsibleNavigationWithText();
+@endphp
+
 <li
-    @class([
-        'fi-sidebar-item',
-        // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
-        'fi-active fi-sidebar-item-active' => $active,
-    ])
+    {{
+        $attributes->class([
+            'fi-sidebar-item',
+            // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
+            'fi-active fi-sidebar-item-active' => $active,
+            'flex flex-col gap-y-1' => $active || $activeChildItems,
+        ])
+    }}
 >
     <a
         {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
-        @if (filament()->isSidebarCollapsibleOnDesktop())
+        @if ($sidebarCollapsible)
             x-data="{ tooltip: false }"
-            x-effect="
+        x-effect="
                 tooltip = $store.sidebar.isOpen
                     ? false
                     : {
@@ -32,28 +45,35 @@
                           theme: $store.theme,
                       }
             "
-            x-tooltip.html="tooltip"
+        x-tooltip.html="tooltip"
 
-            @if (filament()->hasCollapsibleNavigationWithText())
-                :class="{ 'flex-col' : !$store.sidebar.isOpen }"
-            @endif
+        @if ($sidebarNavWithText)
+            :class="{ 'flex-col' : !$store.sidebar.isOpen }"
+        @endif
+
         @endif
         @class([
             'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 text-sm outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
             'bg-gray-100 dark:bg-white/5' => $active,
         ])
     >
-        @if (filled($icon))
+        @if (filled($icon) && ((! $subGrouped) || $isSidebarCollapsibleOnDesktop))
             <x-filament::icon
-                :icon="$active && $activeIcon ? $activeIcon : $icon"
+                :icon="($active && $activeIcon) ? $activeIcon : $icon"
+                :x-show="($subGrouped && $isSidebarCollapsibleOnDesktop) ? '! $store.sidebar.isOpen' : false"
                 @class([
                     'fi-sidebar-item-icon h-6 w-6',
                     'text-gray-400 dark:text-gray-500' => ! $active,
                     'text-primary-600 dark:text-primary-400' => $active,
                 ])
             />
-        @elseif ($grouped)
+        @endif
+
+        @if ((blank($icon) && $grouped) || $subGrouped)
             <div
+                @if (filled($icon) && $subGrouped && $isSidebarCollapsibleOnDesktop)
+                    x-show="$store.sidebar.isOpen"
+                @endif
                 class="fi-sidebar-item-grouped-border relative flex h-6 w-6 items-center justify-center"
             >
                 @if (! $first)
@@ -79,23 +99,20 @@
         @endif
 
         <span
-            @if (filament()->isSidebarCollapsibleOnDesktop() && ! filament()->hasCollapsibleNavigationWithText())
+            @if ($sidebarCollapsible && !$sidebarNavWithText)
                 x-show="$store.sidebar.isOpen"
-                x-transition:enter="lg:transition lg:delay-100"
-                x-transition:enter-start="opacity-0"
-                x-transition:enter-end="opacity-100"
+            x-transition:enter="lg:transition lg:delay-100"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
             @endif
             @class([
-                'fi-sidebar-item-label flex-1',
+                'fi-sidebar-item-label flex-1 font-medium',
                 'text-gray-700 dark:text-gray-200' => ! $active,
                 'text-primary-600 dark:text-primary-400' => $active,
-                'font-semibold' => ! $grouped,
-                'font-medium' => $grouped,
-                'truncate' => ! filament()->hasCollapsibleNavigationWithText(),
-                'w-16 text-ellipsis text-center text-xs' => filament()->isSidebarCollapsibleOnDesktop() &&
-                filament()->hasCollapsibleNavigationWithText(),
+                'truncate' => ! $sidebarNavWithText,
+                'w-16 text-ellipsis text-center text-xs' => $sidebarCollapsible && $sidebarNavWithText
             ])
-            @if (filament()->isSidebarCollapsibleOnDesktop() && filament()->hasCollapsibleNavigationWithText())
+            @if ($sidebarCollapsible && $sidebarNavWithText)
                 :class="{ 'text-xs text-center text-ellipsis w-16': !$store.sidebar.isOpen }"
             @endif
         >
@@ -104,11 +121,11 @@
 
         @if (filled($badge))
             <span
-                @if (filament()->isSidebarCollapsibleOnDesktop())
-                    x-show="$store.sidebar.isOpen "
-                    x-transition:enter="lg:transition lg:delay-100"
-                    x-transition:enter-start="opacity-0"
-                    x-transition:enter-end="opacity-100"
+                @if ($sidebarCollapsible)
+                    x-show="$store.sidebar.isOpen"
+                x-transition:enter="lg:transition lg:delay-100"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
                 @endif
             >
                 <x-filament::badge :color="$badgeColor">
@@ -117,4 +134,27 @@
             </span>
         @endif
     </a>
+
+    @if (($active || $activeChildItems) && $childItems)
+        <ul class="fi-sidebar-sub-group-items flex flex-col gap-y-1">
+            @foreach ($childItems as $childItem)
+                <x-filament-panels::sidebar.item
+                    :active="$childItem->isActive()"
+                    :active-child-items="$childItem->isChildItemsActive()"
+                    :active-icon="$childItem->getActiveIcon()"
+                    :badge="$childItem->getBadge()"
+                    :badge-color="$childItem->getBadgeColor()"
+                    :first="$loop->first"
+                    grouped
+                    :icon="$childItem->getIcon()"
+                    :last="$loop->last"
+                    :should-open-url-in-new-tab="$childItem->shouldOpenUrlInNewTab()"
+                    sub-grouped
+                    :url="$childItem->getUrl()"
+                >
+                    {{ $childItem->getLabel() }}
+                </x-filament-panels::sidebar.item>
+            @endforeach
+        </ul>
+    @endif
 </li>
