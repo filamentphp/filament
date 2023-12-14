@@ -23,6 +23,7 @@
     {{
         $attributes->class([
             'fi-sidebar-item',
+            'fi-sidebar-item-' . str($slot)->slug(),
             // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
             'fi-active fi-sidebar-item-active' => $active,
             'flex flex-col gap-y-1' => $active || $activeChildItems,
