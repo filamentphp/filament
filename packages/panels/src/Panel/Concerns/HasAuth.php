@@ -182,7 +182,7 @@ trait HasAuth
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.login", $parameters);
+        return $this->route('auth.login', $parameters);
     }
 
     /**
@@ -194,7 +194,7 @@ trait HasAuth
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.register", $parameters);
+        return $this->route('auth.register', $parameters);
     }
 
     /**
@@ -206,7 +206,7 @@ trait HasAuth
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.password-reset.request", $parameters);
+        return $this->route('auth.password-reset.request', $parameters);
     }
 
     /**
@@ -249,7 +249,7 @@ trait HasAuth
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.profile", $parameters);
+        return $this->route('auth.profile', $parameters);
     }
 
     /**
@@ -257,7 +257,7 @@ trait HasAuth
      */
     public function getLogoutUrl(array $parameters = []): string
     {
-        return route("filament.{$this->getId()}.auth.logout", $parameters);
+        return $this->route('auth.logout', $parameters);
     }
 
     public function getEmailVerifiedMiddlewareName(): string
