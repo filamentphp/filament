@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components\Builder;
 
-use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns;
 use Filament\Support\Concerns\HasIcon;
@@ -10,8 +9,8 @@ use Filament\Support\Enums\IconSize;
 
 class BlockGroup extends Component
 {
-    use Concerns\HasName;
     use Concerns\HasDescription;
+    use Concerns\HasName;
     use HasIcon;
 
     final public function __construct(string $name)
