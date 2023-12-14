@@ -36,7 +36,7 @@
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
         @if ($sidebarCollapsible)
             x-data="{ tooltip: false }"
-        x-effect="
+            x-effect="
                 tooltip = $store.sidebar.isOpen
                     ? false
                     : {
@@ -45,12 +45,11 @@
                           theme: $store.theme,
                       }
             "
-        x-tooltip.html="tooltip"
+            x-tooltip.html="tooltip"
 
-        @if ($sidebarNavWithText)
-            :class="{ 'flex-col' : !$store.sidebar.isOpen }"
-        @endif
-
+            @if ($sidebarNavWithText)
+                :class="{ 'flex-col' : !$store.sidebar.isOpen }"
+            @endif
         @endif
         @class([
             'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 text-sm outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
@@ -99,18 +98,18 @@
         @endif
 
         <span
-            @if ($sidebarCollapsible && !$sidebarNavWithText)
+            @if ($sidebarCollapsible && ! $sidebarNavWithText)
                 x-show="$store.sidebar.isOpen"
-            x-transition:enter="lg:transition lg:delay-100"
-            x-transition:enter-start="opacity-0"
-            x-transition:enter-end="opacity-100"
+                x-transition:enter="lg:transition lg:delay-100"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
             @endif
             @class([
                 'fi-sidebar-item-label flex-1 font-medium',
                 'text-gray-700 dark:text-gray-200' => ! $active,
                 'text-primary-600 dark:text-primary-400' => $active,
                 'truncate' => ! $sidebarNavWithText,
-                'w-16 text-ellipsis text-center text-xs' => $sidebarCollapsible && $sidebarNavWithText
+                'w-16 text-ellipsis text-center text-xs' => $sidebarCollapsible && $sidebarNavWithText,
             ])
             @if ($sidebarCollapsible && $sidebarNavWithText)
                 :class="{ 'text-xs text-center text-ellipsis w-16': !$store.sidebar.isOpen }"
@@ -123,9 +122,9 @@
             <span
                 @if ($sidebarCollapsible)
                     x-show="$store.sidebar.isOpen"
-                x-transition:enter="lg:transition lg:delay-100"
-                x-transition:enter-start="opacity-0"
-                x-transition:enter-end="opacity-100"
+                    x-transition:enter="lg:transition lg:delay-100"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
                 @endif
             >
                 <x-filament::badge :color="$badgeColor">
