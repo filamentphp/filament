@@ -436,6 +436,10 @@ trait CanOpenModal
                 default => $color,
             });
 
+        if ($this->evaluate($this->modalSubmitAction, ['action' => $action]) === true) {
+            return $action;
+        }
+
         if ($this->modalSubmitAction !== null) {
             $action = $this->evaluate($this->modalSubmitAction, ['action' => $action]) ?? $action;
         }
@@ -453,6 +457,10 @@ trait CanOpenModal
             ->label($this->getModalCancelActionLabel())
             ->close()
             ->color('gray');
+
+        if ($this->evaluate($this->modalCancelAction, ['action' => $action]) === true) {
+            return $action;
+        }
 
         if ($this->modalCancelAction !== null) {
             $action = $this->evaluate($this->modalCancelAction, ['action' => $action]) ?? $action;
