@@ -55,7 +55,7 @@ trait HasBulkActions
             return null;
         }
 
-        $action->arguments($arguments);
+        $action->mergeArguments($arguments);
 
         $form = $this->getMountedTableBulkActionForm();
 

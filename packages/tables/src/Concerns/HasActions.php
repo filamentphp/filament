@@ -73,7 +73,7 @@ trait HasActions
             return null;
         }
 
-        $action->arguments($arguments);
+        $action->mergeArguments($arguments);
 
         $form = $this->getMountedTableActionForm();
 

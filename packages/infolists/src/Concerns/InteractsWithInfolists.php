@@ -96,7 +96,7 @@ trait InteractsWithInfolists
             return null;
         }
 
-        $action->arguments($arguments);
+        $action->mergeArguments($arguments);
 
         $form = $this->getMountedInfolistActionForm();
 
