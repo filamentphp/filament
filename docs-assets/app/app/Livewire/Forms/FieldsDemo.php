@@ -595,6 +595,103 @@ class FieldsDemo extends Component implements HasForms
                             ->disableOptionWhen(fn (string $value): bool => $value === 'published'),
                     ]),
                 Group::make()
+                    ->id('buttonsRadio')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Radio::make('buttonsRadio')
+                            ->label('Status')
+                            ->buttons()
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
+                            ->default('draft'),
+                    ]),
+                Group::make()
+                    ->id('buttonsRadioInlineUnderLabel')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Radio::make('buttonsRadioInlineUnderLabel')
+                            ->label('Status')
+                            ->buttons()
+                            ->inline()
+                            ->inlineLabel(false)
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
+                            ->default('draft'),
+                    ]),
+                Group::make()
+                    ->id('buttonGroupRadio')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Radio::make('buttonGroupRadio')
+                            ->label('Status')
+                            ->buttonGroup()
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
+                            ->default('draft'),
+                    ]),
+                Group::make()
+                    ->id('radioOptionColors')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Radio::make('radioOptionColors')
+                            ->label('Status')
+                            ->buttonGroup()
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
+                            ->colors([
+                                'draft' => 'warning',
+                                'scheduled' => 'info',
+                                'published' => 'success',
+                            ])
+                            ->default('draft'),
+                    ]),
+                Group::make()
+                    ->id('radioOptionIcons')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Radio::make('radioOptionIcons')
+                            ->label('Status')
+                            ->buttonGroup()
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
+                            ->colors([
+                                'draft' => 'warning',
+                                'scheduled' => 'info',
+                                'published' => 'success',
+                            ])
+                            ->icons([
+                                'draft' => 'heroicon-m-pencil-square',
+                                'scheduled' => 'heroicon-m-clock',
+                                'published' => 'heroicon-m-check-circle',
+                            ])
+                            ->default('draft'),
+                    ]),
+                Group::make()
                     ->id('dateTimePickers')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
