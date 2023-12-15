@@ -156,6 +156,25 @@ class FieldsDemo extends Component implements HasForms
                             ->suffixIcon('heroicon-m-globe-alt'),
                     ]),
                 Group::make()
+                    ->id('textInputRevealablePassword')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('textInputRevealablePassword')
+                            ->label('Password')
+                            ->default('https://filamentphp.com')
+                            ->password()
+                            ->revealable(),
+                        TextInput::make('textInputRevealedPassword')
+                            ->label('Password')
+                            ->default('https://filamentphp.com')
+                            ->suffixActions([
+                                TextInput\Actions\HidePasswordAction::make()
+                                    ->extraAttributes([]),
+                            ]),
+                    ]),
+                Group::make()
                     ->id('select')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',

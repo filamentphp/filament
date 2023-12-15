@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\TextInput\Actions;
 
 use Filament\Forms\Components\Actions\Action;
+use Filament\Support\Facades\FilamentIcon;
 
 class HidePasswordAction extends Action
 {
@@ -15,7 +16,9 @@ class HidePasswordAction extends Action
     {
         parent::setUp();
 
-        $this->icon('heroicon-o-eye-slash');
+        $this->label(__('filament-forms::components.text_input.actions.hide_password.label'));
+
+        $this->icon(FilamentIcon::resolve('forms::components.text-input.actions.hide-password') ?? 'heroicon-m-eye-slash');
 
         $this->extraAttributes([
             'x-cloak' => true,
