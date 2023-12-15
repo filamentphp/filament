@@ -50,7 +50,7 @@ php artisan filament:install --infolists
 Run the following command to install Tailwind CSS with the Tailwind Forms and Typography plugins:
 
 ```bash
-npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev
+npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss postcss-nesting autoprefixer --save-dev
 ```
 
 Create a new `tailwind.config.js` file and add the Filament `preset` *(includes the Filament color scheme and the required Tailwind plugins)*:
@@ -78,11 +78,12 @@ Add Tailwind's CSS layers to your `resources/css/app.css`:
 @tailwind utilities;
 ```
 
-Create a `postcss.config.js` file in the root of your project and register Tailwind CSS and Autoprefixer as plugins:
+Create a `postcss.config.js` file in the root of your project and register Tailwind CSS, PostCSS Nesting and Autoprefixer as plugins:
 
 ```js
 export default {
     plugins: {
+        'tailwindcss/nesting': 'postcss-nesting',
         tailwindcss: {},
         autoprefixer: {},
     },
