@@ -28,6 +28,8 @@
             $arrayState = $arrayState->all();
         }
 
+        $listLimit = 1;
+
         if (is_array($arrayState)) {
             if ($listLimit = $getListLimit()) {
                 $limitedArrayStateCount = (count($arrayState) > $listLimit) ? (count($arrayState) - $listLimit) : 0;
