@@ -165,7 +165,7 @@ trait HasAuth
 
     public function getEmailVerificationPromptRouteName(): string
     {
-        return "filament.{$this->getId()}.auth.email-verification.prompt";
+        return $this->generateRouteName('auth.email-verification.prompt');
     }
 
     public function getEmailVerifiedMiddleware(): string
@@ -215,7 +215,7 @@ trait HasAuth
     public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array $parameters = []): string
     {
         return URL::temporarySignedRoute(
-            "filament.{$this->getId()}.auth.email-verification.verify",
+            $this->generateRouteName('auth.email-verification.verify'),
             now()->addMinutes(config('auth.verification.expire', 60)),
             [
                 'id' => $user->getKey(),
@@ -231,7 +231,7 @@ trait HasAuth
     public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = []): string
     {
         return URL::signedRoute(
-            "filament.{$this->getId()}.auth.password-reset.reset",
+            $this->generateRouteName('auth.password-reset.reset'),
             [
                 'email' => $user->getEmailForPasswordReset(),
                 'token' => $token,
