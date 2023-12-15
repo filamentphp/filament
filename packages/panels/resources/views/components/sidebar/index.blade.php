@@ -95,8 +95,14 @@
     </div>
 
     <nav
-        class="fi-sidebar-nav flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"
         style="scrollbar-gutter: stable"
+        @class([
+            'fi-sidebar-nav flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden py-8',
+            'px-6' => ! filament()->hasCollapsibleNavigationWithText(),
+        ])
+        @if (filament()->hasCollapsibleNavigationWithText())
+            x-bind:class="$store.sidebar.isOpen ? 'px-6' : 'px-3'"
+        @endif
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.start') }}
 
