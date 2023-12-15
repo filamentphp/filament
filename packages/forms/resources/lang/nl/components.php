@@ -419,6 +419,22 @@ return [
         'placeholder' => 'Nieuwe tag',
     ],
 
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Wachtwoord verbergen',
+            ],
+
+            'show_password' => [
+                'label' => 'Wachtwoord tonen',
+            ],
+
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [
