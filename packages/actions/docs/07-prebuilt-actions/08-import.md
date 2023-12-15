@@ -387,10 +387,22 @@ use Filament\Forms\Components\Checkbox;
 public static function getOptionsFormComponents(): array
 {
     return [
-        Checkbox::make('update_existing')
+        Checkbox::make('updateExisting')
             ->label('Update existing records'),
     ];
 }
+```
+
+Alternatively, you can pass a set of static options to the importer through the `options()` method on the action:
+
+```php
+use Filament\Actions\ImportAction;
+
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->options([
+        'updateExisting' => true,
+    ])
 ```
 
 Now, you can access the data from these options inside the importer class, by calling `$this->options`. For example, you might want to use it inside `resolveRecord()` to [update an existing product](#updating-existing-records-when-importing):
@@ -400,7 +412,7 @@ use App\Models\Product;
 
 public function resolveRecord(): ?Product
 {
-    if ($this->options['update_existing'] ?? false) {
+    if ($this->options['updateExisting'] ?? false) {
         return Product::firstOrNew([
             'sku' => $this->data['sku'],
         ]);
