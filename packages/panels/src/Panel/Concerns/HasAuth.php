@@ -165,7 +165,7 @@ trait HasAuth
 
     public function getEmailVerificationPromptRouteName(): string
     {
-        return "filament.{$this->getId()}.auth.email-verification.prompt";
+        return $this->generateRouteName('auth.email-verification.prompt');
     }
 
     public function getEmailVerifiedMiddleware(): string
@@ -182,7 +182,7 @@ trait HasAuth
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.login", $parameters);
+        return $this->route('auth.login', $parameters);
     }
 
     /**
@@ -194,7 +194,7 @@ trait HasAuth
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.register", $parameters);
+        return $this->route('auth.register', $parameters);
     }
 
     /**
@@ -206,7 +206,7 @@ trait HasAuth
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.password-reset.request", $parameters);
+        return $this->route('auth.password-reset.request', $parameters);
     }
 
     /**
@@ -215,7 +215,7 @@ trait HasAuth
     public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array $parameters = []): string
     {
         return URL::temporarySignedRoute(
-            "filament.{$this->getId()}.auth.email-verification.verify",
+            $this->generateRouteName('auth.email-verification.verify'),
             now()->addMinutes(config('auth.verification.expire', 60)),
             [
                 'id' => $user->getKey(),
@@ -231,7 +231,7 @@ trait HasAuth
     public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = []): string
     {
         return URL::signedRoute(
-            "filament.{$this->getId()}.auth.password-reset.reset",
+            $this->generateRouteName('auth.password-reset.reset'),
             [
                 'email' => $user->getEmailForPasswordReset(),
                 'token' => $token,
@@ -249,7 +249,7 @@ trait HasAuth
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.profile", $parameters);
+        return $this->route('auth.profile', $parameters);
     }
 
     /**
@@ -257,7 +257,7 @@ trait HasAuth
      */
     public function getLogoutUrl(array $parameters = []): string
     {
-        return route("filament.{$this->getId()}.auth.logout", $parameters);
+        return $this->route('auth.logout', $parameters);
     }
 
     public function getEmailVerifiedMiddlewareName(): string
