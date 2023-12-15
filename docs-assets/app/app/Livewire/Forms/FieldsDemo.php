@@ -163,12 +163,12 @@ class FieldsDemo extends Component implements HasForms
                     ->schema([
                         TextInput::make('textInputRevealablePassword')
                             ->label('Password')
-                            ->default('https://filamentphp.com')
+                            ->default('filament123')
                             ->password()
                             ->revealable(),
                         TextInput::make('textInputRevealedPassword')
                             ->label('Password')
-                            ->default('https://filamentphp.com')
+                            ->default('filament123')
                             ->suffixActions([
                                 TextInput\Actions\HidePasswordAction::make()
                                     ->extraAttributes([]),

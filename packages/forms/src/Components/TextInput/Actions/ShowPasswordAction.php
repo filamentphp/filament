@@ -20,6 +20,8 @@ class ShowPasswordAction extends Action
 
         $this->icon(FilamentIcon::resolve('forms::components.text-input.actions.show-password') ?? 'heroicon-m-eye');
 
+        $this->color('gray');
+
         $this->extraAttributes([
             'x-show' => '! isPasswordRevealed',
         ]);

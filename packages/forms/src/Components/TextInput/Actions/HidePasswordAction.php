@@ -20,6 +20,8 @@ class HidePasswordAction extends Action
 
         $this->icon(FilamentIcon::resolve('forms::components.text-input.actions.hide-password') ?? 'heroicon-m-eye-slash');
 
+        $this->color('gray');
+
         $this->extraAttributes([
             'x-cloak' => true,
             'x-show' => 'isPasswordRevealed',
