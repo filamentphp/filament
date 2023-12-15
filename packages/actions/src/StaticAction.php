@@ -49,6 +49,8 @@ class StaticAction extends ViewComponent
 
     protected string $viewIdentifier = 'action';
 
+    protected ?string $livewireTarget = null;
+
     final public function __construct(?string $name)
     {
         $this->name($name);
@@ -172,9 +174,16 @@ class StaticAction extends ViewComponent
         return 'close()';
     }
 
+    public function livewireTarget(?string $target): static
+    {
+        $this->livewireTarget = $target;
+
+        return $this;
+    }
+
     public function getLivewireTarget(): ?string
     {
-        return null;
+        return $this->livewireTarget;
     }
 
     /**

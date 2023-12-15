@@ -125,6 +125,45 @@ trait HasState
     }
 
     /**
+     * @param  array<string, mixed>  $state
+     * @return array<string, mixed>
+     */
+    public function mutateStateForValidation(array &$state = []): array
+    {
+        foreach ($this->getComponents() as $component) {
+            if ($component->isHidden()) {
+                continue;
+            }
+
+            foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
+                $container->mutateStateForValidation($state);
+            }
+
+            if ($component->getStatePath(isAbsolute: false)) {
+                if (! $component->mutatesStateForValidation()) {
+                    continue;
+                }
+
+                $componentStatePath = $component->getStatePath();
+
+                data_set(
+                    $state,
+                    $componentStatePath,
+                    $component->mutateStateForValidation(
+                        data_get($state, $componentStatePath),
+                    ),
+                );
+            }
+        }
+
+        return $state;
+    }
+
+    /**
      * @param  array<string, mixed> | null  $state
      */
     public function fill(?array $state = null): static

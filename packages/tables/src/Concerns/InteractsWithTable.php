@@ -310,5 +310,7 @@ trait InteractsWithTable
         $this->resetTableFiltersForm();
 
         $this->resetPage();
+
+        $this->flushCachedTableRecords();
     }
 }

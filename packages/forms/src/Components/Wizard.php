@@ -96,6 +96,7 @@ class Wizard extends Component
             ->label(__('filament-forms::components.wizard.actions.next_step.label'))
             ->iconPosition(IconPosition::After)
             ->livewireClickHandlerEnabled(false)
+            ->livewireTarget('dispatchFormEvent')
             ->button();
 
         if ($this->modifyNextActionUsing) {

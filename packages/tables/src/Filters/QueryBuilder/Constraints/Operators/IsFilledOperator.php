@@ -46,7 +46,7 @@ class IsFilledOperator extends Operator
         return $query->where(
             fn (Builder $query) => $query
                 ->{$this->isInverse() ? 'whereNull' : 'whereNotNull'}($qualifiedColumn)
-                ->{$this->isInverse() ? 'where' : 'whereNot'}($qualifiedStringColumn, ''),
+                ->{$this->isInverse() ? 'orWhere' : 'whereNot'}($qualifiedStringColumn, ''),
         );
     }
 }

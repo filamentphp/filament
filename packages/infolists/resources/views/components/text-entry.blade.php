@@ -1,5 +1,6 @@
 @php
     use Filament\Infolists\Components\TextEntry\TextEntrySize;
+    use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconPosition;
@@ -7,7 +8,9 @@
 
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
+        $alignment = $getAlignment();
         $isBadge = $isBadge();
+        $isBulleted = $isBulleted();
         $iconPosition = $getIconPosition();
         $isListWithLineBreaks = $isListWithLineBreaks();
         $isLimitedListExpandable = $isLimitedListExpandable();
@@ -15,11 +18,17 @@
         $isMarkdown = $isMarkdown();
         $url = $getUrl();
 
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+        }
+
         $arrayState = $getState();
 
         if ($arrayState instanceof \Illuminate\Support\Collection) {
             $arrayState = $arrayState->all();
         }
+
+        $listLimit = 1;
 
         if (is_array($arrayState)) {
             if ($listLimit = $getListLimit()) {
@@ -50,9 +59,7 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class([
-                    'fi-in-text',
-                ])
+                ->class(['fi-in-text w-full'])
         }}
     >
         @if ($arrayState)
@@ -62,8 +69,34 @@
             >
                 <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
                     @class([
-                        'list-inside list-disc' => $isBulleted(),
-                        'flex flex-wrap items-center gap-1.5' => $isBadge,
+                        'flex' => ! $isBulleted,
+                        'flex-col' => (! $isBulleted) && $isListWithLineBreaks,
+                        'list-inside list-disc' => $isBulleted,
+                        'gap-1.5' => $isBadge,
+                        'flex-wrap' => $isBadge && (! $isListWithLineBreaks),
+                        match ($alignment) {
+                            Alignment::Start => 'text-start',
+                            Alignment::Center => 'text-center',
+                            Alignment::End => 'text-end',
+                            Alignment::Left => 'text-left',
+                            Alignment::Right => 'text-right',
+                            Alignment::Justify, Alignment::Between => 'text-justify',
+                            default => $alignment,
+                        },
+                        match ($alignment) {
+                            Alignment::Start, Alignment::Left => 'justify-start',
+                            Alignment::Center => 'justify-center',
+                            Alignment::End, Alignment::Right => 'justify-end',
+                            Alignment::Between, Alignment::Justify => 'justify-between',
+                            default => null,
+                        } => $isBulleted || (! $isListWithLineBreaks),
+                        match ($alignment) {
+                            Alignment::Start, Alignment::Left => 'items-start',
+                            Alignment::Center => 'items-center',
+                            Alignment::End, Alignment::Right => 'items-end',
+                            Alignment::Between, Alignment::Justify => 'items-stretch',
+                            default => null,
+                        } => $isListWithLineBreaks && (! $isBulleted),
                     ])
                     @if ($isListWithLineBreaks && $isLimitedListExpandable)
                         x-data="{ isLimited: true }"
@@ -71,7 +104,7 @@
                 >
                     @foreach ($arrayState as $state)
                         @if (filled($formattedState = $formatState($state)) &&
-                             (! ($isListWithLineBreaks && (! $isLimitedListExpandable) && ($loop->index > $listLimit))))
+                             (! ($isListWithLineBreaks && (! $isLimitedListExpandable) && ($loop->iteration > $listLimit))))
                             @php
                                 $color = $getColor($state);
                                 $copyableState = $getCopyableState($state) ?? $state;
@@ -115,7 +148,6 @@
 
                             <{{ $isListWithLineBreaks ? 'li' : 'div' }}
                                 @if ($itemIsCopyable)
-                                    x-data="{}"
                                     x-on:click="
                                         window.navigator.clipboard.writeText(@js($copyableState))
                                         $tooltip(@js($copyMessage), {
@@ -123,13 +155,18 @@
                                             timeout: @js($copyMessageDuration),
                                         })
                                     "
-                                    class="cursor-pointer max-w-max"
                                 @endif
-                                @if ($isListWithLineBreaks && ($loop->index > $listLimit))
-                                    x-show="! isLimited"
+                                @if ($isListWithLineBreaks && ($loop->iteration > $listLimit))
                                     x-cloak
+                                    x-show="! isLimited"
                                     x-transition
                                 @endif
+                                @class([
+                                    'flex' => ! $isBulleted,
+                                    'max-w-max' => ! ($isBulleted || $isBadge),
+                                    'w-max' => $isBadge,
+                                    'cursor-pointer' => $itemIsCopyable,
+                                ])
                             >
                                 @if ($isBadge)
                                     <x-filament::badge

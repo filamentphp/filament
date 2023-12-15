@@ -128,41 +128,23 @@ class EditRecord extends Page
         $this->authorizeAccess();
 
         try {
-            /** @internal Read the DocBlock above the following method. */
-            $this->validateFormAndUpdateRecordAndCallHooks();
+            $this->callHook('beforeValidate');
+
+            $data = $this->form->getState();
+
+            $this->callHook('afterValidate');
+
+            $data = $this->mutateFormDataBeforeSave($data);
+
+            $this->callHook('beforeSave');
+
+            $this->handleRecordUpdate($this->getRecord(), $data);
+
+            $this->callHook('afterSave');
         } catch (Halt $exception) {
             return;
         }
 
-        /** @internal Read the DocBlock above the following method. */
-        $this->sendSavedNotificationAndRedirect(shouldRedirect: $shouldRedirect);
-    }
-
-    /**
-     * @internal Never override or call this method. If you completely override `save()`, copy the contents of this method into your override.
-     */
-    protected function validateFormAndUpdateRecordAndCallHooks(): void
-    {
-        $this->callHook('beforeValidate');
-
-        $data = $this->form->getState();
-
-        $this->callHook('afterValidate');
-
-        $data = $this->mutateFormDataBeforeSave($data);
-
-        $this->callHook('beforeSave');
-
-        $this->handleRecordUpdate($this->getRecord(), $data);
-
-        $this->callHook('afterSave');
-    }
-
-    /**
-     * @internal Never override or call this method. If you completely override `save()`, copy the contents of this method into your override.
-     */
-    protected function sendSavedNotificationAndRedirect(bool $shouldRedirect = true): void
-    {
         $this->getSavedNotification()?->send();
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {

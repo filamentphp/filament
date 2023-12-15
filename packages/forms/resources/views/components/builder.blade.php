@@ -88,31 +88,7 @@
                         }"
                         x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
-                        x-on:expand-concealing-component.window="
-                            $nextTick(() => {
-                                error = $el.querySelector('[data-validation-error]')
-
-                                if (! error) {
-                                    return
-                                }
-
-                                isCollapsed = false
-
-                                if (document.body.querySelector('[data-validation-error]') !== error) {
-                                    return
-                                }
-
-                                setTimeout(
-                                    () =>
-                                        $el.scrollIntoView({
-                                            behavior: 'smooth',
-                                            block: 'start',
-                                            inline: 'start',
-                                        }),
-                                    200,
-                                )
-                            })
-                        "
+                        x-on:expand="isCollapsed = false"
                         x-sortable-item="{{ $uuid }}"
                         class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                         x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"

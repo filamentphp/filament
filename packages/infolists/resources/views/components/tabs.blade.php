@@ -10,6 +10,10 @@
         tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
 
         getTabs: function () {
+            if (! this.$refs.tabsData) {
+                return []
+            }
+
             return JSON.parse(this.$refs.tabsData.value)
         },
 
@@ -25,13 +29,13 @@
         },
     }"
     x-init="
+        $watch('tab', () => updateQueryString())
+
         const tabs = getTabs()
 
         if (! tab || ! tabs.includes(tab)) {
             tab = tabs[@js($getActiveTab()) - 1]
         }
-
-        $watch('tab', () => updateQueryString())
 
         Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
             succeed(({ snapshot, effect }) => {

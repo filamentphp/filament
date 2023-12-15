@@ -92,6 +92,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
     protected bool $shouldMergeHydratedDefaultStateWithChildComponentContainerStateAfterStateHydrated = true;
 
+    protected bool $hasHydratedState = false;
+
     protected string | Closure | null $labelBetweenItems = null;
 
     protected bool | Closure $isItemLabelTruncated = true;
@@ -114,6 +116,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 return;
             }
 
+            // If this repeater is inside a layout component that is entangled
+            // with a relationship, this callback will be called twice. We
+            // do not want to regenerate the keys or hydrate simple state
+            // twice, so we check if this has already happened.
+            if ($component->hasHydratedState) {
+                return;
+            }
+
             $items = [];
 
             $simpleField = $component->getSimpleField();
@@ -125,6 +135,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             }
 
             $component->state($items);
+
+            // Remember that the state has already been hydrated before.
+            $component->hasHydratedState = true;
         });
 
         $this->registerActions([
