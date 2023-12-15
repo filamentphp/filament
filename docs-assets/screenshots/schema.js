@@ -395,6 +395,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/text-input/revealable-password': {
+        url: 'forms/fields',
+        selector: '#textInputRevealablePassword',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/select/simple': {
         url: 'forms/fields',
         selector: '#select',
