@@ -72,7 +72,7 @@ trait Translatable
         }
 
         try {
-            $this->form->validate();
+            $this->form->getLivewire()->resetValidation();
         } catch (ValidationException $exception) {
             $this->activeLocale = $this->oldActiveLocale;
 
