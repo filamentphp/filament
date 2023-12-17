@@ -120,9 +120,9 @@ To ensure that the Edit page for the `PostResource` is able to render successful
 
 ```php
 it('can render page', function () {
-    $this->get(PostResource::getUrl('edit', [
-        'record' => Post::factory()->create(),
-    ]))->assertSuccessful();
+    livewire(PostResource\Pages\EditPost::class, [
+        'record' => Post::factory()->create()->getRouteKey(),
+    ])->assertSuccessful();
 });
 ```
 
