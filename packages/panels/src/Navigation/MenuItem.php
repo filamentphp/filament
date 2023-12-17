@@ -13,7 +13,11 @@ class MenuItem extends Component
      */
     protected string | array | Closure | null $color = null;
 
+    protected bool | Closure | null $isActive = null;
+
     protected string | Closure | null $icon = null;
+
+    protected string | Closure | null $activeIcon = null;
 
     protected string | Closure | null $label = null;
 
@@ -92,6 +96,20 @@ class MenuItem extends Component
         return $this;
     }
 
+    public function activeIcon(string | Closure | null $activeIcon): static
+    {
+        $this->activeIcon = $activeIcon;
+
+        return $this;
+    }
+
+    public function isActiveWhen(Closure $callback): static
+    {
+        $this->isActive = $callback;
+
+        return $this;
+    }
+
     public function visible(bool | Closure $condition = true): static
     {
         $this->isVisible = $condition;
@@ -126,6 +144,11 @@ class MenuItem extends Component
         return $this->evaluate($this->icon);
     }
 
+    public function getActiveIcon(): ?string
+    {
+        return $this->evaluate($this->activeIcon);
+    }
+
     public function getLabel(): ?string
     {
         return $this->evaluate($this->label);
@@ -139,6 +162,15 @@ class MenuItem extends Component
     public function getUrl(): ?string
     {
         return $this->evaluate($this->url);
+    }
+
+    public function isActive(): bool
+    {
+        if ($this->isActive instanceof Closure) {
+            $this->isActive = ((bool) $this->evaluate($this->isActive));
+        }
+
+        return (bool) $this->isActive;
     }
 
     public function shouldOpenUrlInNewTab(): bool

@@ -82,7 +82,9 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `panels::sidebar.expand-button.rtl` - Button to expand the sidebar (right-to-left direction)
 - `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
 - `panels::tenant-menu.billing-button` - Billing button in the tenant menu
+- `panels::tenant-menu.billing-button.active` - Billing button in the tenant menu when it's active
 - `panels::tenant-menu.profile-button` - Profile button in the tenant menu
+- `panels::tenant-menu.profile-button.active` - Profile button in the tenant menu when it's active
 - `panels::tenant-menu.registration-button` - Registration button in the tenant menu
 - `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
 - `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
@@ -93,6 +95,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `panels::topbar.group.toggle-button` - Toggle button for a topbar group
 - `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
 - `panels::user-menu.profile-item` - Profile item in the user menu
+- `panels::user-menu.profile-item.active` - Profile item in the user menu when it's active
 - `panels::user-menu.logout-button` - Button in the user menu to log out
 - `panels::widgets.account.logout-button` - Button in the account widget to log out
 - `panels::widgets.filament-info.open-documentation-button` - Button to open the documentation from the Filament info widget

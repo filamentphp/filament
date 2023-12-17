@@ -345,9 +345,11 @@ public function panel(Panel $panel): Panel
         // ...
         ->userMenuItems([
             MenuItem::make()
-                ->label('Settings')
+                ->label(fn (): string => __('Settings'))
                 ->url(fn (): string => Settings::getUrl())
-                ->icon('heroicon-o-cog-6-tooth'),
+                ->isActiveWhen(fn () => request()->routeIs('filament.admin.pages.settings'))
+                ->icon('heroicon-o-cog-6-tooth')
+                ->activeIcon('heroicon-s-cog-6-tooth'),
             // ...
         ]);
 }

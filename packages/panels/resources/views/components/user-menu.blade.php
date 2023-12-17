@@ -39,7 +39,9 @@
             <x-filament::dropdown.list>
                 <x-filament::dropdown.list.item
                     :color="$profileItem?->getColor()"
-                    :icon="$profileItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::user-menu.profile-item') ?? 'heroicon-m-user-circle'"
+                    :icon="$profileItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::user-menu.profile-item') ?? 'heroicon-o-user-circle'"
+                    :active-icon="$profileItem?->getActiveIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::user-menu.profile-item.active') ?? 'heroicon-s-user-circle'"
+                    :active="$profileItem?->isActive()"
                     :href="$profileItemUrl ?? filament()->getProfileUrl()"
                     :target="($profileItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
                     tag="a"
@@ -50,7 +52,8 @@
         @else
             <x-filament::dropdown.header
                 :color="$profileItem?->getColor()"
-                :icon="$profileItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::user-menu.profile-item') ?? 'heroicon-m-user-circle'"
+                :icon="$profileItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::user-menu.profile-item') ?? 'heroicon-o-user-circle'"
+                :active-icon="$profileItem?->getActiveIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::user-menu.profile-item.active') ?? 'heroicon-s-user-circle'"
             >
                 {{ $profileItem?->getLabel() ?? filament()->getUserName($user) }}
             </x-filament::dropdown.header>
@@ -70,8 +73,10 @@
             <x-filament::dropdown.list.item
                 :color="$item->getColor()"
                 :href="$item->getUrl()"
+                :active="$item->isActive()"
                 :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
                 :icon="$item->getIcon()"
+                :active-icon="$item->getActiveIcon()"
                 tag="a"
             >
                 {{ $item->getLabel() }}
