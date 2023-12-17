@@ -181,7 +181,8 @@ trait HasBulkActions
             return false;
         }
 
-        return $action->hasModalDescription() ||
+        return $action->hasCustomModalHeading() ||
+            $action->hasModalDescription() ||
             $action->hasModalContent() ||
             $action->hasModalContentFooter() ||
             $action->getInfolist() ||
