@@ -20,7 +20,7 @@ trait HasTranslatableFormWithExistingRecordData
             $translatedData = [];
 
             foreach ($translatableAttributes as $attribute) {
-                $translatedData[$attribute] = $record->getTranslation($attribute, $locale, false);
+                $translatedData[$attribute] = $record->getTranslation($attribute, $locale, useFallbackLocale: false);
             }
 
             if ($locale !== $this->activeLocale) {
