@@ -58,7 +58,7 @@ return [
         ],
 
         'started' => [
-            'title' => 'L\'importation a commencé',
+            'title' => 'L\'importation a commencée',
             'body' => 'Votre importation a commencé et 1 ligne sera traitée en arrière-plan.|Votre importation a commencé et :count lignes seront traitées en arrière-plan.',
         ],
 
