@@ -85,8 +85,7 @@ trait Translatable
             return;
         }
 
-        $this->form->getLivewire()->resetValidation();
-
+        $this->resetValidation();
 
         $translatableAttributes = static::getResource()::getTranslatableAttributes();
 
