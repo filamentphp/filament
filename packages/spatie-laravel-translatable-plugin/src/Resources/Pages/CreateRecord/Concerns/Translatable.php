@@ -78,6 +78,8 @@ trait Translatable
             return;
         }
 
+        $this->resetValidation();
+
         $translatableAttributes = static::getResource()::getTranslatableAttributes();
 
         $this->otherLocaleData[$this->oldActiveLocale] = Arr::only($this->data, $translatableAttributes);
