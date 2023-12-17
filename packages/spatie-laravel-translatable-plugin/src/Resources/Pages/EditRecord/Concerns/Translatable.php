@@ -85,6 +85,9 @@ trait Translatable
             return;
         }
 
+        $this->form->getLivewire()->resetValidation();
+
+
         $translatableAttributes = static::getResource()::getTranslatableAttributes();
 
         $this->otherLocaleData[$this->oldActiveLocale] = Arr::only($this->data, $translatableAttributes);
