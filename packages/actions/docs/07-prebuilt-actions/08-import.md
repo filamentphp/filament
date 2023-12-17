@@ -4,7 +4,7 @@ title: Import action
 
 ## Overview
 
-Filament includes a prebuilt action that is able to import rows from a CSV. When the trigger button is clicked, a modal asks the user for a file. Once they upload one, they are able to map each column in the CSV to a real column in the database. If any rows fail validation, they will be compiled into a downloadable CSV for the user to review after the rest of the rows have been imported. Users can also download an example CSV file containing all the columns that can be imported.
+Filament v3.1 introduced a prebuilt action that is able to import rows from a CSV. When the trigger button is clicked, a modal asks the user for a file. Once they upload one, they are able to map each column in the CSV to a real column in the database. If any rows fail validation, they will be compiled into a downloadable CSV for the user to review after the rest of the rows have been imported. Users can also download an example CSV file containing all the columns that can be imported.
 
 This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications#overview), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about imports:
 
@@ -387,10 +387,22 @@ use Filament\Forms\Components\Checkbox;
 public static function getOptionsFormComponents(): array
 {
     return [
-        Checkbox::make('update_existing')
+        Checkbox::make('updateExisting')
             ->label('Update existing records'),
     ];
 }
+```
+
+Alternatively, you can pass a set of static options to the importer through the `options()` method on the action:
+
+```php
+use Filament\Actions\ImportAction;
+
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->options([
+        'updateExisting' => true,
+    ])
 ```
 
 Now, you can access the data from these options inside the importer class, by calling `$this->options`. For example, you might want to use it inside `resolveRecord()` to [update an existing product](#updating-existing-records-when-importing):
@@ -400,7 +412,7 @@ use App\Models\Product;
 
 public function resolveRecord(): ?Product
 {
-    if ($this->options['update_existing'] ?? false) {
+    if ($this->options['updateExisting'] ?? false) {
         return Product::firstOrNew([
             'sku' => $this->data['sku'],
         ]);
@@ -412,13 +424,13 @@ public function resolveRecord(): ?Product
 
 ## Improving import column mapping guesses
 
-By default, Filament will attempt to "guess" which columns in the CSV match which columns in the database, to save the user time. It does this by attempting to find different combinations of the column name, with spaces, `-`, `_`, all cases insensitively. However, if you'd like to improve the guesses, you can call the `guesses()` method with more examples of the column name that could be present in the CSV:
+By default, Filament will attempt to "guess" which columns in the CSV match which columns in the database, to save the user time. It does this by attempting to find different combinations of the column name, with spaces, `-`, `_`, all cases insensitively. However, if you'd like to improve the guesses, you can call the `guess()` method with more examples of the column name that could be present in the CSV:
 
 ```php
 use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('sku')
-    ->guesses(['id', 'number', 'stock-keeping unit'])
+    ->guess(['id', 'number', 'stock-keeping unit'])
 ```
 
 ## Providing example CSV data

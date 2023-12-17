@@ -26,6 +26,8 @@
         $arrayState = $arrayState->all();
     }
 
+    $listLimit = 1;
+
     if (is_array($arrayState)) {
         if ($listLimit = $getListLimit()) {
             $limitedArrayStateCount = (count($arrayState) > $listLimit) ? (count($arrayState) - $listLimit) : 0;
@@ -80,6 +82,7 @@
                 'list-inside list-disc' => $isBulleted,
                 'gap-1.5' => $isBadge,
                 'flex-wrap' => $isBadge && (! $isListWithLineBreaks),
+                'whitespace-normal' => $canWrap,
                 match ($alignment) {
                     Alignment::Start => 'text-start',
                     Alignment::Center => 'text-center',

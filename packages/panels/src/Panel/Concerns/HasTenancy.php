@@ -180,13 +180,10 @@ trait HasTenancy
             return null;
         }
 
-        return route(
-            "filament.{$this->getId()}.tenant.billing",
-            [
-                'tenant' => $tenant,
-                ...$parameters,
-            ],
-        );
+        return $this->route('tenant.billing', [
+            'tenant' => $tenant,
+            ...$parameters,
+        ]);
     }
 
     /**
@@ -198,7 +195,7 @@ trait HasTenancy
             return null;
         }
 
-        return route("filament.{$this->getId()}.tenant.profile", $parameters);
+        return $this->route('tenant.profile', $parameters);
     }
 
     /**
@@ -210,7 +207,7 @@ trait HasTenancy
             return null;
         }
 
-        return route("filament.{$this->getId()}.tenant.registration", $parameters);
+        return $this->route('tenant.registration', $parameters);
     }
 
     public function hasTenantMenu(): bool
