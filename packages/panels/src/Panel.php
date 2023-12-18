@@ -36,6 +36,7 @@ class Panel extends Component
     use Panel\Concerns\HasTheme;
     use Panel\Concerns\HasTopNavigation;
     use Panel\Concerns\HasUserMenu;
+    use Panel\Concerns\HasDefaultThemeMode;
 
     protected bool $isDefault = false;
 

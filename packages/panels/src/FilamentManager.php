@@ -816,4 +816,8 @@ class FilamentManager
             throw new Exception('Please use the `widgets()` method on the panel configuration to register widgets.');
         }
     }
+    public function getDefaultThemeMode(): string
+    {
+        return $this->getCurrentPanel()->getDefaultThemeMode();
+    }
 }
