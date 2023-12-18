@@ -1,40 +1,41 @@
 <?php
 
 use Illuminate\View\ComponentAttributeBag;
+
 use function Filament\Support\prepare_inherited_attributes;
 
-it('will prepare attributes', function() {
+it('will prepare attributes', function () {
     $bag = new ComponentAttributeBag([
-        'style' => 'color:red'
+        'style' => 'color:red',
     ]);
 
     $attributes = prepare_inherited_attributes($bag);
 
     expect($attributes->getAttributes())->toBe([
-        'style' => 'color:red'
+        'style' => 'color:red',
     ]);
 });
 
-it('will prepare alpine attributes', function() {
+it('will prepare alpine attributes', function () {
     $bag = new ComponentAttributeBag([
-        'x-data' => '{foo:bar}'
+        'x-data' => '{foo:bar}',
     ]);
 
     $attributes = prepare_inherited_attributes($bag);
 
     expect($attributes->getAttributes())->toBe([
-        'x-data' => '{foo:bar}'
+        'x-data' => '{foo:bar}',
     ]);
 });
 
-it('will prepare data attributes', function() {
+it('will prepare data attributes', function () {
     $bag = new ComponentAttributeBag([
-        'data-foo' => 'bar'
+        'data-foo' => 'bar',
     ]);
 
     $attributes = prepare_inherited_attributes($bag);
 
     expect($attributes->getAttributes())->toBe([
-        'data-foo' => 'bar'
+        'data-foo' => 'bar',
     ]);
 });
