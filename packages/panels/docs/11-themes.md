@@ -153,6 +153,22 @@ public function panel(Panel $panel): Panel
         ->darkMode(false);
 }
 ```
+## Changing default theme mode
+
+By default,Filament uses system as the default mode when the user open panel for the first time.
+
+If you want to simply change the default mode that is used as default, you can use the `defaultThemeMode()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->defaultThemMode('light'); // or ->defaultThemeMode('dark'); or ->defaultThemeMode('system');
+}
+```
 
 ## Adding a logo
 
