@@ -11,9 +11,6 @@ class LogoutController
     {
         Filament::auth()->logout();
 
-        session()->invalidate();
-        session()->regenerateToken();
-
         return app(LogoutResponse::class);
     }
 }
