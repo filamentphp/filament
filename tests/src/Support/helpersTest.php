@@ -16,7 +16,7 @@ it('will prepare attributes', function () {
     ]);
 });
 
-it('will prepare alpine attributes', function () {
+it('will prepare Alpine attributes', function () {
     $bag = new ComponentAttributeBag([
         'x-data' => '{foo:bar}',
     ]);
