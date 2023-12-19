@@ -161,12 +161,13 @@ If you want to simply change the default mode that is used as default, you can u
 
 ```php
 use Filament\Panel;
+use Filament\Support\Enums\ThemeMode;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->defaultThemMode('light'); // or ->defaultThemeMode('dark'); or ->defaultThemeMode('system');
+        ->defaultThemMode(ThemeMode::Light); // or ->defaultThemeMode(ThemeMode::Dark); or ->defaultThemeMode(ThemeMode::System);
 }
 ```
 
