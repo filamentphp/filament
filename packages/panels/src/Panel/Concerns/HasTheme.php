@@ -3,6 +3,7 @@
 namespace Filament\Panel\Concerns;
 
 use Filament\Support\Assets\Theme;
+use Filament\Support\Enums\ThemeMode;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Foundation\Vite;
@@ -18,7 +19,7 @@ trait HasTheme
 
     protected ?string $viteThemeBuildDirectory = null;
 
-    protected string $defaultThemeMode = "system";
+    protected ThemeMode $defaultThemeMode = ThemeMode::System;
 
     /**
      * @param  string | array<string>  $theme
@@ -66,7 +67,7 @@ trait HasTheme
         return FilamentAsset::getTheme('app');
     }
 
-    public function defaultThemeMode(string $mode): static
+    public function defaultThemeMode(ThemeMode $mode): static
     {
         $this->defaultThemeMode = $mode;
 
@@ -75,7 +76,7 @@ trait HasTheme
 
     public function getDefaultThemeMode(): string
     {
-        return $this->defaultThemeMode;
+        return $this->defaultThemeMode->value;
     }
 
 }
