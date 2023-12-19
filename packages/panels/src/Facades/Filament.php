@@ -78,6 +78,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getTenantProfileUrl(array $parameters = [])
  * @method static string | null getTenantRegistrationUrl(array $parameters = [])
  * @method static Theme getTheme()
+ * @method static string getDefaultThemeMode()
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
  * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)
  * @method static array<MenuItem> getUserMenuItems()
