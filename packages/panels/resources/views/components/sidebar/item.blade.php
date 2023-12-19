@@ -5,6 +5,7 @@
     'badge' => null,
     'badgeColor' => null,
     'childItems' => [],
+    'first' => false,
     'grouped' => false,
     'icon' => null,
     'last' => false,
@@ -66,11 +67,17 @@
                 @if (filled($icon) && $subGrouped && filament()->isSidebarCollapsibleOnDesktop())
                     x-show="$store.sidebar.isOpen"
                 @endif
-                class="fi-sidebar-item-grouped-border flex h-6 w-6 items-center justify-center"
+                class="fi-sidebar-item-grouped-border relative flex h-6 w-6 items-center justify-center"
             >
+                @if (! $first)
+                    <div
+                        class="absolute -top-1/2 bottom-1/2 w-px bg-gray-300 dark:bg-gray-600"
+                    ></div>
+                @endif
+
                 @if (! $last)
                     <div
-                        class="absolute -bottom-[calc(50%+0.25rem)] top-1/2 w-px bg-gray-300 dark:bg-gray-600"
+                        class="absolute -bottom-1/2 top-1/2 w-px bg-gray-300 dark:bg-gray-600"
                     ></div>
                 @endif
 
@@ -125,6 +132,7 @@
                     :active-icon="$childItem->getActiveIcon()"
                     :badge="$childItem->getBadge()"
                     :badge-color="$childItem->getBadgeColor()"
+                    :first="$loop->first"
                     grouped
                     :icon="$childItem->getIcon()"
                     :last="$loop->last"
