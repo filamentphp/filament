@@ -101,7 +101,7 @@ if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
 
         $attributes->setAttributes(
             collect($originalAttributes)
-                ->filter(fn ($value, string $name): bool => ! str($name)->startsWith('x-'))
+                ->filter(fn ($value, string $name): bool => ! str($name)->startsWith(['x-', 'data-']))
                 ->mapWithKeys(fn ($value, string $name): array => [Str::camel($name) => $value])
                 ->merge($originalAttributes)
                 ->all(),
