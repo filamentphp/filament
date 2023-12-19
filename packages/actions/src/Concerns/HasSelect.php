@@ -11,16 +11,16 @@ trait HasSelect
     use HasId;
 
     /**
-     * @var array<string> | Arrayable | string | Closure
+     * @var array<string | array<string>> | Arrayable | string | Closure | null
      */
-    protected array | Arrayable | string | Closure $options = [];
+    protected array | Arrayable | string | Closure | null $options = null;
 
     protected ?string $placeholder = null;
 
     /**
-     * @param  array<string> | Arrayable | Closure  $options
+     * @param  array<string | array<string>> | Arrayable | string | Closure | null  $options
      */
-    public function options(array | Arrayable | Closure $options): static
+    public function options(array | Arrayable | string | Closure | null $options): static
     {
         $this->options = $options;
 
@@ -35,11 +35,11 @@ trait HasSelect
     }
 
     /**
-     * @return array<string>
+     * @return array<string | array<string>>
      */
     public function getOptions(): array
     {
-        $options = $this->evaluate($this->options);
+        $options = $this->evaluate($this->options) ?? [];
 
         $enum = $options;
         if (
