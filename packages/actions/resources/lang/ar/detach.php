@@ -41,7 +41,7 @@ return [
             'actions' => [
 
                 'detach' => [
-                    'label' => 'فصل المحدد',
+                    'label' => 'فصل',
                 ],
 
             ],
