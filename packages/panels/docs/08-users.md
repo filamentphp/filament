@@ -99,6 +99,7 @@ In this example, we create a new file at `app/Filament/AvatarProviders/BoringAva
 
 namespace App\Filament\AvatarProviders;
 
+use Filament\AvatarProviders\Contracts;
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
