@@ -18,6 +18,8 @@ trait HasTheme
 
     protected ?string $viteThemeBuildDirectory = null;
 
+    protected string $defaultThemeMode = "system";
+
     /**
      * @param  string | array<string>  $theme
      */
@@ -63,4 +65,17 @@ trait HasTheme
     {
         return FilamentAsset::getTheme('app');
     }
+
+    public function defaultThemeMode(string $mode): static
+    {
+        $this->defaultThemeMode = $mode;
+
+        return $this;
+    }
+
+    public function getDefaultThemeMode(): string
+    {
+        return $this->defaultThemeMode;
+    }
+
 }
