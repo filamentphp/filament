@@ -41,7 +41,7 @@ return [
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'فك ارتباط المحدد',
+                    'label' => 'فك الارتباط',
                 ],
 
             ],
