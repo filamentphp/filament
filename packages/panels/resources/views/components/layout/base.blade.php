@@ -76,7 +76,7 @@
             </script>
         @else
             <script>
-                const theme = localStorage.getItem('theme') ?? '{{filament()->getDefaultThemeMode() }}'
+                const theme = localStorage.getItem('theme') ?? @js(filament()->getDefaultThemeMode())
 
                 if (
                     theme === 'dark' ||

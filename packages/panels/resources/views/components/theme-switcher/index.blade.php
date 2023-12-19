@@ -5,7 +5,7 @@
             $dispatch('theme-changed', theme)
         })
 
-        theme = localStorage.getItem('theme') || '{{filament()->getDefaultThemeMode() }}'
+        theme = localStorage.getItem('theme') || @js(filament()->getDefaultThemeMode())
     "
     class="fi-theme-switcher grid grid-flow-col gap-x-1"
 >
