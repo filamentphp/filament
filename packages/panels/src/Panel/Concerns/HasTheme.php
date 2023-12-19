@@ -74,9 +74,9 @@ trait HasTheme
         return $this;
     }
 
-    public function getDefaultThemeMode(): string
+    public function getDefaultThemeMode(): ThemeMode
     {
-        return $this->defaultThemeMode->value;
+        return $this->defaultThemeMode;
     }
 
 }
