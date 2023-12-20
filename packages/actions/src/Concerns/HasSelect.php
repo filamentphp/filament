@@ -11,16 +11,16 @@ trait HasSelect
     use HasId;
 
     /**
-     * @var array<string> | Arrayable | string | Closure | null
+     * @var array<string> | Arrayable | string | Closure
      */
-    protected array | Arrayable | string | Closure | null $options = null;
+    protected array | Arrayable | string | Closure $options = [];
 
     protected ?string $placeholder = null;
 
     /**
-     * @param  array<string> | Arrayable | string | Closure | null  $options
+     * @param  array<string> | Arrayable | string | Closure  $options
      */
-    public function options(array | Arrayable | string | Closure | null $options): static
+    public function options(array | Arrayable | string | Closure $options): static
     {
         $this->options = $options;
 
