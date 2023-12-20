@@ -5,6 +5,7 @@ namespace Filament\Facades;
 use Closure;
 use Filament\Billing\Providers\Contracts\Provider as BillingProvider;
 use Filament\Contracts\Plugin;
+use Filament\Enums\ThemeMode;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasTenants;
@@ -78,6 +79,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getTenantProfileUrl(array $parameters = [])
  * @method static string | null getTenantRegistrationUrl(array $parameters = [])
  * @method static Theme getTheme()
+ * @method static ThemeMode getDefaultThemeMode()
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
  * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)
  * @method static array<MenuItem> getUserMenuItems()

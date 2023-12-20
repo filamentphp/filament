@@ -154,6 +154,22 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Changing the default theme mode
+
+By default, Filament uses the user's system theme as the default mode. For example, if the user's computer is in dark mode, Filament will use dark mode by default. The system mode in Filament is reactive if the user changes their computer's mode. If you want to change the default mode to force light or dark mode, you can use the `defaultThemeMode()` method, passing `ThemeMode::Light` or `ThemeMode::Dark`:
+
+```php
+use Filament\Enums\ThemeMode;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->defaultThemeMode(ThemeMode::Light);
+}
+```
+
 ## Adding a logo
 
 By default, Filament uses your app's name to render a simple text-based logo. However, you can easily customize this.

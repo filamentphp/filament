@@ -5,6 +5,7 @@ namespace Filament;
 use Closure;
 use Exception;
 use Filament\Contracts\Plugin;
+use Filament\Enums\ThemeMode;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
 use Filament\Exceptions\NoDefaultPanelSetException;
@@ -815,5 +816,10 @@ class FilamentManager
         } catch (NoDefaultPanelSetException $exception) {
             throw new Exception('Please use the `widgets()` method on the panel configuration to register widgets.');
         }
+    }
+
+    public function getDefaultThemeMode(): ThemeMode
+    {
+        return $this->getCurrentPanel()->getDefaultThemeMode();
     }
 }
