@@ -153,21 +153,20 @@ public function panel(Panel $panel): Panel
         ->darkMode(false);
 }
 ```
-## Changing default theme mode
 
-By default,Filament uses system as the default mode when the user open panel for the first time.
+## Changing the default theme mode
 
-If you want to simply change the default mode that is used as default, you can use the `defaultThemeMode()` method:
+By default, Filament uses the user's system theme as the default mode. For example, if the user's computer is in dark mode, Filament will use dark mode by default. The system mode in Filament is reactive if the user changes their computer's mode. If you want to change the default mode to force light or dark mode, you can use the `defaultThemeMode()` method, passing `ThemeMode::Light` or `ThemeMode::Dark`:
 
 ```php
+use Filament\Enums\ThemeMode;
 use Filament\Panel;
-use Filament\Support\Enums\ThemeMode;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->defaultThemMode(ThemeMode::Light); // or ->defaultThemeMode(ThemeMode::Dark); or ->defaultThemeMode(ThemeMode::System);
+        ->defaultThemeMode(ThemeMode::Light);
 }
 ```
 

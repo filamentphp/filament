@@ -18,7 +18,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Support\Enums\ThemeMode;
+use Filament\Enums\ThemeMode;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\Widgets\Widget;

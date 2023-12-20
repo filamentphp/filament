@@ -3,7 +3,7 @@
 namespace Filament\Panel\Concerns;
 
 use Filament\Support\Assets\Theme;
-use Filament\Support\Enums\ThemeMode;
+use Filament\Enums\ThemeMode;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Foundation\Vite;
@@ -78,5 +78,4 @@ trait HasTheme
     {
         return $this->defaultThemeMode;
     }
-
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support\Enums;
+namespace Filament\Enums;
 
 enum ThemeMode: string
 {
