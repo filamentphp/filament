@@ -11,13 +11,14 @@ class LogoutController
     {
         Filament::auth()->logout();
 
-        $count = collect(session()->all())->filter(function ($value, $key) {
-            return strpos($key, 'login_') === 0;
-        })->count();
+        $logins = array_filter(
+            array_keys(session()->all()),
+            fn (string $key): bool => str($key)->startsWith('login_'),
+        );
 
-        ($count == 1)
-            ? session()->invalidate()
-            : session()->migrate();        
+        (count($logins) < 2) ?
+            session()->invalidate() :
+            session()->migrate();
         
         session()->regenerateToken();
 
