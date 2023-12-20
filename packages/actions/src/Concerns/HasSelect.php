@@ -11,14 +11,14 @@ trait HasSelect
     use HasId;
 
     /**
-     * @var array<string | array<string>> | Arrayable | string | Closure | null
+     * @var array<string> | Arrayable | string | Closure | null
      */
     protected array | Arrayable | string | Closure | null $options = null;
 
     protected ?string $placeholder = null;
 
     /**
-     * @param  array<string | array<string>> | Arrayable | string | Closure | null  $options
+     * @param  array<string> | Arrayable | string | Closure | null  $options
      */
     public function options(array | Arrayable | string | Closure | null $options): static
     {
@@ -35,7 +35,7 @@ trait HasSelect
     }
 
     /**
-     * @return array<string | array<string>>
+     * @return array<string>
      */
     public function getOptions(): array
     {
