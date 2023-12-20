@@ -2,8 +2,8 @@
 
 namespace Filament\Panel\Concerns;
 
-use Filament\Support\Assets\Theme;
 use Filament\Enums\ThemeMode;
+use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Foundation\Vite;

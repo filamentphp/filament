@@ -5,6 +5,7 @@ namespace Filament;
 use Closure;
 use Exception;
 use Filament\Contracts\Plugin;
+use Filament\Enums\ThemeMode;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
 use Filament\Exceptions\NoDefaultPanelSetException;
@@ -18,7 +19,6 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Enums\ThemeMode;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\Widgets\Widget;
@@ -817,6 +817,7 @@ class FilamentManager
             throw new Exception('Please use the `widgets()` method on the panel configuration to register widgets.');
         }
     }
+
     public function getDefaultThemeMode(): ThemeMode
     {
         return $this->getCurrentPanel()->getDefaultThemeMode();
