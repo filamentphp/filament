@@ -18,9 +18,9 @@ trait HasSelect
     protected ?string $placeholder = null;
 
     /**
-     * @param  array<string> | Arrayable | Closure  $options
+     * @param  array<string> | Arrayable | string | Closure  $options
      */
-    public function options(array | Arrayable | Closure $options): static
+    public function options(array | Arrayable | string | Closure $options): static
     {
         $this->options = $options;
 
@@ -39,7 +39,7 @@ trait HasSelect
      */
     public function getOptions(): array
     {
-        $options = $this->evaluate($this->options);
+        $options = $this->evaluate($this->options) ?? [];
 
         $enum = $options;
         if (
