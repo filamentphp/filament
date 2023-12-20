@@ -19,7 +19,7 @@ class LogoutController
         (count($logins) < 2) ?
             session()->invalidate() :
             session()->migrate();
-        
+
         session()->regenerateToken();
 
         return app(LogoutResponse::class);
