@@ -43,7 +43,11 @@
                 'flex' => filament()->hasTopNavigation() || (! filament()->hasNavigation()),
             ])
         >
+            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::before.topbar') }}
+            
             <x-filament-panels::topbar :navigation="$navigation" />
+
+            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::after.topbar') }}
 
             <main
                 @class([
