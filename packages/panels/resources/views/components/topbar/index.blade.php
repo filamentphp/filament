@@ -27,7 +27,7 @@
                 x-on:click="$store.sidebar.open()"
                 x-show="! $store.sidebar.isOpen"
                 @class([
-                    'fi-topbar-open-sidebar-button',
+                    'fi-topbar-open-sidebar-btn',
                     'lg:hidden' => (! filament()->isSidebarFullyCollapsibleOnDesktop()) || filament()->isSidebarCollapsibleOnDesktop(),
                 ])
             />
