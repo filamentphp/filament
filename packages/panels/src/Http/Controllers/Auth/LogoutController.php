@@ -17,7 +17,9 @@ class LogoutController
 
         ($count == 1)
             ? session()->invalidate()
-            : session()->migrate();        session()->regenerateToken();
+            : session()->migrate();        
+        
+        session()->regenerateToken();
 
         return app(LogoutResponse::class);
     }
