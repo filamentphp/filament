@@ -69,7 +69,6 @@
             @if ($item->isHidden())
                 @continue
             @endif
-
             <x-filament-panels::sidebar.item
                 :active="$item->isActive()"
                 :active-child-items="$item->isChildItemsActive()"
