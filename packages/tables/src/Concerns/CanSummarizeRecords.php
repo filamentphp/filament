@@ -43,8 +43,7 @@ trait CanSummarizeRecords
                 continue;
             }
             
-            $tablePrefix = $query->getConnection()->getTablePrefix();
-            $qualifiedAttribute = $tablePrefix . $query->getModel()->qualifyColumn($column->getName());
+            $qualifiedAttribute = $query->getConnection()->getTablePrefix() . $query->getModel()->qualifyColumn($column->getName());
 
             foreach ($summarizers as $summarizer) {
                 if ($summarizer->hasQueryModification()) {
