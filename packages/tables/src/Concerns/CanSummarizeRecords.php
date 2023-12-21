@@ -42,8 +42,9 @@ trait CanSummarizeRecords
             if (filled($column->getRelationshipName())) {
                 continue;
             }
-
-            $qualifiedAttribute = $query->getModel()->qualifyColumn($column->getName());
+            
+            $tablePrefix = $query->getConnection()->getTablePrefix();
+            $qualifiedAttribute = $tablePrefix . $query->getModel()->qualifyColumn($column->getName());
 
             foreach ($summarizers as $summarizer) {
                 if ($summarizer->hasQueryModification()) {
