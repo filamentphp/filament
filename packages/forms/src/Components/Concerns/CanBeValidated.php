@@ -240,6 +240,23 @@ trait CanBeValidated
 
         return $this;
     }
+    public function max(int | Closure $value): static
+    {
+        $this->rule(static function (Field $component) use ($value) {
+            return 'max:' . $component->evaluate($value);
+        }, static fn (Field $component): bool => filled($component->evaluate($value)));
+
+        return $this;
+    }
+
+    public function min(int | Closure $value): static
+    {
+        $this->rule(static function (Field $component) use ($value) {
+            return 'min:' . $component->evaluate($value);
+        }, static fn (Field $component): bool => filled($component->evaluate($value)));
+
+        return $this;
+    }
 
     public function multipleOf(int | Closure $value): static
     {

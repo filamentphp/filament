@@ -129,6 +129,83 @@ test('fields can be required unless', function () {
         ->toContain('The two field is required unless one is in foo.');
 });
 
+test('fields can have max chars', function () {
+    $rules = [];
+
+    $fieldName = Str::random();
+
+    $component = Livewire::make()->data([$fieldName => 'max chars exceeded']);
+
+    try {
+        ComponentContainer::make($component)
+            ->statePath('data')
+            ->components([
+                $field = (new Field($fieldName))
+                    ->max(3),
+            ])
+            ->validate();
+    } catch (ValidationException $exception) {
+
+        $rules = array_keys($exception->validator->failed()[$field->getStatePath()]);
+    }
+
+    expect($rules)
+        ->toContain('Max');
+});
+
+test('max value as closure', function (){
+    $rules = [];
+
+    $fieldName = Str::random();
+
+    $component = Livewire::make()->data([$fieldName => 'max chars exceeded']);
+
+    try {
+        ComponentContainer::make($component)
+            ->statePath('data')
+            ->components([
+                $field = (new Field($fieldName))
+                    ->max(function () {
+                        return '6';
+                    }),
+            ])
+            ->validate();
+    } catch (ValidationException $exception) {
+        $rules = $exception->validator->failed()[$field->getStatePath()];
+    }
+
+    expect($rules)
+        ->toHaveKey('Max');
+    expect($rules['Max'][0])
+        ->toBe('6');
+
+});
+
+test('fields can have min chars', function () {
+    $rules = [];
+
+
+    $fieldName = Str::random();
+
+    $component = Livewire::make()->data([$fieldName => 'min chars required']);
+
+    try {
+        ComponentContainer::make($component)
+            ->statePath('data')
+            ->components([
+                $field = (new Field($fieldName))
+                    ->min(30),
+            ])
+            ->validate();
+    } catch (ValidationException $exception) {
+
+        $rules = array_keys($exception->validator->failed()[$field->getStatePath()]);
+    }
+
+    expect($rules)
+        ->toContain('Min');
+});
+
 test('the `in()` rule behaves the same as Laravel\'s', function (?string $input, array | Arrayable | string | Closure $allowed) {
     $filamentFails = [];
 
