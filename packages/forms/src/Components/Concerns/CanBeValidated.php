@@ -420,8 +420,10 @@ trait CanBeValidated
     /**
      * @param  string | array<mixed>  $rules
      */
-    public function rules(string | array $rules, bool | Closure $condition = true): static
+    public function rules(Closure | string | array $rules, bool | Closure $condition = true): static
     {
+        $rules = $this->evaluate($rules);
+        
         if (is_string($rules)) {
             $rules = explode('|', $rules);
         }
