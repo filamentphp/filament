@@ -207,8 +207,8 @@
                             <div
                                 @class([
                                     'absolute',
-                                    'end-4 top-4' => ! $slideOver,
-                                    'end-6 top-6' => $slideOver,
+                                    'end-4' => ! $slideOver,
+                                    'end-6' => $slideOver,
                                 ])
                             >
                                 <x-filament::icon-button
