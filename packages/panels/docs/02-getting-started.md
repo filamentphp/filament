@@ -605,6 +605,29 @@ class Treatment extends Model
 }
 ```
 
+When using [Summarises](../tables/summaries) on table columns you will want to pass in the divideBy attribute to the Money function, this is because we sum at the database level and so it isn't cast to floats:
+
+```php
+    ->money('EUR', 100)
+```
+
+in example:
+
+```php
+            TextColumn::make('total_price')
+                ->label('Total Price')
+                ->alignCenter()
+                ->toggleable()
+                ->money('EUR', 0)
+                ->summarize([
+                    Tables\Columns\Summarizers\Sum::make()
+                        ->money('EUR', 100)
+                        ->label('Total'),
+                ])
+                ->default(0),
+```
+
+
 ### Setting up the treatments table
 
 When the relation manager was generated previously, the `description` text column was automatically added. Let's also add a `sortable()` column for the `price` with a currency prefix. Use the Filament `money()` method to format the `price` column as money — in this case for `EUR` (`€`):
