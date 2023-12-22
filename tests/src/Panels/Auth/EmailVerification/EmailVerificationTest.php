@@ -22,3 +22,24 @@ it('can verify an email', function () {
     expect($userToVerify->refresh())
         ->hasVerifiedEmail()->toBeTrue();
 });
+
+it('cannot verify an email when signed in as another user', function () {
+    $userToVerify = User::factory()->create([
+        'email_verified_at' => null,
+    ]);
+
+    $anotherUser = User::factory()->create([
+        'email_verified_at' => null,
+    ]);
+
+    expect($anotherUser)
+        ->hasVerifiedEmail()->toBeFalse();
+
+    $this
+        ->actingAs($anotherUser)
+        ->get(Filament::getVerifyEmailUrl($userToVerify))
+        ->assertForbidden();
+
+    expect($anotherUser->refresh())
+        ->hasVerifiedEmail()->toBeFalse();
+});

@@ -72,8 +72,8 @@ Route::name('filament.')
                                         ->prefix('/email-verification')
                                         ->group(function () use ($panel) {
                                             Route::get('/prompt', $panel->getEmailVerificationPromptRouteAction())->name('prompt');
-                                            Route::get('/verify', EmailVerificationController::class)
-                                                ->middleware(['signed'])
+                                            Route::get('/verify/{id}/{hash}', EmailVerificationController::class)
+                                                ->middleware(['signed', 'throttle:6,1'])
                                                 ->name('verify');
                                         });
                                 }
