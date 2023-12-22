@@ -1,7 +1,7 @@
 @props([
     'placeholder' => __('filament-tables::table.fields.search.placeholder'),
     'wireModel' => 'tableSearch',
-    'debounce' => '500ms'
+    'debounce' => '500ms',
 ])
 
 @php
@@ -23,15 +23,17 @@
         :wire:target="$wireModel"
     >
         <x-filament::input
-            :attributes="$attributes->merge([
-                'autocomplete' => 'off',
-                'inline-prefix' => true,
-                'placeholder' => $placeholder,
-                'type' => 'search',
-                $modelAttribute => $wireModel,
-                'x-bind:id' => '$id(\'input\')',
-                'wire:key' => $this->getId() . '.table.' . $wireModel . '.field.input',
-            ])"
+            :attributes="
+                $attributes->merge([
+                    'autocomplete' => 'off',
+                    'inline-prefix' => true,
+                    'placeholder' => $placeholder,
+                    'type' => 'search',
+                    $modelAttribute => $wireModel,
+                    'x-bind:id' => '$id(\'input\')',
+                    'wire:key' => $this->getId() . '.table.' . $wireModel . '.field.input',
+                ])
+            "
         />
     </x-filament::input.wrapper>
 </div>
