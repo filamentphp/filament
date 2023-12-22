@@ -129,6 +129,19 @@ ImageColumn::make('colleagues.avatar')
     ->overlap(2)
 ```
 
+## Wrapping the images
+
+When displaying the table as a Grid, images can be set to wrap if they can't fit on one line, using `wrap()`:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('colleagues.avatar')
+    ->circular()
+    ->stacked()
+    ->wrap()
+```
+
 ## Setting a limit
 
 You may limit the maximum number of images you want to display by passing `limit()`:
