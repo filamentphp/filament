@@ -16,9 +16,9 @@ return [
                 'collapse_list' => 'Afficher :count de moins',
                 'expand_list' => 'Afficher :count de plus',
             ],
-    
+
             'more_list_items' => ':count de plus',
-    
+
         ],
 
     ],
@@ -35,7 +35,7 @@ return [
 
         'bulk_select_group' => [
             'label' => 'Sélectionner/désélectionner le groupe :title pour les actions groupées.',
-            ],
+        ],
 
         'search' => [
             'label' => 'Rechercher',
