@@ -420,7 +420,7 @@ trait CanBeValidated
     /**
      * @param  string | array<mixed>  $rules
      */
-    public function rules(Closure | string | array $rules, bool | Closure $condition = true): static
+    public function rules(string | array | Closure $rules, bool | Closure $condition = true): static
     {
         $rules = $this->evaluate($rules);
         
