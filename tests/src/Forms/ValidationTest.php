@@ -153,7 +153,7 @@ test('fields can have max chars', function () {
         ->toContain('Max');
 });
 
-test('max value as closure', function (){
+test('max value as closure', function () {
     $rules = [];
 
     $fieldName = Str::random();
@@ -183,7 +183,6 @@ test('max value as closure', function (){
 
 test('fields can have min chars', function () {
     $rules = [];
-
 
     $fieldName = Str::random();
 

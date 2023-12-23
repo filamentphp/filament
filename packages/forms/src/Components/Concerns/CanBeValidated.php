@@ -240,6 +240,7 @@ trait CanBeValidated
 
         return $this;
     }
+
     public function max(int | Closure $value): static
     {
         $this->rule(static function (Field $component) use ($value) {
