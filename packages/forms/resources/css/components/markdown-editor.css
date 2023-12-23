@@ -146,7 +146,7 @@
 .EasyMDEContainer .cm-s-easymde .cm-formatting-list,
 .EasyMDEContainer .cm-s-easymde .cm-formatting-list + .cm-variable-2,
 .EasyMDEContainer .cm-s-easymde .cm-tab + .cm-variable-2 {
-    color: var(--color-cm-gray)
+    color: var(--color-cm-gray);
 }
 
 .EasyMDEContainer .cm-s-easymde .cm-link {
@@ -165,7 +165,10 @@
     color: var(--color-cm-green);
 }
 
-.EasyMDEContainer .cm-s-easymde .cm-formatting-code + .cm-comment:not(.cm-formatting-code) {
+.EasyMDEContainer
+    .cm-s-easymde
+    .cm-formatting-code
+    + .cm-comment:not(.cm-formatting-code) {
     background-color: var(--color-cm-gray-background);
     color: var(--color-cm-gray);
 }
@@ -194,7 +197,7 @@
     @apply text-sm;
 }
 
-.EasyMDEContainer .cm-s-easymde .cm-comment  {
+.EasyMDEContainer .cm-s-easymde .cm-comment {
     @apply bg-none;
 }
 
