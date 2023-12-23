@@ -264,3 +264,26 @@ public function panel(Panel $panel): Panel
         ->authPasswordBroker('users');
 }
 ```
+
+## Guest Access
+
+By default Filament expects to work with Authenticated Users.
+
+To work with Guest users, you need to avoid using components which expect a User (such as profiles, avatars), and skip the built-in Authentication middleware.
+
+### Disabling User Authentication in a Panel
+
+- Remove the default `Authenticate::class` from the `authMiddleware()` array.
+- Remove `->login()` and any other [Authentication Features](#authentication-features) settings from the panel.
+- Remove the default `AccountWidget` from the `widgets()` array, because depends on a User Name and Avatar lookup for an active user.
+
+### Guest Access in Model Policies
+
+When present, Filament relies on [Laravel Model Policies](https://laravel.com/docs/master/authorization#generating-policies) for Model access control. To give read-access for [Guest users in a model policy](https://laravel.com/docs/master/authorization#guest-users), create the Policy and update the `viewAny()` and `view()` methods, changing the `User $user` param to `?User $user` so that it's optional (ie: guest allowed), and `return true;`.
+
+
+### Read Only Guest Data
+
+Tip: The simplest solution to giving Guests read-only access to a model's data might be to display a Table Widget on a custom Dashboard page.
+
+
