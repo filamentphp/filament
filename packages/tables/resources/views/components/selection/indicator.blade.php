@@ -15,7 +15,7 @@
                 'wire:key' => "{$this->getId()}.table.selection.indicator",
             ], escape: false)
             ->class([
-                'fi-ta-selection-indicator flex flex-col justify-between gap-y-1 bg-gray-50 px-3 py-2 dark:bg-white/5 sm:flex-row sm:items-center sm:px-6 sm:py-1.5',
+                'fi-ta-selection-indicator flex flex-col justify-between gap-y-1 bg-gray-50 px-3 py-2 sm:flex-row sm:items-center sm:px-6 sm:py-1.5 dark:bg-white/5',
             ])
     }}
 >
