@@ -328,7 +328,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-### Disabling the top bar
+### Disabling the topbar
 
 You may disable top bar entirely by passing `false` to the `topbar()` method:
 
