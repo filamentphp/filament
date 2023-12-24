@@ -131,7 +131,7 @@ ImageColumn::make('colleagues.avatar')
 
 ## Wrapping the images
 
-When displaying the table as a Grid, images can be set to wrap if they can't fit on one line, using `wrap()`:
+Images can be set to wrap if they can't fit on one line, by setting `wrap()`:
 
 ```php
 use Filament\Tables\Columns\ImageColumn;
