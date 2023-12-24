@@ -1,6 +1,7 @@
 @php
     $canWrap = $canWrap();
 @endphp
+
 <div
     {{
         $attributes

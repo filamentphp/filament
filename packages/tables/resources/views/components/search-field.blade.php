@@ -1,4 +1,7 @@
-@php use Illuminate\View\ComponentAttributeBag; @endphp
+@php
+    use Illuminate\View\ComponentAttributeBag;
+@endphp
+
 @props([
     'debounce' => '500ms',
     'placeholder' => __('filament-tables::table.fields.search.placeholder'),
