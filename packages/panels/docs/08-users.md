@@ -271,7 +271,7 @@ By default, Filament expects to work with authenticated users only. To allow gue
 
 - Remove the default `Authenticate::class` from the `authMiddleware()` array in the panel configuration.
 - Remove `->login()` and any other [authentication features](#authentication-features) from the panel.
-- Remove the default `AccountWidget` from the `widgets()` array, because reads the current user's data.
+- Remove the default `AccountWidget` from the `widgets()` array, because it reads the current user's data.
 
 ### Authorizing guests in policies
 
