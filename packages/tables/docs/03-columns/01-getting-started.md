@@ -200,25 +200,6 @@ public static function table(Table $table): Table
 }
 ```
 
-#### Customizing the table search debounce
-
-You may customize the debounce timing in the search field using the `searchDebounce()` method on the `$table`:
-
-*This will also be applied to any individually searchable columns.*
-
-```php
-use Filament\Tables\Table;
-
-public static function table(Table $table): Table
-{
-    return $table
-        ->columns([
-            // ...
-        ])
-        ->searchDebounce('500ms');
-}
-```
-
 ### Searching individually
 
 You can choose to enable a per-column search input field using the `isIndividual` parameter:
@@ -253,6 +234,23 @@ use Livewire\Attributes\Url;
  */
 #[Url]
 public array $tableColumnSearches = [];
+```
+
+### Customizing the table search debounce
+
+You may customize the debounce time in all table search fields using the `searchDebounce()` method on the `$table`. By default it is set to `500ms`:
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchDebounce('750ms');
+}
 ```
 
 ### Persist search in session
