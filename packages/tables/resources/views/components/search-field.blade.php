@@ -1,11 +1,12 @@
+@php use Illuminate\View\ComponentAttributeBag; @endphp
 @props([
+    'debounce' => '500ms',
     'placeholder' => __('filament-tables::table.fields.search.placeholder'),
     'wireModel' => 'tableSearch',
-    'debounce' => '500ms',
 ])
 
 @php
-    $modelAttribute = 'wire:model.live.debounce.' . $debounce;
+    $wireModelAttribute = "wire:model.live.debounce.{$debounce}";
 @endphp
 
 <div
@@ -23,13 +24,13 @@
         :wire:target="$wireModel"
     >
         <x-filament::input
+            inlinePrefix
             :attributes="
-                $attributes->merge([
+                (new ComponentAttributeBag())->merge([
                     'autocomplete' => 'off',
-                    'inline-prefix' => true,
                     'placeholder' => $placeholder,
                     'type' => 'search',
-                    $modelAttribute => $wireModel,
+                    $wireModelAttribute => $wireModel,
                     'x-bind:id' => '$id(\'input\')',
                     'wire:key' => $this->getId() . '.table.' . $wireModel . '.field.input',
                 ])

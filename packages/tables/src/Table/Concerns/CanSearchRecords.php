@@ -38,7 +38,7 @@ trait CanSearchRecords
         return $this;
     }
 
-    public function searchDebounce(?string $debounce = '500ms'): static
+    public function searchDebounce(?string $debounce): static
     {
         $this->searchDebounce = $debounce;
 
