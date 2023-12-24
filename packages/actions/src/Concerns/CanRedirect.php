@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Support\Facades\FilamentView;
 
 trait CanRedirect
 {
@@ -34,7 +35,7 @@ trait CanRedirect
 
     public function redirect(string | Closure $url): void
     {
-        $this->getLivewire()->redirect($this->evaluate($url));
+        $this->getLivewire()->redirect($this->evaluate($url), navigate: FilamentView::hasSpaMode());
     }
 
     public function failureRedirectUrl(string | Closure | null $url): static
