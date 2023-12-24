@@ -100,7 +100,7 @@ IconColumn::make('is_featured')
 
 <AutoScreenshot name="tables/columns/icon/boolean-color" alt="Icon column to display a boolean with custom colors" version="3.x" />
 
-## Wrapping the icons
+## Wrapping multiple icons
 
 When displaying multiple icons, they can be set to wrap if they can't fit on one line, using `wrap()`:
 
