@@ -129,6 +129,21 @@ ImageColumn::make('colleagues.avatar')
     ->overlap(2)
 ```
 
+## Wrapping multiple images
+
+Images can be set to wrap if they can't fit on one line, by setting `wrap()`:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('colleagues.avatar')
+    ->circular()
+    ->stacked()
+    ->wrap()
+```
+
+Note: the "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
+
 ## Setting a limit
 
 You may limit the maximum number of images you want to display by passing `limit()`:
