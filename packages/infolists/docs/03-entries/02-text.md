@@ -82,6 +82,15 @@ TextEntry::make('price')
     ->money('EUR')
 ```
 
+There is also a `divideBy` argument for `money()` that allows you to divide the original value by a number before formatting it. This could be useful if your database stores the price in cents, for example:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('price')
+    ->money('EUR', divideBy: 100)
+```
+
 ## Limiting text length
 
 You may `limit()` the length of the entry's value:

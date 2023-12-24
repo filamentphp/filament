@@ -2,16 +2,17 @@
 
 namespace Filament\Navigation;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Conditionable;
 
 class NavigationBuilder
 {
     use Conditionable;
 
-    /** @var NavigationGroup[] */
+    /** @var array<NavigationGroup> */
     protected array $groups = [];
 
-    /** @var NavigationItem[] */
+    /** @var array<NavigationItem> */
     protected array $items = [];
 
     /**
@@ -66,18 +67,32 @@ class NavigationBuilder
      */
     public function getNavigation(): array
     {
-        $navigation = collect();
+        $items = array_filter(
+            $this->items,
+            fn (NavigationItem $item): bool => $item->isVisible(),
+        );
 
-        $items = $this->items;
+        return collect($this->groups)
+            ->filter(function (NavigationGroup $group): bool {
+                $visibleGroupItems = array_filter(
+                    $group->getItems(),
+                    fn (NavigationItem $item): bool => $item->isVisible(),
+                );
 
-        if (count($items)) {
-            $navigation->push(
-                NavigationGroup::make()->items($items),
-            );
-        }
+                if (empty($visibleGroupItems)) {
+                    return false;
+                }
 
-        return $navigation
-            ->merge($this->groups)
+                $group->items($visibleGroupItems);
+
+                return true;
+            })
+            ->when(
+                count($items),
+                fn (Collection $groups): Collection => $groups->prepend(
+                    NavigationGroup::make()->items($items),
+                ),
+            )
             ->all();
     }
 }
