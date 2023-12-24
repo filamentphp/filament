@@ -11,7 +11,10 @@
 @endphp
 
 <div
-    x-bind:class="tab === @js($id) ? @js($visibleTabClasses) : @js($invisibleTabClasses)"
+    x-bind:class="{
+        @js($visibleTabClasses): tab === @js($id),
+        @js($invisibleTabClasses): tab !== @js($id),
+    }"
     x-on:expand="tab = @js($id)"
     {{
         $attributes
