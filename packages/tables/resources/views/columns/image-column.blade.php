@@ -7,6 +7,7 @@
     $isStacked = $isStacked();
     $overlap = $isStacked ? ($getOverlap() ?? 2) : null;
     $ring = $isStacked ? ($getRing() ?? 2) : null;
+    $canWrap = $canWrap();
     $height = $getHeight() ?? ($isStacked ? '2rem' : '2.5rem');
     $width = $getWidth() ?? (($isCircular || $isSquare) ? $height : null);
 
@@ -55,6 +56,7 @@
             <div
                 @class([
                     'flex',
+                    'flex-wrap' => $canWrap,
                     match ($overlap) {
                         0 => null,
                         1 => '-space-x-1',
@@ -65,7 +67,7 @@
                         6 => '-space-x-6',
                         7 => '-space-x-7',
                         8 => '-space-x-8',
-                        default => 'gap-x-1.5',
+                        default => 'gap-1.5',
                     },
                 ])
             >
