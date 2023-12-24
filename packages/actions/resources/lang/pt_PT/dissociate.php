@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Desassociar selecionado',
+        'label' => 'Desassociar seleccionados',
 
         'modal' => [
 
-            'heading' => 'Desassociar :label selecionado',
+            'heading' => 'Desassociar :label seleccionados',
 
             'actions' => [
 

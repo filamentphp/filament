@@ -19,7 +19,7 @@ return [
         ],
 
         'open_user_menu' => [
-            'label' => 'Menu do usuário',
+            'label' => 'Menu de utilizador',
         ],
 
         'sidebar' => [
@@ -37,15 +37,15 @@ return [
         'theme_switcher' => [
 
             'dark' => [
-                'label' => 'Alternar para o modo escuro',
+                'label' => 'Activar o modo escuro',
             ],
 
             'light' => [
-                'label' => 'Alternar para o modo claro',
+                'label' => 'Activar o modo claro',
             ],
 
             'system' => [
-                'label' => 'Alternar para o modo sistema',
+                'label' => 'Activar o modo sistema',
             ],
 
         ],

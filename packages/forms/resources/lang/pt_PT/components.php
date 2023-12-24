@@ -11,7 +11,7 @@ return [
             ],
 
             'add' => [
-                'label' => 'Adicionar em :label',
+                'label' => 'Adicionar a :label',
             ],
 
             'add_between' => [
