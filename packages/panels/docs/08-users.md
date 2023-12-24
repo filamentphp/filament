@@ -265,25 +265,14 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Guest Access
+## Setting up guest access to a panel
 
-By default Filament expects to work with Authenticated Users.
+By default, Filament expects to work with authenticated users only. To allow guests to access a panel, you need to avoid using components which expect a signed-in user (such as profiles, avatars), and remove the built-in Authentication middleware:
 
-To work with Guest users, you need to avoid using components which expect a User (such as profiles, avatars), and skip the built-in Authentication middleware.
+- Remove the default `Authenticate::class` from the `authMiddleware()` array in the panel configuration.
+- Remove `->login()` and any other [authentication features](#authentication-features) from the panel.
+- Remove the default `AccountWidget` from the `widgets()` array, because reads the current user's data.
 
-### Disabling User Authentication in a Panel
+### Authorizing guests in policies
 
-- Remove the default `Authenticate::class` from the `authMiddleware()` array.
-- Remove `->login()` and any other [Authentication Features](#authentication-features) settings from the panel.
-- Remove the default `AccountWidget` from the `widgets()` array, because depends on a User Name and Avatar lookup for an active user.
-
-### Guest Access in Model Policies
-
-When present, Filament relies on [Laravel Model Policies](https://laravel.com/docs/master/authorization#generating-policies) for Model access control. To give read-access for [Guest users in a model policy](https://laravel.com/docs/master/authorization#guest-users), create the Policy and update the `viewAny()` and `view()` methods, changing the `User $user` param to `?User $user` so that it's optional (ie: guest allowed), and `return true;`.
-
-
-### Read Only Guest Data
-
-Tip: The simplest solution to giving Guests read-only access to a model's data might be to display a Table Widget on a custom Dashboard page.
-
-
+When present, Filament relies on [Laravel Model Policies](https://laravel.com/docs/authorization#generating-policies) for access control. To give read-access for [guest users in a model policy](https://laravel.com/docs/authorization#guest-users), create the Policy and update the `viewAny()` and `view()` methods, changing the `User $user` param to `?User $user` so that it's optional, and `return true;`. Alternatively, you can remove those methods from the policy entirely.
