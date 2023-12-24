@@ -330,7 +330,7 @@ public function panel(Panel $panel): Panel
 
 ### Disabling the topbar
 
-You may disable top bar entirely by passing `false` to the `topbar()` method:
+You may disable topbar entirely by passing `false` to the `topbar()` method:
 
 ```php
 use Filament\Panel;
