@@ -4,7 +4,7 @@ namespace Filament\Panel\Concerns;
 
 trait HasTopBar
 {
-    protected bool $hasTopBar = false;
+    protected bool $hasTopBar = true;
 
     public function topBar(bool $condition = true): static
     {
