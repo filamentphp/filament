@@ -66,10 +66,6 @@
         class="fi-sidebar-group-items flex flex-col gap-y-1"
     >
         @foreach ($items as $item)
-            @if ($item->isHidden())
-                @continue
-            @endif
-
             <x-filament-panels::sidebar.item
                 :active="$item->isActive()"
                 :active-child-items="$item->isChildItemsActive()"
