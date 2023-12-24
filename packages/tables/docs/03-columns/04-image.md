@@ -129,7 +129,7 @@ ImageColumn::make('colleagues.avatar')
     ->overlap(2)
 ```
 
-## Wrapping the images
+## Wrapping multiple images
 
 Images can be set to wrap if they can't fit on one line, by setting `wrap()`:
 
