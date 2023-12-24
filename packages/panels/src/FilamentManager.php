@@ -587,9 +587,9 @@ class FilamentManager
         return $this->getCurrentPanel()->hasTenantRegistration();
     }
 
-    public function hasTopBar(): bool
+    public function hasTopbar(): bool
     {
-        return $this->getCurrentPanel()->hasTopBar();
+        return $this->getCurrentPanel()->hasTopbar();
     }
 
     public function hasTopNavigation(): bool
