@@ -27,15 +27,15 @@
         :wire:target="$wireModel"
     >
         <x-filament::input
-            inlinePrefix
             :attributes="
                 (new ComponentAttributeBag())->merge([
                     'autocomplete' => 'off',
+                    'inlinePrefix' => true,
                     'placeholder' => $placeholder,
                     'type' => 'search',
                     $wireModelAttribute => $wireModel,
-                    'x-bind:id' => '$id(\'input\')',
                     'wire:key' => $this->getId() . '.table.' . $wireModel . '.field.input',
+                    'x-bind:id' => '$id(\'input\')',
                 ])
             "
         />

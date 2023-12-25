@@ -1,7 +1,5 @@
 @php
     use Filament\Tables\Columns\IconColumn\IconColumnSize;
-
-    $canWrap = $canWrap();
 @endphp
 
 <div
@@ -10,7 +8,7 @@
             ->merge($getExtraAttributes(), escape: false)
             ->class([
                 'fi-ta-icon flex gap-1.5',
-                'flex-wrap' => $canWrap,
+                'flex-wrap' => $canWrap(),
                 'px-3 py-4' => ! $isInline(),
                 'flex-col' => $isListWithLineBreaks(),
             ])

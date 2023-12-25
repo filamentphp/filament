@@ -200,8 +200,8 @@
 
                         @if ($isGlobalSearchVisible)
                             <x-filament-tables::search-field
-                                :placeholder="$getSearchPlaceholder()"
                                 :debounce="$getSearchDebounce()"
+                                :placeholder="$getSearchPlaceholder()"
                             />
                         @endif
 
@@ -818,8 +818,8 @@
                                 >
                                     @if ($column->isIndividuallySearchable())
                                         <x-filament-tables::search-field
-                                            wire-model="tableColumnSearches.{{ $column->getName() }}"
                                             :debounce="$getSearchDebounce()"
+                                            wire-model="tableColumnSearches.{{ $column->getName() }}"
                                         />
                                     @endif
                                 </x-filament-tables::cell>
