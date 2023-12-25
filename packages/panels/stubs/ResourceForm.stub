@@ -1,0 +1,16 @@
+<?php
+
+namespace {{ namespace }};
+
+use Filament\Forms\Form;
+
+trait {{ resourceFormClass }}
+{
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+{{ formSchema }}
+            ]);
+    }
+}

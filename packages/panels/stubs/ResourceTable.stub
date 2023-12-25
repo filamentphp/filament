@@ -1,0 +1,28 @@
+<?php
+
+namespace {{ namespace }};
+
+use Filament\Tables;
+use Filament\Tables\Table;
+
+trait {{ resourceTableClass }}
+{
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+{{ tableColumns }}
+            ])
+            ->filters([
+{{ tableFilters }}
+            ])
+            ->actions([
+{{ tableActions }}
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+{{ tableBulkActions }}
+                ]),
+            ]);
+    }
+}

@@ -91,6 +91,8 @@ class MakeResourceCommand extends Command
         $resourceClass = "{$modelClass}Resource";
         $resourceNamespace = $modelSubNamespace;
         $namespace .= $resourceNamespace !== '' ? "\\{$resourceNamespace}" : '';
+        $resourceFormClass = "{$modelClass}Form";
+        $resourceTableClass = "{$modelClass}Table";
         $listResourcePageClass = "List{$pluralModelClass}";
         $manageResourcePageClass = "Manage{$pluralModelClass}";
         $createResourcePageClass = "Create{$modelClass}";
@@ -105,6 +107,8 @@ class MakeResourceCommand extends Command
                 ->replace('//', '/');
 
         $resourcePath = "{$baseResourcePath}.php";
+        $resourceFormPath = "{$baseResourcePath}/{$resourceFormClass}.php";
+        $resourceTablePath = "{$baseResourcePath}/{$resourceTableClass}.php";
         $resourcePagesDirectory = "{$baseResourcePath}/Pages";
         $listResourcePagePath = "{$resourcePagesDirectory}/{$listResourcePageClass}.php";
         $manageResourcePagePath = "{$resourcePagesDirectory}/{$manageResourcePageClass}.php";
@@ -187,9 +191,6 @@ class MakeResourceCommand extends Command
 
         $this->copyStubToApp('Resource', $resourcePath, [
             'eloquentQuery' => $this->indentString($eloquentQuery, 1),
-            'formSchema' => $this->indentString($this->option('generate') ? $this->getResourceFormSchema(
-                $modelNamespace . ($modelSubNamespace !== '' ? "\\{$modelSubNamespace}" : '') . '\\' . $modelClass,
-            ) : '//', 4),
             'model' => ($model === 'Resource') ? "{$modelNamespace}\\Resource as ResourceModel" : "{$modelNamespace}\\{$model}",
             'modelClass' => ($model === 'Resource') ? 'ResourceModel' : $modelClass,
             'namespace' => $namespace,
@@ -197,6 +198,19 @@ class MakeResourceCommand extends Command
             'relations' => $this->indentString($relations, 1),
             'resource' => "{$namespace}\\{$resourceClass}",
             'resourceClass' => $resourceClass,
+        ]);
+
+        $this->copyStubToApp('ResourceForm', $resourceFormPath, [
+            'formSchema' => $this->indentString($this->option('generate') ? $this->getResourceFormSchema(
+                $modelNamespace . ($modelSubNamespace !== '' ? "\\{$modelSubNamespace}" : '') . '\\' . $modelClass,
+            ) : '//', 4),
+            'namespace' => "{$namespace}\\{$resourceClass}",
+            'resourceFormClass' => $resourceFormClass,
+        ]);
+
+        $this->copyStubToApp('ResourceTable', $resourceTablePath, [
+            'namespace' => "{$namespace}\\{$resourceClass}",
+            'resourceTableClass' => $resourceTableClass,
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 5),
             'tableColumns' => $this->indentString($this->option('generate') ? $this->getResourceTableColumns(
