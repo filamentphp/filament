@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
 use Illuminate\Contracts\Support\Arrayable;
@@ -484,9 +485,9 @@ trait CanBeValidated
         return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute);
     }
 
-    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, bool $ignoreRecord = false, ?Closure $modifyRuleUsing = null): static
+    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure | null $ignorable = null, bool $ignoreRecord = false, bool $onTenant = false, ?Closure $modifyRuleUsing = null): static
     {
-        $this->rule(static function (Field $component, ?string $model) use ($column, $ignorable, $ignoreRecord, $modifyRuleUsing, $table) {
+        $this->rule(static function (Field $component, ?string $model) use ($column, $ignorable, $ignoreRecord, $onTenant, $modifyRuleUsing, $table) {
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
             $ignorable = ($ignoreRecord && ! $ignorable) ?
@@ -499,6 +500,13 @@ trait CanBeValidated
                     fn (Unique $rule) => $rule->ignore(
                         $ignorable->getOriginal($ignorable->getKeyName()),
                         $ignorable->getQualifiedKeyName(),
+                    ),
+                )
+                ->when(
+                    Filament::hasTenancy() && $onTenant,
+                    fn (Unique $rule) => $rule->where(
+                        Filament::getTenant()->getForeignKey(),
+                        Filament::getTenant()->getKey(),
                     ),
                 );
 
