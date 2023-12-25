@@ -102,12 +102,19 @@
             @endif
 
             @foreach ($getOptions() as $value => $label)
-                <option
-                    @disabled($isOptionDisabled($value, $label))
-                    value="{{ $value }}"
-                >
-                    {{ $label }}
-                </option>
+                @if (is_array($label))
+                    <optgroup label="{{ $value }}">
+                        @foreach ($label as $groupedValue => $groupedLabel)
+                            <option @disabled($isOptionDisabled($groupedValue, $groupedLabel)) value="{{ $groupedValue }}">
+                                {{ $groupedLabel }}
+                            </option>
+                        @endforeach
+                    </optgroup>
+                @else
+                    <option @disabled($isOptionDisabled($value, $label)) value="{{ $value }}">
+                        {{ $label }}
+                    </option>
+                @endif 
             @endforeach
         </x-filament::input.select>
     </x-filament::input.wrapper>
