@@ -56,7 +56,7 @@
 
         <style>
             :root {
-                --font-family: {!! filament()->getFontFamily() !!};
+                --font-family: '{!! filament()->getFontFamily() !!}';
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
             }
