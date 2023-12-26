@@ -7,7 +7,8 @@
         <script>
             window.addEventListener('beforeunload', (event) => {
                 if (
-                    JSON.stringify($wire.data) === JSON.stringify($wire.savedData)
+                    JSON.stringify($wire.data) ===
+                    JSON.stringify($wire.savedData)
                 ) {
                     return
                 }
