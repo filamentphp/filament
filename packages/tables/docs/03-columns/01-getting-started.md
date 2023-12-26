@@ -236,6 +236,23 @@ use Livewire\Attributes\Url;
 public array $tableColumnSearches = [];
 ```
 
+### Customizing the table search debounce
+
+You may customize the debounce time in all table search fields using the `searchDebounce()` method on the `$table`. By default it is set to `500ms`:
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchDebounce('750ms');
+}
+```
+
 ### Persist search in session
 
 To persist the table or individual column search in the user's session, use the `persistSearchInSession()` or `persistColumnSearchInSession()` method:

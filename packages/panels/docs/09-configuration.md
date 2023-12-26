@@ -145,3 +145,67 @@ public function panel(Panel $panel): Panel
         ->spa();
 }
 ```
+
+## Applying middleware
+
+You can apply extra middleware to all routes by passing an array of middleware classes to the `middleware()` method in the configuration:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->middleware([
+            // ...
+        ]);
+}
+```
+
+By default, middleware will be run when the page is first loaded, but not on subsequent Livewire AJAX requests. If you want to run middleware on every request, you can make it persistent by passing `true` as the second argument to the `middleware()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMiddleware([
+            // ...
+        ], isPersistent: true);
+}
+```
+
+### Applying middleware to authenticated routes
+
+You can apply middleware to all authenticated routes by passing an array of middleware classes to the `authMiddleware()` method in the configuration:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->authMiddleware([
+            // ...
+        ]);
+}
+```
+
+By default, middleware will be run when the page is first loaded, but not on subsequent Livewire AJAX requests. If you want to run middleware on every request, you can make it persistent by passing `true` as the second argument to the `authMiddleware()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->authMiddleware([
+            // ...
+        ], isPersistent: true);
+}
+```

@@ -15,7 +15,7 @@ return [
             ],
 
             'add_between' => [
-                'label' => 'إدراج',
+                'label' => 'إدراج بين الوحدات',
             ],
 
             'delete' => [
@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'لا يوصى بتحرير ملفات SVG لأنه قد يؤدي إلى فقدان الجودة عند تغيير الحجم.\n هل أنت متأكد من رغبتك في المتابعة؟',
+                    'disabled' => 'تم تعطيل تحرير ملفات SVG لأنه قد يؤدي إلى فقدان الجودة عند تغيير الحجم.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -224,7 +233,7 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'إضافة ملفات',
+            'attach_files' => 'إرفاق ملفات',
             'blockquote' => 'اقتباس',
             'bold' => 'عريض',
             'bullet_list' => 'قائمة نقطية',
@@ -241,12 +250,25 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'نعم',
+            'false' => 'لا',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
 
             'add' => [
                 'label' => 'إضافة إلى :label',
+            ],
+
+            'add_between' => [
+                'label' => 'إدراج بين',
             ],
 
             'delete' => [

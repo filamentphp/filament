@@ -25,7 +25,7 @@ return [
                 ],
 
                 'associate_another' => [
-                    'label' => 'Guardar e associar outro',
+                    'label' => 'Associar e associar outro',
                 ],
 
             ],

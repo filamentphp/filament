@@ -1,7 +1,16 @@
+@php
+    use Illuminate\View\ComponentAttributeBag;
+@endphp
+
 @props([
+    'debounce' => '500ms',
     'placeholder' => __('filament-tables::table.fields.search.placeholder'),
     'wireModel' => 'tableSearch',
 ])
+
+@php
+    $wireModelAttribute = "wire:model.live.debounce.{$debounce}";
+@endphp
 
 <div
     x-id="['input']"
@@ -18,13 +27,17 @@
         :wire:target="$wireModel"
     >
         <x-filament::input
-            autocomplete="off"
-            inline-prefix
-            :placeholder="$placeholder"
-            type="search"
-            :wire:model.live.debounce.500ms="$wireModel"
-            x-bind:id="$id('input')"
-            :wire:key="$this->getId() . '.table.' . $wireModel . '.field.input'"
+            :attributes="
+                (new ComponentAttributeBag())->merge([
+                    'autocomplete' => 'off',
+                    'inlinePrefix' => true,
+                    'placeholder' => $placeholder,
+                    'type' => 'search',
+                    $wireModelAttribute => $wireModel,
+                    'wire:key' => $this->getId() . '.table.' . $wireModel . '.field.input',
+                    'x-bind:id' => '$id(\'input\')',
+                ])
+            "
         />
     </x-filament::input.wrapper>
 </div>
