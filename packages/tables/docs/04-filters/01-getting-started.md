@@ -100,6 +100,18 @@ Filter::make('is_featured')
     ->default()
 ```
 
+### Customizing the built-in filter form field
+
+Whether you are using a checkbox, a [toggle](#using-a-toggle-button-instead-of-a-checkbox) or a [select](select), you can customize the built-in form field used for the filter, using the `modifyFormFieldUsing()` method. The method accepts a function with a `$field` parameter that gives you access to the form field object to customize:
+
+```php
+use Filament\Forms\Components\Checkbox;
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')
+    ->modifyFormFieldUsing(fn (Checkbox $field) => $field->inline(false))
+```
+
 ## Persist filters in session
 
 To persist the table filters in the user's session, use the `persistFiltersInSession()` method:
