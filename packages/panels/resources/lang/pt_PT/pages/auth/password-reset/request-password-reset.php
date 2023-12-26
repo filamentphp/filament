@@ -4,12 +4,12 @@ return [
 
     'title' => 'Redefinir a sua palavra-passe',
 
-    'heading' => 'Esqueceu a sua palavra-passe?',
+    'heading' => 'Esqueceu-se da palavra-passe?',
 
     'actions' => [
 
         'login' => [
-            'label' => 'voltar ao login',
+            'label' => 'voltar ao início',
         ],
 
     ],
