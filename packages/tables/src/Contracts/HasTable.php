@@ -111,5 +111,15 @@ interface HasTable
     /**
      * @param  array<string, mixed>  $arguments
      */
+    public function callMountedTableAction(array $arguments = []): mixed;
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function mountTableAction(string $name, ?string $record = null, array $arguments = []): mixed;
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
     public function replaceMountedTableAction(string $name, ?string $record = null, array $arguments = []): void;
 }
