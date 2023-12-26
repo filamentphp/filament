@@ -12,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\CanRememberSavedData;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
@@ -26,6 +27,7 @@ use function Filament\Support\is_app_url;
  */
 class EditRecord extends Page
 {
+    use CanRememberSavedData;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord {
         configureAction as configureActionRecord;
@@ -144,6 +146,8 @@ class EditRecord extends Page
         } catch (Halt $exception) {
             return;
         }
+
+        $this->rememberData();
 
         $this->getSavedNotification()?->send();
 
