@@ -31,6 +31,8 @@ trait HasFilters
 
     protected ?Closure $modifyFiltersTriggerActionUsing = null;
 
+    protected bool | Closure $hasApplyFiltersButton = false;
+
     protected bool | Closure | null $persistsFiltersInSession = false;
 
     protected bool | Closure $shouldDeselectAllRecordsWhenFiltered = true;
@@ -109,6 +111,13 @@ trait HasFilters
         return $this;
     }
 
+    public function useApplyFilterButton(bool | Closure $condition = true): static
+    {
+        $this->hasApplyFiltersButton = $condition;
+
+        return $this;
+    }
+
     public function persistFiltersInSession(bool | Closure $condition = true): static
     {
         $this->persistsFiltersInSession = $condition;
@@ -139,6 +148,23 @@ trait HasFilters
 
     public function getFiltersTriggerAction(): Action
     {
+        $filterActions = [
+            Action::make('resetFilters')
+                ->label(__('filament-tables::table.filters.actions.reset.label'))
+                ->color('danger')
+                ->action('resetTableFiltersForm'),
+        ];
+
+        if ($this->hasApplyFiltersButton()) {
+            $filterActions[] = Action::make('applyFilters')
+                ->label(__('filament-tables::table.filters.actions.apply.label'))
+                ->action(function (Action $action) {
+                    $this->submitTableFiltersForm();
+
+                    $action->livewireClickHandlerEnabled();
+                });
+        }
+
         $action = Action::make('openFilters')
             ->label(__('filament-tables::table.actions.filter.label'))
             ->iconButton()
@@ -146,12 +172,7 @@ trait HasFilters
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->modalSubmitAction(false)
-            ->extraModalFooterActions([
-                Action::make('resetFilters')
-                    ->label(__('filament-tables::table.filters.actions.reset.label'))
-                    ->color('danger')
-                    ->action('resetTableFiltersForm'),
-            ])
+            ->extraModalFooterActions($filterActions)
             ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))
             ->table($this);
 
@@ -207,6 +228,11 @@ trait HasFilters
     public function isFilterable(): bool
     {
         return (bool) count($this->getFilters());
+    }
+
+    public function hasApplyFiltersButton(): bool
+    {
+        return (bool) $this->evaluate($this->hasApplyFiltersButton);
     }
 
     public function persistsFiltersInSession(): bool

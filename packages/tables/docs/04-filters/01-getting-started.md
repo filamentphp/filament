@@ -154,6 +154,18 @@ TernaryFilter::make('trashed')
     ]))
 ```
 
+## Use Apply filters button
+
+By default, every filter update will run its corresponding query instantly. However, you may use `useApplyFiltersButton()` method to prevent all queries until user clicks the `Apply filters` button:
+
+```php
+$table
+    ->filters([
+        // ...
+    ])
+    ->useApplyFiltersButton();
+```
+
 ## Customizing the filters trigger action
 
 To customize the filters trigger buttons, you may use the `filtersTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/trigger-button) can be used:

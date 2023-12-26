@@ -106,6 +106,10 @@ return [
 
         'actions' => [
 
+            'apply' => [
+                'label' => 'Terapkan filter',
+            ],
+
             'remove' => [
                 'label' => 'Hapus filter',
             ],

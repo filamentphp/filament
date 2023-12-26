@@ -23,12 +23,17 @@ trait HasFilters
             return $this->getForm('tableFiltersForm');
         }
 
-        return $this->makeForm()
+        $form = $this->makeForm()
             ->schema($this->getTableFiltersFormSchema())
             ->columns($this->getTable()->getFiltersFormColumns())
             ->model($this->getTable()->getModel())
-            ->statePath('tableFilters')
-            ->live();
+            ->statePath('tableFilters');
+
+        if ($this->table->hasApplyFiltersButton()) {
+            return $form;
+        }
+
+        return $form->live();
     }
 
     public function updatedTableFilters(): void
@@ -97,6 +102,11 @@ trait HasFilters
     {
         $this->getTableFiltersForm()->fill();
 
+        $this->updatedTableFilters();
+    }
+
+    public function submitTableFiltersForm(): void
+    {
         $this->updatedTableFilters();
     }
 
