@@ -111,7 +111,7 @@ trait HasFilters
         return $this;
     }
 
-    public function useApplyFilterButton(bool | Closure $condition = true): static
+    public function useApplyFiltersButton(bool | Closure $condition = true): static
     {
         $this->hasApplyFiltersButton = $condition;
 
