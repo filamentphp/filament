@@ -122,4 +122,14 @@ interface HasTable
      * @param  array<string, mixed>  $arguments
      */
     public function replaceMountedTableAction(string $name, ?string $record = null, array $arguments = []): void;
+
+    /**
+     * @param  array<int | string> | null  $selectedRecords
+     */
+    public function mountTableBulkAction(string $name, ?array $selectedRecords = null): mixed;
+
+    /**
+     * @param  array<int | string> | null  $selectedRecords
+     */
+    public function replaceMountedTableBulkAction(string $name, ?array $selectedRecords = null): void;
 }
