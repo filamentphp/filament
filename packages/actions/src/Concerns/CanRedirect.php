@@ -4,6 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Support\Facades\FilamentView;
+
 use function Filament\Support\is_app_url;
 
 trait CanRedirect
