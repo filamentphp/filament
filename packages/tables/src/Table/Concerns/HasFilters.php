@@ -158,11 +158,7 @@ trait HasFilters
         if ($this->hasApplyFiltersButton()) {
             $filterActions[] = Action::make('applyFilters')
                 ->label(__('filament-tables::table.filters.actions.apply.label'))
-                ->action(function (Action $action) {
-                    $this->submitTableFiltersForm();
-
-                    $action->livewireClickHandlerEnabled();
-                });
+                ->action('submitTableFiltersForm');
         }
 
         $action = Action::make('openFilters')
