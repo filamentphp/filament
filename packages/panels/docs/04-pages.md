@@ -324,7 +324,7 @@ If your page uses URL / query parameters, you should use the argument:
 ```php
 use App\Filament\Pages\Settings;
 
-Settings:::getUrl(['section' => 'notifications']); // /admin/settings?section=notifications
+Settings::getUrl(['section' => 'notifications']); // /admin/settings?section=notifications
 ```
 
 ### Generating URLs to pages in other panels
