@@ -49,6 +49,11 @@ class BaseFilter extends Component
         return null;
     }
 
+    public function getActiveCount(): int
+    {
+        return count($this->getIndicators());
+    }
+
     /**
      * @return array<mixed>
      */

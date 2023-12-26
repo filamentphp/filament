@@ -3,8 +3,8 @@
 @endphp
 
 @props([
+    'activeFiltersCount' => 0,
     'form',
-    'indicatorsCount' => null,
     'layout',
     'maxHeight' => null,
     'triggerAction',
@@ -30,7 +30,7 @@
         {{ $attributes->class(['fi-ta-filters-modal']) }}
     >
         <x-slot name="trigger">
-            {{ $triggerAction->badge($indicatorsCount) }}
+            {{ $triggerAction->badge($activeFiltersCount) }}
         </x-slot>
 
         {{ $triggerAction->getModalContent() }}
@@ -49,7 +49,7 @@
         {{ $attributes->class(['fi-ta-filters-dropdown']) }}
     >
         <x-slot name="trigger">
-            {{ $triggerAction->badge($indicatorsCount) }}
+            {{ $triggerAction->badge($activeFiltersCount) }}
         </x-slot>
 
         <x-filament-tables::filters :form="$form" class="p-6" />
