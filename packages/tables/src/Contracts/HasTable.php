@@ -107,4 +107,9 @@ interface HasTable
     public function getFilteredSortedTableQuery(): Builder;
 
     public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver;
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function replaceMountedTableAction(string $name, ?string $record = null, array $arguments = []): void;
 }
