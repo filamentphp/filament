@@ -45,7 +45,7 @@ return [
             ],
 
             'system' => [
-                'label' => 'Activar o modo sistema',
+                'label' => 'Activar o modo de sistema',
             ],
 
         ],

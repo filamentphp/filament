@@ -45,7 +45,7 @@ return [
             'actions' => [
 
                 'download_failed_rows_csv' => [
-                    'label' => 'Download information about the failed row|Download information about the failed rows',
+                    'label' => 'Descarregar informação sobre a falha na linha|Descarregar informação sobre as falhas nas linhas',
                 ],
 
             ],
@@ -53,13 +53,13 @@ return [
         ],
 
         'max_rows' => [
-            'title' => 'Uploaded CSV file is too large',
-            'body' => 'You may not import more than 1 row at once.|You may not import more than :count rows at once.',
+            'title' => 'O ficheiro CSV carregado é demasiado grande',
+            'body' => 'Não é possível importar mais de uma linha de uma só vez.|Não é possível importar mais de :count linhas de uma só vez.',
         ],
 
         'started' => [
-            'title' => 'Import started',
-            'body' => 'Your import has begun and 1 row will be processed in the background.|Your import has begun and :count rows will be processed in the background.',
+            'title' => 'Importação iniciada',
+            'body' => 'A importação foi iniciada e 1 linha será processada em segundo plano.|A importação foi iniciada e :count linhas serão processadas em segundo plano.',
         ],
 
     ],
@@ -70,8 +70,8 @@ return [
 
     'failure_csv' => [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
-        'error_header' => 'error',
-        'system_error' => 'System error, please contact support.',
+        'error_header' => 'erro',
+        'system_error' => 'Erro de sistema, por favor, contacte o suporte técnico.',
     ],
 
 ];

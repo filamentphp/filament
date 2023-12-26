@@ -105,7 +105,7 @@ return [
 
         'heading' => 'Sem :model',
 
-        'description' => 'Crie um :model para começar.',
+        'description' => 'Crie um(a) :model para começar.',
     ],
 
     'filters' => [
