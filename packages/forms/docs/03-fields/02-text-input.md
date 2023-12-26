@@ -158,6 +158,20 @@ TextInput::make('domain')
     ->suffixIconColor('success')
 ```
 
+## Revealable password inputs
+
+When using `password()`, you can also make the input `revealable()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('password')
+    ->password()
+    ->revealable()
+```
+
+<AutoScreenshot name="forms/fields/text-input/revealable-password" alt="Text input with revealable password" version="3.x" />
+
 ## Input masking
 
 Input masking is the practice of defining a format that the input value must conform to.

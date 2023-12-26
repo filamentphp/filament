@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Exception;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
@@ -33,6 +34,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     protected bool | Closure $isNumeric = false;
 
     protected bool | Closure $isPassword = false;
+
+    protected bool | Closure $isRevealable = false;
 
     protected bool | Closure $isTel = false;
 
@@ -133,6 +136,26 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $this->isPassword = $condition;
 
         return $this;
+    }
+
+    public function revealable(bool | Closure $condition = true): static
+    {
+        $this->isRevealable = $condition;
+        $this->suffixActions([
+            TextInput\Actions\ShowPasswordAction::make()->visible($condition),
+            TextInput\Actions\HidePasswordAction::make()->visible($condition),
+        ]);
+
+        return $this;
+    }
+
+    public function isPasswordRevealable(): bool
+    {
+        if (! $this->evaluate($this->isRevealable)) {
+            return false;
+        }
+
+        return $this->isPassword() ?: throw new Exception("The text input [{$this->getStatePath()}] is not a [password()], so it cannot be [revealable()].");
     }
 
     public function tel(bool | Closure $condition = true): static
