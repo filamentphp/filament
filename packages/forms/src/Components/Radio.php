@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Contracts\HasDescription as LabelInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -77,6 +78,26 @@ class Radio extends Field implements Contracts\CanDisableOptions
     public function getDescriptions(): array
     {
         $descriptions = $this->evaluate($this->descriptions);
+
+        $enum = $this->options;
+        if (
+            is_string($enum) &&
+            enum_exists($enum)
+        ) {
+            if (is_a($enum, LabelInterface::class, allow_string: true)) {
+                return collect($enum::cases())
+                    ->mapWithKeys(fn ($case) => [
+                        ($case?->value ?? $case->name) => $case->getDescription(),
+                    ])
+                    ->all();
+            }
+
+            return collect($enum::cases())
+                ->mapWithKeys(fn ($case) => [
+                    ($case?->value ?? $case->name) => $case->name,
+                ])
+                ->all();
+        }
 
         if ($descriptions instanceof Arrayable) {
             $descriptions = $descriptions->toArray();
