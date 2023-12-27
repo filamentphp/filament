@@ -6,7 +6,7 @@
 ])
 
 <table
-    {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
+    {{ $attributes->class(['fi-ta-table relative w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
 >
     @if ($header)
         <thead class="bg-gray-50 dark:bg-white/5">
