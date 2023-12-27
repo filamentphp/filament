@@ -7,7 +7,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\CanRememberSavedData;
+use Filament\Pages\Concerns\HasUnsavedChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
@@ -22,7 +22,7 @@ use function Filament\Support\is_app_url;
  */
 class CreateRecord extends Page
 {
-    use CanRememberSavedData;
+    use HasUnsavedChangesAlert;
     use InteractsWithFormActions;
 
     /**

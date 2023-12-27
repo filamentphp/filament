@@ -2,7 +2,7 @@
     use Filament\Support\Facades\FilamentView;
 @endphp
 
-@if (! FilamentView::hasSpaMode())
+@if ($this->hasUnsavedChangesAlert() && (! FilamentView::hasSpaMode()))
     @script
         <script>
             window.addEventListener('beforeunload', (event) => {

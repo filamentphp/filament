@@ -146,6 +146,23 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Unsaved changes alerts
+
+You may alert users if they attempt to navigate away from a page without saving their changes. This is applied on [Create](resources/creating-records) and [Edit](resources/editing-records) pages of a resource. To enable this feature, you can use the `unsavedChangesAlerts()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->unsavedChangesAlerts();
+}
+```
+
+> Please note: this feature is not compatible with [SPA mode](#spa-mode).
+
 ## Applying middleware
 
 You can apply extra middleware to all routes by passing an array of middleware classes to the `middleware()` method in the configuration:
