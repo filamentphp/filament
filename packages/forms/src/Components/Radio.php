@@ -91,12 +91,6 @@ class Radio extends Field implements Contracts\CanDisableOptions
                     ])
                     ->all();
             }
-
-            return collect($enum::cases())
-                ->mapWithKeys(fn ($case) => [
-                    ($case?->value ?? $case->name) => $case->name,
-                ])
-                ->all();
         }
 
         if ($descriptions instanceof Arrayable) {
