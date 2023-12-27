@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Support\Contracts\HasDescription;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -48,6 +49,19 @@ trait HasDescriptions
 
         if ($descriptions instanceof Arrayable) {
             $descriptions = $descriptions->toArray();
+        }
+
+        if (
+            empty($descriptions) &&
+            is_string($this->options) &&
+            enum_exists($this->options) &&
+            is_a($this->options, HasDescription::class, allow_string: true)
+        ) {
+            $descriptions = collect($this->options::cases())
+                ->mapWithKeys(fn ($case) => [
+                    ($case?->value ?? $case->name) => $case->getDescription(),
+                ])
+                ->all();
         }
 
         return $descriptions;
