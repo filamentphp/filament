@@ -15,7 +15,7 @@
         x-bind:class="
             $store.sidebar.isOpen
                 ? @js($openSidebarClasses . ' ' . 'lg:sticky')
-                : 'z-40 -translate-x-full rtl:translate-x-full lg:sticky lg:translate-x-0 rtl:lg:-translate-x-0'
+                : 'z-30 -translate-x-full rtl:translate-x-full lg:sticky lg:translate-x-0 rtl:lg:-translate-x-0'
         "
     @else
         @if (filament()->hasTopNavigation())
