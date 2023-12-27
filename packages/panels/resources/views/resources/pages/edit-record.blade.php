@@ -45,5 +45,5 @@
         </x-filament-panels::resources.relation-managers>
     @endif
 
-    <x-filament-panels::page.unsaved-changes-alert />
+    <x-filament-panels::page.unsaved-data-changes-alert />
 </x-filament-panels::page>

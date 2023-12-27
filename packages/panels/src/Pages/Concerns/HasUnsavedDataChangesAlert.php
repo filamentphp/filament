@@ -5,7 +5,7 @@ namespace Filament\Pages\Concerns;
 use Filament\Facades\Filament;
 use Livewire\Attributes\Locked;
 
-trait HasUnsavedChangesAlert
+trait HasUnsavedDataChangesAlert
 {
     /**
      * @var array<string, mixed>
@@ -13,24 +13,24 @@ trait HasUnsavedChangesAlert
     #[Locked]
     public array $savedData = [];
 
-    protected ?bool $hasUnsavedChangesAlert = null;
+    protected ?bool $hasUnsavedDataChangesAlert = null;
 
-    public function mountHasUnsavedChangesAlert(): void
+    public function mountHasUnsavedDataChangesAlert(): void
     {
         $this->rememberData();
     }
 
     protected function rememberData(): void
     {
-        if (! $this->hasUnsavedChangesAlert()) {
+        if (! $this->hasUnsavedDataChangesAlert()) {
             return;
         }
 
         $this->savedData = $this->data;
     }
 
-    protected function hasUnsavedChangesAlert(): bool
+    protected function hasUnsavedDataChangesAlert(): bool
     {
-        return $this->hasUnsavedChangesAlert ?? Filament::hasUnsavedChangesAlerts();
+        return $this->hasUnsavedDataChangesAlert ?? Filament::hasUnsavedChangesAlerts();
     }
 }
