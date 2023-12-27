@@ -136,10 +136,11 @@
                 <div
                     x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }"
                     @class([
-                        'grid gap-y-3 px-4 py-4 sm:px-6',
+                        'grid px-4 py-4 sm:px-6',
                     ])
                 >
                     <x-filament-tables::filters
+                        :apply-action="$getFiltersApplyAction()"
                         :form="$getFiltersForm()"
                         x-cloak
                         x-show="areFiltersOpen"
@@ -148,6 +149,7 @@
                     @if ($hasFiltersAboveContentCollapsible)
                         <span
                             x-on:click="areFiltersOpen = ! areFiltersOpen"
+                            x-bind:class="{ @js($hasDeferredFilters() ? '-mt-7' : 'mt-3'): areFiltersOpen }"
                             class="ms-auto"
                         >
                             {{ $filtersTriggerAction->badge($activeFiltersCount) }}
@@ -212,6 +214,7 @@
                             @if ($hasFiltersDialog)
                                 <x-filament-tables::filters.dialog
                                     :active-filters-count="$activeFiltersCount"
+                                    :apply-action="$getFiltersApplyAction()"
                                     :form="$getFiltersForm()"
                                     :layout="$filtersLayout"
                                     :max-height="$getFiltersFormMaxHeight()"
@@ -1132,6 +1135,7 @@
 
         @if ($hasFiltersBelowContent)
             <x-filament-tables::filters
+                :apply-action="$getFiltersApplyAction()"
                 :form="$getFiltersForm()"
                 class="p-4 sm:px-6"
             />

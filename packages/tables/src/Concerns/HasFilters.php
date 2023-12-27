@@ -17,6 +17,11 @@ trait HasFilters
      */
     public ?array $tableFilters = null;
 
+    /**
+     * @var array<string, mixed> | null
+     */
+    public ?array $tableDeferredFilters = null;
+
     public function getTableFiltersForm(): Form
     {
         if ((! $this->isCachingForms) && $this->hasCachedForm('tableFiltersForm')) {
@@ -27,11 +32,20 @@ trait HasFilters
             ->schema($this->getTableFiltersFormSchema())
             ->columns($this->getTable()->getFiltersFormColumns())
             ->model($this->getTable()->getModel())
-            ->statePath('tableFilters')
+            ->statePath($this->getTable()->hasDeferredFilters() ? 'tableDeferredFilters' : 'tableFilters')
             ->live();
     }
 
     public function updatedTableFilters(): void
+    {
+        if ($this->getTable()->hasDeferredFilters()) {
+            $this->tableDeferredFilters = $this->tableFilters;
+        }
+
+        $this->handleTableFilterUpdates();
+    }
+
+    protected function handleTableFilterUpdates(): void
     {
         if ($this->getTable()->persistsFiltersInSession()) {
             session()->put(
@@ -97,12 +111,19 @@ trait HasFilters
     {
         $this->getTableFiltersForm()->fill();
 
-        $this->updatedTableFilters();
+        $this->handleTableFilterUpdates();
+    }
+
+    public function applyTableFilters(): void
+    {
+        $this->tableFilters = $this->tableDeferredFilters;
+
+        $this->handleTableFilterUpdates();
     }
 
     protected function applyFiltersToTableQuery(Builder $query): Builder
     {
-        $data = $this->getTableFiltersForm()->getRawState();
+        $data = $this->tableFilters;
 
         foreach ($this->getTable()->getFilters() as $filter) {
             $filter->applyToBaseQuery(
@@ -123,7 +144,7 @@ trait HasFilters
 
     public function getTableFilterState(string $name): ?array
     {
-        return $this->getTableFiltersForm()->getRawState()[$this->parseTableFilterName($name)] ?? null;
+        return $this->tableFilters[$this->parseTableFilterName($name)] ?? null;
     }
 
     public function parseTableFilterName(string $name): string

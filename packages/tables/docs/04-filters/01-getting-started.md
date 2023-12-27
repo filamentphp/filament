@@ -129,6 +129,23 @@ public function table(Table $table): Table
 }
 ```
 
+## Deferring filters
+
+You can defer filter changes from affecting the table, until the user clicks an "Apply" button. To do this, use the `deferFilters()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->deferFilters();
+}
+```
+
 ## Deselecting records when filters change
 
 By default, all records will be deselected when the filters change. Using the `deselectAllRecordsWhenFiltered(false)` method, you can disable this behaviour:
