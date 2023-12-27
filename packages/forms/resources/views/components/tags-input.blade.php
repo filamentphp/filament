@@ -6,6 +6,7 @@
     $isDisabled = $isDisabled();
     $isReorderable = $isReorderable();
     $statePath = $getStatePath();
+    $isInlineInput = $getInlineInput();
 @endphp
 
 <x-dynamic-component
