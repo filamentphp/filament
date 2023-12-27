@@ -57,11 +57,13 @@ trait HasDescriptions
             enum_exists($this->options) &&
             is_a($this->options, HasDescription::class, allow_string: true)
         ) {
-            $descriptions = collect($this->options::cases())
-                ->mapWithKeys(fn ($case) => [
-                    ($case?->value ?? $case->name) => $case->getDescription(),
-                ])
-                ->all();
+            $descriptions = array_reduce($this->options::cases(), function (array $carry, HasDescription $case): array {
+                if (filled($description = $case->getDescription())) {
+                    $carry[$case?->value ?? $case->name] = $description;
+                }
+
+                return $carry;
+            }, []);
         }
 
         return $descriptions;

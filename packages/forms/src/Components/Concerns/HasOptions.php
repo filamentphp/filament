@@ -37,7 +37,7 @@ trait HasOptions
         ) {
             if (is_a($enum, LabelInterface::class, allow_string: true)) {
                 return collect($enum::cases())
-                    ->mapWithKeys(fn ($case) => [
+                    ->mapWithKeys(fn (LabelInterface $case): array => [
                         ($case?->value ?? $case->name) => $case->getLabel() ?? $case->name,
                     ])
                     ->all();
