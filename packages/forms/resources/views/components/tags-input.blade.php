@@ -7,6 +7,7 @@
     $isReorderable = $isReorderable();
     $statePath = $getStatePath();
     $isInlineInput = $getInlineInput();
+    $color = $getColor();
 @endphp
 
 <x-dynamic-component
@@ -98,6 +99,7 @@
                                     @class([
                                         'cursor-move' => $isReorderable,
                                     ])
+                                    :color="$color"
                                 >
                                     {{ $getTagPrefix() }}
 
