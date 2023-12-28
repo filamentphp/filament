@@ -34,7 +34,7 @@
         @endif
     @endif
     @class([
-        'fi-sidebar fixed inset-y-0 start-0 z-30 grid h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 lg:transition-none dark:lg:bg-transparent',
+        'fi-sidebar fixed inset-y-0 start-0 z-30 flex flex-col h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 lg:transition-none dark:lg:bg-transparent',
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
         'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
     ])
@@ -94,7 +94,7 @@
     </div>
 
     <nav
-        class="fi-sidebar-nav flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"
+        class="fi-sidebar-nav flex-grow flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"
         style="scrollbar-gutter: stable"
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.start') }}
@@ -112,7 +112,7 @@
             </div>
         @endif
 
-        <ul class="-mx-2 flex flex-col gap-y-7">
+        <ul class="fi-sidebar-nav-groups -mx-2 flex flex-col gap-y-7">
             @foreach ($navigation as $group)
                 <x-filament-panels::sidebar.group
                     :collapsible="$group->isCollapsible()"
