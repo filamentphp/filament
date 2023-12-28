@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Contracts\HasDescription;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
+use UnitEnum;
 
 trait HasDescriptions
 {
@@ -57,7 +58,7 @@ trait HasDescriptions
             enum_exists($this->options) &&
             is_a($this->options, HasDescription::class, allow_string: true)
         ) {
-            $descriptions = array_reduce($this->options::cases(), function (array $carry, HasDescription $case): array {
+            $descriptions = array_reduce($this->options::cases(), function (array $carry, HasDescription & UnitEnum $case): array {
                 if (filled($description = $case->getDescription())) {
                     $carry[$case?->value ?? $case->name] = $description;
                 }
