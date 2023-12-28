@@ -29,6 +29,13 @@ jobs:
             const user = context.payload.sender.login
             const issue = context.payload.issue
             const body = issue.body
+
+            if (body.includes('filament/minimal-theme')) {
+                debug('Ignoring Minimal Theme issue.')
+
+                return
+            }
+
             const urlMatch = body.match(URL_REGEXP)
             const reproStepsMatch = body.match(REPRO_STEPS_REGEXP)
             const url = urlMatch !== null ? urlMatch[1].trim() : null
