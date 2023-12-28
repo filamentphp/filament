@@ -108,7 +108,7 @@ class SelectFilter extends BaseFilter
     {
         $state = $this->getState();
 
-        return filled($this->isMultiple() ? $state['values'] : $state['value']) ? 1 : 0;
+        return filled($this->isMultiple() ? ($state['values'] ?? []) : ($state['value'] ?? null)) ? 1 : 0;
     }
 
     /**
