@@ -47,7 +47,7 @@
             x-ignore
             {{ $getExtraAlpineAttributeBag() }}
         >
-            @if(!$isInlineInput)
+            @if (! $isInlineInput)
                 <x-filament::input
                     autocomplete="off"
                     :autofocus="$isAutofocused()"
@@ -67,7 +67,7 @@
                         x-bind:key="@js($suggestion)"
                         x-if="! state.includes(@js($suggestion))"
                     >
-                        <option value="{{ $suggestion }}"/>
+                        <option value="{{ $suggestion }}" />
                     </template>
                 @endforeach
             </datalist>
@@ -77,13 +77,16 @@
                     '[&_.fi-badge-delete-button]:hidden' => $isDisabled,
                 ])
             >
-                <div wire:ignore x-data="{inline: {{ $isInlineInput ? 'true' : 'false' }}}">
+                <div
+                    wire:ignore
+                    x-data="{ inline: {{ $isInlineInput ? 'true' : 'false' }} }"
+                >
                     <template x-cloak x-if="state?.length || inline">
                         <div
                             @if ($isReorderable)
                                 x-on:end.stop="reorderTags($event)"
-                            x-sortable
-                            data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
+                                x-sortable
+                                data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                             @endif
                             @class([
                                 'flex w-full flex-wrap gap-1.5 p-2',
@@ -119,7 +122,7 @@
                                 </x-filament::badge>
                             </template>
 
-                            @if($isInlineInput)
+                            @if ($isInlineInput)
                                 <x-filament::input
                                     autocomplete="off"
                                     :autofocus="$isAutofocused()"
@@ -135,7 +138,6 @@
                                     ])
                                 />
                             @endif
-
                         </div>
                     </template>
                 </div>

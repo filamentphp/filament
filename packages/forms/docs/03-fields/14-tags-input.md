@@ -109,3 +109,25 @@ use Filament\Forms\Components\TagsInput;
 TagsInput::make('tags')
     ->reorderable()
 ```
+
+## Changing tag color
+
+You can change the color of the tags by passing a color to the `color()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->color('purple')
+```
+
+## Inline input
+
+You can change the input to be inline by using the `inlineInput()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->inlineInput()
+```
