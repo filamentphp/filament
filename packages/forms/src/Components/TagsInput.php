@@ -13,9 +13,9 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasPlaceholder;
+    use HasColor;
     use HasExtraAlpineAttributes;
     use HasReorderAnimationDuration;
-    use HasColor;
 
     /**
      * @var view-string
@@ -40,7 +40,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
 
     protected string | Closure | null $tagSuffix = null;
 
-    protected bool | null $inlineInput = false;
+    protected ?bool $inlineInput = false;
 
     protected function setUp(): void
     {
@@ -171,7 +171,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         return (bool) $this->evaluate($this->isReorderable);
     }
 
-    public function inlineInput(bool | null $inlineInput = true): static
+    public function inlineInput(?bool $inlineInput = true): static
     {
         $this->inlineInput = $inlineInput;
 

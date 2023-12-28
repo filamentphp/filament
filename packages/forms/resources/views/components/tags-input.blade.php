@@ -47,17 +47,19 @@
             x-ignore
             {{ $getExtraAlpineAttributeBag() }}
         >
-            <x-filament::input
-                autocomplete="off"
-                :autofocus="$isAutofocused()"
-                :disabled="$isDisabled"
-                :id="$id"
-                :list="$id . '-suggestions'"
-                :placeholder="$getPlaceholder()"
-                type="text"
-                x-bind="input"
-                :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())"
-            />
+            @if(!$isInlineInput)
+                <x-filament::input
+                    autocomplete="off"
+                    :autofocus="$isAutofocused()"
+                    :disabled="$isDisabled"
+                    :id="$id"
+                    :list="$id . '-suggestions'"
+                    :placeholder="$getPlaceholder()"
+                    type="text"
+                    x-bind="input"
+                    :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())"
+                />
+            @endif
 
             <datalist id="{{ $id }}-suggestions">
                 @foreach ($getSuggestions() as $suggestion)
@@ -65,7 +67,7 @@
                         x-bind:key="@js($suggestion)"
                         x-if="! state.includes(@js($suggestion))"
                     >
-                        <option value="{{ $suggestion }}" />
+                        <option value="{{ $suggestion }}"/>
                     </template>
                 @endforeach
             </datalist>
@@ -75,13 +77,13 @@
                     '[&_.fi-badge-delete-button]:hidden' => $isDisabled,
                 ])
             >
-                <div wire:ignore>
-                    <template x-cloak x-if="state?.length">
+                <div wire:ignore x-data="{inline: {{ $isInlineInput ? 'true' : 'false' }}}">
+                    <template x-cloak x-if="state?.length || inline">
                         <div
                             @if ($isReorderable)
                                 x-on:end.stop="reorderTags($event)"
-                                x-sortable
-                                data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
+                            x-sortable
+                            data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                             @endif
                             @class([
                                 'flex w-full flex-wrap gap-1.5 p-2',
@@ -116,6 +118,24 @@
                                     ></x-slot>
                                 </x-filament::badge>
                             </template>
+
+                            @if($isInlineInput)
+                                <x-filament::input
+                                    autocomplete="off"
+                                    :autofocus="$isAutofocused()"
+                                    :disabled="$isDisabled"
+                                    :id="$id"
+                                    :list="$id . '-suggestions'"
+                                    :placeholder="$getPlaceholder()"
+                                    type="text"
+                                    x-bind="input"
+                                    :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())"
+                                    @class([
+                                        'flex-1 min-w-fit',
+                                    ])
+                                />
+                            @endif
+
                         </div>
                     </template>
                 </div>
