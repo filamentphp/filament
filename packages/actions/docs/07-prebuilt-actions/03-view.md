@@ -42,6 +42,12 @@ public function table(Table $table): Table
 }
 ```
 
+Actions\Action::make('my-action')->label('My Action')->infolist([
+      TextEntry::make('name'),
+      TextEntry::make('description')
+  ])
+
+
 ## Customizing data before filling the form
 
 You may wish to modify the data from a record before it is filled into the form. To do this, you may use the `mutateRecordDataUsing()` method to modify the `$data` array, and return the modified version before it is filled into the form:
