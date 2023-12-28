@@ -20,7 +20,7 @@
         content: @js($label),
         theme: $store.theme,
     }"
-    class="flex justify-center rounded-lg p-2 outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+    class="flex justify-center rounded-md p-2 outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
 >
     <x-filament::icon
         :alias="'panels::theme-switcher.' . $theme . '-button'"
