@@ -13,13 +13,13 @@ trait HasStateBindingModifiers
 
     protected int | string | null $liveDebounce = null;
 
-    protected bool $isLive = false;
+    protected ?bool $isLive = null;
 
     protected bool $isLiveOnBlur = false;
 
-    public function live(bool $onBlur = false, int | string | null $debounce = null): static
+    public function live(bool $onBlur = false, int | string | null $debounce = null, ?bool $condition = true): static
     {
-        $this->isLive = true;
+        $this->isLive = $condition;
         $this->isLiveOnBlur = $onBlur;
         $this->liveDebounce = $debounce;
 
@@ -85,7 +85,11 @@ trait HasStateBindingModifiers
             return $this->stateBindingModifiers;
         }
 
-        if ($this->isLiveOnBlur()) {
+        if ($this->isLive === false) {
+            return [];
+        }
+
+        if ($this->isLiveOnBlur) {
             if (! $withBlur) {
                 return $isOptimisticallyLive ? ['live'] : [];
             }
@@ -93,15 +97,15 @@ trait HasStateBindingModifiers
             return ['blur'];
         }
 
-        if ($this->isLiveDebounced()) {
+        if (filled($this->liveDebounce)) {
             if (! $withDebounce) {
                 return $isOptimisticallyLive ? ['live'] : [];
             }
 
-            return ['live', 'debounce', $this->getLiveDebounce()];
+            return ['live', 'debounce', $this->liveDebounce];
         }
 
-        if ($this->isLive()) {
+        if ($this->isLive) {
             return ['live'];
         }
 
@@ -118,12 +122,36 @@ trait HasStateBindingModifiers
 
     public function isLive(): bool
     {
-        return $this->isLive;
+        if ($this->isLive !== null) {
+            return $this->isLive;
+        }
+
+        if ($this instanceof Component) {
+            return $this->getContainer()->isLive();
+        }
+
+        if ($this->getParentComponent()) {
+            return $this->getParentComponent()->isLive();
+        }
+
+        return false;
     }
 
     public function isLiveOnBlur(): bool
     {
-        return $this->isLiveOnBlur;
+        if ($this->isLive !== null) {
+            return $this->isLiveOnBlur;
+        }
+
+        if ($this instanceof Component) {
+            return $this->getContainer()->isLiveOnBlur();
+        }
+
+        if ($this->getParentComponent()) {
+            return $this->getParentComponent()->isLiveOnBlur();
+        }
+
+        return false;
     }
 
     public function isLazy(): bool
@@ -133,16 +161,44 @@ trait HasStateBindingModifiers
 
     public function isLiveDebounced(): bool
     {
-        if ($this->isLiveOnBlur()) {
+        if ($this->isLiveOnBlur) {
             return false;
         }
 
-        return filled($this->liveDebounce);
+        if (filled($this->liveDebounce)) {
+            return true;
+        }
+
+        if ($this instanceof Component) {
+            return $this->getContainer()->isLiveDebounced();
+        }
+
+        if ($this->getParentComponent()) {
+            return $this->getParentComponent()->isLiveDebounced();
+        }
+
+        return false;
     }
 
     public function getLiveDebounce(): int | string | null
     {
-        return $this->liveDebounce;
+        if ($this->isLiveOnBlur) {
+            return null;
+        }
+
+        if (filled($this->liveDebounce)) {
+            return $this->liveDebounce;
+        }
+
+        if ($this instanceof Component) {
+            return $this->getContainer()->getLiveDebounce();
+        }
+
+        if ($this->getParentComponent()) {
+            return $this->getParentComponent()->getLiveDebounce();
+        }
+
+        return null;
     }
 
     public function getNormalizedLiveDebounce(): ?int
