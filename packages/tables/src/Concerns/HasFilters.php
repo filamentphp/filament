@@ -33,7 +33,7 @@ trait HasFilters
             ->columns($this->getTable()->getFiltersFormColumns())
             ->model($this->getTable()->getModel())
             ->statePath($this->getTable()->hasDeferredFilters() ? 'tableDeferredFilters' : 'tableFilters')
-            ->live();
+            ->when(! $this->getTable()->hasDeferredFilters(), fn (Form $form) => $form->live(onBlur: true));
     }
 
     public function updatedTableFilters(): void
