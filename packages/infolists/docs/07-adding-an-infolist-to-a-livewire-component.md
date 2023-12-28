@@ -50,6 +50,13 @@ Next, add a method to the Livewire component which accepts an `$infolist` object
 ```php
 use Filament\Infolists\Infolist;
 
+public Product $product;
+
+public function mount(Product $product): void
+{
+    $this->product = $product;
+}
+
 public function productInfolist(Infolist $infolist): Infolist
 {
     return $infolist
