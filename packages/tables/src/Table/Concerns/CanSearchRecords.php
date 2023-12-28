@@ -17,6 +17,8 @@ trait CanSearchRecords
 
     protected ?string $searchDebounce = null;
 
+    protected bool | Closure $isSearchOnBlur = false;
+
     public function persistSearchInSession(bool | Closure $condition = true): static
     {
         $this->persistsSearchInSession = $condition;
@@ -118,5 +120,17 @@ trait CanSearchRecords
     public function getSearchDebounce(): string
     {
         return $this->searchDebounce ?? '500ms';
+    }
+
+    public function searchOnBlur(bool | Closure $condition = true): static
+    {
+        $this->isSearchOnBlur = $condition;
+
+        return $this;
+    }
+
+    public function isSearchOnBlur(): bool
+    {
+        return (bool) $this->evaluate($this->isSearchOnBlur);
     }
 }

@@ -39,6 +39,7 @@
     $isReordering = $isReordering();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
+    $isSearchOnBlur = $isSearchOnBlur();
     $isSelectionEnabled = $isSelectionEnabled() && (! $isGroupsOnly);
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
@@ -55,6 +56,7 @@
     $hasHeaderToolbar = $isReorderable || $areGroupingSettingsVisible || $isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
+    $searchDebounce = $getSearchDebounce();
     $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
     $columnsCount = count($columns);
     $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
@@ -201,7 +203,8 @@
 
                         @if ($isGlobalSearchVisible)
                             <x-filament-tables::search-field
-                                :debounce="$getSearchDebounce()"
+                                :debounce="$searchDebounce"
+                                :on-blur="$isSearchOnBlur"
                                 :placeholder="$getSearchPlaceholder()"
                             />
                         @endif
@@ -819,7 +822,8 @@
                                 >
                                     @if ($column->isIndividuallySearchable())
                                         <x-filament-tables::search-field
-                                            :debounce="$getSearchDebounce()"
+                                            :debounce="$searchDebounce"
+                                            :on-blur="$isSearchOnBlur"
                                             wire-model="tableColumnSearches.{{ $column->getName() }}"
                                         />
                                     @endif

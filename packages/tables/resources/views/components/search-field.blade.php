@@ -4,12 +4,13 @@
 
 @props([
     'debounce' => '500ms',
+    'onBlur' => false,
     'placeholder' => __('filament-tables::table.fields.search.placeholder'),
     'wireModel' => 'tableSearch',
 ])
 
 @php
-    $wireModelAttribute = "wire:model.live.debounce.{$debounce}";
+    $wireModelAttribute = $onBlur ? 'wire:model.blur' : "wire:model.live.debounce.{$debounce}";
 @endphp
 
 <div
@@ -33,9 +34,10 @@
                     'inlinePrefix' => true,
                     'placeholder' => $placeholder,
                     'type' => 'search',
-                    $wireModelAttribute => $wireModel,
                     'wire:key' => $this->getId() . '.table.' . $wireModel . '.field.input',
+                    $wireModelAttribute => $wireModel,
                     'x-bind:id' => '$id(\'input\')',
+                    'x-on:keyup' => 'if ($event.key === \'Enter\') { $wire.$refresh() }',
                 ])
             "
         />
