@@ -55,11 +55,13 @@ trait HasBulkActions
             return null;
         }
 
-        $action->arguments($arguments);
+        $action->mergeArguments($arguments);
 
         $form = $this->getMountedTableBulkActionForm();
 
         $result = null;
+
+        $originallyMountedAction = $this->mountedTableBulkAction;
 
         try {
             if ($this->mountedTableBulkActionHasForm()) {
@@ -97,6 +99,12 @@ trait HasBulkActions
 
         $action->resetArguments();
         $action->resetFormData();
+
+        // If the action was replaced while it was being called,
+        // we don't want to unmount it.
+        if ($originallyMountedAction !== $this->mountedTableBulkAction) {
+            return null;
+        }
 
         $this->unmountTableBulkAction();
 
@@ -167,6 +175,17 @@ trait HasBulkActions
         );
     }
 
+    /**
+     * @param  array<int | string> | null  $selectedRecords
+     */
+    public function replaceMountedTableBulkAction(string $name, ?array $selectedRecords = null): void
+    {
+        $selectedRecords ??= $this->selectedTableRecords;
+
+        $this->resetMountedTableBulkActionProperties();
+        $this->mountTableBulkAction($name, $selectedRecords);
+    }
+
     protected function resetMountedTableBulkActionProperties(): void
     {
         $this->mountedTableBulkAction = null;
@@ -181,7 +200,8 @@ trait HasBulkActions
             return false;
         }
 
-        return $action->hasModalDescription() ||
+        return $action->hasCustomModalHeading() ||
+            $action->hasModalDescription() ||
             $action->hasModalContent() ||
             $action->hasModalContentFooter() ||
             $action->getInfolist() ||

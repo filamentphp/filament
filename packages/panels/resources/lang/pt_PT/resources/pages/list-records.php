@@ -2,6 +2,6 @@
 
 return [
 
-    'breadcrumb' => 'Listar',
+    'breadcrumb' => 'Listagem',
 
 ];

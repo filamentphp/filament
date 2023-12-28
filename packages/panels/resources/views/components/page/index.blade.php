@@ -114,11 +114,9 @@
 
     @if (! ($this instanceof \Filament\Tables\Contracts\HasTable))
         <x-filament-actions::modals />
-    @elseif ($this->isTableLoaded() &&
-             filled($this->defaultTableAction) &&
-             filled($this->defaultTableActionRecord))
+    @elseif ($this->isTableLoaded() && filled($this->defaultTableAction))
         <div
-            wire:init="mountTableAction(@js($this->defaultTableAction), @js($this->defaultTableActionRecord))"
+            wire:init="mountTableAction(@js($this->defaultTableAction), @if (filled($this->defaultTableActionRecord)) @js($this->defaultTableActionRecord) @elsenull @endif @if (filled($this->defaultTableActionArguments)) , @js($this->defaultTableActionArguments) @endif)"
         ></div>
     @endif
 

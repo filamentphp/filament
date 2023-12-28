@@ -73,11 +73,11 @@ abstract class Page extends BasePage
 
     public static function getRouteName(?string $panel = null): string
     {
-        $panel ??= Filament::getCurrentPanel()->getId();
+        $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 
-        return (string) str(static::getSlug())
+        return $panel->generateRouteName((string) str(static::getSlug())
             ->replace('/', '.')
-            ->prepend("filament.{$panel}.pages.");
+            ->prepend('pages.'));
     }
 
     /**

@@ -99,3 +99,17 @@ IconColumn::make('is_featured')
 ```
 
 <AutoScreenshot name="tables/columns/icon/boolean-color" alt="Icon column to display a boolean with custom colors" version="3.x" />
+
+## Wrapping multiple icons
+
+When displaying multiple icons, they can be set to wrap if they can't fit on one line, using `wrap()`:
+
+```php
+use Filament\Tables\Columns\IconColumn;
+
+IconColumn::make('icon')
+    ->wrap()
+```
+
+Note: the "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
+

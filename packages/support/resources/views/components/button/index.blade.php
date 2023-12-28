@@ -152,6 +152,7 @@
         :color="$color"
         :disabled="$disabled"
         :form="$form"
+        :href="$href"
         :icon="$icon"
         :icon-alias="$iconAlias"
         :icon-size="$iconSize"

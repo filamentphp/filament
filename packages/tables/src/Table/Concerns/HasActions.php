@@ -181,6 +181,15 @@ trait HasActions
      */
     protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, ?Model $mountedRecord = null): ?Action
     {
+        $arguments = $this->getLivewire()->mountedTableActionsArguments ?? [];
+
+        if (
+            (($actionArguments = array_shift($arguments)) !== null) &&
+            (! $action->hasArguments())
+        ) {
+            $action->arguments($actionArguments);
+        }
+
         foreach ($modalActionNames as $modalActionName) {
             $action = $action->getMountableModalAction($modalActionName);
 
@@ -190,6 +199,13 @@ trait HasActions
 
             if ($action instanceof Action) {
                 $action->record($mountedRecord);
+            }
+
+            if (
+                (($actionArguments = array_shift($arguments)) !== null) &&
+                (! $action->hasArguments())
+            ) {
+                $action->arguments($actionArguments);
             }
         }
 

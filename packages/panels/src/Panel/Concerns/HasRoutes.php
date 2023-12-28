@@ -86,6 +86,16 @@ trait HasRoutes
         return $this;
     }
 
+    public function route(string $name, mixed $parameters = [], bool $absolute = true): string
+    {
+        return route($this->generateRouteName($name), $parameters, $absolute);
+    }
+
+    public function generateRouteName(string $name): string
+    {
+        return "filament.{$this->getId()}.{$name}";
+    }
+
     public function getRoutes(): ?Closure
     {
         return $this->routes;
@@ -155,28 +165,32 @@ trait HasRoutes
             $this->navigationGroups = [];
 
             $navigation = $this->getNavigation();
-
-            Filament::setTenant($originalTenant);
-
-            $this->isNavigationMounted = $isNavigationMountedOriginally;
-            $this->navigationItems = $originalNavigationItems;
-            $this->navigationGroups = $originalNavigationGroups;
-        } else {
-            $navigation = $this->getNavigation();
         }
 
-        $firstGroup = Arr::first($navigation);
+        $navigation = $this->getNavigation();
 
-        if (! $firstGroup) {
-            return null;
+        try {
+            $firstGroup = Arr::first($navigation);
+
+            if (! $firstGroup) {
+                return null;
+            }
+
+            $firstItem = Arr::first($firstGroup->getItems());
+
+            if (! $firstItem) {
+                return null;
+            }
+
+            return $firstItem->getUrl();
+        } finally {
+            if ($tenant) {
+                Filament::setTenant($originalTenant);
+
+                $this->isNavigationMounted = $isNavigationMountedOriginally;
+                $this->navigationItems = $originalNavigationItems;
+                $this->navigationGroups = $originalNavigationGroups;
+            }
         }
-
-        $firstItem = Arr::first($firstGroup->getItems());
-
-        if (! $firstItem) {
-            return null;
-        }
-
-        return $firstItem->getUrl();
     }
 }

@@ -11,7 +11,7 @@
     }}
 >
     <nav
-        class="flex h-16 items-center gap-x-4 bg-white px-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:px-6 lg:px-8"
+        class="flex h-16 items-center gap-x-4 bg-white px-4 shadow-sm ring-1 ring-gray-950/5 md:px-6 lg:px-8 dark:bg-gray-900 dark:ring-white/10"
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.start') }}
 
@@ -27,6 +27,7 @@
                 x-on:click="$store.sidebar.open()"
                 x-show="! $store.sidebar.isOpen"
                 @class([
+                    'fi-topbar-open-sidebar-btn',
                     'lg:hidden' => (! filament()->isSidebarFullyCollapsibleOnDesktop()) || filament()->isSidebarCollapsibleOnDesktop(),
                 ])
             />
@@ -41,7 +42,7 @@
                 x-data="{}"
                 x-on:click="$store.sidebar.close()"
                 x-show="$store.sidebar.isOpen"
-                class="lg:hidden"
+                class="fi-topbar-close-sidebar-btn lg:hidden"
             />
         @endif
 

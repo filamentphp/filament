@@ -34,7 +34,7 @@
     @endif
     @endif
     @class([
-        'fi-sidebar fixed inset-y-0 start-0 z-30 grid h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 lg:transition-none dark:lg:bg-transparent',
+        'fi-sidebar fixed inset-y-0 start-0 z-30 flex flex-col h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 lg:transition-none dark:lg:bg-transparent',
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
         'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
     ])
@@ -97,7 +97,7 @@
     <nav
         style="scrollbar-gutter: stable"
         @class([
-            'fi-sidebar-nav flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden py-8',
+            'fi-sidebar-nav flex-grow flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8',
             'px-6' => ! filament()->hasCollapsibleNavigationWithText(),
         ])
         @if (filament()->hasCollapsibleNavigationWithText())
@@ -119,59 +119,57 @@
             </div>
         @endif
 
-        @if (filament()->hasNavigation())
-            <ul class="-mx-2 flex flex-col gap-y-7">
-                @foreach ($navigation as $group)
-                    <x-filament-panels::sidebar.group
-                        :collapsible="$group->isCollapsible()"
-                        :icon="$group->getIcon()"
-                        :items="$group->getItems()"
-                        :label="$group->getLabel()"
-                    />
-                @endforeach
-            </ul>
+        <ul class="fi-sidebar-nav-groups -mx-2 flex flex-col gap-y-7">
+            @foreach ($navigation as $group)
+                <x-filament-panels::sidebar.group
+                    :collapsible="$group->isCollapsible()"
+                    :icon="$group->getIcon()"
+                    :items="$group->getItems()"
+                    :label="$group->getLabel()"
+                />
+            @endforeach
+        </ul>
 
-            <script>
-                var collapsedGroups = JSON.parse(
-                    localStorage.getItem('collapsedGroups'),
+        <script>
+            var collapsedGroups = JSON.parse(
+                localStorage.getItem('collapsedGroups'),
+            )
+
+            if (collapsedGroups === null || collapsedGroups === 'null') {
+                localStorage.setItem(
+                    'collapsedGroups',
+                    JSON.stringify(@js(
+                        collect($navigation)
+                            ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
+                            ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
+                            ->values()
+                    )),
                 )
+            }
 
-                if (collapsedGroups === null || collapsedGroups === 'null') {
-                    localStorage.setItem(
-                        'collapsedGroups',
-                        JSON.stringify(@js(
-                            collect($navigation)
-                                ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
-                                ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
-                                ->values()
-                        )),
-                    )
-                }
+            collapsedGroups = JSON.parse(
+                localStorage.getItem('collapsedGroups'),
+            )
 
-                collapsedGroups = JSON.parse(
-                    localStorage.getItem('collapsedGroups'),
-                )
+            document
+                .querySelectorAll('.fi-sidebar-group')
+                .forEach((group) => {
+                    if (
+                        !collapsedGroups.includes(group.dataset.groupLabel)
+                    ) {
+                        return
+                    }
 
-                document
-                    .querySelectorAll('.fi-sidebar-group')
-                    .forEach((group) => {
-                        if (
-                            !collapsedGroups.includes(group.dataset.groupLabel)
-                        ) {
-                            return
-                        }
-
-                        // Alpine.js loads too slow, so attempt to hide a
-                        // collapsed sidebar group earlier.
-                        group.querySelector(
-                            '.fi-sidebar-group-items',
-                        ).style.display = 'none'
-                        group
-                            .querySelector('.fi-sidebar-group-collapse-button')
-                            .classList.add('rotate-180')
-                    })
-            </script>
-        @endif
+                    // Alpine.js loads too slow, so attempt to hide a
+                    // collapsed sidebar group earlier.
+                    group.querySelector(
+                        '.fi-sidebar-group-items',
+                    ).style.display = 'none'
+                    group
+                        .querySelector('.fi-sidebar-group-collapse-button')
+                        .classList.add('rotate-180')
+                })
+        </script>
 
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.end') }}
     </nav>

@@ -529,6 +529,40 @@ public function table(Table $table): Table
 
 To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/delete).
 
+## Importing related records
+
+The [`ImportAction`](../../actions/prebuilt-actions/import) can be added to the header of a relation manager to import records. In this case, you probably want to tell the importer which owner these new records belong to. You can use [import options](../../actions/prebuilt-actions/import#using-import-options) to pass through the ID of the owner record:
+
+```php
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->options(['categoryId' => $this->getOwnerRecord()->getKey()])
+```
+
+Now, in the importer class, you can associate the owner in a one-to-many relationship with the imported record:
+
+```php
+public function resolveRecord(): ?Product
+{
+    $product = Product::firstOrNew([
+        'sku' => $this->data['sku'],
+    ]);
+    
+    $product->category()->associate($this->options['categoryId']);
+    
+    return $product;
+}
+```
+
+Alternatively, you can attach the record in a many-to-many relationship using the `afterSave()` hook of the importer:
+
+```php
+protected function afterSave(): void
+{
+    $this->record->categories()->syncWithoutDetaching([$this->options['categoryId']]);
+}
+```
+
 ## Accessing the relationship's owner record
 
 Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is saved into a property. You can read this property using:

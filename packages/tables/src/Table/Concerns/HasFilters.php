@@ -218,4 +218,13 @@ trait HasFilters
     {
         return (bool) $this->evaluate($this->shouldDeselectAllRecordsWhenFiltered);
     }
+
+    public function getActiveFiltersCount(): int
+    {
+        return array_reduce(
+            $this->getFilters(),
+            fn (int $carry, BaseFilter $filter): int => $carry + $filter->getActiveCount(),
+            0,
+        );
+    }
 }

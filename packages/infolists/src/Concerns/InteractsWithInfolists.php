@@ -96,7 +96,7 @@ trait InteractsWithInfolists
             return null;
         }
 
-        $action->arguments($arguments);
+        $action->mergeArguments($arguments);
 
         $form = $this->getMountedInfolistActionForm();
 
@@ -231,7 +231,8 @@ trait InteractsWithInfolists
             return false;
         }
 
-        return $action->hasModalDescription() ||
+        return $action->hasCustomModalHeading() ||
+            $action->hasModalDescription() ||
             $action->hasModalContent() ||
             $action->hasModalContentFooter() ||
             $action->getInfolist() ||

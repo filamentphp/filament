@@ -192,15 +192,17 @@ trait HasState
     /**
      * @param  array<string, mixed> | null  $hydratedDefaultState
      */
-    public function hydrateState(?array &$hydratedDefaultState): void
+    public function hydrateState(?array &$hydratedDefaultState, bool $andCallHydrationHooks = true): void
     {
         $this->hydrateDefaultState($hydratedDefaultState);
 
         foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
-            $container->hydrateState($hydratedDefaultState);
+            $container->hydrateState($hydratedDefaultState, $andCallHydrationHooks);
         }
 
-        $this->callAfterStateHydrated();
+        if ($andCallHydrationHooks) {
+            $this->callAfterStateHydrated();
+        }
     }
 
     public function fill(): void

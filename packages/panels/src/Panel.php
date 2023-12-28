@@ -34,6 +34,7 @@ class Panel extends Component
     use Panel\Concerns\HasSpaMode;
     use Panel\Concerns\HasTenancy;
     use Panel\Concerns\HasTheme;
+    use Panel\Concerns\HasTopbar;
     use Panel\Concerns\HasTopNavigation;
     use Panel\Concerns\HasUserMenu;
 

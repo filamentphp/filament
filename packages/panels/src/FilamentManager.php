@@ -5,6 +5,7 @@ namespace Filament;
 use Closure;
 use Exception;
 use Filament\Contracts\Plugin;
+use Filament\Enums\ThemeMode;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
 use Filament\Exceptions\NoDefaultPanelSetException;
@@ -591,6 +592,11 @@ class FilamentManager
         return $this->getCurrentPanel()->hasTenantRegistration();
     }
 
+    public function hasTopbar(): bool
+    {
+        return $this->getCurrentPanel()->hasTopbar();
+    }
+
     public function hasTopNavigation(): bool
     {
         return $this->getCurrentPanel()->hasTopNavigation();
@@ -820,5 +826,10 @@ class FilamentManager
         } catch (NoDefaultPanelSetException $exception) {
             throw new Exception('Please use the `widgets()` method on the panel configuration to register widgets.');
         }
+    }
+
+    public function getDefaultThemeMode(): ThemeMode
+    {
+        return $this->getCurrentPanel()->getDefaultThemeMode();
     }
 }

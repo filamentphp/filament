@@ -4,11 +4,9 @@
     'subheading' => null,
 ])
 
-<header class="fi-simple-header">
+<header class="fi-simple-header flex flex-col items-center">
     @if ($logo)
-        <div class="mb-4 flex justify-center">
-            <x-filament-panels::logo />
-        </div>
+        <x-filament-panels::logo class="mb-4" />
     @endif
 
     @if (filled($heading))

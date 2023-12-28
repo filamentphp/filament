@@ -236,6 +236,40 @@ use Livewire\Attributes\Url;
 public array $tableColumnSearches = [];
 ```
 
+### Customizing the table search debounce
+
+You may customize the debounce time in all table search fields using the `searchDebounce()` method on the `$table`. By default it is set to `500ms`:
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchDebounce('750ms');
+}
+```
+
+### Searching when the input is blurred
+
+Instead of automatically reloading the table contents while the user is typing their search, which is affected by the [debounce](#customizing-the-table-search-debounce) of the search field, you may change the behaviour so that the table is only searched when the user blurs the input (tabs or clicks out of it), using the `searchOnBlur()` method:
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchOnBlur();
+}
+```
+
 ### Persist search in session
 
 To persist the table or individual column search in the user's session, use the `persistSearchInSession()` or `persistColumnSearchInSession()` method:

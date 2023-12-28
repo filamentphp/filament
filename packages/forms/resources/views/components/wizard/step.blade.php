@@ -11,7 +11,10 @@
 @endphp
 
 <div
-    x-bind:class="step === @js($id) ? @js($visibleStepClasses) : @js($invisibleStepClasses)"
+    x-bind:class="{
+        @js($visibleStepClasses): step === @js($id),
+        @js($invisibleStepClasses): step !== @js($id),
+    }"
     x-on:expand="
         if (! isStepAccessible(@js($id))) {
             return
