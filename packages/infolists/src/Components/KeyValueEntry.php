@@ -20,13 +20,6 @@ class KeyValueEntry extends Entry
         parent::setUp();
 
         $this->default([]);
-
-        $this->formatStateUsing(static function (?array $state) {
-            return collect($state ?? [])
-                ->filter(static fn (?string $value, ?string $key): bool => filled($key))
-                ->map(static fn (?string $value): ?string => filled($value) ? $value : null)
-                ->all();
-        });
     }
 
     public function keyLabel(string | Closure | null $label): static
