@@ -72,6 +72,7 @@
                     x-data="{}"
                     x-on:click="$store.sidebar.open()"
                     x-show="! $store.sidebar.isOpen"
+                    class="mx-auto"
                 />
             @endif
 
