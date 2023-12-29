@@ -6,8 +6,6 @@ use Closure;
 
 class KeyValueEntry extends Entry
 {
-    use Concerns\CanFormatState;
-
     /**
      * @var view-string
      */
