@@ -111,7 +111,7 @@ class EditRecord extends Page
         $updatedData = $this->getRecord()->only($attributes);
 
         $transformedData = array_map(
-            fn($value) => is_a($value, \BackedEnum::class) ? $value->value : $value,
+            fn ($value) => is_a($value, \BackedEnum::class) ? $value->value : $value,
             $updatedData
         );
 
