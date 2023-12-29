@@ -108,9 +108,16 @@ class EditRecord extends Page
      */
     protected function refreshFormData(array $attributes): void
     {
+        $updatedData = $this->getRecord()->only($attributes);
+
+        $transformedData = array_map(
+            fn($value) => is_a($value, \BackedEnum::class) ? $value->value : $value,
+            $updatedData
+        );
+
         $this->data = [
             ...$this->data,
-            ...$this->getRecord()->only($attributes),
+            ...$transformedData,
         ];
     }
 
