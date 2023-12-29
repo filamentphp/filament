@@ -72,7 +72,7 @@
                     x-data="{}"
                     x-on:click="$store.sidebar.open()"
                     x-show="! $store.sidebar.isOpen"
-                    class="w-full"
+                    class="mx-auto w-full"
                 />
             @endif
 
@@ -109,6 +109,7 @@
         @if (filament()->hasTenancy() && filament()->hasTenantMenu())
             <div
                 @class([
+                    'fi-sidebar-nav-tenant-menu-ctn',
                     '-mx-2' => ! filament()->isSidebarCollapsibleOnDesktop(),
                 ])
                 @if (filament()->isSidebarCollapsibleOnDesktop())
