@@ -148,7 +148,7 @@ public function panel(Panel $panel): Panel
 
 ## Unsaved changes alerts
 
-You may alert users if they attempt to navigate away from a page without saving their changes. This is applied on [Create](resources/creating-records) and [Edit](resources/editing-records) pages of a resource, as well as any open action modals that have forms. To enable this feature, you can use the `unsavedChangesAlerts()` method:
+You may alert users if they attempt to navigate away from a page without saving their changes. This is applied on [Create](resources/creating-records) and [Edit](resources/editing-records) pages of a resource, as well as any open action modals. To enable this feature, you can use the `unsavedChangesAlerts()` method:
 
 ```php
 use Filament\Panel;

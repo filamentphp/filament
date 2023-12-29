@@ -2,29 +2,27 @@
     @script
         <script>
             window.addEventListener('beforeunload', (event) => {
-                for (let actionData of [
-                    ...(@js($this instanceof \Filament\Actions\Contracts\HasActions) ? $wire.mountedActionsData ?? [] : []),
-                    ...(@js($this instanceof \Filament\Forms\Contracts\HasForms)
-                        ? $wire.mountedFormComponentActionsData ?? []
-                        : []),
-                    ...(@js($this instanceof \Filament\Infolists\Contracts\HasInfolists) ? $wire.mountedInfolistActionsData ?? [] : []),
-                    ...(@js($this instanceof \Filament\Tables\Contracts\HasTable)
-                        ? [
-                              ...($wire.mountedTableActionsData ?? []),
-                              $wire.mountedTableBulkActionData ?? {},
-                          ]
-                        : []),
-                ]) {
-                    if (
-                        ![JSON.stringify([]), JSON.stringify({})].includes(
-                            JSON.stringify(actionData),
-                        )
-                    ) {
-                        event.preventDefault()
-                        event.returnValue = true
+                if (
+                    [
+                        ...(@js($this instanceof \Filament\Actions\Contracts\HasActions) ? $wire.mountedActions ?? [] : []),
+                        ...(@js($this instanceof \Filament\Forms\Contracts\HasForms)
+                            ? $wire.mountedFormComponentActions ?? []
+                            : []),
+                        ...(@js($this instanceof \Filament\Infolists\Contracts\HasInfolists) ? $wire.mountedInfolistActions ?? [] : []),
+                        ...(@js($this instanceof \Filament\Tables\Contracts\HasTable)
+                            ? [
+                                  ...($wire.mountedTableActions ?? []),
+                                  ...($wire.mountedTableBulkAction
+                                      ? [$wire.mountedTableBulkAction]
+                                      : []),
+                              ]
+                            : []),
+                    ].length
+                ) {
+                    event.preventDefault()
+                    event.returnValue = true
 
-                        return
-                    }
+                    return
                 }
             })
         </script>
