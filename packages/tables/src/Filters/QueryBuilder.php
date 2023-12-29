@@ -34,7 +34,8 @@ class QueryBuilder extends BaseFilter
                 ->label($filter->getLabel())
                 ->constraints($filter->getConstraints())
                 ->blockPickerColumns($filter->getConstraintPickerColumns())
-                ->blockPickerWidth($filter->getConstraintPickerWidth()),
+                ->blockPickerWidth($filter->getConstraintPickerWidth())
+                ->live(onBlur: true),
         ]);
 
         $this->query(function (Builder $query, array $data) {
