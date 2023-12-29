@@ -146,6 +146,28 @@ public function table(Table $table): Table
 }
 ```
 
+### Customizing the apply filters action
+
+When deferring filters, you can customize the "Apply" button, using the `filtersApplyAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/trigger-button) can be used:
+
+```php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->filtersApplyAction(
+            fn (Action $action) => $action
+                ->link()
+                ->label('Save filters to table'),
+        );
+}
+```
+
 ## Deselecting records when filters change
 
 By default, all records will be deselected when the filters change. Using the `deselectAllRecordsWhenFiltered(false)` method, you can disable this behaviour:
