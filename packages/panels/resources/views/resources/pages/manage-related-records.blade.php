@@ -19,7 +19,7 @@
     @if (count($relationManagers = $this->getRelationManagers()))
         <x-filament-panels::resources.relation-managers
             :active-locale="isset($activeLocale) ? $activeLocale : null"
-            :active-manager="$activeRelationManager ?? array_key_first($relationManagers)"
+            :active-manager="$this->activeRelationManager ?? array_key_first($relationManagers)"
             :managers="$relationManagers"
             :owner-record="$record"
             :page-class="static::class"

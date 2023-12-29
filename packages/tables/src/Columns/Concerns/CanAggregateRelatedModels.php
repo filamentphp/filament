@@ -8,31 +8,46 @@ trait CanAggregateRelatedModels
 {
     protected string | Closure | null $columnToAvg = null;
 
-    protected string | Closure | null $relationshipToAvg = null;
+    /**
+     * @var string | array<int | string, string | Closure> | Closure | null
+     */
+    protected string | array | Closure | null $relationshipToAvg = null;
 
     /**
-     * @var string | array<string> | Closure | null
+     * @var string | array<int | string, string | Closure> | Closure | null
      */
     protected string | array | Closure | null $relationshipsToCount = null;
 
     /**
-     * @var string | array<string> | Closure | null
+     * @var string | array<int | string, string | Closure> | Closure | null
      */
     protected string | array | Closure | null $relationshipsToExistenceCheck = null;
 
     protected string | Closure | null $columnToMax = null;
 
-    protected string | Closure | null $relationshipToMax = null;
+    /**
+     * @var string | array<int | string, string | Closure> | Closure | null
+     */
+    protected string | array | Closure | null $relationshipToMax = null;
 
     protected string | Closure | null $columnToMin = null;
 
-    protected string | Closure | null $relationshipToMin = null;
+    /**
+     * @var string | array<int | string, string | Closure> | Closure | null
+     */
+    protected string | array | Closure | null $relationshipToMin = null;
 
     protected string | Closure | null $columnToSum = null;
 
-    protected string | Closure | null $relationshipToSum = null;
+    /**
+     * @var string | array<int | string, string | Closure> | Closure | null
+     */
+    protected string | array | Closure | null $relationshipToSum = null;
 
-    public function avg(string | Closure | null $relationship, string | Closure | null $column): static
+    /**
+     * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
+     */
+    public function avg(string | array | Closure | null $relationship, string | Closure | null $column): static
     {
         $this->columnToAvg = $column;
         $this->relationshipToAvg = $relationship;
@@ -41,7 +56,7 @@ trait CanAggregateRelatedModels
     }
 
     /**
-     * @param  string | array<string> | Closure | null  $relationships
+     * @param  string | array<int | string, string | Closure> | Closure | null  $relationships
      */
     public function counts(string | array | Closure | null $relationships): static
     {
@@ -51,7 +66,7 @@ trait CanAggregateRelatedModels
     }
 
     /**
-     * @param  string | array<string> | Closure | null  $relationships
+     * @param  string | array<int | string, string | Closure> | Closure | null  $relationships
      */
     public function exists(string | array | Closure | null $relationships): static
     {
@@ -60,7 +75,10 @@ trait CanAggregateRelatedModels
         return $this;
     }
 
-    public function max(string | Closure | null $relationship, string | Closure | null $column): static
+    /**
+     * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
+     */
+    public function max(string | array | Closure | null $relationship, string | Closure | null $column): static
     {
         $this->columnToMax = $column;
         $this->relationshipToMax = $relationship;
@@ -68,7 +86,10 @@ trait CanAggregateRelatedModels
         return $this;
     }
 
-    public function min(string | Closure | null $relationship, string | Closure | null $column): static
+    /**
+     * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
+     */
+    public function min(string | array | Closure | null $relationship, string | Closure | null $column): static
     {
         $this->columnToMin = $column;
         $this->relationshipToMin = $relationship;
@@ -76,7 +97,10 @@ trait CanAggregateRelatedModels
         return $this;
     }
 
-    public function sum(string | Closure | null $relationship, string | Closure | null $column): static
+    /**
+     * @param  string | array<int | string, string | Closure> | Closure | null  $relationship
+     */
+    public function sum(string | array | Closure | null $relationship, string | Closure | null $column): static
     {
         $this->columnToSum = $column;
         $this->relationshipToSum = $relationship;
@@ -89,13 +113,16 @@ trait CanAggregateRelatedModels
         return $this->evaluate($this->columnToAvg);
     }
 
-    public function getRelationshipToAvg(): ?string
+    /**
+     * @return string | array<int | string, string | Closure> | null
+     */
+    public function getRelationshipToAvg(): string | array | null
     {
         return $this->evaluate($this->relationshipToAvg);
     }
 
     /**
-     * @return string | array<string> | null
+     * @return string | array<int | string, string | Closure> | null
      */
     public function getRelationshipsToCount(): string | array | null
     {
@@ -103,7 +130,7 @@ trait CanAggregateRelatedModels
     }
 
     /**
-     * @return string | array<string> | null
+     * @return string | array<int | string, string | Closure> | null
      */
     public function getRelationshipsToExistenceCheck(): string | array | null
     {
@@ -115,7 +142,10 @@ trait CanAggregateRelatedModels
         return $this->evaluate($this->columnToMax);
     }
 
-    public function getRelationshipToMax(): ?string
+    /**
+     * @return string | array<int | string, string | Closure> | null
+     */
+    public function getRelationshipToMax(): string | array | null
     {
         return $this->evaluate($this->relationshipToMax);
     }
@@ -125,7 +155,10 @@ trait CanAggregateRelatedModels
         return $this->evaluate($this->columnToMin);
     }
 
-    public function getRelationshipToMin(): ?string
+    /**
+     * @return string | array<int | string, string | Closure> | null
+     */
+    public function getRelationshipToMin(): string | array | null
     {
         return $this->evaluate($this->relationshipToMin);
     }
@@ -135,7 +168,10 @@ trait CanAggregateRelatedModels
         return $this->evaluate($this->columnToSum);
     }
 
-    public function getRelationshipToSum(): ?string
+    /**
+     * @return string | array<int | string, string | Closure> | null
+     */
+    public function getRelationshipToSum(): string | array | null
     {
         return $this->evaluate($this->relationshipToSum);
     }

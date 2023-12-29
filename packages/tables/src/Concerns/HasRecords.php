@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -18,7 +19,7 @@ trait HasRecords
      */
     protected bool $allowsDuplicates = false;
 
-    protected Collection | Paginator | null $records = null;
+    protected Collection | Paginator | CursorPaginator | null $cachedTableRecords = null;
 
     public function getFilteredTableQuery(): Builder
     {
@@ -59,7 +60,7 @@ trait HasRecords
         return $query;
     }
 
-    protected function hydratePivotRelationForTableRecords(Collection | Paginator $records): Collection | Paginator
+    protected function hydratePivotRelationForTableRecords(Collection | Paginator | CursorPaginator $records): Collection | Paginator | CursorPaginator
     {
         $table = $this->getTable();
         $relationship = $table->getRelationship();
@@ -71,20 +72,20 @@ trait HasRecords
         return $records;
     }
 
-    public function getTableRecords(): Collection | Paginator
+    public function getTableRecords(): Collection | Paginator | CursorPaginator
     {
         if ($translatableContentDriver = $this->makeFilamentTranslatableContentDriver()) {
-            $setRecordLocales = function (Collection | Paginator $records) use ($translatableContentDriver): Collection | Paginator {
+            $setRecordLocales = function (Collection | Paginator | CursorPaginator $records) use ($translatableContentDriver): Collection | Paginator | CursorPaginator {
                 $records->transform(fn (Model $record) => $translatableContentDriver->setRecordLocale($record));
 
                 return $records;
             };
         } else {
-            $setRecordLocales = fn (Collection | Paginator $records): Collection | Paginator => $records;
+            $setRecordLocales = fn (Collection | Paginator | CursorPaginator $records): Collection | Paginator | CursorPaginator => $records;
         }
 
-        if ($this->records) {
-            return $setRecordLocales($this->records);
+        if ($this->cachedTableRecords) {
+            return $setRecordLocales($this->cachedTableRecords);
         }
 
         $query = $this->getFilteredSortedTableQuery();
@@ -93,10 +94,10 @@ trait HasRecords
             (! $this->getTable()->isPaginated()) ||
             ($this->isTableReordering() && (! $this->getTable()->isPaginatedWhileReordering()))
         ) {
-            return $setRecordLocales($this->records = $this->hydratePivotRelationForTableRecords($query->get()));
+            return $setRecordLocales($this->cachedTableRecords = $this->hydratePivotRelationForTableRecords($query->get()));
         }
 
-        return $setRecordLocales($this->records = $this->hydratePivotRelationForTableRecords($this->paginateTableQuery($query)));
+        return $setRecordLocales($this->cachedTableRecords = $this->hydratePivotRelationForTableRecords($this->paginateTableQuery($query)));
     }
 
     protected function resolveTableRecord(?string $key): ?Model
@@ -158,11 +159,16 @@ trait HasRecords
 
     public function getAllTableRecordsCount(): int
     {
-        if ($this->records instanceof LengthAwarePaginator) {
-            return $this->records->total();
+        if ($this->cachedTableRecords instanceof LengthAwarePaginator) {
+            return $this->cachedTableRecords->total();
         }
 
         return $this->getFilteredTableQuery()->count();
+    }
+
+    public function flushCachedTableRecords(): void
+    {
+        $this->cachedTableRecords = null;
     }
 
     /**

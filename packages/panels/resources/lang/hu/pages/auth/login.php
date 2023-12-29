@@ -4,7 +4,7 @@ return [
 
     'title' => 'Bejelentkezés',
 
-    'heading' => 'Bejelentkezés a fiókba',
+    'heading' => 'Jelentkezz be a fiókodba',
 
     'actions' => [
 
@@ -52,8 +52,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Túl sok próbálkozás',
-            'body' => 'Kérjük, próbálja meg újra :second másodperc múlva.',
+            'title' => 'Túl sok bejelentkezési kísérlet',
+            'body' => 'Kérjük, próbáld meg újra :second másodperc múlva.',
         ],
 
     ],

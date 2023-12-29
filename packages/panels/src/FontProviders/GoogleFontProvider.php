@@ -9,7 +9,7 @@ class GoogleFontProvider implements Contracts\FontProvider
 {
     public function getHtml(string $family, ?string $url = null): Htmlable
     {
-        $family = urlencode($family);
+        $family = str_replace(' ', '+', $family);
         $url ??= "https://fonts.googleapis.com/css2?family={$family}:wght@400;500;600;700&display=swap";
 
         return new HtmlString("

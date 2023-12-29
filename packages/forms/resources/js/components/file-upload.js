@@ -40,6 +40,7 @@ export default function fileUploadFormComponent({
     imageResizeUpscale,
     isAvatar,
     hasImageEditor,
+    hasCircleCropper,
     canEditSvgs,
     isSvgEditingConfirmed,
     confirmSvgEditingMessage,
@@ -199,6 +200,10 @@ export default function fileUploadFormComponent({
                     return
                 }
 
+                if (this.state === undefined) {
+                    return
+                }
+
                 // We don't want to overwrite the files that are already in the input, if they haven't been saved yet.
                 if (
                     this.state !== null &&
@@ -338,7 +343,8 @@ export default function fileUploadFormComponent({
                     source: uploadedFile.url,
                     options: {
                         type: 'local',
-                        ...(/^image/.test(uploadedFile.type)
+                        ...(!uploadedFile.type ||
+                        /^image/.test(uploadedFile.type)
                             ? {}
                             : {
                                   file: {
@@ -567,6 +573,33 @@ export default function fileUploadFormComponent({
             })
         },
 
+        getRoundedCanvas: function (sourceCanvas) {
+            let width = sourceCanvas.width
+            let height = sourceCanvas.height
+
+            let canvas = document.createElement('canvas')
+            canvas.width = width
+            canvas.height = height
+
+            let context = canvas.getContext('2d')
+            context.imageSmoothingEnabled = true
+            context.drawImage(sourceCanvas, 0, 0, width, height)
+            context.globalCompositeOperation = 'destination-in'
+            context.beginPath()
+            context.ellipse(
+                width / 2,
+                height / 2,
+                width / 2,
+                height / 2,
+                0,
+                0,
+                2 * Math.PI,
+            )
+            context.fill()
+
+            return canvas
+        },
+
         saveEditor: function () {
             if (isDisabled) {
                 return
@@ -576,15 +609,20 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            this.editor
-                .getCroppedCanvas({
-                    fillColor: imageEditorEmptyFillColor ?? 'transparent',
-                    height: imageResizeTargetHeight,
-                    imageSmoothingEnabled: true,
-                    imageSmoothingQuality: 'high',
-                    width: imageResizeTargetWidth,
-                })
-                .toBlob((croppedImage) => {
+            let croppedCanvas = this.editor.getCroppedCanvas({
+                fillColor: imageEditorEmptyFillColor ?? 'transparent',
+                height: imageResizeTargetHeight,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+                width: imageResizeTargetWidth,
+            })
+
+            if (hasCircleCropper) {
+                croppedCanvas = this.getRoundedCanvas(croppedCanvas)
+            }
+
+            croppedCanvas.toBlob(
+                (croppedImage) => {
                     if (isMultiple) {
                         this.pond.removeFile(
                             this.pond
@@ -636,7 +674,8 @@ export default function fileUploadFormComponent({
                                     {
                                         type:
                                             this.editingFile.type ===
-                                            'image/svg+xml'
+                                                'image/svg+xml' ||
+                                            hasCircleCropper
                                                 ? 'image/png'
                                                 : this.editingFile.type,
                                         lastModified: new Date().getTime(),
@@ -650,7 +689,9 @@ export default function fileUploadFormComponent({
                                 this.closeEditor()
                             })
                     })
-                }, this.editingFile.type)
+                },
+                hasCircleCropper ? 'image/png' : this.editingFile.type,
+            )
         },
 
         destroyEditor: function () {
@@ -676,6 +717,7 @@ import hu from 'filepond/locale/hu-hu'
 import id from 'filepond/locale/id-id'
 import it from 'filepond/locale/it-it'
 import nl from 'filepond/locale/nl-nl'
+import no from 'filepond/locale/no_nb'
 import pl from 'filepond/locale/pl-pl'
 import pt_BR from 'filepond/locale/pt-br'
 import pt_PT from 'filepond/locale/pt-br'
@@ -702,6 +744,7 @@ const locales = {
     id,
     it,
     nl,
+    no,
     pl,
     pt_BR,
     pt_PT,

@@ -53,6 +53,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $shouldStoreFiles = true;
 
+    protected bool | Closure $shouldFetchFileInformation = true;
+
     protected string | Closure | null $fileNamesStatePath = null;
 
     protected string | Closure $visibility = 'public';
@@ -78,10 +80,20 @@ class BaseFileUpload extends Field
                 return;
             }
 
+            $shouldFetchFileInformation = $component->shouldFetchFileInformation();
+
             $files = collect(Arr::wrap($state))
-                ->filter(static function (string $file) use ($component): bool {
+                ->filter(static function (string $file) use ($component, $shouldFetchFileInformation): bool {
+                    if (blank($file)) {
+                        return false;
+                    }
+
+                    if (! $shouldFetchFileInformation) {
+                        return true;
+                    }
+
                     try {
-                        return blank($file) || $component->getDisk()->exists($file);
+                        return $component->getDisk()->exists($file);
                     } catch (UnableToCheckFileExistence $exception) {
                         return false;
                     }
@@ -126,12 +138,16 @@ class BaseFileUpload extends Field
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
-            try {
-                if (! $storage->exists($file)) {
+            $shouldFetchFileInformation = $component->shouldFetchFileInformation();
+
+            if ($shouldFetchFileInformation) {
+                try {
+                    if (! $storage->exists($file)) {
+                        return null;
+                    }
+                } catch (UnableToCheckFileExistence $exception) {
                     return null;
                 }
-            } catch (UnableToCheckFileExistence $exception) {
-                return null;
             }
 
             $url = null;
@@ -151,8 +167,8 @@ class BaseFileUpload extends Field
 
             return [
                 'name' => ($component->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
-                'size' => $storage->size($file),
-                'type' => $storage->mimeType($file),
+                'size' => $shouldFetchFileInformation ? $storage->size($file) : 0,
+                'type' => $shouldFetchFileInformation ? $storage->mimeType($file) : null,
                 'url' => $url,
             ];
         });
@@ -170,10 +186,13 @@ class BaseFileUpload extends Field
                 return null;
             }
 
-            if ($component->shouldMoveFiles() && ($component->getDiskName() == invade($file)->disk)) {
+            if (
+                $component->shouldMoveFiles() &&
+                ($component->getDiskName() == (fn (): string => $this->disk)->call($file))
+            ) {
                 $newPath = trim($component->getDirectory() . '/' . $component->getUploadedFileNameForStorage($file), '/');
 
-                $component->getDisk()->move($file->path(), $newPath);
+                $component->getDisk()->move((fn (): string => $this->path)->call($file), $newPath);
 
                 return $newPath;
             }
@@ -188,17 +207,14 @@ class BaseFileUpload extends Field
         });
     }
 
-    public function callAfterStateUpdated(): static
+    protected function callAfterStateUpdatedHook(Closure $hook): void
     {
-        if ($callback = $this->afterStateUpdated) {
-            $state = $this->getState();
+        $state = $this->getState();
 
-            $this->evaluate($callback, [
-                'state' => $this->isMultiple() ? $state : Arr::first($state ?? []),
-            ]);
-        }
-
-        return $this;
+        $this->evaluate($hook, [
+            'state' => $this->isMultiple() ? $state : Arr::first($state ?? []),
+            'old' => $this->isMultiple() ? $this->getOldState() : Arr::first($this->getOldState() ?? []),
+        ]);
     }
 
     /**
@@ -333,6 +349,13 @@ class BaseFileUpload extends Field
     public function moveFile(bool | Closure $condition = true): static
     {
         $this->moveFiles($condition);
+
+        return $this;
+    }
+
+    public function fetchFileInformation(bool | Closure $condition = true): static
+    {
+        $this->shouldFetchFileInformation = $condition;
 
         return $this;
     }
@@ -522,12 +545,17 @@ class BaseFileUpload extends Field
 
     public function shouldMoveFiles(): bool
     {
-        return $this->evaluate($this->shouldMoveFiles);
+        return (bool) $this->evaluate($this->shouldMoveFiles);
+    }
+
+    public function shouldFetchFileInformation(): bool
+    {
+        return (bool) $this->evaluate($this->shouldFetchFileInformation);
     }
 
     public function shouldStoreFiles(): bool
     {
-        return $this->evaluate($this->shouldStoreFiles);
+        return (bool) $this->evaluate($this->shouldStoreFiles);
     }
 
     public function getFileNamesStatePath(): ?string

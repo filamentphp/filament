@@ -4,13 +4,13 @@ return [
 
     'title' => 'Regisztráció',
 
-    'heading' => 'Regisztráció',
+    'heading' => 'Regisztrálj új fiókot',
 
     'actions' => [
 
         'login' => [
             'before' => 'vagy',
-            'label' => 'jelentkezzen be a fiókjába',
+            'label' => 'jelentkezz be a fiókodba',
         ],
 
     ],
@@ -48,7 +48,7 @@ return [
 
         'throttled' => [
             'title' => 'Túl sok regisztrációs kísérlet',
-            'body' => 'Kérjük, próbálja meg újra :second másodperc múlva.',
+            'body' => 'Kérjük, próbáld meg újra :second másodperc múlva.',
         ],
 
     ],

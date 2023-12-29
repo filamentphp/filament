@@ -12,7 +12,7 @@ abstract class PanelProvider extends ServiceProvider
     public function register(): void
     {
         Filament::registerPanel(
-            $this->panel(Panel::make()),
+            fn (): Panel => $this->panel(Panel::make()),
         );
     }
 }

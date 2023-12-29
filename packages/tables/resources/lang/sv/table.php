@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Kolumner',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -18,6 +24,10 @@ return [
 
         'bulk_select_record' => [
             'label' => 'Markera/avmarkera rad :key för massåtgärder.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Markera/avmarkera gruppen :title för massåtgärder.',
         ],
 
         'search' => [
@@ -85,7 +95,11 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Inga rader hittades',
+
+        'heading' => 'Inga :model',
+
+        'description' => 'Skapa :model för att komma igång.',
+
     ],
 
     'filters' => [
@@ -102,10 +116,12 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Återställ filter',
+                'label' => 'Återställ',
             ],
 
         ],
+
+        'heading' => 'Filter',
 
         'indicator' => 'Aktiva filter',
 
@@ -137,7 +153,7 @@ return [
 
             'group' => [
                 'label' => 'Gruppera',
-                'placeholder' => 'Välj ett fält för gruppering',
+                'placeholder' => 'Gruppera efter',
             ],
 
             'direction' => [

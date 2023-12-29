@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Dissociera',
+        'label' => 'Frånkoppla',
 
         'modal' => [
 
-            'heading' => 'Dissociera :label',
+            'heading' => 'Frånkoppla :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociera',
+                    'label' => 'Frånkoppla',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissocierad',
+                'title' => 'Frånkopplades',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Dissociera valda',
+        'label' => 'Frånkoppla valda',
 
         'modal' => [
 
-            'heading' => 'Dissociera valda :label',
+            'heading' => 'Frånkoppla valda :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociera valda',
+                    'label' => 'Frånkoppla',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissocierade',
+                'title' => 'Frånkopplades',
             ],
 
         ],

@@ -52,3 +52,17 @@ ColorColumn::make('color')
     ->copyable()
     ->copyableState(fn (Post $record): string => "Color: {$record->color}")
 ```
+
+## Wrapping multiple color blocks
+
+Color blocks can be set to wrap if they can't fit on one line, by setting `wrap()`:
+
+```php
+use Filament\Tables\Columns\ColorColumn;
+
+ColorColumn::make('color')
+    ->wrap()
+```
+
+Note: the "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
+

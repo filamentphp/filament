@@ -11,6 +11,12 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => ':count minder tonen',
+                'expand_list' => ':count meer tonen',
+            ],
+
             'more_list_items' => 'en :count meer',
         ],
 

@@ -364,6 +364,17 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
+    public function textColumnIconColor(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email')
+                    ->icon('heroicon-m-envelope')
+                    ->iconColor('primary'),
+            ]);
+    }
+
     public function textColumnLarge(Table $table): Table
     {
         return $this->postsTable($table)

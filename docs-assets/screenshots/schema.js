@@ -697,6 +697,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/radio/inline-under-label': {
+        url: 'forms/fields',
+        selector: '#inlineRadioUnderLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/radio/disabled-option': {
         url: 'forms/fields',
         selector: '#disabledOptionRadio',
@@ -1094,6 +1103,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/layout/section/actions': {
+        url: 'forms/layout',
+        selector: '#sectionHeaderActions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/layout/section/icons': {
         url: 'forms/layout',
         selector: '#sectionIcons',
@@ -1309,6 +1327,15 @@ export default {
     'infolists/entries/text/icon-after': {
         url: 'infolists/entries',
         selector: '#textIconAfter',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/icon-color': {
+        url: 'infolists/entries',
+        selector: '#textIconColor',
         viewport: {
             width: 1920,
             height: 640,
@@ -1580,6 +1607,15 @@ export default {
     'infolists/layout/section/simple': {
         url: 'infolists/layout',
         selector: '#section',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/section/actions': {
+        url: 'infolists/layout',
+        selector: '#sectionHeaderActions',
         viewport: {
             width: 1920,
             height: 640,
@@ -1952,6 +1988,15 @@ export default {
     },
     'tables/columns/text/icon-after': {
         url: 'tables?table=textColumnIconAfter',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/icon-color': {
+        url: 'tables?table=textColumnIconColor',
         selector: 'body',
         viewport: {
             width: 1080,

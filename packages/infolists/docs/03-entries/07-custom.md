@@ -7,6 +7,7 @@ import LaracastsBanner from "@components/LaracastsBanner.astro"
     title="Build a Custom Infolist Entry"
     description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to build components, and you'll get to know all the internal tools to help you."
     url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/8"
+    series="building-advanced-components"
 />
 
 ## View entries

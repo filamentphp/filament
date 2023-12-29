@@ -19,8 +19,8 @@ return [
         ],
 
         'empty' => [
-            'heading' => 'Nincs értesítés',
-            'description' => 'Kérjük, hogy ellenőrizd később.',
+            'heading' => 'Nincsenek értesítések',
+            'description' => 'Kérjük, hogy nézz vissza később.',
         ],
 
     ],

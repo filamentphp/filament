@@ -323,9 +323,11 @@ Action::make('updateAuthor')
 
 ## Changing the modal width
 
-You can change the width of the modal by using the `modalWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, and `screen`:
+You can change the width of the modal by using the `modalWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge`, `SevenExtraLarge`, and `Screen`:
 
 ```php
+use Filament\Support\Enums\MaxWidth;
+
 Action::make('updateAuthor')
     ->form([
         // ...
@@ -333,7 +335,7 @@ Action::make('updateAuthor')
     ->action(function (array $data): void {
         // ...
     })
-    ->modalWidth('5xl')
+    ->modalWidth(MaxWidth::FiveExtraLarge)
 ```
 
 ## Conditionally hiding the modal

@@ -106,6 +106,6 @@ trait InteractsWithRelationshipTable
 
                 return null;
             })
-            ->reorderable(condition: fn (): bool => $this->canReorder());
+            ->authorizeReorder(fn (): bool => $this->canReorder());
     }
 }

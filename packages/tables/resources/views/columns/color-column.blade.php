@@ -1,9 +1,14 @@
+@php
+    $canWrap = $canWrap();
+@endphp
+
 <div
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-ta-color flex flex-wrap gap-1.5',
+                'fi-ta-color flex gap-1.5',
+                'flex-wrap' => $canWrap,
                 'px-3 py-4' => ! $isInline(),
             ])
     }}

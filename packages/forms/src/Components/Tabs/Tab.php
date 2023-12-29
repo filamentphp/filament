@@ -2,22 +2,21 @@
 
 namespace Filament\Forms\Components\Tabs;
 
-use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Contracts\CanConcealComponents;
+use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasIcon;
 use Illuminate\Support\Str;
 
 class Tab extends Component implements CanConcealComponents
 {
+    use HasBadge;
     use HasIcon;
 
     /**
      * @var view-string
      */
     protected string $view = 'filament-forms::components.tabs.tab';
-
-    protected string | Closure | null $badge = null;
 
     final public function __construct(string $label)
     {
@@ -33,13 +32,6 @@ class Tab extends Component implements CanConcealComponents
         return $static;
     }
 
-    public function badge(string | Closure | null $badge): static
-    {
-        $this->badge = $badge;
-
-        return $this;
-    }
-
     public function getId(): string
     {
         return $this->getContainer()->getParentComponent()->getId() . '-' . parent::getId() . '-tab';
@@ -51,11 +43,6 @@ class Tab extends Component implements CanConcealComponents
     public function getColumnsConfig(): array
     {
         return $this->columns ?? $this->getContainer()->getColumnsConfig();
-    }
-
-    public function getBadge(): ?string
-    {
-        return $this->evaluate($this->badge);
     }
 
     public function canConcealComponents(): bool

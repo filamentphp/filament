@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Rad återställd',
+                'title' => 'Återställdes',
             ],
 
         ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Rader återställda',
+                'title' => 'Återställdes',
             ],
 
         ],

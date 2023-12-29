@@ -2,12 +2,14 @@
 
 namespace Filament\Resources\Pages;
 
+use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -19,7 +21,9 @@ use function Filament\authorize;
 class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 {
     use Concerns\HasRelationManagers;
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        configureAction as configureActionRecord;
+    }
     use InteractsWithRelationshipTable;
 
     /**
@@ -59,7 +63,12 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     #[Url]
     public ?string $activeTab = null;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationIcon(): ?string
+    {
+        return static::$navigationIcon
+            ?? FilamentIcon::resolve('panels::resources.pages.manage-related-records.navigation-item')
+            ?? 'heroicon-o-rectangle-stack';
+    }
 
     public function mount(int | string $record): void
     {
@@ -116,19 +125,9 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return $this->getRecord();
     }
 
-    protected function getMountedActionFormModel(): Model
+    protected function configureAction(Action $action): void
     {
-        return $this->getRecord();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getWidgetData(): array
-    {
-        return [
-            'record' => $this->getRecord(),
-        ];
+        $this->configureActionRecord($action);
     }
 
     protected function configureTableAction(Tables\Actions\Action $action): void
@@ -382,21 +381,6 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     public function getRelationManagers(): array
     {
         return [];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getSubNavigationParameters(): array
-    {
-        return [
-            'record' => $this->getRecord(),
-        ];
-    }
-
-    public function getSubNavigation(): array
-    {
-        return static::getResource()::getRecordSubNavigation($this);
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool

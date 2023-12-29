@@ -3,6 +3,7 @@
     'actionsPosition' => null,
     'columns',
     'extraHeadingColumn' => false,
+    'groupColumn' => null,
     'groupsOnly' => false,
     'heading',
     'placeholderColumns' => true,
@@ -14,8 +15,15 @@
 
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Tables\Columns\Column;
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
+
+    if ($groupsOnly && $groupColumn) {
+        $columns = collect($columns)
+            ->reject(fn (Column $column): bool => $column->getName() === $groupColumn)
+            ->all();
+    }
 @endphp
 
 <x-filament-tables::row
@@ -36,7 +44,9 @@
         <x-filament-tables::cell
             class="text-sm font-medium text-gray-950 dark:text-white"
         >
-            {{ $heading }}
+            <span class="px-3 py-4">
+                {{ $heading }}
+            </span>
         </x-filament-tables::cell>
     @else
         @php
@@ -62,7 +72,7 @@
                 $alignment = $column->getAlignment() ?? Alignment::Start;
 
                 if (! $alignment instanceof Alignment) {
-                    $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+                    $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
                 }
             @endphp
 
@@ -75,7 +85,7 @@
                         Alignment::End => 'text-end',
                         Alignment::Left => 'text-left',
                         Alignment::Right => 'text-right',
-                        Alignment::Justify => 'text-justify',
+                        Alignment::Justify, Alignment::Between => 'text-justify',
                         default => $alignment,
                     },
                 ])

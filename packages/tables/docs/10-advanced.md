@@ -75,7 +75,23 @@ use Illuminate\Database\Eloquent\Builder;
 
 protected function paginateTableQuery(Builder $query): Paginator
 {
-    return $query->simplePaginate($this->getTableRecordsPerPage() == 'all' ? $query->count() : $this->getTableRecordsPerPage());
+    return $query->simplePaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+}
+```
+
+### Using cursor pagination
+
+You may use cursor pagination by overriding `paginateTableQuery()` method.
+
+First, locate your Livewire component. If you're using a resource from the Panel Builder and you want to add simple pagination to the List page, you'll want to open the `Pages/List.php` file in the resource, not the resource class itself.
+
+```php
+use Illuminate\Contracts\Pagination\CursorPaginator;
+use Illuminate\Database\Eloquent\Builder;
+
+protected function paginateTableQuery(Builder $query): CursorPaginator
+{
+    return $query->cursorPaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
 }
 ```
 
@@ -179,6 +195,53 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/reordering/custom-trigger-action" alt="Table with reorderable rows and a custom trigger action" version="3.x" />
 
+## Customizing the table header
+
+You can add a heading to a table using the `$table->heading()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->heading('Clients')
+        ->columns([
+            // ...
+        ]);
+```
+
+You can also add a description below the heading using the `$table->description()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->heading('Clients')
+        ->description('Manage your clients here.')
+        ->columns([
+            // ...
+        ]);
+```
+
+You can pass a view to the `$table->header()` method to customize the entire header:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->header(view('tables.header', [
+            'heading' => 'Clients',
+        ]))
+        ->columns([
+            // ...
+        ]);
+```
+
 ## Polling table content
 
 You may poll table content so that it refreshes at a set interval, using the `$table->poll()` method:
@@ -232,6 +295,18 @@ protected function applySearchToTableQuery(Builder $query): Builder
 Scout uses this `whereIn()` method to retrieve results internally, so there is no performance penalty for using it.
 
 The `applyColumnSearchesToTableQuery()` method ensures that searching individual columns will still work. You can replace that method with your own implementation if you want to use Scout for those search inputs as well.
+
+For the global search input to show, at least one column in the table needs to be `searchable()`. Alternatively, if you are using Scout to control which columns are searchable already, you can simply pass `searchable()` to the entire table instead:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->searchable();
+}
+```
 
 ## Query string
 

@@ -34,6 +34,33 @@ trait CanBeValidated
     }
 
     /**
+     * @return array<string, string>
+     */
+    public function getValidationMessages(): array
+    {
+        $messages = [];
+
+        foreach ($this->getComponents() as $component) {
+            if ($component instanceof Components\Contracts\HasValidationRules) {
+                $component->dehydrateValidationMessages($messages);
+            }
+
+            foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
+                $messages = [
+                    ...$messages,
+                    ...$container->getValidationMessages(),
+                ];
+            }
+        }
+
+        return $messages;
+    }
+
+    /**
      * @return array<string, array<mixed>>
      */
     public function getValidationRules(): array
@@ -75,6 +102,6 @@ trait CanBeValidated
             return [];
         }
 
-        return $this->getLivewire()->validate($rules, [], $this->getValidationAttributes());
+        return $this->getLivewire()->validate($rules, $this->getValidationMessages(), $this->getValidationAttributes());
     }
 }

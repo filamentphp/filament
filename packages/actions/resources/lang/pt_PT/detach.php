@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Desvinculado!',
+                'title' => 'Desvinculado',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Desvincular selecionado',
+        'label' => 'Desvincular seleccionados',
 
         'modal' => [
 
-            'heading' => 'Desvincular selecionado :label',
+            'heading' => 'Desvincular :label seleccionados',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Desvincular selecionado',
+                    'label' => 'Desvincular',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Desvinculado!',
+                'title' => 'Desvinculado',
             ],
 
         ],

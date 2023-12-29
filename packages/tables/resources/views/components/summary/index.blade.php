@@ -3,6 +3,7 @@
     'actionsPosition' => null,
     'columns',
     'extraHeadingColumn' => false,
+    'groupColumn' => null,
     'groupsOnly' => false,
     'placeholderColumns' => true,
     'pluralModelLabel',
@@ -13,8 +14,15 @@
 
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Tables\Columns\Column;
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
+
+    if ($groupsOnly && $groupColumn) {
+        $columns = collect($columns)
+            ->reject(fn (Column $column): bool => $column->getName() === $groupColumn)
+            ->all();
+    }
 
     $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 @endphp
@@ -43,7 +51,7 @@
                     $alignment = $column->getAlignment() ?? Alignment::Start;
 
                     if (! $alignment instanceof Alignment) {
-                        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+                        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
                     }
 
                     $hasColumnHeaderLabel = (! $placeholderColumns) || $column->hasSummary();
@@ -61,7 +69,7 @@
                                     Alignment::End => 'text-end',
                                     Alignment::Left => 'text-left',
                                     Alignment::Right => 'text-right',
-                                    Alignment::Justify => 'text-justify',
+                                    Alignment::Justify, Alignment::Between => 'text-justify',
                                     default => $alignment,
                                 } => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
                             ])

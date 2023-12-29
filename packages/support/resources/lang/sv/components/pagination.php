@@ -2,7 +2,7 @@
 
 return [
 
-    'label' => 'Meny för sidnumerering',
+    'label' => 'Sidnavigering',
 
     'overview' => '{1} Visar 1 resultat|[2,*] Visar :first till :last av :total resultat',
 
@@ -10,7 +10,7 @@ return [
 
         'records_per_page' => [
 
-            'label' => 'per sida',
+            'label' => 'Per sida',
 
             'options' => [
                 'all' => 'Alla',

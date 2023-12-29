@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Recuperar',
+        'label' => 'Restaurar',
 
         'modal' => [
 
-            'heading' => 'Recuperar :label',
+            'heading' => 'Restaurar :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Recuperar',
+                    'label' => 'Restaurar',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Recuperado',
+                'title' => 'Restaurado',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Recuperar selecionado',
+        'label' => 'Restaurar seleccionados',
 
         'modal' => [
 
-            'heading' => 'Recuperar :label selecionado',
+            'heading' => 'Restaurar :label seleccionados',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Recuperar',
+                    'label' => 'Restaurar',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Recuperado',
+                'title' => 'Restaurado',
             ],
 
         ],

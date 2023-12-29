@@ -34,6 +34,7 @@ class Panel extends Component
     use Panel\Concerns\HasSpaMode;
     use Panel\Concerns\HasTenancy;
     use Panel\Concerns\HasTheme;
+    use Panel\Concerns\HasTopbar;
     use Panel\Concerns\HasTopNavigation;
     use Panel\Concerns\HasUserMenu;
 
@@ -64,9 +65,9 @@ class Panel extends Component
 
     public function boot(): void
     {
-        FilamentColor::register($this->colors);
+        FilamentColor::register($this->getColors());
 
-        FilamentIcon::register($this->icons);
+        FilamentIcon::register($this->getIcons());
 
         FilamentView::spa($this->hasSpaMode());
 

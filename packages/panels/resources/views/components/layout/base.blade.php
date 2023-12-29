@@ -50,16 +50,19 @@
         </style>
 
         @filamentStyles
+
         {{ filament()->getTheme()->getHtml() }}
         {{ filament()->getFontHtml() }}
 
         <style>
             :root {
-                --font-family: {!! filament()->getFontFamily() !!};
+                --font-family: '{!! filament()->getFontFamily() !!}';
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
             }
         </style>
+
+        @stack('styles')
 
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::styles.after') }}
 
@@ -73,7 +76,7 @@
             </script>
         @else
             <script>
-                const theme = localStorage.getItem('theme') ?? 'system'
+                const theme = localStorage.getItem('theme') ?? @js(filament()->getDefaultThemeMode()->value)
 
                 if (
                     theme === 'dark' ||

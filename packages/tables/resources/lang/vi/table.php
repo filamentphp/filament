@@ -11,6 +11,12 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Hiển thị :count ít hơn',
+                'expand_list' => 'Hiển thị :count nhiều hơn',
+            ],
+
             'more_list_items' => 'và :count cột khác',
         ],
 
@@ -24,6 +30,10 @@ return [
 
         'bulk_select_record' => [
             'label' => 'Chọn/bỏ chọn mục :key để thực hiện tác vụ hàng loạt.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Chọn/bỏ chọn nhóm :title để thực hiện các hành động hàng loạt.',
         ],
 
         'search' => [

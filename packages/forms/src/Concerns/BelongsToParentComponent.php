@@ -19,4 +19,9 @@ trait BelongsToParentComponent
     {
         return $this->parentComponent;
     }
+
+    public function isRoot(): bool
+    {
+        return $this->parentComponent === null;
+    }
 }

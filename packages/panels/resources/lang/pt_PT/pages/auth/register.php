@@ -18,7 +18,7 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'E-mail',
+            'label' => 'Endereço de e-mail',
         ],
 
         'name' => [
@@ -26,18 +26,18 @@ return [
         ],
 
         'password' => [
-            'label' => 'Senha',
-            'validation_attribute' => 'senha',
+            'label' => 'Palavra-passe',
+            'validation_attribute' => 'palavra-passe',
         ],
 
         'password_confirmation' => [
-            'label' => 'Confirmar senha',
+            'label' => 'Confirmar palavra-passe',
         ],
 
         'actions' => [
 
             'register' => [
-                'label' => 'Criar conta',
+                'label' => 'Registar conta',
             ],
 
         ],

@@ -4,7 +4,7 @@ return [
 
     'title' => ':label szerkesztése',
 
-    'breadcrumb' => 'Szerkeszt',
+    'breadcrumb' => 'Szerkesztés',
 
     'form' => [
 

@@ -4,7 +4,7 @@ title: Advanced forms
 
 ## Overview
 
-Filament Form Builder are designed to be flexible and customizable. Many existing form builders allow users to define a form schema, but don't provide a great interface for defining inter-field interactions, or custom logic. Since all Filament forms are built on top of [Livewire](https://livewire.laravel.com), the form can adapt dynamically to user input, even after it has been initially rendered. Developers can use [parameter injection](#form-component-utility-injection) to access many utilities in real time and build dynamic forms based on user input. The [lifecycle](#field-lifecycle) of fields is open to extension using hook functions to define custom functionality for each field. This allows developers to build complex forms with ease.
+Filament Form Builder is designed to be flexible and customizable. Many existing form builders allow users to define a form schema, but don't provide a great interface for defining inter-field interactions, or custom logic. Since all Filament forms are built on top of [Livewire](https://livewire.laravel.com), the form can adapt dynamically to user input, even after it has been initially rendered. Developers can use [parameter injection](#form-component-utility-injection) to access many utilities in real time and build dynamic forms based on user input. The [lifecycle](#field-lifecycle) of fields is open to extension using hook functions to define custom functionality for each field. This allows developers to build complex forms with ease.
 
 ## The basics of reactivity
 
@@ -554,4 +554,88 @@ Group::make()
             ->email()
             ->required(),
     ])
+```
+
+## Inserting Livewire components into a form
+
+You may use insert a Livewire component directly into a form:
+
+```php
+use Filament\Forms\Components\Livewire;
+use App\Livewire\Foo;
+
+Livewire::make(Foo::class)
+```
+
+### Passing parameters to a Livewire component
+
+You can pass an array of parameters to a Livewire component:
+
+```php
+use Filament\Forms\Components\Livewire;
+use App\Livewire\Foo;
+
+Livewire::make(Foo::class, ['bar' => 'baz'])
+```
+
+Now, those parameters will be passed to the Livewire component's `mount()` method:
+
+```php
+class Foo extends Component
+{
+    public function mount(string $bar): void
+    {       
+        // ...
+    }
+}
+```
+
+Alternatively, they will be available as public properties on the Livewire component:
+
+```php
+class Foo extends Component
+{
+    public string $bar;
+}
+```
+
+#### Accessing the current record in the Livewire component
+
+You can access the current record in the Livewire component using the `$record` parameter in the `mount()` method, or the `$record` property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class Foo extends Component
+{
+    public function mount(?Model $record = null): void
+    {       
+        // ...
+    }
+    
+    // or
+    
+    public ?Model $record = null;
+}
+```
+
+Please be aware that when the record has not yet been created, it will be `null`. If you'd like to hide the Livewire component when the record is `null`, you can use the `hidden()` method:
+
+```php
+use Filament\Forms\Components\Livewire;
+use Illuminate\Database\Eloquent\Model;
+
+Livewire::make(Foo::class)
+    ->hidden(fn (?Model $record): bool => $record === null)
+```
+
+### Lazy loading a Livewire component
+
+You may allow the component to [lazily load](https://livewire.laravel.com/docs/lazy#rendering-placeholder-html) using the `lazy()` method:
+
+```php
+use Filament\Forms\Components\Livewire;
+use App\Livewire\Foo;
+
+Livewire::make(Foo::class)->lazy()       
 ```

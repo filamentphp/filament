@@ -21,6 +21,8 @@ abstract class Page extends BasePage
 
     protected static ?string $navigationGroup = null;
 
+    protected static ?string $navigationParentItem = null;
+
     protected static ?string $navigationIcon = null;
 
     protected static ?string $activeNavigationIcon = null;
@@ -59,6 +61,7 @@ abstract class Page extends BasePage
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
+                ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
@@ -70,11 +73,11 @@ abstract class Page extends BasePage
 
     public static function getRouteName(?string $panel = null): string
     {
-        $panel ??= Filament::getCurrentPanel()->getId();
+        $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 
-        return (string) str(static::getSlug())
+        return $panel->generateRouteName((string) str(static::getSlug())
             ->replace('/', '.')
-            ->prepend("filament.{$panel}.pages.");
+            ->prepend('pages.'));
     }
 
     /**
@@ -88,6 +91,11 @@ abstract class Page extends BasePage
     public static function getNavigationGroup(): ?string
     {
         return static::$navigationGroup;
+    }
+
+    public static function getNavigationParentItem(): ?string
+    {
+        return static::$navigationParentItem;
     }
 
     public static function getActiveNavigationIcon(): ?string

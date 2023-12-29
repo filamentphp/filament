@@ -103,8 +103,6 @@ Use `assertHasFormErrors()` to ensure that data is properly validated in a form:
 use function Pest\Livewire\livewire;
 
 it('can validate input', function () {
-    $newData = Post::factory()->make();
-
     livewire(PostResource\Pages\CreatePost::class)
         ->fillForm([
             'title' => null,
@@ -190,7 +188,6 @@ use function Pest\Livewire\livewire;
 
 it('can validate input', function () {
     $post = Post::factory()->create();
-    $newData = Post::factory()->make();
 
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getRouteKey(),

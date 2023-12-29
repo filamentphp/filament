@@ -26,6 +26,7 @@
         <button
             aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
             type="button"
+            class="shrink-0"
         >
             <x-filament-panels::avatar.user :user="$user" />
         </button>
@@ -38,10 +39,9 @@
             <x-filament::dropdown.list>
                 <x-filament::dropdown.list.item
                     :color="$profileItem?->getColor()"
-                    :icon="$profileItem?->getIcon() ?? 'heroicon-m-user-circle'"
+                    :icon="$profileItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::user-menu.profile-item') ?? 'heroicon-m-user-circle'"
                     :href="$profileItemUrl ?? filament()->getProfileUrl()"
                     :target="($profileItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
-                    icon-alias="panels::user-menu.profile-item"
                     tag="a"
                 >
                     {{ $profileItem?->getLabel() ?? ($profilePage ? $profilePage::getLabel() : null) ?? filament()->getUserName($user) }}
@@ -50,8 +50,7 @@
         @else
             <x-filament::dropdown.header
                 :color="$profileItem?->getColor()"
-                :icon="$profileItem?->getIcon() ?? 'heroicon-m-user-circle'"
-                icon-alias="panels::user-menu.profile-item"
+                :icon="$profileItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::user-menu.profile-item') ?? 'heroicon-m-user-circle'"
             >
                 {{ $profileItem?->getLabel() ?? filament()->getUserName($user) }}
             </x-filament::dropdown.header>
@@ -82,8 +81,7 @@
         <x-filament::dropdown.list.item
             :action="$logoutItem?->getUrl() ?? filament()->getLogoutUrl()"
             :color="$logoutItem?->getColor()"
-            :icon="$logoutItem?->getIcon() ?? 'heroicon-m-arrow-left-on-rectangle'"
-            icon-alias="panels::user-menu.logout-button"
+            :icon="$logoutItem?->getIcon() ?? \Filament\Support\Facades\FilamentIcon::resolve('panels::user-menu.logout-button') ?? 'heroicon-m-arrow-left-on-rectangle'"
             method="post"
             tag="form"
         >

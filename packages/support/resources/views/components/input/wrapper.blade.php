@@ -38,7 +38,7 @@
     $enabledWrapperClasses = 'bg-white focus-within:ring-2 dark:bg-white/5';
     $disabledWrapperClasses = 'bg-gray-50 dark:bg-transparent';
     $validWrapperClasses = 'ring-gray-950/10';
-    $invalidWrapperClasses = 'ring-danger-600 dark:ring-danger-500';
+    $invalidWrapperClasses = 'fi-invalid ring-danger-600 dark:ring-danger-500';
     $enabledValidWrapperClasses = 'focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500';
     $enabledInvalidWrapperClasses = 'focus-within:ring-danger-600 dark:focus-within:ring-danger-500';
     $disabledValidWrapperClasses = 'dark:ring-white/10';
@@ -57,8 +57,8 @@
     $getIconStyles = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssStyles([
         \Filament\Support\get_color_css_variables(
             $color,
-            shades: [400, 500],
-            alias: 'input-wrapper-icon',
+            shades: [500],
+            alias: 'input-wrapper.icon',
         ) => $color !== 'gray',
     ]);
 

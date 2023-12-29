@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\IconPosition;
+    use Filament\Support\Facades\FilamentView;
 
     $chartColor = $getChartColor() ?? 'gray';
     $descriptionColor = $getDescriptionColor() ?? 'gray';
@@ -21,6 +22,7 @@
         \Filament\Support\get_color_css_variables(
             $descriptionColor,
             shades: [500],
+            alias: 'widgets::stats-overview-widget.stat.description.icon',
         ) => $descriptionColor !== 'gray',
     ]);
 @endphp
@@ -78,6 +80,7 @@
                         \Filament\Support\get_color_css_variables(
                             $descriptionColor,
                             shades: [400, 600],
+                            alias: 'widgets::stats-overview-widget.stat.description',
                         ) => $descriptionColor !== 'gray',
                     ])
                 >
@@ -99,7 +102,11 @@
         {{-- An empty function to initialize the Alpine component with until it's loaded with `ax-load`. This removes the need for `x-ignore`, allowing the chart to be updated via Livewire polling. --}}
         <div x-data="{ statsOverviewStatChart: function () {} }">
             <div
-                ax-load
+                @if (FilamentView::hasSpaMode())
+                    ax-load="visible"
+                @else
+                    ax-load
+                @endif
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
                 x-data="statsOverviewStatChart({
                             dataChecksum: @js($dataChecksum),
@@ -117,6 +124,7 @@
                     \Filament\Support\get_color_css_variables(
                         $chartColor,
                         shades: [50, 400, 500],
+                        alias: 'widgets::stats-overview-widget.stat.chart',
                     ) => $chartColor !== 'gray',
                 ])
             >

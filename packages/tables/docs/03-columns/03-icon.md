@@ -44,7 +44,7 @@ In the function, `$state` is the value of the column, and `$record` can be used 
 
 ## Customizing the size
 
-The default icon size is `IconColumnSize::Large`, but you may customize the size to be either `IconColumnSize::ExtraSmall`, `IconColumnSize::Small`, `IconColumnSize::Medium` or `IconColumnSize::ExtraLarge`:
+The default icon size is `IconColumnSize::Large`, but you may customize the size to be either `IconColumnSize::ExtraSmall`, `IconColumnSize::Small`, `IconColumnSize::Medium`, `IconColumnSize::ExtraLarge` or `IconColumnSize::TwoExtraLarge`:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
@@ -65,6 +65,8 @@ use Filament\Tables\Columns\IconColumn;
 IconColumn::make('is_featured')
     ->boolean()
 ```
+
+> If this column in the model class is already cast as a `bool` or `boolean`, Filament is able to detect this, and you do not need to use `boolean()` manually.
 
 <AutoScreenshot name="tables/columns/icon/boolean" alt="Icon column to display a boolean" version="3.x" />
 
@@ -97,3 +99,17 @@ IconColumn::make('is_featured')
 ```
 
 <AutoScreenshot name="tables/columns/icon/boolean-color" alt="Icon column to display a boolean with custom colors" version="3.x" />
+
+## Wrapping multiple icons
+
+When displaying multiple icons, they can be set to wrap if they can't fit on one line, using `wrap()`:
+
+```php
+use Filament\Tables\Columns\IconColumn;
+
+IconColumn::make('icon')
+    ->wrap()
+```
+
+Note: the "width" for wrapping is affected by the column label, so you may need to use a shorter or hidden label to wrap more tightly.
+

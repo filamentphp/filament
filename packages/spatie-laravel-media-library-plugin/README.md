@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-media-library-plugin:"^3.0-stable" -W
+composer require filament/spatie-laravel-media-library-plugin:"^3.1" -W
 ```
 
 If you haven't already done so, you need to publish the migration to create the media table:
@@ -68,14 +68,14 @@ The base file upload component also has configuration options for setting the `d
 
 In addition to the behaviour of the normal file upload, Spatie's Media Library also allows users to reorder files.
 
-To enable this behaviour, use the `enableReordering()` method:
+To enable this behaviour, use the `reorderable()` method:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
-    ->enableReordering()
+    ->reorderable()
 ```
 
 You may now drag and drop files into order.

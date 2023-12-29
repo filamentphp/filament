@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Rad raderad',
+                'title' => 'Raderades',
             ],
 
         ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Rader raderade',
+                'title' => 'Raderades',
             ],
 
         ],

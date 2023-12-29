@@ -146,7 +146,7 @@
                     return
                 }
 
-                $wire.mountedTableBulkAction = null
+                $wire.unmountTableBulkAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
         >

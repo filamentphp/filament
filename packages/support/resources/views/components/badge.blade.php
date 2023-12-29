@@ -25,15 +25,15 @@
 
 @php
     if (! $iconPosition instanceof IconPosition) {
-        $iconPosition = $iconPosition ? IconPosition::tryFrom($iconPosition) : null;
+        $iconPosition = filled($iconPosition) ? (IconPosition::tryFrom($iconPosition) ?? $iconPosition) : null;
     }
 
     if (! $size instanceof ActionSize) {
-        $size = ActionSize::tryFrom($size) ?? $size;
+        $size = filled($size) ? (ActionSize::tryFrom($size) ?? $size) : null;
     }
 
     if (! $iconSize instanceof IconSize) {
-        $iconSize = IconSize::tryFrom($iconSize) ?? $iconSize;
+        $iconSize = filled($iconSize) ? (IconSize::tryFrom($iconSize) ?? $iconSize) : null;
     }
 
     $isDeletable = count($deleteButton?->attributes->getAttributes() ?? []) > 0;
@@ -50,6 +50,14 @@
             'gray' => 'text-gray-400 dark:text-gray-500',
             default => 'text-custom-500',
         },
+    ]);
+
+    $iconStyles = \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [500],
+            alias: 'badge.icon',
+        ) => $color !== 'gray',
     ]);
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
@@ -108,8 +116,6 @@
                         50,
                         400,
                         600,
-                        ...($icon || $hasLoadingIndicator) ? [500] : [],
-                        ...$isDeletable ? [300, 700] : [],
                     ],
                     alias: 'badge',
                 ) => $color !== 'gray',
@@ -127,7 +133,9 @@
                             'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                         ])
-                    )->class([$iconClasses])
+                    )
+                        ->class([$iconClasses])
+                        ->style([$iconStyles])
                 "
             />
         @endif
@@ -140,7 +148,9 @@
                             'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                             'wire:target' => $loadingIndicatorTarget,
                         ])
-                    )->class([$iconClasses])
+                    )
+                        ->class([$iconClasses])
+                        ->style([$iconStyles])
                 "
             />
         @endif
@@ -160,11 +170,18 @@
                     ->attributes
                     ->except(['label'])
                     ->class([
-                        '-my-1 -me-2 -ms-1 flex items-center justify-center p-1 outline-none transition duration-75',
+                        'fi-badge-delete-button -my-1 -me-2 -ms-1 flex items-center justify-center p-1 outline-none transition duration-75',
                         match ($color) {
                             'gray' => 'text-gray-700/50 hover:text-gray-700/75 focus-visible:text-gray-700/75 dark:text-gray-300/50 dark:hover:text-gray-300/75 dark:focus-visible:text-gray-300/75',
                             default => 'text-custom-700/50 hover:text-custom-700/75 focus-visible:text-custom-700/75 dark:text-custom-300/50 dark:hover:text-custom-300/75 dark:focus-visible:text-custom-300/75',
                         },
+                    ])
+                    ->style([
+                        \Filament\Support\get_color_css_variables(
+                            $color,
+                            shades: [300, 700],
+                            alias: 'badge.delete-button',
+                        ) => $color !== 'gray',
                     ])
             }}
         >
@@ -191,7 +208,9 @@
                             'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
                             'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                         ])
-                    )->class([$iconClasses])
+                    )
+                        ->class([$iconClasses])
+                        ->style([$iconStyles])
                 "
             />
         @endif
@@ -204,7 +223,9 @@
                             'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                             'wire:target' => $loadingIndicatorTarget,
                         ])
-                    )->class([$iconClasses])
+                    )
+                        ->class([$iconClasses])
+                        ->style([$iconStyles])
                 "
             />
         @endif
