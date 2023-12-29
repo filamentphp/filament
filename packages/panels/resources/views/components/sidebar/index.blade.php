@@ -102,7 +102,7 @@
         @if (filament()->hasTenancy() && filament()->hasTenantMenu())
             <div
                 @class([
-                    'fi-tenant-menu-ctn',
+                    'fi-sidebar-nav-tenant-menu-ctn',
                     '-mx-2' => ! filament()->isSidebarCollapsibleOnDesktop(),
                 ])
                 @if (filament()->isSidebarCollapsibleOnDesktop())
