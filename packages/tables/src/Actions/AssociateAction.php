@@ -225,7 +225,10 @@ class AssociateAction extends Action
 
             $relationCountHash = $relationship->getRelationCountHash(false);
             $relationshipQuery
-                ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use ($relationship): Builder {
+                ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use (
+                    $relationCountHash,
+                    $relationship
+                ): Builder {
                     if ($relationship instanceof MorphMany) {
                         return $query
                             ->where(
