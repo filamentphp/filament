@@ -78,7 +78,7 @@ protected function paginateTableQuery(Builder $query): Paginator
     return $query->simplePaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
 }
 ```
-
+What if I want to use it in a table builder that I opened to public. It doesn't have a resource it has app/Livewire/ListBlog.php . How to implement this?
 ### Using cursor pagination
 
 You may use cursor pagination by overriding `paginateTableQuery()` method.
