@@ -14,7 +14,7 @@
 
 <li
     @class([
-        'fi-topbar-item overflow-hidden',
+        'fi-topbar-item',
         // @deprecated `fi-topbar-item-active` has been replaced by `fi-active`.
         'fi-active fi-topbar-item-active' => $active,
     ])
@@ -36,7 +36,7 @@
                 @class([
                     'fi-topbar-item-icon h-5 w-5',
                     'text-gray-400 dark:text-gray-500' => ! $active,
-                    'text-primary-500' => $active,
+                    'text-primary-600 dark:text-primary-400' => $active,
                 ])
             />
         @endif
@@ -64,7 +64,7 @@
                 @class([
                     'fi-topbar-group-toggle-icon h-5 w-5',
                     'text-gray-400 dark:text-gray-500' => ! $active,
-                    'text-primary-500' => $active,
+                    'text-primary-600 dark:text-primary-400' => $active,
                 ])
             />
         @endif
