@@ -100,7 +100,7 @@ enum Status: string implements HasColor
     case Published = 'published';
     case Rejected = 'rejected';
     
-    public function getColor(): string | array | null
+    public function getColor(): ?string
     {
         return match ($this) {
             self::Draft => 'gray',
