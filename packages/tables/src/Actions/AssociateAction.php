@@ -223,7 +223,8 @@ class AssociateAction extends Action
                 });
             }
 
-            $relationCountHash = $relationship->getRelationCountHash(false);
+            $relationCountHash = $relationship->getRelationCountHash(incrementJoinCount: false);
+            
             $relationshipQuery
                 ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use (
                     $relationCountHash,
