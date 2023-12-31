@@ -250,12 +250,25 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Igen',
+            'false' => 'Nem',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
 
             'add' => [
                 'label' => 'Új :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Beillesztés blokkok közé',
             ],
 
             'delete' => [
