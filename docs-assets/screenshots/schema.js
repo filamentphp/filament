@@ -1211,6 +1211,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/layout/split/simple': {
+        url: 'forms/layout',
+        selector: '#split',
+        viewport: {
+            width: 1920,
+            height: 320,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/layout/placeholder/simple': {
         url: 'forms/layout',
         selector: '#placeholder',
