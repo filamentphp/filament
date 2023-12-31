@@ -136,6 +136,7 @@
                                     @class([
                                         'flex-1 min-w-fit',
                                     ])
+                                    style="padding: 0px !important;"
                                 />
                             @endif
                         </div>
