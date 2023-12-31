@@ -1,4 +1,8 @@
-<div class="fi-global-search flex items-center">
+<div
+    x-data="{}"
+    x-on:focus-first-global-search-result.stop="$el.querySelector('a')?.focus()"
+    class="fi-global-search flex items-center"
+>
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.start') }}
 
     <div class="sm:relative">
