@@ -46,7 +46,7 @@
             x-tooltip.html="tooltip"
         @endif
         @class([
-            'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 text-sm outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
+            'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
             'bg-gray-100 dark:bg-white/5' => $active,
         ])
     >
@@ -99,7 +99,7 @@
                 x-transition:enter-end="opacity-100"
             @endif
             @class([
-                'fi-sidebar-item-label flex-1 truncate font-medium',
+                'fi-sidebar-item-label flex-1 truncate font-medium text-sm',
                 'text-gray-700 dark:text-gray-200' => ! $active,
                 'text-primary-600 dark:text-primary-400' => $active,
             ])

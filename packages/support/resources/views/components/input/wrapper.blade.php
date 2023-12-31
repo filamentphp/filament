@@ -36,7 +36,7 @@
     $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
 
     $enabledWrapperClasses = 'bg-white focus-within:ring-2 dark:bg-white/5';
-    $disabledWrapperClasses = 'bg-gray-50 dark:bg-transparent';
+    $disabledWrapperClasses = 'fi-disabled bg-gray-50 dark:bg-transparent';
     $validWrapperClasses = 'ring-gray-950/10';
     $invalidWrapperClasses = 'fi-invalid ring-danger-600 dark:ring-danger-500';
     $enabledValidWrapperClasses = 'focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500';
