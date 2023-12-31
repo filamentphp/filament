@@ -11,7 +11,14 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'عرض :count أقل',
+                'expand_list' => 'عرض :count أكثر',
+            ],
+
             'more_list_items' => 'و :count إضافية',
+
         ],
 
     ],
@@ -19,15 +26,15 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'تحديد / إلغاء تحديد كافة العناصر للإجراءات الجماعية.',
+            'label' => 'تحديد/إلغاء تحديد كافة العناصر للإجراءات الجماعية.',
         ],
 
         'bulk_select_record' => [
-            'label' => 'تحديد / إلغاء تحديد العنصر :key للإجراءات الجماعية.',
+            'label' => 'تحديد/إلغاء تحديد العنصر :key للإجراءات الجماعية.',
         ],
 
         'bulk_select_group' => [
-            'label' => 'تحديد / إلغاء تحديد المجموعة :title للإجراءات الجماعية.',
+            'label' => 'تحديد/إلغاء تحديد المجموعة :title للإجراءات الجماعية.',
         ],
 
         'search' => [
@@ -85,7 +92,7 @@ return [
         ],
 
         'open_bulk_actions' => [
-            'label' => 'فتح الإجراءات',
+            'label' => 'الإجراءات',
         ],
 
         'toggle_columns' => [
@@ -96,7 +103,7 @@ return [
 
     'empty' => [
 
-        'heading' => 'لا توجد سجلات',
+        'heading' => 'لا توجد :model',
 
         'description' => 'قم بإضافة :model للبدء.',
 
@@ -107,23 +114,23 @@ return [
         'actions' => [
 
             'remove' => [
-                'label' => 'إلغاء الفلاتر',
+                'label' => 'إلغاء التصفيات',
             ],
 
             'remove_all' => [
-                'label' => 'إلغاء كافة الفلاتر',
-                'tooltip' => 'إلغاء كافة الفلاتر',
+                'label' => 'إلغاء كافة التصفيات',
+                'tooltip' => 'إلغاء كافة التصفيات',
             ],
 
             'reset' => [
-                'label' => 'إعادة ضبط الفلاتر',
+                'label' => 'إعادة ضبط التصفيات',
             ],
 
         ],
 
-        'heading' => 'الفلاتر',
+        'heading' => 'التصفيات',
 
-        'indicator' => 'الفلاتر النشطة',
+        'indicator' => 'التصفيات النشطة',
 
         'multi_select' => [
             'placeholder' => 'الكل',

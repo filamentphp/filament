@@ -328,6 +328,21 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Disabling the topbar
+
+You may disable topbar entirely by passing `false` to the `topbar()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->topbar(false);
+}
+```
+
 ## Customizing the user menu
 
 The user menu is featured in the top right corner of the admin layout. It's fully customizable.

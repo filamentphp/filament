@@ -56,7 +56,7 @@
 
         <style>
             :root {
-                --font-family: {!! filament()->getFontFamily() !!};
+                --font-family: '{!! filament()->getFontFamily() !!}';
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
             }
@@ -76,7 +76,7 @@
             </script>
         @else
             <script>
-                const theme = localStorage.getItem('theme') ?? 'system'
+                const theme = localStorage.getItem('theme') ?? @js(filament()->getDefaultThemeMode()->value)
 
                 if (
                     theme === 'dark' ||

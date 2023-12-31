@@ -15,4 +15,6 @@
             :full-width="$this->hasFullWidthFormActions()"
         />
     </x-filament-panels::form>
+
+    <x-filament-panels::page.unsaved-data-changes-alert />
 </x-filament-panels::page>

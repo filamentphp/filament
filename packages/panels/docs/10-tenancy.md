@@ -420,6 +420,23 @@ MenuItem::make()
     ->hidden(fn (): bool => ! auth()->user()->can('manage-team'))
 ```
 
+### Hiding the tenant menu
+
+You can hide the tenant menu by using the `tenantMenu(false)`
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMenu(false);
+}
+```
+
+However, this is a sign that Filament's tenancy feature is not suitable for your project. If each user only belongs to one tenant, you should stick to [simple one-to-many tenancy](#simple-one-to-many-tenancy).
+
 ## Setting up avatars
 
 Out of the box, Filament uses [ui-avatars.com](https://ui-avatars.com) to generate avatars based on a user's name. However, if you user model has an `avatar_url` attribute, that will be used instead. To customize how Filament gets a user's avatar URL, you can implement the `HasAvatar` contract:

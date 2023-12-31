@@ -5,6 +5,7 @@ namespace Filament;
 use Closure;
 use Exception;
 use Filament\Contracts\Plugin;
+use Filament\Enums\ThemeMode;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
 use Filament\Exceptions\NoDefaultPanelSetException;
@@ -561,6 +562,11 @@ class FilamentManager
         return $this->getCurrentPanel()->hasRegistration();
     }
 
+    public function hasTenantMenu(): bool
+    {
+        return $this->getCurrentPanel()->hasTenantMenu();
+    }
+
     public function hasTenancy(): bool
     {
         return $this->getCurrentPanel()->hasTenancy();
@@ -581,9 +587,19 @@ class FilamentManager
         return $this->getCurrentPanel()->hasTenantRegistration();
     }
 
+    public function hasTopbar(): bool
+    {
+        return $this->getCurrentPanel()->hasTopbar();
+    }
+
     public function hasTopNavigation(): bool
     {
         return $this->getCurrentPanel()->hasTopNavigation();
+    }
+
+    public function hasUnsavedChangesAlerts(): bool
+    {
+        return $this->getCurrentPanel()->hasUnsavedChangesAlerts();
     }
 
     public function isGlobalSearchEnabled(): bool
@@ -810,5 +826,10 @@ class FilamentManager
         } catch (NoDefaultPanelSetException $exception) {
             throw new Exception('Please use the `widgets()` method on the panel configuration to register widgets.');
         }
+    }
+
+    public function getDefaultThemeMode(): ThemeMode
+    {
+        return $this->getCurrentPanel()->getDefaultThemeMode();
     }
 }

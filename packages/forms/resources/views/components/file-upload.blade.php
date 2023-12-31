@@ -113,6 +113,7 @@
                         Alignment::End => 'justify-end',
                         Alignment::Left => 'justify-left',
                         Alignment::Right => 'justify-right',
+                        Alignment::Between, Alignment::Justify => 'justify-between',
                         default => $alignment,
                     },
                 ])
@@ -142,7 +143,7 @@
             <div
                 x-show="isEditorOpen"
                 x-cloak
-                x-on:click.stop
+                x-on:click.stop=""
                 x-trap.noscroll="isEditorOpen"
                 x-on:keydown.escape.window="closeEditor"
                 @class([
@@ -160,7 +161,7 @@
                     class="isolate z-10 flex h-full w-full items-center justify-center"
                 >
                     <div
-                        class="mx-auto flex h-full w-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10 lg:flex-row"
+                        class="mx-auto flex h-full w-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-gray-900/10 lg:flex-row dark:bg-gray-800 dark:ring-gray-50/10"
                     >
                         <div class="w-full flex-1 overflow-auto p-4 lg:h-full">
                             <div class="h-full w-full">
@@ -169,7 +170,7 @@
                         </div>
 
                         <div
-                            class="shadow-top z-[1] flex h-96 w-full flex-col overflow-auto bg-gray-50 dark:bg-gray-900/30 lg:h-full lg:max-w-xs lg:shadow-none"
+                            class="shadow-top z-[1] flex h-96 w-full flex-col overflow-auto bg-gray-50 lg:h-full lg:max-w-xs lg:shadow-none dark:bg-gray-900/30"
                         >
                             <div class="flex-1 overflow-hidden">
                                 <div
@@ -246,18 +247,14 @@
                                                     >
                                                         @foreach ($groupedActions as $action)
                                                             <x-filament::button
-                                                                :x-tooltip="'{ content: ' . \Illuminate\Support\Js::from($action['label']) . ', theme: $store.theme }'"
-                                                                x-on:click.stop.prevent="{{ $action['alpineClickHandler'] }}"
                                                                 color="gray"
                                                                 grouped
+                                                                :icon="new \Illuminate\Support\HtmlString($action['iconHtml'])"
+                                                                label-sr-only
+                                                                x-on:click.stop.prevent="{{ $action['alpineClickHandler'] }}"
+                                                                :x-tooltip="'{ content: ' . \Illuminate\Support\Js::from($action['label']) . ', theme: $store.theme }'"
                                                             >
-                                                                {!! $action['iconHtml'] !!}
-
-                                                                <span
-                                                                    class="sr-only"
-                                                                >
-                                                                    {{ $action['label'] }}
-                                                                </span>
+                                                                {{ $action['label'] }}
                                                             </x-filament::button>
                                                         @endforeach
                                                     </x-filament::button.group>

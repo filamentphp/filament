@@ -74,6 +74,8 @@ FilamentView::registerRenderHook(
 - `panels::styles.before` - Before styles are defined
 - `panels::tenant-menu.after` - After the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
 - `panels::tenant-menu.before` - Before the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
+- `panels::topbar.after` - Below the topbar
+- `panels::topbar.before` - Above the topbar
 - `panels::topbar.end` - End of the topbar container
 - `panels::topbar.start` - Start of the topbar container
 - `panels::user-menu.after` - After the [user menu](../panels/navigation#customizing-the-user-menu)

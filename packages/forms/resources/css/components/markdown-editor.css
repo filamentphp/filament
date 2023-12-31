@@ -1,5 +1,178 @@
 @import 'easymde/dist/easymde.min.css';
 
+:root {
+    --color-cm-red: #991b1b;
+    --color-cm-orange: #9a3412;
+    --color-cm-amber: #92400e;
+    --color-cm-yellow: #854d0e;
+    --color-cm-lime: #3f6212;
+    --color-cm-green: #166534;
+    --color-cm-emerald: #065f46;
+    --color-cm-teal: #115e59;
+    --color-cm-cyan: #155e75;
+    --color-cm-sky: #075985;
+    --color-cm-blue: #1e40af;
+    --color-cm-indigo: #3730a3;
+    --color-cm-violet: #5b21b6;
+    --color-cm-purple: #6b21a8;
+    --color-cm-fuchsia: #86198f;
+    --color-cm-pink: #9d174d;
+    --color-cm-rose: #9f1239;
+    --color-cm-gray: #18181b;
+    --color-cm-gray-muted: #71717a;
+    --color-cm-gray-background: #e4e4e7;
+}
+
+.dark {
+    --color-cm-red: #f87171;
+    --color-cm-orange: #fb923c;
+    --color-cm-amber: #fbbf24;
+    --color-cm-yellow: #facc15;
+    --color-cm-lime: #a3e635;
+    --color-cm-green: #4ade80;
+    --color-cm-emerald: #4ade80;
+    --color-cm-teal: #2dd4bf;
+    --color-cm-cyan: #22d3ee;
+    --color-cm-sky: #38bdf8;
+    --color-cm-blue: #60a5fa;
+    --color-cm-indigo: #818cf8;
+    --color-cm-violet: #a78bfa;
+    --color-cm-purple: #c084fc;
+    --color-cm-fuchsia: #e879f9;
+    --color-cm-pink: #f472b6;
+    --color-cm-rose: #fb7185;
+    --color-cm-gray: #fafafa;
+    --color-cm-gray-muted: #a1a1aa;
+    --color-cm-gray-background: #52525b;
+}
+
+.cm-s-easymde .cm-comment {
+    background-color: transparent;
+    color: var(--color-cm-gray-muted);
+}
+
+.EasyMDEContainer .CodeMirror-cursor {
+    border-color: currentColor;
+}
+
+.dark .EasyMDEContainer .cm-s-easymde span.CodeMirror-selectedtext {
+    filter: invert(100%);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-keyword {
+    color: var(--color-cm-violet);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-atom {
+    color: var(--color-cm-blue);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-number {
+    color: var(--color-cm-green);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-def {
+    color: var(--color-cm-blue);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-variable {
+    color: var(--color-cm-yellow);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-variable-2 {
+    color: var(--color-cm-blue);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-variable-3 {
+    color: var(--color-cm-emerald);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-property {
+    color: var(--color-cm-gray);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-operator {
+    color: var(--color-cm-gray);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-string {
+    color: var(--color-cm-rose);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-string-2 {
+    color: var(--color-cm-rose);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-meta {
+    color: var(--color-cm-gray-muted);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-error {
+    color: var(--color-cm-red);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-qualifier {
+    color: var(--color-cm-gray-muted);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-builtin {
+    color: var(--color-cm-violet);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-bracket {
+    color: var(--color-cm-gray-muted);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-tag {
+    color: var(--color-cm-green);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-attribute {
+    color: var(--color-cm-blue);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-hr {
+    color: var(--color-cm-gray-muted);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-formatting-quote {
+    color: var(--color-cm-sky);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-formatting-quote + .cm-quote {
+    color: var(--color-cm-gray-muted);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-formatting-list,
+.EasyMDEContainer .cm-s-easymde .cm-formatting-list + .cm-variable-2,
+.EasyMDEContainer .cm-s-easymde .cm-tab + .cm-variable-2 {
+    color: var(--color-cm-gray);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-link {
+    color: var(--color-cm-blue);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-tag {
+    color: var(--color-cm-red);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-attribute {
+    color: var(--color-cm-amber);
+}
+
+.EasyMDEContainer .cm-s-easymde .cm-attribute + .cm-string {
+    color: var(--color-cm-green);
+}
+
+.EasyMDEContainer
+    .cm-s-easymde
+    .cm-formatting-code
+    + .cm-comment:not(.cm-formatting-code) {
+    background-color: var(--color-cm-gray-background);
+    color: var(--color-cm-gray);
+}
+
 .EasyMDEContainer .cm-s-easymde .cm-header-1 {
     @apply text-3xl;
 }
@@ -28,84 +201,9 @@
     @apply bg-none;
 }
 
-.EasyMDEContainer .cm-keyword {
-    color: #708;
-}
-
-.EasyMDEContainer .cm-atom {
-    color: #219;
-}
-
-.EasyMDEContainer .cm-number {
-    color: #164;
-}
-
-.EasyMDEContainer .cm-def {
-    color: #00f;
-}
-
-.EasyMDEContainer .cm-variable,
-.EasyMDEContainer .cm-punctuation,
-.EasyMDEContainer .cm-property,
-.EasyMDEContainer .cm-operator {
-}
-
-.EasyMDEContainer .cm-variable-2 {
-    color: #05a;
-}
-
-.EasyMDEContainer .cm-formatting-list,
-.EasyMDEContainer .cm-formatting-list + .cm-variable-2 {
-    color: #000;
-}
-
-.EasyMDEContainer .cm-variable-3,
-.EasyMDEContainer .cm-s-default .cm-type {
-    color: #085;
-}
-
-.EasyMDEContainer .cm-comment {
-    color: #a50;
-}
-
-.EasyMDEContainer .cm-string {
-    color: #a11;
-}
-
-.EasyMDEContainer .cm-string-2 {
-    color: #f50;
-}
-
-.EasyMDEContainer .cm-meta {
-    color: #555;
-}
-
-.EasyMDEContainer .cm-qualifier {
-    color: #555;
-}
-
-.EasyMDEContainer .cm-builtin {
-    color: #30a;
-}
-
-.EasyMDEContainer .cm-bracket {
-    color: #997;
-}
-
-.EasyMDEContainer .cm-tag {
-    color: #170;
-}
-
-.EasyMDEContainer .cm-attribute {
-    color: #00c;
-}
-
-.EasyMDEContainer .cm-hr {
-    color: #999;
-}
-
-.EasyMDEContainer .cm-link {
-    color: #00c;
+.EasyMDEContainer .cm-s-easymde .cm-formatting-code-block,
+.EasyMDEContainer .cm-s-easymde .cm-tab + .cm-comment {
+    @apply bg-transparent text-inherit;
 }
 
 .EasyMDEContainer .CodeMirror {
@@ -114,10 +212,6 @@
 
 .EasyMDEContainer .CodeMirror-scroll {
     @apply h-auto;
-}
-
-.EasyMDEContainer .CodeMirror-cursor {
-    border-color: currentColor;
 }
 
 .EasyMDEContainer .editor-toolbar {

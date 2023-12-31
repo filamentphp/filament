@@ -4,6 +4,7 @@ namespace Filament\Widgets;
 
 use Filament\Support\RawJs;
 use Illuminate\Contracts\Support\Htmlable;
+use Livewire\Attributes\Locked;
 
 abstract class ChartWidget extends Widget
 {
@@ -14,7 +15,8 @@ abstract class ChartWidget extends Widget
      */
     protected ?array $cachedData = null;
 
-    public string $dataChecksum;
+    #[Locked]
+    public ?string $dataChecksum = null;
 
     public ?string $filter = null;
 
@@ -106,7 +108,7 @@ abstract class ChartWidget extends Widget
         }
     }
 
-    public function updatedFilter(): void
+    public function rendering(): void
     {
         $this->updateChartData();
     }

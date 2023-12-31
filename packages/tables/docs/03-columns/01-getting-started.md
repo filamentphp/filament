@@ -2,8 +2,16 @@
 title: Getting started
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Table Columns"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding columns to Filament resource tables."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/9"
+    series="rapid-laravel-development"
+/>
 
 Column classes can be found in the `Filament\Tables\Columns` namespace. You can put them inside the `$table->columns()` method:
 
@@ -226,6 +234,40 @@ use Livewire\Attributes\Url;
  */
 #[Url]
 public array $tableColumnSearches = [];
+```
+
+### Customizing the table search debounce
+
+You may customize the debounce time in all table search fields using the `searchDebounce()` method on the `$table`. By default it is set to `500ms`:
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchDebounce('750ms');
+}
+```
+
+### Searching when the input is blurred
+
+Instead of automatically reloading the table contents while the user is typing their search, which is affected by the [debounce](#customizing-the-table-search-debounce) of the search field, you may change the behaviour so that the table is only searched when the user blurs the input (tabs or clicks out of it), using the `searchOnBlur()` method:
+
+```php
+use Filament\Tables\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->searchOnBlur();
+}
 ```
 
 ### Persist search in session

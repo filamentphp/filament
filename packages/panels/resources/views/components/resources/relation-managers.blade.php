@@ -79,7 +79,7 @@
             @endphp
 
             @if ($managers[$activeManager] instanceof \Filament\Resources\RelationManagers\RelationGroup)
-                @foreach ($managers[$activeManager]->ownerRecord($ownerRecord)->pageClass($pageClass)->getManagers() as $groupedManager)
+                @foreach ($managers[$activeManager]->ownerRecord($ownerRecord)->pageClass($pageClass)->getManagers() as $groupedManagerKey => $groupedManager)
                     @php
                         $normalizedGroupedManagerClass = $normalizeRelationManagerClass($groupedManager);
                     @endphp
@@ -87,7 +87,7 @@
                     @livewire(
                         $normalizedGroupedManagerClass,
                         [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? [...$groupedManager->relationManager::getDefaultProperties(), ...$groupedManager->properties] : $groupedManager::getDefaultProperties())],
-                        key($normalizedGroupedManagerClass),
+                        key("{$normalizedGroupedManagerClass}-{$groupedManagerKey}"),
                     )
                 @endforeach
             @else

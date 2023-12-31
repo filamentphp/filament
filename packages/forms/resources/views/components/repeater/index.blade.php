@@ -86,31 +86,7 @@
                             x-data="{
                                 isCollapsed: @js($isCollapsed($item)),
                             }"
-                            x-on:expand-concealing-component.window="
-                                $nextTick(() => {
-                                    error = $el.querySelector('[data-validation-error]')
-
-                                    if (! error) {
-                                        return
-                                    }
-
-                                    isCollapsed = false
-
-                                    if (document.body.querySelector('[data-validation-error]') !== error) {
-                                        return
-                                    }
-
-                                    setTimeout(
-                                        () =>
-                                            $el.scrollIntoView({
-                                                behavior: 'smooth',
-                                                block: 'start',
-                                                inline: 'start',
-                                            }),
-                                        200,
-                                    )
-                                })
-                            "
+                            x-on:expand="isCollapsed = false"
                             x-on:repeater-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                             x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                             x-sortable-item="{{ $uuid }}"
@@ -220,7 +196,7 @@
                             @if ($isAddable && $addBetweenAction->isVisible())
                                 <li class="flex w-full justify-center">
                                     <div
-                                        class="rounded-lg bg-white dark:bg-gray-900"
+                                        class="fi-fo-repeater-add-between-action-ctn rounded-lg bg-white dark:bg-gray-900"
                                     >
                                         {{ $addBetweenAction(['afterItem' => $uuid]) }}
                                     </div>

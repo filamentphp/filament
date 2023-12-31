@@ -10,17 +10,11 @@
     x-data="{
         tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
 
-        init: function () {
-            this.$watch('tab', () => this.updateQueryString())
-
-            const tabs = this.getTabs()
-
-            if ((! this.tab) || (! tabs.includes(this.tab))) {
-                 this.tab = tabs[@js($getActiveTab()) - 1]
-            }
-        },
-
         getTabs: function () {
+            if (! this.$refs.tabsData) {
+                return []
+            }
+
             return JSON.parse(this.$refs.tabsData.value)
         },
 
@@ -35,6 +29,31 @@
             history.pushState(null, document.title, url.toString())
         },
     }"
+    x-init="
+        $watch('tab', () => updateQueryString())
+
+        const tabs = getTabs()
+
+        if (! tab || ! tabs.includes(tab)) {
+            tab = tabs[@js($getActiveTab()) - 1]
+        }
+
+        Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
+            succeed(({ snapshot, effect }) => {
+                $nextTick(() => {
+                    if (component.id !== @js($this->getId())) {
+                        return
+                    }
+
+                    const tabs = getTabs()
+
+                    if (! tabs.includes(tab)) {
+                        tab = tabs[@js($getActiveTab()) - 1]
+                    }
+                })
+            })
+        })
+    "
     {{
         $attributes
             ->merge([

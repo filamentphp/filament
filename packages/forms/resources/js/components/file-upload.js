@@ -200,6 +200,10 @@ export default function fileUploadFormComponent({
                     return
                 }
 
+                if (this.state === undefined) {
+                    return
+                }
+
                 // We don't want to overwrite the files that are already in the input, if they haven't been saved yet.
                 if (
                     this.state !== null &&

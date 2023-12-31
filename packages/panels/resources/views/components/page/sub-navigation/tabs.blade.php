@@ -3,7 +3,11 @@
 ])
 
 <x-filament::tabs
-    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
+    wire:ignore
+    :attributes="
+        \Filament\Support\prepare_inherited_attributes($attributes)
+            ->class(['hidden md:flex'])
+    "
 >
     @foreach ($navigation as $navigationGroup)
         @if ($navigationGroupLabel = $navigationGroup->getLabel())

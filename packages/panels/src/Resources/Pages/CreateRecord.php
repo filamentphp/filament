@@ -7,13 +7,13 @@ use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Support\Str;
 
 use function Filament\Support\is_app_url;
 
@@ -22,6 +22,7 @@ use function Filament\Support\is_app_url;
  */
 class CreateRecord extends Page
 {
+    use HasUnsavedDataChangesAlert;
     use InteractsWithFormActions;
 
     /**
@@ -63,15 +64,6 @@ class CreateRecord extends Page
 
     protected function fillForm(): void
     {
-        /** @internal Read the DocBlock above the following method. */
-        $this->fillFormWithDefaultsAndCallHooks();
-    }
-
-    /**
-     * @internal Never override or call this method. If you completely override `fillForm()`, copy the contents of this method into your override.
-     */
-    protected function fillFormWithDefaultsAndCallHooks(): void
-    {
         $this->callHook('beforeFill');
 
         $this->form->fill();
@@ -92,40 +84,22 @@ class CreateRecord extends Page
 
             $data = $this->mutateFormDataBeforeCreate($data);
 
-            /** @internal Read the DocBlock above the following method. */
-            $this->createRecordAndCallHooks($data);
+            $this->callHook('beforeCreate');
+
+            $this->record = $this->handleRecordCreation($data);
+
+            $this->form->model($this->getRecord())->saveRelationships();
+
+            $this->callHook('afterCreate');
         } catch (Halt $exception) {
             return;
         }
 
-        /** @internal Read the DocBlock above the following method. */
-        $this->sendCreatedNotificationAndRedirect(shouldCreateAnotherInsteadOfRedirecting: $another);
-    }
+        $this->rememberData();
 
-    /**
-     * @internal Never override or call this method. If you completely override `create()`, copy the contents of this method into your override.
-     *
-     * @param  array<string, mixed>  $data
-     */
-    protected function createRecordAndCallHooks(array $data): void
-    {
-        $this->callHook('beforeCreate');
-
-        $this->record = $this->handleRecordCreation($data);
-
-        $this->form->model($this->getRecord())->saveRelationships();
-
-        $this->callHook('afterCreate');
-    }
-
-    /**
-     * @internal Never override or call this method. If you completely override `create()`, copy the contents of this method into your override.
-     */
-    protected function sendCreatedNotificationAndRedirect(bool $shouldCreateAnotherInsteadOfRedirecting = true): void
-    {
         $this->getCreatedNotification()?->send();
 
-        if ($shouldCreateAnotherInsteadOfRedirecting) {
+        if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
             $this->form->model($this->getRecord()::class);
             $this->record = null;
@@ -137,11 +111,7 @@ class CreateRecord extends Page
 
         $redirectUrl = $this->getRedirectUrl();
 
-        if (FilamentView::hasSpaMode()) {
-            $this->redirect($redirectUrl, navigate: is_app_url($redirectUrl));
-        } else {
-            $this->redirect($redirectUrl);
-        }
+        $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
     }
 
     protected function getCreatedNotification(): ?Notification
@@ -265,7 +235,7 @@ class CreateRecord extends Page
         }
 
         return __('filament-panels::resources/pages/create-record.title', [
-            'label' => Str::headline(static::getResource()::getModelLabel()),
+            'label' => static::getResource()::getTitleCaseModelLabel(),
         ]);
     }
 
@@ -314,7 +284,7 @@ class CreateRecord extends Page
         return [];
     }
 
-    protected function getMountedActionFormModel(): string
+    protected function getMountedActionFormModel(): Model | string | null
     {
         return $this->getModel();
     }

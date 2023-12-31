@@ -12,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
@@ -30,6 +31,7 @@ class EditRecord extends Page
     use Concerns\InteractsWithRecord {
         configureAction as configureActionRecord;
     }
+    use HasUnsavedDataChangesAlert;
     use InteractsWithFormActions;
 
     /**
@@ -128,49 +130,29 @@ class EditRecord extends Page
         $this->authorizeAccess();
 
         try {
-            /** @internal Read the DocBlock above the following method. */
-            $this->validateFormAndUpdateRecordAndCallHooks();
+            $this->callHook('beforeValidate');
+
+            $data = $this->form->getState();
+
+            $this->callHook('afterValidate');
+
+            $data = $this->mutateFormDataBeforeSave($data);
+
+            $this->callHook('beforeSave');
+
+            $this->handleRecordUpdate($this->getRecord(), $data);
+
+            $this->callHook('afterSave');
         } catch (Halt $exception) {
             return;
         }
 
-        /** @internal Read the DocBlock above the following method. */
-        $this->sendSavedNotificationAndRedirect(shouldRedirect: $shouldRedirect);
-    }
+        $this->rememberData();
 
-    /**
-     * @internal Never override or call this method. If you completely override `save()`, copy the contents of this method into your override.
-     */
-    protected function validateFormAndUpdateRecordAndCallHooks(): void
-    {
-        $this->callHook('beforeValidate');
-
-        $data = $this->form->getState();
-
-        $this->callHook('afterValidate');
-
-        $data = $this->mutateFormDataBeforeSave($data);
-
-        $this->callHook('beforeSave');
-
-        $this->handleRecordUpdate($this->getRecord(), $data);
-
-        $this->callHook('afterSave');
-    }
-
-    /**
-     * @internal Never override or call this method. If you completely override `save()`, copy the contents of this method into your override.
-     */
-    protected function sendSavedNotificationAndRedirect(bool $shouldRedirect = true): void
-    {
         $this->getSavedNotification()?->send();
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            if (FilamentView::hasSpaMode()) {
-                $this->redirect($redirectUrl, navigate: is_app_url($redirectUrl));
-            } else {
-                $this->redirect($redirectUrl);
-            }
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
         }
     }
 

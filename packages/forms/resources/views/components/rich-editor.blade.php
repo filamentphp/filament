@@ -12,19 +12,15 @@
                 state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
             }"
             x-html="state"
-            class="fi-fo-rich-editor fi-disabled prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert dark:bg-transparent dark:text-gray-400 dark:ring-white/10 sm:text-sm"
+            class="fi-fo-rich-editor fi-disabled prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert sm:text-sm dark:bg-transparent dark:text-gray-400 dark:ring-white/10"
         ></div>
     @else
-        <div
-            {{
-                $attributes
-                    ->merge($getExtraAttributes(), escape: false)
-                    ->class([
-                        'fi-fo-rich-editor max-w-full overflow-x-auto rounded-lg bg-white shadow-sm ring-1 transition duration-75 focus-within:ring-2 dark:bg-white/5',
-                        'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500' => ! $errors->has($statePath),
-                        'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-500 dark:focus-within:ring-danger-500' => $errors->has($statePath),
-                    ])
-            }}
+        <x-filament::input.wrapper
+            :valid="! $errors->has($statePath)"
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+                    ->class(['fi-fo-rich-editor max-w-full overflow-x-auto'])
+            "
         >
             <div
                 @if (FilamentView::hasSpaMode())
@@ -483,11 +479,11 @@
                     wire:ignore
                     {{
                         $getExtraInputAttributeBag()->class([
-                            'prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert focus-visible:outline-none dark:text-white sm:text-sm sm:leading-6',
+                            'prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert focus-visible:outline-none sm:text-sm sm:leading-6 dark:text-white',
                         ])
                     }}
                 ></trix-editor>
             </div>
-        </div>
+        </x-filament::input.wrapper>
     @endif
 </x-dynamic-component>

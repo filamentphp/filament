@@ -227,14 +227,19 @@ class AttachAction extends Action
                 });
             }
 
+            $relationCountHash = $relationship->getRelationCountHash(incrementJoinCount: false);
+
             $relationshipQuery
                 ->when(
                     ! $table->allowsDuplicates(),
                     fn (Builder $query): Builder => $query->whereDoesntHave(
                         $table->getInverseRelationship(),
                         fn (Builder $query): Builder => $query->where(
-                            $table->getRelationship()->getParent()->getQualifiedKeyName(),
-                            $table->getRelationship()->getParent()->getKey(),
+                            // https://github.com/filamentphp/filament/issues/8067
+                            $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?
+                                "{$relationCountHash}.{$relationship->getParent()->getKeyName()}" :
+                                $relationship->getParent()->getQualifiedKeyName(),
+                            $relationship->getParent()->getKey(),
                         ),
                     ),
                 );

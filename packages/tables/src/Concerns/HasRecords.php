@@ -19,7 +19,7 @@ trait HasRecords
      */
     protected bool $allowsDuplicates = false;
 
-    protected Collection | Paginator | CursorPaginator | null $records = null;
+    protected Collection | Paginator | CursorPaginator | null $cachedTableRecords = null;
 
     public function getFilteredTableQuery(): Builder
     {
@@ -84,8 +84,8 @@ trait HasRecords
             $setRecordLocales = fn (Collection | Paginator | CursorPaginator $records): Collection | Paginator | CursorPaginator => $records;
         }
 
-        if ($this->records) {
-            return $setRecordLocales($this->records);
+        if ($this->cachedTableRecords) {
+            return $setRecordLocales($this->cachedTableRecords);
         }
 
         $query = $this->getFilteredSortedTableQuery();
@@ -94,10 +94,10 @@ trait HasRecords
             (! $this->getTable()->isPaginated()) ||
             ($this->isTableReordering() && (! $this->getTable()->isPaginatedWhileReordering()))
         ) {
-            return $setRecordLocales($this->records = $this->hydratePivotRelationForTableRecords($query->get()));
+            return $setRecordLocales($this->cachedTableRecords = $this->hydratePivotRelationForTableRecords($query->get()));
         }
 
-        return $setRecordLocales($this->records = $this->hydratePivotRelationForTableRecords($this->paginateTableQuery($query)));
+        return $setRecordLocales($this->cachedTableRecords = $this->hydratePivotRelationForTableRecords($this->paginateTableQuery($query)));
     }
 
     protected function resolveTableRecord(?string $key): ?Model
@@ -159,11 +159,16 @@ trait HasRecords
 
     public function getAllTableRecordsCount(): int
     {
-        if ($this->records instanceof LengthAwarePaginator) {
-            return $this->records->total();
+        if ($this->cachedTableRecords instanceof LengthAwarePaginator) {
+            return $this->cachedTableRecords->total();
         }
 
         return $this->getFilteredTableQuery()->count();
+    }
+
+    public function flushCachedTableRecords(): void
+    {
+        $this->cachedTableRecords = null;
     }
 
     /**

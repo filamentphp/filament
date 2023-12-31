@@ -1,9 +1,13 @@
 @php
+    use Filament\Forms\Components\TextInput\Actions\HidePasswordAction;
+    use Filament\Forms\Components\TextInput\Actions\ShowPasswordAction;
+
     $datalistOptions = $getDatalistOptions();
     $extraAlpineAttributes = $getExtraAlpineAttributes();
     $id = $getId();
     $isConcealed = $isConcealed();
     $isDisabled = $isDisabled();
+    $isPasswordRevealable = $isPasswordRevealable();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
     $mask = $getMask();
@@ -14,6 +18,22 @@
     $suffixIcon = $getSuffixIcon();
     $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
+
+    if ($isPasswordRevealable) {
+        $xData = '{ isPasswordRevealed: false }';
+    } elseif (count($extraAlpineAttributes) || filled($mask)) {
+        $xData = '{}';
+    } else {
+        $xData = null;
+    }
+
+    if ($isPasswordRevealable) {
+        $type = null;
+    } elseif (filled($mask)) {
+        $type = 'text';
+    } else {
+        $type = $getType();
+    }
 @endphp
 
 <x-dynamic-component
@@ -34,10 +54,10 @@
         :suffix-icon="$suffixIcon"
         :suffix-icon-color="$getSuffixIconColor()"
         :valid="! $errors->has($statePath)"
-        class="fi-fo-text-input"
+        :x-data="$xData"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
-                ->class(['overflow-hidden'])
+                ->class(['fi-fo-text-input overflow-hidden'])
         "
     >
         <x-filament::input
@@ -62,9 +82,9 @@
                         'readonly' => $isReadOnly(),
                         'required' => $isRequired() && (! $isConcealed),
                         'step' => $getStep(),
-                        'type' => blank($mask) ? $getType() : 'text',
+                        'type' => $type,
                         $applyStateBindingModifiers('wire:model') => $statePath,
-                        'x-data' => (count($extraAlpineAttributes) || filled($mask)) ? '{}' : null,
+                        'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
                         'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
                     ], escape: false)
             "

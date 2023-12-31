@@ -357,11 +357,17 @@ Sometimes, you may find that your data fits into a grid format better than a lis
 Simply use the `$table->contentGrid()` method:
 
 ```php
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
     return $table
+        ->columns([
+            Stack::make([
+                // Columns
+            ]),
+        ])
         ->contentGrid([
             'md' => 2,
             'xl' => 3,

@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Contracts\Support\Arrayable;
+use UnitEnum;
 
 trait HasSelect
 {
@@ -18,9 +19,9 @@ trait HasSelect
     protected ?string $placeholder = null;
 
     /**
-     * @param  array<string> | Arrayable | Closure  $options
+     * @param  array<string> | Arrayable | string | Closure  $options
      */
-    public function options(array | Arrayable | Closure $options): static
+    public function options(array | Arrayable | string | Closure $options): static
     {
         $this->options = $options;
 
@@ -39,7 +40,7 @@ trait HasSelect
      */
     public function getOptions(): array
     {
-        $options = $this->evaluate($this->options);
+        $options = $this->evaluate($this->options) ?? [];
 
         $enum = $options;
         if (
@@ -47,18 +48,18 @@ trait HasSelect
             enum_exists($enum)
         ) {
             if (is_a($enum, LabelInterface::class, allow_string: true)) {
-                return collect($enum::cases())
-                    ->mapWithKeys(fn ($case) => [
-                        ($case?->value ?? $case->name) => $case->getLabel() ?? $case->name,
-                    ])
-                    ->all();
+                return array_reduce($enum::cases(), function (array $carry, LabelInterface & UnitEnum $case): array {
+                    $carry[$case?->value ?? $case->name] = $case->getLabel() ?? $case->name;
+
+                    return $carry;
+                }, []);
             }
 
-            return collect($enum::cases())
-                ->mapWithKeys(fn ($case) => [
-                    ($case?->value ?? $case->name) => $case->name,
-                ])
-                ->all();
+            return array_reduce($enum::cases(), function (array $carry, UnitEnum $case): array {
+                $carry[$case?->value ?? $case->name] = $case->name;
+
+                return $carry;
+            }, []);
         }
 
         if ($options instanceof Arrayable) {

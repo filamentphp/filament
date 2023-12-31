@@ -2,8 +2,16 @@
 title: File upload
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="File Uploads"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding file upload fields to Filament forms."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/8"
+    series="rapid-laravel-development"
+/>
 
 The file upload field is based on [Filepond](https://pqina.nl/filepond).
 

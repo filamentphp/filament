@@ -1,4 +1,5 @@
 @props([
+    'applyAction',
     'form',
 ])
 
@@ -10,33 +11,41 @@
             {{ __('filament-tables::table.filters.heading') }}
         </h4>
 
-        <x-filament::link
-            :attributes="
-                \Filament\Support\prepare_inherited_attributes(
-                    new \Illuminate\View\ComponentAttributeBag([
-                        'color' => 'danger',
-                        'tag' => 'button',
-                        'wire:click' => 'resetTableFiltersForm',
-                        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                        'wire:target' => 'tableFilters,resetTableFiltersForm',
-                    ])
-                )
-            "
-        >
-            {{ __('filament-tables::table.filters.actions.reset.label') }}
-        </x-filament::link>
+        <div>
+            <x-filament::link
+                :attributes="
+                    \Filament\Support\prepare_inherited_attributes(
+                        new \Illuminate\View\ComponentAttributeBag([
+                            'color' => 'danger',
+                            'tag' => 'button',
+                            'wire:click' => 'resetTableFiltersForm',
+                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                            'wire:target' => 'resetTableFiltersForm',
+                        ])
+                    )
+                "
+            >
+                {{ __('filament-tables::table.filters.actions.reset.label') }}
+            </x-filament::link>
 
-        <x-filament::loading-indicator
-            :attributes="
-                \Filament\Support\prepare_inherited_attributes(
-                    new \Illuminate\View\ComponentAttributeBag([
-                        'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                        'wire:target' => 'tableFilters,resetTableFiltersForm',
-                    ])
-                )->class(['h-5 w-5 text-gray-400 dark:text-gray-500'])
-            "
-        />
+            <x-filament::loading-indicator
+                :attributes="
+                    \Filament\Support\prepare_inherited_attributes(
+                        new \Illuminate\View\ComponentAttributeBag([
+                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                            'wire:target' => 'tableFilters,applyTableFilters,resetTableFiltersForm',
+                        ])
+                    )->class(['h-5 w-5 text-gray-400 dark:text-gray-500'])
+                "
+            />
+        </div>
     </div>
 
     {{ $form }}
+
+    @if ($applyAction->isVisible())
+        <div>
+            {{ $applyAction }}
+        </div>
+    @endif
 </div>

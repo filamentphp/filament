@@ -1,9 +1,11 @@
 @php
+    use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconPosition;
     use Filament\Tables\Columns\TextColumn\TextColumnSize;
 
+    $alignment = $getAlignment();
     $canWrap = $canWrap();
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
@@ -14,11 +16,17 @@
     $isLimitedListExpandable = $isLimitedListExpandable();
     $url = $getUrl();
 
+    if (! $alignment instanceof Alignment) {
+        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+    }
+
     $arrayState = $getState();
 
     if ($arrayState instanceof \Illuminate\Support\Collection) {
         $arrayState = $arrayState->all();
     }
+
+    $listLimit = 1;
 
     if (is_array($arrayState)) {
         if ($listLimit = $getListLimit()) {
@@ -50,7 +58,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-ta-text grid gap-y-1',
+                'fi-ta-text grid w-full gap-y-1',
                 'px-3 py-4' => ! $isInline(),
             ])
     }}
@@ -69,9 +77,35 @@
 
         <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
             @class([
+                'flex' => ! $isBulleted,
+                'flex-col' => (! $isBulleted) && $isListWithLineBreaks,
                 'list-inside list-disc' => $isBulleted,
-                'flex flex-wrap items-center gap-1.5' => $isBadge,
+                'gap-1.5' => $isBadge,
+                'flex-wrap' => $isBadge && (! $isListWithLineBreaks),
                 'whitespace-normal' => $canWrap,
+                match ($alignment) {
+                    Alignment::Start => 'text-start',
+                    Alignment::Center => 'text-center',
+                    Alignment::End => 'text-end',
+                    Alignment::Left => 'text-left',
+                    Alignment::Right => 'text-right',
+                    Alignment::Justify, Alignment::Between => 'text-justify',
+                    default => $alignment,
+                },
+                match ($alignment) {
+                    Alignment::Start, Alignment::Left => 'justify-start',
+                    Alignment::Center => 'justify-center',
+                    Alignment::End, Alignment::Right => 'justify-end',
+                    Alignment::Between, Alignment::Justify => 'justify-between',
+                    default => null,
+                } => $isBulleted || (! $isListWithLineBreaks),
+                match ($alignment) {
+                    Alignment::Start, Alignment::Left => 'items-start',
+                    Alignment::Center => 'items-center',
+                    Alignment::End, Alignment::Right => 'items-end',
+                    Alignment::Between, Alignment::Justify => 'items-stretch',
+                    default => null,
+                } => $isListWithLineBreaks && (! $isBulleted),
             ])
             @if ($isListWithLineBreaks && $isLimitedListExpandable)
                 x-data="{ isLimited: true }"
@@ -126,7 +160,7 @@
                         @endif
                         @class([
                             'flex' => ! $isBulleted,
-                            'max-w-max' => ! $isBadge,
+                            'max-w-max' => ! ($isBulleted || $isBadge),
                             'w-max' => $isBadge,
                             'cursor-pointer' => $itemIsCopyable,
                         ])
@@ -165,7 +199,7 @@
                                         'group-hover/item:underline group-focus-visible/item:underline' => $url,
                                         match ($size) {
                                             TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
-                                            TextColumnSize::Small, 'sm', null => 'text-sm',
+                                            TextColumnSize::Small, 'sm', null => 'text-sm leading-6',
                                             TextColumnSize::Medium, 'base', 'md' => 'text-base',
                                             TextColumnSize::Large, 'lg' => 'text-lg',
                                             default => $size,

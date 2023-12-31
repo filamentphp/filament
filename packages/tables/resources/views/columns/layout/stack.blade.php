@@ -15,9 +15,10 @@
             ->class([
                 'flex flex-col',
                 match ($alignment) {
-                    Alignment::Start => 'items-start',
+                    Alignment::Start, Alignment::Left => 'items-start',
                     Alignment::Center => 'items-center',
                     Alignment::End, Alignment::Right => 'items-end',
+                    Alignment::Justify, Alignment::Between => null,
                     default => $alignment,
                 },
                 match ($space = $getSpace()) {

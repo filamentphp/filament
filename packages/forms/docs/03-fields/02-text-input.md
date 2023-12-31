@@ -158,6 +158,20 @@ TextInput::make('domain')
     ->suffixIconColor('success')
 ```
 
+## Revealable password inputs
+
+When using `password()`, you can also make the input `revealable()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('password')
+    ->password()
+    ->revealable()
+```
+
+<AutoScreenshot name="forms/fields/text-input/revealable-password" alt="Text input with revealable password" version="3.x" />
+
 ## Input masking
 
 Input masking is the practice of defining a format that the input value must conform to.
@@ -182,6 +196,18 @@ TextInput::make('cardNumber')
     ->mask(RawJs::make(<<<'JS'
         $input.startsWith('34') || $input.startsWith('37') ? '9999 999999 99999' : '9999 9999 9999 9999'
     JS))
+```
+
+Alpine.js will send the entire masked value to the server, so you may need to strip certain characters from the state before validating the field and saving it. You can do this with the `stripCharacters()` method, passing in a character or an array of characters to remove from the masked value:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Support\RawJs;
+
+TextInput::make('amount')
+    ->mask(RawJs::make('$money($input)'))
+    ->stripCharacters(',')
+    ->numeric()
 ```
 
 ## Text input validation

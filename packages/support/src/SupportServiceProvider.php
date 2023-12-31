@@ -110,6 +110,18 @@ class SupportServiceProvider extends PackageServiceProvider
             return new Stringable(Str::sanitizeHtml($this->value));
         });
 
+        Str::macro('ucwords', function (string $value): string {
+            return implode(' ', array_map(
+                [Str::class, 'ucfirst'],
+                explode(' ', $value),
+            ));
+        });
+
+        Stringable::macro('ucwords', function (): Stringable {
+            /** @phpstan-ignore-next-line */
+            return new Stringable(Str::ucwords($this->value));
+        });
+
         if (class_exists(InstalledVersions::class)) {
             $packages = [
                 'filament',

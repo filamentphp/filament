@@ -25,11 +25,15 @@
         };
     @endphp
 
-    @foreach ($widgets as $key => $widget)
+    @foreach ($widgets as $widgetKey => $widget)
+        @php
+            $widgetClass = $normalizeWidgetClass($widget);
+        @endphp
+
         @livewire(
-            $normalizeWidgetClass($widget),
+            $widgetClass,
             [...(($widget instanceof \Filament\Widgets\WidgetConfiguration) ? [...$widget->widget::getDefaultProperties(), ...$widget->properties] : $widget::getDefaultProperties()), ...$data],
-            key($key),
+            key("{$widgetClass}-{$widgetKey}"),
         )
     @endforeach
 </x-filament::grid>

@@ -92,6 +92,10 @@ trait InteractsWithTable
 
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
+        if ($this->getTable()->hasDeferredFilters()) {
+            $this->tableFilters = $this->tableDeferredFilters;
+        }
+
         if ($shouldPersistFiltersInSession) {
             session()->put(
                 $filtersSessionKey,
@@ -185,7 +189,6 @@ trait InteractsWithTable
             ->query($this->getTableQuery())
             ->actions($this->getTableActions())
             ->actionsColumnLabel($this->getTableActionsColumnLabel())
-            ->groupedBulkActions($this->getTableBulkActions())
             ->checkIfRecordIsSelectableUsing($this->isTableRecordSelectable())
             ->columns($this->getTableColumns())
             ->columnToggleFormColumns($this->getTableColumnToggleFormColumns())
@@ -206,6 +209,7 @@ trait InteractsWithTable
             ->filters($this->getTableFilters())
             ->filtersFormMaxHeight($this->getTableFiltersFormMaxHeight())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
+            ->groupedBulkActions($this->getTableBulkActions())
             ->header($this->getTableHeader())
             ->headerActions($this->getTableHeaderActions())
             ->modelLabel($this->getTableModelLabel())
@@ -310,5 +314,7 @@ trait InteractsWithTable
         $this->resetTableFiltersForm();
 
         $this->resetPage();
+
+        $this->flushCachedTableRecords();
     }
 }

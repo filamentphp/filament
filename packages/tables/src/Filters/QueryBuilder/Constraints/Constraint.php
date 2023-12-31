@@ -156,8 +156,12 @@ class Constraint extends Component
         $options = [];
 
         foreach ($this->getOperators() as $operatorName => $operator) {
+            $operator->constraint($this);
+
             $options[$operatorName] = $operator->inverse(false)->getLabel();
             $options["{$operatorName}.inverse"] = $operator->inverse()->getLabel();
+
+            $operator->constraint(null);
 
             $operator->inverse(null);
         }

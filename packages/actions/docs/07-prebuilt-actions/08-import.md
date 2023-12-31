@@ -4,24 +4,47 @@ title: Import action
 
 ## Overview
 
-Filament includes a prebuilt action that is able to import rows from a CSV. When the trigger button is clicked, a modal asks the user for a file. Once they upload one, they are able to map each column in the CSV to a real column in the database. If any rows fail validation, they will be compiled into a downloadable CSV for the user to review after the rest of the rows have been imported. Users can also download an example CSV file containing all the columns that can be imported.
+Filament v3.1 introduced a prebuilt action that is able to import rows from a CSV. When the trigger button is clicked, a modal asks the user for a file. Once they upload one, they are able to map each column in the CSV to a real column in the database. If any rows fail validation, they will be compiled into a downloadable CSV for the user to review after the rest of the rows have been imported. Users can also download an example CSV file containing all the columns that can be imported.
 
-This feature uses job batches, so you need to [publish that migration from Laravel](https://laravel.com/docs/queues#job-batching). Also, you need to publish the migrations for tables that Filament uses to store information about imports:
+This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications#overview), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about imports:
 
 ```bash
 php artisan queue:batches-table
+php artisan notifications:table
 php artisan vendor:publish --tag=filament-actions-migrations
 
 php artisan migrate
 ```
 
+> If you're using PostgreSQL, make sure that the `data` column in the notifications migration is using `json()`: `$table->json('data')`.
+
+> If you're using UUIDs for your `User` model, make sure that your `notifiable` column in the notifications migration is using `uuidMorphs()`: `$table->uuidMorphs('notifiable')`.
+
 You may use the `ImportAction` like so:
 
 ```php
 use App\Filament\Imports\ProductImporter;
+use Filament\Actions\ImportAction;
 
 ImportAction::make()
     ->importer(ProductImporter::class)
+```
+
+If you want to add this action to the header of a table instead, you can use `Filament\Tables\Actions\ImportAction`:
+
+```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Tables\Actions\ImportAction;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->headerActions([
+            ImportAction::make()
+                ->importer(ProductImporter::class)
+        ]);
+}
 ```
 
 The ["importer" class needs to be created](#creating-an-importer) to tell Filament how to import each row of the CSV.
@@ -96,7 +119,7 @@ If you require a column in the database, you also need to make sure that it has 
 
 ### Validating CSV data
 
-You can call the `rules()` method to add validation rules to a column. These rules will check the data in reach row from the CSV before it is saved to the database:
+You can call the `rules()` method to add validation rules to a column. These rules will check the data in each row from the CSV before it is saved to the database:
 
 ```php
 use Filament\Actions\Imports\ImportColumn;
@@ -286,14 +309,14 @@ ImportColumn::make('customer_ratings')
 
 ### Customizing how a column is filled into a record
 
-If you want to customize how column state is filled into a record, you can pass a function to the `fillUsing()` method:
+If you want to customize how column state is filled into a record, you can pass a function to the `fillRecordUsing()` method:
 
 ```php
 use App\Models\Product;
 
 ImportColumn::make('sku')
-    ->fillUsing(function (Product $record, string $state): void {
-        $product->state = strtoupper($state);
+    ->fillRecordUsing(function (Product $record, string $state): void {
+        $record->sku = strtoupper($state);
     })
 ```
 
@@ -361,13 +384,25 @@ The import action can render extra form components that the user can interact wi
 ```php
 use Filament\Forms\Components\Checkbox;
 
-public function getOptionsFormComponents(): array
+public static function getOptionsFormComponents(): array
 {
     return [
-        Checkbox::make('update_existing')
+        Checkbox::make('updateExisting')
             ->label('Update existing records'),
     ];
 }
+```
+
+Alternatively, you can pass a set of static options to the importer through the `options()` method on the action:
+
+```php
+use Filament\Actions\ImportAction;
+
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->options([
+        'updateExisting' => true,
+    ])
 ```
 
 Now, you can access the data from these options inside the importer class, by calling `$this->options`. For example, you might want to use it inside `resolveRecord()` to [update an existing product](#updating-existing-records-when-importing):
@@ -377,7 +412,7 @@ use App\Models\Product;
 
 public function resolveRecord(): ?Product
 {
-    if ($this->options['update_existing'] ?? false) {
+    if ($this->options['updateExisting'] ?? false) {
         return Product::firstOrNew([
             'sku' => $this->data['sku'],
         ]);
@@ -389,13 +424,13 @@ public function resolveRecord(): ?Product
 
 ## Improving import column mapping guesses
 
-By default, Filament will attempt to "guess" which columns in the CSV match which columns in the database, to save the user time. It does this by attempting to find different combinations of the column name, with spaces, `-`, `_`, all cases insensitively. However, if you'd like to improve the guesses, you can call the `guesses()` method with more examples of the column name that could be present in the CSV:
+By default, Filament will attempt to "guess" which columns in the CSV match which columns in the database, to save the user time. It does this by attempting to find different combinations of the column name, with spaces, `-`, `_`, all cases insensitively. However, if you'd like to improve the guesses, you can call the `guess()` method with more examples of the column name that could be present in the CSV:
 
 ```php
 use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('sku')
-    ->guesses(['id', 'number', 'stock-keeping unit'])
+    ->guess(['id', 'number', 'stock-keeping unit'])
 ```
 
 ## Providing example CSV data
@@ -409,6 +444,45 @@ use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('sku')
     ->example('ABC123')
+```
+
+## Using a custom user model
+
+By default, the `imports` table has a `user_id` column. That column is constrained to the `users` table:
+
+```php
+$table->foreignId('user_id')->constrained()->cascadeOnDelete();
+```
+
+In the `Import` model, the `user()` relationship is defined as a `BelongsTo` relationship to the `App\Models\User` model. If the `App\Models\User` model does not exist, or you want to use a different one, you can bind a new `Authenticatable` model to the container in a service provider's `register()` method:
+
+```php
+use App\Models\Admin;
+use Illuminate\Contracts\Auth\Authenticatable;
+
+$this->app->bind(Authenticatable::class, Admin::class);
+```
+
+If your authenticatable model uses a different table to `users`, you should pass that table name to `constrained()`:
+
+```php
+$table->foreignId('user_id')->constrained('admins')->cascadeOnDelete();
+```
+
+### Using a polymorphic user relationship
+
+If you want to associate imports with multiple user models, you can use a polymorphic `MorphTo` relationship instead. To do this, you need to replace the `user_id` column in the `imports` table:
+
+```php
+$table->morphs('user');
+```
+
+Then, in a service provider's `boot()` method, you should call `Import::polymorphicUserRelationship()` to swap the `user()` relationship on the `Import` model to a `MorphTo` relationship:
+
+```php
+use Filament\Actions\Imports\Models\Import;
+
+Import::polymorphicUserRelationship();
 ```
 
 ## Limiting the maximum number of rows that can be imported
@@ -432,6 +506,18 @@ ImportAction::make()
 ```
 
 If you are encountering memory issues when importing large CSV files, you may wish to reduce the chunk size.
+
+## Changing the CSV delimiter
+
+The default delimiter for CSVs is the comma (`,`). If your import uses a different delimiter, you may call the `csvDelimiter()` method on the action, passing a new one:
+
+```php
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->csvDelimiter(';')
+```
+
+You can only specify a single character, otherwise an exception will be thrown.
 
 ## Customizing the import job
 

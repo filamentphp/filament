@@ -37,31 +37,7 @@
     }"
     @if ($collapsible)
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
-        x-on:expand-concealing-component.window="
-            $nextTick(() => {
-                error = $el.querySelector('[data-validation-error]')
-
-                if (! error) {
-                    return
-                }
-
-                isCollapsed = false
-
-                if (document.body.querySelector('[data-validation-error]') !== error) {
-                    return
-                }
-
-                setTimeout(
-                    () =>
-                        $el.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start',
-                            inline: 'start',
-                        }),
-                    200,
-                )
-            })
-        "
+        x-on:expand="isCollapsed = false"
         x-on:open-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:toggle-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
         x-bind:class="isCollapsed && 'fi-collapsed'"
@@ -82,7 +58,7 @@
                 x-on:click="isCollapsed = ! isCollapsed"
             @endif
             @class([
-                'fi-section-header flex items-center gap-x-3 overflow-hidden',
+                'fi-section-header flex flex-col gap-3 overflow-hidden sm:flex-row sm:items-center',
                 'cursor-pointer' => $collapsible,
                 match ($compact) {
                     true => 'px-4 py-2.5',
@@ -135,8 +111,8 @@
             @if ($hasHeaderActions)
                 <x-filament-actions::actions
                     :actions="$headerActions"
-                    :alignment="\Filament\Support\Enums\Alignment::End"
-                    x-on:click.stop
+                    :alignment="\Filament\Support\Enums\Alignment::Start"
+                    x-on:click.stop=""
                 />
             @endif
 

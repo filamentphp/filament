@@ -35,6 +35,29 @@ trait HasFilters
 
     protected bool | Closure $shouldDeselectAllRecordsWhenFiltered = true;
 
+    protected bool | Closure $hasDeferredFilters = false;
+
+    protected ?Closure $modifyFiltersApplyActionUsing = null;
+
+    public function deferFilters(bool | Closure $condition = true): static
+    {
+        $this->hasDeferredFilters = $condition;
+
+        return $this;
+    }
+
+    public function hasDeferredFilters(): bool
+    {
+        return (bool) $this->evaluate($this->hasDeferredFilters);
+    }
+
+    public function filtersApplyAction(?Closure $callback): static
+    {
+        $this->modifyFiltersApplyActionUsing = $callback;
+
+        return $this;
+    }
+
     public function deselectAllRecordsWhenFiltered(bool | Closure $condition = true): static
     {
         $this->shouldDeselectAllRecordsWhenFiltered = $condition;
@@ -147,6 +170,8 @@ trait HasFilters
             ->livewireClickHandlerEnabled(false)
             ->modalSubmitAction(false)
             ->extraModalFooterActions([
+                $this->getFiltersApplyAction()
+                    ->close(),
                 Action::make('resetFilters')
                     ->label(__('filament-tables::table.filters.actions.reset.label'))
                     ->color('danger')
@@ -163,6 +188,23 @@ trait HasFilters
 
         if ($action->getView() === Action::BUTTON_VIEW) {
             $action->defaultSize(ActionSize::Small);
+        }
+
+        return $action;
+    }
+
+    public function getFiltersApplyAction(): Action
+    {
+        $action = Action::make('applyFilters')
+            ->label(__('filament-tables::table.filters.actions.apply.label'))
+            ->action('applyTableFilters')
+            ->table($this)
+            ->visible($this->hasDeferredFilters());
+
+        if ($this->modifyFiltersApplyActionUsing) {
+            $action = $this->evaluate($this->modifyFiltersApplyActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
         }
 
         return $action;
@@ -217,5 +259,14 @@ trait HasFilters
     public function shouldDeselectAllRecordsWhenFiltered(): bool
     {
         return (bool) $this->evaluate($this->shouldDeselectAllRecordsWhenFiltered);
+    }
+
+    public function getActiveFiltersCount(): int
+    {
+        return array_reduce(
+            $this->getFilters(),
+            fn (int $carry, BaseFilter $filter): int => $carry + $filter->getActiveCount(),
+            0,
+        );
     }
 }

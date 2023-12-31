@@ -26,7 +26,7 @@ class ActionContainer extends Component
 
     public function getKey(): string
     {
-        return parent::getKey() ?? "{$this->action->getName()}Action";
+        return parent::getKey() ?? "{$this->getStatePath()}.{$this->action->getName()}Action";
     }
 
     public function isHidden(): bool

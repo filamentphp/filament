@@ -109,7 +109,7 @@ $panel->font(
 
 Filament allows you to change the CSS used to render the UI by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
 
-Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, the Tailwind Typography plugin, and [Autoprefixer](https://github.com/postcss/autoprefixer).
+Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, the Tailwind Typography plugin, the [PostCSS Nesting plugin](https://www.npmjs.com/package/postcss-nesting), and [Autoprefixer](https://github.com/postcss/autoprefixer).
 
 To create a custom theme for a panel, you can use the `php artisan make:filament-theme` command:
 
@@ -151,6 +151,22 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->darkMode(false);
+}
+```
+
+## Changing the default theme mode
+
+By default, Filament uses the user's system theme as the default mode. For example, if the user's computer is in dark mode, Filament will use dark mode by default. The system mode in Filament is reactive if the user changes their computer's mode. If you want to change the default mode to force light or dark mode, you can use the `defaultThemeMode()` method, passing `ThemeMode::Light` or `ThemeMode::Dark`:
+
+```php
+use Filament\Enums\ThemeMode;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->defaultThemeMode(ThemeMode::Light);
 }
 ```
 
