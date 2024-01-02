@@ -38,7 +38,8 @@ abstract class Page extends BasePage
      */
     public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
     {
-        $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
+        if ($panel === null || Filament::getPanel($panel)->hasTenancy())
+            $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
 
         return route(static::getRouteName($panel), $parameters, $isAbsolute);
     }
