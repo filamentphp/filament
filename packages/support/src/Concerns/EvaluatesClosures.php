@@ -100,6 +100,10 @@ trait EvaluatesClosures
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
+        if ($parameterName == 'self') {
+            return [$this];
+        }
+
         return [];
     }
 
