@@ -19,6 +19,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 use function Filament\Support\is_app_url;
 
@@ -112,7 +113,7 @@ class EditRecord extends Page
     {
         $this->data = [
             ...$this->data,
-            ...$this->getRecord()->only($attributes),
+            ...Arr::only($this->getRecord()->attributesToArray(), $attributes),
         ];
     }
 
