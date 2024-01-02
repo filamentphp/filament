@@ -666,11 +666,11 @@ class FilamentManager
         $this->isServing = $condition;
     }
 
-    public function setTenant(?Model $tenant): void
+    public function setTenant(?Model $tenant, bool $isQuiet = false): void
     {
         $this->tenant = $tenant;
 
-        if ($tenant) {
+        if ($tenant && (! $isQuiet)) {
             event(new TenantSet($tenant, $this->auth()->user()));
         }
     }
