@@ -228,7 +228,7 @@ class AttachAction extends Action
             }
 
             $relationCountHash = $relationship->getRelationCountHash(incrementJoinCount: false);
-            
+
             $relationshipQuery
                 ->when(
                     ! $table->allowsDuplicates(),
