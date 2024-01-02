@@ -16,7 +16,7 @@ abstract class ChartWidget extends Widget
     protected ?array $cachedData = null;
 
     #[Locked]
-    public string $dataChecksum;
+    public ?string $dataChecksum = null;
 
     public ?string $filter = null;
 

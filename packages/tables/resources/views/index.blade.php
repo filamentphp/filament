@@ -138,7 +138,7 @@
                 <div
                     x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }"
                     @class([
-                        'grid gap-y-3 px-4 py-4 sm:px-6',
+                        'fi-ta-filters-above-content-ctn grid gap-y-3 px-4 py-4 sm:px-6',
                     ])
                 >
                     <x-filament-tables::filters
@@ -1130,14 +1130,14 @@
             <x-filament::pagination
                 :page-options="$getPaginationPageOptions()"
                 :paginator="$records"
-                class="px-3 py-3 sm:px-6"
+                class="fi-ta-pagination px-3 py-3 sm:px-6"
             />
         @endif
 
         @if ($hasFiltersBelowContent)
             <x-filament-tables::filters
                 :form="$getFiltersForm()"
-                class="p-4 sm:px-6"
+                class="fi-ta-filters-below-content p-4 sm:px-6"
             />
         @endif
     </x-filament-tables::container>
