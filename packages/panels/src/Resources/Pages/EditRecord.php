@@ -18,6 +18,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 use function Filament\Support\is_app_url;
 
@@ -108,16 +109,9 @@ class EditRecord extends Page
      */
     protected function refreshFormData(array $attributes): void
     {
-        $updatedData = $this->getRecord()->only($attributes);
-
-        $transformedData = array_map(
-            fn ($value) => is_a($value, \BackedEnum::class) ? $value->value : $value,
-            $updatedData
-        );
-
         $this->data = [
             ...$this->data,
-            ...$transformedData,
+            ...Arr::only($this->getRecord()->attributesToArray(), $attributes),
         ];
     }
 
