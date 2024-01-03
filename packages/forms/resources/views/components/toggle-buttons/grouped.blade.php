@@ -7,8 +7,17 @@
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
-    :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+    :has-inline-label="$hasInlineLabel"
 >
+    <x-slot
+        name="label"
+        @class([
+            'sm:pt-1.5' => $hasInlineLabel,
+        ])
+    >
+        {{ $getLabel() }}
+    </x-slot>
+
     <x-filament::button.group class="w-max">
         @foreach ($getOptions() as $value => $label)
             @php
@@ -18,7 +27,6 @@
 
             <input
                 @disabled($shouldOptionBeDisabled)
-                hidden
                 id="{{ $inputId }}"
                 name="{{ $id }}"
                 type="radio"
