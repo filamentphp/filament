@@ -23,7 +23,7 @@
                 x-transition:enter-end="opacity-100"
             @endif
             @class([
-                'flex items-center gap-x-3 px-2 py-2',
+                'fi-sidebar-group-button flex items-center gap-x-3 px-2 py-2',
                 'cursor-pointer' => $collapsible,
             ])
         >
