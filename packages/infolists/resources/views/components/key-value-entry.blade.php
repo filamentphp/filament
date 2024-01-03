@@ -13,14 +13,14 @@
                 <tr>
                     <th
                         scope="col"
-                        class="px-3 py-2 text-start text-sm font-medium text-gray-700 dark:text-gray-200"
+                        class="px-3 py-2 text-start align-top text-sm font-medium text-gray-700 dark:text-gray-200"
                     >
                         {{ $getKeyLabel() }}
                     </th>
 
                     <th
                         scope="col"
-                        class="px-3 py-2 text-start text-sm font-medium text-gray-700 dark:text-gray-200"
+                        class="px-3 py-2 text-start align-top text-sm font-medium text-gray-700 dark:text-gray-200"
                     >
                         {{ $getValueLabel() }}
                     </th>
@@ -28,13 +28,13 @@
             </thead>
 
             <tbody class="divide-y divide-gray-200 font-mono text-base sm:text-sm sm:leading-6 dark:divide-white/5">
-                @foreach ($getState() as $key => $value)
+                @foreach (($getState() ?? []) as $key => $value)
                     <tr class="divide-x divide-gray-200 rtl:divide-x-reverse dark:divide-white/5">
-                        <td class="w-1/2 px-3 py-1.5">
+                        <td class="w-1/2 px-3 py-1.5 align-top">
                             {{ $key }}
                         </td>
 
-                        <td class="w-1/2 px-3 py-1.5">
+                        <td class="w-1/2 px-3 py-1.5 align-top">
                             {{ $value }}
                         </td>
                     </tr>

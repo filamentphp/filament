@@ -17,7 +17,7 @@ return [
 
         'key_value' => [
 
-            'fields' => [
+            'columns' => [
 
                 'key' => [
                     'label' => 'Key',

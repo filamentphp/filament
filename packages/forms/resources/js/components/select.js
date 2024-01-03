@@ -249,11 +249,10 @@ export default function selectFormComponent({
                 return
             }
 
-            this.$el.querySelector(
-                '.choices__list--single',
-            ).innerHTML = `<div class="choices__placeholder choices__item">${
-                placeholder ?? ''
-            }</div>`
+            this.$el.querySelector('.choices__list--single').innerHTML =
+                `<div class="choices__placeholder choices__item">${
+                    placeholder ?? ''
+                }</div>`
         },
 
         formatState: function (state) {
