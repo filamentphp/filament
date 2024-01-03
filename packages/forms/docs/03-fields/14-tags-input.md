@@ -120,14 +120,3 @@ use Filament\Forms\Components\TagsInput;
 TagsInput::make('tags')
     ->color('purple')
 ```
-
-## Inline input
-
-You can change the input to be inline by using the `inlineInput()` method:
-
-```php
-use Filament\Forms\Components\TagsInput;
-
-TagsInput::make('tags')
-    ->inlineInput()
-```
