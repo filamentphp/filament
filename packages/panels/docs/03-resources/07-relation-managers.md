@@ -51,6 +51,7 @@ Fieldset::make('Metadata')
 ```
 
 In this example, the `title`, `description` and `image` are automatically loaded from the `metadata` relationship, and saved again when the form is submitted. If the `metadata` record does not exist, it is automatically created.
+The foreign key in the child table should be nullable. The foreign key will be filled straight after the records are both created. Your app must adapt if it has a creating/created/saving/saved observer method on the model that depends on the child relationship existing.
 
 ## Creating a relation manager
 
