@@ -1,8 +1,4 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
-    @php
-        $state = $getState();
-    @endphp
-
     <div
         {{
             $attributes
@@ -32,7 +28,7 @@
             </thead>
 
             <tbody class="divide-y divide-gray-200 font-mono text-base sm:text-sm sm:leading-6 dark:divide-white/5">
-                @foreach ($state as $key => $value)
+                @foreach ($getState() as $key => $value)
                     <tr class="divide-x divide-gray-200 rtl:divide-x-reverse dark:divide-white/5">
                         <td class="w-1/2 px-3 py-1.5">
                             {{ $key }}
