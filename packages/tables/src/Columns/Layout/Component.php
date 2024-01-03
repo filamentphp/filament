@@ -4,12 +4,12 @@ namespace Filament\Tables\Columns\Layout;
 
 use Closure;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
 use Filament\Tables\Columns\Concerns\BelongsToTable;
 use Filament\Tables\Columns\Concerns\CanBeHidden;
-use Filament\Tables\Columns\Concerns\CanGrow;
 use Filament\Tables\Columns\Concerns\CanSpanColumns;
 use Filament\Tables\Columns\Concerns\HasRecord;
 use Filament\Tables\Columns\Concerns\HasRowLoopObject;

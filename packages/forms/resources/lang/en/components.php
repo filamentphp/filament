@@ -419,6 +419,22 @@ return [
         'placeholder' => 'New tag',
     ],
 
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Hide password',
+            ],
+
+            'show_password' => [
+                'label' => 'Show password',
+            ],
+
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [

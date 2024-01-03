@@ -12,12 +12,14 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 use function Filament\Support\is_app_url;
 
@@ -30,6 +32,7 @@ class EditRecord extends Page
     use Concerns\InteractsWithRecord {
         configureAction as configureActionRecord;
     }
+    use HasUnsavedDataChangesAlert;
     use InteractsWithFormActions;
 
     /**
@@ -110,7 +113,7 @@ class EditRecord extends Page
     {
         $this->data = [
             ...$this->data,
-            ...$this->getRecord()->only($attributes),
+            ...Arr::only($this->getRecord()->attributesToArray(), $attributes),
         ];
     }
 
@@ -144,6 +147,8 @@ class EditRecord extends Page
         } catch (Halt $exception) {
             return;
         }
+
+        $this->rememberData();
 
         $this->getSavedNotification()?->send();
 

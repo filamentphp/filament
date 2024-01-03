@@ -395,6 +395,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/text-input/revealable-password': {
+        url: 'forms/fields',
+        selector: '#textInputRevealablePassword',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/select/simple': {
         url: 'forms/fields',
         selector: '#select',
@@ -709,6 +718,51 @@ export default {
     'forms/fields/radio/disabled-option': {
         url: 'forms/fields',
         selector: '#disabledOptionRadio',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/radio/buttons': {
+        url: 'forms/fields',
+        selector: '#buttonsRadio',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/radio/buttons-inline-under-label': {
+        url: 'forms/fields',
+        selector: '#buttonsRadioInlineUnderLabel',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/radio/button-group': {
+        url: 'forms/fields',
+        selector: '#buttonGroupRadio',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/radio/colors': {
+        url: 'forms/fields',
+        selector: '#radioOptionColors',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/radio/icons': {
+        url: 'forms/fields',
+        selector: '#radioOptionIcons',
         viewport: {
             width: 1920,
             height: 640,
@@ -1154,6 +1208,15 @@ export default {
         viewport: {
             width: 1920,
             height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/split/simple': {
+        url: 'forms/layout',
+        selector: '#split',
+        viewport: {
+            width: 1920,
+            height: 320,
             deviceScaleFactor: 3,
         },
     },

@@ -3,29 +3,68 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Htmlable;
 
 class Radio extends Field implements Contracts\CanDisableOptions
 {
     use Concerns\CanDisableOptions;
     use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
     use Concerns\CanFixIndistinctState;
+    use Concerns\HasColors;
+    use Concerns\HasDescriptions;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;
+    use Concerns\HasIcons;
     use Concerns\HasOptions;
+
+    public const RADIOS_VIEW = 'filament-forms::components.radio.index';
+
+    public const BUTTONS_VIEW = 'filament-forms::components.radio.buttons';
+
+    public const BUTTON_GROUP_VIEW = 'filament-forms::components.radio.button-group';
 
     /**
      * @var view-string
      */
-    protected string $view = 'filament-forms::components.radio';
+    protected string $view = self::RADIOS_VIEW;
 
     protected bool | Closure $isInline = false;
 
-    /**
-     * @var array<string | Htmlable> | Arrayable | Closure
-     */
-    protected array | Arrayable | Closure $descriptions = [];
+    protected bool | Closure | null $isOptionDisabled = null;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+    }
+
+    public function radios(): static
+    {
+        return $this->view(static::RADIOS_VIEW);
+    }
+
+    public function isRadios(): bool
+    {
+        return $this->getView() === static::RADIOS_VIEW;
+    }
+
+    public function buttons(): static
+    {
+        return $this->view(static::BUTTONS_VIEW);
+    }
+
+    public function isButtons(): bool
+    {
+        return $this->getView() === static::BUTTONS_VIEW;
+    }
+
+    public function buttonGroup(): static
+    {
+        return $this->view(static::BUTTON_GROUP_VIEW);
+    }
+
+    public function isButtonGroup(): bool
+    {
+        return $this->getView() === static::BUTTON_GROUP_VIEW;
+    }
 
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
     {
@@ -43,46 +82,6 @@ class Radio extends Field implements Contracts\CanDisableOptions
         $this->inlineLabel(fn (Radio $component): ?bool => $component->evaluate($condition) ? true : null);
 
         return $this;
-    }
-
-    /**
-     * @param  array<string | Htmlable> | Arrayable | Closure  $descriptions
-     */
-    public function descriptions(array | Arrayable | Closure $descriptions): static
-    {
-        $this->descriptions = $descriptions;
-
-        return $this;
-    }
-
-    /**
-     * @param  array-key  $value
-     */
-    public function hasDescription($value): bool
-    {
-        return array_key_exists($value, $this->getDescriptions());
-    }
-
-    /**
-     * @param  array-key  $value
-     */
-    public function getDescription($value): string | Htmlable | null
-    {
-        return $this->getDescriptions()[$value] ?? null;
-    }
-
-    /**
-     * @return array<string | Htmlable>
-     */
-    public function getDescriptions(): array
-    {
-        $descriptions = $this->evaluate($this->descriptions);
-
-        if ($descriptions instanceof Arrayable) {
-            $descriptions = $descriptions->toArray();
-        }
-
-        return $descriptions;
     }
 
     public function isInline(): bool

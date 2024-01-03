@@ -3,16 +3,17 @@
 namespace Filament\Tables\Columns\Layout;
 
 use Closure;
+use Filament\Support\Concerns\HasFromBreakpoint;
 use Filament\Tables\Columns\Column;
 
 class Split extends Component
 {
+    use HasFromBreakpoint;
+
     /**
      * @var view-string
      */
     protected string $view = 'filament-tables::columns.layout.split';
-
-    protected string | Closure | null $fromBreakpoint = null;
 
     /**
      * @param  array<Column | Component> | Closure  $schema
@@ -31,17 +32,5 @@ class Split extends Component
         $static->configure();
 
         return $static;
-    }
-
-    public function from(string | Closure | null $breakpoint): static
-    {
-        $this->fromBreakpoint = $breakpoint;
-
-        return $this;
-    }
-
-    public function getFromBreakpoint(): ?string
-    {
-        return $this->evaluate($this->fromBreakpoint);
     }
 }

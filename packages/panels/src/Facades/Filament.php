@@ -106,6 +106,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasTenantProfile()
  * @method static bool hasTenantRegistration()
  * @method static bool hasTopNavigation()
+ * @method static bool hasUnsavedChangesAlerts()
  * @method static bool isServing()
  * @method static bool isSidebarCollapsibleOnDesktop()
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
@@ -113,7 +114,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void serving(Closure $callback)
  * @method static void setCurrentPanel(Panel | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)
- * @method static void setTenant(Model | null $tenant = null)
+ * @method static void setTenant(Model | null $tenant = null, bool $isQuiet = false)
  *
  * @see FilamentManager
  */

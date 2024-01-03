@@ -223,8 +223,13 @@ class AssociateAction extends Action
                 });
             }
 
+            $relationCountHash = $relationship->getRelationCountHash(incrementJoinCount: false);
+
             $relationshipQuery
-                ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use ($relationship): Builder {
+                ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use (
+                    $relationCountHash,
+                    $relationship
+                ): Builder {
                     if ($relationship instanceof MorphMany) {
                         return $query
                             ->where(
@@ -240,7 +245,7 @@ class AssociateAction extends Action
                     return $query->where(
                         // https://github.com/filamentphp/filament/issues/8067
                         $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?
-                            $relationship->getParent()->getKeyName() :
+                            "{$relationCountHash}.{$relationship->getParent()->getKeyName()}" :
                             $relationship->getParent()->getQualifiedKeyName(),
                         $relationship->getParent()->getKey(),
                     );

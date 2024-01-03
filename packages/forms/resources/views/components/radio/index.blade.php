@@ -21,7 +21,7 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
                     'fi-fo-radio gap-4',
-                    '-mt-4' => (! $isInline) && $gridDirection === 'column',
+                    '-mt-4' => (! $isInline) && ($gridDirection === 'column'),
                     'flex flex-wrap' => $isInline,
                 ])
         "
@@ -29,7 +29,7 @@
         @foreach ($getOptions() as $value => $label)
             <div
                 @class([
-                    'break-inside-avoid pt-4' => (! $isInline) && $gridDirection === 'column',
+                    'break-inside-avoid pt-4' => (! $isInline) && ($gridDirection === 'column'),
                 ])
             >
                 <label class="flex gap-x-3">
