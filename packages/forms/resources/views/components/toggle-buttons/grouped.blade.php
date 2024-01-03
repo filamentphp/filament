@@ -1,6 +1,7 @@
 @php
     $id = $getId();
     $isDisabled = $isDisabled();
+    $isMultiple = $isMultiple();
     $statePath = $getStatePath();
 @endphp
 
@@ -28,8 +29,10 @@
             <input
                 @disabled($shouldOptionBeDisabled)
                 id="{{ $inputId }}"
-                name="{{ $id }}"
-                type="radio"
+                @if (! $isMultiple)
+                    name="{{ $id }}"
+                @endif
+                type="{{ $isMultiple ? 'checkbox' : 'radio' }}"
                 value="{{ $value }}"
                 wire:loading.attr="disabled"
                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $statePath }}"

@@ -18,6 +18,8 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
 
     public const GROUPED_VIEW = 'filament-forms::components.toggle-buttons.grouped';
 
+    protected bool | Closure $isMultiple = false;
+
     /**
      * @var view-string
      */
@@ -28,6 +30,8 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->default(fn (ToggleButtons $component): mixed => $component->isMultiple() ? [] : null);
     }
 
     public function grouped(): static
@@ -70,6 +74,18 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
     public function isInline(): bool
     {
         return (bool) $this->evaluate($this->isInline);
+    }
+
+    public function multiple(bool | Closure $condition = true): static
+    {
+        $this->isMultiple = $condition;
+
+        return $this;
+    }
+
+    public function isMultiple(): bool
+    {
+        return (bool) $this->evaluate($this->isMultiple);
     }
 
     public function getDefaultState(): mixed
