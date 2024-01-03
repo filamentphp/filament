@@ -1,13 +1,13 @@
 @php
     use Filament\Support\Facades\FilamentView;
 
+    $color = $getColor();
     $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
+    $isInlineInput = $getInlineInput();
     $isReorderable = $isReorderable();
     $statePath = $getStatePath();
-    $isInlineInput = $getInlineInput();
-    $color = $getColor();
 @endphp
 
 <x-dynamic-component
@@ -99,12 +99,12 @@
                                 class="hidden"
                             >
                                 <x-filament::badge
+                                    :color="$color"
                                     :x-bind:x-sortable-item="$isReorderable ? 'index' : null"
                                     :x-sortable-handle="$isReorderable ? '' : null"
                                     @class([
                                         'cursor-move' => $isReorderable,
                                     ])
-                                    :color="$color"
                                 >
                                     {{ $getTagPrefix() }}
 
