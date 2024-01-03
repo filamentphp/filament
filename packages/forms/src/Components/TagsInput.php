@@ -40,8 +40,6 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
 
     protected string | Closure | null $tagSuffix = null;
 
-    protected ?bool $inlineInput = false;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -169,17 +167,5 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     public function isReorderable(): bool
     {
         return (bool) $this->evaluate($this->isReorderable);
-    }
-
-    public function inlineInput(?bool $inlineInput = true): static
-    {
-        $this->inlineInput = $inlineInput;
-
-        return $this;
-    }
-
-    public function getInlineInput(): bool
-    {
-        return (bool) $this->evaluate($this->inlineInput);
     }
 }
