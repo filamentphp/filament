@@ -64,6 +64,7 @@ class Column extends ViewComponent
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
+            'column' => [$this],
             'livewire' => [$this->getLivewire()],
             'record' => [$this->getRecord()],
             'rowLoop' => [$this->getRowLoop()],
@@ -81,11 +82,15 @@ class Column extends ViewComponent
         $record = $this->getRecord();
 
         if (! $record) {
-            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+            return match($parameterType) {
+                self::class, static::class => [$this],
+                default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+            };
         }
 
         return match ($parameterType) {
             Model::class, $record::class => [$record],
+            self::class, static::class => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
