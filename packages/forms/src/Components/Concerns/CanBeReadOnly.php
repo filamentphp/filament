@@ -10,10 +10,6 @@ trait CanBeReadOnly
 {
     protected bool | Closure $isReadOnly = false;
 
-    /**
-     * Remember that the input can still be modified on the client side if edited by browser dev tools.
-     * Call `->dehydrated(false)` to prevent this.
-     */
     public function readOnly(bool | Closure $condition = true): static
     {
         $this->isReadOnly = $condition;
