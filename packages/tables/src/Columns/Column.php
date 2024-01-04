@@ -64,7 +64,7 @@ class Column extends ViewComponent
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
-            'column' => [$this],
+            'column', 'component' => [$this],
             'livewire' => [$this->getLivewire()],
             'record' => [$this->getRecord()],
             'rowLoop' => [$this->getRowLoop()],
