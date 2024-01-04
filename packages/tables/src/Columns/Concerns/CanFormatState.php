@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -26,9 +27,9 @@ trait CanFormatState
 
     protected string | Closure | null $wordLimitEnd = null;
 
-    protected string | Closure | null $prefix = null;
+    protected string | Htmlable | Closure | null $prefix = null;
 
-    protected string | Closure | null $suffix = null;
+    protected string | Htmlable | Closure | null $suffix = null;
 
     protected string | Closure | null $timezone = null;
 
@@ -179,14 +180,14 @@ trait CanFormatState
         return $this;
     }
 
-    public function prefix(string | Closure | null $prefix): static
+    public function prefix(string | Htmlable | Closure | null $prefix): static
     {
         $this->prefix = $prefix;
 
         return $this;
     }
 
-    public function suffix(string | Closure | null $suffix): static
+    public function suffix(string | Htmlable | Closure | null $suffix): static
     {
         $this->suffix = $suffix;
 
@@ -227,10 +228,18 @@ trait CanFormatState
 
         if (filled($prefix = $this->getPrefix())) {
             $state = $prefix . $state;
+
+            if ($prefix instanceof Htmlable) {
+                $this->isHtml = true;
+            }
         }
 
         if (filled($suffix = $this->getSuffix())) {
             $state = $state . $suffix;
+
+            if ($suffix instanceof Htmlable) {
+                $this->isHtml = true;
+            }
         }
 
         if ($state instanceof HtmlString) {
@@ -277,12 +286,12 @@ trait CanFormatState
         return $this->evaluate($this->isHtml) || $this->isMarkdown();
     }
 
-    public function getPrefix(): ?string
+    public function getPrefix(): null | string | Htmlable
     {
         return $this->evaluate($this->prefix);
     }
 
-    public function getSuffix(): ?string
+    public function getSuffix(): null | string | Htmlable
     {
         return $this->evaluate($this->suffix);
     }
