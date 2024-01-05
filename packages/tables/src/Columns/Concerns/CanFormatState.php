@@ -286,12 +286,12 @@ trait CanFormatState
         return $this->evaluate($this->isHtml) || $this->isMarkdown();
     }
 
-    public function getPrefix(): null | string | Htmlable
+    public function getPrefix(): string | Htmlable | null
     {
         return $this->evaluate($this->prefix);
     }
 
-    public function getSuffix(): null | string | Htmlable
+    public function getSuffix(): string | Htmlable | null
     {
         return $this->evaluate($this->suffix);
     }
