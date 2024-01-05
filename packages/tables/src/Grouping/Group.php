@@ -8,6 +8,7 @@ use Closure;
 use DateTimeInterface;
 use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use Filament\Tables\Columns\Concerns\InteractsWithTableQuery;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,8 @@ use Illuminate\Support\Arr;
 
 class Group extends Component
 {
+    use InteractsWithTableQuery;
+
     protected ?string $column;
 
     protected ?Closure $getDescriptionFromRecordUsing = null;
