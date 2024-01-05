@@ -7,11 +7,17 @@ use Filament\Tables\Filters\Indicator;
 
 trait HasFilterIndicators
 {
+    protected ?bool $hideFilterIndicators = null;
+
     /**
      * @return array<Indicator>
      */
     public function getFilterIndicators(): array
     {
+        if ($this->hideFilterIndicators) {
+            return [];
+        }
+
         return [
             ...($this->hasSearch() ? [$this->getSearchIndicator()] : []),
             ...$this->getColumnSearchIndicators(),
@@ -30,5 +36,12 @@ trait HasFilterIndicators
                 [],
             ),
         ];
+    }
+
+    public function hideFilterIndicators(?bool $condition = true): static
+    {
+        $this->hideFilterIndicators = $condition;
+
+        return $this;
     }
 }
