@@ -2,8 +2,8 @@
 
 namespace Filament\Widgets;
 
-use Illuminate\Support\HtmlString;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
 abstract class Widget extends Component
