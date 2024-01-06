@@ -2,6 +2,7 @@
 
 namespace Filament\Widgets;
 
+use Illuminate\Support\HtmlString;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -99,7 +100,7 @@ abstract class Widget extends Component
         return $properties;
     }
 
-    public function placeholder(): View
+    public function placeholder(): View | HtmlString
     {
         return view('filament::components.loading-section', [
             'columnSpan' => $this->getColumnSpan(),
