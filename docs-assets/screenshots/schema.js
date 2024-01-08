@@ -724,51 +724,6 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/fields/radio/buttons': {
-        url: 'forms/fields',
-        selector: '#buttonsRadio',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/fields/radio/buttons-inline-under-label': {
-        url: 'forms/fields',
-        selector: '#buttonsRadioInlineUnderLabel',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/fields/radio/button-group': {
-        url: 'forms/fields',
-        selector: '#buttonGroupRadio',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/fields/radio/colors': {
-        url: 'forms/fields',
-        selector: '#radioOptionColors',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/fields/radio/icons': {
-        url: 'forms/fields',
-        selector: '#radioOptionIcons',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
     'forms/fields/date-time-picker/simple': {
         url: 'forms/fields',
         selector: '#dateTimePickers',
