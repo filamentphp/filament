@@ -69,5 +69,5 @@
 
 .fi-fo-file-upload-circle-cropper .cropper-view-box,
 .fi-fo-file-upload-circle-cropper .cropper-face {
-    @apply rounded-full;
+    border-radius: 50%;
 }
