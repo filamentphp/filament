@@ -11,7 +11,7 @@ composer require filament/spatie-laravel-media-library-plugin:"^3.1" -W
 If you haven't already done so, you need to publish the migration to create the media table:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
 ```
 
 Run the migrations:
