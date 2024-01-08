@@ -8,9 +8,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Illuminate\Support\Stringable;
 
 use function Filament\Support\format_money;
 use function Filament\Support\format_number;
@@ -210,9 +208,16 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
+        $isHtml = $this->isHtml();
+
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
         ]);
+
+        if ($state instanceof Htmlable) {
+            $isHtml = true;
+            $state = $state->toHtml();
+        }
 
         if ($state instanceof LabelInterface) {
             $state = $state->getLabel();
@@ -226,31 +231,39 @@ trait CanFormatState
             $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
         }
 
-        if (filled($prefix = $this->getPrefix())) {
-            $state = $prefix . $state;
+        if ($isHtml && $this->isMarkdown()) {
+            $state = Str::markdown($state);
+        }
 
+        $prefix = $this->getPrefix();
+        $suffix = $this->getSuffix();
+
+        if (
+            (($prefix instanceof Htmlable) || ($suffix instanceof Htmlable)) &&
+            (! $isHtml)
+        ) {
+            $isHtml = true;
+            $state = e($state);
+        }
+
+        if (filled($prefix)) {
             if ($prefix instanceof Htmlable) {
-                $this->isHtml = true;
+                $prefix = $prefix->toHtml();
             }
+
+            $state = $prefix . $state;
         }
 
-        if (filled($suffix = $this->getSuffix())) {
-            $state = $state . $suffix;
-
+        if (filled($suffix)) {
             if ($suffix instanceof Htmlable) {
-                $this->isHtml = true;
+                $suffix = $suffix->toHtml();
             }
+
+            $state = $state . $suffix;
         }
 
-        if ($state instanceof HtmlString) {
-            return $state;
-        }
-
-        if ($this->isHtml()) {
-            return str($state)
-                ->when($this->isMarkdown(), fn (Stringable $stringable) => $stringable->markdown())
-                ->sanitizeHtml()
-                ->toHtmlString();
+        if ($isHtml) {
+            return str($state)->sanitizeHtml()->toHtmlString();
         }
 
         return $state;
