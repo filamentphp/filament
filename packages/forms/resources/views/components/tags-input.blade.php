@@ -1,7 +1,7 @@
 @php
     use Filament\Support\Facades\FilamentView;
 
-    $color = $getColor();
+    $color = $getColor() ?? 'primary';
     $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
