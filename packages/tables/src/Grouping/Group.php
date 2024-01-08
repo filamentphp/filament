@@ -8,7 +8,6 @@ use Closure;
 use DateTimeInterface;
 use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
-use Filament\Tables\Columns\Concerns\InteractsWithTableQuery;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
@@ -18,8 +17,6 @@ use Illuminate\Support\Arr;
 
 class Group extends Component
 {
-    use InteractsWithTableQuery;
-
     protected ?string $column;
 
     protected ?Closure $getDescriptionFromRecordUsing = null;
@@ -456,5 +453,20 @@ class Group extends Component
     public function isDate(): bool
     {
         return $this->isDate;
+    }
+
+    public function applyEagerLoading(EloquentBuilder $query): EloquentBuilder
+    {
+        if (! $this->getRelationship($query->getModel())) {
+            return $query;
+        }
+
+        $relationshipName = $this->getRelationshipName();
+
+        if (array_key_exists($relationshipName, $query->getEagerLoads())) {
+            return $query;
+        }
+
+        return $query->with([$relationshipName]);
     }
 }
