@@ -1013,6 +1013,96 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/toggle-buttons/simple': {
+        url: 'forms/fields',
+        selector: '#toggleButtons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/colors': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsColors',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/icons': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsIcons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/boolean': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsBoolean',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/inline': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsInline',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/grouped': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsGrouped',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/multiple': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsMultiple',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/columns': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsColumns',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/rows': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsRows',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/disabled-option': {
+        url: 'forms/fields',
+        selector: '#disabledOptionToggleButtons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/actions/suffix': {
         url: 'forms/fields',
         selector: '#suffixAction',

@@ -1,4 +1,5 @@
 @php
+    $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
     $isMultiple = $isMultiple();

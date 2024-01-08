@@ -39,11 +39,6 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
         return $this->view(static::GROUPED_VIEW);
     }
 
-    public function isGrouped(): bool
-    {
-        return $this->getView() === static::GROUPED_VIEW;
-    }
-
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
     {
         $this->options([
@@ -57,8 +52,8 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
         ]);
 
         $this->icons([
-            1 => FilamentIcon::resolve('forms::components.toggle-buttons.true') ?? 'heroicon-m-check',
-            0 => FilamentIcon::resolve('forms::components.toggle-buttons.false') ?? 'heroicon-m-x-mark',
+            1 => FilamentIcon::resolve('forms::components.toggle-buttons.boolean.true') ?? 'heroicon-m-check',
+            0 => FilamentIcon::resolve('forms::components.toggle-buttons.boolean.false') ?? 'heroicon-m-x-mark',
         ]);
 
         return $this;
