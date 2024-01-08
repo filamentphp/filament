@@ -53,6 +53,10 @@ trait CanGroupRecords
             return $query;
         }
 
-        return $group->orderQuery($query, $this->getTableGroupingDirection() ?? 'asc');
+        $group->applyEagerLoading($query);
+
+        $group->orderQuery($query, $this->getTableGroupingDirection() ?? 'asc');
+
+        return $query;
     }
 }
