@@ -93,23 +93,6 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/filters/above-content" alt="Table with filters above content" version="3.x" />
 
-## Hiding the filter indicator bar
-
-To hide the active filters indicator bar, you may use: 
-
-```php
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->filters([
-            // ...
-        ])
-        ->hideFilterIndicators();
-}
-```
-
 ### Allowing filters above the table content to be collapsed
 
 To allow the filters above the table content to be collapsed, you may use:
@@ -144,3 +127,20 @@ public function table(Table $table): Table
 ```
 
 <AutoScreenshot name="tables/filters/below-content" alt="Table with filters below content" version="3.x" />
+
+## Hiding the filter indicators
+
+To hide the active filters indicators above the table, you may use `hiddenFilterIndicators()`:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->hiddenFilterIndicators();
+}
+```

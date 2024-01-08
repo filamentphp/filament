@@ -2,19 +2,20 @@
 
 namespace Filament\Tables\Table\Concerns;
 
+use Closure;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Indicator;
 
 trait HasFilterIndicators
 {
-    protected ?bool $hideFilterIndicators = null;
+    protected bool | Closure $areFilterIndicatorsHidden = false;
 
     /**
      * @return array<Indicator>
      */
     public function getFilterIndicators(): array
     {
-        if ($this->hideFilterIndicators) {
+        if ($this->evaluate($this->areFilterIndicatorsHidden)) {
             return [];
         }
 
@@ -38,9 +39,9 @@ trait HasFilterIndicators
         ];
     }
 
-    public function hideFilterIndicators(?bool $condition = true): static
+    public function hiddenFilterIndicators(bool | Closure $condition = true): static
     {
-        $this->hideFilterIndicators = $condition;
+        $this->areFilterIndicatorsHidden = $condition;
 
         return $this;
     }
