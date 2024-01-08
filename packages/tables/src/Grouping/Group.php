@@ -454,4 +454,19 @@ class Group extends Component
     {
         return $this->isDate;
     }
+
+    public function applyEagerLoading(EloquentBuilder $query): EloquentBuilder
+    {
+        if (! $this->getRelationship($query->getModel())) {
+            return $query;
+        }
+
+        $relationshipName = $this->getRelationshipName();
+
+        if (array_key_exists($relationshipName, $query->getEagerLoads())) {
+            return $query;
+        }
+
+        return $query->with([$relationshipName]);
+    }
 }

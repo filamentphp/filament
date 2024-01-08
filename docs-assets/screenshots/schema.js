@@ -1586,6 +1586,15 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'infolists/entries/key-value/simple': {
+        url: 'infolists/entries',
+        selector: '#keyValue',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/entries/repeatable/simple': {
         url: 'infolists/entries',
         selector: '#repeatable',

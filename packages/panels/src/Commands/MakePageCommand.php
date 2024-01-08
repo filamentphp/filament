@@ -219,7 +219,7 @@ class MakePageCommand extends Command
 
         $path = (string) str($page)
             ->prepend('/')
-            ->prepend(empty($resource) ? ($path ?? '') : ($resourcePath ?? '') . "\\{$resource}\\Pages\\")
+            ->prepend(empty($resource) ? $path : $resourcePath . "\\{$resource}\\Pages\\")
             ->replace('\\', '/')
             ->replace('//', '/')
             ->append('.php');
@@ -243,7 +243,7 @@ class MakePageCommand extends Command
         if (empty($resource)) {
             $this->copyStubToApp('Page', $path, [
                 'class' => $pageClass,
-                'namespace' => str($namespace ?? '') . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'namespace' => $namespace . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'view' => $view,
             ]);
         } elseif ($resourcePage === 'ManageRelatedRecords') {
@@ -251,10 +251,10 @@ class MakePageCommand extends Command
                 'baseResourcePage' => "Filament\\Resources\\Pages\\{$resourcePage}",
                 'baseResourcePageClass' => $resourcePage,
                 'modifyQueryUsing' => filled($modifyQueryUsing ?? null) ? PHP_EOL . $this->indentString($modifyQueryUsing ?? '', 3) : $modifyQueryUsing ?? '',
-                'namespace' => ($resourceNamespace ?? '') . "\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'namespace' => "{$resourceNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'recordTitleAttribute' => $recordTitleAttribute ?? null,
                 'relationship' => $relationship ?? null,
-                'resource' => ($resourceNamespace ?? '') . "\\{$resource}",
+                'resource' => "{$resourceNamespace}\\{$resource}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
                 'tableActions' => $this->indentString($tableActions ?? '', 4),
@@ -271,8 +271,8 @@ class MakePageCommand extends Command
             $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . ($resourcePage === 'custom' ? 'Page' : $resourcePage),
                 'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' : $resourcePage,
-                'namespace' => ($resourceNamespace ?? '') . "\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
-                'resource' => ($resourceNamespace ?? '') . "\\{$resource}",
+                'namespace' => "{$resourceNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'resource' => "{$resourceNamespace}\\{$resource}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
                 'view' => $view,
