@@ -435,6 +435,15 @@ return [
 
     ],
 
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Yes',
+            'false' => 'No',
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [

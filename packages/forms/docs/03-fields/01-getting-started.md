@@ -39,6 +39,7 @@ Filament ships with many types of field, suitable for editing different types of
 - [Textarea](textarea)
 - [Key-value](key-value)
 - [Color picker](color-picker)
+- [Toggle buttons](toggle-buttons)
 - [Hidden](hidden)
 
 You may also [create your own custom fields](custom) to edit data however you wish.
