@@ -37,6 +37,11 @@ class Radio extends Field implements Contracts\CanDisableOptions
         return $this;
     }
 
+    public function reverseBoolean(?string $trueLabel = null, ?string $falseLabel = null): static
+    {
+        return $this->boolean($falseLabel, $trueLabel);
+    }
+
     public function inline(bool | Closure $condition = true): static
     {
         $this->isInline = $condition;
