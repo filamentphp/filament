@@ -85,6 +85,28 @@ TagsInput::make('percentages')
     ->tagSuffix('%')
 ```
 
+## Reordering tags
+
+You can allow the user to reorder tags within the field using the `reorderable()` method:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->reorderable()
+```
+
+## Changing the color of tags
+
+You can change the color of the tags by passing a color to the `color()` method. It may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->color('danger')
+```
+
 ## Tags validation
 
 You may add validation rules for each tag by passing an array of rules to the `nestedRecursiveRules()` method:
@@ -97,15 +119,4 @@ TagsInput::make('tags')
         'min:3',
         'max:255',
     ])
-```
-
-## Reordering tags
-
-You can allow the user to reorder tags within the field using the `reorderable()` method:
-
-```php
-use Filament\Forms\Components\TagsInput;
-
-TagsInput::make('tags')
-    ->reorderable()
 ```

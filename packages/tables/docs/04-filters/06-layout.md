@@ -127,3 +127,20 @@ public function table(Table $table): Table
 ```
 
 <AutoScreenshot name="tables/filters/below-content" alt="Table with filters below content" version="3.x" />
+
+## Hiding the filter indicators
+
+To hide the active filters indicators above the table, you may use `hiddenFilterIndicators()`:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->hiddenFilterIndicators();
+}
+```

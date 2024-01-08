@@ -221,7 +221,9 @@
                                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                                 'wire:target' => $loadingIndicatorTarget,
                             ])
-                        )->class([$iconClasses])
+                        )
+                            ->class([$iconClasses])
+                            ->style([$iconStyles])
                     "
                 />
             @endif

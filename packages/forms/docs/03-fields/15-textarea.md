@@ -38,6 +38,23 @@ Textarea::make('description')
     ->autosize()
 ```
 
+## Making the field read-only
+
+Not to be confused with [disabling the field](getting-started#disabling-a-field), you may make the field "read-only" using the `readonly()` method:
+
+```php
+use Filament\Forms\Components\Textarea;
+
+Textarea::make('description')
+    ->readonly()
+```
+
+There are a few differences, compared to [`disabled()`](getting-started#disabling-a-field):
+
+- When using `readOnly()`, the field will still be sent to the server when the form is submitted. It can be mutated with the browser console, or via JavaScript. You can use [`dehydrated(false)`](advanced#preventing-a-field-from-being-dehydrated) to prevent this.
+- There are no styling changes, such as less opacity, when using `readOnly()`.
+- The field is still focusable when using `readOnly()`.
+
 ## Textarea validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to textareas.

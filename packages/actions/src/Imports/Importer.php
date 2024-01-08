@@ -304,4 +304,9 @@ abstract class Importer
 
         $this->{$hook}();
     }
+
+    public function getImport(): Import
+    {
+        return $this->import;
+    }
 }
