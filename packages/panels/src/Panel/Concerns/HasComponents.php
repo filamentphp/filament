@@ -555,6 +555,10 @@ trait HasComponents
      */
     public function getClusteredComponents(?string $cluster = null): array
     {
+        if (blank($cluster)) {
+            return $this->clusteredComponents;
+        }
+
         return $this->clusteredComponents[$cluster] ?? [];
     }
 }
