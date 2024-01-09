@@ -756,7 +756,7 @@ public function table(Table $table): Table
 To set the title of the relation manager, you can use the `$title` property on the relation manager class:
 
 ```php
-protected static string $title = 'Posts';
+protected static ?string $title = 'Posts';
 ```
 
 To set the title of the relation manager dynamically, you can override the `getTitle()` method on the relation manager class:
