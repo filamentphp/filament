@@ -2,7 +2,6 @@
 
 namespace Filament\Pages\Concerns;
 
-use Filament\Pages\Page;
 use Filament\Panel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
@@ -21,22 +20,27 @@ trait HasRoutes
      */
     protected static string | array $withoutRouteMiddleware = [];
 
+    public static function registerRoutes(Panel $panel): void
+    {
+        static::routes($panel);
+    }
+
     public static function routes(Panel $panel): void
     {
-        $slug = static::getSlug();
-        $routeName = (string) str($slug)
-            ->replace('/', '.')
-            ->prepend('pages.');
-
-        if (is_subclass_of(static::class, Page::class)) {
-            $slug = static::prependClusterSlug($slug);
-            $routeName = static::prependClusterRouteBaseNameSlug($routeName);
-        }
-
-        Route::get("/{$slug}", static::class)
+        Route::get(static::getRoutePath(), static::class)
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->name($routeName);
+            ->name(static::getRelativeRouteName());
+    }
+
+    public static function getRoutePath(): string
+    {
+        return '/' . static::getSlug();
+    }
+
+    public static function getRelativeRouteName(): string
+    {
+        return (string) str(static::getSlug())->replace('/', '.');
     }
 
     public static function getSlug(): string

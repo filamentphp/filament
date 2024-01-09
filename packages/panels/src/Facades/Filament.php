@@ -32,7 +32,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | Htmlable getBrandName()
  * @method static string | Htmlable | null getBrandLogo()
  * @method static string | null getBrandLogoHeight()
- * @method static array getClusteredComponents(string $cluster)
+ * @method static array getClusteredComponents(?string $cluster = null)
  * @method static string getCollapsedSidebarWidth()
  * @method static Panel | null getCurrentPanel()
  * @method static string | Htmlable | null getDarkModeBrandLogo()

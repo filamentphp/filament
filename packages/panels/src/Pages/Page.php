@@ -5,10 +5,12 @@ namespace Filament\Pages;
 use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
+use Filament\Panel;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Route;
 
 abstract class Page extends BasePage
 {
@@ -48,6 +50,19 @@ abstract class Page extends BasePage
         }
 
         return route(static::getRouteName($panel), $parameters, $isAbsolute);
+    }
+
+    public static function registerRoutes(Panel $panel): void
+    {
+        if (filled(static::getCluster())) {
+            Route::name(static::prependClusterRouteBaseName('pages.'))
+                ->prefix(static::prependClusterSlug(''))
+                ->group(fn () => static::routes($panel));
+
+            return;
+        }
+
+        Route::name('pages.')->group(fn () => static::routes($panel));
     }
 
     public static function registerNavigationItems(): void
@@ -91,11 +106,8 @@ abstract class Page extends BasePage
     {
         $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 
-        $routeName = (string) str(static::getSlug())
-            ->replace('/', '.')
-            ->prepend('pages.');
-
-        $routeName = static::prependClusterRouteBaseNameSlug($routeName);
+        $routeName = 'pages.' . static::getRelativeRouteName();
+        $routeName = static::prependClusterRouteBaseName($routeName);
 
         return $panel->generateRouteName($routeName);
     }
@@ -278,7 +290,7 @@ abstract class Page extends BasePage
         return $slug;
     }
 
-    public static function prependClusterRouteBaseNameSlug(string $name): string
+    public static function prependClusterRouteBaseName(string $name): string
     {
         if (filled($cluster = static::getCluster())) {
             return $cluster::prependClusterRouteBaseName($name);

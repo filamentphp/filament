@@ -6,7 +6,6 @@ use Filament\Facades\Filament;
 use Filament\Pages\Page;
 use Filament\Panel;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Route;
 
 class Cluster extends Page
 {
@@ -38,13 +37,18 @@ class Cluster extends Page
 
     public function mount(): void
     {
-        foreach (static::getClusteredComponents() as $component) {
-            if (! $component::canAccess()) {
-                continue;
-            }
+        foreach ($this->getCachedSubNavigation() as $navigationGroup) {
+            foreach ($navigationGroup->getItems() as $navigationItem) {
+                redirect($navigationItem->getUrl());
 
-            redirect($component::getUrl());
+                return;
+            }
         }
+    }
+
+    public function getSubNavigation(): array
+    {
+        return $this->generateNavigationItems(static::getClusteredComponents());
     }
 
     /**
@@ -111,24 +115,16 @@ class Cluster extends Page
     {
         $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 
-        return $panel->generateRouteName((string) str(static::getSlug())
-            ->replace('/', '.'));
-    }
-
-    public static function routes(Panel $panel): void
-    {
-        $slug = static::getSlug();
-        $routeName = (string) str($slug)
-            ->replace('/', '.');
-
-        Route::get("/{$slug}", static::class)
-            ->middleware(static::getRouteMiddleware($panel))
-            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->name($routeName);
+        return $panel->generateRouteName(static::getRelativeRouteName());
     }
 
     public static function getNavigationItemActiveRoutePattern(): string
     {
         return static::getRouteName() . '.*';
+    }
+
+    public static function registerRoutes(Panel $panel): void
+    {
+        static::routes($panel);
     }
 }

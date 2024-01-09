@@ -21,6 +21,8 @@ abstract class Page extends BasePage
 
     protected static string $resource;
 
+    protected static bool $isDiscovered = false;
+
     public static function getRouteName(?string $panel = null): string
     {
         $routeBaseName = static::getResource()::getRouteBaseName(panel: $panel);

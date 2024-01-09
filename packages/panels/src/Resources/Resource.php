@@ -595,18 +595,25 @@ abstract class Resource
         return static::$recordRouteKeyName;
     }
 
+    public static function registerRoutes(Panel $panel): void
+    {
+        if (filled($cluster = static::getCluster())) {
+            Route::name($cluster::prependClusterRouteBaseName('resources.'))
+                ->prefix($cluster::prependClusterSlug(''))
+                ->group(fn () => static::routes($panel));
+
+            return;
+        }
+
+        Route::name('resources.')->group(fn () => static::routes($panel));
+    }
+
     public static function routes(Panel $panel): void
     {
         $slug = static::getSlug();
         $routeBaseName = (string) str($slug)
             ->replace('/', '.')
-            ->prepend('resources.')
             ->append('.');
-
-        if (filled($cluster = static::getCluster())) {
-            $slug = $cluster::prependClusterSlug($slug);
-            $routeBaseName = $cluster::prependClusterRouteBaseName($routeBaseName);
-        }
 
         Route::name($routeBaseName)
             ->prefix($slug)
