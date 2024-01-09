@@ -2,6 +2,7 @@
 
 namespace Filament\Pages\Concerns;
 
+use Filament\Pages\Page;
 use Filament\Panel;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
@@ -23,16 +24,28 @@ trait HasRoutes
     public static function routes(Panel $panel): void
     {
         $slug = static::getSlug();
+        $routeName = (string) str($slug)
+            ->replace('/', '.')
+            ->prepend('pages.');
+
+        if (is_subclass_of(static::class, Page::class)) {
+            $slug = static::prependClusterSlug($slug);
+            $routeName = static::prependClusterRouteBaseNameSlug($routeName);
+        }
 
         Route::get("/{$slug}", static::class)
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->name((string) str($slug)->replace('/', '.'));
+            ->name($routeName);
     }
 
     public static function getSlug(): string
     {
-        return static::$slug ?? (string) str(class_basename(static::class))
+        if (filled(static::$slug)) {
+            return static::$slug;
+        }
+
+        return (string) str(class_basename(static::class))
             ->kebab()
             ->slug();
     }

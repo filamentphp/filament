@@ -22,6 +22,10 @@ trait HasSubNavigation
      */
     public function getSubNavigation(): array
     {
+        if (filled($cluster = static::getCluster())) {
+            return $this->generateNavigationItems($cluster::getClusteredComponents());
+        }
+
         return [];
     }
 
@@ -52,29 +56,33 @@ trait HasSubNavigation
     }
 
     /**
-     * @param  array<class-string<Page>>  $pages
+     * @param  array<class-string<Page>>  $components
      * @return array<NavigationItem>
      */
-    public function generateNavigationItems(array $pages): array
+    public function generateNavigationItems(array $components): array
     {
         $parameters = $this->getSubNavigationParameters();
 
         $items = [];
 
-        foreach ($pages as $page) {
-            $isResourcePage = is_subclass_of($page, ResourcePage::class);
+        foreach ($components as $component) {
+            $isResourcePage = is_subclass_of($component, ResourcePage::class);
 
             $shouldRegisterNavigation = $isResourcePage ?
-                $page::shouldRegisterNavigation($parameters) :
-                $page::shouldRegisterNavigation();
+                $component::shouldRegisterNavigation($parameters) :
+                $component::shouldRegisterNavigation();
 
             if (! $shouldRegisterNavigation) {
                 continue;
             }
 
+            if (! $component::canAccess()) {
+                continue;
+            }
+
             $pageItems = $isResourcePage ?
-                $page::getNavigationItems($parameters) :
-                $page::getNavigationItems();
+                $component::getNavigationItems($parameters) :
+                $component::getNavigationItems();
 
             $items = [
                 ...$items,

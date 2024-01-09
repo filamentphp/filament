@@ -37,10 +37,10 @@ class Dashboard extends Page
 
     public static function routes(Panel $panel): void
     {
-        Route::get(static::getRoutePath(), static::class)
+        Route::get(static::prependClusterSlug(static::getRoutePath()), static::class)
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->name(static::getSlug());
+            ->name(static::prependClusterRouteBaseNameSlug((string) str(static::getSlug())->replace('/', '.')->prepend('pages.')));
     }
 
     public static function getRoutePath(): string

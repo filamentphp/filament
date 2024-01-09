@@ -83,8 +83,6 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
     protected function authorizeAccess(): void
     {
-        static::authorizeResourceAccess();
-
         abort_unless(static::canAccess($this->getRecord()), 403);
     }
 

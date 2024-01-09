@@ -10,9 +10,4 @@ class {{ resourcePageClass }} extends {{ baseResourcePageClass }}
     protected static string $resource = {{ resourceClass }}::class;
 
     protected static string $view = '{{ view }}';
-
-    public function mount(): void
-    {
-        static::authorizeResourceAccess();
-    }
 }

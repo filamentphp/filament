@@ -69,6 +69,10 @@ trait InteractsWithRecord
 
         $breadcrumbs[] = $this->getBreadcrumb();
 
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
         return $breadcrumbs;
     }
 

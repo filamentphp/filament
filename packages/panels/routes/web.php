@@ -105,17 +105,13 @@ Route::name('filament.')
                                             }
                                         });
 
-                                        Route::name('pages.')->group(function () use ($panel): void {
-                                            foreach ($panel->getPages() as $page) {
-                                                $page::routes($panel);
-                                            }
-                                        });
+                                        foreach ($panel->getPages() as $page) {
+                                            $page::routes($panel);
+                                        }
 
-                                        Route::name('resources.')->group(function () use ($panel): void {
-                                            foreach ($panel->getResources() as $resource) {
-                                                $resource::routes($panel);
-                                            }
-                                        });
+                                        foreach ($panel->getResources() as $resource) {
+                                            $resource::routes($panel);
+                                        }
                                     });
 
                             });

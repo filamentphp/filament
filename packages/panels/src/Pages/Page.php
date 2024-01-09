@@ -2,6 +2,7 @@
 
 namespace Filament\Pages;
 
+use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 use Filament\Widgets\Widget;
@@ -11,11 +12,15 @@ use Illuminate\Database\Eloquent\Model;
 
 abstract class Page extends BasePage
 {
+    use Concerns\CanAuthorizeAccess;
     use Concerns\HasRoutes;
     use Concerns\HasSubNavigation;
     use Concerns\InteractsWithHeaderActions;
 
     protected static string $layout = 'filament-panels::components.layout.index';
+
+    /** @var class-string<Cluster> | null */
+    protected static ?string $cluster = null;
 
     protected static bool $isDiscovered = true;
 
@@ -47,6 +52,10 @@ abstract class Page extends BasePage
 
     public static function registerNavigationItems(): void
     {
+        if (filled(static::getCluster())) {
+            return;
+        }
+
         if (! static::shouldRegisterNavigation()) {
             return;
         }
@@ -66,20 +75,29 @@ abstract class Page extends BasePage
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
+                ->isActiveWhen(fn (): bool => request()->routeIs(static::getNavigationItemActiveRoutePattern()))
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->url(static::getNavigationUrl()),
         ];
     }
 
+    public static function getNavigationItemActiveRoutePattern(): string
+    {
+        return static::getRouteName();
+    }
+
     public static function getRouteName(?string $panel = null): string
     {
         $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 
-        return $panel->generateRouteName((string) str(static::getSlug())
+        $routeName = (string) str(static::getSlug())
             ->replace('/', '.')
-            ->prepend('pages.'));
+            ->prepend('pages.');
+
+        $routeName = static::prependClusterRouteBaseNameSlug($routeName);
+
+        return $panel->generateRouteName($routeName);
     }
 
     /**
@@ -87,6 +105,10 @@ abstract class Page extends BasePage
      */
     public function getBreadcrumbs(): array
     {
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs([]);
+        }
+
         return [];
     }
 
@@ -237,5 +259,36 @@ abstract class Page extends BasePage
     public static function isDiscovered(): bool
     {
         return static::$isDiscovered;
+    }
+
+    /**
+     * @return class-string<Cluster> | null
+     */
+    public static function getCluster(): ?string
+    {
+        return static::$cluster;
+    }
+
+    public static function prependClusterSlug(string $slug): string
+    {
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::prependClusterSlug($slug);
+        }
+
+        return $slug;
+    }
+
+    public static function prependClusterRouteBaseNameSlug(string $name): string
+    {
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::prependClusterRouteBaseName($name);
+        }
+
+        return $name;
+    }
+
+    public static function canAccess(): bool
+    {
+        return true;
     }
 }

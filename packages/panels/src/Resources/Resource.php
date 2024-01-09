@@ -3,6 +3,7 @@
 namespace Filament\Resources;
 
 use Exception;
+use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\GlobalSearch\Actions\Action;
@@ -48,6 +49,9 @@ abstract class Resource
     }
 
     protected static ?string $breadcrumb = null;
+
+    /** @var class-string<Cluster> | null */
+    protected static ?string $cluster = null;
 
     protected static bool $isDiscovered = true;
 
@@ -127,13 +131,22 @@ abstract class Resource
         return $infolist;
     }
 
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
+    }
+
     public static function registerNavigationItems(): void
     {
+        if (filled(static::getCluster())) {
+            return;
+        }
+
         if (! static::shouldRegisterNavigation()) {
             return;
         }
 
-        if (! static::canViewAny()) {
+        if (! static::canAccess()) {
             return;
         }
 
@@ -311,7 +324,7 @@ abstract class Resource
 
     public static function canGloballySearch(): bool
     {
-        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canViewAny();
+        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
     }
 
     public static function getBreadcrumb(): string
@@ -566,9 +579,15 @@ abstract class Resource
     {
         $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 
-        return $panel->generateRouteName((string) str(static::getSlug())
+        $routeBaseName = (string) str(static::getSlug())
             ->replace('/', '.')
-            ->prepend('resources.'));
+            ->prepend('resources.');
+
+        if (filled($cluster = static::getCluster())) {
+            $routeBaseName = $cluster::prependClusterRouteBaseName($routeBaseName);
+        }
+
+        return $panel->generateRouteName($routeBaseName);
     }
 
     public static function getRecordRouteKeyName(): ?string
@@ -579,12 +598,17 @@ abstract class Resource
     public static function routes(Panel $panel): void
     {
         $slug = static::getSlug();
+        $routeBaseName = (string) str($slug)
+            ->replace('/', '.')
+            ->prepend('resources.')
+            ->append('.');
 
-        Route::name(
-            (string) str($slug)
-                ->replace('/', '.')
-                ->append('.'),
-        )
+        if (filled($cluster = static::getCluster())) {
+            $slug = $cluster::prependClusterSlug($slug);
+            $routeBaseName = $cluster::prependClusterRouteBaseName($routeBaseName);
+        }
+
+        Route::name($routeBaseName)
             ->prefix($slug)
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
@@ -885,5 +909,13 @@ abstract class Resource
     public static function getRecordSubNavigation(Page $page): array
     {
         return [];
+    }
+
+    /**
+     * @return class-string<Cluster> | null
+     */
+    public static function getCluster(): ?string
+    {
+        return static::$cluster;
     }
 }
