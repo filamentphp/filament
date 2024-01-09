@@ -8,6 +8,14 @@ Icons are used throughout the entire Filament UI to visually communicate core pa
 
 They have a website where you can [search all the available icons](https://blade-ui-kit.com/blade-icons?set=1#search) from various Blade Icons packages. Each package contains a different icon set that you can choose from.
 
+### Blade Usage
+
+You can use the Filament Icon component to render icons from your custom Blade views.
+
+```blade
+<x-filament::icon icon="heroicon-o-check-circle" />
+```
+
 ## Using custom SVGs as icons
 
 The [Blade Icons](https://github.com/blade-ui-kit/blade-icons) package allows you to register custom SVGs as icons. This is useful if you want to use your own custom icons in Filament.
