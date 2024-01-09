@@ -75,6 +75,10 @@ abstract class Page extends BasePage
             return;
         }
 
+        if (! static::canAccess()) {
+            return;
+        }
+
         Filament::getCurrentPanel()
             ->navigationItems(static::getNavigationItems());
     }
