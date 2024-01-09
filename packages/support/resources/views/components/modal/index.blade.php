@@ -115,7 +115,6 @@
                 'fi-modal-close-overlay fixed inset-0 bg-gray-950/50 dark:bg-gray-950/75',
                 'cursor-pointer' => $closeByClickingAway,
             ])
-            style="will-change: transform"
         ></div>
 
         <div
@@ -143,14 +142,14 @@
                     x-on:keydown.window.escape="close()"
                 @endif
                 x-show="isShown"
-                x-transition:enter="duration-300"
-                x-transition:leave="duration-300"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:leave="transition ease-in duration-300"
                 @if ($width === MaxWidth::Screen)
                 @elseif ($slideOver)
-                    x-transition:enter-start="translate-x-full rtl:-translate-x-full"
+                    x-transition:enter-start="translate-x-1/2 rtl:-translate-x-1/2"
                     x-transition:enter-end="translate-x-0"
                     x-transition:leave-start="translate-x-0"
-                    x-transition:leave-end="translate-x-full rtl:-translate-x-full"
+                    x-transition:leave-end="translate-x-1/2 rtl:-translate-x-1/2"
                 @else
                     x-transition:enter-start="scale-95"
                     x-transition:enter-end="scale-100"
