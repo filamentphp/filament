@@ -123,7 +123,11 @@ trait HasSubNavigation
                 continue;
             }
 
-            if (! $component::canAccess()) {
+            $canAccess = $isResourcePage ?
+                $component::canAccess($parameters) :
+                $component::canAccess();
+
+            if (! $canAccess) {
                 continue;
             }
 

@@ -139,6 +139,14 @@ abstract class Page extends BasePage
         return parent::shouldRegisterNavigation();
     }
 
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public static function canAccess(array $parameters = []): bool
+    {
+        return parent::canAccess();
+    }
+
     public function getModel(): string
     {
         return static::getResource()::getModel();
