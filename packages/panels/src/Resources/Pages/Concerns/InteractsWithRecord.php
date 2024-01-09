@@ -13,6 +13,11 @@ trait InteractsWithRecord
     #[Locked]
     public Model | int | string | null $record;
 
+    public function mountCanAuthorizeAccess(): void
+    {
+        abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
+    }
+
     protected function resolveRecord(int | string $key): Model
     {
         $record = static::getResource()::resolveRecordRouteBinding($key);
