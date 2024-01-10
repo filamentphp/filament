@@ -11,6 +11,17 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 it('can render page', function () {
+    expect(Filament::getLoginUrl())->toEndWith('/login');
+
+    $this->get(Filament::getLoginUrl())
+        ->assertSuccessful();
+});
+
+it('can render page with a custom slug', function () {
+    Filament::setCurrentPanel(Filament::getPanel('slugs'));
+
+    expect(Filament::getLoginUrl())->toEndWith('/login-test');
+
     $this->get(Filament::getLoginUrl())
         ->assertSuccessful();
 });

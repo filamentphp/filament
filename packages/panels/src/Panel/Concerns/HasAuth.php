@@ -15,6 +15,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 
 trait HasAuth
 {
@@ -25,6 +26,12 @@ trait HasAuth
      */
     protected string | Closure | array | null $emailVerificationRouteAction = null;
 
+    protected string $emailVerificationPromptRouteSlug = 'prompt';
+
+    protected string $emailVerificationVerifyRouteSlug = 'verify';
+
+    protected string $emailVerificationRoutePrefix = 'email-verification';
+
     protected bool $isEmailVerificationRequired = false;
 
     /**
@@ -32,20 +39,30 @@ trait HasAuth
      */
     protected string | Closure | array | null $loginRouteAction = null;
 
+    protected string $loginRouteSlug = 'login';
+
     /**
      * @var string | Closure | array<class-string, string> | null
      */
     protected string | Closure | array | null $registrationRouteAction = null;
+
+    protected string $registrationRouteSlug = 'register';
 
     /**
      * @var string | Closure | array<class-string, string> | null
      */
     protected string | Closure | array | null $requestPasswordResetRouteAction = null;
 
+    protected string $requestPasswordResetRouteSlug = 'request';
+
     /**
      * @var string | Closure | array<class-string, string> | null
      */
     protected string | Closure | array | null $resetPasswordRouteAction = null;
+
+    protected string $resetPasswordRouteSlug = 'reset';
+
+    protected string $resetPasswordRoutePrefix = 'password-reset';
 
     protected ?string $profilePage = null;
 
@@ -56,10 +73,14 @@ trait HasAuth
     /**
      * @param  string | Closure | array<class-string, string> | null  $promptAction
      */
-    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true): static
+    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true, string $promptSlug = 'prompt', string $verifySlug = 'verify', string $prefix = 'email-verification'): static
     {
         $this->emailVerificationRouteAction = $promptAction;
         $this->requiresEmailVerification($isRequired);
+
+        $this->emailVerificationPromptRouteSlug = $promptSlug;
+        $this->emailVerificationVerifyRouteSlug = $verifySlug;
+        $this->emailVerificationRoutePrefix = $prefix;
 
         return $this;
     }
@@ -81,9 +102,10 @@ trait HasAuth
     /**
      * @param  string | Closure | array<class-string, string> | null  $action
      */
-    public function login(string | Closure | array | null $action = Login::class): static
+    public function login(string | Closure | array | null $action = Login::class, string $slug = 'login'): static
     {
         $this->loginRouteAction = $action;
+        $this->loginRouteSlug = $slug;
 
         return $this;
     }
@@ -92,10 +114,15 @@ trait HasAuth
      * @param  string | Closure | array<class-string, string> | null  $requestAction
      * @param  string | Closure | array<class-string, string> | null  $resetAction
      */
-    public function passwordReset(string | Closure | array | null $requestAction = RequestPasswordReset::class, string | Closure | array | null $resetAction = ResetPassword::class): static
+    public function passwordReset(string | Closure | array | null $requestAction = RequestPasswordReset::class, string | Closure | array | null $resetAction = ResetPassword::class, string $requestSlug = 'request', string $resetSlug = 'reset', string $prefix = 'password-reset'): static
     {
         $this->requestPasswordResetRouteAction = $requestAction;
         $this->resetPasswordRouteAction = $resetAction;
+
+        $this->requestPasswordResetRouteSlug = $requestSlug;
+        $this->resetPasswordRouteSlug = $resetSlug;
+
+        $this->resetPasswordRoutePrefix = $prefix;
 
         return $this;
     }
@@ -103,9 +130,10 @@ trait HasAuth
     /**
      * @param  string | Closure | array<class-string, string> | null  $action
      */
-    public function registration(string | Closure | array | null $action = Register::class): static
+    public function registration(string | Closure | array | null $action = Register::class, string $slug = 'register'): static
     {
         $this->registrationRouteAction = $action;
+        $this->registrationRouteSlug = $slug;
 
         return $this;
     }
@@ -273,12 +301,32 @@ trait HasAuth
         return $this->emailVerificationRouteAction;
     }
 
+    public function getEmailVerificationPromptRouteSlug(): string
+    {
+        return Str::start($this->emailVerificationPromptRouteSlug, '/');
+    }
+
+    public function getEmailVerificationVerifyRouteSlug(string $suffix): string
+    {
+        return Str::start($this->emailVerificationVerifyRouteSlug, '/') . $suffix;
+    }
+
+    public function getEmailVerificationRoutePrefix(): string
+    {
+        return Str::start($this->emailVerificationRoutePrefix, '/');
+    }
+
     /**
      * @return string | Closure | array<class-string, string> | null
      */
     public function getLoginRouteAction(): string | Closure | array | null
     {
         return $this->loginRouteAction;
+    }
+
+    public function getLoginRouteSlug(): string
+    {
+        return Str::start($this->loginRouteSlug, '/');
     }
 
     /**
@@ -289,6 +337,11 @@ trait HasAuth
         return $this->registrationRouteAction;
     }
 
+    public function getRegistrationRouteSlug(): string
+    {
+        return Str::start($this->registrationRouteSlug, '/');
+    }
+
     /**
      * @return string | Closure | array<class-string, string> | null
      */
@@ -297,12 +350,27 @@ trait HasAuth
         return $this->requestPasswordResetRouteAction;
     }
 
+    public function getRequestPasswordResetRouteSlug(): string
+    {
+        return Str::start($this->requestPasswordResetRouteSlug, '/');
+    }
+
     /**
      * @return string | Closure | array<class-string, string> | null
      */
     public function getResetPasswordRouteAction(): string | Closure | array | null
     {
         return $this->resetPasswordRouteAction;
+    }
+
+    public function getResetPasswordRouteSlug(): string
+    {
+        return Str::start($this->resetPasswordRouteSlug, '/');
+    }
+
+    public function getResetPasswordRoutePrefix(): string
+    {
+        return Str::start($this->resetPasswordRoutePrefix, '/');
     }
 
     public function hasEmailVerification(): bool

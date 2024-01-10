@@ -7,10 +7,13 @@ use Filament\Billing\Providers\Contracts\Provider as BillingProvider;
 use Filament\Navigation\MenuItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Str;
 
 trait HasTenancy
 {
     protected ?BillingProvider $tenantBillingProvider = null;
+
+    protected string $tenantBillingRouteSlug = 'billing';
 
     protected bool | Closure $hasTenantMenu = true;
 
@@ -76,9 +79,10 @@ trait HasTenancy
         return $this;
     }
 
-    public function tenantBillingProvider(?BillingProvider $provider): static
+    public function tenantBillingProvider(?BillingProvider $provider, string $slug = 'billing'): static
     {
         $this->tenantBillingProvider = $provider;
+        $this->tenantBillingRouteSlug = $slug;
 
         return $this;
     }
@@ -135,6 +139,11 @@ trait HasTenancy
     public function getTenantBillingProvider(): ?BillingProvider
     {
         return $this->tenantBillingProvider;
+    }
+
+    public function getTenantBillingRouteSlug(): string
+    {
+        return Str::start($this->tenantBillingRouteSlug, '/');
     }
 
     public function getTenantProfilePage(): ?string

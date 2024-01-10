@@ -13,6 +13,17 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 it('can render page', function () {
+    expect(Filament::getRegistrationUrl())->toEndWith('/register');
+
+    $this->get(Filament::getRegistrationUrl())
+        ->assertSuccessful();
+});
+
+it('can render page with a custom slug', function () {
+    Filament::setCurrentPanel(Filament::getPanel('slugs'));
+
+    expect(Filament::getRegistrationUrl())->toEndWith('/register-test');
+
     $this->get(Filament::getRegistrationUrl())
         ->assertSuccessful();
 });
