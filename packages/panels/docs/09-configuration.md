@@ -212,7 +212,7 @@ public function panel(Panel $panel): Panel
 
 ## Changing the default slugs
 
-Filament uses sensible English slugs by default when registering its routes. These can be changed by setting them in their respective config methods. 
+Filament uses sensible English slugs by default when registering its routes. These can be changed by setting them in the methods below. 
 
 ```php
 use Filament\Panel;
@@ -221,18 +221,14 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->tenantBillingProvider(slug: 'abrechnung')
-        ->login(slug: 'einloggen')
-        ->passwordReset(
-            requestSlug: 'anfragen',
-            resetSlug: 'zuruecksetzen',
-            prefix: 'passwort-ruecksetzung'
-        )
-        ->registration(slug: 'registrieren')
-        ->emailVerification(
-            promptSlug: 'auffordern',
-            verifySlug: 'verifizieren',
-            prefix: 'email-verifizierung'
-        );
+        ->tenantBillingSlug('abrechnung')
+        ->loginSlug('einloggen')
+        ->passwordResetRequestSlug('anfragen')
+        ->passwordResetSlug('zuruecksetzen')
+        ->passwordResetPrefix('passwort-ruecksetzung')
+        ->registrationSlug('registrieren')
+        ->emailVerificationPromptSlug('auffordern')
+        ->emailVerificationVerifySlug('verifizieren')
+        ->emailVerificationPrefix('email-verifizierung');
 }
 ```

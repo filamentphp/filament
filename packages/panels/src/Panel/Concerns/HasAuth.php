@@ -73,13 +73,30 @@ trait HasAuth
     /**
      * @param  string | Closure | array<class-string, string> | null  $promptAction
      */
-    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true, string $promptSlug = 'prompt', string $verifySlug = 'verify', string $prefix = 'email-verification'): static
+    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true): static
     {
         $this->emailVerificationRouteAction = $promptAction;
         $this->requiresEmailVerification($isRequired);
 
-        $this->emailVerificationPromptRouteSlug = $promptSlug;
-        $this->emailVerificationVerifyRouteSlug = $verifySlug;
+        return $this;
+    }
+
+    public function emailVerificationPromptSlug(string $slug): static
+    {
+        $this->emailVerificationPromptRouteSlug = $slug;
+
+        return $this;
+    }
+
+    public function emailVerificationVerifySlug(string $slug): static
+    {
+        $this->emailVerificationVerifyRouteSlug = $slug;
+
+        return $this;
+    }
+
+    public function emailVerificationPrefix(string $prefix): static
+    {
         $this->emailVerificationRoutePrefix = $prefix;
 
         return $this;
@@ -102,9 +119,15 @@ trait HasAuth
     /**
      * @param  string | Closure | array<class-string, string> | null  $action
      */
-    public function login(string | Closure | array | null $action = Login::class, string $slug = 'login'): static
+    public function login(string | Closure | array | null $action = Login::class): static
     {
         $this->loginRouteAction = $action;
+
+        return $this;
+    }
+
+    public function loginSlug(string $slug): static
+    {
         $this->loginRouteSlug = $slug;
 
         return $this;
@@ -114,14 +137,30 @@ trait HasAuth
      * @param  string | Closure | array<class-string, string> | null  $requestAction
      * @param  string | Closure | array<class-string, string> | null  $resetAction
      */
-    public function passwordReset(string | Closure | array | null $requestAction = RequestPasswordReset::class, string | Closure | array | null $resetAction = ResetPassword::class, string $requestSlug = 'request', string $resetSlug = 'reset', string $prefix = 'password-reset'): static
+    public function passwordReset(string | Closure | array | null $requestAction = RequestPasswordReset::class, string | Closure | array | null $resetAction = ResetPassword::class): static
     {
         $this->requestPasswordResetRouteAction = $requestAction;
         $this->resetPasswordRouteAction = $resetAction;
 
-        $this->requestPasswordResetRouteSlug = $requestSlug;
-        $this->resetPasswordRouteSlug = $resetSlug;
+        return $this;
+    }
 
+    public function passwordResetRequestSlug(string $slug): static
+    {
+        $this->requestPasswordResetRouteSlug = $slug;
+
+        return $this;
+    }
+
+    public function passwordResetSlug(string $slug): static
+    {
+        $this->resetPasswordRouteSlug = $slug;
+
+        return $this;
+    }
+
+    public function passwordResetPrefix(string $prefix): static
+    {
         $this->resetPasswordRoutePrefix = $prefix;
 
         return $this;
@@ -130,9 +169,15 @@ trait HasAuth
     /**
      * @param  string | Closure | array<class-string, string> | null  $action
      */
-    public function registration(string | Closure | array | null $action = Register::class, string $slug = 'register'): static
+    public function registration(string | Closure | array | null $action = Register::class): static
     {
         $this->registrationRouteAction = $action;
+
+        return $this;
+    }
+
+    public function registrationSlug(string $slug): static
+    {
         $this->registrationRouteSlug = $slug;
 
         return $this;

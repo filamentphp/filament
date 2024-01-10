@@ -22,18 +22,18 @@ class SlugsPanelProvider extends PanelProvider
         return $panel
             ->id('slugs')
             ->path('slugs')
-            ->login(slug: 'login-test')
-            ->passwordReset(
-                requestSlug: 'request-test',
-                resetSlug: 'reset-test',
-                prefix: 'password-reset-test'
-            )
-            ->registration(slug: 'register-test')
-            ->emailVerification(
-                promptSlug: 'prompt-test',
-                verifySlug: 'verify-test',
-                prefix: 'email-verification-test'
-            )
+            ->login()
+            ->loginSlug('login-test')
+            ->passwordReset()
+            ->passwordResetRequestSlug('request-test')
+            ->passwordResetSlug('reset-test')
+            ->passwordResetPrefix('password-reset-test')
+            ->registration()
+            ->registrationSlug('register-test')
+            ->emailVerification()
+            ->emailVerificationPromptSlug('prompt-test')
+            ->emailVerificationVerifySlug('verify-test')
+            ->emailVerificationPrefix('email-verification-test')
             ->resources([])
             ->pages([])
             ->middleware([
