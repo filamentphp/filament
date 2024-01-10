@@ -19,6 +19,10 @@
                 ->class(['fi-fo-placeholder text-sm leading-6'])
         }}
     >
-        {{ $getContent() }}
+        @if($isHtmlAllowed())
+            {!! $getContent() !!}
+        @else
+            {{ $getContent() }}
+        @endif
     </div>
 </x-dynamic-component>
