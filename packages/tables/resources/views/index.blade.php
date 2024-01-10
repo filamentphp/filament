@@ -123,7 +123,7 @@
     <x-filament-tables::container>
         <div
             @if (! $hasHeader) x-cloak @endif
-        x-bind:hidden="! (@js($hasHeader) || (selectedRecords.length && @js(count($bulkActions))))"
+            x-bind:hidden="! (@js($hasHeader) || (selectedRecords.length && @js(count($bulkActions))))"
             x-show="@js($hasHeader) || (selectedRecords.length && @js(count($bulkActions)))"
             class="fi-ta-header-ctn divide-y divide-gray-200 dark:divide-white/10"
         >
@@ -164,7 +164,7 @@
 
             <div
                 @if (! $hasHeaderToolbar) x-cloak @endif
-            x-show="@js($hasHeaderToolbar) || (selectedRecords.length && @js(count($bulkActions)))"
+                x-show="@js($hasHeaderToolbar) || (selectedRecords.length && @js(count($bulkActions)))"
                 class="fi-ta-header-toolbar flex items-center justify-between gap-x-4 px-4 py-3 sm:px-6"
             >
                 {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.start', scopes: static::class) }}
@@ -248,7 +248,7 @@
         </div>
 
         @if ($isReordering)
-            <x-filament-tables::reorder.indicator :colspan="$columnsCount"/>
+            <x-filament-tables::reorder.indicator :colspan="$columnsCount" />
         @elseif ($isSelectionEnabled && $isLoaded)
             <x-filament-tables::selection.indicator
                 :all-selectable-records-count="$allSelectableRecordsCount"
@@ -462,15 +462,15 @@
                             <div
                                 @if ($hasCollapsibleColumnsLayout)
                                     x-data="{ isCollapsed: @js($collapsibleColumnsLayout->isCollapsed()) }"
-                                x-init="$dispatch('collapsible-table-row-initialized')"
-                                x-on:collapse-all-table-rows.window="isCollapsed = true"
-                                x-on:expand-all-table-rows.window="isCollapsed = false"
-                                x-bind:class="isCollapsed && 'fi-collapsed'"
+                                    x-init="$dispatch('collapsible-table-row-initialized')"
+                                    x-on:collapse-all-table-rows.window="isCollapsed = true"
+                                    x-on:expand-all-table-rows.window="isCollapsed = false"
+                                    x-bind:class="isCollapsed && 'fi-collapsed'"
                                 @endif
                                 wire:key="{{ $this->getId() }}.table.records.{{ $recordKey }}"
                                 @if ($isReordering)
                                     x-sortable-item="{{ $recordKey }}"
-                                x-sortable-handle
+                                    x-sortable-handle
                                 @endif
                                 @class([
                                     'fi-ta-record relative h-full bg-white transition duration-75 dark:bg-gray-900',
