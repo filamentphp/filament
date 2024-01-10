@@ -7,6 +7,8 @@ use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Concerns\HasTabs;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -68,7 +70,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function authorizeAccess(): void
     {
-        static::authorizeResourceAccess();
     }
 
     public function getBreadcrumb(): ?string
@@ -323,6 +324,18 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
      */
     protected function getForms(): array
     {
+        return [];
+    }
+
+    /**
+     * @return array<NavigationItem | NavigationGroup>
+     */
+    public function getSubNavigation(): array
+    {
+        if (filled($cluster = static::getCluster())) {
+            return $this->generateNavigationItems($cluster::getClusteredComponents());
+        }
+
         return [];
     }
 }

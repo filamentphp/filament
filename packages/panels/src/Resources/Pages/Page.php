@@ -3,19 +3,25 @@
 namespace Filament\Resources\Pages;
 
 use Exception;
+use Filament\Clusters\Cluster;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page as BasePage;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Panel;
+use Filament\Resources\Pages\Concerns\CanAuthorizeResourceAccess;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 
 abstract class Page extends BasePage
 {
+    use CanAuthorizeResourceAccess;
+
     protected static ?string $breadcrumb = null;
 
     protected static string $resource;
+
+    protected static bool $isDiscovered = false;
 
     public static function getRouteName(?string $panel = null): string
     {
@@ -113,17 +119,16 @@ abstract class Page extends BasePage
     {
         $resource = static::getResource();
 
-        $breadcrumb = $this->getBreadcrumb();
-
-        return [
+        $breadcrumbs = [
             $resource::getUrl() => $resource::getBreadcrumb(),
-            ...(filled($breadcrumb) ? [$breadcrumb] : []),
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];
-    }
 
-    public static function authorizeResourceAccess(): void
-    {
-        abort_unless(static::getResource()::canViewAny(), 403);
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
+        return $breadcrumbs;
     }
 
     /**
@@ -132,6 +137,14 @@ abstract class Page extends BasePage
     public static function shouldRegisterNavigation(array $parameters = []): bool
     {
         return parent::shouldRegisterNavigation();
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public static function canAccess(array $parameters = []): bool
+    {
+        return parent::canAccess();
     }
 
     public function getModel(): string
@@ -161,5 +174,18 @@ abstract class Page extends BasePage
     public function getSubNavigationPosition(): SubNavigationPosition
     {
         return static::getResource()::getSubNavigationPosition();
+    }
+
+    /**
+     * @return class-string<Cluster> | null
+     */
+    public static function getCluster(): ?string
+    {
+        return static::getResource()::getCluster();
+    }
+
+    public function getSubNavigation(): array
+    {
+        return [];
     }
 }

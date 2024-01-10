@@ -43,8 +43,6 @@ class ManageUser extends Page
     public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);
-
-        static::authorizeResourceAccess();
     }
 
     // ...

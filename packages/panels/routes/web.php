@@ -63,7 +63,7 @@ Route::name('filament.')
                                         Route::post('/logout', LogoutController::class)->name('logout');
 
                                         if ($panel->hasProfile()) {
-                                            $panel->getProfilePage()::routes($panel);
+                                            $panel->getProfilePage()::registerRoutes($panel);
                                         }
                                     });
 
@@ -81,7 +81,7 @@ Route::name('filament.')
                                 Route::name('tenant.')
                                     ->group(function () use ($panel): void {
                                         if ($panel->hasTenantRegistration()) {
-                                            $panel->getTenantRegistrationPage()::routes($panel);
+                                            $panel->getTenantRegistrationPage()::registerRoutes($panel);
                                         }
                                     });
 
@@ -101,21 +101,17 @@ Route::name('filament.')
                                             }
 
                                             if ($panel->hasTenantProfile()) {
-                                                $panel->getTenantProfilePage()::routes($panel);
+                                                $panel->getTenantProfilePage()::registerRoutes($panel);
                                             }
                                         });
 
-                                        Route::name('pages.')->group(function () use ($panel): void {
-                                            foreach ($panel->getPages() as $page) {
-                                                $page::routes($panel);
-                                            }
-                                        });
+                                        foreach ($panel->getPages() as $page) {
+                                            $page::registerRoutes($panel);
+                                        }
 
-                                        Route::name('resources.')->group(function () use ($panel): void {
-                                            foreach ($panel->getResources() as $resource) {
-                                                $resource::routes($panel);
-                                            }
-                                        });
+                                        foreach ($panel->getResources() as $resource) {
+                                            $resource::registerRoutes($panel);
+                                        }
                                     });
 
                             });

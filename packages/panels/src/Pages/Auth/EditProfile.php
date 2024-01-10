@@ -20,9 +20,7 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Password;
 
 use function Filament\Support\is_app_url;
@@ -50,25 +48,14 @@ class EditProfile extends SimplePage
         return __('filament-panels::pages/auth/edit-profile.label');
     }
 
-    public static function routes(Panel $panel): void
+    public static function getRelativeRouteName(): string
     {
-        $slug = static::getSlug();
-
-        Route::get("/{$slug}", static::class)
-            ->middleware(static::getRouteMiddleware($panel))
-            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->name('profile');
+        return 'profile';
     }
 
-    /**
-     * @return string | array<string>
-     */
-    public static function getRouteMiddleware(Panel $panel): string | array
+    public static function isTenantSubscriptionRequired(Panel $panel): bool
     {
-        return [
-            ...(static::isEmailVerificationRequired($panel) ? [static::getEmailVerifiedMiddleware($panel)] : []),
-            ...Arr::wrap(static::$routeMiddleware),
-        ];
+        return false;
     }
 
     public function mount(): void

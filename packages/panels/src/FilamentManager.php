@@ -249,6 +249,14 @@ class FilamentManager
     }
 
     /**
+     * @return array<string | int, array<class-string> | class-string>
+     */
+    public function getClusteredComponents(?string $cluster): array
+    {
+        return $this->getCurrentPanel()->getClusteredComponents($cluster);
+    }
+
+    /**
      * @return array<class-string>
      */
     public function getPages(): array
