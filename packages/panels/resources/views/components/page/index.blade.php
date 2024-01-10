@@ -127,4 +127,6 @@
     @endif
 
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.end', scopes: $this->getRenderHookScopes()) }}
+
+    <x-filament-panels::unsaved-action-changes-alert />
 </div>

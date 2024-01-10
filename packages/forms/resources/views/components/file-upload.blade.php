@@ -247,18 +247,14 @@
                                                     >
                                                         @foreach ($groupedActions as $action)
                                                             <x-filament::button
-                                                                :x-tooltip="'{ content: ' . \Illuminate\Support\Js::from($action['label']) . ', theme: $store.theme }'"
-                                                                x-on:click.stop.prevent="{{ $action['alpineClickHandler'] }}"
                                                                 color="gray"
                                                                 grouped
+                                                                :icon="new \Illuminate\Support\HtmlString($action['iconHtml'])"
+                                                                label-sr-only
+                                                                x-on:click.stop.prevent="{{ $action['alpineClickHandler'] }}"
+                                                                :x-tooltip="'{ content: ' . \Illuminate\Support\Js::from($action['label']) . ', theme: $store.theme }'"
                                                             >
-                                                                {!! $action['iconHtml'] !!}
-
-                                                                <span
-                                                                    class="sr-only"
-                                                                >
-                                                                    {{ $action['label'] }}
-                                                                </span>
+                                                                {{ $action['label'] }}
                                                             </x-filament::button>
                                                         @endforeach
                                                     </x-filament::button.group>

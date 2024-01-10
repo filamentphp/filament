@@ -142,10 +142,11 @@
                 <div
                     x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }"
                     @class([
-                        'fi-ta-filters-above-content-ctn grid gap-y-3 px-4 py-4 sm:px-6',
+                        'fi-ta-filters-above-content-ctn grid px-4 py-4 sm:px-6',
                     ])
                 >
                     <x-filament-tables::filters
+                        :apply-action="$getFiltersApplyAction()"
                         :form="$getFiltersForm()"
                         x-cloak
                         x-show="areFiltersOpen"
@@ -154,6 +155,7 @@
                     @if ($hasFiltersAboveContentCollapsible)
                         <span
                             x-on:click="areFiltersOpen = ! areFiltersOpen"
+                            x-bind:class="{ @js($hasDeferredFilters() ? '-mt-7' : 'mt-3'): areFiltersOpen }"
                             class="ms-auto"
                         >
                             {{ $filtersTriggerAction->badge($activeFiltersCount) }}
@@ -219,6 +221,7 @@
                             @if ($hasFiltersDialog)
                                 <x-filament-tables::filters.dialog
                                     :active-filters-count="$activeFiltersCount"
+                                    :apply-action="$getFiltersApplyAction()"
                                     :form="$getFiltersForm()"
                                     :layout="$filtersLayout"
                                     :max-height="$getFiltersFormMaxHeight()"
@@ -812,7 +815,7 @@
                                     \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
                                         ->class([
                                             'fi-table-header-cell-' . str($column->getName())->camel()->kebab(),
-                                            'w-full' => $column->canGrow(),
+                                            'w-full' => $column->canGrow(default: false),
                                             '[&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e border-gray-200 dark:border-white/5' => $column->getGroup(),
                                             $getHiddenClasses($column),
                                         ])
@@ -1210,6 +1213,7 @@
 
         @if ($hasFiltersBelowContent)
             <x-filament-tables::filters
+                :apply-action="$getFiltersApplyAction()"
                 :form="$getFiltersForm()"
                 class="fi-ta-filters-below-content p-4 sm:px-6"
             />

@@ -36,6 +36,7 @@ Filament ships with some layout components, suitable for arranging your form fie
 - [Tabs](tabs)
 - [Wizard](wizard)
 - [Section](section)
+- [Split](split)
 - [Placeholder](placeholder)
 
 You may also [create your own custom layout components](custom) to organize fields however you wish.

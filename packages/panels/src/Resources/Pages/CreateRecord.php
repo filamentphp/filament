@@ -7,6 +7,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
@@ -21,6 +22,7 @@ use function Filament\Support\is_app_url;
  */
 class CreateRecord extends Page
 {
+    use HasUnsavedDataChangesAlert;
     use InteractsWithFormActions;
 
     /**
@@ -90,6 +92,8 @@ class CreateRecord extends Page
         } catch (Halt $exception) {
             return;
         }
+
+        $this->rememberData();
 
         $this->getCreatedNotification()?->send();
 

@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns;
 
 use Exception;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasPlaceholder;
@@ -13,6 +14,7 @@ use Illuminate\Support\Traits\Conditionable;
 
 class Column extends ViewComponent
 {
+    use CanGrow;
     use Concerns\BelongsToGroup;
     use Concerns\BelongsToLayout;
     use Concerns\BelongsToTable;
@@ -25,7 +27,6 @@ class Column extends ViewComponent
     use Concerns\CanBeSummarized;
     use Concerns\CanBeToggled;
     use Concerns\CanCallAction;
-    use Concerns\CanGrow;
     use Concerns\CanOpenUrl;
     use Concerns\CanSpanColumns;
     use Concerns\CanWrapHeader;

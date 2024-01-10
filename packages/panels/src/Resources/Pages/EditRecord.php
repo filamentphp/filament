@@ -12,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
@@ -31,6 +32,7 @@ class EditRecord extends Page
     use Concerns\InteractsWithRecord {
         configureAction as configureActionRecord;
     }
+    use HasUnsavedDataChangesAlert;
     use InteractsWithFormActions;
 
     /**
@@ -143,6 +145,8 @@ class EditRecord extends Page
         } catch (Halt $exception) {
             return;
         }
+
+        $this->rememberData();
 
         $this->getSavedNotification()?->send();
 

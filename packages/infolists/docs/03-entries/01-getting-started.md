@@ -37,6 +37,8 @@ TextEntry::make('author.name')
 - [Icon entry](icon)
 - [Image entry](image)
 - [Color entry](color)
+- [Key-value entry](key-value)
+- [Repeatable entry](repeatable)
 
 You may also [create your own custom entries](custom) to display data however you wish.
 
