@@ -1,10 +1,12 @@
 <?php
 
+use Filament\Events\Auth\Registered;
 use Filament\Facades\Filament;
 use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Pages\Auth\Register;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
@@ -19,6 +21,7 @@ it('can render page', function () {
 
 it('can register', function () {
     Notification::fake();
+    Event::fake();
 
     $this->assertGuest();
 
@@ -37,6 +40,7 @@ it('can register', function () {
         ->assertRedirect(Filament::getUrl());
 
     Notification::assertSentTimes(VerifyEmail::class, expectedCount: 1);
+    Event::assertDispatched(Registered::class);
 
     $this->assertAuthenticated();
 
@@ -48,6 +52,7 @@ it('can register', function () {
 
 it('can register and redirect user to their intended URL', function () {
     Notification::fake();
+    Event::fake();
 
     session()->put('url.intended', $intendedUrl = Str::random());
 
@@ -68,6 +73,7 @@ it('can register and redirect user to their intended URL', function () {
 
 it('can throttle registration attempts', function () {
     Notification::fake();
+    Event::fake();
 
     $this->assertGuest();
 
@@ -90,6 +96,7 @@ it('can throttle registration attempts', function () {
     }
 
     Notification::assertSentTimes(VerifyEmail::class, expectedCount: 2);
+    Event::assertDispatchedTimes(Registered::class, times: 2);
 
     livewire(Register::class)
         ->fillForm([
@@ -103,6 +110,7 @@ it('can throttle registration attempts', function () {
         ->assertNoRedirect();
 
     Notification::assertSentTimes(VerifyEmail::class, expectedCount: 2);
+    Event::assertDispatchedTimes(Registered::class, times: 2);
 
     $this->assertGuest();
 });

@@ -7,6 +7,7 @@ use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Events\Auth\Registered;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
@@ -76,6 +77,8 @@ class Register extends SimplePage
         $data = $this->form->getState();
 
         $user = $this->getUserModel()::create($data);
+
+        event(new Registered($user));
 
         $this->sendEmailVerificationNotification($user);
 
