@@ -2,17 +2,19 @@
 
 namespace Filament\Tables\Columns;
 
+use Exception;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasPlaceholder;
-use Filament\Tables\Columns\Concerns\BelongsToLayout;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
 
 class Column extends ViewComponent
 {
-    use BelongsToLayout;
+    use Concerns\BelongsToGroup;
+    use Concerns\BelongsToLayout;
     use Concerns\BelongsToTable;
     use Concerns\CanAggregateRelatedModels;
     use Concerns\CanBeDisabled;
@@ -56,6 +58,11 @@ class Column extends ViewComponent
         $static->configure();
 
         return $static;
+    }
+
+    public function getTable(): Table
+    {
+        return $this->table ?? $this->getGroup()?->getTable() ?? $this->getLayout()?->getTable() ?? throw new Exception("The column [{$this->getName()}] is not mounted to a table.");
     }
 
     /**

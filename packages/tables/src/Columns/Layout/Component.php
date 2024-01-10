@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Layout;
 
 use Closure;
+use Exception;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Tables\Columns\Column;
@@ -13,6 +14,7 @@ use Filament\Tables\Columns\Concerns\CanGrow;
 use Filament\Tables\Columns\Concerns\CanSpanColumns;
 use Filament\Tables\Columns\Concerns\HasRecord;
 use Filament\Tables\Columns\Concerns\HasRowLoopObject;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
 
@@ -112,6 +114,11 @@ class Component extends ViewComponent
         return array_map(function (Component | Column $component): Component | Column {
             return $component->layout($this);
         }, $this->evaluate($this->components));
+    }
+
+    public function getTable(): Table
+    {
+        return $this->table ?? $this->getLayout()?->getTable() ?? throw new Exception('The column layout component is not mounted to a table.');
     }
 
     public function isCollapsible(): bool
