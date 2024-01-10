@@ -10,6 +10,11 @@ class Registered
     use SerializesModels;
 
     public function __construct(
-        readonly public Authenticatable $user,
+        protected Authenticatable $user,
     ) {}
+
+    public function getUser(): Authenticatable
+    {
+        return $this->user;
+    }
 }
