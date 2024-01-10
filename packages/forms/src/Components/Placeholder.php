@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 class Placeholder extends Component implements Contracts\HasHintActions
 {
+    use Concerns\CanAllowHtml;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;
