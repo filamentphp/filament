@@ -1027,7 +1027,7 @@
                                 >
                                     @if ($isReordering)
                                         <x-filament-tables::reorder.cell>
-                                            <x-filament-tables::reorder.handle/>
+                                            <x-filament-tables::reorder.handle />
                                         </x-filament-tables::reorder.cell>
                                     @endif
 
@@ -1216,5 +1216,5 @@
         @endif
     </x-filament-tables::container>
 
-    <x-filament-actions::modals/>
+    <x-filament-actions::modals />
 </div>
