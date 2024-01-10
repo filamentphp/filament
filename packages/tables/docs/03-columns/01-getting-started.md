@@ -489,6 +489,60 @@ TextColumn::make('name')
     ->alignEnd()
 ```
 
+## Allowing a column headers to wrap
+
+By default, column headers will not wrap onto multiple lines, if they need more space. You may allow them to wrap using the `wrapHeader()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->wrapHeader()
+```
+
+## Grouping columns
+
+You group multiple columns together underneath a single heading using a `ColumnGroup` object:
+
+```php
+use Filament\Tables\Columns\ColumnGroup;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('slug'),
+            ColumnGroup::make('Visibility', [
+                TextColumn::make('status'),
+                IconColumn::make('is_featured'),
+            ]),
+            TextColumn::make('author.name'),
+        ]);
+}
+```
+
+The first argument is the label of the group, and the second is an array of column objects that belong to that group.
+
+<AutoScreenshot name="tables/columns/grouping" alt="Table with grouped columns" version="3.x" />
+
+You can also control the group header [alignment](#aligning-column-content) and [wrapping](#allowing-a-column-headers-to-wrap) on the `ColumnGroup` object. To improve the multi-line fluency of the API, you can chain the `columns()` onto the object instead of passing it as the second argument:
+
+```php
+use Filament\Support\Enums\Alignment;
+use Filament\Tables\Columns\ColumnGroup;
+
+ColumnGroup::make('Website visibility')
+    ->columns([
+        // ...
+    ])
+    ->alignment(Alignment::Center)
+    ->wrapHeader()
+```
+
 ## Custom attributes
 
 The HTML of columns can be customized, by passing an array of `extraAttributes()`:
