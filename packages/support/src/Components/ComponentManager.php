@@ -23,6 +23,23 @@ class ComponentManager
      */
     protected array $methodCache = [];
 
+    final public function __construct() {}
+
+    public static function register(): void
+    {
+        app()->scopedIf(
+            static::class,
+            fn () => new static(),
+        );
+    }
+
+    public static function resolve(): static
+    {
+        static::register();
+
+        return app(static::class);
+    }
+
     public function configureUsing(string $component, Closure $modifyUsing, ?Closure $during = null, bool $isImportant = false): mixed
     {
         if ($isImportant) {

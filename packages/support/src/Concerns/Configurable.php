@@ -9,7 +9,7 @@ trait Configurable
 {
     public static function configureUsing(Closure $modifyUsing, ?Closure $during = null, bool $isImportant = false): mixed
     {
-        return app(ComponentManager::class)->configureUsing(
+        return ComponentManager::resolve()->configureUsing(
             static::class,
             $modifyUsing,
             $during,
@@ -19,7 +19,7 @@ trait Configurable
 
     public function configure(): static
     {
-        app(ComponentManager::class)->configure(
+        ComponentManager::resolve()->configure(
             $this,
             $this->setUp(...),
         );

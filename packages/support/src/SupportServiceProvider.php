@@ -49,10 +49,7 @@ class SupportServiceProvider extends PackageServiceProvider
             fn () => new AssetManager(),
         );
 
-        $this->app->scoped(
-            ComponentManager::class,
-            fn () => new ComponentManager(),
-        );
+        ComponentManager::register();
 
         $this->app->scoped(
             ColorManager::class,

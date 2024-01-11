@@ -61,7 +61,7 @@ abstract class ViewComponent extends Component implements Htmlable
      */
     protected function extractPublicMethods(): array
     {
-        return app(ComponentManager::class)->extractPublicMethods($this);
+        return ComponentManager::resolve()->extractPublicMethods($this);
     }
 
     /**
