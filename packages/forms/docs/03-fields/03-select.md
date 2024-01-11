@@ -532,6 +532,20 @@ Select::make('author_id')
 
 Ensure that you are not lowering the debounce too much, as this may cause the select to become slow and unresponsive due to a high number of network requests to retrieve options from server.
 
+## Prepend options
+
+You can prepend options which appear on the top of the list using the `prependOptions()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->prependOptions(['123' => 'Shakespeare ', '456' => 'Tolstoy'])
+```
+
+The method behaves like the ´options()´ method, thus you can also use a closure for more advanced calculations. The option list will not contain duplicates. 
+
 ## Limiting the number of options
 
 You can limit the number of options that are displayed in a searchable select or multi-select using the `optionsLimit()` method. The default is 50:
