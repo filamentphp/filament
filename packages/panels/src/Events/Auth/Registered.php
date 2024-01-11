@@ -11,7 +11,8 @@ class Registered
 
     public function __construct(
         protected Authenticatable $user,
-    ) {}
+    ) {
+    }
 
     public function getUser(): Authenticatable
     {
