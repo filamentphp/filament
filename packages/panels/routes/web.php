@@ -29,22 +29,25 @@ Route::name('filament.')
 
                         Route::name('auth.')->group(function () use ($panel) {
                             if ($panel->hasLogin()) {
-                                Route::get('/login', $panel->getLoginRouteAction())->name('login');
+                                Route::get($panel->getLoginRouteSlug(), $panel->getLoginRouteAction())
+                                    ->name('login');
                             }
 
                             if ($panel->hasPasswordReset()) {
                                 Route::name('password-reset.')
-                                    ->prefix('/password-reset')
+                                    ->prefix($panel->getResetPasswordRoutePrefix())
                                     ->group(function () use ($panel) {
-                                        Route::get('/request', $panel->getRequestPasswordResetRouteAction())->name('request');
-                                        Route::get('/reset', $panel->getResetPasswordRouteAction())
+                                        Route::get($panel->getRequestPasswordResetRouteSlug(), $panel->getRequestPasswordResetRouteAction())
+                                            ->name('request');
+                                        Route::get($panel->getResetPasswordRouteSlug(), $panel->getResetPasswordRouteAction())
                                             ->middleware(['signed'])
                                             ->name('reset');
                                     });
                             }
 
                             if ($panel->hasRegistration()) {
-                                Route::get('/register', $panel->getRegistrationRouteAction())->name('register');
+                                Route::get($panel->getRegistrationRouteSlug(), $panel->getRegistrationRouteAction())
+                                    ->name('register');
                             }
                         });
 
@@ -69,10 +72,11 @@ Route::name('filament.')
 
                                 if ($panel->hasEmailVerification()) {
                                     Route::name('auth.email-verification.')
-                                        ->prefix('/email-verification')
+                                        ->prefix($panel->getEmailVerificationRoutePrefix())
                                         ->group(function () use ($panel) {
-                                            Route::get('/prompt', $panel->getEmailVerificationPromptRouteAction())->name('prompt');
-                                            Route::get('/verify/{id}/{hash}', EmailVerificationController::class)
+                                            Route::get($panel->getEmailVerificationPromptRouteSlug(), $panel->getEmailVerificationPromptRouteAction())
+                                                ->name('prompt');
+                                            Route::get($panel->getEmailVerificationRouteSlug('/{id}/{hash}'), EmailVerificationController::class)
                                                 ->middleware(['signed', 'throttle:6,1'])
                                                 ->name('verify');
                                         });
@@ -96,7 +100,7 @@ Route::name('filament.')
 
                                         Route::name('tenant.')->group(function () use ($panel): void {
                                             if ($panel->hasTenantBilling()) {
-                                                Route::get('/billing', $panel->getTenantBillingProvider()->getRouteAction())
+                                                Route::get($panel->getTenantBillingRouteSlug(), $panel->getTenantBillingProvider()->getRouteAction())
                                                     ->name('billing');
                                             }
 

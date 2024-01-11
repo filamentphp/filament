@@ -83,6 +83,7 @@ Not all indicators are simple, so you may need to use `indicateUsing()` to custo
 For example, if you have a custom date filter, you may create a custom indicator that formats the selected date:
 
 ```php
+use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 
@@ -103,6 +104,7 @@ Filter::make('created_at')
 You may even render multiple indicators at once, by returning an array of `Indicator` objects. If you have different fields associated with different indicators, you should set the field using the `removeField()` method on the `Indicator` object to ensure that the correct field is reset when the filter is removed:
 
 ```php
+use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
@@ -128,4 +130,16 @@ Filter::make('created_at')
 
         return $indicators;
     })
+```
+
+### Preventing indicators from being removed
+
+You can prevent users from removing an indicator using `removable(false)` on an `Indicator` object:
+
+```php
+use Carbon\Carbon;
+use Filament\Tables\Filters\Indicator;
+
+Indicator::make('Created from ' . Carbon::parse($data['from'])->toFormattedDateString())
+    ->removable(false)
 ```

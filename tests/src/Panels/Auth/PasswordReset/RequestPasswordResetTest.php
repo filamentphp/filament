@@ -12,6 +12,17 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 it('can render page', function () {
+    expect(Filament::getRequestPasswordResetUrl())->toEndWith('/password-reset/request');
+
+    $this->get(Filament::getRequestPasswordResetUrl())
+        ->assertSuccessful();
+});
+
+it('can render page with a custom slug', function () {
+    Filament::setCurrentPanel(Filament::getPanel('slugs'));
+
+    expect(Filament::getRequestPasswordResetUrl())->toEndWith('/password-reset-test/request-test');
+
     $this->get(Filament::getRequestPasswordResetUrl())
         ->assertSuccessful();
 });

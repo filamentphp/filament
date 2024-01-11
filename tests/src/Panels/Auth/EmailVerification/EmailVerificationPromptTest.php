@@ -18,6 +18,23 @@ it('can render page', function () {
 
     $this->actingAs($userToVerify);
 
+    expect(Filament::getEmailVerificationPromptUrl())->toEndWith('/email-verification/prompt');
+
+    $this->get(Filament::getEmailVerificationPromptUrl())
+        ->assertSuccessful();
+});
+
+it('can render page with a custom slug', function () {
+    Filament::setCurrentPanel(Filament::getPanel('slugs'));
+
+    expect(Filament::getEmailVerificationPromptUrl())->toEndWith('/email-verification-test/prompt-test');
+
+    $userToVerify = User::factory()->create([
+        'email_verified_at' => null,
+    ]);
+
+    $this->actingAs($userToVerify);
+
     $this->get(Filament::getEmailVerificationPromptUrl())
         ->assertSuccessful();
 });
