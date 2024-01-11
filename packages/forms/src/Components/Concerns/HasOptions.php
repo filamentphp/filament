@@ -47,6 +47,8 @@ trait HasOptions
     }
 
     /**
+     * @param  array<string | array<string>> | Arrayable | string | Closure | null  $opt
+     *
      * @return array<string | array<string>>
      */
     private function getOptionsHelper(array | Arrayable | string | Closure | null $opt): array
