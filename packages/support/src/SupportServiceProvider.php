@@ -11,6 +11,7 @@ use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\UpgradeCommand;
+use Filament\Support\Components\ComponentManager;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
 use Filament\Support\View\ViewManager;
@@ -46,6 +47,11 @@ class SupportServiceProvider extends PackageServiceProvider
         $this->app->scoped(
             AssetManager::class,
             fn () => new AssetManager(),
+        );
+
+        $this->app->scoped(
+            ComponentManager::class,
+            fn () => new ComponentManager(),
         );
 
         $this->app->scoped(
