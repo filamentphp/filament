@@ -43,6 +43,7 @@ abstract class TestCase extends BaseTestCase
             WidgetsServiceProvider::class,
             AdminPanelProvider::class,
             CustomPanelProvider::class,
+            SlugsPanelProvider::class,
         ];
     }
 

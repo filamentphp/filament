@@ -235,6 +235,28 @@ This class extends the base profile page class from the Filament codebase. Other
 
 In the `form()` method of the example, we call methods like `getNameFormComponent()` to get the default form components for the page. You can customize these components as required. For all the available customization options, see the base `EditProfile` page class in the Filament codebase - it contains all the methods that you can override to make changes.
 
+### Customizing the authentication route slugs
+
+You can customize the URL slugs used for the authentication routes in the [configuration](configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->loginRouteSlug('login')
+        ->registrationRouteSlug('register')
+        ->passwordResetRoutePrefix('password-reset')
+        ->passwordResetRequestRouteSlug('request')
+        ->passwordResetRouteSlug('reset')
+        ->emailVerificationRoutePrefix('email-verification')
+        ->emailVerificationPromptRouteSlug('prompt')
+        ->emailVerificationRouteSlug('verify');
+}
+```
+
 ### Setting the authentication guard
 
 To set the authentication guard that Filament uses, you can pass in the guard name to the `authGuard()` configuration method:

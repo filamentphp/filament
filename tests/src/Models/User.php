@@ -28,7 +28,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $panel->getId() === 'admin';
+        return in_array($panel->getId(), ['admin', 'slugs']);
     }
 
     public function posts(): HasMany
