@@ -173,13 +173,13 @@ trait HasRoutes
             $firstGroup = Arr::first($navigation);
 
             if (! $firstGroup) {
-                return null;
+                return url($this->getPath());
             }
 
             $firstItem = Arr::first($firstGroup->getItems());
 
             if (! $firstItem) {
-                return null;
+                return url($this->getPath());
             }
 
             return $firstItem->getUrl();
