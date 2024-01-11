@@ -11,7 +11,22 @@ trait HasOptions
     /**
      * @var array<string | array<string>> | Arrayable | string | Closure | null
      */
+    protected array | Arrayable | string | Closure | null $prependedOptions = null;
+
+    /**
+     * @var array<string | array<string>> | Arrayable | string | Closure | null
+     */
     protected array | Arrayable | string | Closure | null $options = null;
+
+    /**
+     * @param  array<string | array<string>> | Arrayable | string | Closure | null  $options
+     */
+    public function prependOptions(array | Arrayable | string | Closure | null $options): static
+    {
+        $this->prependedOptions = $options;
+
+        return $this;
+    }
 
     /**
      * @param  array<string | array<string>> | Arrayable | string | Closure | null  $options
@@ -28,7 +43,15 @@ trait HasOptions
      */
     public function getOptions(): array
     {
-        $options = $this->evaluate($this->options) ?? [];
+        return $this->getOptionsHelper($this->prependedOptions) + $this->getOptionsHelper($this->options);
+    }
+
+    /**
+     * @return array<string | array<string>>
+     */
+    private function getOptionsHelper(array | Arrayable | string | Closure | null $opt): array
+    {
+        $options = $this->evaluate($opt) ?? [];
 
         $enum = $options;
         if (
