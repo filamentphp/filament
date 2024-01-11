@@ -38,6 +38,10 @@ FilamentView::registerRenderHook(
 
 - `panels::auth.login.form.before` - Before login form
 - `panels::auth.login.form.after` - After login form
+- `panels::auth.password-reset.request.form.before` - Before password reset request form
+- `panels::auth.password-reset.request.form.after` - After password reset request form
+- `panels::auth.password-reset.reset.form.before` - Before password reset form
+- `panels::auth.password-reset.reset.form.after` - After password reset form
 - `panels::auth.register.form.before` - Before register form
 - `panels::auth.register.form.after` - After register form
 - `panels::body.start` - After `<body>`
