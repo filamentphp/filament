@@ -324,6 +324,21 @@ class ExampleBillingProvider implements Provider
 }
 ```
 
+### Customizing the billing route slug
+
+You can customize the URL slug used for the billing route using the `tenantBillingRouteSlug()` method in the [configuration](configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantBillingRouteSlug('billing');
+}
+```
+
 ## Customizing the tenant menu
 
 The tenant-switching menu is featured in the sidebar of the admin layout. It's fully customizable.

@@ -86,7 +86,7 @@ trait HasTenancy
         return $this;
     }
 
-    public function tenantBillingSlug(string $slug): static
+    public function tenantBillingRouteSlug(string $slug): static
     {
         $this->tenantBillingRouteSlug = $slug;
 
