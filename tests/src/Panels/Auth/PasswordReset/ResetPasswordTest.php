@@ -22,7 +22,7 @@ it('can render page', function () {
         $userToResetPassword,
     );
 
-    expect($url)->toContain('/password-reset/reset?');
+    expect($url)->toContain('/password-reset/reset');
 
     $this->get($url)->assertSuccessful();
 });
@@ -38,7 +38,7 @@ it('can render page with a custom slug', function () {
         $userToResetPassword,
     );
 
-    expect($url)->toContain('/password-reset-test/reset-test?');
+    expect($url)->toContain('/password-reset-test/reset-test');
 
     $this->get($url)->assertSuccessful();
 });

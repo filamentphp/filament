@@ -35,7 +35,7 @@ Route::name('filament.')
 
                             if ($panel->hasPasswordReset()) {
                                 Route::name('password-reset.')
-                                    ->prefix($panel->getResetPasswordRoutesPrefix())
+                                    ->prefix($panel->getResetPasswordRoutePrefix())
                                     ->group(function () use ($panel) {
                                         Route::get($panel->getRequestPasswordResetRouteSlug(), $panel->getRequestPasswordResetRouteAction())
                                             ->name('request');
@@ -72,11 +72,11 @@ Route::name('filament.')
 
                                 if ($panel->hasEmailVerification()) {
                                     Route::name('auth.email-verification.')
-                                        ->prefix($panel->getEmailVerificationRoutesPrefix())
+                                        ->prefix($panel->getEmailVerificationRoutePrefix())
                                         ->group(function () use ($panel) {
                                             Route::get($panel->getEmailVerificationPromptRouteSlug(), $panel->getEmailVerificationPromptRouteAction())
                                                 ->name('prompt');
-                                            Route::get($panel->getEmailVerificationVerifyRouteSlug('/{id}/{hash}'), EmailVerificationController::class)
+                                            Route::get($panel->getEmailVerificationRouteSlug('/{id}/{hash}'), EmailVerificationController::class)
                                                 ->middleware(['signed', 'throttle:6,1'])
                                                 ->name('verify');
                                         });

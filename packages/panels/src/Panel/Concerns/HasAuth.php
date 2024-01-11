@@ -28,9 +28,9 @@ trait HasAuth
 
     protected string $emailVerificationPromptRouteSlug = 'prompt';
 
-    protected string $emailVerificationVerifyRouteSlug = 'verify';
+    protected string $emailVerificationRouteSlug = 'verify';
 
-    protected string $emailVerificationRoutesPrefix = 'email-verification';
+    protected string $emailVerificationRoutePrefix = 'email-verification';
 
     protected bool $isEmailVerificationRequired = false;
 
@@ -62,7 +62,7 @@ trait HasAuth
 
     protected string $resetPasswordRouteSlug = 'reset';
 
-    protected string $resetPasswordRoutesPrefix = 'password-reset';
+    protected string $resetPasswordRoutePrefix = 'password-reset';
 
     protected ?string $profilePage = null;
 
@@ -88,16 +88,16 @@ trait HasAuth
         return $this;
     }
 
-    public function emailVerificationVerifyRouteSlug(string $slug): static
+    public function emailVerificationRouteSlug(string $slug): static
     {
-        $this->emailVerificationVerifyRouteSlug = $slug;
+        $this->emailVerificationRouteSlug = $slug;
 
         return $this;
     }
 
-    public function emailVerificationRoutesPrefix(string $prefix): static
+    public function emailVerificationRoutePrefix(string $prefix): static
     {
-        $this->emailVerificationRoutesPrefix = $prefix;
+        $this->emailVerificationRoutePrefix = $prefix;
 
         return $this;
     }
@@ -159,9 +159,9 @@ trait HasAuth
         return $this;
     }
 
-    public function passwordResetRoutesPrefix(string $prefix): static
+    public function passwordResetRoutePrefix(string $prefix): static
     {
-        $this->resetPasswordRoutesPrefix = $prefix;
+        $this->resetPasswordRoutePrefix = $prefix;
 
         return $this;
     }
@@ -351,14 +351,14 @@ trait HasAuth
         return Str::start($this->emailVerificationPromptRouteSlug, '/');
     }
 
-    public function getEmailVerificationVerifyRouteSlug(string $suffix): string
+    public function getEmailVerificationRouteSlug(string $suffix): string
     {
-        return Str::start($this->emailVerificationVerifyRouteSlug, '/') . $suffix;
+        return Str::start($this->emailVerificationRouteSlug, '/') . $suffix;
     }
 
-    public function getEmailVerificationRoutesPrefix(): string
+    public function getEmailVerificationRoutePrefix(): string
     {
-        return Str::start($this->emailVerificationRoutesPrefix, '/');
+        return Str::start($this->emailVerificationRoutePrefix, '/');
     }
 
     /**
@@ -413,9 +413,9 @@ trait HasAuth
         return Str::start($this->resetPasswordRouteSlug, '/');
     }
 
-    public function getResetPasswordRoutesPrefix(): string
+    public function getResetPasswordRoutePrefix(): string
     {
-        return Str::start($this->resetPasswordRoutesPrefix, '/');
+        return Str::start($this->resetPasswordRoutePrefix, '/');
     }
 
     public function hasEmailVerification(): bool

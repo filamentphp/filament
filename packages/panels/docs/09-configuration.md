@@ -225,10 +225,10 @@ public function panel(Panel $panel): Panel
         ->loginRouteSlug('einloggen')
         ->passwordResetRequestRouteSlug('anfragen')
         ->passwordResetRouteSlug('zuruecksetzen')
-        ->passwordResetRoutesPrefix('passwort-ruecksetzung')
+        ->passwordResetRoutePrefix('passwort-ruecksetzung')
         ->registrationRouteSlug('registrieren')
         ->emailVerificationPromptRouteSlug('auffordern')
-        ->emailVerificationVerifyRouteSlug('verifizieren')
-        ->emailVerificationRoutesPrefix('email-verifizierung');
+        ->emailVerificationRouteSlug('verifizieren')
+        ->emailVerificationRoutePrefix('email-verifizierung');
 }
 ```
