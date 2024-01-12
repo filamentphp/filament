@@ -2,24 +2,24 @@
 
 return [
 
-    'title' => 'Создать :label',
+    'title' => ':label - yaratish',
 
-    'breadcrumb' => 'Создать',
+    'breadcrumb' => 'Yaratish',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Отмена',
+                'label' => 'Bekor qilish',
             ],
 
             'create' => [
-                'label' => 'Создать',
+                'label' => 'Yaratish',
             ],
 
             'create_another' => [
-                'label' => 'Создать и Создать еще',
+                'label' => 'Yaratish va yana boshqa yaratish',
             ],
 
         ],
@@ -29,7 +29,7 @@ return [
     'notifications' => [
 
         'created' => [
-            'title' => 'Создано',
+            'title' => 'Yaratildi',
         ],
 
     ],

@@ -53,7 +53,7 @@ return [
 
         'throttled' => [
             'title' => 'Kirish urinishlari juda koʻp',
-            'body' => 'Iltimos, :soniya soniyadan keyin qayta urinib ko\'ring.',
+            'body' => 'Iltimos, :seconds soniyadan keyin qayta urinib ko\'ring.',
         ],
 
     ],

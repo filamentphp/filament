@@ -2,20 +2,20 @@
 
 return [
 
-    'title' => 'Редактирование :label',
+    'title' => ':label - Tahrirlash',
 
-    'breadcrumb' => 'Редактирование',
+    'breadcrumb' => 'Tahrirlash',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Отмена',
+                'label' => 'Bekor qilish',
             ],
 
             'save' => [
-                'label' => 'Сохранить',
+                'label' => 'Saqlash',
             ],
 
         ],
@@ -25,7 +25,7 @@ return [
     'content' => [
 
         'tab' => [
-            'label' => 'Изменить',
+            'label' => 'Tahrirlash',
         ],
 
     ],
@@ -33,7 +33,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'Сохранено',
+            'title' => 'Saqlandi',
         ],
 
     ],

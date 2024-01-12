@@ -2,32 +2,32 @@
 
 return [
 
-    'title' => 'Подтвердите свой адрес электронной почты',
+    'title' => 'Elektron pochta manzilingizni tasdiqlang',
 
-    'heading' => 'Подтвердите свой адрес электронной почты',
+    'heading' => 'Elektron pochta manzilingizni tasdiqlang',
 
     'actions' => [
 
         'resend_notification' => [
-            'label' => 'Отправить еще раз',
+            'label' => 'Yana bir bor yuborish',
         ],
 
     ],
 
     'messages' => [
-        'notification_not_received' => 'Не получили письмо, которое мы отправили?',
-        'notification_sent' => 'Мы отправили электронное письмо на адрес :email, содержащее инструкции о том, как подтвердить свой адрес электронной почты.',
+        'notification_not_received' => 'Biz yuborgan xatni olmadingizmi?',
+        'notification_sent' => 'Biz :email manziliga elektron pochta manzilingizni tekshirish bo\'yicha ko\'rsatmalar bilan xat yubordik.',
     ],
 
     'notifications' => [
 
         'notification_resent' => [
-            'title' => 'Мы повторно отправили электронное письмо.',
+            'title' => 'Biz elektron pochta xabarini qayta yubordik.',
         ],
 
         'notification_resend_throttled' => [
-            'title' => 'Слишком много попыток повторной отправки',
-            'body' => 'Пожалуйста, попробуйте еще раз через :seconds секунд.',
+            'title' => 'Qayta yuborishlar soni juda koʻp',
+            'body' => 'Iltimos, :seconds soniyadan keyin qayta urinib ko\'ring.',
         ],
 
     ],

@@ -2,6 +2,6 @@
 
 return [
 
-    'breadcrumb' => 'Список',
+    'breadcrumb' => 'Ro\'yxat',
 
 ];

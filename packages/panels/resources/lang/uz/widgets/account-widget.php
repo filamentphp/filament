@@ -5,11 +5,11 @@ return [
     'actions' => [
 
         'logout' => [
-            'label' => 'Выход',
+            'label' => 'Chiqish',
         ],
 
     ],
 
-    'welcome' => 'Добро пожаловать',
+    'welcome' => 'Hush kelibsiz',
 
 ];

@@ -2,29 +2,29 @@
 
 return [
 
-    'title' => 'Сбросить пароль',
+    'title' => 'Parolni qayta o\'rnatish',
 
-    'heading' => 'Сбросить пароль',
+    'heading' => 'Parolni qayta o\'rnatish',
 
     'form' => [
 
         'email' => [
-            'label' => 'Адрес электронной почты',
+            'label' => 'Elektron pochta manzili',
         ],
 
         'password' => [
-            'label' => 'Пароль',
+            'label' => 'Parol',
             'validation_attribute' => 'password',
         ],
 
         'password_confirmation' => [
-            'label' => 'Подтвердите пароль',
+            'label' => 'Parolni tasdiqlash',
         ],
 
         'actions' => [
 
             'reset' => [
-                'label' => 'Сбросить пароль',
+                'label' => 'Parolni qayta o\'rnatish',
             ],
 
         ],
@@ -34,8 +34,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Слишком много попыток сброса',
-            'body' => 'Пожалуйста, попробуйте еще раз через :seconds секунд.',
+            'title' => 'Urinishlar juda ko\'p',
+            'body' => 'Iltimos, :seconds soniyadan so\'ng qayta urinib ko\'ring.',
         ],
 
     ],
