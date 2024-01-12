@@ -23,7 +23,9 @@ class ComponentManager
      */
     protected array $methodCache = [];
 
-    final public function __construct() {}
+    final public function __construct()
+    {
+    }
 
     public static function register(): void
     {
