@@ -109,7 +109,7 @@
             @endif
 
             @if ($hasHeaderActions)
-                <x-filament-actions::actions
+                <x-filament::actions
                     :actions="$headerActions"
                     :alignment="\Filament\Support\Enums\Alignment::Start"
                     x-on:click.stop=""
