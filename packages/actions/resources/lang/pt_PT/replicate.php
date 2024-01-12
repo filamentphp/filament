@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Reproduzir',
+        'label' => 'Replicar',
 
         'modal' => [
 
-            'heading' => 'Reproduzir :label',
+            'heading' => 'Replicar :label',
 
             'actions' => [
 
                 'replicate' => [
-                    'label' => 'Reproduzir',
+                    'label' => 'Replicar',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'replicated' => [
-                'title' => 'Reproduzido',
+                'title' => 'Replicado',
             ],
 
         ],

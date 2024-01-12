@@ -35,6 +35,8 @@ class TextEntry extends Entry implements HasAffixActions
 
     protected TextEntrySize | string | Closure | null $size = null;
 
+    protected bool | Closure $isLimitedListExpandable = false;
+
     public function badge(bool | Closure $condition = true): static
     {
         $this->isBadge = $condition;
@@ -107,5 +109,17 @@ class TextEntry extends Entry implements HasAffixActions
     public function getListLimit(): ?int
     {
         return $this->evaluate($this->listLimit);
+    }
+
+    public function expandableLimitedList(bool | Closure $condition = true): static
+    {
+        $this->isLimitedListExpandable = $condition;
+
+        return $this;
+    }
+
+    public function isLimitedListExpandable(): bool
+    {
+        return (bool) $this->evaluate($this->isLimitedListExpandable);
     }
 }

@@ -1,9 +1,18 @@
 ---
 title: Getting started
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
+
 ## Overview
 
 Panels are the top-level container in Filament, allowing you to build feature-rich admin panels that include pages, resources, forms, tables, notifications, actions, infolists, and widgets. All Panels include a default dashboard that can include widgets with statistics, charts, tables, and more.
+
+<LaracastsBanner
+    title="Introduction to Filament"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you how to get started with the panel builder. Alternatively, continue reading this text-based guide."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/2"
+    series="rapid-laravel-development"
+/>
 
 ## Prerequisites
 
@@ -406,9 +415,9 @@ This will add a sort icon button to the column header. Clicking it will sort the
 
 Although you can make the `type` field searchable, making it filterable is a much better user experience.
 
-Filament tables can have [filters](../tables/filters), which are components that reduce the number of records in a table by adding a scope to the Eloquent query. Filters can even contain custom form components, making them a potent tool for building interfaces.
+Filament tables can have [filters](../tables/filters/getting-started), which are components that reduce the number of records in a table by adding a scope to the Eloquent query. Filters can even contain custom form components, making them a potent tool for building interfaces.
 
-Filament includes a prebuilt [`SelectFilter`](../tables/filters#select-filters) that you can add to the table's `filters()`:
+Filament includes a prebuilt [`SelectFilter`](../tables/filters/select) that you can add to the table's `filters()`:
 
 ```php
 use Filament\Tables;

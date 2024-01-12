@@ -58,9 +58,13 @@ class User extends Authenticatable implements FilamentUser
 }
 ```
 
+## Authorizing access to Resources
+
+See the [Authorization](resources/getting-started#authorization) section in the Resource documentation for controlling access to Resource pages and their data records.
+
 ## Setting up user avatars
 
-Out of the box, Filament uses [ui-avatars.com](https://ui-avatars.com) to generate avatars based on a user's name. However, if you user model has an `avatar_url` attribute, that will be used instead. To customize how Filament gets a user's avatar URL, you can implement the `HasAvatar` contract:
+Out of the box, Filament uses [ui-avatars.com](https://ui-avatars.com) to generate avatars based on a user's name. However, if your user model has an `avatar_url` attribute, that will be used instead. To customize how Filament gets a user's avatar URL, you can implement the `HasAvatar` contract:
 
 ```php
 <?php
@@ -95,6 +99,7 @@ In this example, we create a new file at `app/Filament/AvatarProviders/BoringAva
 
 namespace App\Filament\AvatarProviders;
 
+use Filament\AvatarProviders\Contracts;
 use Filament\Facades\Filament;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -230,6 +235,28 @@ This class extends the base profile page class from the Filament codebase. Other
 
 In the `form()` method of the example, we call methods like `getNameFormComponent()` to get the default form components for the page. You can customize these components as required. For all the available customization options, see the base `EditProfile` page class in the Filament codebase - it contains all the methods that you can override to make changes.
 
+### Customizing the authentication route slugs
+
+You can customize the URL slugs used for the authentication routes in the [configuration](configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->loginRouteSlug('login')
+        ->registrationRouteSlug('register')
+        ->passwordResetRoutePrefix('password-reset')
+        ->passwordResetRequestRouteSlug('request')
+        ->passwordResetRouteSlug('reset')
+        ->emailVerificationRoutePrefix('email-verification')
+        ->emailVerificationPromptRouteSlug('prompt')
+        ->emailVerificationRouteSlug('verify');
+}
+```
+
 ### Setting the authentication guard
 
 To set the authentication guard that Filament uses, you can pass in the guard name to the `authGuard()` configuration method:
@@ -259,3 +286,15 @@ public function panel(Panel $panel): Panel
         ->authPasswordBroker('users');
 }
 ```
+
+## Setting up guest access to a panel
+
+By default, Filament expects to work with authenticated users only. To allow guests to access a panel, you need to avoid using components which expect a signed-in user (such as profiles, avatars), and remove the built-in Authentication middleware:
+
+- Remove the default `Authenticate::class` from the `authMiddleware()` array in the panel configuration.
+- Remove `->login()` and any other [authentication features](#authentication-features) from the panel.
+- Remove the default `AccountWidget` from the `widgets()` array, because it reads the current user's data.
+
+### Authorizing guests in policies
+
+When present, Filament relies on [Laravel Model Policies](https://laravel.com/docs/authorization#generating-policies) for access control. To give read-access for [guest users in a model policy](https://laravel.com/docs/authorization#guest-users), create the Policy and update the `viewAny()` and `view()` methods, changing the `User $user` param to `?User $user` so that it's optional, and `return true;`. Alternatively, you can remove those methods from the policy entirely.

@@ -2,8 +2,16 @@
 title: Select
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Select Input"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding select fields to Filament forms."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/4"
+    series="rapid-laravel-development"
+/>
 
 The select component allows you to select from a list of predefined options:
 
@@ -157,6 +165,17 @@ use Filament\Forms\Components\Select;
 
 Select::make('technologies')
     ->multiple()
+    ->relationship(titleAttribute: 'name')
+```
+
+When using `disabled()` with `multiple()` and `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->multiple()
+    ->disabled()
     ->relationship(titleAttribute: 'name')
 ```
 

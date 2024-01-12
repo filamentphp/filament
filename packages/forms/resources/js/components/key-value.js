@@ -10,10 +10,10 @@ export default function keyValueFormComponent({ state }) {
             this.updateRows()
 
             if (this.rows.length <= 0) {
-                this.addRow()
+                this.rows.push({ key: '', value: '' })
+            } else {
+                this.updateState()
             }
-
-            this.updateState()
 
             this.$watch('state', (state, oldState) => {
                 const getLength = (value) => {

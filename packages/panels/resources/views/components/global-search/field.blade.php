@@ -24,6 +24,7 @@
             wire:key="global-search.field.input"
             wire:model.live.debounce.500ms="search"
             x-bind:id="$id('input')"
+            x-on:keydown.down.prevent.stop="$dispatch('focus-first-global-search-result')"
             x-data="{}"
             :attributes="
                 \Filament\Support\prepare_inherited_attributes(

@@ -82,6 +82,15 @@ TextEntry::make('price')
     ->money('EUR')
 ```
 
+There is also a `divideBy` argument for `money()` that allows you to divide the original value by a number before formatting it. This could be useful if your database stores the price in cents, for example:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('price')
+    ->money('EUR', divideBy: 100)
+```
+
 ## Limiting text length
 
 You may `limit()` the length of the entry's value:
@@ -161,6 +170,21 @@ TextEntry::make('authors.name')
     ->listWithLineBreaks()
     ->limitList(3)
 ```
+
+#### Expanding the limited list
+
+You can allow the limited items to be expanded and collapsed, using the `expandableLimitedList()` method:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('authors.name')
+    ->listWithLineBreaks()
+    ->limitList(3)
+    ->expandableLimitedList()
+```
+
+Please note that this is only a feature for `listWithLineBreaks()` or `bulleted()`, where each item is on its own line.
 
 ### Using a list separator
 
@@ -254,6 +278,7 @@ use Filament\Infolists\Components\TextEntry;
 TextEntry::make('email')
     ->icon('heroicon-m-envelope')
     ->iconColor('primary')
+```
 
 <AutoScreenshot name="infolists/entries/text/icon-color" alt="Text entry with icon in the primary color" version="3.x" />
 

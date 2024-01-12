@@ -15,7 +15,7 @@
 }
 
 .fi-fo-rich-editor trix-toolbar .trix-dialog__link-fields .trix-input {
-    @apply block w-full rounded-md border-none bg-white py-1.5 pe-3 ps-3 text-sm text-gray-950 outline-none ring-1 ring-gray-950/10 transition duration-75 placeholder:text-gray-400 focus-within:ring-primary-600 dark:bg-gray-700 dark:text-white dark:ring-white/20 dark:placeholder:text-gray-500 dark:focus-within:ring-primary-600 sm:text-sm sm:leading-6;
+    @apply block w-full rounded-md border-none bg-white py-1.5 pe-3 ps-3 text-sm text-gray-950 outline-none ring-1 ring-gray-950/10 transition duration-75 placeholder:text-gray-400 focus-within:ring-primary-600 sm:text-sm sm:leading-6 dark:bg-gray-700 dark:text-white dark:ring-white/20 dark:placeholder:text-gray-500 dark:focus-within:ring-primary-600;
 }
 
 .fi-fo-rich-editor

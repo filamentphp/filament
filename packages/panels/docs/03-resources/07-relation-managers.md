@@ -1,6 +1,7 @@
 ---
 title: Managing relationships
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Choosing the right tool for the job
 
@@ -32,7 +33,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 > These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
 
-All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), etc.) have a `relationship()` method. When you use this, all fields within that layout are saved to the related model instead of the owner's model:
+All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), etc.) have a [`relationship()` method](../../forms/advanced#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
 use Filament\Forms\Components\Fieldset;
@@ -51,7 +52,16 @@ Fieldset::make('Metadata')
 
 In this example, the `title`, `description` and `image` are automatically loaded from the `metadata` relationship, and saved again when the form is submitted. If the `metadata` record does not exist, it is automatically created.
 
+This feature is explained more in depth in the [Forms documentation](../../forms/advanced#saving-data-to-relationships). Please visit that page for more information about how to use it.
+
 ## Creating a relation manager
+
+<LaracastsBanner
+    title="Relation Managers"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding relation managers to Filament resources."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/13"
+    series="rapid-laravel-development"
+/>
 
 To create a relation manager, you can use the `make:filament-relation-manager` command:
 
@@ -521,6 +531,40 @@ public function table(Table $table): Table
 
 To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/delete).
 
+## Importing related records
+
+The [`ImportAction`](../../actions/prebuilt-actions/import) can be added to the header of a relation manager to import records. In this case, you probably want to tell the importer which owner these new records belong to. You can use [import options](../../actions/prebuilt-actions/import#using-import-options) to pass through the ID of the owner record:
+
+```php
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->options(['categoryId' => $this->getOwnerRecord()->getKey()])
+```
+
+Now, in the importer class, you can associate the owner in a one-to-many relationship with the imported record:
+
+```php
+public function resolveRecord(): ?Product
+{
+    $product = Product::firstOrNew([
+        'sku' => $this->data['sku'],
+    ]);
+    
+    $product->category()->associate($this->options['categoryId']);
+    
+    return $product;
+}
+```
+
+Alternatively, you can attach the record in a many-to-many relationship using the `afterSave()` hook of the importer:
+
+```php
+protected function afterSave(): void
+{
+    $this->record->categories()->syncWithoutDetaching([$this->options['categoryId']]);
+}
+```
+
 ## Accessing the relationship's owner record
 
 Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is saved into a property. You can read this property using:
@@ -707,6 +751,40 @@ public function table(Table $table): Table
 }
 ```
 
+## Customizing the relation manager title
+
+To set the title of the relation manager, you can use the `$title` property on the relation manager class:
+
+```php
+protected static ?string $title = 'Posts';
+```
+
+To set the title of the relation manager dynamically, you can override the `getTitle()` method on the relation manager class:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+public static function getTitle(Model $ownerRecord, string $pageClass): string
+{
+    return __('relation-managers.posts.title');
+}
+```
+
+The title will be reflected in the [heading of the table](../../tables/advanced#customizing-the-table-header), as well as the relation manager tab if there is more than one. If you want to customize the table heading independently, you can still use the `$table->heading()` method:
+
+```php
+use Filament\Tables;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->heading('Posts')
+        ->columns([
+            // ...
+        ]);
+}
+```
+
 ## Customizing the relation manager record title
 
 The relation manager uses the concept of a "record title attribute" to determine which attribute of the related model should be used to identify it. When creating a relation manager, this attribute is passed as the third argument to the `make:filament-relation-manager` command:
@@ -746,6 +824,54 @@ AssociateAction::make()
 
 AttachAction::make()
     ->recordSelectSearchColumns(['title', 'id'])
+```
+
+## Relation pages
+
+Using a `ManageRelatedRecords` page is an alternative to using a relation manager, if you want to keep the functionality of managing a relationship separate from editing or viewing the owner record.
+
+This feature is ideal if you are using [resource sub-navigation](getting-started#resource-sub-navigation), as you are easily able to switch between the View or Edit page and the relation page.
+
+To create a relation page, you should use the `make:filament-page` command:
+
+```bash
+php artisan make:filament-page ManageCustomerAddresses --resource=CustomerResource --type=ManageRelatedRecords
+```
+
+When you run this command, you will be asked a series of questions to customize the page, for example, the name of the relationship and its title attribute.
+
+You must register this new page in your resource's `getPages()` method:
+
+```php
+public static function getPages(): array
+{
+    return [
+        'index' => Pages\ListCustomers::route('/'),
+        'create' => Pages\CreateCustomer::route('/create'),
+        'view' => Pages\ViewCustomer::route('/{record}'),
+        'edit' => Pages\EditCustomer::route('/{record}/edit'),
+        'addresses' => Pages\ManageCustomerAddresses::route('/{record}/addresses'),
+    ];
+}
+```
+
+> When using a relation page, you do not need to generate a relation manager with `make:filament-relation-manager`, and you do not need to register it in the `getRelations()` method of the resource.
+
+Now, you can customize the page in exactly the same way as a relation manager, with the same `table()` and `form()`.
+
+If you're using [resource sub-navigation](getting-started#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
+
+```php
+use App\Filament\Resources\CustomerResource\Pages;
+use Filament\Resources\Pages\Page;
+
+public static function getRecordSubNavigation(Page $page): array
+{
+    return $page->generateNavigationItems([
+        // ...
+        Pages\ManageCustomerAddresses::class,
+    ]);
+}
 ```
 
 ## Passing properties to relation managers

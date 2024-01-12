@@ -55,11 +55,13 @@ trait HasBulkActions
             return null;
         }
 
-        $action->arguments($arguments);
+        $action->mergeArguments($arguments);
 
         $form = $this->getMountedTableBulkActionForm();
 
         $result = null;
+
+        $originallyMountedAction = $this->mountedTableBulkAction;
 
         try {
             if ($this->mountedTableBulkActionHasForm()) {
@@ -97,6 +99,12 @@ trait HasBulkActions
 
         $action->resetArguments();
         $action->resetFormData();
+
+        // If the action was replaced while it was being called,
+        // we don't want to unmount it.
+        if ($originallyMountedAction !== $this->mountedTableBulkAction) {
+            return null;
+        }
 
         $this->unmountTableBulkAction();
 
@@ -167,6 +175,17 @@ trait HasBulkActions
         );
     }
 
+    /**
+     * @param  array<int | string> | null  $selectedRecords
+     */
+    public function replaceMountedTableBulkAction(string $name, ?array $selectedRecords = null): void
+    {
+        $selectedRecords ??= $this->selectedTableRecords;
+
+        $this->resetMountedTableBulkActionProperties();
+        $this->mountTableBulkAction($name, $selectedRecords);
+    }
+
     protected function resetMountedTableBulkActionProperties(): void
     {
         $this->mountedTableBulkAction = null;
@@ -181,19 +200,22 @@ trait HasBulkActions
             return false;
         }
 
-        return $action->getModalDescription() ||
-            $action->getModalContent() ||
-            $action->getModalContentFooter() ||
+        return $action->hasCustomModalHeading() ||
+            $action->hasModalDescription() ||
+            $action->hasModalContent() ||
+            $action->hasModalContentFooter() ||
             $action->getInfolist() ||
             $this->mountedTableBulkActionHasForm();
     }
 
-    public function unmountTableBulkAction(): void
+    public function unmountTableBulkAction(bool $shouldCloseModal = true): void
     {
         $this->mountedTableBulkAction = null;
         $this->selectedTableRecords = [];
 
-        $this->closeTableBulkActionModal();
+        if ($shouldCloseModal) {
+            $this->closeTableBulkActionModal();
+        }
     }
 
     public function mountedTableBulkActionHasForm(): bool
@@ -300,11 +322,11 @@ trait HasBulkActions
         }
 
         if ($this->getTable()->selectsCurrentPageOnly()) {
-            return $this->records->count();
+            return $this->cachedTableRecords->count();
         }
 
-        if ($this->records instanceof LengthAwarePaginator) {
-            return $this->records->total();
+        if ($this->cachedTableRecords instanceof LengthAwarePaginator) {
+            return $this->cachedTableRecords->total();
         }
 
         return $this->getFilteredTableQuery()->count();

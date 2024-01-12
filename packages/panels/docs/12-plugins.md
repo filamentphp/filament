@@ -7,6 +7,7 @@ import LaracastsBanner from "@components/LaracastsBanner.astro"
     title="Panel Builder Plugins"
     description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to get started with your plugin. The text-based guide on this page can also give a good overview."
     url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/16"
+    series="building-advanced-components"
 />
 
 ## Overview

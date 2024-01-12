@@ -4,7 +4,7 @@ title: Advanced forms
 
 ## Overview
 
-Filament Form Builder are designed to be flexible and customizable. Many existing form builders allow users to define a form schema, but don't provide a great interface for defining inter-field interactions, or custom logic. Since all Filament forms are built on top of [Livewire](https://livewire.laravel.com), the form can adapt dynamically to user input, even after it has been initially rendered. Developers can use [parameter injection](#form-component-utility-injection) to access many utilities in real time and build dynamic forms based on user input. The [lifecycle](#field-lifecycle) of fields is open to extension using hook functions to define custom functionality for each field. This allows developers to build complex forms with ease.
+Filament Form Builder is designed to be flexible and customizable. Many existing form builders allow users to define a form schema, but don't provide a great interface for defining inter-field interactions, or custom logic. Since all Filament forms are built on top of [Livewire](https://livewire.laravel.com), the form can adapt dynamically to user input, even after it has been initially rendered. Developers can use [parameter injection](#form-component-utility-injection) to access many utilities in real time and build dynamic forms based on user input. The [lifecycle](#field-lifecycle) of fields is open to extension using hook functions to define custom functionality for each field. This allows developers to build complex forms with ease.
 
 ## The basics of reactivity
 
@@ -554,4 +554,119 @@ Group::make()
             ->email()
             ->required(),
     ])
+```
+
+### Saving data to a `BelongsTo` relationship
+
+Please note that if you are saving the data to a `BelongsTo` relationship, then the foreign key column in your database must be `nullable()`. This is because Filament saves the form first, before saving the relationship. Since the form is saved first, the foreign ID does not exist yet, so it must be nullable. Immediately after the form is saved, Filament saves the relationship, which will then fill in the foreign ID and save it again.
+
+It is worth noting that if you have an observer on your form model, then you may need to adapt it to ensure that it does not depend on the relationship existing when it it created. For example, if you have an observer that sends an email to a related record when a form is created, you may need to switch to using a different hook that runs after the relationship is attached, like `updated()`.
+
+### Conditionally saving data to a relationship
+
+Sometimes, saving the related record may be optional. If the user fills out the customer fields, then the customer will be created / updated. Otherwise, the customer will not be created, or will be deleted if it already exists. To do this, you can pass a `condition` function as an argument to `relationship()`, which can use the `$state` of the related form to determine whether the relationship should be saved or not:
+
+```php
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\TextInput;
+
+Group::make()
+    ->relationship(
+        'customer',
+        condition: fn (?array $state): bool => filled($state['name']),
+    )
+    ->schema([
+        TextInput::make('name')
+            ->label('Customer'),
+        TextInput::make('email')
+            ->label('Email address')
+            ->email()
+            ->requiredWith('name'),
+    ])
+```
+
+In this example, the customer's name is not `required()`, and the email address is only required when the `name` is filled. The `condition` function is used to check whether the `name` field is filled, and if it is, then the customer will be created / updated. Otherwise, the customer will not be created, or will be deleted if it already exists.
+
+## Inserting Livewire components into a form
+
+You may use insert a Livewire component directly into a form:
+
+```php
+use Filament\Forms\Components\Livewire;
+use App\Livewire\Foo;
+
+Livewire::make(Foo::class)
+```
+
+### Passing parameters to a Livewire component
+
+You can pass an array of parameters to a Livewire component:
+
+```php
+use Filament\Forms\Components\Livewire;
+use App\Livewire\Foo;
+
+Livewire::make(Foo::class, ['bar' => 'baz'])
+```
+
+Now, those parameters will be passed to the Livewire component's `mount()` method:
+
+```php
+class Foo extends Component
+{
+    public function mount(string $bar): void
+    {       
+        // ...
+    }
+}
+```
+
+Alternatively, they will be available as public properties on the Livewire component:
+
+```php
+class Foo extends Component
+{
+    public string $bar;
+}
+```
+
+#### Accessing the current record in the Livewire component
+
+You can access the current record in the Livewire component using the `$record` parameter in the `mount()` method, or the `$record` property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class Foo extends Component
+{
+    public function mount(?Model $record = null): void
+    {       
+        // ...
+    }
+    
+    // or
+    
+    public ?Model $record = null;
+}
+```
+
+Please be aware that when the record has not yet been created, it will be `null`. If you'd like to hide the Livewire component when the record is `null`, you can use the `hidden()` method:
+
+```php
+use Filament\Forms\Components\Livewire;
+use Illuminate\Database\Eloquent\Model;
+
+Livewire::make(Foo::class)
+    ->hidden(fn (?Model $record): bool => $record === null)
+```
+
+### Lazy loading a Livewire component
+
+You may allow the component to [lazily load](https://livewire.laravel.com/docs/lazy#rendering-placeholder-html) using the `lazy()` method:
+
+```php
+use Filament\Forms\Components\Livewire;
+use App\Livewire\Foo;
+
+Livewire::make(Foo::class)->lazy()       
 ```

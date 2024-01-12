@@ -13,6 +13,8 @@ trait HasWizard
 
     protected int | Closure $wizardStartStep = 1;
 
+    protected ?Closure $modifyWizardUsing = null;
+
     /**
      * @param  array<Step> | Closure  $steps
      */
@@ -46,6 +48,14 @@ trait HasWizard
     public function isWizardSkippable(): bool
     {
         return (bool) $this->evaluate($this->isWizardSkippable);
+    }
+
+    public function modifyWizardUsing(?Closure $callback): static
+    {
+        $this->isWizard = true;
+        $this->modifyWizardUsing = $callback;
+
+        return $this;
     }
 
     public function getWizardStartStep(): int

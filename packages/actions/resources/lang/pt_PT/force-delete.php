@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Forçar exclusão',
+        'label' => 'Eliminar permanentemente',
 
         'modal' => [
 
-            'heading' => 'Forçar exclusão de :label',
+            'heading' => 'Eliminar permanentemente :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Excluir',
+                    'label' => 'Eliminar',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Excluído',
+                'title' => 'Eliminado',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Forçar exclusão selecionado',
+        'label' => 'Eliminar permanentemente seleccionados',
 
         'modal' => [
 
-            'heading' => 'Forçar exclusão de :label selecionado',
+            'heading' => 'Eliminar permanentemente :label seleccionados',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Excluir',
+                    'label' => 'Eliminar',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Excluído',
+                'title' => 'Eliminado',
             ],
 
         ],

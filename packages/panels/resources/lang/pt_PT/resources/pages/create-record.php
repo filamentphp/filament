@@ -29,7 +29,7 @@ return [
     'notifications' => [
 
         'created' => [
-            'title' => 'Guardado!',
+            'title' => 'Criado',
         ],
 
     ],

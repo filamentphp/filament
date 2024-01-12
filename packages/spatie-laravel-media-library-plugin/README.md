@@ -5,13 +5,13 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-media-library-plugin:"^3.0-stable" -W
+composer require filament/spatie-laravel-media-library-plugin:"^3.1" -W
 ```
 
 If you haven't already done so, you need to publish the migration to create the media table:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
 ```
 
 Run the migrations:
@@ -36,7 +36,7 @@ SpatieMediaLibraryFileUpload::make('avatar')
 
 The media library file upload supports all the customization options of the [original file upload component](https://filamentphp.com/docs/forms/fields/file-upload).
 
-> The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](https://filamentphp.com/docs/forms/getting-started#field-relationships) section**. If you're using a [panel](../panels), you can skip this step.
+> The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [setting a form model](https://filamentphp.com/docs/forms/adding-a-form-to-a-livewire-component#setting-a-form-model) section**. If you're using a [panel](../panels), you can skip this step.
 
 ### Passing a collection
 
@@ -68,14 +68,14 @@ The base file upload component also has configuration options for setting the `d
 
 In addition to the behaviour of the normal file upload, Spatie's Media Library also allows users to reorder files.
 
-To enable this behaviour, use the `enableReordering()` method:
+To enable this behaviour, use the `reorderable()` method:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
-    ->enableReordering()
+    ->reorderable()
 ```
 
 You may now drag and drop files into order.

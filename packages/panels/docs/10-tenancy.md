@@ -23,13 +23,13 @@ class Post extends Model
 {
     protected static function booted(): void
     {
-        if (auth()->check()) {
-            static::addGlobalScope('team', function (Builder $query) {
+        static::addGlobalScope('team', function (Builder $query) {
+            if (auth()->check()) {
                 $query->where('team_id', auth()->user()->team_id);
                 // or with a `team` relationship defined:
                 $query->whereBelongsTo(auth()->user()->team);
-            });
-        }
+            }
+        });
     }
 }
 ```
@@ -324,6 +324,21 @@ class ExampleBillingProvider implements Provider
 }
 ```
 
+### Customizing the billing route slug
+
+You can customize the URL slug used for the billing route using the `tenantBillingRouteSlug()` method in the [configuration](configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantBillingRouteSlug('billing');
+}
+```
+
 ## Customizing the tenant menu
 
 The tenant-switching menu is featured in the sidebar of the admin layout. It's fully customizable.
@@ -419,6 +434,23 @@ MenuItem::make()
     // or
     ->hidden(fn (): bool => ! auth()->user()->can('manage-team'))
 ```
+
+### Hiding the tenant menu
+
+You can hide the tenant menu by using the `tenantMenu(false)`
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMenu(false);
+}
+```
+
+However, this is a sign that Filament's tenancy feature is not suitable for your project. If each user only belongs to one tenant, you should stick to [simple one-to-many tenancy](#simple-one-to-many-tenancy).
 
 ## Setting up avatars
 
@@ -651,6 +683,22 @@ By default, all resources within a panel with tenancy will be scoped to the curr
 
 ```php
 protected static bool $isScopedToTenant = false;
+```
+
+### Disabling tenancy for all resources
+
+If you wish to opt-in to tenancy for each resource instead of opting-out, you can call `Resource::scopeToTenant(false)` inside a service provider's `boot()` method or a middleware:
+
+```php
+use Filament\Resources\Resource;
+
+Resource::scopeToTenant(false);
+```
+
+Now, you can opt-in to tenancy for each resource by setting the `$isScopedToTenant` static property to `true` on a resource class:
+
+```php
+protected static bool $isScopedToTenant = true;
 ```
 
 ## Tenancy security

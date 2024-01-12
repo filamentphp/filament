@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-google-fonts-plugin:"^3.0-stable" -W
+composer require filament/spatie-laravel-google-fonts-plugin:"^3.1" -W
 ```
 
 Please [follow Spatie's documentation about how to set up their package](https://github.com/spatie/laravel-google-fonts) first.

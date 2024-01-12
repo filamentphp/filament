@@ -6,8 +6,11 @@ use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 
-class Radio extends Field
+class Radio extends Field implements Contracts\CanDisableOptions
 {
+    use Concerns\CanDisableOptions;
+    use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
+    use Concerns\CanFixIndistinctState;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;
     use Concerns\HasOptions;
@@ -24,26 +27,12 @@ class Radio extends Field
      */
     protected array | Arrayable | Closure $descriptions = [];
 
-    protected bool | Closure | null $isOptionDisabled = null;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    public function boolean(string $trueLabel = 'Yes', string $falseLabel = 'No'): static
+    public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
     {
         $this->options([
-            1 => $trueLabel,
-            0 => $falseLabel,
+            1 => $trueLabel ?? __('filament-forms::components.radio.boolean.true'),
+            0 => $falseLabel ?? __('filament-forms::components.radio.boolean.false'),
         ]);
-
-        return $this;
-    }
-
-    public function disableOptionWhen(bool | Closure $callback): static
-    {
-        $this->isOptionDisabled = $callback;
 
         return $this;
     }
@@ -51,6 +40,7 @@ class Radio extends Field
     public function inline(bool | Closure $condition = true): static
     {
         $this->isInline = $condition;
+        $this->inlineLabel(fn (Radio $component): ?bool => $component->evaluate($condition) ? true : null);
 
         return $this;
     }
@@ -98,21 +88,6 @@ class Radio extends Field
     public function isInline(): bool
     {
         return (bool) $this->evaluate($this->isInline);
-    }
-
-    /**
-     * @param  array-key  $value
-     */
-    public function isOptionDisabled($value, string $label): bool
-    {
-        if ($this->isOptionDisabled === null) {
-            return false;
-        }
-
-        return (bool) $this->evaluate($this->isOptionDisabled, [
-            'label' => $label,
-            'value' => $value,
-        ]);
     }
 
     public function getDefaultState(): mixed

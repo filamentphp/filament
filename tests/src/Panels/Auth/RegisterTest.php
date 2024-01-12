@@ -1,11 +1,13 @@
 <?php
 
+use Filament\Events\Auth\Registered;
 use Filament\Facades\Filament;
+use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Pages\Auth\Register;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
@@ -13,11 +15,23 @@ use function Filament\Tests\livewire;
 uses(TestCase::class);
 
 it('can render page', function () {
+    expect(Filament::getRegistrationUrl())->toEndWith('/register');
+
+    $this->get(Filament::getRegistrationUrl())
+        ->assertSuccessful();
+});
+
+it('can render page with a custom slug', function () {
+    Filament::setCurrentPanel(Filament::getPanel('slugs'));
+
+    expect(Filament::getRegistrationUrl())->toEndWith('/register-test');
+
     $this->get(Filament::getRegistrationUrl())
         ->assertSuccessful();
 });
 
 it('can register', function () {
+    Notification::fake();
     Event::fake();
 
     $this->assertGuest();
@@ -36,6 +50,7 @@ it('can register', function () {
         ->call('register')
         ->assertRedirect(Filament::getUrl());
 
+    Notification::assertSentTimes(VerifyEmail::class, expectedCount: 1);
     Event::assertDispatched(Registered::class);
 
     $this->assertAuthenticated();
@@ -47,6 +62,9 @@ it('can register', function () {
 });
 
 it('can register and redirect user to their intended URL', function () {
+    Notification::fake();
+    Event::fake();
+
     session()->put('url.intended', $intendedUrl = Str::random());
 
     Filament::getCurrentPanel()->requiresEmailVerification(false);
@@ -65,6 +83,7 @@ it('can register and redirect user to their intended URL', function () {
 });
 
 it('can throttle registration attempts', function () {
+    Notification::fake();
     Event::fake();
 
     $this->assertGuest();
@@ -87,6 +106,7 @@ it('can throttle registration attempts', function () {
         auth()->logout();
     }
 
+    Notification::assertSentTimes(VerifyEmail::class, expectedCount: 2);
     Event::assertDispatchedTimes(Registered::class, times: 2);
 
     livewire(Register::class)
@@ -100,6 +120,7 @@ it('can throttle registration attempts', function () {
         ->assertNotified()
         ->assertNoRedirect();
 
+    Notification::assertSentTimes(VerifyEmail::class, expectedCount: 2);
     Event::assertDispatchedTimes(Registered::class, times: 2);
 
     $this->assertGuest();

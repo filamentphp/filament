@@ -14,8 +14,9 @@
 
 <li
     @class([
-        'fi-topbar-item overflow-hidden',
-        'fi-topbar-item-active' => $active,
+        'fi-topbar-item',
+        // @deprecated `fi-topbar-item-active` has been replaced by `fi-active`.
+        'fi-active fi-topbar-item-active' => $active,
     ])
 >
     <{{ $tag }}
@@ -25,9 +26,8 @@
             type="button"
         @endif
         @class([
-            'flex items-center justify-center gap-x-2 rounded-lg px-3 py-2 text-sm font-semibold outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
-            'text-gray-700 dark:text-gray-200' => ! $active,
-            'bg-gray-50 text-primary-600 dark:bg-white/5 dark:text-primary-400' => $active,
+            'fi-topbar-item-button flex items-center justify-center gap-x-2 rounded-lg px-3 py-2 outline-none transition duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
+            'bg-gray-50 dark:bg-white/5' => $active,
         ])
     >
         @if ($icon || $activeIcon)
@@ -36,12 +36,18 @@
                 @class([
                     'fi-topbar-item-icon h-5 w-5',
                     'text-gray-400 dark:text-gray-500' => ! $active,
-                    'text-primary-500' => $active,
+                    'text-primary-600 dark:text-primary-400' => $active,
                 ])
             />
         @endif
 
-        <span>
+        <span
+            @class([
+                'fi-topbar-item-label font-medium text-sm',
+                'text-gray-700 dark:text-gray-200' => ! $active,
+                'text-primary-600 dark:text-primary-400' => $active,
+            ])
+        >
             {{ $slot }}
         </span>
 
@@ -58,7 +64,7 @@
                 @class([
                     'fi-topbar-group-toggle-icon h-5 w-5',
                     'text-gray-400 dark:text-gray-500' => ! $active,
-                    'text-primary-500' => $active,
+                    'text-primary-600 dark:text-primary-400' => $active,
                 ])
             />
         @endif

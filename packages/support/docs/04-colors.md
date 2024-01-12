@@ -32,7 +32,7 @@ You can also pass in a function to `register()` which will only get called when 
 
 ## Using a non-Tailwind color
 
-You can use custom colors that are not included in the [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference) palette by passing an array of color shades from `50` to `900` in RGB format:
+You can use custom colors that are not included in the [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference) palette by passing an array of color shades from `50` to `950` in RGB format:
 
 ```php
 use Filament\Support\Facades\FilamentColor;
