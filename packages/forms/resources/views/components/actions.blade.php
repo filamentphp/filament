@@ -26,7 +26,7 @@
             ])
     }}
 >
-    <x-filament-actions::actions
+    <x-filament::actions
         :actions="$getChildComponentContainer()->getComponents()"
         :alignment="$getAlignment()"
         :full-width="$isFullWidth()"
