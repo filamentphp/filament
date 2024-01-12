@@ -2,30 +2,30 @@
 
 return [
 
-    'label' => 'Профиль',
+    'label' => 'Profil',
 
     'form' => [
 
         'email' => [
-            'label' => 'Адрес электронной почты',
+            'label' => 'Elektron pochta manzili',
         ],
 
         'name' => [
-            'label' => 'Имя',
+            'label' => 'Ism',
         ],
 
         'password' => [
-            'label' => 'Новый пароль',
+            'label' => 'Yangi parol',
         ],
 
         'password_confirmation' => [
-            'label' => 'Подтвердите новый пароль',
+            'label' => 'Yangi parolni tasdiqlang',
         ],
 
         'actions' => [
 
             'save' => [
-                'label' => 'Сохранить изменения',
+                'label' => 'O\'zgarishlarni saqlash',
             ],
 
         ],
@@ -35,7 +35,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'Сохранено',
+            'title' => 'Saqlandi',
         ],
 
     ],
@@ -43,7 +43,7 @@ return [
     'actions' => [
 
         'cancel' => [
-            'label' => 'назад',
+            'label' => 'Qaytish',
         ],
 
     ],

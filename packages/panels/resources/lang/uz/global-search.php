@@ -3,10 +3,10 @@
 return [
 
     'field' => [
-        'label' => 'Глобальный поиск',
-        'placeholder' => 'Поиск',
+        'label' => 'Global qidiruv',
+        'placeholder' => 'Qidirish',
     ],
 
-    'no_results_message' => 'Ничего не найдено.',
+    'no_results_message' => 'Hech narsa topilmadi.',
 
 ];

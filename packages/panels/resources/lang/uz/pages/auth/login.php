@@ -2,19 +2,19 @@
 
 return [
 
-    'title' => 'Авторизоваться',
+    'title' => 'Tizimga kirish',
 
-    'heading' => 'Войдите в свой аккаунт',
+    'heading' => 'Hisobingizga kiring',
 
     'actions' => [
 
         'register' => [
-            'before' => 'или',
-            'label' => 'зарегистрируйте учетную запись',
+            'before' => 'yoki',
+            'label' => 'hisob qaydnomasini ro\'yxatdan o\'tkazish',
         ],
 
         'request_password_reset' => [
-            'label' => 'Забыли свой пароль?',
+            'label' => 'Parolni unutdingizmi?',
         ],
 
     ],
@@ -22,21 +22,21 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Адрес электронной почты',
+            'label' => 'Elektron pochta manzili',
         ],
 
         'password' => [
-            'label' => 'Пароль',
+            'label' => 'Parol',
         ],
 
         'remember' => [
-            'label' => 'Запомнить меня',
+            'label' => 'Meni eslab qol',
         ],
 
         'actions' => [
 
             'authenticate' => [
-                'label' => 'Войти',
+                'label' => 'Hisobga kirish',
             ],
 
         ],
@@ -45,15 +45,15 @@ return [
 
     'messages' => [
 
-        'failed' => 'Неверное имя пользователя или пароль.',
+        'failed' => 'Siz kiritgan foydalanuvchi nomi yoki parol noto\'g\'ri.',
 
     ],
 
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Слишком много попыток входа',
-            'body' => 'Пожалуйста, попробуйте еще раз через :seconds секунд.',
+            'title' => 'Kirish urinishlari juda koʻp',
+            'body' => 'Iltimos, :soniya soniyadan keyin qayta urinib ko\'ring.',
         ],
 
     ],

@@ -7,7 +7,7 @@ return [
         'actions' => [
 
             'save' => [
-                'label' => 'Сохранить изменения',
+                'label' => 'O\'zgarishlarni saqlash',
             ],
 
         ],
@@ -17,7 +17,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'Сохранено',
+            'title' => 'Saqlandi',
         ],
 
     ],

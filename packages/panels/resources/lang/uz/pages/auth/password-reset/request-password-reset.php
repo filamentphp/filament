@@ -2,14 +2,14 @@
 
 return [
 
-    'title' => 'Сбросить пароль',
+    'title' => 'Parolni qayta o\'rnatish',
 
-    'heading' => 'Забыли свой пароль?',
+    'heading' => 'Parolni unutdingizmi?',
 
     'actions' => [
 
         'login' => [
-            'label' => 'назад на страницу входа',
+            'label' => 'Kirish sahifasiga qaytish',
         ],
 
     ],
@@ -17,13 +17,13 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Адрес электронной почты',
+            'label' => 'Elektron pochta manzili',
         ],
 
         'actions' => [
 
             'request' => [
-                'label' => 'Отправить письмо',
+                'label' => 'Xabar yuborish',
             ],
 
         ],
@@ -33,8 +33,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Слишком много попыток',
-            'body' => 'Пожалуйста, попробуйте еще раз через :seconds секунд.',
+            'title' => 'Urinishlar soni juda ko\'p',
+            'body' => 'Iltimos, :seconds soniyadan keyin qayta urinib ko\'ring.',
         ],
 
     ],

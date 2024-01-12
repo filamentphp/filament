@@ -7,29 +7,29 @@ return [
     'actions' => [
 
         'billing' => [
-            'label' => 'Управление подпиской',
+            'label' => 'Obuna boshqaruvi',
         ],
 
         'logout' => [
-            'label' => 'Выйти',
+            'label' => 'Chiqish',
         ],
 
         'open_database_notifications' => [
-            'label' => 'Открыть уведомления',
+            'label' => 'Bildirishnomalarni ochish',
         ],
 
         'open_user_menu' => [
-            'label' => 'Меню пользователя',
+            'label' => 'Foydalanuvchi menyusi',
         ],
 
         'sidebar' => [
 
             'collapse' => [
-                'label' => 'Свернуть боковую панель',
+                'label' => 'Yon panelni yig\'ish',
             ],
 
             'expand' => [
-                'label' => 'Раскрыть боковую панель',
+                'label' => 'Yon panelni yoyish',
             ],
 
         ],
@@ -37,15 +37,15 @@ return [
         'theme_switcher' => [
 
             'dark' => [
-                'label' => 'Включить темный режим',
+                'label' => 'To\'q rejimni ishlatish',
             ],
 
             'light' => [
-                'label' => 'Включить светлый режим',
+                'label' => 'Yorqin rejimni ishlatish',
             ],
 
             'system' => [
-                'label' => 'Включить системный режим',
+                'label' => 'Tizim rejimidan foydalanish',
             ],
 
         ],

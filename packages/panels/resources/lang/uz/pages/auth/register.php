@@ -2,15 +2,15 @@
 
 return [
 
-    'title' => 'Регистрация',
+    'title' => 'Ro\'yxatdan o\'tish',
 
-    'heading' => 'Регистрация учетной записи',
+    'heading' => 'Hisob qaydnomasini ro\'yxatdan o\'tkazish',
 
     'actions' => [
 
         'login' => [
-            'before' => 'или',
-            'label' => 'войти в свой аккаунт',
+            'before' => 'yoki',
+            'label' => 'o\'z hisob raqamingiz orqali kirish',
         ],
 
     ],
@@ -18,26 +18,26 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Адрес электронной почты',
+            'label' => 'Elektron pochta manzili',
         ],
 
         'name' => [
-            'label' => 'Имя',
+            'label' => 'Ism',
         ],
 
         'password' => [
-            'label' => 'Пароль',
+            'label' => 'Parol',
             'validation_attribute' => 'password',
         ],
 
         'password_confirmation' => [
-            'label' => 'Подтвердите пароль',
+            'label' => 'Parolni tasdiqlash',
         ],
 
         'actions' => [
 
             'register' => [
-                'label' => 'Зарегистрироваться',
+                'label' => 'Roʻyxatdan oʻtish',
             ],
 
         ],
@@ -47,8 +47,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Слишком много попыток регистрации',
-            'body' => 'Пожалуйста, попробуйте еще раз через :seconds секунд.',
+            'title' => 'Roʻyxatdan oʻtishga urinishlar juda koʻp',
+            'body' => 'Iltimos, :soniya soniyadan keyin qayta urinib ko\'ring.',
         ],
 
     ],
