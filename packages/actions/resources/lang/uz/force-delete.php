@@ -4,16 +4,15 @@ return [
 
     'single' => [
 
-        'label' => 'Force delete',
+        'label' => 'Majburiy o\'chirish',
 
         'modal' => [
 
-            'heading' => 'Force delete :label',
+            'heading' => ':label - majburiy o\'chirish',
 
             'actions' => [
-
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'O\'chirish',
                 ],
 
             ],
@@ -23,7 +22,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => 'O\'chirildi',
             ],
 
         ],
@@ -32,16 +31,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Force delete selected',
+        'label' => 'Tanlanganlarni majburiy o\'chirish',
 
         'modal' => [
 
-            'heading' => 'Force delete selected :label',
+            'heading' => ':label - majburiy o\'chirish',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'O\'chirish',
                 ],
 
             ],
@@ -51,7 +50,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => 'O\'chirildi',
             ],
 
         ],

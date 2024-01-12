@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Restore',
+        'label' => 'Qayta tiklash',
 
         'modal' => [
 
-            'heading' => 'Restore :label',
+            'heading' => ':label ni qayta tiklash',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restore',
+                    'label' => 'Qayta tiklash',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Restored',
+                'title' => 'Qayta tiklandi',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Restore selected',
+        'label' => 'Tanlanganni qayta tiklash',
 
         'modal' => [
 
-            'heading' => 'Restore selected :label',
+            'heading' => ':label - qayta tiklash',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restore',
+                    'label' => 'Qayta tiklash',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Restored',
+                'title' => 'Qayta tiklandi',
             ],
 
         ],

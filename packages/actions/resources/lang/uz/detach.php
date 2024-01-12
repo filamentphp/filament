@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ":label ajratish",
+            'heading' => ":label - ajratish",
 
             'actions' => [
 
@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Tanlangan :label ajratish ',
+            'heading' => ':label - ajratish ',
 
             'actions' => [
 

@@ -2,20 +2,20 @@
 
 return [
 
-    'confirmation' => 'Are you sure you would like to do this?',
+    'confirmation' => 'Buni amalni bajarishga ishonchingiz komilmi?',
 
     'actions' => [
 
         'cancel' => [
-            'label' => 'Cancel',
+            'label' => 'Qaytarish',
         ],
 
         'confirm' => [
-            'label' => 'Confirm',
+            'label' => 'Tasdiqlash',
         ],
 
         'submit' => [
-            'label' => 'Submit',
+            'label' => 'Yuborish',
         ],
 
     ],

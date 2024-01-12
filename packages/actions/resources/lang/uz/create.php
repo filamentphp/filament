@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label yaratish',
+            'heading' => ':label - yaratish',
 
             'actions' => [
 

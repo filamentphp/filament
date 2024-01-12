@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label o\'chirish',
+            'heading' => ':label - o\'chirish',
 
             'actions' => [
 
@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Tanlangan :label ni o\'chirish',
+            'heading' => ':label - o\'chirish',
 
             'actions' => [
 

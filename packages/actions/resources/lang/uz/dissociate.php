@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Dissociate',
+        'label' => 'Ajratish',
 
         'modal' => [
 
-            'heading' => 'Dissociate :label',
+            'heading' => ':label - ajratish',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociate',
+                    'label' => 'Ajratish',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissociated',
+                'title' => 'Ajratilgan',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Dissociate selected',
+        'label' => 'Tanlanganlarni ajratish',
 
         'modal' => [
 
-            'heading' => 'Dissociate selected :label',
+            'heading' => ':label - ajratish',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociate',
+                     'label' => 'Ajratish',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissociated',
+                'title' => 'Ajratilgan',
             ],
 
         ],
