@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Assets;
 
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 
@@ -12,6 +13,8 @@ class Js extends Asset
     protected bool $isDeferred = false;
 
     protected bool $isCore = false;
+
+    protected bool $isNavigateOnce = true;
 
     protected bool $isModule = false;
 
@@ -34,6 +37,13 @@ class Js extends Asset
     public function core(bool $condition = true): static
     {
         $this->isCore = $condition;
+
+        return $this;
+    }
+
+    public function navigateOnce(bool $condition = true): static
+    {
+        $this->isNavigateOnce = $condition;
 
         return $this;
     }
@@ -67,6 +77,11 @@ class Js extends Asset
         return $this->isCore;
     }
 
+    public function isNavigateOnce(): bool
+    {
+        return $this->isNavigateOnce;
+    }
+
     public function isModule(): bool
     {
         return $this->isModule;
@@ -86,13 +101,19 @@ class Js extends Asset
         $defer = $this->isDeferred() ? 'defer' : '';
         $module = $this->isModule() ? 'type="module"' : '';
 
+        $hasSpaMode = FilamentView::hasSpaMode();
+
+        $navigateOnce = ($hasSpaMode && $this->isNavigateOnce()) ? 'data-navigate-once' : '';
+        $navigateTrack = $hasSpaMode ? 'data-navigate-track' : '';
+
         return new HtmlString("
             <script
                 src=\"{$html}\"
                 {$async}
                 {$defer}
                 {$module}
-                data-navigate-track
+                {$navigateOnce}
+                {$navigateTrack}
             ></script>
         ");
     }

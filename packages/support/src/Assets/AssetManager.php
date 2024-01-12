@@ -16,6 +16,11 @@ class AssetManager
     /**
      * @var array<string, array<string, mixed>>
      */
+    protected array $cssVariables = [];
+
+    /**
+     * @var array<string, array<string, mixed>>
+     */
     protected array $scriptData = [];
 
     /**
@@ -49,6 +54,17 @@ class AssetManager
                 default => null,
             };
         }
+    }
+
+    /**
+     * @param  array<string, mixed>  $variables
+     */
+    public function registerCssVariables(array $variables, ?string $package = null): void
+    {
+        $this->cssVariables[$package] = [
+            ...($this->cssVariables[$package] ?? []),
+            ...$variables,
+        ];
     }
 
     /**
@@ -196,10 +212,36 @@ class AssetManager
 
     /**
      * @param  array<string> | null  $packages
+     * @return array<string, mixed>
+     */
+    public function getCssVariables(?array $packages = null): array
+    {
+        $variables = [];
+
+        foreach ($this->cssVariables as $package => $packageVariables) {
+            if (
+                ($packages !== null) &&
+                ($package !== null) &&
+                (! in_array($package, $packages))
+            ) {
+                continue;
+            }
+
+            $variables = [
+                ...$variables,
+                ...$packageVariables,
+            ];
+        }
+
+        return $variables;
+    }
+
+    /**
+     * @param  array<string> | null  $packages
      */
     public function renderStyles(?array $packages = null): string
     {
-        $variables = [];
+        $variables = $this->getCssVariables($packages);
 
         foreach (FilamentColor::getColors() as $name => $shades) {
             foreach ($shades as $shade => $color) {

@@ -5,6 +5,7 @@ namespace Filament\Tables\Table\Concerns;
 use BackedEnum;
 use Closure;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -60,7 +61,7 @@ trait HasRecords
         return $this;
     }
 
-    public function getRecords(): Collection | Paginator
+    public function getRecords(): Collection | Paginator | CursorPaginator
     {
         return $this->getLivewire()->getTableRecords();
     }
@@ -111,7 +112,13 @@ trait HasRecords
                 Model::class => $record,
                 $record::class => $record,
             ],
-        ) ?? $record->getAttributeValue($this->getRecordTitleAttribute()) ?? $this->getModelLabel();
+        );
+
+        if (filled($titleAttribute = $this->getRecordTitleAttribute())) {
+            $title ??= $record->getAttributeValue($titleAttribute);
+        }
+
+        $title ??= $this->getModelLabel();
 
         if ($title instanceof HasLabel) {
             return $title->getLabel();

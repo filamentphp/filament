@@ -11,11 +11,12 @@
                 Alignment::Start, Alignment::Left => 'items-start',
                 Alignment::Center => 'items-center',
                 Alignment::End, Alignment::Right => 'items-end',
+                default => null,
             },
             match (static::$verticalAlignment) {
                 VerticalAlignment::Start => 'flex-col-reverse justify-end',
                 VerticalAlignment::End => 'flex-col justify-end',
-                VerticalAlignment::Center => 'flex-col justify-center'
+                VerticalAlignment::Center => 'flex-col justify-center',
             },
         ])
         role="status"

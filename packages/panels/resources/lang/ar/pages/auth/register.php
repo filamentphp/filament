@@ -37,7 +37,7 @@ return [
         'actions' => [
 
             'register' => [
-                'label' => 'تسجيل',
+                'label' => 'إنشاء حساب',
             ],
 
         ],

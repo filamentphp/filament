@@ -1,5 +1,21 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Facades\FilamentView;
+
+    $imageCropAspectRatio = $getImageCropAspectRatio();
+    $imageResizeTargetHeight = $getImageResizeTargetHeight();
+    $imageResizeTargetWidth = $getImageResizeTargetWidth();
+    $isAvatar = $isAvatar();
+    $statePath = $getStatePath();
+    $isDisabled = $isDisabled();
+    $hasImageEditor = $hasImageEditor();
+    $hasCircleCropper = $hasCircleCropper();
+
+    $alignment = $getAlignment() ?? Alignment::Start;
+
+    if (! $alignment instanceof Alignment) {
+        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+    }
 @endphp
 
 <x-dynamic-component
@@ -7,24 +23,12 @@
     :field="$field"
     :label-sr-only="$isLabelHidden()"
 >
-    @php
-        $imageCropAspectRatio = $getImageCropAspectRatio();
-        $imageResizeTargetHeight = $getImageResizeTargetHeight();
-        $imageResizeTargetWidth = $getImageResizeTargetWidth();
-        $isAvatar = $isAvatar();
-        $statePath = $getStatePath();
-        $isDisabled = $isDisabled();
-        $hasImageEditor = $hasImageEditor();
-
-        $alignment = $getAlignment() ?? Alignment::Start;
-
-        if (! $alignment instanceof Alignment) {
-            $alignment = Alignment::tryFrom($alignment) ?? $alignment;
-        }
-    @endphp
-
     <div
-        ax-load
+        @if (FilamentView::hasSpaMode())
+            ax-load="visible"
+        @else
+            ax-load
+        @endif
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
@@ -39,12 +43,11 @@
                         return await $wire.getFormUploadedFiles(@js($statePath))
                     },
                     hasImageEditor: @js($hasImageEditor),
+                    hasCircleCropper: @js($hasCircleCropper),
                     canEditSvgs: @js($canEditSvgs()),
                     isSvgEditingConfirmed: @js($isSvgEditingConfirmed()),
-                    confirmSvgEditingMessage:
-                        '{{ __('filament-forms::components.file_upload.editor.svg.messages.confirmation') }}',
-                    disabledSvgEditingMessage:
-                        '{{ __('filament-forms::components.file_upload.editor.svg.messages.disabled') }}',
+                    confirmSvgEditingMessage: @js(__('filament-forms::components.file_upload.editor.svg.messages.confirmation')),
+                    disabledSvgEditingMessage: @js(__('filament-forms::components.file_upload.editor.svg.messages.disabled')),
                     imageCropAspectRatio: @js($imageCropAspectRatio),
                     imagePreviewHeight: @js($getImagePreviewHeight()),
                     imageResizeMode: @js($getImageResizeMode()),
@@ -110,6 +113,7 @@
                         Alignment::End => 'justify-end',
                         Alignment::Left => 'justify-left',
                         Alignment::Right => 'justify-right',
+                        Alignment::Between, Alignment::Justify => 'justify-between',
                         default => $alignment,
                     },
                 ])
@@ -139,10 +143,13 @@
             <div
                 x-show="isEditorOpen"
                 x-cloak
-                x-on:click.stop
+                x-on:click.stop=""
                 x-trap.noscroll="isEditorOpen"
                 x-on:keydown.escape.window="closeEditor"
-                class="fixed inset-0 isolate z-50 h-screen w-screen p-2 sm:p-10 md:p-20"
+                @class([
+                    'fixed inset-0 isolate z-50 h-screen w-screen p-2 sm:p-10 md:p-20',
+                    'fi-fo-file-upload-circle-cropper' => $hasCircleCropper,
+                ])
             >
                 <div
                     aria-hidden="true"
@@ -154,7 +161,7 @@
                     class="isolate z-10 flex h-full w-full items-center justify-center"
                 >
                     <div
-                        class="mx-auto flex h-full w-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10 lg:flex-row"
+                        class="mx-auto flex h-full w-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-gray-900/10 lg:flex-row dark:bg-gray-800 dark:ring-gray-50/10"
                     >
                         <div class="w-full flex-1 overflow-auto p-4 lg:h-full">
                             <div class="h-full w-full">
@@ -163,7 +170,7 @@
                         </div>
 
                         <div
-                            class="shadow-top z-[1] flex h-96 w-full flex-col overflow-auto bg-gray-50 dark:bg-gray-900/30 lg:h-full lg:max-w-xs lg:shadow-none"
+                            class="shadow-top z-[1] flex h-96 w-full flex-col overflow-auto bg-gray-50 lg:h-full lg:max-w-xs lg:shadow-none dark:bg-gray-900/30"
                         >
                             <div class="flex-1 overflow-hidden">
                                 <div

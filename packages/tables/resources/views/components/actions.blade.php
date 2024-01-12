@@ -22,7 +22,7 @@
     );
 
     if (! $alignment instanceof Alignment) {
-        $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+        $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
     }
 @endphp
 
@@ -36,6 +36,7 @@
                 Alignment::Center => 'justify-center',
                 Alignment::Start, Alignment::Left => 'justify-start',
                 Alignment::End, Alignment::Right => 'justify-end',
+                Alignment::Between, Alignment::Justify => 'justify-between',
                 'start md:end' => 'justify-start md:justify-end',
                 default => $alignment,
             },

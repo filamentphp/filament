@@ -9,7 +9,6 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
-use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
@@ -19,6 +18,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 use function Filament\Support\is_app_url;
 
@@ -28,7 +28,9 @@ use function Filament\Support\is_app_url;
 class EditRecord extends Page
 {
     use Concerns\HasRelationManagers;
-    use Concerns\InteractsWithRecord;
+    use Concerns\InteractsWithRecord {
+        configureAction as configureActionRecord;
+    }
     use InteractsWithFormActions;
 
     /**
@@ -47,7 +49,7 @@ class EditRecord extends Page
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.edit-record.navigation-item')
-            ?? (Filament::hasTopNavigation() ? 'heroicon-m-pencil-square' : 'heroicon-o-pencil-square');
+            ?? 'heroicon-o-pencil-square';
     }
 
     public function getBreadcrumb(): string
@@ -73,8 +75,6 @@ class EditRecord extends Page
 
     protected function authorizeAccess(): void
     {
-        static::authorizeResourceAccess();
-
         abort_unless(static::getResource()::canEdit($this->getRecord()), 403);
     }
 
@@ -109,7 +109,7 @@ class EditRecord extends Page
     {
         $this->data = [
             ...$this->data,
-            ...$this->getRecord()->only($attributes),
+            ...Arr::only($this->getRecord()->attributesToArray(), $attributes),
         ];
     }
 
@@ -127,49 +127,27 @@ class EditRecord extends Page
         $this->authorizeAccess();
 
         try {
-            /** @internal Read the DocBlock above the following method. */
-            $this->validateFormAndUpdateRecordAndCallHooks();
+            $this->callHook('beforeValidate');
+
+            $data = $this->form->getState();
+
+            $this->callHook('afterValidate');
+
+            $data = $this->mutateFormDataBeforeSave($data);
+
+            $this->callHook('beforeSave');
+
+            $this->handleRecordUpdate($this->getRecord(), $data);
+
+            $this->callHook('afterSave');
         } catch (Halt $exception) {
             return;
         }
 
-        /** @internal Read the DocBlock above the following method. */
-        $this->sendSavedNotificationAndRedirect(shouldRedirect: $shouldRedirect);
-    }
-
-    /**
-     * @internal Never override or call this method. If you completely override `save()`, copy the contents of this method into your override.
-     */
-    protected function validateFormAndUpdateRecordAndCallHooks(): void
-    {
-        $this->callHook('beforeValidate');
-
-        $data = $this->form->getState();
-
-        $this->callHook('afterValidate');
-
-        $data = $this->mutateFormDataBeforeSave($data);
-
-        $this->callHook('beforeSave');
-
-        $this->handleRecordUpdate($this->getRecord(), $data);
-
-        $this->callHook('afterSave');
-    }
-
-    /**
-     * @internal Never override or call this method. If you completely override `save()`, copy the contents of this method into your override.
-     */
-    protected function sendSavedNotificationAndRedirect(bool $shouldRedirect = true): void
-    {
         $this->getSavedNotification()?->send();
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
-            if (FilamentView::hasSpaMode()) {
-                $this->redirect($redirectUrl, navigate: is_app_url($redirectUrl));
-            } else {
-                $this->redirect($redirectUrl);
-            }
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
         }
     }
 
@@ -220,9 +198,7 @@ class EditRecord extends Page
 
     protected function configureAction(Action $action): void
     {
-        $action
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
+        $this->configureActionRecord($action);
 
         match (true) {
             $action instanceof DeleteAction => $this->configureDeleteAction($action),
@@ -351,36 +327,6 @@ class EditRecord extends Page
     protected function getRedirectUrl(): ?string
     {
         return null;
-    }
-
-    protected function getMountedActionFormModel(): Model
-    {
-        return $this->getRecord();
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getWidgetData(): array
-    {
-        return [
-            'record' => $this->getRecord(),
-        ];
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getSubNavigationParameters(): array
-    {
-        return [
-            'record' => $this->getRecord(),
-        ];
-    }
-
-    public function getSubNavigation(): array
-    {
-        return static::getResource()::getRecordSubNavigation($this);
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool

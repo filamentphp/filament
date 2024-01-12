@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Table;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,7 +53,7 @@ class AssociateAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::associate.single.modal.actions.associate.label'));
 
-        $this->modalWidth('lg');
+        $this->modalWidth(MaxWidth::Large);
 
         $this->extraModalFooterActions(function (): array {
             return $this->canAssociateAnother ? [
@@ -175,7 +176,7 @@ class AssociateAction extends Action
     {
         $table = $this->getTable();
 
-        $getOptions = function (?string $search = null, ?array $searchColumns = []) use ($table): array {
+        $getOptions = function (int $optionsLimit, ?string $search = null, ?array $searchColumns = []) use ($table): array {
             /** @var HasMany | MorphMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
@@ -185,6 +186,10 @@ class AssociateAction extends Action
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
+            }
+
+            if (! isset($relationshipQuery->getQuery()->limit)) {
+                $relationshipQuery->limit($optionsLimit);
             }
 
             $titleAttribute = $this->getRecordTitleAttribute();
@@ -218,8 +223,13 @@ class AssociateAction extends Action
                 });
             }
 
+            $relationCountHash = $relationship->getRelationCountHash(incrementJoinCount: false);
+
             $relationshipQuery
-                ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use ($relationship): Builder {
+                ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use (
+                    $relationCountHash,
+                    $relationship
+                ): Builder {
                     if ($relationship instanceof MorphMany) {
                         return $query
                             ->where(
@@ -233,7 +243,10 @@ class AssociateAction extends Action
                     }
 
                     return $query->where(
-                        $relationship->getParent()->getQualifiedKeyName(),
+                        // https://github.com/filamentphp/filament/issues/8067
+                        $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?
+                            "{$relationCountHash}.{$relationship->getParent()->getKeyName()}" :
+                            $relationship->getParent()->getQualifiedKeyName(),
                         $relationship->getParent()->getKey(),
                     );
                 });
@@ -262,9 +275,20 @@ class AssociateAction extends Action
             ->label(__('filament-actions::associate.single.modal.fields.record_id.label'))
             ->required()
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
-            ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
-            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle(Relation::noConstraints(fn () => $table->getRelationship())->getQuery()->find($value)))
-            ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
+            ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(optionsLimit: $component->getOptionsLimit(), search: $search, searchColumns: $component->getSearchColumns()))
+            ->getOptionLabelUsing(function ($value) use ($table): string {
+                $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+
+                return $this->getRecordTitle($relationship->getQuery()->find($value));
+            })
+            ->getOptionLabelsUsing(function (array $values) use ($table): array {
+                $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+
+                return $relationship->getQuery()->find($values)
+                    ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
+                    ->all();
+            })
+            ->options(fn (Select $component): array => $this->isRecordSelectPreloaded() ? $getOptions(optionsLimit: $component->getOptionsLimit()) : [])
             ->hiddenLabel();
 
         if ($this->modifyRecordSelectUsing) {

@@ -14,10 +14,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
-class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
+class CheckboxList extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
+    use Concerns\CanDisableOptionsWhenSelectedInSiblingRepeaterItems;
+    use Concerns\CanFixIndistinctState;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;
     use Concerns\HasNestedRecursiveValidationRules;
@@ -125,7 +127,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return 'deselectAll';
     }
 
-    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string | Closure | null $name = null, string | Closure | null $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;

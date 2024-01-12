@@ -17,7 +17,7 @@ MarkdownEditor::make('content')
 
 ## Customizing the toolbar buttons
 
-You may set the toolbar buttons for the editor using the `toolbarButtons()` method:
+You may set the toolbar buttons for the editor using the `toolbarButtons()` method. The options shown here are the defaults:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -51,6 +51,8 @@ MarkdownEditor::make('content')
         'strike',
     ])
 ```
+
+To disable all toolbar buttons, set an empty array with `toolbarButtons([])` or use `disableAllToolbarButtons()`.
 
 ## Uploading images to the editor
 

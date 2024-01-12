@@ -41,7 +41,7 @@ return [
             'actions' => [
 
                 'delete' => [
-                    'label' => 'حذف المحدد',
+                    'label' => 'حذف',
                 ],
 
             ],

@@ -19,7 +19,7 @@ Please upgrade Filament before upgrading to Livewire v3. Instructions on how to 
 The easiest way to upgrade your app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes.
 
 ```bash
-composer require filament/upgrade:"^3.0-stable" -W --dev
+composer require filament/upgrade:"^3.1" -W --dev
 
 vendor/bin/filament-v3
 ```
@@ -206,3 +206,15 @@ Some Blade components have been moved to different namespaces:
 - `<x-filament::widget>` is now `<x-filament-widgets::widget>`
 
 However, aliases have been set up so that you don't need to change your code.
+
+#### Resource pages without a `$resource` property
+
+Filament v2 allowed for resource pages to be created without a `$resource` property. In v3 you must declare this, else you may end up with the error:
+
+`Typed static property Filament\Resources\Pages\Page::$resource must not be accessed before initialization`
+
+You should ensure that the `$resource` property is set on all resource pages:
+
+```php
+protected static string $resource = PostResource::class;
+```

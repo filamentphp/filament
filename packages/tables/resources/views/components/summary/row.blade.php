@@ -72,7 +72,7 @@
                 $alignment = $column->getAlignment() ?? Alignment::Start;
 
                 if (! $alignment instanceof Alignment) {
-                    $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+                    $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
                 }
             @endphp
 
@@ -85,7 +85,7 @@
                         Alignment::End => 'text-end',
                         Alignment::Left => 'text-left',
                         Alignment::Right => 'text-right',
-                        Alignment::Justify => 'text-justify',
+                        Alignment::Justify, Alignment::Between => 'text-justify',
                         default => $alignment,
                     },
                 ])

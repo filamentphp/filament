@@ -184,6 +184,35 @@ TextInput::make('cardNumber')
     JS))
 ```
 
+Alpine.js will send the entire masked value to the server, so you may need to strip certain characters from the state before validating the field and saving it. You can do this with the `stripCharacters()` method, passing in a character or an array of characters to remove from the masked value:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Filament\Support\RawJs;
+
+TextInput::make('amount')
+    ->mask(RawJs::make('$money($input)'))
+    ->stripCharacters(',')
+    ->numeric()
+```
+
+## Making the field read-only
+
+Not to be confused with [disabling the field](getting-started#disabling-a-field), you may make the field "read-only" using the `readonly()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->readonly()
+```
+
+There are a few differences, compared to [`disabled()`](getting-started#disabling-a-field):
+
+- When using `readOnly()`, the field will still be sent to the server when the form is submitted. It can be mutated with the browser console, or via JavaScript. You can use [`dehydrated(false)`](advanced#preventing-a-field-from-being-dehydrated) to prevent this.
+- There are no styling changes, such as less opacity, when using `readOnly()`.
+- The field is still focusable when using `readOnly()`.
+
 ## Text input validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to text inputs.

@@ -38,7 +38,7 @@ class MakeThemeCommand extends Command
             default => "{$pm} install",
         };
 
-        exec("{$installCommand} tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev");
+        exec("{$installCommand} tailwindcss @tailwindcss/forms @tailwindcss/typography postcss postcss-nesting autoprefixer --save-dev");
 
         $panel = $this->argument('panel');
 

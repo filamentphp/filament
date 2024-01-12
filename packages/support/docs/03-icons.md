@@ -26,14 +26,14 @@ Now that the default set exists in the config file, you can simply put any icons
 
 Filament includes an icon management system that allows you to replace any icons are used by default in the UI with your own. This happens in the `boot()` method of any service provider, like `AppServiceProvider`, or even a dedicated service provider for icons. If you wanted to build a plugin to replace Heroicons with a different set, you could absolutely do that by creating a Laravel package with a similar service provider.
 
-To replace an icon, you can use the `FilamentIcon` facade. It has a `register()` method, which accepts an array of icons to replace. The key of the array is the unique [icon alias](#available-icon-aliases) that identifies the icon in the Filament UI, and the value is name of a Blade icon to replace it instead:
+To replace an icon, you can use the `FilamentIcon` facade. It has a `register()` method, which accepts an array of icons to replace. The key of the array is the unique [icon alias](#available-icon-aliases) that identifies the icon in the Filament UI, and the value is name of a Blade icon to replace it instead. Alternatively, you may use HTML instead of an icon name to render an icon from a Blade view for example:
 
 ```php
 use Filament\Support\Facades\FilamentIcon;
 
 FilamentIcon::register([
     'panels::topbar.global-search.field' => 'fas-magnifying-glass',
-    'panels::sidebar.group.collapse-button' => 'fas-chevron-up',
+    'panels::sidebar.group.collapse-button' => view('icons.chevron-up'),
 ]);
 ```
 
@@ -69,12 +69,13 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 ### Panel Builder icon aliases
 
 - `panels::global-search.field` - Global search field
+- `panels::pages.dashboard.actions.filter` - Trigger button of the dashboard filter action
 - `panels::pages.dashboard.navigation-item` - Dashboard page navigation item
+- `panels::pages.password-reset.request-password-reset.actions.login` - Trigger button of the login action on the request password reset page
+- `panels::pages.password-reset.request-password-reset.actions.login.rtl` - Trigger button of the login action on the request password reset page (right-to-left direction)
 - `panels::resources.pages.edit-record.navigation-item` - Resource edit record page navigation item
 - `panels::resources.pages.manage-related-records.navigation-item` - Resource manage related records page navigation item
 - `panels::resources.pages.view-record.navigation-item` - Resource view record page navigation item
-- `panels::pages.password-reset.request-password-reset.actions.login` - Trigger button of the login action on the request password reset page
-- `panels::pages.password-reset.request-password-reset.actions.login.rtl` - Trigger button of the login action on the request password reset page (right-to-left direction)
 - `panels::sidebar.collapse-button` - Button to collapse the sidebar
 - `panels::sidebar.collapse-button.rtl` - Button to collapse the sidebar (right-to-left direction)
 - `panels::sidebar.expand-button` - Button to expand the sidebar
@@ -145,6 +146,12 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `tables::columns.icon-column.false` - Falsy state of an icon column
 - `tables::columns.icon-column.true` - Truthy state of an icon column
 - `tables::empty-state` - Empty state icon
+- `tables::filters.query-builder.constraints.boolean` - Default icon for a boolean constraint in the query builder
+- `tables::filters.query-builder.constraints.date` - Default icon for a date constraint in the query builder
+- `tables::filters.query-builder.constraints.number` - Default icon for a number constraint in the query builder
+- `tables::filters.query-builder.constraints.relationship` - Default icon for a relationship constraint in the query builder
+- `tables::filters.query-builder.constraints.select` - Default icon for a select constraint in the query builder
+- `tables::filters.query-builder.constraints.text` - Default icon for a text constraint in the query builder
 - `tables::filters.remove-all-button` - Button to remove all filters
 - `tables::grouping.collapse-button` - Button to collapse a group of records
 - `tables::header-cell.sort-asc-button` - Sort button of a column sorted in ascending order
@@ -177,6 +184,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `actions::force-delete-action` - Trigger button of a force delete action
 - `actions::force-delete-action.grouped` - Trigger button of a grouped force delete action
 - `actions::force-delete-action.modal` - Modal of a force delete action
+- `actions::import-action.grouped` - Trigger button of a grouped import action
 - `actions::modal.confirmation` - Modal of an action that requires confirmation
 - `actions::replicate-action` - Trigger button of a replicate action
 - `actions::replicate-action.grouped` - Trigger button of a grouped replicate action

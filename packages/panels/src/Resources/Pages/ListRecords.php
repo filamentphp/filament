@@ -7,6 +7,8 @@ use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Concerns\HasTabs;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -15,7 +17,6 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 
 class ListRecords extends Page implements Tables\Contracts\HasTable
@@ -69,7 +70,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function authorizeAccess(): void
     {
-        static::authorizeResourceAccess();
     }
 
     public function getBreadcrumb(): ?string
@@ -84,7 +84,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     public function getTitle(): string | Htmlable
     {
-        return static::$title ?? Str::headline(static::getResource()::getPluralModelLabel());
+        return static::$title ?? static::getResource()::getTitleCasePluralModelLabel();
     }
 
     protected function configureAction(Action $action): void
@@ -217,7 +217,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->authorize(static::getResource()::canRestoreAny());
     }
 
-    protected function getMountedActionFormModel(): string
+    protected function getMountedActionFormModel(): Model | string | null
     {
         return $this->getModel();
     }
@@ -308,7 +308,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
                 return null;
             })
-            ->reorderable(condition: static::getResource()::canReorder());
+            ->authorizeReorder(static::getResource()::canReorder());
     }
 
     /**
@@ -324,6 +324,18 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
      */
     protected function getForms(): array
     {
+        return [];
+    }
+
+    /**
+     * @return array<NavigationItem | NavigationGroup>
+     */
+    public function getSubNavigation(): array
+    {
+        if (filled($cluster = static::getCluster())) {
+            return $this->generateNavigationItems($cluster::getClusteredComponents());
+        }
+
         return [];
     }
 }

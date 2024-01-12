@@ -6,9 +6,6 @@
             "spacing": "one"
         },
         "method_argument_space": true,
-        "nullable_type_declaration_for_default_null_value": {
-            "use_nullable_type_declaration": true
-        },
         "single_trait_insert_per_statement": true,
         "types_spaces": {
             "space": "single"

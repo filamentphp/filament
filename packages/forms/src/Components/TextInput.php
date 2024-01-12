@@ -73,6 +73,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         $this->numeric($condition);
         $this->inputMode(static fn (): ?string => $condition ? 'numeric' : null);
         $this->step(static fn (): ?int => $condition ? 1 : null);
+        $this->rule('integer', $condition);
 
         return $this;
     }

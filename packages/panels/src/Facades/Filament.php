@@ -5,6 +5,7 @@ namespace Filament\Facades;
 use Closure;
 use Filament\Billing\Providers\Contracts\Provider as BillingProvider;
 use Filament\Contracts\Plugin;
+use Filament\Enums\ThemeMode;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasTenants;
@@ -13,6 +14,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\Support\Assets\Theme;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -30,6 +32,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | Htmlable getBrandName()
  * @method static string | Htmlable | null getBrandLogo()
  * @method static string | null getBrandLogoHeight()
+ * @method static array getClusteredComponents(?string $cluster = null)
  * @method static string getCollapsedSidebarWidth()
  * @method static Panel | null getCurrentPanel()
  * @method static string | Htmlable | null getDarkModeBrandLogo()
@@ -48,7 +51,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getHomeUrl()
  * @method static string | null getLoginUrl(array $parameters = [])
  * @method static string getLogoutUrl(array $parameters = [])
- * @method static string | null getMaxContentWidth()
+ * @method static MaxWidth | string | null getMaxContentWidth()
  * @method static string | null getModelResource(string | Model $model)
  * @method static string getNameForDefaultAvatar(Model | Authenticatable $user)
  * @method static array<NavigationGroup> getNavigation()
@@ -77,6 +80,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getTenantProfileUrl(array $parameters = [])
  * @method static string | null getTenantRegistrationUrl(array $parameters = [])
  * @method static Theme getTheme()
+ * @method static ThemeMode getDefaultThemeMode()
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
  * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)
  * @method static array<MenuItem> getUserMenuItems()
@@ -99,6 +103,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasRegistration()
  * @method static bool hasTenancy()
  * @method static bool hasTenantBilling()
+ * @method static bool hasTenantMenu()
  * @method static bool hasTenantProfile()
  * @method static bool hasTenantRegistration()
  * @method static bool hasTopNavigation()
@@ -109,7 +114,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void serving(Closure $callback)
  * @method static void setCurrentPanel(Panel | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)
- * @method static void setTenant(Model | null $tenant = null)
+ * @method static void setTenant(Model | null $tenant = null, bool $isQuiet = false)
  *
  * @see FilamentManager
  */
@@ -120,11 +125,11 @@ class Filament extends Facade
         return 'filament';
     }
 
-    public static function registerPanel(Panel $panel): void
+    public static function registerPanel(Panel | Closure $panel): void
     {
         static::getFacadeApplication()->resolving(
             static::getFacadeAccessor(),
-            fn (FilamentManager $filamentManager) => $filamentManager->registerPanel($panel),
+            fn (FilamentManager $filamentManager) => $filamentManager->registerPanel(value($panel)),
         );
     }
 }

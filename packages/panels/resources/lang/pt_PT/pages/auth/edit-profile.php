@@ -7,7 +7,7 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'E-mail',
+            'label' => 'Endereço de e-mail',
         ],
 
         'name' => [
@@ -15,17 +15,17 @@ return [
         ],
 
         'password' => [
-            'label' => 'Nova senha',
+            'label' => 'Nova palavra-passe',
         ],
 
         'password_confirmation' => [
-            'label' => 'Confirmar nova senha',
+            'label' => 'Confirmar nova palavra-passe',
         ],
 
         'actions' => [
 
             'save' => [
-                'label' => 'Salvar alterações',
+                'label' => 'Guardar alterações',
             ],
 
         ],
@@ -35,7 +35,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'Salvo',
+            'title' => 'Guardado',
         ],
 
     ],
@@ -43,7 +43,7 @@ return [
     'actions' => [
 
         'cancel' => [
-            'label' => 'Voltar',
+            'label' => 'Cancelar',
         ],
 
     ],

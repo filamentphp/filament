@@ -55,6 +55,7 @@
             <div
                 @class([
                     'flex',
+                    'flex-wrap' => $canWrap(),
                     match ($overlap) {
                         0 => null,
                         1 => '-space-x-1',
@@ -65,7 +66,7 @@
                         6 => '-space-x-6',
                         7 => '-space-x-7',
                         8 => '-space-x-8',
-                        default => 'gap-x-1.5',
+                        default => 'gap-1.5',
                     },
                 ])
             >

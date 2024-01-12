@@ -11,6 +11,7 @@ use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\UpgradeCommand;
+use Filament\Support\Components\ComponentManager;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
 use Filament\Support\View\ViewManager;
@@ -47,6 +48,8 @@ class SupportServiceProvider extends PackageServiceProvider
             AssetManager::class,
             fn () => new AssetManager(),
         );
+
+        ComponentManager::register();
 
         $this->app->scoped(
             ColorManager::class,
@@ -108,6 +111,18 @@ class SupportServiceProvider extends PackageServiceProvider
         Stringable::macro('sanitizeHtml', function (): Stringable {
             /** @phpstan-ignore-next-line */
             return new Stringable(Str::sanitizeHtml($this->value));
+        });
+
+        Str::macro('ucwords', function (string $value): string {
+            return implode(' ', array_map(
+                [Str::class, 'ucfirst'],
+                explode(' ', $value),
+            ));
+        });
+
+        Stringable::macro('ucwords', function (): Stringable {
+            /** @phpstan-ignore-next-line */
+            return new Stringable(Str::ucwords($this->value));
         });
 
         if (class_exists(InstalledVersions::class)) {

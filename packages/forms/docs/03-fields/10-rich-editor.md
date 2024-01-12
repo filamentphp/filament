@@ -17,7 +17,7 @@ RichEditor::make('content')
 
 ## Customizing the toolbar buttons
 
-You may set the toolbar buttons for the editor using the `toolbarButtons()` method:
+You may set the toolbar buttons for the editor using the `toolbarButtons()` method. The options shown here are the defaults. In addition to these, `'h1'` is also available:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -52,6 +52,8 @@ RichEditor::make('content')
         'strike',
     ])
 ```
+
+To disable all toolbar buttons, set an empty array with `toolbarButtons([])` or use `disableAllToolbarButtons()`.
 
 ## Uploading images to the editor
 

@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => '外す',
+        'label' => '解除',
 
         'modal' => [
 
-            'heading' => ':labelを外す',
+            'heading' => ':labelを解除',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => '外す',
+                    'label' => '解除',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => '外しました',
+                'title' => '解除しました',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => '選択中を外す',
+        'label' => '選択中を解除',
 
         'modal' => [
 
-            'heading' => '選択中の:labelを外す',
+            'heading' => '選択中の:labelを解除',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => '外す',
+                    'label' => '解除',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => '外しました',
+                'title' => '解除しました',
             ],
 
         ],

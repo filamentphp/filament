@@ -36,12 +36,16 @@ FilamentView::registerRenderHook(
 
 ### Panel Builder render hooks
 
-- `panels::auth.login.form.before` - Before login form
 - `panels::auth.login.form.after` - After login form
-- `panels::auth.register.form.before` - Before register form
+- `panels::auth.login.form.before` - Before login form
+- `panels::auth.password-reset.request.form.after` - After password reset request form
+- `panels::auth.password-reset.request.form.before` - Before password reset request form
+- `panels::auth.password-reset.reset.form.after` - After password reset form
+- `panels::auth.password-reset.reset.form.before` - Before password reset form
 - `panels::auth.register.form.after` - After register form
-- `panels::body.start` - After `<body>`
+- `panels::auth.register.form.before` - Before register form
 - `panels::body.end` - Before `</body>`
+- `panels::body.start` - After `<body>`
 - `panels::content.end` - After page content, inside `<main>`
 - `panels::content.start` - Before page content, inside `<main>`
 - `panels::footer` - Footer of the page
@@ -74,6 +78,8 @@ FilamentView::registerRenderHook(
 - `panels::styles.before` - Before styles are defined
 - `panels::tenant-menu.after` - After the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
 - `panels::tenant-menu.before` - Before the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
+- `panels::topbar.after` - Below the topbar
+- `panels::topbar.before` - Above the topbar
 - `panels::topbar.end` - End of the topbar container
 - `panels::topbar.start` - Start of the topbar container
 - `panels::user-menu.after` - After the [user menu](../panels/navigation#customizing-the-user-menu)
