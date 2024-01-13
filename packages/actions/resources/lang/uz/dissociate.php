@@ -41,7 +41,7 @@ return [
             'actions' => [
 
                 'dissociate' => [
-                     'label' => 'Ajratish',
+                    'label' => 'Ajratish',
                 ],
 
             ],

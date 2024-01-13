@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ":label - ajratish",
+            'heading' => ':label - ajratish',
 
             'actions' => [
 
