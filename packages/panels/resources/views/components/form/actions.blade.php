@@ -25,7 +25,7 @@
         @endif
         class="fi-form-actions"
     >
-        <x-filament-actions::actions
+        <x-filament::actions
             :actions="$actions"
             :alignment="$alignment ?? $this->getFormActionsAlignment()"
             :full-width="$fullWidth"
