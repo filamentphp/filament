@@ -36,4 +36,15 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
 
         $this->columns(2);
     }
+    
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'fieldset', 'fieldSet', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

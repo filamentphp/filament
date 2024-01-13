@@ -1247,4 +1247,15 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     {
         return $this->getChildComponentContainer($uuid)->getRawState();
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'repeater', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

@@ -58,4 +58,15 @@ class ColorPicker extends Field implements Contracts\HasAffixActions
     {
         return $this->evaluate($this->format);
     }
+    
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'colorPicker', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

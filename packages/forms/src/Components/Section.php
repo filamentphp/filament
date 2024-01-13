@@ -117,4 +117,15 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     {
         return (bool) $this->evaluate($this->isFormBefore);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'section', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

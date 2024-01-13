@@ -38,4 +38,15 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         'underline',
         'undo',
     ];
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'richEditor', 'editor', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

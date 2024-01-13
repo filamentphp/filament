@@ -60,4 +60,15 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
     {
         return (bool) $this->evaluate($this->shouldAutosize);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'textarea', 'textArea', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

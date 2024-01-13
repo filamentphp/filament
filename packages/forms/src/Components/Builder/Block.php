@@ -64,4 +64,15 @@ class Block extends Component
             ['state' => $state, 'uuid' => $uuid],
         ) ?? $this->getDefaultLabel();
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'block', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

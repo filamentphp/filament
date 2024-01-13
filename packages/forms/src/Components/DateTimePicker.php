@@ -521,4 +521,15 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
 
         return 'datetime-local';
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'dateTimePicker', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

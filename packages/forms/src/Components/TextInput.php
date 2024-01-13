@@ -236,4 +236,15 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     {
         return (bool) $this->evaluate($this->isUrl);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'textInput', 'input', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

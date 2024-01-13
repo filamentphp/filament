@@ -36,4 +36,15 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
         'table',
         'undo',
     ];
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'markdownEditor', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

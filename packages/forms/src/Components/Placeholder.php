@@ -52,4 +52,15 @@ class Placeholder extends Component implements Contracts\HasHintActions
     {
         return $this->evaluate($this->content);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'placeholder', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

@@ -311,4 +311,15 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
         return $descriptions;
     }
+    
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'checkboxList', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

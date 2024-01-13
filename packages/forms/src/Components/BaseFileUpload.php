@@ -859,4 +859,15 @@ class BaseFileUpload extends Field
             $rules[$fileNamesStatePath] = ['nullable'];
         }
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'baseFileUpload', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

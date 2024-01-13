@@ -949,4 +949,15 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         return $this->getChildComponentContainer($uuid)->getRawState();
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'builder', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

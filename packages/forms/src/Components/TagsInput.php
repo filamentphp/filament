@@ -166,4 +166,15 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     {
         return (bool) $this->evaluate($this->isReorderable);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'tagsInput', 'input', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

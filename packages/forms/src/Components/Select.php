@@ -1203,4 +1203,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         return $relationship->getQualifiedOwnerKeyName();
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'select', 'field', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }
