@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables\Filters\BaseFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,7 +28,7 @@ trait HasFilters
         }
 
         return $this->makeForm()
-            ->schema($this->getTableFiltersFormSchema())
+            ->schema($this->getTable()->getFiltersFormSchema())
             ->columns($this->getTable()->getFiltersFormColumns())
             ->model($this->getTable()->getModel())
             ->statePath($this->getTable()->hasDeferredFilters() ? 'tableDeferredFilters' : 'tableFilters')
@@ -158,25 +157,6 @@ trait HasFilters
         }
 
         return $name::getDefaultName();
-    }
-
-    /**
-     * @return array<string, Forms\Components\Group>
-     */
-    public function getTableFiltersFormSchema(): array
-    {
-        $schema = [];
-
-        foreach ($this->getTable()->getFilters() as $filter) {
-            $schema[$filter->getName()] = Forms\Components\Group::make()
-                ->schema($filter->getFormSchema())
-                ->statePath($filter->getName())
-                ->columnSpan($filter->getColumnSpan())
-                ->columnStart($filter->getColumnStart())
-                ->columns($filter->getColumns());
-        }
-
-        return $schema;
     }
 
     public function getTableFiltersSessionKey(): string

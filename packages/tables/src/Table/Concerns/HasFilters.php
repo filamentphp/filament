@@ -3,6 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\MaxWidth;
@@ -17,6 +18,8 @@ trait HasFilters
      * @var array<string, BaseFilter>
      */
     protected array $filters = [];
+
+    protected ?Closure $filtersFormSchema = null;
 
     /**
      * @var int | array<string, int | null> | Closure
@@ -158,6 +161,32 @@ trait HasFilters
     public function getFiltersForm(): Form
     {
         return $this->getLivewire()->getTableFiltersForm();
+    }
+
+    public function filtersFormSchema(?Closure $schema): static
+    {
+        $this->filtersFormSchema = $schema;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, Group>
+     */
+    public function getFiltersFormSchema(): array
+    {
+        $filters = [];
+
+        foreach ($this->getFilters() as $filterName => $filter) {
+            $filters[$filterName] = Group::make()
+                ->schema($filter->getFormSchema())
+                ->statePath($filterName)
+                ->columnSpan($filter->getColumnSpan())
+                ->columnStart($filter->getColumnStart())
+                ->columns($filter->getColumns());
+        }
+
+        return $this->evaluate($this->filtersFormSchema, ['filters' => $filters]) ?? $filters;
     }
 
     public function getFiltersTriggerAction(): Action
