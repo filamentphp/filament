@@ -115,6 +115,7 @@ class RelationGroup extends Component
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
+            'relationGroup', 'component' => [$this],
             'ownerRecord' => [$this->getOwnerRecord()],
             'pageClass' => [$this->getPageClass()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),

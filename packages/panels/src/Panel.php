@@ -93,4 +93,15 @@ class Panel extends Component
     {
         return $this->isDefault;
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'panel', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

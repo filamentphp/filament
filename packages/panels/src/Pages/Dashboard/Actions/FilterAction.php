@@ -51,4 +51,15 @@ class FilterAction extends Action
 
         $this->modalWidth('md');
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'filterAction' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

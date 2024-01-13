@@ -62,4 +62,15 @@ class Tab extends Component
             'query' => $query,
         ]) ?? $query;
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'tab', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

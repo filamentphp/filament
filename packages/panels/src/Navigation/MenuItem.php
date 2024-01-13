@@ -145,4 +145,15 @@ class MenuItem extends Component
     {
         return (bool) $this->evaluate($this->shouldOpenUrlInNewTab);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'menuItem', 'item', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

@@ -147,4 +147,15 @@ class NavigationGroup extends Component
 
         return $hasIconCount > 0;
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'navigationGroup', 'group', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }
