@@ -181,12 +181,13 @@ trait HasFilters
             $filters[$filterName] = Group::make()
                 ->schema($filter->getFormSchema())
                 ->statePath($filterName)
+                ->key($filterName)
                 ->columnSpan($filter->getColumnSpan())
                 ->columnStart($filter->getColumnStart())
                 ->columns($filter->getColumns());
         }
 
-        return $this->evaluate($this->filtersFormSchema, ['filters' => $filters]) ?? $filters;
+        return $this->evaluate($this->filtersFormSchema, ['filters' => $filters]) ?? array_values($filters);
     }
 
     public function getFiltersTriggerAction(): Action
