@@ -145,7 +145,13 @@ abstract class Exporter
     {
         return __('filament-actions::export.file_name', [
             'export_id' => $export->getKey(),
-            'model' => (string) str(class_basename(static::getModel()))->beforeLast('Exporter')->kebab(),
+            'model' => (string) str(static::getModel())
+                ->classBasename()
+                ->beforeLast('Exporter')
+                ->kebab()
+                ->replace('-', ' ')
+                ->plural()
+                ->replace(' ', '-'),
         ]);
     }
 

@@ -44,6 +44,7 @@ class ActionsServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         $commands = [
+            Commands\MakeExporterCommand::class,
             Commands\MakeImporterCommand::class,
         ];
 

@@ -64,6 +64,7 @@ trait CanGenerateForms
             }
 
             if (in_array($columnName, [
+                'id',
                 'sku',
                 'uuid',
             ])) {
