@@ -110,4 +110,15 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 
         return $query->with(['media']);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'spatieMediaLibraryImageColumn', 'mediaLibraryImageColumn', 'imageColumn', 'column', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

@@ -331,4 +331,15 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             'file' => $file,
         ]);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'spatieMediaLibraryFileUpload', 'mediaLibraryFileUpload' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

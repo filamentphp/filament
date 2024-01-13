@@ -87,4 +87,15 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             ->map(fn (Media $media): string => $media->uuid)
             ->all();
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'spatieMediaLibraryImageEntry', 'mediaLibraryImageEntry', 'imageEntry', 'entry', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }
