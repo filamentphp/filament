@@ -2,7 +2,6 @@
 
 namespace Filament\Actions\Commands\Concerns;
 
-use Doctrine\DBAL\Types;
 use Illuminate\Support\Str;
 
 trait CanGenerateExporterColumns
@@ -58,36 +57,6 @@ trait CanGenerateExporterColumns
                 $columnData['label'] = [Str::upper($columnName)];
             }
 
-            if (in_array($column->getType()::class, [
-                Types\DateImmutableType::class,
-                Types\DateType::class,
-            ])) {
-                $columnData['date'] = [];
-            }
-
-            if (in_array($column->getType()::class, [
-                Types\DateTimeImmutableType::class,
-                Types\DateTimeType::class,
-                Types\DateTimeTzImmutableType::class,
-                Types\DateTimeTzType::class,
-            ])) {
-                $columnData['dateTime'] = [];
-            }
-
-            if (in_array($column->getType()::class, [
-                Types\BigIntType::class,
-                Types\DecimalType::class,
-                Types\FloatType::class,
-                Types\IntegerType::class,
-                Types\SmallIntType::class,
-            ])) {
-                $columnData[in_array($columnName, [
-                    'cost',
-                    'money',
-                    'price',
-                ]) ? 'money' : 'numeric'] = [];
-            }
-
             $columns[$columnName] = $columnData;
         }
 
@@ -113,6 +82,7 @@ trait CanGenerateExporterColumns
                             /** @phpstan-ignore-next-line */
                             is_null($parameterValue) => 'null',
                             is_numeric($parameterValue) => $parameterValue,
+                            /** @phpstan-ignore-next-line */
                             is_array($parameterValue) => '[\'' . implode('\', \'', $parameterValue) . '\']',
                             default => "'{$parameterValue}'",
                         };

@@ -146,6 +146,7 @@ trait CanExportRecords
                     query: $serializedQuery,
                     columnMap: $columnMap,
                     options: $options,
+                    chunkSize: $action->getChunkSize(),
                     records: $action instanceof ExportTableBulkAction ? $action->getRecords()->all() : null,
                 )])->allowFailures(),
                 app(ExportCompletion::class, ['export' => $export]),

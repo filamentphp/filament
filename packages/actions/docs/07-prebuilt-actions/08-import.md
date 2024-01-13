@@ -505,7 +505,7 @@ ImportAction::make()
     ->chunkSize(250)
 ```
 
-If you are encountering memory issues when importing large CSV files, you may wish to reduce the chunk size.
+If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
 
 ## Changing the CSV delimiter
 
@@ -548,7 +548,7 @@ By default, the import system will only process one job at a time from each impo
 public function getJobMiddleware(): array
 {
     return [
-        (new WithoutOverlapping("import{$this->import->id}"))->expireAfter(600),
+        (new WithoutOverlapping("import{$this->import->getKey()}"))->expireAfter(600),
     ];
 }
 ```
@@ -577,7 +577,7 @@ By default, the import system will tag each job with the ID of the import. This 
 ```php
 public function getJobTags(): array
 {
-    return ["import{$this->import->id}"];
+    return ["import{$this->import->getKey()}"];
 }
 ```
 

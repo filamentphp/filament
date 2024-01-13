@@ -170,7 +170,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function words(int $words = 100, string $end = '...'): static
+    public function words(int | Closure | null $words = 100, string | Closure | null $end = '...'): static
     {
         $this->wordLimit = $words;
         $this->wordLimitEnd = $end;

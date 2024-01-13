@@ -17,14 +17,6 @@ abstract class Exporter
 
     protected static ?string $model = null;
 
-    public static string $defaultCurrency = 'usd';
-
-    public static string $defaultDateDisplayFormat = 'M j, Y';
-
-    public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';
-
-    public static string $defaultTimeDisplayFormat = 'H:i:s';
-
     /**
      * @param  array<string, string>  $columnMap
      * @param  array<string, mixed>  $options
@@ -85,7 +77,7 @@ abstract class Exporter
     public function getJobMiddleware(): array
     {
         return [
-            (new WithoutOverlapping("export{$this->export->id}"))->expireAfter(600),
+            (new WithoutOverlapping("export{$this->export->getKey()}"))->expireAfter(600),
         ];
     }
 
@@ -99,7 +91,7 @@ abstract class Exporter
      */
     public function getJobTags(): array
     {
-        return ["export{$this->export->id}"];
+        return ["export{$this->export->getKey()}"];
     }
 
     /**
@@ -125,15 +117,6 @@ abstract class Exporter
     public function getOptions(): array
     {
         return $this->options;
-    }
-
-    protected function callHook(string $hook): void
-    {
-        if (! method_exists($this, $hook)) {
-            return;
-        }
-
-        $this->{$hook}();
     }
 
     public static function getFileDisk(): string

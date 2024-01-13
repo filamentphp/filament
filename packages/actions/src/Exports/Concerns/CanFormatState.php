@@ -3,14 +3,7 @@
 namespace Filament\Actions\Exports\Concerns;
 
 use Closure;
-use Filament\Actions\Exports\ExportColumn;
-use Filament\Actions\Exports\Exporter;
-use Filament\Support\Contracts\HasLabel as LabelInterface;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 
 trait CanFormatState
 {
@@ -28,129 +21,7 @@ trait CanFormatState
 
     protected string | Closure | null $suffix = null;
 
-    protected string | Closure | null $timezone = null;
-
-    protected bool $isDate = false;
-
-    protected bool $isDateTime = false;
-
-    protected bool $isMoney = false;
-
-    protected bool $isNumeric = false;
-
-    protected bool $isTime = false;
-
     protected bool $isListedAsJson = false;
-
-    public function date(?string $format = null, ?string $timezone = null): static
-    {
-        $this->isDate = true;
-
-        $format ??= Exporter::$defaultDateDisplayFormat;
-
-        $this->formatStateUsing(static function (ExportColumn $column, $state) use ($format, $timezone): ?string {
-            if (blank($state)) {
-                return null;
-            }
-
-            return Carbon::parse($state)
-                ->setTimezone($timezone ?? $column->getTimezone())
-                ->translatedFormat($format);
-        });
-
-        return $this;
-    }
-
-    public function dateTime(?string $format = null, ?string $timezone = null): static
-    {
-        $this->isDateTime = true;
-
-        $format ??= Exporter::$defaultDateTimeDisplayFormat;
-
-        $this->date($format, $timezone);
-
-        return $this;
-    }
-
-    public function since(?string $timezone = null): static
-    {
-        $this->isDateTime = true;
-
-        $this->formatStateUsing(static function (ExportColumn $column, $state) use ($timezone): ?string {
-            if (blank($state)) {
-                return null;
-            }
-
-            return Carbon::parse($state)
-                ->setTimezone($timezone ?? $column->getTimezone())
-                ->diffForHumans();
-        });
-
-        return $this;
-    }
-
-    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
-    {
-        $this->isMoney = true;
-
-        $this->formatStateUsing(static function (ExportColumn $column, $state) use ($currency, $divideBy): ?string {
-            if (blank($state)) {
-                return null;
-            }
-
-            $currency = $column->evaluate($currency) ?? Exporter::$defaultCurrency;
-
-            return format_money($state, $currency, $divideBy);
-        });
-
-        return $this;
-    }
-
-    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
-    {
-        $this->isNumeric = true;
-
-        $this->formatStateUsing(static function (ExportColumn $column, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
-            if (blank($state)) {
-                return null;
-            }
-
-            if (! is_numeric($state)) {
-                return $state;
-            }
-
-            if ($decimalPlaces === null) {
-                return format_number($state);
-            }
-
-            return number_format(
-                $state,
-                $column->evaluate($decimalPlaces),
-                $column->evaluate($decimalSeparator),
-                $column->evaluate($thousandsSeparator),
-            );
-        });
-
-        return $this;
-    }
-
-    public function time(?string $format = null, ?string $timezone = null): static
-    {
-        $this->isTime = true;
-
-        $format ??= Exporter::$defaultTimeDisplayFormat;
-
-        $this->date($format, $timezone);
-
-        return $this;
-    }
-
-    public function timezone(string | Closure | null $timezone): static
-    {
-        $this->timezone = $timezone;
-
-        return $this;
-    }
 
     public function limit(int | Closure | null $length = 100, string | Closure | null $end = '...'): static
     {
@@ -160,7 +31,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function words(int $words = 100, string $end = '...'): static
+    public function words(int | Closure | null $words = 100, string | Closure | null $end = '...'): static
     {
         $this->wordLimit = $words;
         $this->wordLimitEnd = $end;
@@ -194,10 +65,6 @@ trait CanFormatState
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
         ]);
-
-        if ($state instanceof LabelInterface) {
-            $state = $state->getLabel();
-        }
 
         if ($characterLimit = $this->getCharacterLimit()) {
             $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());
@@ -258,11 +125,6 @@ trait CanFormatState
         return $this->evaluate($this->wordLimitEnd);
     }
 
-    public function getTimezone(): string
-    {
-        return $this->evaluate($this->timezone) ?? config('app.timezone');
-    }
-
     public function getPrefix(): ?string
     {
         return $this->evaluate($this->prefix);
@@ -271,31 +133,6 @@ trait CanFormatState
     public function getSuffix(): ?string
     {
         return $this->evaluate($this->suffix);
-    }
-
-    public function isDate(): bool
-    {
-        return $this->isDate;
-    }
-
-    public function isDateTime(): bool
-    {
-        return $this->isDateTime;
-    }
-
-    public function isMoney(): bool
-    {
-        return $this->isMoney;
-    }
-
-    public function isNumeric(): bool
-    {
-        return $this->isNumeric;
-    }
-
-    public function isTime(): bool
-    {
-        return $this->isTime;
     }
 
     public function listAsJson(bool $condition = true): static

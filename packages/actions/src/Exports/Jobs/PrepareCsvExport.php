@@ -36,6 +36,7 @@ class PrepareCsvExport implements ShouldQueue
         protected string $query,
         protected array $columnMap,
         protected array $options = [],
+        protected int $chunkSize = 100,
         protected ?array $records = null,
     ) {
     }
@@ -71,7 +72,7 @@ class PrepareCsvExport implements ShouldQueue
 
             $jobs = [];
 
-            foreach (array_chunk($records, length: 100) as $recordsChunk) {
+            foreach (array_chunk($records, length: $this->chunkSize) as $recordsChunk) {
                 $jobs[] = new $exportCsvJob(
                     $this->export,
                     $this->query,
@@ -98,7 +99,7 @@ class PrepareCsvExport implements ShouldQueue
         $query->toBase()
             ->select([$query->getModel()->getQualifiedKeyName()])
             ->chunkById(
-                1000,
+                $this->chunkSize * 10,
                 fn (Collection $records) => $dispatchRecords(
                     Arr::pluck($records->all(), $keyName),
                 ),

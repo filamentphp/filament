@@ -8,6 +8,7 @@ use Filament\Actions\Exports\Exporter;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,6 +24,8 @@ use Illuminate\Support\Facades\Storage;
  */
 class Export extends Model
 {
+    use Prunable;
+
     protected $casts = [
         'completed_at' => 'timestamp',
         'processed_rows' => 'integer',

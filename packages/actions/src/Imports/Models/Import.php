@@ -8,6 +8,7 @@ use Filament\Actions\Imports\Importer;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -24,6 +25,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Import extends Model
 {
+    use Prunable;
+
     protected $casts = [
         'completed_at' => 'timestamp',
         'processed_rows' => 'integer',
