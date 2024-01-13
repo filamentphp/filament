@@ -74,4 +74,15 @@ class SpatieTagsEntry extends TextEntry
     {
         return $this->getType() instanceof AllTagTypes;
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'spatieTagsEntry', 'tagsEntry' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

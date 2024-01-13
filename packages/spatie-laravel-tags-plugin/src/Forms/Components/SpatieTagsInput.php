@@ -124,4 +124,15 @@ class SpatieTagsInput extends TagsInput
     {
         return $this->getType() instanceof AllTagTypes;
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'spatieTagsInput' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

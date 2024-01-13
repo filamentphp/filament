@@ -81,4 +81,15 @@ class SpatieTagsColumn extends TagsColumn
 
         return $query->with(['tags']);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'spatieTagsColumn', 'tagsColumn', 'column', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }
