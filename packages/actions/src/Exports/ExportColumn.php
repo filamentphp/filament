@@ -4,11 +4,15 @@ namespace Filament\Actions\Exports;
 
 use Closure;
 use Filament\Support\Components\Component;
+use Filament\Support\Concerns\CanAggregateRelatedModels;
 use Filament\Support\Concerns\HasCellState;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class ExportColumn extends Component
 {
+    use CanAggregateRelatedModels;
     use Concerns\CanFormatState;
     use HasCellState;
 
@@ -75,6 +79,44 @@ class ExportColumn extends Component
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
+    }
+
+    public function applyRelationshipAggregates(EloquentBuilder $query): EloquentBuilder
+    {
+        return $query->when(
+            filled([$this->getRelationshipToAvg(), $this->getColumnToAvg()]),
+            fn ($query) => $query->withAvg($this->getRelationshipToAvg(), $this->getColumnToAvg())
+        )->when(
+            filled($this->getRelationshipsToCount()),
+            fn ($query) => $query->withCount(Arr::wrap($this->getRelationshipsToCount()))
+        )->when(
+            filled($this->getRelationshipsToExistenceCheck()),
+            fn ($query) => $query->withExists(Arr::wrap($this->getRelationshipsToExistenceCheck()))
+        )->when(
+            filled([$this->getRelationshipToMax(), $this->getColumnToMax()]),
+            fn ($query) => $query->withMax($this->getRelationshipToMax(), $this->getColumnToMax())
+        )->when(
+            filled([$this->getRelationshipToMin(), $this->getColumnToMin()]),
+            fn ($query) => $query->withMin($this->getRelationshipToMin(), $this->getColumnToMin())
+        )->when(
+            filled([$this->getRelationshipToSum(), $this->getColumnToSum()]),
+            fn ($query) => $query->withSum($this->getRelationshipToSum(), $this->getColumnToSum())
+        );
+    }
+
+    public function applyEagerLoading(EloquentBuilder $query): EloquentBuilder
+    {
+        if (! $this->queriesRelationships($query->getModel())) {
+            return $query;
+        }
+
+        $relationshipName = $this->getRelationshipName();
+
+        if (array_key_exists($relationshipName, $query->getEagerLoads())) {
+            return $query;
+        }
+
+        return $query->with([$relationshipName]);
     }
 
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array

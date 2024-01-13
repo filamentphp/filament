@@ -126,6 +126,7 @@ trait CanExportRecords
             $export->file_name = $action->getFileName($export);
             $export->save();
 
+            $query->withoutEagerLoads();
             $serializedQuery = EloquentSerializeFacade::serialize($query);
 
             $job = $action->getJob();

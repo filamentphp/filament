@@ -76,6 +76,11 @@ class ExportCsv implements ShouldQueue
 
         $query = EloquentSerializeFacade::unserialize($this->query);
 
+        foreach ($this->exporter->getCachedColumns() as $column) {
+            $column->applyRelationshipAggregates($query);
+            $column->applyEagerLoading($query);
+        }
+
         foreach ($query->find($this->records) as $record) {
             try {
                 $csv->insertOne(($this->exporter)($record));
