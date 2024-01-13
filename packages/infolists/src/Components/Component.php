@@ -35,6 +35,7 @@ class Component extends ViewComponent
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
+            'component' => [$this],
             'record' => [$this->getRecord()],
             'state' => [$this->getState()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),

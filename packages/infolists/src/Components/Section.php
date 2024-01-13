@@ -112,4 +112,15 @@ class Section extends Component implements Contracts\HasHeaderActions
     {
         return (bool) $this->evaluate($this->isContentBefore);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'section', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

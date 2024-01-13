@@ -122,4 +122,15 @@ class TextEntry extends Entry implements HasAffixActions
     {
         return (bool) $this->evaluate($this->isLimitedListExpandable);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'textEntry', 'entry', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

@@ -322,4 +322,15 @@ class ImageEntry extends Entry
     {
         return (bool) $this->evaluate($this->shouldCheckFileExistence);
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'imageEntry', 'entry', 'component' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }
