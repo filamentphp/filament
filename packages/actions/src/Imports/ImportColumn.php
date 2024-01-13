@@ -511,6 +511,7 @@ class ImportColumn extends Component
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
+            'column', 'component' => [$this],
             'data' => [$this->getImporter()->getData()],
             'importer' => [$this->getImporter()],
             'options' => [$this->getImporter()->getOptions()],
