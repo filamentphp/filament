@@ -177,4 +177,4 @@ public function table(Table $table): Table
 }
 ```
 
-In this example, we have put two of the filters inside a [section](../../forms/layout/section) component, and used the `columns()` method to specify that the section should have two columns. We have also used the `columnSpanFull()` method to specify that the section should span the full width of the form, which is also 2 columns wide. We have inserted each filter into the form schema by using the filter's name as the key in the `$filters` array.
+In this example, we have put two of the filters inside a [section](../../forms/layout/section) component, and used the `columns()` method to specify that the section should have two columns. We have also used the `columnSpanFull()` method to specify that the section should span the full width of the filter form, which is also 2 columns wide. We have inserted each filter into the form schema by using the filter's name as the key in the `$filters` array.
