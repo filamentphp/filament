@@ -4,10 +4,12 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Support\Concerns\HasFromBreakpoint;
+use Filament\Support\Concerns\HasVerticalAlignment;
 
 class Split extends Component
 {
     use HasFromBreakpoint;
+    use HasVerticalAlignment;
 
     /**
      * @var view-string

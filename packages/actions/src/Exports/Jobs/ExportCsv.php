@@ -1,25 +1,26 @@
 <?php
 
-namespace Filament\Actions\Imports\Jobs;
+namespace Filament\Actions\Exports\Jobs;
 
+use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
 use Carbon\CarbonInterface;
 use Exception;
-use Filament\Actions\Imports\Importer;
-use Filament\Actions\Imports\Models\FailedImportRow;
-use Filament\Actions\Imports\Models\Import;
+use Filament\Actions\Exports\Exporter;
+use Filament\Actions\Exports\Models\Export;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+use League\Csv\Writer;
+use SplTempFileObject;
 use Throwable;
 
-class ImportCsv implements ShouldQueue
+class ExportCsv implements ShouldQueue
 {
     use Batchable;
     use Dispatchable;
@@ -29,20 +30,22 @@ class ImportCsv implements ShouldQueue
 
     public bool $deleteWhenMissingModels = true;
 
-    protected readonly Importer $importer;
+    protected readonly Exporter $exporter;
 
     /**
-     * @param  array<array<string, string>>  $rows
+     * @param  array<mixed>  $records
      * @param  array<string, string>  $columnMap
      * @param  array<string, mixed>  $options
      */
     public function __construct(
-        protected Import $import,
-        protected array $rows,
+        protected Export $export,
+        protected string $query,
+        protected array $records,
+        protected int $page,
         protected array $columnMap,
         protected array $options = [],
     ) {
-        $this->importer = $this->import->getImporter(
+        $this->exporter = $this->export->getExporter(
             $this->columnMap,
             $this->options,
         );
@@ -53,13 +56,13 @@ class ImportCsv implements ShouldQueue
      */
     public function middleware(): array
     {
-        return $this->importer->getJobMiddleware();
+        return $this->exporter->getJobMiddleware();
     }
 
     public function handle(): void
     {
         /** @var Authenticatable $user */
-        $user = $this->import->user;
+        $user = $this->export->user;
 
         auth()->login($user);
 
@@ -68,30 +71,35 @@ class ImportCsv implements ShouldQueue
         $processedRows = 0;
         $successfulRows = 0;
 
-        foreach ($this->rows as $row) {
+        $csv = Writer::createFromFileObject(new SplTempFileObject());
+        $csv->setDelimiter($this->export->exporter::getCsvDelimiter());
+
+        $query = EloquentSerializeFacade::unserialize($this->query);
+
+        foreach ($query->find($this->records) as $record) {
             try {
-                DB::transaction(fn () => ($this->importer)($row));
+                $csv->insertOne(($this->exporter)($record));
+
                 $successfulRows++;
-            } catch (ValidationException $exception) {
-                $this->logFailedRow($row, collect($exception->errors())->flatten()->implode(' '));
             } catch (Throwable $exception) {
                 $exceptions[$exception::class] = $exception;
-
-                $this->logFailedRow($row);
             }
 
             $processedRows++;
         }
 
-        $this->import->increment('processed_rows', $processedRows);
-        $this->import->increment('successful_rows', $successfulRows);
+        $filePath = $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . str_pad(strval($this->page), 16, '0', STR_PAD_LEFT) . '.csv';
+        $this->export->getFileDisk()->put($filePath, $csv->toString(), Filesystem::VISIBILITY_PRIVATE);
+
+        $this->export->increment('processed_rows', $processedRows);
+        $this->export->increment('successful_rows', $successfulRows);
 
         $this->handleExceptions($exceptions);
     }
 
     public function retryUntil(): CarbonInterface
     {
-        return $this->importer->getJobRetryUntil();
+        return $this->exporter->getJobRetryUntil();
     }
 
     /**
@@ -99,19 +107,7 @@ class ImportCsv implements ShouldQueue
      */
     public function tags(): array
     {
-        return $this->importer->getJobTags();
-    }
-
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    protected function logFailedRow(array $data, ?string $validationError = null): void
-    {
-        $failedRow = app(FailedImportRow::class);
-        $failedRow->import()->associate($this->import);
-        $failedRow->data = $data;
-        $failedRow->validation_error = $validationError;
-        $failedRow->save();
+        return $this->exporter->getJobTags();
     }
 
     /**

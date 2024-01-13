@@ -6,6 +6,7 @@ use Exception;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasAlignment;
+use Filament\Support\Concerns\HasCellState;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Tables\Table;
@@ -36,11 +37,11 @@ class Column extends ViewComponent
     use Concerns\HasName;
     use Concerns\HasRecord;
     use Concerns\HasRowLoopObject;
-    use Concerns\HasState;
     use Concerns\HasTooltip;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
     use HasAlignment;
+    use HasCellState;
     use HasExtraAttributes;
     use HasPlaceholder;
 

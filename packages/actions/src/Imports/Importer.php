@@ -72,8 +72,6 @@ abstract class Importer
         $this->saveRecord();
         $this->callHook('afterSave');
         $this->callHook($recordExists ? 'afterUpdate' : 'afterCreate');
-
-        $this->import->increment('successful_rows');
     }
 
     public function remapData(): void
