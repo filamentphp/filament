@@ -4,8 +4,10 @@ namespace Filament\Tables\Columns;
 
 use Exception;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\CanAggregateRelatedModels;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasAlignment;
+use Filament\Support\Concerns\HasCellState;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Tables\Table;
@@ -14,11 +16,11 @@ use Illuminate\Support\Traits\Conditionable;
 
 class Column extends ViewComponent
 {
+    use CanAggregateRelatedModels;
     use CanGrow;
     use Concerns\BelongsToGroup;
     use Concerns\BelongsToLayout;
     use Concerns\BelongsToTable;
-    use Concerns\CanAggregateRelatedModels;
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanBeInline;
@@ -36,11 +38,11 @@ class Column extends ViewComponent
     use Concerns\HasName;
     use Concerns\HasRecord;
     use Concerns\HasRowLoopObject;
-    use Concerns\HasState;
     use Concerns\HasTooltip;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
     use HasAlignment;
+    use HasCellState;
     use HasExtraAttributes;
     use HasPlaceholder;
 

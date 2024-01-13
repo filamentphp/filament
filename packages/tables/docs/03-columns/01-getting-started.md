@@ -437,8 +437,11 @@ Sometimes you need to calculate the state of a column, instead of directly readi
 By passing a callback function to the `state()` method, you can customize the returned state for that column based on the `$record`:
 
 ```php
-Tables\Columns\TextColumn::make('amount_including_vat')
-    ->state(function (Model $record): float {
+use App\Models\Order;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('amount_including_vat')
+    ->state(function (Order $record): float {
         return $record->amount * (1 + $record->vat_rate);
     })
 ```

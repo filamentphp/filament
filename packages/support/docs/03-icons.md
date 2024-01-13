@@ -185,6 +185,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `actions::dissociate-action.modal` - Modal of a dissociate action
 - `actions::edit-action` - Trigger button of an edit action
 - `actions::edit-action.grouped` - Trigger button of a grouped edit action
+- `actions::export-action.grouped` - Trigger button of a grouped export action
 - `actions::force-delete-action` - Trigger button of a force delete action
 - `actions::force-delete-action.grouped` - Trigger button of a grouped force delete action
 - `actions::force-delete-action.modal` - Modal of a force delete action

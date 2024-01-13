@@ -239,6 +239,7 @@ Filament includes several prebuilt actions and bulk actions that you can add to 
 - [Force-delete](../actions/prebuilt-actions/force-delete)
 - [Restore](../actions/prebuilt-actions/restore)
 - [Import](../actions/prebuilt-actions/import)
+- [Export](../actions/prebuilt-actions/export)
 
 ## Grouping actions
 

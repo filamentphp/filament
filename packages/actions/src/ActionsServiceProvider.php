@@ -17,6 +17,7 @@ class ActionsServiceProvider extends PackageServiceProvider
             ->hasCommands($this->getCommands())
             ->hasMigrations([
                 'create_imports_table',
+                'create_exports_table',
                 'create_failed_import_rows_table',
             ])
             ->hasRoute('web')
@@ -43,6 +44,7 @@ class ActionsServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         $commands = [
+            Commands\MakeExporterCommand::class,
             Commands\MakeImporterCommand::class,
         ];
 

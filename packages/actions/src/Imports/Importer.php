@@ -72,8 +72,6 @@ abstract class Importer
         $this->saveRecord();
         $this->callHook('afterSave');
         $this->callHook($recordExists ? 'afterUpdate' : 'afterCreate');
-
-        $this->import->increment('successful_rows');
     }
 
     public function remapData(): void
@@ -239,7 +237,7 @@ abstract class Importer
     public function getJobMiddleware(): array
     {
         return [
-            (new WithoutOverlapping("import{$this->import->id}"))->expireAfter(600),
+            (new WithoutOverlapping("import{$this->import->getKey()}"))->expireAfter(600),
         ];
     }
 
@@ -253,7 +251,7 @@ abstract class Importer
      */
     public function getJobTags(): array
     {
-        return ["import{$this->import->id}"];
+        return ["import{$this->import->getKey()}"];
     }
 
     /**
