@@ -129,19 +129,19 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Actions\Action::make('enabled'),
                 Tables\Actions\Action::make('disabled')
                     ->disabled(),
-                Tables\Actions\Action::make('has-icon')
+                Tables\Actions\Action::make('hasIcon')
                     ->icon('heroicon-m-pencil-square'),
-                Tables\Actions\Action::make('has-label')
+                Tables\Actions\Action::make('hasLabel')
                     ->label('My Action'),
-                Tables\Actions\Action::make('has-color')
+                Tables\Actions\Action::make('hasColor')
                     ->color('primary'),
                 Tables\Actions\Action::make('exists'),
-                Tables\Actions\Action::make('exists-in-order'),
+                Tables\Actions\Action::make('existsInOrder'),
                 Tables\Actions\Action::make('url')
                     ->url('https://filamentphp.com'),
-                Tables\Actions\Action::make('url-in-new-tab')
+                Tables\Actions\Action::make('urlInNewTab')
                     ->url('https://filamentphp.com', true),
-                Tables\Actions\Action::make('url-not-in-new-tab')
+                Tables\Actions\Action::make('urlNotInNewTab')
                     ->url('https://filamentphp.com'),
             ])
             ->actions([
@@ -178,18 +178,18 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Actions\BulkAction::make('enabled'),
                 Tables\Actions\BulkAction::make('disabled')
                     ->disabled(),
-                Tables\Actions\BulkAction::make('has-icon')
+                Tables\Actions\BulkAction::make('hasIcon')
                     ->icon('heroicon-m-pencil-square'),
-                Tables\Actions\BulkAction::make('has-label')
+                Tables\Actions\BulkAction::make('hasLabel')
                     ->label('My Action'),
-                Tables\Actions\BulkAction::make('has-color')
+                Tables\Actions\BulkAction::make('hasColor')
                     ->color('primary'),
                 Tables\Actions\BulkAction::make('exists'),
-                Tables\Actions\BulkAction::make('exists-in-order'),
+                Tables\Actions\BulkAction::make('existsInOrder'),
             ])
             ->emptyStateActions([
-                Tables\Actions\Action::make('empty-exists'),
-                Tables\Actions\Action::make('empty-exists-in-order'),
+                Tables\Actions\Action::make('emptyExists'),
+                Tables\Actions\Action::make('emptyExistsInOrder'),
             ]);
     }
 
