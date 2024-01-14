@@ -2,6 +2,7 @@
 
 namespace Filament\Commands;
 
+use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Commands\Concerns\CanIndentStrings;
@@ -240,9 +241,24 @@ class MakePageCommand extends Command
             return static::INVALID;
         }
 
+        $potentialCluster = empty($resource) ? ((string) str($namespace)->beforeLast('\Pages')) : null;
+        $clusterAssignment = null;
+        $clusterImport = null;
+
+        if (
+            filled($potentialCluster) &&
+            class_exists($potentialCluster) &&
+            is_subclass_of($potentialCluster, Cluster::class)
+        ) {
+            $clusterAssignment = $this->indentString(PHP_EOL . PHP_EOL . 'protected static ?string $cluster = ' . class_basename($potentialCluster) . '::class;');
+            $clusterImport = "use {$potentialCluster};" . PHP_EOL;
+        }
+
         if (empty($resource)) {
             $this->copyStubToApp('Page', $path, [
                 'class' => $pageClass,
+                'clusterAssignment' => $clusterAssignment,
+                'clusterImport' => $clusterImport,
                 'namespace' => $namespace . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'view' => $view,
             ]);

@@ -18,23 +18,14 @@ This command will create two files - a page class in the `/Pages` directory of t
 
 Page classes are all full-page [Livewire](https://livewire.laravel.com) components with a few extra utilities you can use with the panel.
 
-## Conditionally hiding pages in navigation
+## Authorization
 
-You can prevent pages from appearing in the menu by overriding the `shouldRegisterNavigation()` method in your Page class. This is useful if you want to control which users can see the page in the sidebar.
+You can prevent pages from appearing in the menu by overriding the `canAccess()` method in your Page class. This is useful if you want to control which users can see the page in the navigation, and also which users can visit the page directly:
 
 ```php
-public static function shouldRegisterNavigation(): bool
+public static function canAccess(): bool
 {
     return auth()->user()->canManageSettings();
-}
-```
-
-Please be aware that all users will still be able to visit this page through its direct URL, so to fully limit access, you must also check in the `mount()` method of the page:
-
-```php
-public function mount(): void
-{
-    abort_unless(auth()->user()->canManageSettings(), 403);
 }
 ```
 
@@ -336,3 +327,7 @@ use App\Filament\Pages\Settings;
 
 Settings::getUrl(panel: 'marketing');
 ```
+
+## Adding sub-navigation between pages
+
+You may want to add a common sub-navigation to multiple pages, to allow users to quickly navigate between them. You can do this by defining a [cluster](clusters). Clusters can also contain [resources](resources), and you can switch between multiple pages or resources within a cluster.
