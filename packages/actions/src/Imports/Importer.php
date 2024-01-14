@@ -34,9 +34,9 @@ abstract class Importer
      * @param  array<string, mixed>  $options
      */
     public function __construct(
-        readonly protected Import $import,
-        readonly protected array $columnMap,
-        readonly protected array $options,
+        protected Import $import,
+        protected array $columnMap,
+        protected array $options,
     ) {
     }
 

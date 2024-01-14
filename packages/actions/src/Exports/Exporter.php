@@ -22,9 +22,9 @@ abstract class Exporter
      * @param  array<string, mixed>  $options
      */
     public function __construct(
-        readonly protected Export $export,
-        readonly protected array $columnMap,
-        readonly protected array $options,
+        protected Export $export,
+        protected array $columnMap,
+        protected array $options,
     ) {
     }
 
