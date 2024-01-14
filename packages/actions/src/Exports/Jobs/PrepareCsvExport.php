@@ -3,6 +3,7 @@
 namespace Filament\Actions\Exports\Jobs;
 
 use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
+use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -26,6 +27,8 @@ class PrepareCsvExport implements ShouldQueue
 
     public bool $deleteWhenMissingModels = true;
 
+    protected Exporter $exporter;
+
     /**
      * @param  array<string, string>  $columnMap
      * @param  array<string, mixed>  $options
@@ -39,12 +42,24 @@ class PrepareCsvExport implements ShouldQueue
         protected int $chunkSize = 100,
         protected ?array $records = null,
     ) {
+        $this->exporter = $this->export->getExporter(
+            $this->columnMap,
+            $this->options,
+        );
+
+        if (filled($connection = $this->exporter->getJobConnection())) {
+            $this->onConnection($connection);
+        }
+
+        if (filled($queue = $this->exporter->getJobQueue())) {
+            $this->onQueue($queue);
+        }
     }
 
     public function handle(): void
     {
         $csv = Writer::createFromFileObject(new SplTempFileObject());
-        $csv->setDelimiter($this->export->exporter::getCsvDelimiter());
+        $csv->setDelimiter($this->exporter->getCsvDelimiter());
         $csv->insertOne(array_values($this->columnMap));
 
         $filePath = $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv';

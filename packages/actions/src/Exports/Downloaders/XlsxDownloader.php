@@ -24,7 +24,7 @@ class XlsxDownloader implements Downloader
 
         $writer = app(Writer::class);
 
-        $csvDelimiter = $export->exporter::getCsvDelimiter();
+        $csvDelimiter = $this->exporter->getCsvDelimiter();
 
         $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer) {
             $csvReader = CsvReader::createFromStream($disk->readStream($file));

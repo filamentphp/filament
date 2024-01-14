@@ -285,7 +285,7 @@ ExportAction::make()
 Alternatively, you can override the `getFileDisk()` method on the exporter class, returning the name of the disk:
 
 ```php
-public static function getFileDisk(): string
+public function getFileDisk(): string
 {
     return 's3';
 }
@@ -310,7 +310,7 @@ Alternatively, you can override the `getFileName()` method on the exporter class
 
 use Filament\Actions\Exports\Models\Export;
 
-public static function getFileName(Export $export): string
+public function getFileName(Export $export): string
 {
     return "products-{$export->getKey()}.csv";
 }
@@ -431,7 +431,7 @@ If you are encountering memory or timeout issues when exporting large CSV files,
 The default delimiter for CSVs is the comma (`,`). If you want to export using a different delimiter, you may override the `getCsvDelimiter()` method on the exporter class, returning a new one:
 
 ```php
-public static function getCsvDelimiter(): string
+public function getCsvDelimiter(): string
 {
     return ';';
 }
@@ -458,6 +458,26 @@ use App\Jobs\PrepareCsvExport;
 ExportAction::make()
     ->exporter(ProductExporter::class)
     ->job(PrepareCsvExport::class)
+```
+
+### Customizing the export queue and connection
+
+By default, the export system will use the default queue and connection. If you'd like to customize the queue used for jobs of a certain exporter, you may override the `getJobQueue()` method in your exporter class:
+
+```php
+public function getJobQueue(): ?string
+{
+    return 'exports';
+}
+```
+
+You can also customize the connection used for jobs of a certain exporter, by overriding the `getJobConnection()` method in your exporter class:
+
+```php
+public function getJobConnection(): ?string
+{
+    return 'sqs';
+}
 ```
 
 ### Customizing the export job middleware

@@ -29,7 +29,7 @@ class ImportCsv implements ShouldQueue
 
     public bool $deleteWhenMissingModels = true;
 
-    protected readonly Importer $importer;
+    protected Importer $importer;
 
     /**
      * @param  array<array<string, string>>  $rows
@@ -46,6 +46,14 @@ class ImportCsv implements ShouldQueue
             $this->columnMap,
             $this->options,
         );
+
+        if (filled($connection = $this->importer->getJobConnection())) {
+            $this->onConnection($connection);
+        }
+
+        if (filled($queue = $this->importer->getJobQueue())) {
+            $this->onQueue($queue);
+        }
     }
 
     /**

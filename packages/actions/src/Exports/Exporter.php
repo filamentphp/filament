@@ -94,6 +94,16 @@ abstract class Exporter
         return ["export{$this->export->getKey()}"];
     }
 
+    public function getJobQueue(): ?string
+    {
+        return null;
+    }
+
+    public function getJobConnection(): ?string
+    {
+        return null;
+    }
+
     /**
      * @return array<ExportColumn>
      */
@@ -119,12 +129,12 @@ abstract class Exporter
         return $this->options;
     }
 
-    public static function getFileDisk(): string
+    public function getFileDisk(): string
     {
         return config('filament.default_filesystem_disk');
     }
 
-    public static function getFileName(Export $export): string
+    public function getFileName(Export $export): string
     {
         return __('filament-actions::export.file_name', [
             'export_id' => $export->getKey(),
@@ -138,7 +148,7 @@ abstract class Exporter
         ]);
     }
 
-    public static function getCsvDelimiter(): string
+    public function getCsvDelimiter(): string
     {
         return ',';
     }

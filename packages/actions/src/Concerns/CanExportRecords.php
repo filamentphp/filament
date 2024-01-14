@@ -116,21 +116,6 @@ trait CanExportRecords
 
             $user = auth()->user();
 
-            $export = app(Export::class);
-            $export->user()->associate($user);
-            $export->exporter = $action->getExporter();
-            $export->file_disk = $action->getFileDisk();
-            $export->total_rows = $totalRows;
-            $export->save();
-
-            $export->file_name = $action->getFileName($export);
-            $export->save();
-
-            $query->withoutEagerLoads();
-            $serializedQuery = EloquentSerializeFacade::serialize($query);
-
-            $job = $action->getJob();
-
             $options = array_merge(
                 $action->getOptions(),
                 Arr::except($data, ['columnMap']),
@@ -141,6 +126,27 @@ trait CanExportRecords
                 ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
                 ->all();
 
+            $export = app(Export::class);
+            $export->user()->associate($user);
+            $export->exporter = $action->getExporter();
+            $export->total_rows = $totalRows;
+
+            $exporter = $export->getExporter(
+                columnMap: $columnMap,
+                options: $options,
+            );
+
+            $export->file_disk = $action->getFileDisk() ?? $exporter->getFileDisk();
+            $export->save();
+
+            $export->file_name = $action->getFileName($export) ?? $exporter->getFileName($export);
+            $export->save();
+
+            $query->withoutEagerLoads();
+            $serializedQuery = EloquentSerializeFacade::serialize($query);
+
+            $job = $action->getJob();
+
             Bus::chain([
                 Bus::batch([new $job(
                     $export,
@@ -150,8 +156,16 @@ trait CanExportRecords
                     chunkSize: $action->getChunkSize(),
                     records: $action instanceof ExportTableBulkAction ? $action->getRecords()->all() : null,
                 )])->allowFailures(),
-                app(ExportCompletion::class, ['export' => $export]),
-                app(CreateXlsxFile::class, ['export' => $export]),
+                app(ExportCompletion::class, [
+                    'export' => $export,
+                    'columnMap' => $columnMap,
+                    'options' => $options,
+                ]),
+                app(CreateXlsxFile::class, [
+                    'export' => $export,
+                    'columnMap' => $columnMap,
+                    'options' => $options,
+                ]),
             ])->dispatch();
 
             Notification::make()
@@ -246,11 +260,6 @@ trait CanExportRecords
         return $this->evaluate($this->maxRows);
     }
 
-    public function getCsvDelimiter(): string
-    {
-        return $this->evaluate($this->csvDelimiter) ?? $this->getExporter()::getCsvDelimiter();
-    }
-
     /**
      * @param  array<string, mixed> | Closure  $options
      */
@@ -276,9 +285,9 @@ trait CanExportRecords
         return $this;
     }
 
-    public function getFileDisk(): string
+    public function getFileDisk(): ?string
     {
-        return $this->evaluate($this->fileDisk) ?? $this->getExporter()::getFileDisk();
+        return $this->evaluate($this->fileDisk);
     }
 
     public function fileName(string | Closure | null $name): static
@@ -288,10 +297,10 @@ trait CanExportRecords
         return $this;
     }
 
-    public function getFileName(Export $export): string
+    public function getFileName(Export $export): ?string
     {
         return $this->evaluate($this->fileName, [
             'export' => $export,
-        ]) ?? $this->getExporter()::getFileName($export);
+        ]);
     }
 }

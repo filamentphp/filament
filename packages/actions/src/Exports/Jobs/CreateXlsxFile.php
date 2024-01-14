@@ -2,6 +2,7 @@
 
 namespace Filament\Actions\Exports\Jobs;
 
+use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -24,9 +25,25 @@ class CreateXlsxFile implements ShouldQueue
 
     public bool $deleteWhenMissingModels = true;
 
+    protected Exporter $exporter;
+
     public function __construct(
         protected Export $export,
+        protected array $columnMap,
+        protected array $options = [],
     ) {
+        $this->exporter = $this->export->getExporter(
+            $this->columnMap,
+            $this->options,
+        );
+
+        if (filled($connection = $this->exporter->getJobConnection())) {
+            $this->onConnection($connection);
+        }
+
+        if (filled($queue = $this->exporter->getJobQueue())) {
+            $this->onQueue($queue);
+        }
     }
 
     public function handle(): void
@@ -36,7 +53,7 @@ class CreateXlsxFile implements ShouldQueue
         $writer = app(Writer::class);
         $writer->openToFile($temporaryFile = tempnam(sys_get_temp_dir(), $this->export->file_name));
 
-        $csvDelimiter = $this->export->exporter::getCsvDelimiter();
+        $csvDelimiter = $this->exporter->getCsvDelimiter();
 
         $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer) {
             $csvReader = CsvReader::createFromStream($disk->readStream($file));

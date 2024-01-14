@@ -254,6 +254,16 @@ abstract class Importer
         return ["import{$this->import->getKey()}"];
     }
 
+    public function getJobQueue(): ?string
+    {
+        return null;
+    }
+
+    public function getJobConnection(): ?string
+    {
+        return null;
+    }
+
     /**
      * @return array<ImportColumn>
      */

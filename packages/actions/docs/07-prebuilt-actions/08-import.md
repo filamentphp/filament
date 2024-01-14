@@ -540,6 +540,26 @@ ImportAction::make()
     ->job(ImportCsv::class)
 ```
 
+### Customizing the import queue and connection
+
+By default, the import system will use the default queue and connection. If you'd like to customize the queue used for jobs of a certain importer, you may override the `getJobQueue()` method in your importer class:
+
+```php
+public function getJobQueue(): ?string
+{
+    return 'imports';
+}
+```
+
+You can also customize the connection used for jobs of a certain importer, by overriding the `getJobConnection()` method in your importer class:
+
+```php
+public function getJobConnection(): ?string
+{
+    return 'sqs';
+}
+```
+
 ### Customizing the import job middleware
 
 By default, the import system will only process one job at a time from each import. This is to prevent the server from being overloaded, and other jobs from being delayed by large imports. That functionality is defined in the `WithoutOverlapping` middleware on the importer class:

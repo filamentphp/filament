@@ -3,6 +3,7 @@
 namespace Filament\Actions\Exports\Jobs;
 
 use Filament\Actions\Exports\Enums\DownloadFileFormat;
+use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
@@ -22,9 +23,25 @@ class ExportCompletion implements ShouldQueue
 
     public bool $deleteWhenMissingModels = true;
 
+    protected Exporter $exporter;
+
     public function __construct(
         protected Export $export,
+        protected array $columnMap,
+        protected array $options = [],
     ) {
+        $this->exporter = $this->export->getExporter(
+            $this->columnMap,
+            $this->options,
+        );
+
+        if (filled($connection = $this->exporter->getJobConnection())) {
+            $this->onConnection($connection);
+        }
+
+        if (filled($queue = $this->exporter->getJobQueue())) {
+            $this->onQueue($queue);
+        }
     }
 
     public function handle(): void
@@ -39,7 +56,7 @@ class ExportCompletion implements ShouldQueue
 
         Notification::make()
             ->title(__('filament-actions::export.notifications.completed.title'))
-            ->body($this->export->exporter::getCompletedNotificationBody($this->export))
+            ->body($this->exporter::getCompletedNotificationBody($this->export))
             ->when(
                 ! $failedRowsCount,
                 fn (Notification $notification) => $notification->success(),
