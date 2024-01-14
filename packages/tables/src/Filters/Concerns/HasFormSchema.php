@@ -79,7 +79,7 @@ trait HasFormSchema
     {
         return $this->getLivewire()
             ->getTableFiltersForm()
-            ->getComponents()[$this->getName()]
+            ->getComponent($this->getName())
             ->getChildComponentContainer();
     }
 }
