@@ -49,14 +49,6 @@ class ExportCsv implements ShouldQueue
             $this->columnMap,
             $this->options,
         );
-
-        if (filled($connection = $this->exporter->getJobConnection())) {
-            $this->onConnection($connection);
-        }
-
-        if (filled($queue = $this->exporter->getJobQueue())) {
-            $this->onQueue($queue);
-        }
     }
 
     /**
@@ -80,7 +72,7 @@ class ExportCsv implements ShouldQueue
         $successfulRows = 0;
 
         $csv = Writer::createFromFileObject(new SplTempFileObject());
-        $csv->setDelimiter($this->exporter->getCsvDelimiter());
+        $csv->setDelimiter($this->exporter::getCsvDelimiter());
 
         $query = EloquentSerializeFacade::unserialize($this->query);
 

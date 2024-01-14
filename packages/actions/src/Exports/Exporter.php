@@ -148,7 +148,7 @@ abstract class Exporter
         ]);
     }
 
-    public function getCsvDelimiter(): string
+    public static function getCsvDelimiter(): string
     {
         return ',';
     }

@@ -46,20 +46,12 @@ class PrepareCsvExport implements ShouldQueue
             $this->columnMap,
             $this->options,
         );
-
-        if (filled($connection = $this->exporter->getJobConnection())) {
-            $this->onConnection($connection);
-        }
-
-        if (filled($queue = $this->exporter->getJobQueue())) {
-            $this->onQueue($queue);
-        }
     }
 
     public function handle(): void
     {
         $csv = Writer::createFromFileObject(new SplTempFileObject());
-        $csv->setDelimiter($this->exporter->getCsvDelimiter());
+        $csv->setDelimiter($this->exporter::getCsvDelimiter());
         $csv->insertOne(array_values($this->columnMap));
 
         $filePath = $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv';

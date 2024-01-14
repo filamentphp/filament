@@ -431,7 +431,7 @@ If you are encountering memory or timeout issues when exporting large CSV files,
 The default delimiter for CSVs is the comma (`,`). If you want to export using a different delimiter, you may override the `getCsvDelimiter()` method on the exporter class, returning a new one:
 
 ```php
-public function getCsvDelimiter(): string
+public static function getCsvDelimiter(): string
 {
     return ';';
 }

@@ -25,6 +25,10 @@ class ExportCompletion implements ShouldQueue
 
     protected Exporter $exporter;
 
+    /**
+     * @param  array<string, string>  $columnMap
+     * @param  array<string, mixed>  $options
+     */
     public function __construct(
         protected Export $export,
         protected array $columnMap,
@@ -34,14 +38,6 @@ class ExportCompletion implements ShouldQueue
             $this->columnMap,
             $this->options,
         );
-
-        if (filled($connection = $this->exporter->getJobConnection())) {
-            $this->onConnection($connection);
-        }
-
-        if (filled($queue = $this->exporter->getJobQueue())) {
-            $this->onQueue($queue);
-        }
     }
 
     public function handle(): void

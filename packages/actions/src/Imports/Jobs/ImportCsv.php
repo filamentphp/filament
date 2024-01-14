@@ -46,14 +46,6 @@ class ImportCsv implements ShouldQueue
             $this->columnMap,
             $this->options,
         );
-
-        if (filled($connection = $this->importer->getJobConnection())) {
-            $this->onConnection($connection);
-        }
-
-        if (filled($queue = $this->importer->getJobQueue())) {
-            $this->onQueue($queue);
-        }
     }
 
     /**

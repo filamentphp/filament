@@ -19,6 +19,8 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Actions\ExportAction as ExportTableAction;
 use Filament\Tables\Actions\ExportBulkAction as ExportTableBulkAction;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Bus\PendingBatch;
+use Illuminate\Foundation\Bus\PendingChain;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Livewire\Component;
@@ -146,6 +148,8 @@ trait CanExportRecords
             $serializedQuery = EloquentSerializeFacade::serialize($query);
 
             $job = $action->getJob();
+            $jobQueue = $exporter->getJobQueue();
+            $jobConnection = $exporter->getJobConnection();
 
             Bus::chain([
                 Bus::batch([new $job(
@@ -155,7 +159,16 @@ trait CanExportRecords
                     options: $options,
                     chunkSize: $action->getChunkSize(),
                     records: $action instanceof ExportTableBulkAction ? $action->getRecords()->all() : null,
-                )])->allowFailures(),
+                )])
+                    ->when(
+                        filled($jobQueue),
+                        fn (PendingBatch $batch) => $batch->onQueue($jobQueue),
+                    )
+                    ->when(
+                        filled($jobConnection),
+                        fn (PendingBatch $batch) => $batch->onConnection($jobConnection),
+                    )
+                    ->allowFailures(),
                 app(ExportCompletion::class, [
                     'export' => $export,
                     'columnMap' => $columnMap,
@@ -166,7 +179,16 @@ trait CanExportRecords
                     'columnMap' => $columnMap,
                     'options' => $options,
                 ]),
-            ])->dispatch();
+            ])
+                ->when(
+                    filled($jobQueue),
+                    fn (PendingChain $chain) => $chain->onQueue($jobQueue),
+                )
+                ->when(
+                    filled($jobConnection),
+                    fn (PendingChain $chain) => $chain->onConnection($jobConnection),
+                )
+                ->dispatch();
 
             Notification::make()
                 ->title($action->getSuccessNotificationTitle())
