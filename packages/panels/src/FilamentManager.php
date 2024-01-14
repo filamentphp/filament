@@ -189,6 +189,11 @@ class FilamentManager
         return $this->getCurrentPanel()->getHomeUrl() ?? $this->getCurrentPanel()->getUrl();
     }
 
+    public function getId(): string
+    {
+        return $this->getCurrentPanel()->getId();
+    }
+
     /**
      * @param  array<mixed>  $parameters
      */
