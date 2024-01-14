@@ -204,7 +204,7 @@ it('can send invoices', function () {
     livewire(EditInvoice::class, [
         'invoice' => $invoice,
     ])
-        ->callAction('customer_id', 'send', data: [
+        ->callFormComponentAction('customer_id', 'send', data: [
             'email' => $email = fake()->email(),
         ])
         ->assertHasNoFormComponentActionErrors();
