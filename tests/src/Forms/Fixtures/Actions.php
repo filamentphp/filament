@@ -16,11 +16,6 @@ class Actions extends Component implements HasForms
 
     public $data;
 
-    public static function make(): static
-    {
-        return new static();
-    }
-
     public function mount(): void
     {
         $this->form->fill();
