@@ -66,6 +66,8 @@ class ImportColumn extends Component
 
     protected string | Closure | null $validationAttribute = null;
 
+    protected string $evaluationIdentifier = 'importColumn';
+
     final public function __construct(string $name)
     {
         $this->name($name);

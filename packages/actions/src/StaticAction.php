@@ -210,7 +210,7 @@ class StaticAction extends ViewComponent
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
-            'action', 'component' => [$this],
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
