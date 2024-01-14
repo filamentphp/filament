@@ -13,6 +13,8 @@ class Grid extends Component implements CanEntangleWithSingularRelationships
      */
     protected string $view = 'filament-forms::components.grid';
 
+    protected string $evaluationIdentifier = 'grid';
+
     /**
      * @param  array<string, int | string | null> | int | string | null  $columns
      */
@@ -44,8 +46,8 @@ class Grid extends Component implements CanEntangleWithSingularRelationships
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'grid', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

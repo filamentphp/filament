@@ -17,6 +17,8 @@ class Tabs extends Component
      */
     protected string $view = 'filament-forms::components.tabs';
 
+    protected string $evaluationIdentifier = 'tabs';
+
     protected int | Closure $activeTab = 1;
 
     protected string | Closure | null $tabQueryStringKey = null;
@@ -90,8 +92,8 @@ class Tabs extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'tabs', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

@@ -22,6 +22,8 @@ class FileUpload extends BaseFileUpload
      */
     protected string $view = 'filament-forms::components.file-upload';
 
+    protected string $evaluationIdentifier = 'fileUpload';
+
     protected string | Closure | null $imageCropAspectRatio = null;
 
     protected string | Closure | null $imagePreviewHeight = null;
@@ -558,16 +560,5 @@ class FileUpload extends BaseFileUpload
                 ],
             ],
         ];
-    }
-    
-    /**
-     * @return array<mixed>
-     */
-    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
-    {
-        return match($parameterName) {
-            'fileUpload' => [$this],
-            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
-        };
     }
 }

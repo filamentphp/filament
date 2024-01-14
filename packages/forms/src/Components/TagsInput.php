@@ -20,6 +20,8 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
      */
     protected string $view = 'filament-forms::components.tags-input';
 
+    protected string $evaluationIdentifier = 'tagsInput';
+
     protected bool | Closure $isReorderable = false;
 
     protected string | Closure | null $separator = null;
@@ -172,8 +174,8 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'tagsInput', 'input', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'input', 'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

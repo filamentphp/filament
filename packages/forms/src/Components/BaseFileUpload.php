@@ -69,6 +69,8 @@ class BaseFileUpload extends Field
 
     protected ?Closure $saveUploadedFileUsing = null;
 
+    protected string $evaluationIdentifier = 'baseFileUpload';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -866,7 +868,7 @@ class BaseFileUpload extends Field
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match($parameterName) {
-            'baseFileUpload', 'field', 'component' => [$this],
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

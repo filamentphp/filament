@@ -22,6 +22,8 @@ class Step extends Component implements CanConcealComponents
      */
     protected string $view = 'filament-forms::components.wizard.step';
 
+    protected string $evaluationIdentifier = 'step';
+
     final public function __construct(string $label)
     {
         $this->label($label);
@@ -112,8 +114,8 @@ class Step extends Component implements CanConcealComponents
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'step', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

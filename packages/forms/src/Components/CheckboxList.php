@@ -30,6 +30,8 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
      */
     protected string $view = 'filament-forms::components.checkbox-list';
 
+    protected string $evaluationIdentifier = 'checkboxList';
+
     protected string | Closure | null $relationshipTitleAttribute = null;
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
@@ -311,14 +313,14 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
 
         return $descriptions;
     }
-    
+
     /**
      * @return array<mixed>
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'checkboxList', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

@@ -21,6 +21,8 @@ class MorphToSelect extends Component
      */
     protected string $view = 'filament-forms::components.fieldset';
 
+    protected string $evaluationIdentifier = 'morphToSelect';
+
     protected bool | Closure $isRequired = false;
 
     protected int | Closure $optionsLimit = 50;
@@ -157,8 +159,8 @@ class MorphToSelect extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'morphToSelect', 'select', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'morphTo', 'select', 'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

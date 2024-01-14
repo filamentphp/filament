@@ -7,6 +7,8 @@ namespace Filament\Forms\Components;
  */
 class MultiSelect extends Select
 {
+    protected string $evaluationIdentifier = 'multiSelect';
+
     public function isMultiple(): bool
     {
         return true;
@@ -17,8 +19,8 @@ class MultiSelect extends Select
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'multiSelect' => [$this],
+        return match ($parameterName) {
+            'select' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

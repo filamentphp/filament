@@ -19,6 +19,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
      */
     protected string $view = 'filament-forms::components.rich-editor';
 
+    protected string $evaluationIdentifier = 'richEditor';
+
     /**
      * @var array<string>
      */
@@ -44,8 +46,8 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'richEditor', 'editor', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'editor', 'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

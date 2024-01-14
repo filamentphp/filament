@@ -19,6 +19,8 @@ class KeyValue extends Field
      */
     protected string $view = 'filament-forms::components.key-value';
 
+    protected string $evaluationIdentifier = 'keyValue';
+
     protected string | Closure | null $addActionLabel = null;
 
     protected string | Closure | null $deleteActionLabel = null;
@@ -383,7 +385,7 @@ class KeyValue extends Field
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match($parameterName) {
-            'keyValue', 'field', 'component' => [$this],
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

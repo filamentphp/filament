@@ -8,6 +8,8 @@ class ActionContainer extends Component
 {
     protected string $view = 'filament-forms::components.actions.action-container';
 
+    protected string $evaluationIdentifier = 'container';
+
     protected Action $action;
 
     final public function __construct(Action $action)
@@ -39,8 +41,8 @@ class ActionContainer extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'actionContainer', 'container', 'component' => [$this],
+        return match ($parameterName) {
+            'actionContainer', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

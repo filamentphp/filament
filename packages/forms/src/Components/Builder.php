@@ -30,6 +30,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
      */
     protected string $view = 'filament-forms::components.builder';
 
+    protected string $evaluationIdentifier = 'builder';
+
     protected string | Closure | null $addBetweenActionLabel = null;
 
     protected string | Closure | null $addActionLabel = null;
@@ -955,8 +957,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'builder', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

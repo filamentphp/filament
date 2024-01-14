@@ -20,6 +20,8 @@ class Radio extends Field implements Contracts\CanDisableOptions
      */
     protected string $view = 'filament-forms::components.radio';
 
+    protected string $evaluationIdentifier = 'radio';
+
     protected bool | Closure $isInline = false;
 
     /**
@@ -106,8 +108,8 @@ class Radio extends Field implements Contracts\CanDisableOptions
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'radio', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

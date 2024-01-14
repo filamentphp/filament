@@ -19,6 +19,8 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
      */
     protected string $view = 'filament-forms::components.textarea';
 
+    protected string $evaluationIdentifier = 'textarea';
+
     protected int | Closure | null $cols = null;
 
     protected int | Closure | null $rows = null;
@@ -66,8 +68,8 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'textarea', 'textArea', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'textArea', 'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

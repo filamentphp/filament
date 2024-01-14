@@ -13,6 +13,8 @@ class Field extends Component implements Contracts\HasHintActions, Contracts\Has
 
     protected string $viewIdentifier = 'field';
 
+    protected string $evaluationIdentifier = 'field';
+
     final public function __construct(string $name)
     {
         $this->name($name);

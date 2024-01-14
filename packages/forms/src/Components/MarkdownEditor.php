@@ -18,6 +18,8 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
      */
     protected string $view = 'filament-forms::components.markdown-editor';
 
+    protected string $evaluationIdentifier = 'markdownEditor';
+
     /**
      * @var array<string>
      */
@@ -42,8 +44,8 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'markdownEditor', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'editor', 'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

@@ -17,6 +17,8 @@ class ColorPicker extends Field implements Contracts\HasAffixActions
      */
     protected string $view = 'filament-forms::components.color-picker';
 
+    protected string $evaluationIdentifier = 'colorPicker';
+
     protected string | Closure $format = 'hex';
 
     public function format(string | Closure $format): static
@@ -58,14 +60,14 @@ class ColorPicker extends Field implements Contracts\HasAffixActions
     {
         return $this->evaluate($this->format);
     }
-    
+
     /**
      * @return array<mixed>
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'colorPicker', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

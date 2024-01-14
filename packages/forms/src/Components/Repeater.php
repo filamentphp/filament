@@ -98,6 +98,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
     protected bool | Closure $isItemLabelTruncated = true;
 
+    protected string $evaluationIdentifier = 'repeater';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -1254,7 +1256,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match($parameterName) {
-            'repeater', 'field', 'component' => [$this],
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

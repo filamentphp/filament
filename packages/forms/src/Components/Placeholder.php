@@ -13,6 +13,8 @@ class Placeholder extends Component implements Contracts\HasHintActions
      */
     protected string $view = 'filament-forms::components.placeholder';
 
+    protected string $evaluationIdentifier = 'placeholder';
+
     protected mixed $content = null;
 
     final public function __construct(string $name)
@@ -58,8 +60,8 @@ class Placeholder extends Component implements Contracts\HasHintActions
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'placeholder', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

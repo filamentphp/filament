@@ -14,6 +14,8 @@ class Checkbox extends Field
      */
     protected string $view = 'filament-forms::components.checkbox';
 
+    protected string $evaluationIdentifier = 'checkbox';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -32,8 +34,8 @@ class Checkbox extends Field
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'checkbox', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

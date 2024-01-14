@@ -25,6 +25,8 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
      */
     protected string $view = 'filament-forms::components.date-time-picker';
 
+    protected string $evaluationIdentifier = 'dateTimePicker';
+
     protected string | Closure | null $displayFormat = null;
 
     /**
@@ -527,8 +529,8 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'dateTimePicker', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

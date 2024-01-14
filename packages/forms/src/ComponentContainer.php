@@ -54,7 +54,7 @@ class ComponentContainer extends ViewComponent
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
-            'component', 'componentContainer', 'container' => [$this],
+            'component', 'componentContainer' => [$this],
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel()],
             'record' => [$this->getRecord()],

@@ -9,6 +9,8 @@ class Hidden extends Field
      */
     protected string $view = 'filament-forms::components.hidden';
 
+    protected string $evaluationIdentifier = 'hidden';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -22,7 +24,7 @@ class Hidden extends Field
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match($parameterName) {
-            'hidden', 'field', 'component' => [$this],
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

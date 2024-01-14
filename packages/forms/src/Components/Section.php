@@ -29,6 +29,8 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
      */
     protected string $view = 'filament-forms::components.section';
 
+    protected string $evaluationIdentifier = 'section';
+
     protected bool | Closure | null $isAside = null;
 
     protected bool | Closure $isFormBefore = false;
@@ -123,8 +125,8 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'section', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

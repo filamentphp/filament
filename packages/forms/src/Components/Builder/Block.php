@@ -17,6 +17,8 @@ class Block extends Component
 
     protected int | Closure | null $maxItems = null;
 
+    protected string $evaluationIdentifier = 'block';
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -63,16 +65,5 @@ class Block extends Component
             $this->label,
             ['state' => $state, 'uuid' => $uuid],
         ) ?? $this->getDefaultLabel();
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
-    {
-        return match($parameterName) {
-            'block', 'component' => [$this],
-            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
-        };
     }
 }

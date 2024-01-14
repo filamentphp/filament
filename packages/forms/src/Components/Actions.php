@@ -14,6 +14,8 @@ class Actions extends Component
 
     protected string $view = 'filament-forms::components.actions';
 
+    protected string $evaluationIdentifier = 'actions';
+
     protected bool | Closure $isFullWidth = false;
 
     /**
@@ -65,8 +67,8 @@ class Actions extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'actions', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

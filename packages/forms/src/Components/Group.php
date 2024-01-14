@@ -14,6 +14,8 @@ class Group extends Component implements CanEntangleWithSingularRelationships
      */
     protected string $view = 'filament-forms::components.group';
 
+    protected string $evaluationIdentifier = 'group';
+
     /**
      * @param  array<Component> | Closure  $schema
      */
@@ -32,14 +34,14 @@ class Group extends Component implements CanEntangleWithSingularRelationships
 
         return $static;
     }
-    
+
     /**
      * @return array<mixed>
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'group', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

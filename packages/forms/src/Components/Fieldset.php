@@ -15,6 +15,8 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
      */
     protected string $view = 'filament-forms::components.fieldset';
 
+    protected string $evaluationIdentifier = 'fieldset';
+
     final public function __construct(string | Htmlable | Closure | null $label = null)
     {
         $this->label($label);
@@ -36,14 +38,14 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
 
         $this->columns(2);
     }
-    
+
     /**
      * @return array<mixed>
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'fieldset', 'fieldSet', 'component' => [$this],
+        return match ($parameterName) {
+            'fieldSet', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

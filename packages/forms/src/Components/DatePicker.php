@@ -4,19 +4,10 @@ namespace Filament\Forms\Components;
 
 class DatePicker extends DateTimePicker
 {
+    protected string $evaluationIdentifier = 'datePicker';
+
     public function hasTime(): bool
     {
         return false;
-    }
-    
-    /**
-     * @return array<mixed>
-     */
-    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
-    {
-        return match($parameterName) {
-            'datePicker' => [$this],
-            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
-        };
     }
 }

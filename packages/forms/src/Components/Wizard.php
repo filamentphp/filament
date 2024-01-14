@@ -34,6 +34,8 @@ class Wizard extends Component
      */
     protected string $view = 'filament-forms::components.wizard';
 
+    protected string $evaluationIdentifier = 'wizard';
+
     /**
      * @param  array<Step> | Closure  $steps
      */
@@ -241,8 +243,8 @@ class Wizard extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'wizard', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

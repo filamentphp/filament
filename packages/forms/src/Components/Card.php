@@ -7,13 +7,15 @@ namespace Filament\Forms\Components;
  */
 class Card extends Section
 {
+    protected string $evaluationIdentifier = 'card';
+
     /**
      * @return array<mixed>
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'card' => [$this],
+        return match ($parameterName) {
+            'section' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

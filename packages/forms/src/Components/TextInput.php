@@ -26,6 +26,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
      */
     protected string $view = 'filament-forms::components.text-input';
 
+    protected string $evaluationIdentifier = 'textInput';
+
     protected string | RawJs | Closure | null $mask = null;
 
     protected bool | Closure $isEmail = false;
@@ -243,7 +245,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match($parameterName) {
-            'textInput', 'input', 'field', 'component' => [$this],
+            'input', 'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

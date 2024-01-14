@@ -53,6 +53,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
      */
     protected string $view = 'filament-forms::components.select';
 
+    protected string $evaluationIdentifier = 'select';
+
     /**
      * @var array<Component> | Closure | null
      */
@@ -1210,7 +1212,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match($parameterName) {
-            'select', 'field', 'component' => [$this],
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

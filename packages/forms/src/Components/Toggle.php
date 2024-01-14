@@ -18,6 +18,8 @@ class Toggle extends Field
      */
     protected string $view = 'filament-forms::components.toggle';
 
+    protected string $evaluationIdentifier = 'toggle';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -36,8 +38,8 @@ class Toggle extends Field
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'toggle', 'field', 'component' => [$this],
+        return match ($parameterName) {
+            'field', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
