@@ -12,4 +12,15 @@ class SelectAction extends Action
 
         $this->view('filament-actions::select-action');
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'selectAction' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }

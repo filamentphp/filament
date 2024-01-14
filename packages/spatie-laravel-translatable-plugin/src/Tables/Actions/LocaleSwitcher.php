@@ -21,4 +21,15 @@ class LocaleSwitcher extends SelectAction
 
         $this->setTranslatableLocaleOptions();
     }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match($parameterName) {
+            'localeSwitcher', 'switcher' => [$this],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
 }
