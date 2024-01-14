@@ -7,11 +7,8 @@ use Livewire\Attributes\Locked;
 
 trait HasUnsavedDataChangesAlert
 {
-    /**
-     * @var array<string, mixed>
-     */
     #[Locked]
-    public array $savedData = [];
+    public string $savedDataHash;
 
     protected ?bool $hasUnsavedDataChangesAlert = null;
 
@@ -26,7 +23,7 @@ trait HasUnsavedDataChangesAlert
             return;
         }
 
-        $this->savedData = $this->data;
+        $this->savedDataHash = md5(str_replace('\\', '', json_encode($this->data)));
     }
 
     protected function hasUnsavedDataChangesAlert(): bool

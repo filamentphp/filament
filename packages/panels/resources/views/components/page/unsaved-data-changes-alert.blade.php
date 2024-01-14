@@ -6,10 +6,7 @@
     @script
         <script>
             window.addEventListener('beforeunload', (event) => {
-                if (
-                    JSON.stringify($wire.data) ===
-                    JSON.stringify($wire.savedData)
-                ) {
+                if (window.jsMd5(JSON.stringify($wire.data).replace('\\', '')) === $wire.savedDataHash) {
                     return
                 }
 

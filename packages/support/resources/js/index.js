@@ -2,6 +2,7 @@ import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import AlpineLazyLoadAssets from 'alpine-lazy-load-assets'
 import Sortable from './sortable'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
+import { md5 } from 'js-md5'
 
 import '../css/components/pagination.css'
 import 'tippy.js/dist/tippy.css'
@@ -105,3 +106,4 @@ const pluralize = function (text, number, variables) {
 }
 
 window.pluralize = pluralize
+window.jsMd5 = require('md5')
