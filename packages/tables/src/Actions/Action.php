@@ -22,6 +22,11 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
         return 'callMountedTableAction';
     }
 
+    public function getAlpineClickHandler(): ?string
+    {
+        return "mountTableAction('{$this->getName()}')";
+    }
+
     public function getLivewireClickHandler(): ?string
     {
         if (! $this->isLivewireClickHandlerEnabled()) {

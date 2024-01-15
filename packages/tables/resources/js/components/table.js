@@ -26,6 +26,11 @@ export default function table() {
             })
         },
 
+        mountTableAction: function (name) {
+            this.$wire.set('selectedTableRecords', this.selectedRecords, false)
+            this.$wire.mountTableAction(name)
+        },
+
         mountBulkAction: function (name) {
             this.$wire.set('selectedTableRecords', this.selectedRecords, false)
             this.$wire.mountTableBulkAction(name)
