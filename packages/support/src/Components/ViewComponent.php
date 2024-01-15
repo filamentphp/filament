@@ -12,6 +12,8 @@ use ReflectionMethod;
 
 abstract class ViewComponent extends Component implements Htmlable
 {
+    protected string $evaluationIdentifier = 'component';
+
     /**
      * @var view-string
      */
