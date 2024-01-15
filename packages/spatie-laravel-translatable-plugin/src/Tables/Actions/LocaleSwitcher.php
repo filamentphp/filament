@@ -6,6 +6,8 @@ use Filament\Actions\Concerns\HasTranslatableLocaleOptions;
 
 class LocaleSwitcher extends SelectAction
 {
+    protected string $evaluationIdentifier = 'localeSwitcher';
+
     use HasTranslatableLocaleOptions;
 
     public static function getDefaultName(): ?string
@@ -27,8 +29,8 @@ class LocaleSwitcher extends SelectAction
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'localeSwitcher', 'switcher' => [$this],
+        return match ($parameterName) {
+            'switcher', 'action' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
