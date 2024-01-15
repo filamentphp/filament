@@ -317,7 +317,7 @@ class Notification extends ViewComponent implements Arrayable
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match($parameterName) {
-            'notification', 'component' => [$this],
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
