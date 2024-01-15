@@ -145,7 +145,7 @@ public function table(Table $table): Table
 }
 ```
 
-### Customizing the filter form schema
+## Customizing the filter form schema
 
 You may customize the [form schema](../../forms/layout) of the entire filter form at once, in order to rearrange filters into your desired layout, and use any of the [layout components](../../forms/layout) available to forms. To do this, use the `filterFormSchema()` method, passing a closure function that receives the array of defined `$filters` that you can insert:
 
