@@ -90,15 +90,15 @@ trait HasState
     public function callAfterStateUpdated(): static
     {
         foreach ($this->afterStateUpdated as $callback) {
-            $callbackId = spl_object_id($callback);
+            $runId = spl_object_id($callback) . md5(json_encode($this->getState()));
 
-            if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $callbackId)) {
+            if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $runId)) {
                 continue;
             }
 
             $this->callAfterStateUpdatedHook($callback);
 
-            store($this)->push('executedAfterStateUpdatedCallbacks', value: $callbackId, iKey: $callbackId);
+            store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
         }
 
         return $this;
