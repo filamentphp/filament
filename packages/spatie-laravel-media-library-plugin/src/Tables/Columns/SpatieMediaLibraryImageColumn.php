@@ -116,8 +116,8 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'spatieMediaLibraryImageColumn', 'mediaLibraryImageColumn', 'imageColumn', 'column', 'component' => [$this],
+        return match ($parameterName) {
+            'spatieMediaLibraryImageColumn', 'mediaLibraryImageColumn' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
