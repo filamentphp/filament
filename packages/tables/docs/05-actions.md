@@ -92,6 +92,41 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="3.x" />
 
+### Retrieving selected rows
+
+Sometimes you may want to get the selected records so you can apply some modification/update to them, based on the current record.
+For example, you may want to have a row Action that copies that record's properties to all the selected records:
+
+```php
+use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Table;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\Action;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
+
+public function table(Table $table): Table
+{
+    return $table
+        // Force selection column to show. Required when your table does not have any BulkActions (and therefore is not letting you select records)
+        ->enableSelection(true)
+        ->actions([
+            Action::make('copy_to_selected')
+                ->action(function (ListRecords $livewire, Model $record, Collection $records) {
+                    // $record will have the current record.
+                    // $livewire->getSelectedTableRecords() will return the selected records.
+                    // $records will still be empty, since this is a TableAction and not a BulkAction.
+                    // so we can do:
+                    $livewire->getSelectedTableRecords()
+                        ->each(function (Model $selectedRecord) use ($record) {
+                            $selectedRecord->isActive = $record->isActive;
+                            $selectedRecord->save();
+                        });
+                });
+            ]);
+}
+```
+
 ## Bulk actions
 
 Tables also support "bulk actions". These can be used when the user selects rows in the table. Traditionally, when rows are selected, a "bulk actions" button appears in the top left corner of the table. When the user clicks this button, they are presented with a dropdown menu of actions to choose from. You can put them in the `$table->bulkActions()` method:
