@@ -62,7 +62,7 @@ return [
 
         'max_rows' => [
             'title' => 'La exportación es demasiado grande',
-            'body' => 'No se puede exportar más de 1 fila a la vez.|No se puede exportar más de :count filas a la vez.',
+            'body' => 'No se puede exportar más de 1 fila a la vez.|No se pueden exportar más de :count filas a la vez.',
         ],
 
         'started' => [
