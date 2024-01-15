@@ -28,7 +28,7 @@
             </thead>
 
             <tbody
-                class="divide-y divide-gray-200 font-mono text-base sm:text-sm sm:leading-6 dark:divide-white/5"
+                class="divide-y divide-gray-200 font-mono text-base dark:divide-white/5 sm:text-sm sm:leading-6"
             >
                 @foreach ($getState() as $key => $value)
                     <tr
