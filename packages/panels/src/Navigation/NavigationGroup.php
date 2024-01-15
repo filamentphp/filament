@@ -5,10 +5,13 @@ namespace Filament\Navigation;
 use Closure;
 use Exception;
 use Filament\Support\Components\Component;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 
 class NavigationGroup extends Component
 {
+    use HasExtraAttributes;
+
     protected bool | Closure $isCollapsed = false;
 
     protected bool | Closure | null $isCollapsible = null;
