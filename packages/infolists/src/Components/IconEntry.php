@@ -20,6 +20,8 @@ class IconEntry extends Entry
      */
     protected string $view = 'filament-infolists::components.icon-entry';
 
+    protected string $evaluationIdentifier = 'iconEntry';
+
     protected bool | Closure | null $isBoolean = null;
 
     /**
@@ -200,8 +202,8 @@ class IconEntry extends Entry
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'iconEntry', 'entry', 'component' => [$this],
+        return match ($parameterName) {
+            'entry', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

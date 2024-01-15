@@ -29,6 +29,8 @@ class Section extends Component implements Contracts\HasHeaderActions
      */
     protected string $view = 'filament-infolists::components.section';
 
+    protected string $evaluationIdentifier = 'section';
+
     protected bool | Closure | null $isAside = null;
 
     protected bool | Closure $isContentBefore = false;
@@ -118,8 +120,8 @@ class Section extends Component implements Contracts\HasHeaderActions
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'section', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

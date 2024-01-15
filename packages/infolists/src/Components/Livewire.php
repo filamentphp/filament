@@ -11,6 +11,8 @@ class Livewire extends Component
      */
     protected string $view = 'filament-infolists::components.livewire';
 
+    protected string $evaluationIdentifier = 'livewire';
+
     protected bool | Closure $isLazy = false;
 
     /**
@@ -109,7 +111,7 @@ class Livewire extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
+        return match ($parameterName) {
             'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };

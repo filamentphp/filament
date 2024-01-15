@@ -17,6 +17,8 @@ class ImageEntry extends Entry
      */
     protected string $view = 'filament-infolists::components.image-entry';
 
+    protected string $evaluationIdentifier = 'imageEntry';
+
     protected string | Closure | null $disk = null;
 
     protected int | string | Closure | null $height = null;
@@ -328,7 +330,7 @@ class ImageEntry extends Entry
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
+        return match ($parameterName) {
             'imageEntry', 'entry', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };

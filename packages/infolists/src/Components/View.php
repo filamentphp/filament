@@ -4,6 +4,8 @@ namespace Filament\Infolists\Components;
 
 class View extends Component
 {
+    protected string $evaluationIdentifier = 'view';
+
     /**
      * @param  view-string  $view
      */
@@ -29,7 +31,7 @@ class View extends Component
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match($parameterName) {
-            'view', 'component' => [$this],
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

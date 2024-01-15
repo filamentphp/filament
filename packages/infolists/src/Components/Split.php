@@ -11,6 +11,8 @@ class Split extends Component
      */
     protected string $view = 'filament-infolists::components.split';
 
+    protected string $evaluationIdentifier = 'split';
+
     protected string | Closure | null $fromBreakpoint = null;
 
     /**
@@ -49,8 +51,8 @@ class Split extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'split', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

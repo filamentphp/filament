@@ -4,6 +4,8 @@ namespace Filament\Infolists;
 
 class Infolist extends ComponentContainer
 {
+    protected string $evaluationIdentifier = 'infolist';
+
     protected string $name;
 
     public static string $defaultCurrency = 'usd';
@@ -31,8 +33,8 @@ class Infolist extends ComponentContainer
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'infolist', 'infoList' => [$this],
+        return match ($parameterName) {
+            'infoList', 'container' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

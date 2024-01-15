@@ -8,6 +8,8 @@ class ActionContainer extends Component
 {
     protected string $view = 'filament-infolists::components.actions.action-container';
 
+    protected string $evaluationIdentifier = 'container';
+
     final public function __construct(Action $action)
     {
         $this->action($action);
@@ -36,8 +38,8 @@ class ActionContainer extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'actionContainer', 'container', 'component' => [$this],
+        return match ($parameterName) {
+            'actionContainer', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

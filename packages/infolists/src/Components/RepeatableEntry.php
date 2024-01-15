@@ -16,6 +16,8 @@ class RepeatableEntry extends Entry
      */
     protected string $view = 'filament-infolists::components.repeatable-entry';
 
+    protected string $evaluationIdentifier = 'repeatableEntry';
+
     /**
      * @return array<ComponentContainer>
      */
@@ -50,7 +52,7 @@ class RepeatableEntry extends Entry
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match($parameterName) {
-            'repeatableEntry', 'entry', 'component' => [$this],
+            'entry', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

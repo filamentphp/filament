@@ -11,6 +11,8 @@ class Fieldset extends Component
      */
     protected string $view = 'filament-infolists::components.fieldset';
 
+    protected string $evaluationIdentifier = 'fieldset';
+
     final public function __construct(string $label)
     {
         $this->label($label);
@@ -39,7 +41,7 @@ class Fieldset extends Component
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match($parameterName) {
-            'fieldset', 'fieldSet', 'component' => [$this],
+            'fieldSet', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

@@ -13,13 +13,15 @@ class ColorEntry extends Entry
      */
     protected string $view = 'filament-infolists::components.color-entry';
 
+    protected string $evaluationIdentifier = 'colorEntry';
+
     /**
      * @return array<mixed>
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'colorEntry', 'entry', 'component' => [$this],
+        return match ($parameterName) {
+            'entry', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

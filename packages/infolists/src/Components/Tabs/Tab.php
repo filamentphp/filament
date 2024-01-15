@@ -17,6 +17,8 @@ class Tab extends Component
      */
     protected string $view = 'filament-infolists::components.tabs.tab';
 
+    protected string $evaluationIdentifier = 'tab';
+
     final public function __construct(string $label)
     {
         $this->label($label);
@@ -49,8 +51,8 @@ class Tab extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'tab', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

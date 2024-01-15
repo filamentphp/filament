@@ -13,6 +13,8 @@ class Group extends Component
      */
     protected string $view = 'filament-infolists::components.group';
 
+    protected string $evaluationIdentifier = 'group';
+
     /**
      * @param  array<Component> | Closure  $schema
      */
@@ -37,8 +39,8 @@ class Group extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'grid', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

@@ -11,6 +11,8 @@ class Grid extends Component
      */
     protected string $view = 'filament-infolists::components.grid';
 
+    protected string $evaluationIdentifier = 'grid';
+
     /**
      * @param  array<string, int | null> | int | null  $columns
      */
@@ -42,8 +44,8 @@ class Grid extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'grid', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
