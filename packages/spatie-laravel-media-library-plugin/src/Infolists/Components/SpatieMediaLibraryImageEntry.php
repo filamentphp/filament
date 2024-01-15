@@ -93,8 +93,8 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'spatieMediaLibraryImageEntry', 'mediaLibraryImageEntry', 'imageEntry', 'entry', 'component' => [$this],
+        return match ($parameterName) {
+            'spatieMediaLibraryImageEntry', 'mediaLibraryImageEntry' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
