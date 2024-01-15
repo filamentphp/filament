@@ -135,6 +135,15 @@ public function panel(Panel $panel): Panel
 
 In this example, we pass in a custom `icon()` for the groups, and make one `collapsed()` by default.
 
+### Adding extra HTML attributes to a navigation groups
+
+You may also pass extra HTML attributes to stats using `extraAttributes()`:
+
+```php
+NavigationGroup::make()
+    ->extraAttributes(['class' => 'highlighted']),
+```
+
 #### Ordering navigation groups
 
 By using `navigationGroups()`, you are defining a new order for the navigation groups. If you just want to reorder the groups and not define an entire `NavigationGroup` object, you may just pass the labels of the groups in the new order:
