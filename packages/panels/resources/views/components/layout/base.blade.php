@@ -70,7 +70,16 @@
             document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => {
                     const activeSidebarItem = document.querySelector('.fi-sidebar-item-active')
+
+                    if (! activeSidebarItem) {
+                        return
+                    }
+                    
                     const sidebarWrapper = document.querySelector('.fi-sidebar-nav')
+
+                    if (! sidebarWrapper) {
+                        return
+                    }
 
                     sidebarWrapper.scrollTo(0, activeSidebarItem.offsetTop - (window.innerHeight / 2))
                 }, 0)
