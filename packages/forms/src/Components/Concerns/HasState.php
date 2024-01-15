@@ -90,7 +90,7 @@ trait HasState
     public function callAfterStateUpdated(): static
     {
         foreach ($this->afterStateUpdated as $callback) {
-            $runId = spl_object_id($callback) . md5(json_encode($this->getState()));;
+            $runId = spl_object_id($callback) . md5(json_encode($this->getState()));
 
             if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $runId)) {
                 continue;
