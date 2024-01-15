@@ -301,7 +301,7 @@ use Filament\Actions\Exports\Models\Export;
 
 ExportAction::make()
     ->exporter(ProductExporter::class)
-    ->fileName(fn (Export): string => "products-{$export->getKey()}.csv")
+    ->fileName(fn (Export $export): string => "products-{$export->getKey()}.csv")
 ```
 
 Alternatively, you can override the `getFileName()` method on the exporter class, returning a string:
