@@ -51,15 +51,15 @@ abstract class Importer
         $this->remapData();
         $this->castData();
 
+        $this->callHook('beforeValidate');
+        $this->validateData();
+        $this->callHook('afterValidate');
+
         $this->record = $this->resolveRecord();
 
         if (! $this->record) {
             return;
         }
-
-        $this->callHook('beforeValidate');
-        $this->validateData();
-        $this->callHook('afterValidate');
 
         $this->callHook('beforeFill');
         $this->fillRecord();
