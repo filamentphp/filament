@@ -845,4 +845,9 @@ class FilamentManager
     {
         return $this->getCurrentPanel()->getDefaultThemeMode();
     }
+
+    public function arePasswordsRevealable(): bool
+    {
+        return $this->getCurrentPanel()->arePasswordsRevealable();
+    }
 }

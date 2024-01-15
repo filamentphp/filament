@@ -235,6 +235,20 @@ This class extends the base profile page class from the Filament codebase. Other
 
 In the `form()` method of the example, we call methods like `getNameFormComponent()` to get the default form components for the page. You can customize these components as required. For all the available customization options, see the base `EditProfile` page class in the Filament codebase - it contains all the methods that you can override to make changes.
 
+#### Customizing an authentication field without needing to re-define the form
+
+If you'd like to customize a field in an authentication form without needing to define a new `form()` method, you could extend the specific field method and chain your customizations:
+
+```php
+use Filament\Forms\Components\Component;
+
+protected function getPasswordFormComponent(): Component
+{
+    return parent::getPasswordFormComponent()
+        ->revealable(false);
+}
+```
+
 ### Customizing the authentication route slugs
 
 You can customize the URL slugs used for the authentication routes in the [configuration](configuration):
@@ -259,7 +273,7 @@ public function panel(Panel $panel): Panel
 
 ### Setting the authentication guard
 
-To set the authentication guard that Filament uses, you can pass in the guard name to the `authGuard()` configuration method:
+To set the authentication guard that Filament uses, you can pass in the guard name to the `authGuard()` [configuration](configuration) method:
 
 ```php
 use Filament\Panel;
@@ -274,7 +288,7 @@ public function panel(Panel $panel): Panel
 
 ### Setting the password broker
 
-To set the password broker that Filament uses, you can pass in the broker name to the `authPasswordBroker()` configuration method:
+To set the password broker that Filament uses, you can pass in the broker name to the `authPasswordBroker()` [configuration](configuration) method:
 
 ```php
 use Filament\Panel;
@@ -286,6 +300,23 @@ public function panel(Panel $panel): Panel
         ->authPasswordBroker('users');
 }
 ```
+
+### Disabling revealable password inputs
+
+By default, all password inputs in authentication forms are [`revealable()`](../forms/fields/text-input#revealable-password-inputs). This allows the user can see a plain text version of the password they're typing by clicking a button. To disable this feature, you can pass `false` to the `revealablePasswords()` [configuration](configuration) method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->revealablePasswords(false);
+}
+```
+
+You could also disable this feature on a per-field basis by calling `->revealable(false)` on the field object when [extending the base page class](#customizing-an-authentication-field-without-needing-to-re-define-the-form).
 
 ## Setting up guest access to a panel
 

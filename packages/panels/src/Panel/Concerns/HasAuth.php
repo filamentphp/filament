@@ -70,6 +70,8 @@ trait HasAuth
 
     protected ?string $authPasswordBroker = null;
 
+    protected bool | Closure $arePasswordsRevealable = true;
+
     /**
      * @param  string | Closure | array<class-string, string> | null  $promptAction
      */
@@ -446,5 +448,17 @@ trait HasAuth
     public function getAuthPasswordBroker(): ?string
     {
         return $this->authPasswordBroker;
+    }
+
+    public function revealablePasswords(bool | Closure $condition = true): static
+    {
+        $this->arePasswordsRevealable = $condition;
+
+        return $this;
+    }
+
+    public function arePasswordsRevealable(): bool
+    {
+        return (bool) $this->evaluate($this->arePasswordsRevealable);
     }
 }

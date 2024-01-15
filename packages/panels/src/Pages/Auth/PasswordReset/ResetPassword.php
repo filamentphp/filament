@@ -138,7 +138,7 @@ class ResetPassword extends SimplePage
         return TextInput::make('password')
             ->label(__('filament-panels::pages/auth/password-reset/reset-password.form.password.label'))
             ->password()
-            ->revealable()
+            ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->rule(PasswordRule::default())
             ->same('passwordConfirmation')
@@ -150,7 +150,7 @@ class ResetPassword extends SimplePage
         return TextInput::make('passwordConfirmation')
             ->label(__('filament-panels::pages/auth/password-reset/reset-password.form.password_confirmation.label'))
             ->password()
-            ->revealable()
+            ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->dehydrated(false);
     }

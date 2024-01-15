@@ -160,7 +160,7 @@ TextInput::make('domain')
 
 ## Revealable password inputs
 
-When using `password()`, you can also make the input `revealable()`:
+When using `password()`, you can also make the input `revealable()`, so that the user can see a plain text version of the password they're typing by clicking a button:
 
 ```php
 use Filament\Forms\Components\TextInput;
