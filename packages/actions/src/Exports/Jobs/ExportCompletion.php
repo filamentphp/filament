@@ -70,10 +70,10 @@ class ExportCompletion implements ShouldQueue
                 fn (Notification $notification) => $notification->actions([
                     NotificationAction::make('download_csv')
                         ->label(__('filament-actions::export.notifications.completed.actions.download_csv.label'))
-                        ->url(route('filament.exports.download', ['export' => $this->export, 'format' => DownloadFileFormat::Csv])),
+                        ->url(route('filament.exports.download', ['export' => $this->export, 'format' => DownloadFileFormat::Csv]), true),
                     NotificationAction::make('download_xlsx')
                         ->label(__('filament-actions::export.notifications.completed.actions.download_xlsx.label'))
-                        ->url(route('filament.exports.download', ['export' => $this->export, 'format' => DownloadFileFormat::Xlsx])),
+                        ->url(route('filament.exports.download', ['export' => $this->export, 'format' => DownloadFileFormat::Xlsx]), true),
                 ]),
             )
             ->sendToDatabase($this->export->user);
