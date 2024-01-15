@@ -102,7 +102,7 @@ class ExportCsv implements ShouldQueue
         $this->handleExceptions($exceptions);
     }
 
-    public function retryUntil(): CarbonInterface
+    public function retryUntil(): ?CarbonInterface
     {
         return $this->exporter->getJobRetryUntil();
     }
