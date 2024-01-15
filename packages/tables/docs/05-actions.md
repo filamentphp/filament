@@ -116,7 +116,9 @@ public function table(Table $table): Table
                     // $record will have the current record.
                     // $livewire->getSelectedTableRecords() will return the selected records.
                     // $records will still be empty, since this is a TableAction and not a BulkAction.
-                    // so we can do:
+
+                    // So we can, for example, set the active status of all selected records to match the clicked one:
+
                     $livewire->getSelectedTableRecords()
                         ->each(function (Model $selectedRecord) use ($record) {
                             $selectedRecord->isActive = $record->isActive;
