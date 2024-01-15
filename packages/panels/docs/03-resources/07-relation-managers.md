@@ -859,6 +859,8 @@ public static function getPages(): array
 
 Now, you can customize the page in exactly the same way as a relation manager, with the same `table()` and `form()`.
 
+### Adding relation pages to resource sub-navigation
+
 If you're using [resource sub-navigation](getting-started#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
 
 ```php

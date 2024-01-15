@@ -34,9 +34,9 @@ abstract class Importer
      * @param  array<string, mixed>  $options
      */
     public function __construct(
-        readonly protected Import $import,
-        readonly protected array $columnMap,
-        readonly protected array $options,
+        protected Import $import,
+        protected array $columnMap,
+        protected array $options,
     ) {
     }
 
@@ -72,8 +72,6 @@ abstract class Importer
         $this->saveRecord();
         $this->callHook('afterSave');
         $this->callHook($recordExists ? 'afterUpdate' : 'afterCreate');
-
-        $this->import->increment('successful_rows');
     }
 
     public function remapData(): void
@@ -239,7 +237,7 @@ abstract class Importer
     public function getJobMiddleware(): array
     {
         return [
-            (new WithoutOverlapping("import{$this->import->id}"))->expireAfter(600),
+            (new WithoutOverlapping("import{$this->import->getKey()}"))->expireAfter(600),
         ];
     }
 
@@ -253,7 +251,17 @@ abstract class Importer
      */
     public function getJobTags(): array
     {
-        return ["import{$this->import->id}"];
+        return ["import{$this->import->getKey()}"];
+    }
+
+    public function getJobQueue(): ?string
+    {
+        return null;
+    }
+
+    public function getJobConnection(): ?string
+    {
+        return null;
     }
 
     /**

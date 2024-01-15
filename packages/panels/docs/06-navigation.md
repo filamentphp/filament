@@ -4,7 +4,9 @@ title: Navigation
 
 ## Overview
 
-By default, Filament will register navigation items for each of your [resources](resources/getting-started) and [custom pages](pages). These classes contain static properties and methods that you can override, to configure that navigation item.
+By default, Filament will register navigation items for each of your [resources](resources/getting-started), [custom pages](pages), and [clusters](clusters). These classes contain static properties and methods that you can override, to configure that navigation item.
+
+If you're looking to add a second layer of navigation to your app, you can use [clusters](clusters). These are useful for grouping resources and pages together.
 
 ## Customizing a navigation item's label
 
@@ -79,9 +81,9 @@ You may group navigation items by specifying a `$navigationGroup` property on a 
 protected static ?string $navigationGroup = 'Settings';
 ```
 
-All items in the same navigation group will be displayed together under the same group label, "Settings" in this case. Ungrouped items will remain at the top of the sidebar.
+All items in the same navigation group will be displayed together under the same group label, "Settings" in this case. Ungrouped items will remain at the start of the navigation.
 
-#### Grouping navigation items under other items
+### Grouping navigation items under other items
 
 You may group navigation items as children of other items, by passing the label of the parent item as the `$navigationParentItem`:
 
@@ -91,7 +93,18 @@ protected static ?string $navigationParentItem = 'Notifications';
 protected static ?string $navigationGroup = 'Settings';
 ```
 
+You may also use the `getNavigationParentItem()` method to set a dynamic parent item label:
+
+```php
+public static function getNavigationParentItem(): ?string
+{
+    return __('filament/navigation.groups.settings.items.notifications');
+}
+```
+
 As seen above, if the parent item has a navigation group, that navigation group must also be defined, so the correct parent item can be identified.
+
+> If you're reaching for a third level of navigation like this, you should consider using [clusters](clusters) instead, which are a logical grouping of resources and custom pages, which can share their own separate navigation.
 
 ### Customizing navigation groups
 
@@ -124,7 +137,7 @@ In this example, we pass in a custom `icon()` for the groups, and make one `coll
 
 #### Ordering navigation groups
 
-By using `navigationGroups()`, you are defining a new order for the navigation groups in the sidebar. If you just want to reorder the groups and not define an entire `NavigationGroup` object, you may just pass the labels of the groups in the new order:
+By using `navigationGroups()`, you are defining a new order for the navigation groups. If you just want to reorder the groups and not define an entire `NavigationGroup` object, you may just pass the labels of the groups in the new order:
 
 ```php
 $panel
@@ -237,6 +250,17 @@ To prevent resources or pages from showing up in navigation, you may use:
 ```php
 protected static bool $shouldRegisterNavigation = false;
 ```
+
+Or, you may override the `shouldRegisterNavigation()` method:
+
+```php
+public static function shouldRegisterNavigation(): bool
+{
+    return false;
+}
+```
+
+Please note that these methods do not control direct access to the resource or page. They only control whether the resource or page will show up in the navigation. If you want to also control access, then you should use [resource authorization](resources/getting-started#authorization) or [page authorization](pages#authorization).
 
 ## Using top navigation
 

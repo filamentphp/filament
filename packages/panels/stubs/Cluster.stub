@@ -1,0 +1,10 @@
+<?php
+
+namespace {{ namespace }};
+
+use Filament\Clusters\Cluster;
+
+class {{ class }} extends Cluster
+{
+    protected static ?string $navigationIcon = 'heroicon-o-squares-2x2';
+}

@@ -6,7 +6,7 @@ namespace Livewire\Features\SupportTesting {
     use Closure;
 
     class Testable {
-        public function mountTableAction(string $name, $record = null): static {}
+        public function mountTableAction(string | array $name, $record = null): static {}
 
         public function unmountTableAction(): static {}
 
@@ -14,15 +14,15 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertTableActionDataSet(array $data): static {}
 
-        public function callTableAction(string $name, $record = null, array $data = [], array $arguments = []): static {}
+        public function callTableAction(string | array $name, $record = null, array $data = [], array $arguments = []): static {}
 
         public function callTableColumnAction(string $name, $record = null): static {}
 
         public function callMountedTableAction(array $arguments = []): static {}
 
-        public function assertTableActionExists(string $name): static {}
+        public function assertTableActionExists(string | array $name): static {}
 
-        public function assertTableActionDoesNotExist(string $name): static {}
+        public function assertTableActionDoesNotExist(string | array $name): static {}
 
         public function assertTableActionsExistInOrder(array $names): static {}
 
@@ -30,19 +30,19 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertTableEmptyStateActionsExistInOrder(array $names): static {}
 
-        public function assertTableActionVisible(string $name, $record = null): static {}
+        public function assertTableActionVisible(string | array $name, $record = null): static {}
 
-        public function assertTableActionHidden(string $name, $record = null): static {}
+        public function assertTableActionHidden(string | array $name, $record = null): static {}
 
-        public function assertTableActionEnabled(string $name, $record = null): static {}
+        public function assertTableActionEnabled(string | array $name, $record = null): static {}
 
-        public function assertTableActionDisabled(string $name, $record = null): static {}
+        public function assertTableActionDisabled(string | array $name, $record = null): static {}
 
-        public function assertTableActionMounted(string $name): static {}
+        public function assertTableActionMounted(string | array $name): static {}
 
-        public function assertTableActionNotMounted(string $name): static {}
+        public function assertTableActionNotMounted(string | array $name): static {}
 
-        public function assertTableActionHalted(string $name): static {}
+        public function assertTableActionHalted(string | array $name): static {}
 
         public function assertHasTableActionErrors(array $keys = []): static {}
 
@@ -72,17 +72,17 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertTableBulkActionDisabled(string $name): static {}
 
-        public function assertTableActionHasIcon(string $name, string $icon): static {}
+        public function assertTableActionHasIcon(string | array $name, string $icon): static {}
 
-        public function assertTableActionDoesNotHaveIcon(string $name, string $icon): static {}
+        public function assertTableActionDoesNotHaveIcon(string | array $name, string $icon): static {}
 
-        public function assertTableActionHasLabel(string $name, string $label): static {}
+        public function assertTableActionHasLabel(string | array $name, string $label): static {}
 
-        public function assertTableActionDoesNotHaveLabel(string $name, string $label): static {}
+        public function assertTableActionDoesNotHaveLabel(string | array $name, string $label): static {}
 
-        public function assertTableActionHasColor(string $name, string | array $color): static {}
+        public function assertTableActionHasColor(string | array $name, string | array $color): static {}
 
-        public function assertTableActionDoesNotHaveColor(string $name, string | array $color): static {}
+        public function assertTableActionDoesNotHaveColor(string | array $name, string | array $color): static {}
 
         public function assertTableBulkActionHasIcon(string $name, string $icon): static {}
 
@@ -96,13 +96,13 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertTableBulkActionDoesNotHaveColor(string $name, string | array $color): static {}
 
-        public function assertTableActionHasUrl(string $name, string $url): static {}
+        public function assertTableActionHasUrl(string | array $name, string $url): static {}
 
-        public function assertTableActionDoesNotHaveUrl(string $name, string $url): static {}
+        public function assertTableActionDoesNotHaveUrl(string | array $name, string $url): static {}
 
-        public function assertTableActionShouldOpenUrlInNewTab(string $name): static {}
+        public function assertTableActionShouldOpenUrlInNewTab(string | array $name): static {}
 
-        public function assertTableActionShouldNotOpenUrlInNewTab(string $name): static {}
+        public function assertTableActionShouldNotOpenUrlInNewTab(string | array $name): static {}
 
         public function assertTableBulkActionMounted(string $name): static {}
 

@@ -311,6 +311,8 @@ public function form(Form $form): Form
 }
 ```
 
+## Adding edit pages to resource sub-navigation
+
 If you're using [resource sub-navigation](getting-started#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
 
 ```php

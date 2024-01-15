@@ -395,6 +395,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/text-input/revealable-password': {
+        url: 'forms/fields',
+        selector: '#textInputRevealablePassword',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/select/simple': {
         url: 'forms/fields',
         selector: '#select',
@@ -1004,6 +1013,96 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/toggle-buttons/simple': {
+        url: 'forms/fields',
+        selector: '#toggleButtons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/colors': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsColors',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/icons': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsIcons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/boolean': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsBoolean',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/inline': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsInline',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/grouped': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsGrouped',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/multiple': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsMultiple',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/columns': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsColumns',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/rows': {
+        url: 'forms/fields',
+        selector: '#toggleButtonsRows',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle-buttons/disabled-option': {
+        url: 'forms/fields',
+        selector: '#disabledOptionToggleButtons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/actions/suffix': {
         url: 'forms/fields',
         selector: '#suffixAction',
@@ -1154,6 +1253,15 @@ export default {
         viewport: {
             width: 1920,
             height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/split/simple': {
+        url: 'forms/layout',
+        selector: '#split',
+        viewport: {
+            width: 1920,
+            height: 320,
             deviceScaleFactor: 3,
         },
     },
@@ -1521,6 +1629,15 @@ export default {
             await page.click('#colorCopyable .fi-in-color-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'infolists/entries/key-value/simple': {
+        url: 'infolists/entries',
+        selector: '#keyValue',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
         },
     },
     'infolists/entries/repeatable/simple': {
@@ -1925,6 +2042,15 @@ export default {
     },
     'tables/columns/alignment': {
         url: 'tables?table=columnAlignment',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/grouping': {
+        url: 'tables?table=columnGrouping',
         selector: 'body',
         viewport: {
             width: 1080,

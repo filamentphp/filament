@@ -1203,10 +1203,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     public function getDefaultView(): string
     {
         if ($this->isSimple()) {
-            return 'filament-forms::components.simple-repeater';
+            return 'filament-forms::components.repeater.simple';
         }
 
-        return 'filament-forms::components.repeater';
+        return 'filament-forms::components.repeater.index';
     }
 
     public function getLabelBetweenItems(): ?string

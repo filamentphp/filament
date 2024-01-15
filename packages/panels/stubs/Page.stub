@@ -2,11 +2,11 @@
 
 namespace {{ namespace }};
 
-use Filament\Pages\Page;
+{{ clusterImport }}use Filament\Pages\Page;
 
 class {{ class }} extends Page
 {
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string $view = '{{ view }}';
+    protected static string $view = '{{ view }}';{{ clusterAssignment }}
 }

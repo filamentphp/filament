@@ -605,6 +605,11 @@ class FilamentManager
         return $this->getCurrentPanel()->hasTopNavigation();
     }
 
+    public function hasUnsavedChangesAlerts(): bool
+    {
+        return $this->getCurrentPanel()->hasUnsavedChangesAlerts();
+    }
+
     public function isGlobalSearchEnabled(): bool
     {
         if ($this->getGlobalSearchProvider() === null) {

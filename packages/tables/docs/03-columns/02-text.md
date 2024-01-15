@@ -158,6 +158,18 @@ TextColumn::make('description')
     ->words(10)
 ```
 
+## Adding a prefix or suffix
+
+You may add a prefix or suffix to the cell's value:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('domain')
+    ->prefix('https://')
+    ->suffix('.com')
+```
+
 ## Wrapping content
 
 If you'd like your column's content to wrap if it's too long, you may use the `wrap()` method:

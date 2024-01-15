@@ -19,6 +19,7 @@ use Filament\Support\ChunkIterator;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ImportAction as ImportTableAction;
+use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Filesystem\AwsS3V3Adapter;
@@ -218,8 +219,21 @@ trait CanImportRecords
                     options: $options,
                 ));
 
+            $importer = $import->getImporter(
+                columnMap: $data['columnMap'],
+                options: $options,
+            );
+
             Bus::batch($importJobs->all())
                 ->allowFailures()
+                ->when(
+                    filled($jobQueue = $importer->getJobQueue()),
+                    fn (PendingBatch $batch) => $batch->onQueue($jobQueue),
+                )
+                ->when(
+                    filled($jobConnection = $importer->getJobConnection()),
+                    fn (PendingBatch $batch) => $batch->onConnection($jobConnection),
+                )
                 ->finally(function () use ($import) {
                     $import->touch('completed_at');
 

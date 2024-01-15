@@ -282,7 +282,7 @@ Now, users will be redirected to the billing page if they don't have an active s
 
 #### Requiring a subscription for specific resources and pages
 
-Sometimes, you may wish to only require a subscription for certain [resources](resources/getting-started) and [pages](pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
+Sometimes, you may wish to only require a subscription for certain [resources](resources/getting-started) and [custom pages](pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
 
 ```php
 public static function isTenantSubscriptionRequired(Panel $panel): bool
@@ -341,7 +341,7 @@ public function panel(Panel $panel): Panel
 
 ## Customizing the tenant menu
 
-The tenant-switching menu is featured in the sidebar of the admin layout. It's fully customizable.
+The tenant-switching menu is featured in the admin layout. It's fully customizable.
 
 To register new items to the tenant menu, you can use the [configuration](configuration):
 
@@ -569,7 +569,7 @@ The `getFilamentName()` method is used to retrieve the name of the current user.
 
 ## Setting the current tenant label
 
-Inside the tenant switcher on the sidebar, you may wish to add a small label like "Active team" above the name of the current team. You can do this by implementing the `HasCurrentTenantLabel` method on the tenant model:
+Inside the tenant switcher, you may wish to add a small label like "Active team" above the name of the current team. You can do this by implementing the `HasCurrentTenantLabel` method on the tenant model:
 
 ```php
 <?php

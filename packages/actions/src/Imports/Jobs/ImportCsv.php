@@ -29,7 +29,7 @@ class ImportCsv implements ShouldQueue
 
     public bool $deleteWhenMissingModels = true;
 
-    protected readonly Importer $importer;
+    protected Importer $importer;
 
     /**
      * @param  array<array<string, string>>  $rows
@@ -37,10 +37,10 @@ class ImportCsv implements ShouldQueue
      * @param  array<string, mixed>  $options
      */
     public function __construct(
-        readonly public Import $import,
-        readonly public array $rows,
-        readonly public array $columnMap,
-        readonly public array $options = [],
+        protected Import $import,
+        protected array $rows,
+        protected array $columnMap,
+        protected array $options = [],
     ) {
         $this->importer = $this->import->getImporter(
             $this->columnMap,
@@ -65,9 +65,13 @@ class ImportCsv implements ShouldQueue
 
         $exceptions = [];
 
+        $processedRows = 0;
+        $successfulRows = 0;
+
         foreach ($this->rows as $row) {
             try {
                 DB::transaction(fn () => ($this->importer)($row));
+                $successfulRows++;
             } catch (ValidationException $exception) {
                 $this->logFailedRow($row, collect($exception->errors())->flatten()->implode(' '));
             } catch (Throwable $exception) {
@@ -76,8 +80,11 @@ class ImportCsv implements ShouldQueue
                 $this->logFailedRow($row);
             }
 
-            $this->import->increment('processed_rows');
+            $processedRows++;
         }
+
+        $this->import->increment('processed_rows', $processedRows);
+        $this->import->increment('successful_rows', $successfulRows);
 
         $this->handleExceptions($exceptions);
     }

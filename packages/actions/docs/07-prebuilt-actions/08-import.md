@@ -505,7 +505,7 @@ ImportAction::make()
     ->chunkSize(250)
 ```
 
-If you are encountering memory issues when importing large CSV files, you may wish to reduce the chunk size.
+If you are encountering memory or timeout issues when importing large CSV files, you may wish to reduce the chunk size.
 
 ## Changing the CSV delimiter
 
@@ -540,6 +540,26 @@ ImportAction::make()
     ->job(ImportCsv::class)
 ```
 
+### Customizing the import queue and connection
+
+By default, the import system will use the default queue and connection. If you'd like to customize the queue used for jobs of a certain importer, you may override the `getJobQueue()` method in your importer class:
+
+```php
+public function getJobQueue(): ?string
+{
+    return 'imports';
+}
+```
+
+You can also customize the connection used for jobs of a certain importer, by overriding the `getJobConnection()` method in your importer class:
+
+```php
+public function getJobConnection(): ?string
+{
+    return 'sqs';
+}
+```
+
 ### Customizing the import job middleware
 
 By default, the import system will only process one job at a time from each import. This is to prevent the server from being overloaded, and other jobs from being delayed by large imports. That functionality is defined in the `WithoutOverlapping` middleware on the importer class:
@@ -548,7 +568,7 @@ By default, the import system will only process one job at a time from each impo
 public function getJobMiddleware(): array
 {
     return [
-        (new WithoutOverlapping("import{$this->import->id}"))->expireAfter(600),
+        (new WithoutOverlapping("import{$this->import->getKey()}"))->expireAfter(600),
     ];
 }
 ```
@@ -577,7 +597,7 @@ By default, the import system will tag each job with the ID of the import. This 
 ```php
 public function getJobTags(): array
 {
-    return ["import{$this->import->id}"];
+    return ["import{$this->import->getKey()}"];
 }
 ```
 

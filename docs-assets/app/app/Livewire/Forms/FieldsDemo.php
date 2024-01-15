@@ -22,6 +22,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -154,6 +155,25 @@ class FieldsDemo extends Component implements HasForms
                             ->label('Domain')
                             ->default('https://filamentphp.com')
                             ->suffixIcon('heroicon-m-globe-alt'),
+                    ]),
+                Group::make()
+                    ->id('textInputRevealablePassword')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('textInputRevealablePassword')
+                            ->label('Password')
+                            ->default('filament123')
+                            ->password()
+                            ->revealable(),
+                        TextInput::make('textInputRevealedPassword')
+                            ->label('Password')
+                            ->default('filament123')
+                            ->suffixActions([
+                                TextInput\Actions\HidePasswordAction::make()
+                                    ->extraAttributes([]),
+                            ]),
                     ]),
                 Group::make()
                     ->id('select')
@@ -1203,6 +1223,164 @@ class FieldsDemo extends Component implements HasForms
                         ColorPicker::make('colorPicker')
                             ->label('Color')
                             ->default('#3490dc'),
+                    ]),
+                Group::make()
+                    ->id('toggleButtons')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('toggleButtons')
+                            ->label('Status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
+                            ->default('published'),
+                    ]),
+                Group::make()
+                    ->id('toggleButtonsColors')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('toggleButtonsColors')
+                            ->label('Status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
+                            ->colors([
+                                'draft' => 'info',
+                                'scheduled' => 'warning',
+                                'published' => 'success',
+                            ])
+                            ->default('draft'),
+                    ]),
+                Group::make()
+                    ->id('toggleButtonsIcons')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('toggleButtonsIcons')
+                            ->label('Status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
+                            ->icons([
+                                'draft' => 'heroicon-o-pencil',
+                                'scheduled' => 'heroicon-o-clock',
+                                'published' => 'heroicon-o-check-circle',
+                            ])
+                            ->default('scheduled'),
+                    ]),
+                Group::make()
+                    ->id('toggleButtonsBoolean')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('toggleButtonsBoolean')
+                            ->label('Like this post??')
+                            ->boolean()
+                            ->default(true),
+                    ]),
+                Group::make()
+                    ->id('toggleButtonsInline')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('toggleButtonsInline')
+                            ->label('Like this post??')
+                            ->boolean()
+                            ->inline()
+                            ->default(false),
+                    ]),
+                Group::make()
+                    ->id('toggleButtonsGrouped')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('toggleButtonsGrouped')
+                            ->label('Like this post??')
+                            ->boolean()
+                            ->grouped()
+                            ->default(true),
+                    ]),
+                Group::make()
+                    ->id('toggleButtonsMultiple')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('toggleButtonsMultiple')
+                            ->label('Technologies')
+                            ->multiple()
+                            ->options([
+                                'tailwind' => 'Tailwind CSS',
+                                'alpine' => 'Alpine.js',
+                                'laravel' => 'Laravel',
+                                'livewire' => 'Laravel Livewire',
+                            ])
+                            ->default(['tailwind', 'laravel']),
+                    ]),
+                Group::make()
+                    ->id('toggleButtonsColumns')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('toggleButtonsColumns')
+                            ->label('Technologies')
+                            ->options([
+                                'tailwind' => 'Tailwind CSS',
+                                'alpine' => 'Alpine.js',
+                                'laravel' => 'Laravel',
+                                'livewire' => 'Laravel Livewire',
+                            ])
+                            ->columns(2)
+                            ->default('alpine'),
+                    ]),
+                Group::make()
+                    ->id('toggleButtonsRows')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('toggleButtonsRows')
+                            ->label('Technologies')
+                            ->options([
+                                'tailwind' => 'Tailwind CSS',
+                                'alpine' => 'Alpine.js',
+                                'laravel' => 'Laravel',
+                                'livewire' => 'Laravel Livewire',
+                            ])
+                            ->columns(2)
+                            ->gridDirection('row')
+                            ->default('alpine'),
+                    ]),
+                Group::make()
+                    ->id('disabledOptionToggleButtons')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ToggleButtons::make('disabledOptionToggleButtons')
+                            ->label('Status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published',
+                            ])
+                            ->default('draft')
+                            ->disableOptionWhen(fn (string $value): bool => $value === 'published'),
                     ]),
                 Group::make()
                     ->id('suffixAction')

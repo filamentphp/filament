@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Columns\Concerns;
+namespace Filament\Support\Concerns;
 
 use Closure;
 
@@ -15,7 +15,7 @@ trait CanGrow
         return $this;
     }
 
-    public function canGrow(bool $default = false): bool
+    public function canGrow(bool $default = true): bool
     {
         return (bool) ($this->evaluate($this->canGrow) ?? $default);
     }
