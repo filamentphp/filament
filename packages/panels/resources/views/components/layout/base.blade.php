@@ -72,13 +72,13 @@
                     const activeSidebarItem = document.querySelector('.fi-sidebar-item-active')
 
                     if (! activeSidebarItem) {
-                        return;
+                        return
                     }
                     
                     const sidebarWrapper = document.querySelector('.fi-sidebar-nav')
 
                     if (! sidebarWrapper) {
-                        return;
+                        return
                     }
 
                     sidebarWrapper.scrollTo(0, activeSidebarItem.offsetTop - (window.innerHeight / 2))
