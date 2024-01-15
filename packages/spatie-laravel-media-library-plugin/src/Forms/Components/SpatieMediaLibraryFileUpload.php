@@ -337,7 +337,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
+        return match ($parameterName) {
             'spatieMediaLibraryFileUpload', 'mediaLibraryFileUpload' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };

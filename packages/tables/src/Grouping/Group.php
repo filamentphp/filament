@@ -17,7 +17,6 @@ use Illuminate\Support\Arr;
 
 class Group extends Component
 {
-
     protected string $evaluationIdentifier = 'group';
 
     protected ?string $column;

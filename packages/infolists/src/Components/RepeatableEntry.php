@@ -51,7 +51,7 @@ class RepeatableEntry extends Entry
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
+        return match ($parameterName) {
             'entry', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };

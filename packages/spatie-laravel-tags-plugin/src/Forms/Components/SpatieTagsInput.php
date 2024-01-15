@@ -130,7 +130,7 @@ class SpatieTagsInput extends TagsInput
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
+        return match ($parameterName) {
             'spatieTagsInput' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };

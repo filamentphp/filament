@@ -27,7 +27,7 @@ class LocaleSwitcher extends SelectAction
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
+        return match ($parameterName) {
             'switcher', 'action' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };

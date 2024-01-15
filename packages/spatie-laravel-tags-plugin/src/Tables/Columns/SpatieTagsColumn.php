@@ -87,7 +87,7 @@ class SpatieTagsColumn extends TagsColumn
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
+        return match ($parameterName) {
             'spatieTagsColumn', 'tagsColumn', 'column', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
