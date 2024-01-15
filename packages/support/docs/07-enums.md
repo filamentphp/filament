@@ -124,6 +124,10 @@ If you use a [`TextColumn`](../tables/columns/text) with the Table Builder, and 
 
 If you use a [`TextEntry`](../infolists/entries/text) with the Infolist Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasColor` interface to display the enum label in its color. This works best if you use the [`badge()`](../infolists/entries/text#displaying-as-a-badge) method on the entry.
 
+### Using the enum color with a toggle buttons field in your form
+
+If you use a [`ToggleButtons`](../forms/fields/toggle-buttons) with the Form Builder, and it is set to use an enum for its options, Filament will automatically use the `HasColor` interface to display the enum label in its color.
+
 ## Enum icons
 
 The `HasIcon` interface transforms an enum instance into an [icon](icons). This is useful for displaying icons alongside enum values in your UI.
@@ -157,6 +161,10 @@ If you use a [`TextColumn`](../tables/columns/text) with the Table Builder, and 
 ### Using the enum icon with a text entry in your infolist
 
 If you use a [`TextEntry`](../infolists/entries/text) with the Infolist Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label. This works best if you use the [`badge()`](../infolists/entries/text#displaying-as-a-badge) method on the entry.
+
+### Using the enum icon with a toggle buttons field in your form
+
+If you use a [`ToggleButtons`](../forms/fields/toggle-buttons) with the Form Builder, and it is set to use an enum for its options, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label.
 
 ## Enum descriptions
 

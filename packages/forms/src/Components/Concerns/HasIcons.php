@@ -3,20 +3,22 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Support\Contracts\HasIcon as IconInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
+use UnitEnum;
 
 trait HasIcons
 {
     /**
-     * @var array<string | Htmlable | null> | Arrayable | Closure
+     * @var array<string | Htmlable | null> | Arrayable | Closure | null
      */
-    protected array | Arrayable | Closure $icons = [];
+    protected array | Arrayable | Closure | null $icons = null;
 
     /**
-     * @param  array<string | Htmlable | null> | Arrayable | Closure  $icons
+     * @param  array<string | Htmlable | null> | Arrayable | Closure | null  $icons
      */
-    public function icons(array | Arrayable | Closure $icons): static
+    public function icons(array | Arrayable | Closure | null $icons): static
     {
         $this->icons = $icons;
 
@@ -39,6 +41,18 @@ trait HasIcons
             $icons = $icons->toArray();
         }
 
-        return $icons;
+        if (
+            is_string($this->options) &&
+            enum_exists($enum = $this->options) &&
+            is_a($enum, IconInterface::class, allow_string: true)
+        ) {
+            return array_reduce($enum::cases(), function (array $carry, IconInterface & UnitEnum $case): array {
+                $carry[$case?->value ?? $case->name] = $case->getIcon();
+
+                return $carry;
+            }, []);
+        }
+
+        return $icons ?? [];
     }
 }

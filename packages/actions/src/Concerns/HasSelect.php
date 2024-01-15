@@ -42,10 +42,9 @@ trait HasSelect
     {
         $options = $this->evaluate($this->options) ?? [];
 
-        $enum = $options;
         if (
-            is_string($enum) &&
-            enum_exists($enum)
+            is_string($options) &&
+            enum_exists($enum = $options)
         ) {
             if (is_a($enum, LabelInterface::class, allow_string: true)) {
                 return array_reduce($enum::cases(), function (array $carry, LabelInterface & UnitEnum $case): array {

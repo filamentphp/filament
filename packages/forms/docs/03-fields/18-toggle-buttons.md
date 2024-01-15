@@ -41,6 +41,8 @@ ToggleButtons::make('status')
 ])
 ```
 
+If you are using an enum for the options, you can use the [`HasColor` interface](../../support/enums#enum-colors) to define icons instead.
+
 <AutoScreenshot name="forms/fields/toggle-buttons/colors" alt="Toggle buttons with different colors" version="3.x" />
 
 ## Adding icons to option buttons
@@ -63,6 +65,8 @@ ToggleButtons::make('status')
     ])
 ])
 ```
+
+If you are using an enum for the options, you can use the [`HasIcon` interface](../../support/enums#enum-icons) to define icons instead.
 
 <AutoScreenshot name="forms/fields/toggle-buttons/icons" alt="Toggle buttons with icons" version="3.x" />
 
