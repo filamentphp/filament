@@ -45,6 +45,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
      */
     protected array | Closure | null $properties = null;
 
+    protected ?Closure $filterMedia = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -55,6 +57,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 ->when(
                     ! $component->isMultiple(),
                     fn (Collection $files): Collection => $files->take(1),
+                )
+                ->when(
+                    $component->hasMediaFilter(),
+                    fn (Collection $files) => $component->getFilteredMedia($files)
                 )
                 ->mapWithKeys(function (Media $file): array {
                     $uuid = $file->getAttributeValue('uuid');
@@ -229,6 +235,13 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    public function filterMedia(?Closure $filterMedia): static
+    {
+        $this->filterMedia = $filterMedia;
+
+        return $this;
+    }
+
     public function responsiveImages(bool | Closure $condition = true): static
     {
         $this->hasResponsiveImages = $condition;
@@ -244,6 +257,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $record
             ->getMedia($this->getCollection())
             ->whereNotIn('uuid', array_keys($this->getState() ?? []))
+            ->when($this->hasMediaFilter(), fn (Collection $files) => $this->getFilteredMedia($files))
             ->each(fn (Media $media) => $media->delete());
     }
 
@@ -311,6 +325,18 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     public function getProperties(): array
     {
         return $this->evaluate($this->properties) ?? [];
+    }
+
+    public function getFilteredMedia(Collection $media): Collection
+    {
+        return $this->evaluate($this->filterMedia, [
+            'media' => $media,
+        ]) ?? $media;
+    }
+
+    public function hasMediaFilter(): bool
+    {
+        return $this->filterMedia instanceof Closure;
     }
 
     public function hasResponsiveImages(): bool

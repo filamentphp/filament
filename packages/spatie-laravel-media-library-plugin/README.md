@@ -92,6 +92,23 @@ SpatieMediaLibraryFileUpload::make('attachments')
     ->customProperties(['zip_filename_prefix' => 'folder/subfolder/'])
 ```
 
+### Filtering media
+
+It's possible to filter media down by using the `filterMedia()` method. This method
+requires a closure that accepts an additional `$media` property consisting of a
+collection of media items available to the resource. You can then use the [available collection methods](https://laravel.com/docs/10.x/collections#available-methods)
+to filter down the returned media.
+
+An example usage would be to scope down a gallery of images within a Builder block:
+
+```php
+Forms\Components\SpatieMediaLibraryFileUpload::make('images')
+    ->filterMedia(fn (\Illuminate\Support\Collection $media, Forms\Get $get) => 
+        $media->where('custom_properties.gallery_id', $get('gallery_id'))
+    )
+    ->customProperties(fn (Forms\Get $get) => ['gallery_id' => $get('gallery_id')])
+```
+
 ### Adding custom headers
 
 You may pass in custom headers when uploading files using the `customHeaders()` method:
