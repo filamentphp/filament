@@ -9,6 +9,8 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class NavigationItem extends Component
 {
+    protected string $evaluationIdentifier = 'item';
+
     protected string | Closure | null $group = null;
 
     protected string | Closure | null $parentItem = null;
@@ -263,8 +265,8 @@ class NavigationItem extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'navigationItem', 'item', 'component' => [$this],
+        return match ($parameterName) {
+            'navigationItem', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

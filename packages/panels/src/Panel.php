@@ -42,6 +42,8 @@ class Panel extends Component
 
     protected ?Closure $bootUsing = null;
 
+    protected string $evaluationIdentifier = 'panel';
+
     public static function make(): static
     {
         $static = app(static::class);
@@ -99,8 +101,8 @@ class Panel extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'panel', 'component' => [$this],
+        return match ($parameterName) {
+            'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }

@@ -9,6 +9,8 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class NavigationGroup extends Component
 {
+    protected string $evaluationIdentifier = 'group';
+
     protected bool | Closure $isCollapsed = false;
 
     protected bool | Closure | null $isCollapsible = null;
@@ -153,8 +155,8 @@ class NavigationGroup extends Component
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'navigationGroup', 'group', 'component' => [$this],
+        return match ($parameterName) {
+            'navigationGroup', 'component' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
