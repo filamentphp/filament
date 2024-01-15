@@ -23,7 +23,7 @@ trait HasUnsavedDataChangesAlert
             return;
         }
 
-        $this->savedDataHash = md5(str_replace('\\', '', json_encode($this->data)));
+        $this->savedDataHash = md5((string) str(json_encode($this->data))->replace('\\', ''));
     }
 
     protected function hasUnsavedDataChangesAlert(): bool
