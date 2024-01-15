@@ -18,10 +18,12 @@ trait HasUnsavedChangesAlerts
 
     public function hasUnsavedChangesAlerts(): bool
     {
-        if ($this->hasSpaMode()) {
+        $hasAlerts = (bool) $this->evaluate($this->hasUnsavedChangesAlerts);
+
+        if ($hasAlerts && $this->hasSpaMode()) {
             throw new Exception('Unsaved changes alerts are not supported in SPA mode.');
         }
 
-        return (bool) $this->evaluate($this->hasUnsavedChangesAlerts);
+        return $hasAlerts;
     }
 }
