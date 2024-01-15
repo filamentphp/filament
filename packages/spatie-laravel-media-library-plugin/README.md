@@ -92,23 +92,6 @@ SpatieMediaLibraryFileUpload::make('attachments')
     ->customProperties(['zip_filename_prefix' => 'folder/subfolder/'])
 ```
 
-### Filtering media
-
-It's possible to filter media down by using the `filterMedia()` method. This method
-requires a closure that accepts an additional `$media` property consisting of a
-collection of media items available to the resource. You can then use the [available collection methods](https://laravel.com/docs/10.x/collections#available-methods)
-to filter down the returned media.
-
-An example usage would be to scope down a gallery of images within a Builder block:
-
-```php
-Forms\Components\SpatieMediaLibraryFileUpload::make('images')
-    ->filterMedia(fn (\Illuminate\Support\Collection $media, Forms\Get $get) => 
-        $media->where('custom_properties.gallery_id', $get('gallery_id'))
-    )
-    ->customProperties(fn (Forms\Get $get) => ['gallery_id' => $get('gallery_id')])
-```
-
 ### Adding custom headers
 
 You may pass in custom headers when uploading files using the `customHeaders()` method:
@@ -167,6 +150,29 @@ SpatieMediaLibraryFileUpload::make('attachments')
     ->manipulations([
         'thumb' => ['orientation' => '90'],
     ])
+```
+
+### Filtering media
+
+It's possible to target a file upload component to only handle a certain subset of media in a collection. To do that, you can filter the media collection using the `filterMediaUsing()` method. This method accepts a function that receives the `$media` collection and manipulates it. You can use any [collection method](https://laravel.com/docs/collections#available-methods) to filter it.
+
+For example, you could scope the media to only handle files that have certain custom properties:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Get;
+use Illuminate\Support\Collection;
+
+SpatieMediaLibraryFileUpload::make('images')
+    ->customProperties(fn (Get $get): array => [
+        'gallery_id' => $get('gallery_id'),
+    ])
+    ->filterMediaUsing(
+        fn (Collection $media, Get $get): Collection => $media->where(
+            'custom_properties.gallery_id',
+            $get('gallery_id')
+        ),
+    )
 ```
 
 ## Table column

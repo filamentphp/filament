@@ -45,7 +45,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
      */
     protected array | Closure | null $properties = null;
 
-    protected ?Closure $filterMedia = null;
+    protected ?Closure $filterMediaUsing = null;
 
     protected function setUp(): void
     {
@@ -53,23 +53,23 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
         $this->loadStateFromRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component, HasMedia $record): void {
             /** @var Model&HasMedia $record */
-            $files = $record->load('media')->getMedia($component->getCollection())
+            $media = $record->load('media')->getMedia($component->getCollection())
                 ->when(
                     ! $component->isMultiple(),
-                    fn (Collection $files): Collection => $files->take(1),
+                    fn (Collection $media): Collection => $media->take(1),
                 )
                 ->when(
                     $component->hasMediaFilter(),
-                    fn (Collection $files) => $component->getFilteredMedia($files)
+                    fn (Collection $media) => $component->filterMedia($media)
                 )
-                ->mapWithKeys(function (Media $file): array {
-                    $uuid = $file->getAttributeValue('uuid');
+                ->mapWithKeys(function (Media $media): array {
+                    $uuid = $media->getAttributeValue('uuid');
 
                     return [$uuid => $uuid];
                 })
                 ->toArray();
 
-            $component->state($files);
+            $component->state($media);
         });
 
         $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $state): void {
@@ -235,9 +235,9 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
-    public function filterMedia(?Closure $filterMedia): static
+    public function filterMediaUsing(?Closure $callback): static
     {
-        $this->filterMedia = $filterMedia;
+        $this->filterMediaUsing = $callback;
 
         return $this;
     }
@@ -257,7 +257,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $record
             ->getMedia($this->getCollection())
             ->whereNotIn('uuid', array_keys($this->getState() ?? []))
-            ->when($this->hasMediaFilter(), fn (Collection $files) => $this->getFilteredMedia($files))
+            ->when($this->hasMediaFilter(), fn (Collection $media): Collection => $this->filterMedia($media))
             ->each(fn (Media $media) => $media->delete());
     }
 
@@ -327,16 +327,16 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this->evaluate($this->properties) ?? [];
     }
 
-    public function getFilteredMedia(Collection $media): Collection
+    public function filterMedia(Collection $media): Collection
     {
-        return $this->evaluate($this->filterMedia, [
+        return $this->evaluate($this->filterMediaUsing, [
             'media' => $media,
         ]) ?? $media;
     }
 
     public function hasMediaFilter(): bool
     {
-        return $this->filterMedia instanceof Closure;
+        return $this->filterMediaUsing instanceof Closure;
     }
 
     public function hasResponsiveImages(): bool
