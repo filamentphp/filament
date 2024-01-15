@@ -8,6 +8,7 @@
 >
     @foreach ($navigation as $navigationGroup)
         <x-filament-panels::sidebar.group
+            :attributes="\Filament\Support\prepare_inherited_attributes($navigationGroup->getExtraAttributeBag())"
             :collapsible="$navigationGroup->isCollapsible()"
             :icon="$navigationGroup->getIcon()"
             :items="$navigationGroup->getItems()"
