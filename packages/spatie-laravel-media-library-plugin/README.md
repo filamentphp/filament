@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-media-library-plugin:"^3.1" -W
+composer require filament/spatie-laravel-media-library-plugin:"^3.2" -W
 ```
 
 If you haven't already done so, you need to publish the migration to create the media table:

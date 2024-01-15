@@ -20,7 +20,7 @@ Filament requires the following to run:
 Require the Actions package using Composer:
 
 ```bash
-composer require filament/actions:"^3.1" -W
+composer require filament/actions:"^3.2" -W
 ```
 
 ## New Laravel projects
