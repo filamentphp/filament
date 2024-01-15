@@ -29,10 +29,10 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Now, you can create a cluster with the `php artisan make:filament:cluster` command:
+Now, you can create a cluster with the `php artisan make:filament-cluster` command:
 
 ```bash
-php artisan make:filament:cluster Settings
+php artisan make:filament-cluster Settings
 ```
 
 This will create a new cluster class in the `app/Filament/Clusters` directory:
