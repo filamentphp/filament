@@ -152,6 +152,29 @@ SpatieMediaLibraryFileUpload::make('attachments')
     ])
 ```
 
+### Filtering media
+
+It's possible to target a file upload component to only handle a certain subset of media in a collection. To do that, you can filter the media collection using the `filterMediaUsing()` method. This method accepts a function that receives the `$media` collection and manipulates it. You can use any [collection method](https://laravel.com/docs/collections#available-methods) to filter it.
+
+For example, you could scope the field to only handle media that has certain custom properties:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Get;
+use Illuminate\Support\Collection;
+
+SpatieMediaLibraryFileUpload::make('images')
+    ->customProperties(fn (Get $get): array => [
+        'gallery_id' => $get('gallery_id'),
+    ])
+    ->filterMediaUsing(
+        fn (Collection $media, Get $get): Collection => $media->where(
+            'custom_properties.gallery_id',
+            $get('gallery_id')
+        ),
+    )
+```
+
 ## Table column
 
 To use the media library image column:
