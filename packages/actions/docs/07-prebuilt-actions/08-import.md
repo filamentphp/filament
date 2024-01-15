@@ -582,7 +582,7 @@ By default, the import system will retry a job for 24 hours. This is to allow fo
 ```php
 use Carbon\CarbonInterface;
 
-public function getJobRetryUntil(): CarbonInterface
+public function getJobRetryUntil(): ?CarbonInterface
 {
     return now()->addDay();
 }
