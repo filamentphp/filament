@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 class SpatieTagsEntry extends TextEntry
 {
+    protected string $evaluationIdentifier = 'tagsEntry';
+
     protected string | Closure | AllTagTypes | null $type;
 
     protected function setUp(): void
@@ -80,8 +82,8 @@ class SpatieTagsEntry extends TextEntry
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match($parameterName) {
-            'spatieTagsEntry', 'tagsEntry' => [$this],
+        return match ($parameterName) {
+            'spatieTagsEntry' => [$this],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
