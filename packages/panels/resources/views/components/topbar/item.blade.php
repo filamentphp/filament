@@ -43,7 +43,7 @@
 
         <span
             @class([
-                'fi-topbar-item-label text-sm font-medium',
+                'fi-topbar-item-label font-medium text-sm',
                 'text-gray-700 dark:text-gray-200' => ! $active,
                 'text-primary-600 dark:text-primary-400' => $active,
             ])
