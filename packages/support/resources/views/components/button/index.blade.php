@@ -117,6 +117,7 @@
         },
         'text-gray-400 dark:text-gray-500' => ($color === 'gray') || ($tag === 'label'),
         'text-white' => ($color !== 'gray') && ($tag !== 'label'),
+        'text-current' => $outlined,
         '[:checked+*>&]:text-white' => $tag === 'label',
     ]);
 
