@@ -76,7 +76,7 @@ If you want a simple boolean toggle button group, with "Yes" and "No" options, y
 
 ```php
 ToggleButtons::make('feedback')
-    ->label('Like this post??')
+    ->label('Like this post?')
     ->boolean()
 ```
 
@@ -90,7 +90,7 @@ You may wish to display the options `inline()` with each other:
 
 ```php
 ToggleButtons::make('feedback')
-    ->label('Like this post??')
+    ->label('Like this post?')
     ->boolean()
     ->inline()
 ```
@@ -102,12 +102,9 @@ ToggleButtons::make('feedback')
 You may wish to group option buttons together so they are more compact, using the `grouped()` method. This also makes them appear horizontally inline with each other:
 
 ```php
-ToggleButtons::make('status')
-    ->options([
-        'draft' => 'Draft',
-        'scheduled' => 'Scheduled',
-        'published' => 'Published'
-    ])
+ToggleButtons::make('feedback')
+    ->label('Like this post?')
+    ->boolean()
     ->grouped()
 ```
 
