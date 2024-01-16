@@ -58,6 +58,12 @@ class PrepareCsvExport implements ShouldQueue
         $this->export->getFileDisk()->put($filePath, $csv->toString(), Filesystem::VISIBILITY_PRIVATE);
 
         $query = EloquentSerializeFacade::unserialize($this->query);
+        $baseQuery = $query->toBase();
+
+        $orders = $baseQuery->orders;
+        $direction = $orders ? $orders[0]['direction'] : 'asc';
+        $descending = $direction === 'desc' ? true : false;
+
         $keyName = $query->getModel()->getKeyName();
 
         $exportCsvJob = $this->getExportCsvJob();
@@ -103,13 +109,13 @@ class PrepareCsvExport implements ShouldQueue
             return;
         }
 
-        $query->toBase()
-            ->select([$query->getModel()->getQualifiedKeyName()])
-            ->chunkById(
+        $baseQuery->select([$query->getModel()->getQualifiedKeyName()])
+            ->orderedChunkById(
                 $this->chunkSize * 10,
                 fn (Collection $records) => $dispatchRecords(
                     Arr::pluck($records->all(), $keyName),
                 ),
+                descending: $descending,
             );
     }
 
