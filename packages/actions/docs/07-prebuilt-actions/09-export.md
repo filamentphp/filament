@@ -96,7 +96,7 @@ public function getColumns(): array
     return [
         ExportColumn::make('name'),
         ExportColumn::make('sku')
-            ->label('SKU')),
+            ->label('SKU'),
         ExportColumn::make('price'),
     ];
 }
