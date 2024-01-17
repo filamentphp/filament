@@ -49,7 +49,7 @@ return [
             'actions' => [
 
                 'download_csv' => [
-                    'label' => 'Download .csv',
+                    'label' => '.csv downloaden',
                 ],
 
                 'download_xlsx' => [
