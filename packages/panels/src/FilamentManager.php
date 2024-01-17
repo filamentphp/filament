@@ -17,6 +17,7 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentAsset;
@@ -425,7 +426,7 @@ class FilamentManager
         return $this->getCurrentPanel()->getTenantRegistrationUrl($parameters);
     }
 
-    public function getTheme(): Theme
+    public function getTheme(): Theme | Js
     {
         return $this->getCurrentPanel()->getTheme();
     }

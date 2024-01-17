@@ -3,6 +3,7 @@
 namespace Filament\Panel\Concerns;
 
 use Filament\Enums\ThemeMode;
+use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Contracts\Support\Htmlable;
@@ -21,6 +22,8 @@ trait HasTheme
 
     protected ThemeMode $defaultThemeMode = ThemeMode::System;
 
+    protected string | array $themeExtension = 'css';
+
     /**
      * @param  string | array<string>  $theme
      */
@@ -28,6 +31,10 @@ trait HasTheme
     {
         $this->viteTheme = $theme;
         $this->viteThemeBuildDirectory = $buildDirectory;
+        $this->themeExtension = collect((array) $theme)
+            ->map(fn ($item) => pathinfo($item, PATHINFO_EXTENSION))
+            ->filter()
+            ->first() ?: $this->themeExtension;
 
         return $this;
     }
@@ -39,7 +46,7 @@ trait HasTheme
         return $this;
     }
 
-    public function getTheme(): Theme
+    public function getTheme(): Theme | Js
     {
         if (filled($this->viteTheme)) {
             $this->theme = app(Vite::class)($this->viteTheme, $this->viteThemeBuildDirectory);
@@ -54,6 +61,10 @@ trait HasTheme
         }
 
         if ($this->theme instanceof Htmlable) {
+            if ($this->themeExtension === 'js') {
+                return Js::make('app')->html($this->theme);
+            }
+
             return Theme::make('app')->html($this->theme);
         }
 
