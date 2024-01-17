@@ -112,11 +112,10 @@ public function table(Table $table): Table
         ->enableSelection(true)
         ->actions([
             Action::make('copy_to_selected')
-                ->action(function (ListRecords $livewire, Model $record, Collection $records) {
-                    // $record will have the current record.
+                ->accessSelectedRecords() // enable access to selected Records
+                ->action(function (ListRecords $livewire) {
                     // $livewire->getSelectedTableRecords() will return the selected records.
-                    // $records will still be empty, since this is a TableAction and not a BulkAction.
-                    // so we can do:
+                    // This way, we can modify the selected records based on the current record:
                     $livewire->getSelectedTableRecords()
                         ->each(function (Model $selectedRecord) use ($record) {
                             $selectedRecord->isActive = $record->isActive;

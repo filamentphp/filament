@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class Action extends MountableAction implements Groupable, HasRecord, HasTable
 {
     use Concerns\BelongsToTable;
+    use Concerns\UsesSelectedRecords;
     use HasMountableArguments;
     use InteractsWithRecord;
 
@@ -24,7 +25,9 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
 
     public function getAlpineClickHandler(): ?string
     {
-        return "mountTableAction('{$this->getName()}')";
+        return $this->needsAccessToSelectedRecords()
+            ? "mountTableAction('{$this->getName()}')"
+            : null;
     }
 
     public function getLivewireClickHandler(): ?string
