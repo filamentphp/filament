@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'O\'chirish',
+        'label' => "O'chirish",
 
         'modal' => [
 
-            'heading' => ':label - o\'chirish',
+            'heading' => ":labelni o'chirish",
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'O\'chirish',
+                    'label' => "O'chirish",
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'O\'chirildi',
+                'title' => "O'chirildi",
             ],
 
         ],
@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Tanlanganlarni o\chirish',
+        'label' => "Tanlanganlarni o'chirish",
 
         'modal' => [
 
-            'heading' => ':label - o\'chirish',
+            'heading' => ':labelni o\'chirish',
 
             'actions' => [
 
