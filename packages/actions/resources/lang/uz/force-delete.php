@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label - majburiy o\'chirish',
+            'heading' => ':labelni majburiy o\'chirish',
 
             'actions' => [
                 'delete' => [
@@ -35,7 +35,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label - majburiy o\'chirish',
+            'heading' => ':labelni majburiy o\'chirish',
 
             'actions' => [
 
