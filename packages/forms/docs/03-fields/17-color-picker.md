@@ -33,3 +33,14 @@ ColorPicker::make('rgb_color')
 ColorPicker::make('rgba_color')
     ->rgba()
 ```
+
+## Live updates
+
+When using the color picker with `live()` you may run into issues with the color picker updating the value too often and making unnecessary server requests. To avoid this, you can use the `updateOnDragend()` method instead to only update the value when the user has finished dragging the color picker:
+
+```php
+use Filament\Forms\Components\ColorPicker;
+
+ColorPicker::make('color')
+    ->updateOnDragend()
+```

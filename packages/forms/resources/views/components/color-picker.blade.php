@@ -54,6 +54,13 @@
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                     })"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
+            @if ($shouldUpdateOnDragend())
+                x-on:color-changed="(event) => setTimeout(() => {
+                    if (state === event.detail.value) {
+                        $wire.set(@js($statePath), event.detail.value);
+                    }
+                }, 250)"
+            @endif
             {{ $getExtraAlpineAttributeBag()->class(['flex']) }}
         >
             <x-filament::input
