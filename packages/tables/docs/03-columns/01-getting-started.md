@@ -492,7 +492,7 @@ TextColumn::make('name')
     ->alignEnd()
 ```
 
-## Allowing a column headers to wrap
+## Allowing column headers to wrap
 
 By default, column headers will not wrap onto multiple lines, if they need more space. You may allow them to wrap using the `wrapHeader()` method:
 
