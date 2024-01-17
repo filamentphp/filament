@@ -53,7 +53,7 @@ return [
                 ],
 
                 'download_xlsx' => [
-                    'label' => 'Download .xlsx',
+                    'label' => '.xlsx downloaden',
                 ],
 
             ],
