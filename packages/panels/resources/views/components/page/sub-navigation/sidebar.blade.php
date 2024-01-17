@@ -8,12 +8,12 @@
 >
     @foreach ($navigation as $navigationGroup)
         <x-filament-panels::sidebar.group
-            :attributes="\Filament\Support\prepare_inherited_attributes($navigationGroup->getExtraAttributeBag())"
             :collapsible="$navigationGroup->isCollapsible()"
             :icon="$navigationGroup->getIcon()"
             :items="$navigationGroup->getItems()"
             :label="$navigationGroup->getLabel()"
             :sidebar-collapsible="false"
+            :attributes="\Filament\Support\prepare_inherited_attributes($navigationGroup->getExtraAttributeBag())"
         />
     @endforeach
 </ul>

@@ -67,8 +67,8 @@
                         @if ($groupLabel = $group->getLabel())
                             <x-filament::dropdown
                                 placement="bottom-start"
-                                :attributes="\Filament\Support\prepare_inherited_attributes($group->getExtraAttributeBag())"
                                 teleport
+                                :attributes="\Filament\Support\prepare_inherited_attributes($group->getExtraAttributeBag())"
                             >
                                 <x-slot name="trigger">
                                     <x-filament-panels::topbar.item
