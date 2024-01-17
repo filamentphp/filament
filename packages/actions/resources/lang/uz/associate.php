@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Bog\'lash',
+        'label' => "Bog'lash",
 
         'modal' => [
 
-            'heading' => ':label - bog\'lash',
+            'heading' => ":labelni bog'lash",
 
             'fields' => [
 
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Bog\'lash',
+                    'label' => "Bog'lash",
                 ],
 
                 'associate_another' => [
-                    'label' => 'Bog\'lash va boshqa bog\'lash',
+                    'label' => "Bog'lash va yana boshqa bog'lash",
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'associated' => [
-                'title' => 'Bog\'langan',
+                'title' => "Bog'langan",
             ],
 
         ],
