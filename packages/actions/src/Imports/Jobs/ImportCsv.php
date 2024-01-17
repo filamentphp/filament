@@ -38,7 +38,7 @@ class ImportCsv implements ShouldQueue
      */
     public function __construct(
         protected Import $import,
-        protected array $rows,
+        protected array | string $rows,
         protected array $columnMap,
         protected array $options = [],
     ) {
@@ -68,7 +68,11 @@ class ImportCsv implements ShouldQueue
         $processedRows = 0;
         $successfulRows = 0;
 
-        foreach ($this->rows as $row) {
+        if( ! is_array($this->rows)) {
+            $rows = unserialize(base64_decode($this->rows));
+        }
+
+        foreach ($rows ?? $this->rows as $row) {
             try {
                 DB::transaction(fn () => ($this->importer)($row));
                 $successfulRows++;
