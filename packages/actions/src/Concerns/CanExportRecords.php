@@ -124,9 +124,17 @@ trait CanExportRecords
             );
 
             $columnMap = collect($data['columnMap'])
-                ->filter(fn (array $column): bool => $column['isEnabled'] ?? false)
-                ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
-                ->all();
+             ->flatMap(function (array $column, string $columnName) {                 
+                 if (isset($column['isEnabled']) && $column['isEnabled']) {
+                     return [$columnName => $column['label']];
+                 }                
+                 return collect($column)->filter(function ($subColumn) {
+                     return is_array($subColumn) && ($subColumn['isEnabled'] ?? false);
+                 })->mapWithKeys(function ($subColumn, $subColumnName) use ($columnName) {
+                     return ["{$columnName}.{$subColumnName}" => $subColumn['label']];
+                 })->all();
+             })
+             ->all();
 
             $export = app(Export::class);
             $export->user()->associate($user);
