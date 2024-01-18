@@ -331,3 +331,22 @@ Settings::getUrl(panel: 'marketing');
 ## Adding sub-navigation between pages
 
 You may want to add a common sub-navigation to multiple pages, to allow users to quickly navigate between them. You can do this by defining a [cluster](clusters). Clusters can also contain [resources](resources), and you can switch between multiple pages or resources within a cluster.
+
+## Adding extra attributes to the body tag of a page
+
+You may wish to add extra attributes to the `<body>` tag of a page. To do this, you can set an array of attributes in `$extraBodyAttributes`:
+
+```php
+protected array $extraBodyAttributes = [];
+```
+
+Or, you can return an array of attributes and their values from the `getExtraBodyAttributes()` method:
+
+```php
+public function getExtraBodyAttributes(): array
+{
+    return [
+        'class' => 'settings-page',
+    ];
+}
+```
