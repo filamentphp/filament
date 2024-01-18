@@ -300,7 +300,7 @@ it('can send invoices to the primary contact by default', function () {
 
 ### Action state
 
-To ensure that an action exists or doesn't in a table, you can use the `assertFormComponentActionExists()` or  `assertFormComponentActionDoesNotExist()` method:
+To ensure that an action exists or doesn't in a form, you can use the `assertFormComponentActionExists()` or  `assertFormComponentActionDoesNotExist()` method:
 
 ```php
 use function Pest\Livewire\livewire;
