@@ -32,7 +32,7 @@ class ImportCsv implements ShouldQueue
     protected Importer $importer;
 
     /**
-     * @param  array<array<string, string>>  $rows
+     * @param  array<array<string, string>> | string  $rows
      * @param  array<string, string>  $columnMap
      * @param  array<string, mixed>  $options
      */
