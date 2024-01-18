@@ -122,6 +122,12 @@ trait HasFilters
     {
         $this->getTableFiltersForm()->fill();
 
+        if ($this->getTable()->hasDeferredFilters()) {
+            $this->applyTableFilters();
+
+            return;
+        }
+
         $this->handleTableFilterUpdates();
     }
 
