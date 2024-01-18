@@ -38,7 +38,7 @@ abstract class BasePage extends Component implements HasActions, HasForms, HasIn
     protected ?string $maxContentWidth = null;
 
     /**
-     * @var array<string, scalar>
+     * @var array<mixed>
      */
     protected array $extraBodyAttributes = [];
 
@@ -82,7 +82,7 @@ abstract class BasePage extends Component implements HasActions, HasForms, HasIn
     }
 
     /**
-     * @return array<string, scalar>
+     * @return array<mixed>
      */
     public function getExtraBodyAttributes(): array
     {
