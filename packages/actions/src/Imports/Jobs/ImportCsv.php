@@ -68,7 +68,7 @@ class ImportCsv implements ShouldQueue
         $processedRows = 0;
         $successfulRows = 0;
 
-        if( ! is_array($this->rows)) {
+        if (! is_array($this->rows)) {
             $rows = unserialize(base64_decode($this->rows));
         }
 
