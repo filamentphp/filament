@@ -1,5 +1,5 @@
 @props([
-    'livewire',
+    'livewire' => null,
 ])
 
 <!DOCTYPE html>
@@ -23,7 +23,7 @@
         @endif
 
         <title>
-            {{ filled($title = strip_tags($livewire->getTitle())) ? "{$title} - " : null }}
+            {{ filled($title = strip_tags(($livewire ?? null)?->getTitle() ?? '')) ? "{$title} - " : null }}
             {{ filament()->getBrandName() }}
         </title>
 
@@ -115,7 +115,7 @@
     <body
         {{
             $attributes
-                ->merge($livewire->getExtraBodyAttributes(), escape: false)
+                ->merge(($livewire ?? null)?->getExtraBodyAttributes() ?? [], escape: false)
                 ->class([
                     'fi-body',
                     'fi-panel-' . filament()->getId(),
