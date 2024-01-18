@@ -62,7 +62,7 @@ class PrepareCsvExport implements ShouldQueue
 
         $orders = $baseQuery->orders;
         $direction = $orders ? $orders[0]['direction'] : 'asc';
-        $descending = $direction === 'desc' ? true : false;
+        $descending = $direction === 'desc';
 
         $keyName = $query->getModel()->getKeyName();
 
