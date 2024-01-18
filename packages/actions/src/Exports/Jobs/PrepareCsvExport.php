@@ -102,7 +102,7 @@ class PrepareCsvExport implements ShouldQueue
 
             return;
         }
-        
+
         $baseQuery = $query->toBase();
         $sortDirection = $baseQuery->orders[0]['direction'] ?? 'asc';
 
