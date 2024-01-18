@@ -412,7 +412,7 @@ return [
         'searching_message' => 'A pesquisar...',
 
         'search_prompt' => 'Comece a escrever para pesquisar...',
-        
+
     ],
 
     'tags_input' => [

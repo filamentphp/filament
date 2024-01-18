@@ -201,7 +201,7 @@ return [
         ],
 
     ],
-    
+
     'sorting' => [
 
         'fields' => [
