@@ -17,7 +17,7 @@
         {{ $triggerAction }}
     </x-slot>
 
-    <div class="grid gap-y-4 p-6">
+    <div class="grid gap-y-4 p-6 max-h-96 overflow-y-auto">
         <h4
             class="text-base font-semibold leading-6 text-gray-950 dark:text-white"
         >
