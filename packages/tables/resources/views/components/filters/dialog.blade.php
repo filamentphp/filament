@@ -4,6 +4,7 @@
 
 @props([
     'activeFiltersCount' => 0,
+    'applyAction',
     'form',
     'layout',
     'maxHeight' => null,
@@ -52,6 +53,10 @@
             {{ $triggerAction->badge($activeFiltersCount) }}
         </x-slot>
 
-        <x-filament-tables::filters :form="$form" class="p-6" />
+        <x-filament-tables::filters
+            :apply-action="$applyAction"
+            :form="$form"
+            class="p-6"
+        />
     </x-filament::dropdown>
 @endif

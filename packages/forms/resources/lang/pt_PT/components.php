@@ -412,10 +412,36 @@ return [
         'searching_message' => 'A pesquisar...',
 
         'search_prompt' => 'Comece a escrever para pesquisar...',
+
     ],
 
     'tags_input' => [
         'placeholder' => 'Nova etiqueta',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Esconder palavra-passe',
+            ],
+
+            'show_password' => [
+                'label' => 'Mostrar palavra-passe',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Sim',
+            'false' => 'Não',
+        ],
+
     ],
 
     'wizard' => [

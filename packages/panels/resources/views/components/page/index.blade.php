@@ -116,7 +116,7 @@
         <x-filament-actions::modals />
     @elseif ($this->isTableLoaded() && filled($this->defaultTableAction))
         <div
-            wire:init="mountTableAction(@js($this->defaultTableAction), @if (filled($this->defaultTableActionRecord)) @js($this->defaultTableActionRecord) @elsenull @endif @if (filled($this->defaultTableActionArguments)) , @js($this->defaultTableActionArguments) @endif)"
+            wire:init="mountTableAction(@js($this->defaultTableAction), @if (filled($this->defaultTableActionRecord)) @js($this->defaultTableActionRecord) @else null @endif @if (filled($this->defaultTableActionArguments)) , @js($this->defaultTableActionArguments) @endif)"
         ></div>
     @endif
 
@@ -127,4 +127,6 @@
     @endif
 
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.end', scopes: $this->getRenderHookScopes()) }}
+
+    <x-filament-panels::unsaved-action-changes-alert />
 </div>

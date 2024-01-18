@@ -63,6 +63,7 @@ trait CanGenerateTables
             $columnData = [];
 
             if (in_array($columnName, [
+                'id',
                 'sku',
                 'uuid',
             ])) {

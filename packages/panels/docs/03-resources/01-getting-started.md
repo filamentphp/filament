@@ -364,6 +364,8 @@ public static function getNavigationParentItem(): ?string
 }
 ```
 
+> If you're reaching for a third level of navigation like this, you should consider using [clusters](clusters) instead, which are a logical grouping of resources and [custom pages](../pages), which can share their own separate navigation.
+
 ## Generating URLs to resource pages
 
 Filament provides `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
@@ -505,6 +507,8 @@ public static function getRecordSubNavigation(Page $page): array
 ```
 
 Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
+
+> If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../pages), you might be looking for [clusters](../clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
 
 ### Sub-navigation position
 

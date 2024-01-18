@@ -146,7 +146,7 @@ This will create several files in the `app/Filament/Resources` directory:
 |   |   +-- ListPatients.php
 ```
 
-Visit `/admin/patients` in your browser and observe a new link called "Patients" in the sidebar. Clicking the link will display an empty table. Let's add a form to create new patients.
+Visit `/admin/patients` in your browser and observe a new link called "Patients" in the navigation. Clicking the link will display an empty table. Let's add a form to create new patients.
 
 ### Setting up the resource form
 

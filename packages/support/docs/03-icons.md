@@ -132,6 +132,10 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `forms::components.repeater.actions.reorder` - Trigger button of a reorder action in a repeater item
 - `forms::components.select.actions.create-option` - Trigger button of a create option action in a select field
 - `forms::components.select.actions.edit-option` - Trigger button of an edit option action in a select field
+- `forms::components.text-input.actions.hide-password` - Trigger button of a hide password action in a text input field
+- `forms::components.text-input.actions.show-password` - Trigger button of a show password action in a text input field
+- `forms::components.toggle-buttons.boolean.false` - "False" option of a `boolean()` toggle buttons field
+- `forms::components.toggle-buttons.boolean.true` - "True" option of a `boolean()` toggle buttons field
 - `forms::components.wizard.completed-step` - Completed step in a wizard
 
 ### Table Builder icon aliases
@@ -181,6 +185,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `actions::dissociate-action.modal` - Modal of a dissociate action
 - `actions::edit-action` - Trigger button of an edit action
 - `actions::edit-action.grouped` - Trigger button of a grouped edit action
+- `actions::export-action.grouped` - Trigger button of a grouped export action
 - `actions::force-delete-action` - Trigger button of a force delete action
 - `actions::force-delete-action.grouped` - Trigger button of a grouped force delete action
 - `actions::force-delete-action.modal` - Modal of a force delete action

@@ -9,6 +9,7 @@
     },
     "require": {
         "php": "^8.1",
+        "anourvalar/eloquent-serialize": "^1.2",
         "filament/forms": "self.version",
         "filament/infolists": "self.version",
         "filament/notifications": "self.version",
@@ -17,6 +18,7 @@
         "illuminate/database": "^10.0",
         "illuminate/support": "^10.0",
         "league/csv": "9.11.0",
+        "openspout/openspout": "^4.23",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {

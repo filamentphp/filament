@@ -8,7 +8,7 @@ By default, the configuration file is located at `app/Providers/Filament/AdminPa
 
 ## Introducing panels
 
-By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources/getting-started), [pages](pages), and [dashboard widgets](dashboard) you create get registered to this panel.
+By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources/getting-started), [custom pages](pages), and [dashboard widgets](dashboard) you create get registered to this panel.
 
 However, you can create as many panels as you want, and each can have its own set of resources, pages and widgets.
 
@@ -145,6 +145,23 @@ public function panel(Panel $panel): Panel
         ->spa();
 }
 ```
+
+## Unsaved changes alerts
+
+You may alert users if they attempt to navigate away from a page without saving their changes. This is applied on [Create](resources/creating-records) and [Edit](resources/editing-records) pages of a resource, as well as any open action modals. To enable this feature, you can use the `unsavedChangesAlerts()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->unsavedChangesAlerts();
+}
+```
+
+> Please note: this feature is not compatible with [SPA mode](#spa-mode).
 
 ## Applying middleware
 

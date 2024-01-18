@@ -11,6 +11,12 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => ':count weniger anzeigen',
+                'expand_list' => ':count weitere anzeigen',
+            ],
+
             'more_list_items' => 'und :count weitere',
         ],
 

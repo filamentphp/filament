@@ -6,10 +6,9 @@ use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
-use Illuminate\Support\Stringable;
 
 use function Filament\Support\format_money;
 use function Filament\Support\format_number;
@@ -26,9 +25,9 @@ trait CanFormatState
 
     protected string | Closure | null $wordLimitEnd = null;
 
-    protected string | Closure | null $prefix = null;
+    protected string | Htmlable | Closure | null $prefix = null;
 
-    protected string | Closure | null $suffix = null;
+    protected string | Htmlable | Closure | null $suffix = null;
 
     protected string | Closure | null $timezone = null;
 
@@ -171,7 +170,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function words(int $words = 100, string $end = '...'): static
+    public function words(int | Closure | null $words = 100, string | Closure | null $end = '...'): static
     {
         $this->wordLimit = $words;
         $this->wordLimitEnd = $end;
@@ -179,14 +178,14 @@ trait CanFormatState
         return $this;
     }
 
-    public function prefix(string | Closure | null $prefix): static
+    public function prefix(string | Htmlable | Closure | null $prefix): static
     {
         $this->prefix = $prefix;
 
         return $this;
     }
 
-    public function suffix(string | Closure | null $suffix): static
+    public function suffix(string | Htmlable | Closure | null $suffix): static
     {
         $this->suffix = $suffix;
 
@@ -209,9 +208,16 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
+        $isHtml = $this->isHtml();
+
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
         ]);
+
+        if ($state instanceof Htmlable) {
+            $isHtml = true;
+            $state = $state->toHtml();
+        }
 
         if ($state instanceof LabelInterface) {
             $state = $state->getLabel();
@@ -225,23 +231,39 @@ trait CanFormatState
             $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
         }
 
-        if (filled($prefix = $this->getPrefix())) {
+        if ($isHtml && $this->isMarkdown()) {
+            $state = Str::markdown($state);
+        }
+
+        $prefix = $this->getPrefix();
+        $suffix = $this->getSuffix();
+
+        if (
+            (($prefix instanceof Htmlable) || ($suffix instanceof Htmlable)) &&
+            (! $isHtml)
+        ) {
+            $isHtml = true;
+            $state = e($state);
+        }
+
+        if (filled($prefix)) {
+            if ($prefix instanceof Htmlable) {
+                $prefix = $prefix->toHtml();
+            }
+
             $state = $prefix . $state;
         }
 
-        if (filled($suffix = $this->getSuffix())) {
+        if (filled($suffix)) {
+            if ($suffix instanceof Htmlable) {
+                $suffix = $suffix->toHtml();
+            }
+
             $state = $state . $suffix;
         }
 
-        if ($state instanceof HtmlString) {
-            return $state;
-        }
-
-        if ($this->isHtml()) {
-            return str($state)
-                ->when($this->isMarkdown(), fn (Stringable $stringable) => $stringable->markdown())
-                ->sanitizeHtml()
-                ->toHtmlString();
+        if ($isHtml) {
+            return str($state)->sanitizeHtml()->toHtmlString();
         }
 
         return $state;
@@ -277,12 +299,12 @@ trait CanFormatState
         return $this->evaluate($this->isHtml) || $this->isMarkdown();
     }
 
-    public function getPrefix(): ?string
+    public function getPrefix(): string | Htmlable | null
     {
         return $this->evaluate($this->prefix);
     }
 
-    public function getSuffix(): ?string
+    public function getSuffix(): string | Htmlable | null
     {
         return $this->evaluate($this->suffix);
     }

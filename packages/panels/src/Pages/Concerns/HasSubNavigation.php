@@ -22,6 +22,10 @@ trait HasSubNavigation
      */
     public function getSubNavigation(): array
     {
+        if (filled($cluster = static::getCluster())) {
+            return $this->generateNavigationItems($cluster::getClusteredComponents());
+        }
+
         return [];
     }
 
@@ -39,42 +43,97 @@ trait HasSubNavigation
             return $this->cachedSubNavigation;
         }
 
-        [$navigationItems, $navigationGroups] = array_reduce($this->getSubNavigation(), function (array $groups, NavigationItem | NavigationGroup $item) {
-            $groups[$item instanceof NavigationItem ? 0 : 1][] = $item;
+        $navigationItems = [];
 
-            return $groups;
-        }, [[], []]);
+        $navigationGroups = [];
 
-        return $this->cachedSubNavigation ??= [
+        foreach ($this->getSubNavigation() as $item) {
+            if ($item instanceof NavigationGroup) {
+                $navigationGroups[$item->getLabel()] = $item;
+
+                continue;
+            }
+
+            $navigationItems[] = $item;
+        }
+
+        $navigationItems = collect($navigationItems)
+            ->sortBy(fn (NavigationItem $item): int => $item->getSort())
+            ->filter(function (NavigationItem $item) use (&$navigationGroups): bool {
+                if (! $item->isVisible()) {
+                    return false;
+                }
+
+                $itemGroup = $item->getGroup();
+
+                if (array_key_exists($itemGroup, $navigationGroups)) {
+                    $navigationGroups[$itemGroup]->items([
+                        ...$navigationGroups[$itemGroup]->getItems(),
+                        $item,
+                    ]);
+
+                    return false;
+                }
+
+                if (filled($itemGroup)) {
+                    $navigationGroups[$itemGroup] = NavigationGroup::make()
+                        ->label($itemGroup)
+                        ->items([$item]);
+
+                    return false;
+                }
+
+                return true;
+            })
+            ->all();
+
+        foreach ($navigationGroups as $navigationGroup) {
+            $navigationGroup->items(
+                collect($navigationGroup->getItems())
+                    ->filter(fn (NavigationItem $item): bool => $item->isVisible())
+                    ->sortBy(fn (NavigationItem $item): int => $item->getSort())
+                    ->all(),
+            );
+        }
+
+        return $this->cachedSubNavigation = [
             ...($navigationItems ? [NavigationGroup::make()->items($navigationItems)] : []),
             ...$navigationGroups,
         ];
     }
 
     /**
-     * @param  array<class-string<Page>>  $pages
+     * @param  array<class-string<Page>>  $components
      * @return array<NavigationItem>
      */
-    public function generateNavigationItems(array $pages): array
+    public function generateNavigationItems(array $components): array
     {
         $parameters = $this->getSubNavigationParameters();
 
         $items = [];
 
-        foreach ($pages as $page) {
-            $isResourcePage = is_subclass_of($page, ResourcePage::class);
+        foreach ($components as $component) {
+            $isResourcePage = is_subclass_of($component, ResourcePage::class);
 
             $shouldRegisterNavigation = $isResourcePage ?
-                $page::shouldRegisterNavigation($parameters) :
-                $page::shouldRegisterNavigation();
+                $component::shouldRegisterNavigation($parameters) :
+                $component::shouldRegisterNavigation();
 
             if (! $shouldRegisterNavigation) {
                 continue;
             }
 
+            $canAccess = $isResourcePage ?
+                $component::canAccess($parameters) :
+                $component::canAccess();
+
+            if (! $canAccess) {
+                continue;
+            }
+
             $pageItems = $isResourcePage ?
-                $page::getNavigationItems($parameters) :
-                $page::getNavigationItems();
+                $component::getNavigationItems($parameters) :
+                $component::getNavigationItems();
 
             $items = [
                 ...$items,

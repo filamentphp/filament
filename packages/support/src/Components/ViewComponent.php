@@ -7,8 +7,6 @@ use Exception;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\ComponentAttributeBag;
-use ReflectionClass;
-use ReflectionMethod;
 
 abstract class ViewComponent extends Component implements Htmlable
 {
@@ -30,11 +28,6 @@ abstract class ViewComponent extends Component implements Htmlable
     protected array $viewData = [];
 
     protected string $viewIdentifier;
-
-    /**
-     * @var array<string, array<string>>
-     */
-    protected static array $methodCache = [];
 
     /**
      * @param  view-string | null  $view
@@ -70,22 +63,7 @@ abstract class ViewComponent extends Component implements Htmlable
      */
     protected function extractPublicMethods(): array
     {
-        if (! isset(static::$methodCache[static::class])) {
-            $reflection = new ReflectionClass($this);
-
-            static::$methodCache[static::class] = array_map(
-                fn (ReflectionMethod $method): string => $method->getName(),
-                $reflection->getMethods(ReflectionMethod::IS_PUBLIC),
-            );
-        }
-
-        $values = [];
-
-        foreach (static::$methodCache[static::class] as $method) {
-            $values[$method] = Closure::fromCallable([$this, $method]);
-        }
-
-        return $values;
+        return ComponentManager::resolve()->extractPublicMethods($this);
     }
 
     /**

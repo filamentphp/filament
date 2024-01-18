@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Illuminate\Contracts\Support\Arrayable;
@@ -12,6 +13,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasPlaceholder;
+    use HasColor;
     use HasExtraAlpineAttributes;
     use HasReorderAnimationDuration;
 

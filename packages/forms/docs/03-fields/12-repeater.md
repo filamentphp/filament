@@ -499,7 +499,7 @@ Repeater::make('members')
 In many cases, you will want to ensure some sort of uniqueness between repeater items. A couple of common examples could be:
 
 - Ensuring that only one [checkbox](checkbox) or [toggle](toggle) is activated at once across items in the repeater.
-- Ensuring that an option may only be selected once across [select](select), [radio](radio) or [checkbox list](checkbox-list) fields in a repeater.
+- Ensuring that an option may only be selected once across [select](select), [radio](radio), [checkbox list](checkbox-list), or [toggle buttons](toggle-buttons) fields in a repeater.
 
 You can use the `distinct()` method to validate that the state of a field is unique across all items in the repeater:
 
@@ -518,7 +518,7 @@ Repeater::make('answers')
 The behaviour of the `distinct()` validation depends on the data type that the field handles
 
 - If the field returns a boolean, like a [checkbox](checkbox) or [toggle](toggle), the validation will ensure that only one item has a value of `true`. There may be many fields in the repeater that have a value of `false`.
-- Otherwise, for fields like a [select](select), [radio](radio), or [checkbox list](checkbox-list), the validation will ensure that each option may only be selected once across all items in the repeater.
+- Otherwise, for fields like a [select](select), [radio](radio), [checkbox list](checkbox-list), or [toggle buttons](toggle-buttons), the validation will ensure that each option may only be selected once across all items in the repeater.
 
 #### Automatically fixing indistinct state
 
@@ -541,11 +541,11 @@ This method will automatically enable the `distinct()` and `live()` methods on t
 Depending on the data type that the field handles, the behaviour of the `fixIndistinctState()` adapts:
 
 - If the field returns a boolean, like a [checkbox](checkbox) or [toggle](toggle), and one of the fields is enabled, Filament will automatically disable all other enabled fields on behalf of the user.
-- Otherwise, for fields like a [select](select), [radio](radio), or [checkbox list](checkbox-list), when a user selects an option, Filament will automatically deselect all other usages of that option on behalf of the user.
+- Otherwise, for fields like a [select](select), [radio](radio), [checkbox list](checkbox-list), or [toggle buttons](toggle-buttons), when a user selects an option, Filament will automatically deselect all other usages of that option on behalf of the user.
 
 #### Disabling options when they are already selected in another item
 
-If you'd like to disable options in a [select](select), [radio](radio), or [checkbox list](checkbox-list) when they are already selected in another item, you can use the `disableOptionsWhenSelectedInSiblingRepeaterItems()` method:
+If you'd like to disable options in a [select](select), [radio](radio), [checkbox list](checkbox-list), or [toggle buttons](toggle-buttons) when they are already selected in another item, you can use the `disableOptionsWhenSelectedInSiblingRepeaterItems()` method:
 
 ```php
 use Filament\Forms\Components\Repeater;

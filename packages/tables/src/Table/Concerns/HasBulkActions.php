@@ -7,8 +7,10 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Enums\RecordCheckboxPosition;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use InvalidArgumentException;
 
 trait HasBulkActions
@@ -124,7 +126,7 @@ trait HasBulkActions
     public function getBulkAction(string $name): ?BulkAction
     {
         $action = $this->getFlatBulkActions()[$name] ?? null;
-        $action?->records($this->getLivewire()->getSelectedTableRecords(...));
+        $action?->records(fn (): EloquentCollection | Collection => $this->getLivewire()->getSelectedTableRecords($action->shouldFetchSelectedRecords()));
 
         return $action;
     }

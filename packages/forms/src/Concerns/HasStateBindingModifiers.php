@@ -59,11 +59,11 @@ trait HasStateBindingModifiers
 
     public function applyStateBindingModifiers(string $expression, bool $isOptimisticallyLive = true): string
     {
-        $entangled = str($expression)->contains('entangle');
+        $entangled = str($expression)->is('$entangle(*)');
 
         $modifiers = $this->getStateBindingModifiers(withBlur: ! $entangled, withDebounce: ! $entangled, isOptimisticallyLive: $isOptimisticallyLive);
 
-        if (str($expression)->is('$entangle(*)')) {
+        if ($entangled) {
             return (string) str($expression)->replaceLast(
                 ')',
                 in_array('live', $modifiers) ? ', true)' : ', false)',
@@ -110,11 +110,11 @@ trait HasStateBindingModifiers
         }
 
         if ($this instanceof Component) {
-            return $this->getContainer()->getStateBindingModifiers();
+            return $this->getContainer()->getStateBindingModifiers($withBlur, $withDebounce, $isOptimisticallyLive);
         }
 
         if ($this->getParentComponent()) {
-            return $this->getParentComponent()->getStateBindingModifiers();
+            return $this->getParentComponent()->getStateBindingModifiers($withBlur, $withDebounce, $isOptimisticallyLive);
         }
 
         return [];

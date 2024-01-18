@@ -1,5 +1,6 @@
 import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import AlpineLazyLoadAssets from 'alpine-lazy-load-assets'
+import { md5 } from 'js-md5'
 import Sortable from './sortable'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
 
@@ -104,4 +105,5 @@ const pluralize = function (text, number, variables) {
     )
 }
 
+window.jsMd5 = md5
 window.pluralize = pluralize

@@ -158,6 +158,20 @@ TextInput::make('domain')
     ->suffixIconColor('success')
 ```
 
+## Revealable password inputs
+
+When using `password()`, you can also make the input `revealable()`, so that the user can see a plain text version of the password they're typing by clicking a button:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('password')
+    ->password()
+    ->revealable()
+```
+
+<AutoScreenshot name="forms/fields/text-input/revealable-password" alt="Text input with revealable password" version="3.x" />
+
 ## Input masking
 
 Input masking is the practice of defining a format that the input value must conform to.
@@ -195,6 +209,23 @@ TextInput::make('amount')
     ->stripCharacters(',')
     ->numeric()
 ```
+
+## Making the field read-only
+
+Not to be confused with [disabling the field](getting-started#disabling-a-field), you may make the field "read-only" using the `readonly()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->readonly()
+```
+
+There are a few differences, compared to [`disabled()`](getting-started#disabling-a-field):
+
+- When using `readOnly()`, the field will still be sent to the server when the form is submitted. It can be mutated with the browser console, or via JavaScript. You can use [`dehydrated(false)`](advanced#preventing-a-field-from-being-dehydrated) to prevent this.
+- There are no styling changes, such as less opacity, when using `readOnly()`.
+- The field is still focusable when using `readOnly()`.
 
 ## Text input validation
 

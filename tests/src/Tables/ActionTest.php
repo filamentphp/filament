@@ -79,20 +79,20 @@ it('can disable an action', function () {
 
 it('can have an icon', function () {
     livewire(PostsTable::class)
-        ->assertTableActionHasIcon('has-icon', 'heroicon-m-pencil-square')
-        ->assertTableActionDoesNotHaveIcon('has-icon', 'heroicon-m-trash');
+        ->assertTableActionHasIcon('hasIcon', 'heroicon-m-pencil-square')
+        ->assertTableActionDoesNotHaveIcon('hasIcon', 'heroicon-m-trash');
 });
 
 it('can have a label', function () {
     livewire(PostsTable::class)
-        ->assertTableActionHasLabel('has-label', 'My Action')
-        ->assertTableActionDoesNotHaveLabel('has-label', 'My Other Action');
+        ->assertTableActionHasLabel('hasLabel', 'My Action')
+        ->assertTableActionDoesNotHaveLabel('hasLabel', 'My Other Action');
 });
 
 it('can have a color', function () {
     livewire(PostsTable::class)
-        ->assertTableActionHasColor('has-color', 'primary')
-        ->assertTableActionDoesNotHaveColor('has-color', 'gray');
+        ->assertTableActionHasColor('hasColor', 'primary')
+        ->assertTableActionDoesNotHaveColor('hasColor', 'gray');
 });
 
 it('can have a URL', function () {
@@ -103,19 +103,19 @@ it('can have a URL', function () {
 
 it('can open a URL in a new tab', function () {
     livewire(PostsTable::class)
-        ->assertTableActionShouldOpenUrlInNewTab('url-in-new-tab')
-        ->assertTableActionShouldNotOpenUrlInNewTab('url-not-in-new-tab');
+        ->assertTableActionShouldOpenUrlInNewTab('urlInNewTab')
+        ->assertTableActionShouldNotOpenUrlInNewTab('urlNotInNewTab');
 });
 
 it('can state whether a table action exists', function () {
     livewire(PostsTable::class)
         ->assertTableActionExists('exists')
-        ->assertTableActionDoesNotExist('does-not-exist');
+        ->assertTableActionDoesNotExist('doesNotExist');
 });
 
 it('can state whether table actions exist in order', function () {
     livewire(PostsTable::class)
         ->assertTableActionsExistInOrder(['edit', 'delete'])
-        ->assertTableHeaderActionsExistInOrder(['exists', 'exists-in-order'])
-        ->assertTableEmptyStateActionsExistInOrder(['empty-exists', 'empty-exists-in-order']);
+        ->assertTableHeaderActionsExistInOrder(['exists', 'existsInOrder'])
+        ->assertTableEmptyStateActionsExistInOrder(['emptyExists', 'emptyExistsInOrder']);
 });

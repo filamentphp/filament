@@ -37,6 +37,11 @@ abstract class BasePage extends Component implements HasActions, HasForms, HasIn
 
     protected ?string $maxContentWidth = null;
 
+    /**
+     * @var array<mixed>
+     */
+    protected array $extraBodyAttributes = [];
+
     public static string | Alignment $formActionsAlignment = Alignment::Start;
 
     public static bool $formActionsAreSticky = false;
@@ -74,6 +79,14 @@ abstract class BasePage extends Component implements HasActions, HasForms, HasIn
     public function getMaxContentWidth(): MaxWidth | string | null
     {
         return $this->maxContentWidth;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getExtraBodyAttributes(): array
+    {
+        return $this->extraBodyAttributes;
     }
 
     /**

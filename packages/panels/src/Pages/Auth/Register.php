@@ -7,6 +7,7 @@ use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Events\Auth\Registered;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
@@ -76,6 +77,8 @@ class Register extends SimplePage
         $data = $this->form->getState();
 
         $user = $this->getUserModel()::create($data);
+
+        event(new Registered($user));
 
         $this->sendEmailVerificationNotification($user);
 
@@ -156,6 +159,7 @@ class Register extends SimplePage
         return TextInput::make('password')
             ->label(__('filament-panels::pages/auth/register.form.password.label'))
             ->password()
+            ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->rule(Password::default())
             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
@@ -168,6 +172,7 @@ class Register extends SimplePage
         return TextInput::make('passwordConfirmation')
             ->label(__('filament-panels::pages/auth/register.form.password_confirmation.label'))
             ->password()
+            ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->dehydrated(false);
     }

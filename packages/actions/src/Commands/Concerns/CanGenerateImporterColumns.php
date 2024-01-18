@@ -43,6 +43,7 @@ trait CanGenerateImporterColumns
             $columnData = [];
 
             if (in_array($columnName, [
+                'id',
                 'sku',
                 'uuid',
             ])) {

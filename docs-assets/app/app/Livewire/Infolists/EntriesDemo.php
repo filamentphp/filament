@@ -8,6 +8,7 @@ use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
@@ -464,6 +465,19 @@ class EntriesDemo extends Component implements HasInfolists
                             ->copyable()
                             ->copyMessage('Copied!')
                             ->copyMessageDuration(1500),
+                    ]),
+                Group::make()
+                    ->id('keyValue')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        KeyValueEntry::make('meta')
+                            ->state([
+                                'description' => 'Filament is a collection of Laravel packages',
+                                'og:type' => 'website',
+                                'og:site_name' => 'Filament',
+                            ]),
                     ]),
                 Group::make()
                     ->id('repeatable')

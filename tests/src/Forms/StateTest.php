@@ -301,19 +301,37 @@ test('custom logic can be executed after child component state is updated', func
 });
 
 test('custom logic can be executed only once after nested state is updated', function () {
+    $calls = 0;
+
     ComponentContainer::make($livewire = Livewire::make())
         ->statePath('data')
         ->components([
             (new Component())
                 ->statePath($statePath = Str::random())
-                ->afterStateUpdated(fn (Component $component, $state) => $component->state([strrev($state[0])])),
+                ->afterStateUpdated(function () use (&$calls) {
+                    $calls++;
+                }),
         ])
-        ->fill([$statePath => [$state = Str::random()]])
+        ->tap(fn (ComponentContainer $container) => $container->callAfterStateUpdated("data.{$statePath}.0"))
+        ->tap(fn (ComponentContainer $container) => $container->callAfterStateUpdated("data.{$statePath}.1"));
+
+    expect($calls)->toEqual(1);
+});
+
+test('custom logic can be executed more than once after nested state is updated if the state changes', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath = Str::random())
+                ->afterStateUpdated(fn (Component $component, $state) => $component->state([$state[0] + 1])),
+        ])
+        ->fill([$statePath => [0]])
         ->tap(fn (ComponentContainer $container) => $container->callAfterStateUpdated("data.{$statePath}.0"))
         ->tap(fn (ComponentContainer $container) => $container->callAfterStateUpdated("data.{$statePath}.1"));
 
     expect($livewire)
-        ->getData()->toBe([$statePath => [strrev($state)]]);
+        ->getData()->toBe([$statePath => [2]]);
 });
 
 test('custom logic on parent component can be executed after child component state is updated', function () {

@@ -137,6 +137,7 @@ class Login extends SimplePage
             ->label(__('filament-panels::pages/auth/login.form.password.label'))
             ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament-panels::pages/auth/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
             ->password()
+            ->revealable(filament()->arePasswordsRevealable())
             ->autocomplete('current-password')
             ->required()
             ->extraInputAttributes(['tabindex' => 2]);

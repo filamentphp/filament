@@ -22,6 +22,7 @@
 >
     <{{ $sortable ? 'button' : 'span' }}
         @if ($sortable)
+            aria-label="{{ __('filament-tables::table.sorting.fields.column.label') }} {{ $sortDirection === 'asc' ? __('filament-tables::table.sorting.fields.direction.options.desc') : __('filament-tables::table.sorting.fields.direction.options.asc') }}"
             type="button"
             wire:click="sortTable('{{ $name }}')"
         @endif
@@ -40,12 +41,6 @@
             },
         ])
     >
-        @if ($sortable)
-            <span class="sr-only">
-                {{ __('filament-tables::table.sorting.fields.column.label') }}
-            </span>
-        @endif
-
         <span
             class="fi-ta-header-cell-label text-sm font-semibold text-gray-950 dark:text-white"
         >
@@ -62,10 +57,6 @@
                     'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 group-focus-visible:text-gray-500 dark:group-hover:text-gray-400 dark:group-focus-visible:text-gray-400' => ! $activelySorted,
                 ])
             />
-
-            <span class="sr-only">
-                {{ $sortDirection === 'asc' ? __('filament-tables::table.sorting.fields.direction.options.desc') : __('filament-tables::table.sorting.fields.direction.options.asc') }}
-            </span>
         @endif
     </{{ $sortable ? 'button' : 'span' }}>
 </th>

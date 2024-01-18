@@ -5,13 +5,13 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-media-library-plugin:"^3.1" -W
+composer require filament/spatie-laravel-media-library-plugin:"^3.2" -W
 ```
 
 If you haven't already done so, you need to publish the migration to create the media table:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
 ```
 
 Run the migrations:
@@ -36,7 +36,7 @@ SpatieMediaLibraryFileUpload::make('avatar')
 
 The media library file upload supports all the customization options of the [original file upload component](https://filamentphp.com/docs/forms/fields/file-upload).
 
-> The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](https://filamentphp.com/docs/forms/getting-started#field-relationships) section**. If you're using a [panel](../panels), you can skip this step.
+> The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [setting a form model](https://filamentphp.com/docs/forms/adding-a-form-to-a-livewire-component#setting-a-form-model) section**. If you're using a [panel](../panels), you can skip this step.
 
 ### Passing a collection
 
@@ -150,6 +150,29 @@ SpatieMediaLibraryFileUpload::make('attachments')
     ->manipulations([
         'thumb' => ['orientation' => '90'],
     ])
+```
+
+### Filtering media
+
+It's possible to target a file upload component to only handle a certain subset of media in a collection. To do that, you can filter the media collection using the `filterMediaUsing()` method. This method accepts a function that receives the `$media` collection and manipulates it. You can use any [collection method](https://laravel.com/docs/collections#available-methods) to filter it.
+
+For example, you could scope the field to only handle media that has certain custom properties:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Get;
+use Illuminate\Support\Collection;
+
+SpatieMediaLibraryFileUpload::make('images')
+    ->customProperties(fn (Get $get): array => [
+        'gallery_id' => $get('gallery_id'),
+    ])
+    ->filterMediaUsing(
+        fn (Collection $media, Get $get): Collection => $media->where(
+            'custom_properties.gallery_id',
+            $get('gallery_id')
+        ),
+    )
 ```
 
 ## Table column

@@ -18,7 +18,7 @@ Filament requires the following to run:
 Require the Notifications package using Composer:
 
 ```bash
-composer require filament/notifications:"^3.1" -W
+composer require filament/notifications:"^3.2" -W
 ```
 
 ## New Laravel projects

@@ -147,6 +147,8 @@ public function infolist(Infolist $infolist): Infolist
 }
 ```
 
+## Adding view pages to resource sub-navigation
+
 If you're using [resource sub-navigation](getting-started#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
 
 ```php
