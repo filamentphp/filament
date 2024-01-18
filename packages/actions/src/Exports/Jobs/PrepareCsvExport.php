@@ -103,13 +103,16 @@ class PrepareCsvExport implements ShouldQueue
             return;
         }
 
+        $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
+
         $query->toBase()
-            ->select([$query->getModel()->getQualifiedKeyName()])
+            ->select([$qualifiedKeyName])
             ->chunkById(
                 $this->chunkSize * 10,
                 fn (Collection $records) => $dispatchRecords(
                     Arr::pluck($records->all(), $keyName),
                 ),
+                $qualifiedKeyName,
             );
     }
 
