@@ -157,11 +157,21 @@ trait HasState
     /**
      * @param  array<string, mixed>  $state
      */
-    public function dehydrateState(array &$state): void
+    public function dehydrateState(array &$state, bool $isDehydrated = true): void
     {
-        if (! $this->isDehydrated()) {
+        if (! ($isDehydrated && $this->isDehydrated())) {
             if ($this->hasStatePath()) {
                 Arr::forget($state, $this->getStatePath());
+
+                return;
+            }
+
+            // If the component is not dehydrated, but it has child components,
+            // we need to dehydrate the child component containers while
+            // informing them that they are not dehydrated, so that their
+            // child components get removed from the state.
+            foreach ($this->getChildComponentContainers() as $container) {
+                $container->dehydrateState($state, isDehydrated: false);
             }
 
             return;
@@ -178,7 +188,7 @@ trait HasState
                 continue;
             }
 
-            $container->dehydrateState($state);
+            $container->dehydrateState($state, $isDehydrated);
         }
     }
 
