@@ -27,9 +27,9 @@ class ComponentManager
     {
     }
 
-    public static function isResolved(): void
+    public static function isResolved(): bool
     {
-        app()->resolved(static::class);
+        return app()->resolved(static::class);
     }
 
     public static function register(): void
