@@ -203,6 +203,23 @@ public function table(Table $table): Table
 }
 ```
 
+### Preventing bulk-selection of all pages
+
+The `selectCurrentPageOnly()` method can be used to prevent the user from easily bulk-selecting all records in the table at once, and instead only allows them to select one page at a time:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->bulkActions([
+            // ...
+        ])
+        ->selectCurrentPageOnly();
+}
+```
+
 ## Header actions
 
 Both [row actions](#row-actions) and [bulk actions](#bulk-actions) can be rendered in the header of the table. You can put them in the `$table->headerActions()` method:
