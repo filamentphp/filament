@@ -1,5 +1,7 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Illuminate\Contracts\Support\Htmlable;
+    use Illuminate\Contracts\View\View;
 @endphp
 
 @props([
@@ -8,7 +10,7 @@
     'fullWidth' => false,
 ])
 
-@if ($actions instanceof \Illuminate\Contracts\View\View)
+@if (($actions instanceof View) || ($actions instanceof Htmlable))
     {{ $actions }}
 @elseif (is_array($actions))
     @php

@@ -4,13 +4,13 @@ return [
 
     'title' => 'Ro\'yxatdan o\'tish',
 
-    'heading' => 'Hisob qaydnomasini ro\'yxatdan o\'tkazish',
+    'heading' => 'Hisob qaydnomasini ro\'yxatdan o\'tkazing',
 
     'actions' => [
 
         'login' => [
             'before' => 'yoki',
-            'label' => 'o\'z hisob raqamingiz orqali kirish',
+            'label' => 'o\'z hisob qaydnomangiz orqali kiring',
         ],
 
     ],

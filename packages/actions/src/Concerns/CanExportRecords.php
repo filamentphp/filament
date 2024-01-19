@@ -22,7 +22,9 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Foundation\Bus\PendingChain;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 use function Filament\Support\format_number;
@@ -124,6 +126,10 @@ trait CanExportRecords
             );
 
             $columnMap = collect($data['columnMap'])
+                ->dot()
+                ->reduce(fn (Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
+                    Str::beforeLast($key, '.') => [Str::afterLast($key, '.') => $value],
+                ]), collect())
                 ->filter(fn (array $column): bool => $column['isEnabled'] ?? false)
                 ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
                 ->all();

@@ -13,11 +13,11 @@ return [
         'text' => [
 
             'actions' => [
-                'collapse_list' => ':count dan kamroq ko\'rsatish',
-                'expand_list' => ':count dan ko\'proq ko\'rsatish',
+                'collapse_list' => ':counttadan kamroq ko\'rsatish',
+                'expand_list' => ':counttadan ko\'proq ko\'rsatish',
             ],
 
-            'more_list_items' => 'va :count dan ko\'proq',
+            'more_list_items' => 'va :counttadan ko\'proq',
 
         ],
 
@@ -50,7 +50,7 @@ return [
         'heading' => 'Xulosa',
 
         'subheadings' => [
-            'all' => 'Barcha :label',
+            'all' => 'Barcha :labellar',
             'group' => ':group xulosa',
             'page' => 'Ushbu sahifa',
         ],
@@ -84,7 +84,7 @@ return [
         ],
 
         'filter' => [
-            'label' => 'Filterlash',
+            'label' => 'Filtrlash',
         ],
 
         'group' => [
@@ -114,12 +114,12 @@ return [
         'actions' => [
 
             'remove' => [
-                'label' => 'Filterni o\'chirish',
+                'label' => 'Filtrni o\'chirish',
             ],
 
             'remove_all' => [
-                'label' => 'Barcha filterlarni olib tashlash',
-                'tooltip' => 'Barcha filterlarni olib tashlash',
+                'label' => 'Barcha filtrlarni olib tashlash',
+                'tooltip' => 'Barcha filtrlarni olib tashlash',
             ],
 
             'reset' => [
@@ -128,9 +128,9 @@ return [
 
         ],
 
-        'heading' => 'Filterlar',
+        'heading' => 'Filtrlar',
 
-        'indicator' => 'Faol filterlar',
+        'indicator' => 'Faol filtrlar',
 
         'multi_select' => [
             'placeholder' => 'Barchasi',
@@ -182,7 +182,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 ma\'lumot tanlangan|:count ma\'lumotlar tanlangan',
+        'selected_count' => '1ta ma\'lumot tanlangan|:countta ma\'lumotlar tanlangan',
 
         'actions' => [
 
@@ -191,7 +191,7 @@ return [
             ],
 
             'deselect_all' => [
-                'label' => 'Barchasini qayta belgilash',
+                'label' => 'Barchasini belgilamaslik',
             ],
 
         ],

@@ -40,7 +40,7 @@ abstract class Exporter
         $data = [];
 
         foreach (array_keys($this->columnMap) as $column) {
-            $data[] = $columns[$column]->getState();
+            $data[] = $columns[$column]->getFormattedState();
         }
 
         return $data;

@@ -532,7 +532,7 @@ The first argument is the label of the group, and the second is an array of colu
 
 <AutoScreenshot name="tables/columns/grouping" alt="Table with grouped columns" version="3.x" />
 
-You can also control the group header [alignment](#aligning-column-content) and [wrapping](#allowing-a-column-headers-to-wrap) on the `ColumnGroup` object. To improve the multi-line fluency of the API, you can chain the `columns()` onto the object instead of passing it as the second argument:
+You can also control the group header [alignment](#aligning-column-content) and [wrapping](#allowing-column-headers-to-wrap) on the `ColumnGroup` object. To improve the multi-line fluency of the API, you can chain the `columns()` onto the object instead of passing it as the second argument:
 
 ```php
 use Filament\Support\Enums\Alignment;

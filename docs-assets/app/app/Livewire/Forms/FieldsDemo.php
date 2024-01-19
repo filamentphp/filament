@@ -1286,7 +1286,7 @@ class FieldsDemo extends Component implements HasForms
                     ])
                     ->schema([
                         ToggleButtons::make('toggleButtonsBoolean')
-                            ->label('Like this post??')
+                            ->label('Like this post?')
                             ->boolean()
                             ->default(true),
                     ]),
@@ -1297,7 +1297,7 @@ class FieldsDemo extends Component implements HasForms
                     ])
                     ->schema([
                         ToggleButtons::make('toggleButtonsInline')
-                            ->label('Like this post??')
+                            ->label('Like this post?')
                             ->boolean()
                             ->inline()
                             ->default(false),
@@ -1309,7 +1309,7 @@ class FieldsDemo extends Component implements HasForms
                     ])
                     ->schema([
                         ToggleButtons::make('toggleButtonsGrouped')
-                            ->label('Like this post??')
+                            ->label('Like this post?')
                             ->boolean()
                             ->grouped()
                             ->default(true),

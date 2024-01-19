@@ -4,7 +4,7 @@ return [
 
     'title' => 'Elektron pochta manzilingizni tasdiqlang',
 
-    'heading' => 'Elektron pochta manzilingizni tasdiqlang',
+    'heading' => 'Hurmatli foydalanuvchi elektron pochta manzilingizni tasdiqlang',
 
     'actions' => [
 
@@ -16,7 +16,7 @@ return [
 
     'messages' => [
         'notification_not_received' => 'Biz yuborgan xatni olmadingizmi?',
-        'notification_sent' => 'Biz :email manziliga elektron pochta manzilingizni tekshirish bo\'yicha ko\'rsatmalar bilan xat yubordik.',
+        'notification_sent' => 'Biz :email manziliga elektron pochta manzilingizni tekshirish bo\'yicha ko\'rsatmalar bilan xat yubordik. Elektron pochtangizni tekshiring',
     ],
 
     'notifications' => [

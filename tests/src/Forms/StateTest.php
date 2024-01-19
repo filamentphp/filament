@@ -422,6 +422,24 @@ test('components can be excluded from state dehydration', function () {
         ->dehydrateState()->toBe([]);
 });
 
+test('components can be excluded from state dehydration if their parent component is', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->dehydrated(false)
+                ->schema([
+                    (new Component())
+                        ->statePath(Str::random())
+                        ->default(Str::random()),
+                ]),
+        ])
+        ->fill();
+
+    expect($container)
+        ->dehydrateState()->toBe([]);
+});
+
 test('dehydrated state can be mutated', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->statePath('data')

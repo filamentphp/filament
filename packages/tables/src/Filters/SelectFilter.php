@@ -130,7 +130,7 @@ class SelectFilter extends BaseFilter
             $data['values'] ?? null :
             $data['value'] ?? null;
 
-        if (! count(array_filter(
+        if (blank(Arr::first(
             Arr::wrap($values),
             fn ($value) => filled($value),
         ))) {

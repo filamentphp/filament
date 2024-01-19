@@ -250,6 +250,15 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Ya',
+            'false' => 'Tidak',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
@@ -408,6 +417,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Tag baru',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Sembunyikan password',
+            ],
+
+            'show_password' => [
+                'label' => 'Tampilkan password',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Ya',
+            'false' => 'Tidak',
+        ],
+
     ],
 
     'wizard' => [
