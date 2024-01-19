@@ -203,9 +203,9 @@ class MakeResourceCommand extends Command
             'clusterImport' => $clusterImport,
             'eloquentQuery' => $this->indentString($eloquentQuery, 1),
             'formSchema' => $this->indentString($this->option('generate') ? $this->getResourceFormSchema(
-                $modelNamespace . ($modelSubNamespace !== '' ? "\\{$modelSubNamespace}" : '') . '\\' . $modelClass,
+                $modelNamespace . '\\' . $modelClass,
             ) : '//', 4),
-            'model' => ($model === 'Resource') ? "{$modelNamespace}\\Resource as ResourceModel" : "{$modelNamespace}\\{$model}",
+            'model' => ($model === 'Resource') ? "{$modelNamespace}\\Resource as ResourceModel" : "{$modelNamespace}\\{$modelClass}",
             'modelClass' => ($model === 'Resource') ? 'ResourceModel' : $modelClass,
             'namespace' => $namespace,
             'pages' => $this->indentString($pages, 3),
@@ -215,7 +215,7 @@ class MakeResourceCommand extends Command
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 5),
             'tableColumns' => $this->indentString($this->option('generate') ? $this->getResourceTableColumns(
-                $modelNamespace . ($modelSubNamespace !== '' ? "\\{$modelSubNamespace}" : '') . '\\' . $modelClass,
+                $modelNamespace . '\\' . $modelClass,
             ) : '//', 4),
             'tableFilters' => $this->indentString(
                 $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make(),' : '//',
