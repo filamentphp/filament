@@ -9,9 +9,7 @@ use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Filament\Tables\Actions\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
 class Action extends MountableAction implements Groupable, HasRecord, HasTable
 {
