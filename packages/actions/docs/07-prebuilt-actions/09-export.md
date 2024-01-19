@@ -445,7 +445,7 @@ The default job for processing exports is `Filament\Actions\Exports\Jobs\Prepare
 
 ```php
 use App\Jobs\PrepareCsvExport;
-use Filament\Actions\Exports\Jobs\PrepareCsvExport::class as BasePrepareCsvExport;
+use Filament\Actions\Exports\Jobs\PrepareCsvExport as BasePrepareCsvExport;
 
 $this->app->bind(BasePrepareCsvExport::class, PrepareCsvExport::class);
 ```
