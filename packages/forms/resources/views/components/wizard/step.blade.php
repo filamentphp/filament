@@ -2,18 +2,19 @@
     $id = $getId();
     $isContained = $getContainer()->getParentComponent()->isContained();
 
-    $visibleStepClasses = \Illuminate\Support\Arr::toCssClasses([
+    $activeStepClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-active',
         'p-6' => $isContained,
         'mt-6' => ! $isContained,
     ]);
 
-    $invisibleStepClasses = 'invisible h-0 overflow-y-hidden p-0';
+    $inactiveStepClasses = 'invisible h-0 overflow-y-hidden p-0';
 @endphp
 
 <div
     x-bind:class="{
-        @js($visibleStepClasses): step === @js($id),
-        @js($invisibleStepClasses): step !== @js($id),
+        @js($activeStepClasses): step === @js($id),
+        @js($inactiveStepClasses): step !== @js($id),
     }"
     x-on:expand="
         if (! isStepAccessible(@js($id))) {

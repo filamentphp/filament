@@ -40,7 +40,7 @@ abstract class Exporter
         $data = [];
 
         foreach (array_keys($this->columnMap) as $column) {
-            $data[] = $columns[$column]->getState();
+            $data[] = $columns[$column]->getFormattedState();
         }
 
         return $data;
@@ -81,7 +81,7 @@ abstract class Exporter
         ];
     }
 
-    public function getJobRetryUntil(): CarbonInterface
+    public function getJobRetryUntil(): ?CarbonInterface
     {
         return now()->addDay();
     }

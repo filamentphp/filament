@@ -32,7 +32,7 @@ trait HasFilters
             ->columns($this->getTable()->getFiltersFormColumns())
             ->model($this->getTable()->getModel())
             ->statePath($this->getTable()->hasDeferredFilters() ? 'tableDeferredFilters' : 'tableFilters')
-            ->when(! $this->getTable()->hasDeferredFilters(), fn (Form $form) => $form->live(onBlur: true));
+            ->when(! $this->getTable()->hasDeferredFilters(), fn (Form $form) => $form->live());
     }
 
     public function updatedTableFilters(): void
@@ -60,7 +60,7 @@ trait HasFilters
         $this->resetPage();
     }
 
-    public function removeTableFilter(string $filterName, ?string $field = null, bool $shouldTriggerUpdatedFiltersHook = true): void
+    public function removeTableFilter(string $filterName, ?string $field = null, bool $isRemovingAllFilters = false): void
     {
         $filter = $this->getTable()->getFilter($filterName);
         $filterResetState = $filter->getResetState();
@@ -82,11 +82,17 @@ trait HasFilters
             });
         }
 
-        if (! $shouldTriggerUpdatedFiltersHook) {
+        if ($isRemovingAllFilters) {
             return;
         }
 
-        $this->updatedTableFilters();
+        if ($this->getTable()->hasDeferredFilters()) {
+            $this->applyTableFilters();
+
+            return;
+        }
+
+        $this->handleTableFilterUpdates();
     }
 
     public function removeTableFilters(): void
@@ -96,19 +102,31 @@ trait HasFilters
         foreach ($filters as $filterName => $filter) {
             $this->removeTableFilter(
                 $filterName,
-                shouldTriggerUpdatedFiltersHook: false,
+                isRemovingAllFilters: true,
             );
         }
 
-        $this->updatedTableFilters();
-
         $this->resetTableSearch();
         $this->resetTableColumnSearches();
+
+        if ($this->getTable()->hasDeferredFilters()) {
+            $this->applyTableFilters();
+
+            return;
+        }
+
+        $this->handleTableFilterUpdates();
     }
 
     public function resetTableFiltersForm(): void
     {
         $this->getTableFiltersForm()->fill();
+
+        if ($this->getTable()->hasDeferredFilters()) {
+            $this->applyTableFilters();
+
+            return;
+        }
 
         $this->handleTableFilterUpdates();
     }

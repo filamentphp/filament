@@ -33,7 +33,7 @@ To customize a navigation item's [icon](https://blade-ui-kit.com/blade-icons?set
 protected static ?string $navigationIcon = 'heroicon-o-document-text';
 ```
 
-If you set `$navigationIcon = null` on all items within the same navigation group, those items will be joined with a vertical bar below the Group name.
+If you set `$navigationIcon = null` on all items within the same navigation group, those items will be joined with a vertical bar below the group label.
 
 ### Switching navigation item icon when it is active
 

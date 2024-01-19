@@ -116,7 +116,7 @@
             default => $iconSize,
         },
         'text-gray-400 dark:text-gray-500' => ($color === 'gray') || ($tag === 'label'),
-        'text-white' => ($color !== 'gray') && ($tag !== 'label'),
+        'text-white' => ($color !== 'gray') && ($tag !== 'label') && (! $outlined),
         '[:checked+*>&]:text-white' => $tag === 'label',
     ]);
 

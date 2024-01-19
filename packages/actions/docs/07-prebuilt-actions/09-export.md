@@ -96,7 +96,7 @@ public function getColumns(): array
     return [
         ExportColumn::make('name'),
         ExportColumn::make('sku')
-            ->label('SKU')),
+            ->label('SKU'),
         ExportColumn::make('price'),
     ];
 }
@@ -301,7 +301,7 @@ use Filament\Actions\Exports\Models\Export;
 
 ExportAction::make()
     ->exporter(ProductExporter::class)
-    ->fileName(fn (Export): string => "products-{$export->getKey()}.csv")
+    ->fileName(fn (Export $export): string => "products-{$export->getKey()}.csv")
 ```
 
 Alternatively, you can override the `getFileName()` method on the exporter class, returning a string:
@@ -502,7 +502,7 @@ By default, the export system will retry a job for 24 hours. This is to allow fo
 ```php
 use Carbon\CarbonInterface;
 
-public function getJobRetryUntil(): CarbonInterface
+public function getJobRetryUntil(): ?CarbonInterface
 {
     return now()->addDay();
 }

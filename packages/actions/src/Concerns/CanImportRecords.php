@@ -214,7 +214,7 @@ trait CanImportRecords
             $importJobs = collect($importChunks)
                 ->map(fn (array $importChunk): object => new ($job)(
                     $import,
-                    rows: $importChunk,
+                    rows: base64_encode(serialize($importChunk)),
                     columnMap: $data['columnMap'],
                     options: $options,
                 ));
@@ -266,7 +266,8 @@ trait CanImportRecords
                                         'count' => format_number($failedRowsCount),
                                     ]))
                                     ->color('danger')
-                                    ->url(route('filament.imports.failed-rows.download', ['import' => $import])),
+                                    ->url(route('filament.imports.failed-rows.download', ['import' => $import]), shouldOpenInNewTab: true)
+                                    ->markAsRead(),
                             ]),
                         )
                         ->sendToDatabase($import->user);

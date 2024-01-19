@@ -88,7 +88,7 @@ trait CanFormatState
         return $state;
     }
 
-    public function getFormattedState(): string
+    public function getFormattedState(): ?string
     {
         $state = $this->getState();
 

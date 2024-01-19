@@ -27,6 +27,11 @@ class ComponentManager
     {
     }
 
+    public static function isResolved(): bool
+    {
+        return app()->resolved(static::class);
+    }
+
     public static function register(): void
     {
         app()->scopedIf(
