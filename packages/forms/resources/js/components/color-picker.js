@@ -31,21 +31,26 @@ export default function colorPickerFormComponent({
             this.$refs.panel.addEventListener('color-changed', (event) => {
                 this.setState(event.detail.value)
 
-                if (isLiveOnBlur || (! (isLive || isLiveDebounced))) {
+                if (isLiveOnBlur || !(isLive || isLiveDebounced)) {
                     return
                 }
 
-                setTimeout(() => {
-                    if (this.state !== event.detail.value) {
-                        return
-                    }
+                setTimeout(
+                    () => {
+                        if (this.state !== event.detail.value) {
+                            return
+                        }
 
-                    this.commitState()
-                }, isLiveDebounced ? liveDebounce : 250)
+                        this.commitState()
+                    },
+                    isLiveDebounced ? liveDebounce : 250,
+                )
             })
 
             if (isLive || isLiveDebounced || isLiveOnBlur) {
-                new MutationObserver(() => this.isOpen() ? null : this.commitState()).observe(this.$refs.panel, {
+                new MutationObserver(() =>
+                    this.isOpen() ? null : this.commitState(),
+                ).observe(this.$refs.panel, {
                     attributes: true,
                     childList: true,
                 })
@@ -72,7 +77,10 @@ export default function colorPickerFormComponent({
         },
 
         commitState: function () {
-            if (JSON.stringify(this.$wire.__instance.canonical) === JSON.stringify(this.$wire.__instance.ephemeral)) {
+            if (
+                JSON.stringify(this.$wire.__instance.canonical) ===
+                JSON.stringify(this.$wire.__instance.ephemeral)
+            ) {
                 return
             }
 
