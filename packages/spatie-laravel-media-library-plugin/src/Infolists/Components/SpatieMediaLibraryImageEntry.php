@@ -45,10 +45,8 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             return null;
         }
 
-        $relationshipName = $this->getRelationshipName();
-
-        if (filled($relationshipName)) {
-            $record = $record->getRelationValue($relationshipName);
+        if ($this->hasRelationship($record)) {
+            $record = $record->getRelationValue($this->getRelationshipName());
         }
 
         /** @var ?Media $media */

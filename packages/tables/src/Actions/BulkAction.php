@@ -13,9 +13,8 @@ class BulkAction extends MountableAction implements Groupable, HasTable
 {
     use Concerns\BelongsToTable;
     use Concerns\CanDeselectRecordsAfterCompletion;
+    use Concerns\CanFetchSelectedRecords;
     use Concerns\InteractsWithRecords;
-
-    protected bool | Closure $shouldFetchSelectedRecords = true;
 
     protected function setUp(): void
     {
@@ -24,18 +23,6 @@ class BulkAction extends MountableAction implements Groupable, HasTable
         $this->extraAttributes([
             'x-bind:disabled' => '! selectedRecords.length',
         ]);
-    }
-
-    public function fetchSelectedRecords(bool | Closure $condition = true): static
-    {
-        $this->shouldFetchSelectedRecords = $condition;
-
-        return $this;
-    }
-
-    public function shouldFetchSelectedRecords(): bool
-    {
-        return (bool) $this->evaluate($this->shouldFetchSelectedRecords);
     }
 
     /**

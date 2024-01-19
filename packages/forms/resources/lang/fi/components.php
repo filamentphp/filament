@@ -419,6 +419,31 @@ return [
         'placeholder' => 'Uusi tunniste',
     ],
 
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Piilota salasana',
+            ],
+
+            'show_password' => [
+                'label' => 'Näytä salasana',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Kyllä',
+            'false' => 'Ei',
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [

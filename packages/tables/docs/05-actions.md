@@ -92,6 +92,36 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="3.x" />
 
+### Accessing the selected table rows
+
+You may want an action to be able to access all the selected rows in the table. Usually, this is done with a [bulk action](#bulk-actions) in the header of the table. However, you may want to do this with a row action, where the selected rows provide context for the action.
+
+For example, you may want to have a row action that copies the row data to all the selected records. To force the table to be selectable, even if there aren't bulk actions defined, you need to use the `selectable()` method. To allow the action to access the selected records, you need to use the `accessSelectedRecords()` method. Then, you can use the `$selectedRecords` parameter in your action to access the selected records:
+
+```php
+use Filament\Tables\Table;
+use Filament\Tables\Actions\Action;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->selectable()
+        ->actions([
+            Action::make('copyToSelected')
+                ->accessSelectedRecords()
+                ->action(function (Model $record, Collection $selectedRecords) {
+                    $selectedRecords->each(
+                        fn (Model $selectedRecord) => $selectedRecord->update([
+                            'is_active' => $record->is_active,
+                        ]),
+                    );
+                }),
+        ]);
+}
+```
+
 ## Bulk actions
 
 Tables also support "bulk actions". These can be used when the user selects rows in the table. Traditionally, when rows are selected, a "bulk actions" button appears in the top left corner of the table. When the user clicks this button, they are presented with a dropdown menu of actions to choose from. You can put them in the `$table->bulkActions()` method:
@@ -200,6 +230,23 @@ public function table(Table $table): Table
         ->checkIfRecordIsSelectableUsing(
             fn (Model $record): bool => $record->status === Status::Enabled,
         );
+}
+```
+
+### Preventing bulk-selection of all pages
+
+The `selectCurrentPageOnly()` method can be used to prevent the user from easily bulk-selecting all records in the table at once, and instead only allows them to select one page at a time:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->bulkActions([
+            // ...
+        ])
+        ->selectCurrentPageOnly();
 }
 ```
 

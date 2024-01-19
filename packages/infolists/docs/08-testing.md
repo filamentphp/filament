@@ -135,7 +135,7 @@ it('can send invoices to the primary contact by default', function () {
 
 ### Action state
 
-To ensure that an action exists or doesn't in a table, you can use the `assertInfolistActionExists()` or  `assertInfolistActionDoesNotExist()` method:
+To ensure that an action exists or doesn't in an infolist, you can use the `assertInfolistActionExists()` or  `assertInfolistActionDoesNotExist()` method:
 
 ```php
 use function Pest\Livewire\livewire;

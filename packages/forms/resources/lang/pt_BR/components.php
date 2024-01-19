@@ -419,6 +419,31 @@ return [
         'placeholder' => 'Nova tag',
     ],
 
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Esconder senha',
+            ],
+
+            'show_password' => [
+                'label' => 'Mostrar senha',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Sim',
+            'false' => 'Não',
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [

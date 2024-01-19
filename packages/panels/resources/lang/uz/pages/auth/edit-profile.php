@@ -2,7 +2,7 @@
 
 return [
 
-    'label' => 'Profil',
+    'label' => 'Hisob qaydnomasi',
 
     'form' => [
 
