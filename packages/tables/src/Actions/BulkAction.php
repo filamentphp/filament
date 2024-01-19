@@ -31,7 +31,7 @@ class BulkAction extends MountableAction implements Groupable, HasTable
     public function call(array $parameters = []): mixed
     {
         try {
-            return $this->evaluate($this->getActionFunction(), $parameters);
+            return parent::call($parameters);
         } finally {
             if ($this->shouldDeselectRecordsAfterCompletion()) {
                 $this->getLivewire()->deselectAllTableRecords();

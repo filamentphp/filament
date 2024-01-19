@@ -15,6 +15,7 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
 {
     use Concerns\BelongsToTable;
     use Concerns\CanAccessSelectedRecords;
+    use Concerns\CanDeselectRecordsAfterCompletion;
     use Concerns\CanFetchSelectedRecords;
     use HasMountableArguments;
     use InteractsWithRecord;
@@ -152,5 +153,19 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
     public function getInfolistName(): string
     {
         return 'mountedTableActionInfolist';
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public function call(array $parameters = []): mixed
+    {
+        try {
+            return parent::call($parameters);
+        } finally {
+            if ($this->shouldDeselectRecordsAfterCompletion()) {
+                $this->getLivewire()->deselectAllTableRecords();
+            }
+        }
     }
 }
