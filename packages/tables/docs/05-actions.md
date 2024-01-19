@@ -92,7 +92,7 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="3.x" />
 
-### Retrieving selected rows
+### Accessing the selected table rows
 
 You may want an action to be able to access all the selected rows in the table. Usually, this is done with a [bulk action](#bulk-actions) in the header of the table. However, you may want to do this with a row action, where the selected rows provide context for the action.
 
