@@ -11,7 +11,7 @@ return [
             ],
 
             'add' => [
-                'label' => ':label ga qo\'shish',
+                'label' => ':labelga qo\'shish',
             ],
 
             'add_between' => [
@@ -253,7 +253,7 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => ':label - qo\'shish',
+                'label' => ':label qo\'shish',
             ],
 
             'add_between' => [
@@ -391,7 +391,7 @@ return [
 
         'loading_message' => 'Yuklanmoqda...',
 
-        'max_items_message' => 'Faqat :count tanlash mumkin.',
+        'max_items_message' => 'Faqat :countta tanlash mumkin.',
 
         'no_search_results_message' => 'So\'rovingizga mos keladigan natijalar yo\'q.',
 

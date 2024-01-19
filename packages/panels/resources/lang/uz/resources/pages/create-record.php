@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => ':label - yaratish',
+    'title' => 'Yangi :label yaratish',
 
     'breadcrumb' => 'Yaratish',
 

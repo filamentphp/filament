@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label - o\'chirish',
+            'heading' => ':labelni o\'chirish',
 
             'actions' => [
 
@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Tanlanganlarni o\chirish',
+        'label' => 'Tanlanganlarni o\'chirish',
 
         'modal' => [
 
-            'heading' => ':label - o\'chirish',
+            'heading' => ':labelni o\'chirish',
 
             'actions' => [
 

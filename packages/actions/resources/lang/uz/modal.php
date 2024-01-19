@@ -2,7 +2,7 @@
 
 return [
 
-    'confirmation' => 'Buni amalni bajarishga ishonchingiz komilmi?',
+    'confirmation' => 'Ushbu amalni bajarishga ishonchingiz komilmi?',
 
     'actions' => [
 
