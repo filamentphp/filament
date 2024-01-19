@@ -5,10 +5,15 @@ namespace Filament\Navigation;
 use Closure;
 use Exception;
 use Filament\Support\Components\Component;
+use Filament\Support\Concerns\HasExtraSidebarAttributes;
+use Filament\Support\Concerns\HasExtraTopbarAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 
 class NavigationGroup extends Component
 {
+    use HasExtraSidebarAttributes;
+    use HasExtraTopbarAttributes;
+
     protected bool | Closure $isCollapsed = false;
 
     protected bool | Closure | null $isCollapsible = null;
