@@ -27,6 +27,10 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
 
     public function getAlpineClickHandler(): ?string
     {
+        if (filled($handler = parent::getAlpineClickHandler())) {
+            return $handler;
+        }
+
         if (! $this->canAccessSelectedRecords()) {
             return null;
         }

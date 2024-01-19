@@ -109,10 +109,10 @@ class StaticAction extends ViewComponent
         return $this->getView() === static::LINK_VIEW;
     }
 
-    public function alpineClickHandler(string | Closure $handler): static
+    public function alpineClickHandler(string | Closure | null $handler): static
     {
-        $this->livewireClickHandlerEnabled(false);
         $this->alpineClickHandler = $handler;
+        $this->livewireClickHandlerEnabled(blank($handler));
 
         return $this;
     }
@@ -178,7 +178,7 @@ class StaticAction extends ViewComponent
 
     public function getAlpineClickHandler(): ?string
     {
-        if ($handler = $this->evaluate($this->alpineClickHandler)) {
+        if (filled($handler = $this->evaluate($this->alpineClickHandler))) {
             return $handler;
         }
 
