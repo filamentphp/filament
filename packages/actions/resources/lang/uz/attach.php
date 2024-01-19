@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label - biriktirish',
+            'heading' => ':labelni biriktirish',
 
             'fields' => [
 
@@ -25,7 +25,7 @@ return [
                 ],
 
                 'attach_another' => [
-                    'label' => 'Biriktirish va boshqa biriktirish',
+                    'label' => 'Biriktirish va yana boshqa biriktirish',
                 ],
 
             ],

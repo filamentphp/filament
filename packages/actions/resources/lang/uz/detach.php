@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label - ajratish',
+            'heading' => ':labelni ajratish',
 
             'actions' => [
 
@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label - ajratish ',
+            'heading' => ':labelni ajratish ',
 
             'actions' => [
 

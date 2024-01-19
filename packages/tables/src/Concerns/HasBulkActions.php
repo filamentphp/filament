@@ -210,8 +210,7 @@ trait HasBulkActions
 
     public function unmountTableBulkAction(bool $shouldCloseModal = true): void
     {
-        $this->mountedTableBulkAction = null;
-        $this->selectedTableRecords = [];
+        $this->resetMountedTableBulkActionProperties();
 
         if ($shouldCloseModal) {
             $this->closeTableBulkActionModal();

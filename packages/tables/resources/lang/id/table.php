@@ -11,7 +11,14 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Sembunyikan :count lainnya',
+                'expand_list' => 'Tampilkan :count lainnya',
+            ],
+
             'more_list_items' => 'dan :count lainnya',
+
         ],
 
     ],
@@ -105,6 +112,10 @@ return [
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'Terapkan filter',
+            ],
 
             'remove' => [
                 'label' => 'Hapus filter',

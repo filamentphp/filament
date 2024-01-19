@@ -13,6 +13,7 @@
             :items="$navigationGroup->getItems()"
             :label="$navigationGroup->getLabel()"
             :sidebar-collapsible="false"
+            :attributes="\Filament\Support\prepare_inherited_attributes($navigationGroup->getExtraSidebarAttributeBag())"
         />
     @endforeach
 </ul>

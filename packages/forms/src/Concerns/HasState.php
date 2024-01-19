@@ -68,14 +68,14 @@ trait HasState
      * @param  array<string, mixed>  $state
      * @return array<string, mixed>
      */
-    public function dehydrateState(array &$state = []): array
+    public function dehydrateState(array &$state = [], bool $isDehydrated = true): array
     {
         foreach ($this->getComponents() as $component) {
             if ($component->isHidden()) {
                 continue;
             }
 
-            $component->dehydrateState($state);
+            $component->dehydrateState($state, $isDehydrated);
         }
 
         return $state;

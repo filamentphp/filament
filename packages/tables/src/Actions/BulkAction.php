@@ -13,9 +13,8 @@ class BulkAction extends MountableAction implements Groupable, HasTable
 {
     use Concerns\BelongsToTable;
     use Concerns\CanDeselectRecordsAfterCompletion;
+    use Concerns\CanFetchSelectedRecords;
     use Concerns\InteractsWithRecords;
-
-    protected bool | Closure $shouldFetchSelectedRecords = true;
 
     protected function setUp(): void
     {
@@ -26,25 +25,13 @@ class BulkAction extends MountableAction implements Groupable, HasTable
         ]);
     }
 
-    public function fetchSelectedRecords(bool | Closure $condition = true): static
-    {
-        $this->shouldFetchSelectedRecords = $condition;
-
-        return $this;
-    }
-
-    public function shouldFetchSelectedRecords(): bool
-    {
-        return (bool) $this->evaluate($this->shouldFetchSelectedRecords);
-    }
-
     /**
      * @param  array<string, mixed>  $parameters
      */
     public function call(array $parameters = []): mixed
     {
         try {
-            return $this->evaluate($this->getActionFunction(), $parameters);
+            return parent::call($parameters);
         } finally {
             if ($this->shouldDeselectRecordsAfterCompletion()) {
                 $this->getLivewire()->deselectAllTableRecords();
