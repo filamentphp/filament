@@ -7,11 +7,11 @@ return [
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'Vis :count mindle',
-                'expand_list' => 'Flere :count flere',
+                'collapse_list' => 'Show :count less',
+                'expand_list' => 'Show :count more',
             ],
 
-            'more_list_items' => 'og :count flere',
+            'more_list_items' => 'and :count more',
 
         ],
 
@@ -20,11 +20,11 @@ return [
             'columns' => [
 
                 'key' => [
-                    'label' => 'Nøgle',
+                    'label' => 'Key',
                 ],
 
                 'value' => [
-                    'label' => 'Værdi',
+                    'label' => 'Value',
                 ],
 
             ],
