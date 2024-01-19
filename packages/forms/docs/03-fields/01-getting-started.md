@@ -297,6 +297,16 @@ TextInput::make('name')
     ->markAsRequired(false) // Removes the asterisk
 ```
 
+If you wish to use [other rules](validation#other-rules), but still show an asterisk `*`, such as in the case of using 'required' with `rules()`, you can do it like so:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->rules(['required']) // Adds validation to ensure the field is required
+    ->markAsRequired() // Includes the asterisk
+```
+
 ## Global settings
 
 If you wish to change the default behaviour of a field globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method or a middleware. Pass a closure which is able to modify the component. For example, if you wish to make all [checkboxes `inline(false)`](checkbox#positioning-the-label-above), you can do it like so:
