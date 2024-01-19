@@ -7,8 +7,8 @@ return [
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'Vis :count mindle',
-                'expand_list' => 'Flere :count flere',
+                'collapse_list' => 'Vis :count mindre',
+                'expand_list' => 'Vis :count flere',
             ],
 
             'more_list_items' => 'og :count flere',
