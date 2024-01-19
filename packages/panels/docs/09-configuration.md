@@ -189,7 +189,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->tenantMiddleware([
+        ->middleware([
             // ...
         ], isPersistent: true);
 }
