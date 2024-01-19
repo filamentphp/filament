@@ -135,16 +135,6 @@ public function panel(Panel $panel): Panel
 
 In this example, we pass in a custom `icon()` for the groups, and make one `collapsed()` by default.
 
-### Adding extra HTML attributes to a navigation groups
-
-You may also pass extra HTML attributes to navigation groups using `extraSidebarAttributes()` for the sidebar navigation and `extraTopbarAttributes()` for the topbar navigation 
-
-```php
-NavigationGroup::make()
-    ->extraSidebarAttributes(['class' => 'highlighted']),
-    ->extraTopbarAttributes(['class' => 'highlighted']),
-```
-
 #### Ordering navigation groups
 
 By using `navigationGroups()`, you are defining a new order for the navigation groups. If you just want to reorder the groups and not define an entire `NavigationGroup` object, you may just pass the labels of the groups in the new order:
@@ -158,7 +148,7 @@ $panel
     ])
 ```
 
-### Making navigation groups not collapsible
+#### Making navigation groups not collapsible
 
 By default, navigation groups are collapsible. You may disable this behavior by calling `collapsible(false)` on the `NavigationGroup` object:
 
@@ -183,6 +173,18 @@ public function panel(Panel $panel): Panel
         ->collapsibleNavigationGroups(false);
 }
 ```
+
+#### Adding extra HTML attributes to navigation groups
+
+You can pass extra HTML attributes to the navigation group, which will be merged onto the outer DOM element. Pass an array of attributes to the `extraSidebarAttributes()` or `extraTopbarAttributes()` method, where the key is the attribute name and the value is the attribute value:
+
+```php
+NavigationGroup::make()
+    ->extraSidebarAttributes(['class' => 'featured-sidebar-group']),
+    ->extraTopbarAttributes(['class' => 'featured-topbar-group']),
+```
+
+The `extraSidebarAttributes()` will be applied to navigation group elements contained in the sidebar, and the `extraTopbarAttributes()` will only be applied to topbar navigation group dropdowns when using [top navigation](#using-top-navigation).
 
 ## Collapsible sidebar on desktop
 
