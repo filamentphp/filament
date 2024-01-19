@@ -57,7 +57,7 @@ class BulkAction extends MountableAction implements Groupable, HasTable
 
     public function getAlpineClickHandler(): ?string
     {
-        return "mountBulkAction('{$this->getName()}')";
+        return parent::getAlpineClickHandler() ?? "mountBulkAction('{$this->getName()}')";
     }
 
     public function getLivewireTarget(): ?string
