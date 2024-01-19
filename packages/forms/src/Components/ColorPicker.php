@@ -19,8 +19,6 @@ class ColorPicker extends Field implements Contracts\HasAffixActions
 
     protected string | Closure $format = 'hex';
 
-    protected bool | Closure | null $updateOnDragend = null;
-
     public function format(string | Closure $format): static
     {
         $this->format = $format;
@@ -56,20 +54,8 @@ class ColorPicker extends Field implements Contracts\HasAffixActions
         return $this;
     }
 
-    public function updateOnDragend(bool | Closure $updateOnDragend = true): static
-    {
-        $this->updateOnDragend = $updateOnDragend;
-
-        return $this;
-    }
-
     public function getFormat(): string
     {
         return $this->evaluate($this->format);
-    }
-
-    public function shouldUpdateOnDragend(): bool
-    {
-        return $this->evaluate($this->updateOnDragend) ?? false;
     }
 }
