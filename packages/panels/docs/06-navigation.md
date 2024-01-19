@@ -137,11 +137,12 @@ In this example, we pass in a custom `icon()` for the groups, and make one `coll
 
 ### Adding extra HTML attributes to a navigation groups
 
-You may also pass extra HTML attributes to stats using `extraAttributes()`:
+You may also pass extra HTML attributes to navigation groups using `extraSidebarAttributes()` for the sidebar navigation and `extraTopbarAttributes()` for the topbar navigation 
 
 ```php
 NavigationGroup::make()
-    ->extraAttributes(['class' => 'highlighted']),
+    ->extraSidebarAttributes(['class' => 'highlighted']),
+    ->extraTopbarAttributes(['class' => 'highlighted']),
 ```
 
 #### Ordering navigation groups

@@ -121,7 +121,7 @@
                     :icon="$group->getIcon()"
                     :items="$group->getItems()"
                     :label="$group->getLabel()"
-                    :attributes="\Filament\Support\prepare_inherited_attributes($group->getExtraAttributeBag())"
+                    :attributes="\Filament\Support\prepare_inherited_attributes($group->getExtraSidebarAttributeBag())"
                 />
             @endforeach
         </ul>
