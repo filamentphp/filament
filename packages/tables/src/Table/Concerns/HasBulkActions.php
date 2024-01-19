@@ -31,7 +31,7 @@ trait HasBulkActions
 
     protected RecordCheckboxPosition | Closure | null $recordCheckboxPosition = null;
 
-    protected ?bool $enableSelection = null;
+    protected bool | Closure | null $isSelectable = null;
 
     /**
      * @param  array<BulkAction | ActionGroup> | ActionGroup  $actions
@@ -152,21 +152,26 @@ trait HasBulkActions
         return $this->getLivewire()->getAllSelectableTableRecordsCount();
     }
 
-    public function enableSelection(bool $enable = true): static
+    public function selectable(bool | Closure | null $condition = true): static
     {
-        $this->enableSelection = $enable;
+        $this->isSelectable = $condition;
 
         return $this;
     }
 
     public function isSelectionEnabled(): bool
     {
-        $hasVisibleBulkActions = (bool) count(array_filter(
-            $this->getFlatBulkActions(),
-            fn (BulkAction $action): bool => $action->isVisible(),
-        ));
+        if (is_bool($isSelectable = $this->evaluate($this->isSelectable))) {
+            return $isSelectable;
+        }
 
-        return $this->enableSelection || ($this->enableSelection === null && $hasVisibleBulkActions);
+        foreach ($this->getFlatBulkActions() as $bulkAction) {
+            if ($bulkAction->isVisible()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function selectsCurrentPageOnly(): bool

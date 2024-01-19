@@ -94,35 +94,31 @@ public function table(Table $table): Table
 
 ### Retrieving selected rows
 
-Sometimes you may want to get the selected records so you can apply some modification/update to them, based on the current record.
-For example, you may want to have a row Action that copies that record's properties to all the selected records:
+You may want an action to be able to access all the selected rows in the table. Usually, this is done with a [bulk action](#bulk-actions) in the header of the table. However, you may want to do this with a row action, where the selected rows provide context for the action.
+
+For example, you may want to have a row action that copies the row data to all the selected records. To force the table to be selectable, even if there aren't bulk actions defined, you need to use the `selectable()` method. To allow the action to access the selected records, you need to use the `accessSelectedRecords()` method. Then, you can use the `$selectedRecords` parameter in your action to access the selected records:
 
 ```php
-use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Table;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Actions\Action;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 public function table(Table $table): Table
 {
     return $table
-        // Force selection column to show. Required when your table does not have any BulkActions (and therefore is not letting you select records)
-        ->enableSelection(true)
+        ->selectable()
         ->actions([
-            Action::make('copy_to_selected')
-                ->accessSelectedRecords() // enable access to selected Records
-                ->action(function (ListRecords $livewire) {
-                    // $livewire->getSelectedTableRecords() will return the selected records.
-                    // This way, we can modify the selected records based on the current record:
-                    $livewire->getSelectedTableRecords()
-                        ->each(function (Model $selectedRecord) use ($record) {
-                            $selectedRecord->isActive = $record->isActive;
-                            $selectedRecord->save();
-                        });
-                });
-            ]);
+            Action::make('copyToSelected')
+                ->accessSelectedRecords()
+                ->action(function (Model $record, Collection $selectedRecords) {
+                    $selectedRecords->each(
+                        fn (Model $selectedRecord) => $selectedRecord->update([
+                            'is_active' => $record->is_active,
+                        ]),
+                    );
+                }),
+        ]);
 }
 ```
 
