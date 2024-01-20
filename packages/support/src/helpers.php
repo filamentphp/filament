@@ -174,7 +174,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
 
         $isSearchForcedCaseInsensitive ??= match ($driverName) {
             'pgsql' => true,
-            default => false,
+            default => str($column)->contains('json_extract('),
         };
 
         if ($isSearchForcedCaseInsensitive) {
@@ -188,8 +188,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
         }
 
         if (
-            str($column)->contains('(') || // This checks if the column name probably contains a raw expression like `json_extract()`.
-            $isSearchForcedCaseInsensitive ||
+            str($column)->contains('(') || // This checks if the column name probably contains a raw expression like `lower()` or `json_extract()`.
             filled($collation)
         ) {
             return new Expression($column);
