@@ -3,10 +3,11 @@
 namespace Filament\Support\Components;
 
 use Closure;
+use Filament\Support\Components\Contracts\ScopedComponentManager;
 use ReflectionClass;
 use ReflectionMethod;
 
-class ComponentManager
+class ComponentManager implements ScopedComponentManager
 {
     /**
      * @var array<class-string, array<Closure>>
@@ -27,24 +28,23 @@ class ComponentManager
     {
     }
 
-    public static function isResolved(): bool
+    public static function resolve(): ScopedComponentManager
     {
-        return app()->resolved(static::class);
+        if (app()->resolved(ScopedComponentManager::class)) {
+            return static::resolveScoped();
+        }
+
+        return app(ComponentManager::class);
     }
 
-    public static function register(): void
+    public static function resolveScoped(): ScopedComponentManager
     {
-        app()->scopedIf(
-            static::class,
-            fn () => new static(),
-        );
+        return app(ScopedComponentManager::class);
     }
 
-    public static function resolve(): static
+    public function clone(): static
     {
-        static::register();
-
-        return app(static::class);
+        return clone $this;
     }
 
     public function configureUsing(string $component, Closure $modifyUsing, ?Closure $during = null, bool $isImportant = false): mixed

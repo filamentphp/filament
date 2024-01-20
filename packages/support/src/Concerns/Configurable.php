@@ -9,20 +9,6 @@ trait Configurable
 {
     public static function configureUsing(Closure $modifyUsing, ?Closure $during = null, bool $isImportant = false): mixed
     {
-        if (! ($during || ComponentManager::isResolved())) {
-            app()->resolving(
-                ComponentManager::class,
-                fn (ComponentManager $manager) => $manager->configureUsing(
-                    static::class,
-                    $modifyUsing,
-                    $during,
-                    $isImportant,
-                ),
-            );
-
-            return null;
-        }
-
         return ComponentManager::resolve()->configureUsing(
             static::class,
             $modifyUsing,

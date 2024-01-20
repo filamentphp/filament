@@ -12,13 +12,16 @@ use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Components\ComponentManager;
+use Filament\Support\Components\Contracts\ScopedComponentManager;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
 use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use Laravel\Octane\Events\RequestReceived;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
@@ -49,7 +52,17 @@ class SupportServiceProvider extends PackageServiceProvider
             fn () => new AssetManager(),
         );
 
-        ComponentManager::register();
+        $this->app->singleton(
+            ComponentManager::class,
+            fn () => new ComponentManager(),
+        );
+
+        $this->app->scoped(
+            ScopedComponentManager::class,
+            fn () => $this->app->make(ComponentManager::class)->clone(),
+        );
+        $this->app->booted(fn () => ComponentManager::resolveScoped());
+        class_exists(RequestReceived::class) && Event::listen(RequestReceived::class, fn () => ComponentManager::resolveScoped());
 
         $this->app->scoped(
             ColorManager::class,
