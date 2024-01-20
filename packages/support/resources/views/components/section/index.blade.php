@@ -66,7 +66,7 @@
                 } => ! $aside,
             ])
         >
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 overflow-hidden px-px">
                 @if ($hasIcon)
                     <x-filament::icon
                         :icon="$icon"
