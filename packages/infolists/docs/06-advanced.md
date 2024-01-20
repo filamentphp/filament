@@ -13,6 +13,22 @@ use App\Livewire\Foo;
 Livewire::make(Foo::class)
 ```
 
+If you are rendering multiple of the same Livewire component, please make sure to pass a unique `key()` to each:
+
+```php
+use Filament\Infolists\Components\Livewire;
+use App\Livewire\Foo;
+
+Livewire::make(Foo::class)
+    ->key('foo-first')
+
+Livewire::make(Foo::class)
+    ->key('foo-second')
+
+Livewire::make(Foo::class)
+    ->key('foo-third')
+```
+
 ### Passing parameters to a Livewire component
 
 You can pass an array of parameters to a Livewire component:
