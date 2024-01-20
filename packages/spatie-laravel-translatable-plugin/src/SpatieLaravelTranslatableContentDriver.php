@@ -117,13 +117,13 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
 
         $column = match ($databaseConnection->getDriverName()) {
             'pgsql' => "{$column}->>'{$this->activeLocale}'",
-            default => "json_extract({$column}, \"$.{$this->activeLocale}\")",
+            default => "lower(json_extract({$column}, \"$.{$this->activeLocale}\"))",
         };
 
         return $query->{$whereClause}(
             generate_search_column_expression($column, $isCaseInsensitivityForced, $databaseConnection),
             'like',
-            "%{$search}%",
+            '%' . strtolower($search) . '%',
         );
     }
 }
