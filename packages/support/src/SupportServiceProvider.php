@@ -62,7 +62,7 @@ class SupportServiceProvider extends PackageServiceProvider
             fn () => $this->app->make(ComponentManager::class)->clone(),
         );
         $this->app->booted(fn () => ComponentManager::resolveScoped());
-        Event::listen(RequestReceived::class, fn () => ComponentManager::resolveScoped());
+        class_exists(RequestReceived::class) && Event::listen(RequestReceived::class, fn () => ComponentManager::resolveScoped());
 
         $this->app->scoped(
             ColorManager::class,

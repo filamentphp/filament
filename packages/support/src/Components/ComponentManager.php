@@ -28,7 +28,7 @@ class ComponentManager implements ScopedComponentManager
     {
     }
 
-    public static function resolve(): static
+    public static function resolve(): ScopedComponentManager
     {
         if (app()->resolved(ScopedComponentManager::class)) {
             return static::resolveScoped();
@@ -37,7 +37,7 @@ class ComponentManager implements ScopedComponentManager
         return app(ComponentManager::class);
     }
 
-    public static function resolveScoped(): static
+    public static function resolveScoped(): ScopedComponentManager
     {
         return app(ScopedComponentManager::class);
     }
