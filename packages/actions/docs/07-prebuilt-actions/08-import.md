@@ -525,7 +525,7 @@ The default job for processing imports is `Filament\Actions\Imports\Jobs\ImportC
 
 ```php
 use App\Jobs\ImportCsv;
-use Filament\Actions\Imports\Jobs\ImportCsv::class as BaseImportCsv;
+use Filament\Actions\Imports\Jobs\ImportCsv as BaseImportCsv;
 
 $this->app->bind(BaseImportCsv::class, ImportCsv::class);
 ```
