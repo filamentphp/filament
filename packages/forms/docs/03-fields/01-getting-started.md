@@ -297,14 +297,13 @@ TextInput::make('name')
     ->markAsRequired(false) // Removes the asterisk
 ```
 
-If you wish to use [other rules](validation#other-rules), but still show an asterisk `*`, such as in the case of using 'required' with `rules()`, you can do it like so:
+If your field is not `required()`, but you still wish to show an asterisk `*` you can use `markAsRequired()` too:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
-    ->rules(['required']) // Adds validation to ensure the field is required
-    ->markAsRequired() // Includes the asterisk
+    ->markAsRequired()
 ```
 
 ## Global settings
