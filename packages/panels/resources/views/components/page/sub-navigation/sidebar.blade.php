@@ -14,6 +14,7 @@
             :label="$navigationGroup->getLabel()"
             :sidebar-collapsible="false"
             :attributes="\Filament\Support\prepare_inherited_attributes($navigationGroup->getExtraSidebarAttributeBag())"
+            :is-sub-navigation="true"
         />
     @endforeach
 </ul>

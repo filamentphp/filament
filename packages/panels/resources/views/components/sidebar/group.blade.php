@@ -4,10 +4,11 @@
     'items' => [],
     'label' => null,
     'sidebarCollapsible' => true,
+    "isSubNavigation" => false,
 ])
 
 <li
-    x-data="{ label: @js($label) }"
+    x-data="{ label: @js($isSubNavigation ? 'sub-navigation-' . $label : $label) }"
     data-group-label="{{ $label }}"
     {{ $attributes->class(['fi-sidebar-group flex flex-col gap-y-1']) }}
 >
