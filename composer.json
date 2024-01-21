@@ -20,7 +20,7 @@
         "league/flysystem-aws-s3-v3": "^3.0",
         "nunomaduro/termwind": "^1.0",
         "openspout/openspout": "^4.23",
-        "orchestra/testbench": "^8.0",
+        "orchestra/testbench": "^8.0|^9.0",
         "pestphp/pest": "^2.0",
         "pestphp/pest-plugin-laravel": "^2.0",
         "phpstan/extension-installer": "^1.1",
