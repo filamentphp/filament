@@ -97,7 +97,7 @@ class Export extends Model
         return 'filament_exports' . DIRECTORY_SEPARATOR . $this->getKey();
     }
 
-    public function getWriterType()
+    public function getWriterType(): ?string
     {
         return null;
     }
