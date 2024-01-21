@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
 use Closure;
 use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
@@ -52,6 +53,11 @@ trait CanExportRecords
     protected string | Closure | null $fileDisk = null;
 
     protected string | Closure | null $fileName = null;
+
+    /**
+     * @var array<ExportFormat> | Closure | null
+     */
+    protected array | Closure | null $formats = null;
 
     protected function setUp(): void
     {
@@ -150,12 +156,22 @@ trait CanExportRecords
             $export->file_name = $action->getFileName($export) ?? $exporter->getFileName($export);
             $export->save();
 
+            $formats = $action->getFormats() ?? $exporter->getFormats();
+            $hasCsv = in_array(ExportFormat::Csv, $formats);
+            $hasXlsx = in_array(ExportFormat::Xlsx, $formats);
+
             $query->withoutEagerLoads();
             $serializedQuery = EloquentSerializeFacade::serialize($query);
 
             $job = $action->getJob();
             $jobQueue = $exporter->getJobQueue();
             $jobConnection = $exporter->getJobConnection();
+
+            $makeCreateXlsxFileJob = fn (): CreateXlsxFile => app(CreateXlsxFile::class, [
+                'export' => $export,
+                'columnMap' => $columnMap,
+                'options' => $options,
+            ]);
 
             Bus::chain([
                 Bus::batch([new $job(
@@ -175,16 +191,14 @@ trait CanExportRecords
                         fn (PendingBatch $batch) => $batch->onConnection($jobConnection),
                     )
                     ->allowFailures(),
+                ...(($hasXlsx && (! $hasCsv)) ? [$makeCreateXlsxFileJob()] : []),
                 app(ExportCompletion::class, [
                     'export' => $export,
                     'columnMap' => $columnMap,
+                    'formats' => $formats,
                     'options' => $options,
                 ]),
-                app(CreateXlsxFile::class, [
-                    'export' => $export,
-                    'columnMap' => $columnMap,
-                    'options' => $options,
-                ]),
+                ...(($hasXlsx && $hasCsv) ? [$makeCreateXlsxFileJob()] : []),
             ])
                 ->when(
                     filled($jobQueue),
@@ -330,5 +344,23 @@ trait CanExportRecords
         return $this->evaluate($this->fileName, [
             'export' => $export,
         ]);
+    }
+
+    /**
+     * @param  array<ExportFormat> | Closure | null  $formats
+     */
+    public function formats(array | Closure | null $formats): static
+    {
+        $this->formats = $formats;
+
+        return $this;
+    }
+
+    /**
+     * @return array<ExportFormat> | null
+     */
+    public function getFormats(): ?array
+    {
+        return $this->evaluate($this->formats);
     }
 }
