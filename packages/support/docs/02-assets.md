@@ -213,6 +213,20 @@ If your JavaScript file was [registered to a plugin](#registering-assets-for-a-p
 </div>
 ```
 
+### Add extra attributes to the `<script>` tag
+
+You may add extra attributes to the `<script>` tag using the `extraAttributes()` method:
+
+```php
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+
+FilamentAsset::register([
+    Js::make('custom-script', __DIR__ . '/../../resources/js/custom.js')
+        ->extraAttributes('defer'),
+]);
+```
+
 #### Asynchronous Alpine.js components
 
 <LaracastsBanner
