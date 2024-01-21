@@ -1,6 +1,6 @@
 import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import AlpineLazyLoadAssets from 'alpine-lazy-load-assets'
-import { enableBodyScroll, clearAllBodyScrollLocks } from 'body-scroll-lock'
+import { clearAllBodyScrollLocks, disableBodyScroll } from 'body-scroll-lock'
 import { md5 } from 'js-md5'
 import Sortable from './sortable'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
@@ -111,6 +111,6 @@ const pluralize = function (text, number, variables) {
 }
 
 window.clearAllBodyScrollLocks = clearAllBodyScrollLocks
-window.enableBodyScroll = enableBodyScroll
+window.disableBodyScroll = disableBodyScroll
 window.jsMd5 = md5
 window.pluralize = pluralize
