@@ -9,7 +9,7 @@
     },
     "require": {
         "php": "^8.1",
-        "nunomaduro/termwind": "^1.0",
+        "nunomaduro/termwind": "^1.0|^2.0",
         "rector/rector": "^0.17"
     },
     "autoload": {
