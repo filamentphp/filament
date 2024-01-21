@@ -67,8 +67,8 @@
                     panelAspectRatio: @js($getPanelAspectRatio()),
                     panelLayout: @js($getPanelLayout()),
                     placeholder: @js($getPlaceholder()),
-                    maxSize: @js(($size = $getMaxSize()) ? "'{$size} KB'" : null),
-                    minSize: @js(($size = $getMinSize()) ? "'{$size} KB'" : null),
+                    maxSize: @js(($size = $getMaxSize()) ? "{$size}KB" : null),
+                    minSize: @js(($size = $getMinSize()) ? "{$size}KB" : null),
                     removeUploadedFileUsing: async (fileKey) => {
                         return await $wire.removeFormUploadedFile(@js($statePath), fileKey)
                     },
