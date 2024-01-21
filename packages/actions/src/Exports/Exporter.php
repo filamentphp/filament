@@ -3,6 +3,7 @@
 namespace Filament\Actions\Exports;
 
 use Carbon\CarbonInterface;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
@@ -151,5 +152,13 @@ abstract class Exporter
     public static function getCsvDelimiter(): string
     {
         return ',';
+    }
+
+    /**
+     * @return array<ExportFormat>
+     */
+    public function getFormats(): array
+    {
+        return [ExportFormat::Csv, ExportFormat::Xlsx];
     }
 }

@@ -266,7 +266,7 @@ trait CanImportRecords
                                         'count' => format_number($failedRowsCount),
                                     ]))
                                     ->color('danger')
-                                    ->url(route('filament.imports.failed-rows.download', ['import' => $import]), shouldOpenInNewTab: true)
+                                    ->url(route('filament.imports.failed-rows.download', ['import' => $import], absolute: false), shouldOpenInNewTab: true)
                                     ->markAsRead(),
                             ]),
                         )

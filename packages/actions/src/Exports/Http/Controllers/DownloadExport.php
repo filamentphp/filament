@@ -2,7 +2,7 @@
 
 namespace Filament\Actions\Exports\Http\Controllers;
 
-use Filament\Actions\Exports\Enums\DownloadFileFormat;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -13,7 +13,7 @@ class DownloadExport
     {
         abort_unless($export->user->is(auth()->user()), 403);
 
-        $format = DownloadFileFormat::tryFrom($request->query('format'));
+        $format = ExportFormat::tryFrom($request->query('format'));
 
         abort_unless($format !== null, 404);
 
