@@ -15,7 +15,6 @@
     'id' => null,
     'inlineLabelVerticalAlignment' => VerticalAlignment::Start,
     'isDisabled' => null,
-    'isMarkedAsRequired' => null,
     'label' => null,
     'labelPrefix' => null,
     'labelSrOnly' => null,
@@ -36,10 +35,9 @@
         $hintIconTooltip ??= $field->getHintIconTooltip();
         $id ??= $field->getId();
         $isDisabled ??= $field->isDisabled();
-        $isMarkedAsRequired ??= $field->isMarkedAsRequired();
         $label ??= $field->getLabel();
         $labelSrOnly ??= $field->isLabelHidden();
-        $required ??= $field->isRequired();
+        $required ??= $field->isMarkedAsRequired();
         $statePath ??= $field->getStatePath();
     }
 
@@ -79,8 +77,7 @@
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
                         :for="$id"
-                        :is-disabled="$isDisabled"
-                        :is-marked-as-required="$isMarkedAsRequired"
+                        :disabled="$isDisabled"
                         :prefix="$labelPrefix"
                         :required="$required"
                         :suffix="$labelSuffix"
