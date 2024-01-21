@@ -17,7 +17,7 @@ trait HasAssets
      */
     public function assets(array $assets, string $package = 'app'): static
     {
-        $this->assets[$package][] = [
+        $this->assets[$package] = [
             ...($this->assets[$package] ?? []),
             ...$assets,
         ];
