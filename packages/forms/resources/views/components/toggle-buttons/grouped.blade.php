@@ -20,7 +20,13 @@
         {{ $getLabel() }}
     </x-slot>
 
-    <x-filament::button.group class="w-max">
+    <x-filament::button.group 
+        class="w-max"
+        :attributes="
+            \Filament\Support\prepare_inherited_attributes($attributes)
+                ->merge($getExtraAttributes(), escape: false)
+        ">
+        
         @foreach ($getOptions() as $value => $label)
             @php
                 $inputId = "{$id}-{$value}";
