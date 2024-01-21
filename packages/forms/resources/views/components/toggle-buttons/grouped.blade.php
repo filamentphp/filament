@@ -25,6 +25,7 @@
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
                 ->merge($getExtraAttributes(), escape: false)
+                ->merge($getExtraInputAttributes(), escape: false)
         ">
         
         @foreach ($getOptions() as $value => $label)
