@@ -19,6 +19,7 @@ return new class() extends Migration
             $table->string('exporter');
             $table->unsignedInteger('processed_rows')->default(0);
             $table->unsignedInteger('total_rows');
+            $table->string('writer_type')->nullable();
             $table->unsignedInteger('successful_rows')->default(0);
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->timestamps();

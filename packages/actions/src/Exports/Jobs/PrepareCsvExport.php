@@ -120,6 +120,10 @@ class PrepareCsvExport implements ShouldQueue
 
     public function getExportCsvJob(): string
     {
+        if ($this->export->writer_type === 'XLSX') {
+            return CreateXlsxFile::class;
+        }
+
         return ExportCsv::class;
     }
 }

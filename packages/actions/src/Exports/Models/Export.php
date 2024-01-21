@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
  * @property class-string<Exporter> $exporter
  * @property int $processed_rows
  * @property int $total_rows
+ * @property string $writer_type
  * @property int $successful_rows
  * @property-read Authenticatable $user
  */
@@ -94,5 +95,10 @@ class Export extends Model
     public function getFileDirectory(): string
     {
         return 'filament_exports' . DIRECTORY_SEPARATOR . $this->getKey();
+    }
+
+    public function getWriterType()
+    {
+        return null;
     }
 }

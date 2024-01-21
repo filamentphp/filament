@@ -53,6 +53,8 @@ trait CanExportRecords
 
     protected string | Closure | null $fileName = null;
 
+    protected string | Closure | null $writerType = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -148,6 +150,9 @@ trait CanExportRecords
             $export->save();
 
             $export->file_name = $action->getFileName($export) ?? $exporter->getFileName($export);
+            $export->save();
+
+            $export->writer_type = $action->getWriterType() ?? $exporter->getWriterType();
             $export->save();
 
             $query->withoutEagerLoads();
@@ -330,5 +335,17 @@ trait CanExportRecords
         return $this->evaluate($this->fileName, [
             'export' => $export,
         ]);
+    }
+
+    public function writerType(string | Closure | null $writerType): static
+    {
+        $this->writerType = $writerType;
+
+        return $this;
+    }
+
+    public function getWriterType(): ?string
+    {
+        return $this->evaluate($this->writerType);
     }
 }
