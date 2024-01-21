@@ -163,6 +163,26 @@ public function panel(Panel $panel): Panel
 
 > Please note: this feature is not compatible with [SPA mode](#spa-mode).
 
+## Registering assets for a panel
+
+You can register [assets](../support/assets) that will only be loaded on pages within a specific panel, and not in the rest of the app. To do that, pass an array of assets to the `assets()` method:
+
+```php
+use Filament\Panel;
+use Filament\Support\Assets\Css;
+use Filament\Support\Assets\Js;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->assets([
+            Css::make('custom-stylesheet', resource_path('css/custom.css')),
+            Js::make('custom-script', resource_path('js/custom.js')),
+        ]);
+}
+```
+
 ## Applying middleware
 
 You can apply extra middleware to all routes by passing an array of middleware classes to the `middleware()` method in the configuration:
