@@ -1,6 +1,6 @@
 @props([
     'isDisabled' => false,
-    'isMarkedAsRequired' => true,
+    'isMarkedAsRequired' => false,
     'prefix' => null,
     'required' => false,
     'suffix' => null,
