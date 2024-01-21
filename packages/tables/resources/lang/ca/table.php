@@ -191,11 +191,11 @@ return [
         'actions' => [
 
             'select_all' => [
-                'label' => "Selecciona'ls tots :count",
+                'label' => 'Selecciona\'ls tots :count',
             ],
 
             'deselect_all' => [
-                'label' => "Desselecciona'ls tots",
+                'label' => 'Desselecciona\'ls tots',
             ],
 
         ],
