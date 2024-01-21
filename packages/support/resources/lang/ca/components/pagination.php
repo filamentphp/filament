@@ -13,7 +13,7 @@ return [
             'label' => 'Per pàgina',
 
             'options' => [
-                'all' => 'All',
+                'all' => 'Tots',
             ],
 
         ],
