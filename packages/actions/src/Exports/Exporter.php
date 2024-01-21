@@ -152,4 +152,9 @@ abstract class Exporter
     {
         return ',';
     }
+
+    public function getWriterType(): ?string
+    {
+        return null;
+    }
 }

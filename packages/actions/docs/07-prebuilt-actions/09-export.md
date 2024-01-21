@@ -522,3 +522,14 @@ public function getJobTags(): array
 ```
 
 If you'd like to customize the tags that are applied to jobs of a certain exporter, you may override this method in your exporter class.
+
+### Customizing the writer type
+
+By default, the export system will export the `xlsx` and `csv` file. If you want to download only the `XLSX` or `CSV` file. That functionality is defined in the `getWriterType` method on the  exporter class:
+
+```php
+public function getWriterType(): ?string
+{
+    return null;   
+}
+```
