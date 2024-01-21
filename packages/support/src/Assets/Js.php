@@ -20,6 +20,8 @@ class Js extends Asset
 
     protected string | Htmlable | null $html = null;
 
+    protected string $extraAttributes = '';
+
     public function async(bool $condition = true): static
     {
         $this->isAsync = $condition;
@@ -62,6 +64,13 @@ class Js extends Asset
         return $this;
     }
 
+    public function extraAttributes(string $attributes): static
+    {
+        $this->extraAttributes = $attributes;
+
+        return $this;
+    }
+
     public function isAsync(): bool
     {
         return $this->isAsync;
@@ -96,6 +105,7 @@ class Js extends Asset
         }
 
         $html ??= $this->getSrc();
+        $extraAttributes = $this->extraAttributes;
 
         $async = $this->isAsync() ? 'async' : '';
         $defer = $this->isDeferred() ? 'defer' : '';
@@ -114,6 +124,7 @@ class Js extends Asset
                 {$module}
                 {$navigateOnce}
                 {$navigateTrack}
+                {$extraAttributes}
             ></script>
         ");
     }
