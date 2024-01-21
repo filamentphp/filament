@@ -18,6 +18,9 @@ jobs:
             testbench: 9.*
           - laravel: 10.*
             testbench: 8.*
+        exclude:
+          - laravel: 11.*
+            php: 8.1
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
     steps:
       - uses: actions/checkout@v3
