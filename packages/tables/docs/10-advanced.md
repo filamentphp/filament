@@ -107,7 +107,7 @@ public function table(Table $table): Table
 {
     return $table
         ->recordUrl(
-            fn (Model $record): string => route('posts.edit', ['record' => $record]),
+            fn (Model $record): string => url(TimeRegistrationResource::getUrl('edit', ['record' => $record])),
         );
 }
 ```
