@@ -4,7 +4,6 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Filament\Support\Enums\IconPosition;
-use Filament\Support\Contracts\Iconizable;
 use Filament\Support\Enums\IconSize;
 
 trait HasIcon
@@ -15,9 +14,9 @@ trait HasIcon
 
     protected IconSize | string | Closure | null $iconSize = null;
 
-    public function icon(string | Iconizable | Closure | null $icon): static
+    public function icon(string | Closure | null $icon): static
     {
-        $this->icon = $icon instanceof Iconizable ? $icon->getIconName() : $icon;
+        $this->icon = $icon;
 
         return $this;
     }
