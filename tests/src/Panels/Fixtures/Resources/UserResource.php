@@ -5,7 +5,6 @@ namespace Filament\Tests\Panels\Fixtures\Resources;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Support\Contracts\Iconizable;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Models\User;
@@ -15,7 +14,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string | Iconizable | null $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationIcon = 'heroicon-o-user';
 
     protected static ?int $navigationSort = 1;
 
