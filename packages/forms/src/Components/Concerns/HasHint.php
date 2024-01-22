@@ -5,7 +5,6 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Enums\ActionSize;
-use Filament\Support\Contracts\Iconizable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 
@@ -49,9 +48,9 @@ trait HasHint
         return $this;
     }
 
-    public function hintIcon(string | Iconizable | Closure | null $icon, string | Closure | null $tooltip = null): static
+    public function hintIcon(string | Closure | null $icon, string | Closure | null $tooltip = null): static
     {
-        $this->hintIcon = $icon instanceof Iconizable ?$icon->getIconName() : $icon;
+        $this->hintIcon = $icon;
         $this->hintIconTooltip($tooltip);
 
         return $this;
