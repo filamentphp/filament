@@ -8,8 +8,6 @@ use {{ model }};
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Support\Contracts\Iconizable;
-use Filament\Support\Icons\HeroIcon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
