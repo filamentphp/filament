@@ -20,11 +20,7 @@
             "
         >
             <div
-                @if (FilamentView::hasSpaMode())
-                    ax-load="visible"
-                @else
-                    ax-load
-                @endif
+                ax-load="visible"
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
                 x-data="markdownEditorFormComponent({
                             isLiveDebounced: @js($isLiveDebounced()),
