@@ -102,6 +102,7 @@ You may allow table rows to be completely clickable by using the `$table->record
 ```php
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use App\Filament\Resources\PostResource;
 
 public function table(Table $table): Table
 {
