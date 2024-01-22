@@ -3,7 +3,6 @@
 namespace Filament\Tests\Panels\Fixtures\Resources;
 
 use Filament\Resources\Resource;
-use Filament\Support\Contracts\Iconizable;
 use Filament\Tests\Models\PostCategory;
 use Filament\Tests\Panels\Fixtures\Resources\PostCategoryResource\Pages;
 
@@ -13,7 +12,7 @@ class PostCategoryResource extends Resource
 
     protected static ?string $navigationGroup = 'Blog';
 
-    protected static string | Iconizable | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function getPages(): array
     {
