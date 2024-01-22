@@ -5,6 +5,7 @@ namespace Filament\Navigation;
 use Closure;
 use Exception;
 use Filament\Support\Components\Component;
+use Filament\Support\Contracts\Iconizable;
 use Illuminate\Contracts\Support\Arrayable;
 
 class NavigationItem extends Component
@@ -83,9 +84,9 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function icon(string | Closure | null $icon): static
+    public function icon(string | Iconizable | Closure | null $icon): static
     {
-        $this->icon = $icon;
+        $icon instanceof Iconizable ? $this->icon = $icon->getIconName() : $this->icon = $icon;
 
         return $this;
     }
@@ -104,9 +105,9 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function activeIcon(string | Closure | null $activeIcon): static
+    public function activeIcon(string | Iconizable | Closure | null $activeIcon): static
     {
-        $this->activeIcon = $activeIcon;
+        $activeIcon instanceof Iconizable ? $this->activeIcon = $activeIcon->getIconName() : $this->activeIcon = $activeIcon;
 
         return $this;
     }

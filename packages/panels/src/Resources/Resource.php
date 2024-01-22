@@ -18,6 +18,7 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use Filament\Support\Contracts\Iconizable;
 use Filament\Tables\Table;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -70,9 +71,9 @@ abstract class Resource
 
     protected static ?string $navigationParentItem = null;
 
-    protected static ?string $navigationIcon = null;
+    protected static string | Iconizable | null $navigationIcon = null;
 
-    protected static ?string $activeNavigationIcon = null;
+    protected static string | Iconizable | null $activeNavigationIcon = null;
 
     protected static ?string $navigationLabel = null;
 
@@ -796,7 +797,7 @@ abstract class Resource
         static::$navigationParentItem = $item;
     }
 
-    public static function getNavigationIcon(): ?string
+    public static function getNavigationIcon(): string | Iconizable | null
     {
         return static::$navigationIcon;
     }
@@ -806,7 +807,7 @@ abstract class Resource
         static::$navigationIcon = $icon;
     }
 
-    public static function getActiveNavigationIcon(): ?string
+    public static function getActiveNavigationIcon(): string | Iconizable | null
     {
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }

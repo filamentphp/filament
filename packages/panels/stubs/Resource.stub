@@ -8,6 +8,8 @@ use {{ model }};
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Contracts\Iconizable;
+use Filament\Support\Icons\HeroIcon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,9 +17,12 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class {{ resourceClass }} extends Resource
 {
-    protected static ?string $model = {{ modelClass }}::class;
+    protected static ?string $model = {{ modelClass }}::class;{{ clusterAssignment }}
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';{{ clusterAssignment }}
+    public static function getNavigationIcon(): string | Iconizable | null
+    {
+        return HeroIcon::make(HeroIcon::RECTANGLE_STACK);
+    }
 
     public static function form(Form $form): Form
     {
