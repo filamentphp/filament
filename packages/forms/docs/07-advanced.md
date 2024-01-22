@@ -589,7 +589,7 @@ In this example, the customer's name is not `required()`, and the email address 
 
 ## Inserting Livewire components into a form
 
-You may use insert a Livewire component directly into a form:
+You may insert a Livewire component directly into a form:
 
 ```php
 use Filament\Forms\Components\Livewire;
