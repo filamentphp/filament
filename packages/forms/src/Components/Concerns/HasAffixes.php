@@ -5,7 +5,6 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Enums\ActionSize;
-use Filament\Support\Contracts\Iconizable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 
@@ -130,9 +129,9 @@ trait HasAffixes
         return $this;
     }
 
-    public function prefixIcon(string | Iconizable | Closure | null $icon, bool | Closure $isInline = false): static
+    public function prefixIcon(string | Closure | null $icon, bool | Closure $isInline = false): static
     {
-        $this->prefixIcon = $icon instanceof Iconizable ? $icon->getIconName() : $icon;
+        $this->prefixIcon = $icon;
         $this->inlinePrefix($isInline);
 
         return $this;
@@ -148,9 +147,9 @@ trait HasAffixes
         return $this;
     }
 
-    public function suffixIcon(string | Iconizable | Closure | null $icon, bool | Closure $isInline = false): static
+    public function suffixIcon(string | Closure | null $icon, bool | Closure $isInline = false): static
     {
-        $this->suffixIcon = $icon instanceof Iconizable ? $icon->getIconName() : $icon;
+        $this->suffixIcon = $icon;
         $this->inlineSuffix($isInline);
 
         return $this;
