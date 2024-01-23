@@ -66,9 +66,17 @@ class RenderHook
 
     const PANELS_RESOURCE_PAGES_LIST_RECORDS_TABS_START = 'panels::resource.pages.list-records.tabs.start';
 
+    const PANELS_RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_AFTER = 'panels::resource.pages.manage-related-records.table.after';
+
+    const PANELS_RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_BEFORE = 'panels::resource.pages.manage-related-records.table.before';
+
     const PANELS_RESOURCE_RELATION_MANAGER_AFTER = 'panels::resource.relation-manager.after';
 
     const PANELS_RESOURCE_RELATION_MANAGER_BEFORE = 'panels::resource.relation-manager.before';
+
+    const PANELS_RESOURCE_TABS_END = 'panels::resource.tabs.end';
+
+    const PANELS_RESOURCE_TABS_START = 'panels::resource.tabs.start';
 
     const PANELS_SCRIPTS_AFTER = 'panels::scripts.after';
 
