@@ -194,9 +194,16 @@ class ImportColumn extends Component
     public function getGuesses(): array
     {
         $guesses = $this->evaluate($this->guesses);
+
         array_unshift($guesses, $this->getName());
 
+        if (filled($label = $this->getLabel())) {
+            array_unshift($guesses, $this->getLabel());
+        }
+
         return array_reduce($guesses, function (array $carry, string $guess): array {
+            $carry[] = Str::lower($guess);
+
             $guess = (string) str($guess)
                 ->lower()
                 ->replace('-', ' ')
