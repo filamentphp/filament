@@ -292,6 +292,26 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
+    public function columnVerticalAlignment(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name')
+                    ->verticallyAlignStart(),
+                TextColumn::make('email')
+                    ->label('Email addresses')
+                    ->getStateUsing(fn ($record): array => [
+                        $record->email,
+                        str($record->email)->replace('filamentphp.com', 'filament.dev'),
+                    ])
+                    ->listWithLineBreaks(),
+                IconColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => filled($record->email_verified_at)),
+            ]);
+    }
+
     public function columnGrouping(Table $table): Table
     {
         return $this->postsTable($table)

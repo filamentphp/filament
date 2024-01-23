@@ -469,7 +469,7 @@ TextColumn::make('title')
     ->tooltip(fn (Model $record): string => "By {$record->author->name}")
 ```
 
-## Aligning column content
+## Horizontally aligning column content
 
 Table columns are aligned to the start (left in LTR interfaces or right in RTL interfaces) by default. You may change the alignment using the `alignment()` method, and passing it `Alignment::Start`, `Alignment::Center`, `Alignment::End` or `Alignment::Justify` options:
 
@@ -490,6 +490,30 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
     ->alignEnd()
+```
+
+## Vertically aligning column content
+
+Table column content is vertically centered by default. You may change the vertical alignment using the `verticalAlignment()` method, and passing it `VerticalAlignment::Start`, `VerticalAlignment::Center` or `VerticalAlignment::End` options:
+
+```php
+use Filament\Support\Enums\VerticalAlignment;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->alignment(VerticalAlignment::Start)
+```
+
+<AutoScreenshot name="tables/columns/vertical-alignment" alt="Table with column vertically aligned to the start" version="3.x" />
+
+Alternatively, you may use shorthand methods like `verticallyAlignStart()`:
+
+```php
+use Filament\Support\Enums\VerticalAlignment;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->verticallyAlignStart()
 ```
 
 ## Allowing column headers to wrap
