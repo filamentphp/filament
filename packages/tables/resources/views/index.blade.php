@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\VerticalAlignment;
     use Filament\Support\Facades\FilamentView;
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
@@ -1080,6 +1081,12 @@
                                                 \Filament\Support\prepare_inherited_attributes($column->getExtraCellAttributeBag())
                                                     ->class([
                                                         'fi-table-cell-' . str($column->getName())->camel()->kebab(),
+                                                        match ($column->getVerticalAlignment()) {
+                                                            VerticalAlignment::Start => 'align-top',
+                                                            VerticalAlignment::Center => 'align-middle',
+                                                            VerticalAlignment::End => 'align-bottom',
+                                                            default => null,
+                                                        },
                                                         $getHiddenClasses($column),
                                                     ])
                                             "
