@@ -44,11 +44,11 @@
             ])
         >
             @if (filament()->hasTopbar())
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.before') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_TOPBAR_BEFORE) }}
 
                 <x-filament-panels::topbar :navigation="$navigation" />
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.after') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_TOPBAR_AFTER) }}
             @endif
 
             <main
@@ -80,14 +80,14 @@
                     },
                 ])
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.start') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_CONTENT_START) }}
 
                 {{ $slot }}
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.end') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_CONTENT_END) }}
             </main>
 
-            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer') }}
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_FOOTER) }}
         </div>
     </div>
 </x-filament-panels::layout.base>

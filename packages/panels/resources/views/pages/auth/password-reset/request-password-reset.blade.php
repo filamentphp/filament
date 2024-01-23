@@ -4,8 +4,8 @@
             {{ $this->loginAction }}
         </x-slot>
     @endif
-    
-    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::auth.password-reset.request.form.before') }}
+
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_AUTH_PASSWORD_RESET_REQUEST_FORM_BEFORE) }}
 
     <x-filament-panels::form wire:submit="request">
         {{ $this->form }}
@@ -16,5 +16,5 @@
         />
     </x-filament-panels::form>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::auth.password-reset.request.form.after') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_AUTH_PASSWORD_RESET_REQUEST_FORM_AFTER) }}
 </x-filament-panels::page.simple>
