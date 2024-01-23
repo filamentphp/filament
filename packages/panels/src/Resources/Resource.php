@@ -816,7 +816,7 @@ abstract class Resource
         return static::$navigationLabel ?? static::getTitleCasePluralModelLabel();
     }
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): ?string | int
     {
         return null;
     }
