@@ -19,7 +19,6 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Support\Enums\RenderHook;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentView;
 use Filament\Widgets\Widget;
@@ -665,7 +664,7 @@ class FilamentManager
     /**
      * @deprecated Use the `\Filament\Support\Facades\FilamentView::renderHook()` method instead.
      */
-    public function renderHook(RenderHook | string $name): Htmlable
+    public function renderHook(string $name): Htmlable
     {
         return FilamentView::renderHook($name);
     }
@@ -739,7 +738,7 @@ class FilamentManager
     /**
      * @deprecated Use the `renderHook()` method on the panel configuration instead.
      */
-    public function registerRenderHook(RenderHook | string $name, Closure $hook): void
+    public function registerRenderHook(string $name, Closure $hook): void
     {
         FilamentView::registerRenderHook($name, $hook);
     }

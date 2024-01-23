@@ -3,7 +3,6 @@
 namespace Filament\Support\View;
 
 use Closure;
-use Filament\Support\Enums\RenderHook;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
@@ -20,13 +19,11 @@ class ViewManager
     /**
      * @param  string | array<string> | null  $scopes
      */
-    public function registerRenderHook(RenderHook | string $name, Closure $hook, string | array | null $scopes = null): void
+    public function registerRenderHook(string $name, Closure $hook, string | array | null $scopes = null): void
     {
         if (! is_array($scopes)) {
             $scopes = [$scopes];
         }
-
-        $name = $this->resolveRenderHookName($name);
 
         foreach ($scopes as $scopeName) {
             $this->renderHooks[$name][$scopeName][] = $hook;
@@ -36,7 +33,7 @@ class ViewManager
     /**
      * @param  string | array<string> | null  $scopes
      */
-    public function renderHook(RenderHook | string $name, string | array | null $scopes = null): Htmlable
+    public function renderHook(string $name, string | array | null $scopes = null): Htmlable
     {
         $renderedHooks = [];
 
@@ -53,8 +50,6 @@ class ViewManager
 
             return (string) app()->call($hook, ['scopes' => $scopes]);
         };
-
-        $name = $this->resolveRenderHookName($name);
 
         $hooks = array_map(
             $renderHook,
@@ -82,14 +77,5 @@ class ViewManager
     public function hasSpaMode(): bool
     {
         return $this->hasSpaMode;
-    }
-
-    protected function resolveRenderHookName(RenderHook | string $name): string
-    {
-        if ($name instanceof RenderHook) {
-            return $name->value;
-        }
-
-        return $name;
     }
 }

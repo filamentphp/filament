@@ -8,21 +8,15 @@ Filament allows you to render Blade content at various points in the frameworks 
 
 ## Registering render hooks
 
-To register render hooks, you can call `FilamentView::registerRenderHook()` from a service provider or middleware. The first argument is string or available `RenderHook` enum as the name of the render hook, and the second argument is a callback that returns the content to be rendered:
+To register render hooks, you can call `FilamentView::registerRenderHook()` from a service provider or middleware. The first argument is the name of the render hook, and the second argument is a callback that returns the content to be rendered:
 
 ```php
 use Filament\Support\Facades\FilamentView;
-use Filament\Support\Enums\RenderHook;
 use Illuminate\Support\Facades\Blade;
 
 FilamentView::registerRenderHook(
     'panels::body.start',
     fn (): string => Blade::render('@livewire(\'livewire-ui-modal\')'),
-);
-
-FilamentView::registerRenderHook(
-    RenderHook::Panels_Footer,
-    fn (): string => 'Copyright '.now()->format('Y').'. Allrights Reserved',
 );
 ```
 
