@@ -89,8 +89,19 @@ class ImportCsv implements ShouldQueue
             $processedRows++;
         }
 
-        $this->import->increment('processed_rows', $processedRows);
-        $this->import->increment('successful_rows', $successfulRows);
+        $this->import->refresh();
+
+        $importProcessedRows = $this->import->processed_rows + $processedRows;
+        $this->import->processed_rows = ($importProcessedRows < $this->import->total_rows) ?
+            $importProcessedRows :
+            $this->import->total_rows;
+
+        $importSuccessfulRows = $this->import->successful_rows + $successfulRows;
+        $this->import->successful_rows = ($importSuccessfulRows < $this->import->total_rows) ?
+            $importSuccessfulRows :
+            $this->import->total_rows;
+
+        $this->import->save();
 
         $this->handleExceptions($exceptions);
     }
