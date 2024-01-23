@@ -95,10 +95,19 @@
                         >
                             @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
                                 <div
-                                    class="fi-fo-repeater-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3"
+                                    @if ($isCollapsible)
+                                        x-on:click.stop="isCollapsed = !isCollapsed"
+                                    @endif
+                                    @class([
+                                        'fi-fo-repeater-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3',
+                                        'cursor-pointer select-none' => $isCollapsible,
+                                    ])
                                 >
                                     @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
-                                        <ul class="flex items-center gap-x-3">
+                                        <ul
+                                            x-on:click.stop
+                                            class="flex items-center gap-x-3"
+                                        >
                                             @if ($isReorderableWithDragAndDrop)
                                                 <li x-sortable-handle>
                                                     {{ $reorderAction }}
@@ -123,13 +132,9 @@
 
                                     @if (filled($itemLabel))
                                         <h4
-                                            @if ($isCollapsible)
-                                                x-on:click.stop="isCollapsed = !isCollapsed"
-                                            @endif
                                             @class([
                                                 'text-sm font-medium text-gray-950 dark:text-white',
                                                 'truncate' => $isItemLabelTruncated(),
-                                                'cursor-pointer select-none' => $isCollapsible,
                                             ])
                                         >
                                             {{ $itemLabel }}
@@ -138,6 +143,7 @@
 
                                     @if ($isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
                                         <ul
+                                            x-on:click.stop
                                             class="ms-auto flex items-center gap-x-3"
                                         >
                                             @foreach ($visibleExtraItemActions as $extraItemAction)
