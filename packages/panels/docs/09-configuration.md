@@ -81,6 +81,23 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+You could also use `RenderHook` enum for all predefined hooks:
+```php
+use Filament\Panel;
+use Filament\Support\Enums\RenderHook;
+use Illuminate\Support\Facades\Blade;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->renderHook(
+            RenderHook::Panels_BodyStart,
+            fn (): string => Blade::render('@livewire(\'livewire-ui-modal\')'),
+        );
+}
+```
+
 A full list of available render hooks can be found [here](../support/render-hooks#available-render-hooks).
 
 ## Setting a domain

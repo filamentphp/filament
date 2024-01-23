@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Support\Enums\RenderHook;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Blade;
@@ -13,6 +14,16 @@ test('render hooks can be registered', function () {
     });
 
     expect(FilamentView::renderHook('foo'))
+        ->toBeInstanceOf(HtmlString::class)
+        ->toHtml()->toBe('bar');
+});
+
+test('render hooks can be registered using enum', function () {
+    FilamentView::registerRenderHook(RenderHook::Panels_BodyStart, function (): string {
+        return Blade::render('bar');
+    });
+
+    expect(FilamentView::renderHook(RenderHook::Panels_BodyStart))
         ->toBeInstanceOf(HtmlString::class)
         ->toHtml()->toBe('bar');
 });
