@@ -235,6 +235,19 @@ Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'full_name')
 ```
 
+Or you can use `Illuminate\Database\Query\Expression` to do the same thing:
+
+```php
+use Filament\Forms\Components\Select;
+use Illuminate\Database\Query\Expression;
+
+Select::make('author_id')
+    ->relationship(
+        name: 'author',
+        titleAttribute: new Expression('concat(first_name, \' \', last_name) as full_name'),
+    )
+```
+
 Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform an option's Eloquent model into a label:
 
 ```php

@@ -21,10 +21,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
+use InvalidArgumentException;
 use Livewire\Component as LivewireComponent;
 
 use function Filament\Support\generate_search_column_expression;
@@ -704,7 +706,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
     }
 
-    public function relationship(string | Closure | null $name = null, string | Closure | null $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string | Closure | null $name = null, string | Closure | Expression | null $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
@@ -747,15 +749,17 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                self::applyRelationshipTitleAttributeOrdering($relationshipQuery, $relationshipTitleAttribute);
             }
 
-            if (str_contains($relationshipTitleAttribute, '->')) {
-                if (! str_contains($relationshipTitleAttribute, ' as ')) {
-                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            if (is_string($relationshipTitleAttribute)) {
+                if (str_contains($relationshipTitleAttribute, '->')) {
+                    if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                        $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                    }
+                } else {
+                    $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
                 }
-            } else {
-                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
             }
 
             return $relationshipQuery
@@ -792,15 +796,17 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+                self::applyRelationshipTitleAttributeOrdering($relationshipQuery, $relationshipTitleAttribute);
             }
 
-            if (str_contains($relationshipTitleAttribute, '->')) {
-                if (! str_contains($relationshipTitleAttribute, ' as ')) {
-                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            if (is_string($relationshipTitleAttribute)) {
+                if (str_contains($relationshipTitleAttribute, '->')) {
+                    if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                        $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                    }
+                } else {
+                    $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
                 }
-            } else {
-                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
             }
 
             return $relationshipQuery
@@ -918,12 +924,14 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
-            if (str_contains($relationshipTitleAttribute, '->')) {
-                if (! str_contains($relationshipTitleAttribute, ' as ')) {
-                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            if (is_string($relationshipTitleAttribute)) {
+                if (str_contains($relationshipTitleAttribute, '->')) {
+                    if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                        $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                    }
+                } else {
+                    $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
                 }
-            } else {
-                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
             }
 
             return $relationshipQuery
@@ -1043,7 +1051,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         );
     }
 
-    public function getRelationshipTitleAttribute(): ?string
+    public function getRelationshipTitleAttribute(): null | string | Expression
     {
         return $this->evaluate($this->relationshipTitleAttribute);
     }
@@ -1202,5 +1210,30 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         /** @var BelongsTo $relationship */
 
         return $relationship->getQualifiedOwnerKeyName();
+    }
+
+    protected static function applyRelationshipTitleAttributeOrdering(Builder $query, string | Expression | null $titleAttribute): void
+    {
+        if (is_string($titleAttribute)) {
+            $query->orderBy($titleAttribute);
+
+            return;
+        }
+
+        if ($titleAttribute instanceof Expression) {
+            $sql = $titleAttribute->getValue($query->getQuery()->getGrammar());
+
+            $aliasPosition = stripos($sql, ' as ');
+
+            if ($aliasPosition === false) {
+                //Alias required, because otherwise the builder will fail,
+                //trying to get the column name same as expression,
+                //because it can be too long without alias.
+                throw new InvalidArgumentException('The relationship title attribute must be aliased with an "as" clause (e.g.: concat(...) as result).');
+            }
+
+            //Apply new Expression without alias part.
+            $query->orderBy(new Expression(substr($sql, 0, $aliasPosition)));
+        }
     }
 }
