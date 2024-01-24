@@ -86,6 +86,7 @@
                                         @endphp
 
                                         <x-filament::dropdown.list.item
+                                            :active="$item->isActive()"
                                             :badge="$item->getBadge()"
                                             :badge-color="$item->getBadgeColor()"
                                             :href="$item->getUrl()"
