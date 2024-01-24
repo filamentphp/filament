@@ -501,7 +501,7 @@ use Filament\Support\Enums\VerticalAlignment;
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
-    ->alignment(VerticalAlignment::Start)
+    ->verticalAlignment(VerticalAlignment::Start)
 ```
 
 <AutoScreenshot name="tables/columns/vertical-alignment" alt="Table with column vertically aligned to the start" version="3.x" />
