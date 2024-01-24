@@ -87,6 +87,9 @@
                         'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
                         'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
                     ], escape: false)
+                    ->class([
+                        '[&::-ms-reveal]:hidden' => $isPasswordRevealable,
+                    ])
             "
         />
     </x-filament::input.wrapper>
