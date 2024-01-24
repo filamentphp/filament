@@ -86,6 +86,7 @@
                         $applyStateBindingModifiers('wire:model') => $statePath,
                         'x-bind:type' => $isPasswordRevealable ? 'isPasswordRevealed ? \'text\' : \'password\'' : null,
                         'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
+                        'class' => $isPasswordRevealable ? 'fi-input-password-revealable' : null,
                     ], escape: false)
             "
         />

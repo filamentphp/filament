@@ -100,6 +100,7 @@
 >
     @if ($hasPrefix || $hasLoadingIndicator)
         <div
+            x-on:mousedown.prevent {{-- Prevents input wrapper from losing focus when clicking on the prefix. --}}
             @if (! $hasPrefix)
                 wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.flex
                 wire:target="{{ $loadingIndicatorTarget }}"
@@ -178,6 +179,7 @@
 
     @if ($hasSuffix)
         <div
+            x-on:mousedown.prevent {{-- Prevents input wrapper from losing focus when clicking on the suffix. --}}
             @class([
                 'flex items-center gap-x-3 pe-3',
                 'ps-1' => $inlineSuffix && filled($suffix),

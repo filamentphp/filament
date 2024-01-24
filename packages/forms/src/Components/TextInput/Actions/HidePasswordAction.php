@@ -25,7 +25,6 @@ class HidePasswordAction extends Action
         $this->extraAttributes([
             'x-cloak' => true,
             'x-show' => 'isPasswordRevealed',
-            'x-on:pointerdown.prevent' => '',
         ]);
 
         $this->alpineClickHandler('isPasswordRevealed = false');
