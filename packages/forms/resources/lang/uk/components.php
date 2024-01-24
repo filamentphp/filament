@@ -59,11 +59,11 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'Снять выделение',
+                'label' => 'Зняти виділення',
             ],
 
             'select_all' => [
-                'label' => 'Выделить все',
+                'label' => 'Виділити все',
             ],
 
         ],
