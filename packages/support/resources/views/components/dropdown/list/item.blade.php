@@ -17,7 +17,6 @@
     'tag' => 'button',
     'target' => null,
     'tooltip' => null,
-    'active' => false,
 ])
 
 @php
@@ -52,8 +51,10 @@
             IconSize::Large, 'lg' => 'h-6 w-6',
             default => $iconSize,
         },
-        'text-gray-400 dark:text-gray-500' => ! $active,
-        'text-primary-600 dark:text-primary-400' => $active,
+        match ($color) {
+            'gray' => 'text-gray-400 dark:text-gray-500',
+            default => 'text-custom-500 dark:text-custom-400',
+        },
     ]);
 
     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
@@ -68,8 +69,10 @@
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item-label flex-1 truncate text-start',
-        'text-primary-600 dark:text-primary-500' => $active,
-        'text-gray-700 dark:text-gray-200' => ! $active,
+        match ($color) {
+            'gray' => 'text-gray-700 dark:text-gray-200',
+            default => 'text-custom-600 dark:text-custom-400 ',
+        },
     ]);
 
     $labelStyles = \Illuminate\Support\Arr::toCssStyles([
