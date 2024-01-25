@@ -63,20 +63,20 @@
                 new CustomEvent('modal-closed', { id: '{{ $id }}' }),
             )
 
-            this.$nextTick(() => {
+            {{-- this.$nextTick(() => {
                 if (document.getElementsByClassName('fi-modal-open').length) {
                     return
                 }
 
                 window.clearAllBodyScrollLocks()
-            })
+            }) --}}
         },
 
         open: function () {
             this.isOpen = true
 
-            window.clearAllBodyScrollLocks()
-            window.disableBodyScroll(this.$root)
+            {{-- window.clearAllBodyScrollLocks()
+            window.disableBodyScroll(this.$root) --}}
 
             this.$refs.modalContainer.dispatchEvent(
                 new CustomEvent('modal-opened', { id: '{{ $id }}' }),
@@ -87,11 +87,11 @@
         x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') close()"
         x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
     @endif
-    x-trap="isOpen"
+    x-trap.noscroll="isOpen"
     wire:ignore.self
-    x-bind:class="{
+    {{-- x-bind:class="{
         'fi-modal-open': isOpen,
-    }"
+    }" --}}
     @class([
         'fi-modal',
         'fi-width-screen' => $width === MaxWidth::Screen,
