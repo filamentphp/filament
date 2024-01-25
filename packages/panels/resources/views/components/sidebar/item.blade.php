@@ -109,6 +109,13 @@
 
         @if (filled($badge))
             <span
+                @if (filled($badgeTooltip))
+                    x-data="{}"
+                    x-tooltip="{
+                        content: @js($tooltip),
+                        theme: $store.theme,
+                    }"
+                @endif
                 @if ($sidebarCollapsible)
                     x-show="$store.sidebar.isOpen"
                     x-transition:enter="lg:transition lg:delay-100"
