@@ -58,6 +58,7 @@ export default function fileUploadFormComponent({
     panelAspectRatio,
     panelLayout,
     placeholder,
+    processingMessage,
     removeUploadedFileButtonPosition,
     removeUploadedFileUsing,
     reorderUploadedFilesUsing,
@@ -187,7 +188,7 @@ export default function fileUploadFormComponent({
                 allowImageEdit: hasImageEditor,
                 imageEditEditor: {
                     open: (file) => this.loadEditor(file),
-                    onconfirm: () => {},
+                    onconfirm: () => { },
                     oncancel: () => this.closeEditor(),
                     onclose: () => this.closeEditor(),
                 },
@@ -273,7 +274,7 @@ export default function fileUploadFormComponent({
                     return
                 }
 
-                this.dispatchFormEvent('file-upload-started')
+                this.dispatchFormEvent('field-processing-started', {message: processingMessage})
             })
 
             const handleFileProcessing = async () => {
@@ -283,15 +284,15 @@ export default function fileUploadFormComponent({
                         .filter(
                             (file) =>
                                 file.status ===
-                                    FilePond.FileStatus.PROCESSING ||
+                                FilePond.FileStatus.PROCESSING ||
                                 file.status ===
-                                    FilePond.FileStatus.PROCESSING_QUEUED,
+                                FilePond.FileStatus.PROCESSING_QUEUED,
                         ).length
                 ) {
                     return
                 }
 
-                this.dispatchFormEvent('file-upload-finished')
+                this.dispatchFormEvent('field-processing-finished')
             }
 
             this.pond.on('processfile', handleFileProcessing)
@@ -308,11 +309,12 @@ export default function fileUploadFormComponent({
             this.pond = null
         },
 
-        dispatchFormEvent: function (name) {
+        dispatchFormEvent: function (name, detail = {}) {
             this.$el.closest('form')?.dispatchEvent(
                 new CustomEvent(name, {
                     composed: true,
                     cancelable: true,
+                    detail,
                 }),
             )
         },
@@ -346,15 +348,15 @@ export default function fileUploadFormComponent({
                     options: {
                         type: 'local',
                         ...(!uploadedFile.type ||
-                        /^image/.test(uploadedFile.type)
+                            /^image/.test(uploadedFile.type)
                             ? {}
                             : {
-                                  file: {
-                                      name: uploadedFile.name,
-                                      size: uploadedFile.size,
-                                      type: uploadedFile.type,
-                                  },
-                              }),
+                                file: {
+                                    name: uploadedFile.name,
+                                    size: uploadedFile.size,
+                                    type: uploadedFile.type,
+                                },
+                            }),
                     },
                 })
             }
@@ -677,7 +679,7 @@ export default function fileUploadFormComponent({
                                         type:
                                             this.editingFile.type ===
                                                 'image/svg+xml' ||
-                                            hasCircleCropper
+                                                hasCircleCropper
                                                 ? 'image/png'
                                                 : this.editingFile.type,
                                         lastModified: new Date().getTime(),

@@ -129,8 +129,8 @@
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
-    $hasFileUploadLoadingIndicator = $type === 'submit' && filled($form);
-    $hasLoadingIndicator = filled($wireTarget) || $hasFileUploadLoadingIndicator;
+    $hasFieldProcessingLoadingIndicator = $type === 'submit' && filled($form);
+    $hasLoadingIndicator = filled($wireTarget) || $hasFieldProcessingLoadingIndicator;
 
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
@@ -174,7 +174,7 @@
     @if ($tag === 'a')
         {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
     @endif
-    @if (($keyBindings || $hasTooltip) && (! $hasFileUploadLoadingIndicator))
+    @if (($keyBindings || $hasTooltip) && (! $hasFieldProcessingLoadingIndicator))
         x-data="{}"
     @endif
     @if ($keyBindings)
@@ -186,23 +186,25 @@
             theme: $store.theme,
         }"
     @endif
-    @if ($hasFileUploadLoadingIndicator)
+    @if ($hasFieldProcessingLoadingIndicator)
         x-data="{
             form: null,
-            isUploadingFile: false,
+            isProcessingField: false,
+            processingMessage: null,
         }"
         x-init="
             form = $el.closest('form')
 
-            form?.addEventListener('file-upload-started', () => {
-                isUploadingFile = true
+            form?.addEventListener('field-processing-started', (event) => {
+                isProcessingField = true
+                processingMessage = event.detail.message
             })
 
-            form?.addEventListener('file-upload-finished', () => {
-                isUploadingFile = false
+            form?.addEventListener('field-processing-finished', () => {
+                isProcessingField = false
             })
         "
-        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
+        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isProcessingField }"
     @endif
     {{
         $attributes
@@ -211,7 +213,7 @@
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-                'x-bind:disabled' => $hasFileUploadLoadingIndicator ? 'isUploadingFile' : null,
+                'x-bind:disabled' => $hasFieldProcessingLoadingIndicator ? 'isProcessingField' : null,
             ], escape: false)
             ->class([$buttonClasses])
             ->style([$buttonStyles])
@@ -246,28 +248,26 @@
             />
         @endif
 
-        @if ($hasFileUploadLoadingIndicator)
+        @if ($hasFieldProcessingLoadingIndicator)
             <x-filament::loading-indicator
                 x-cloak="x-cloak"
-                x-show="isUploadingFile"
+                x-show="isProcessingField"
                 :class="$iconClasses"
             />
         @endif
     @endif
 
     <span
-        @if ($hasFileUploadLoadingIndicator)
-            x-show="! isUploadingFile"
+        @if ($hasFieldProcessingLoadingIndicator)
+            x-show="! isProcessingField"
         @endif
         class="{{ $labelClasses }}"
     >
         {{ $slot }}
     </span>
 
-    @if ($hasFileUploadLoadingIndicator)
-        <span x-cloak x-show="isUploadingFile" class="{{ $labelClasses }}">
-            {{ __('filament::components/button.messages.uploading_file') }}
-        </span>
+    @if ($hasFieldProcessingLoadingIndicator)
+        <span x-cloak x-show="isProcessingField" x-text="processingMessage" class="{{ $labelClasses }}"></span>
     @endif
 
     @if ($iconPosition === IconPosition::After)
@@ -299,7 +299,7 @@
             />
         @endif
 
-        @if ($hasFileUploadLoadingIndicator)
+        @if ($hasFieldProcessingLoadingIndicator)
             <x-filament::loading-indicator
                 x-cloak="x-cloak"
                 x-show="isUploadingFile"

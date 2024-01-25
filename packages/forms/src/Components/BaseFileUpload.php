@@ -18,6 +18,8 @@ use Throwable;
 
 class BaseFileUpload extends Field
 {
+    use Concerns\HasProcessing;
+
     /**
      * @var array<string> | Arrayable | Closure | null
      */
@@ -72,6 +74,10 @@ class BaseFileUpload extends Field
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->processingMessage(static function (): string {
+            return __('filament::components/button.messages.uploading_file');
+        });
 
         $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $state): void {
             if (blank($state)) {

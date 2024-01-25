@@ -67,6 +67,7 @@
                     panelAspectRatio: @js($getPanelAspectRatio()),
                     panelLayout: @js($getPanelLayout()),
                     placeholder: @js($getPlaceholder()),
+                    processingMessage: @js($getProcessingMessage()),
                     maxFiles: @js($getMaxFiles()),
                     maxSize: @js(($size = $getMaxSize()) ? "{$size}KB" : null),
                     minSize: @js(($size = $getMinSize()) ? "{$size}KB" : null),
