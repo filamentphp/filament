@@ -267,7 +267,12 @@
     </span>
 
     @if ($hasFieldProcessingLoadingIndicator)
-        <span x-cloak x-show="isProcessingField" x-text="processingMessage" class="{{ $labelClasses }}"></span>
+        <span
+            x-cloak
+            x-show="isProcessingField"
+            x-text="processingMessage"
+            class="{{ $labelClasses }}"
+        ></span>
     @endif
 
     @if ($iconPosition === IconPosition::After)
