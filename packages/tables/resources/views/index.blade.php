@@ -288,7 +288,7 @@
 
                     @if ($isSelectionEnabled || count($sortableColumns))
                         <div
-                            class="flex items-center gap-4 gap-x-6 bg-gray-50 px-4 sm:px-6 dark:bg-white/5"
+                            class="flex items-center gap-4 gap-x-6 bg-gray-50 px-4 dark:bg-white/5 sm:px-6"
                         >
                             @if ($isSelectionEnabled && (! $isReordering))
                                 <x-filament-tables::selection.checkbox
@@ -715,26 +715,32 @@
                                     @if ($columnGroupColumnsCount)
                                         <th
                                             colspan="{{ $columnGroupColumnsCount }}"
-                                            {{ $columnGroup->getExtraHeaderAttributeBag()->class([
-                                                'fi-table-header-group-cell px-3 py-2 sm:first-of-type:ps-6 sm:last-of-type:pe-6 [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e border-gray-200 dark:border-white/5',
-                                            ]) }}
+                                            {{
+                                                $columnGroup->getExtraHeaderAttributeBag()->class([
+                                                    'fi-table-header-group-cell border-gray-200 px-3 py-2 dark:border-white/5 sm:first-of-type:ps-6 sm:last-of-type:pe-6 [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e',
+                                                ])
+                                            }}
                                         >
-                                            <div @class([
-                                                'flex w-full items-center',
-                                                'whitespace-nowrap' => ! $isColumnGroupHeaderWrapped,
-                                                'whitespace-normal' => $isColumnGroupHeaderWrapped,
-                                                match ($columnGroupAlignment) {
-                                                    Alignment::Start => 'justify-start',
-                                                    Alignment::Center => 'justify-center',
-                                                    Alignment::End => 'justify-end',
-                                                    Alignment::Left => 'justify-start rtl:flex-row-reverse',
-                                                    Alignment::Right => 'justify-end rtl:flex-row-reverse',
-                                                    Alignment::Justify, Alignment::Between => 'justify-between',
-                                                    default => $columnGroupAlignment,
-                                                },
-                                                $getHiddenClasses($columnGroup),
-                                            ])>
-                                                <span class="text-sm font-semibold text-gray-950 dark:text-white">
+                                            <div
+                                                @class([
+                                                    'flex w-full items-center',
+                                                    'whitespace-nowrap' => ! $isColumnGroupHeaderWrapped,
+                                                    'whitespace-normal' => $isColumnGroupHeaderWrapped,
+                                                    match ($columnGroupAlignment) {
+                                                        Alignment::Start => 'justify-start',
+                                                        Alignment::Center => 'justify-center',
+                                                        Alignment::End => 'justify-end',
+                                                        Alignment::Left => 'justify-start rtl:flex-row-reverse',
+                                                        Alignment::Right => 'justify-end rtl:flex-row-reverse',
+                                                        Alignment::Justify, Alignment::Between => 'justify-between',
+                                                        default => $columnGroupAlignment,
+                                                    },
+                                                    $getHiddenClasses($columnGroup),
+                                                ])
+                                            >
+                                                <span
+                                                    class="text-sm font-semibold text-gray-950 dark:text-white"
+                                                >
                                                     {{ $columnGroup->getLabel() }}
                                                 </span>
                                             </div>

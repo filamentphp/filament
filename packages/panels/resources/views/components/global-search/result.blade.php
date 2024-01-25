@@ -6,7 +6,7 @@
 ])
 
 <li
-    {{ $attributes->class(['fi-global-search-result transition duration-75 scroll-mt-9 focus-within:bg-gray-50 hover:bg-gray-50 dark:focus-within:bg-white/5 dark:hover:bg-white/5']) }}
+    {{ $attributes->class(['fi-global-search-result scroll-mt-9 transition duration-75 focus-within:bg-gray-50 hover:bg-gray-50 dark:focus-within:bg-white/5 dark:hover:bg-white/5']) }}
 >
     <a
         {{ \Filament\Support\generate_href_html($url) }}

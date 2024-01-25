@@ -99,7 +99,7 @@
                 x-transition:enter-end="opacity-100"
             @endif
             @class([
-                'fi-sidebar-item-label flex-1 truncate font-medium text-sm',
+                'fi-sidebar-item-label flex-1 truncate text-sm font-medium',
                 'text-gray-700 dark:text-gray-200' => ! $active,
                 'text-primary-600 dark:text-primary-400' => $active,
             ])

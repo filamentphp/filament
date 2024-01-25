@@ -20,7 +20,7 @@
         {{ $getLabel() }}
     </x-slot>
 
-    <x-filament::button.group 
+    <x-filament::button.group
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
                 ->merge($getExtraAttributes(), escape: false)
