@@ -113,7 +113,7 @@
                 @if (filled($badgeTooltip))
                     x-data="{}"
                     x-tooltip="{
-                        content: @js($tooltip),
+                        content: @js($badgeTooltip),
                         theme: $store.theme,
                     }"
                 @endif

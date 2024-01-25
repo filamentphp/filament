@@ -167,6 +167,7 @@ abstract class Resource
                 ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*'))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
+                ->tooltip(static::getNavigationTooltip())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
@@ -817,6 +818,11 @@ abstract class Resource
     }
 
     public static function getNavigationBadge(): ?string
+    {
+        return null;
+    }
+
+    public static function getNavigationTooltip(): ?string
     {
         return null;
     }
