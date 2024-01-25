@@ -22,6 +22,8 @@ class ExportColumn extends Component
 
     protected ?Exporter $exporter = null;
 
+    protected bool | Closure $isEnabledByDefault = true;
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -56,6 +58,13 @@ class ExportColumn extends Component
         return $this;
     }
 
+    public function enabledByDefault(bool | Closure $isEnabledByDefault): static
+    {
+        $this->isEnabledByDefault = $isEnabledByDefault;
+
+        return $this;
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -64,6 +73,11 @@ class ExportColumn extends Component
     public function getExporter(): ?Exporter
     {
         return $this->exporter;
+    }
+
+    public function isEnabledByDefault(): bool
+    {
+        return $this->evaluate($this->isEnabledByDefault) ?? true;
     }
 
     public function getRecord(): ?Model

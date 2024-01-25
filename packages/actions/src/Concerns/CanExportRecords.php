@@ -81,7 +81,7 @@ trait CanExportRecords
                             Forms\Components\Checkbox::make('isEnabled')
                                 ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
                                 ->hiddenLabel()
-                                ->default(true)
+                                ->default($column->isEnabledByDefault())
                                 ->live()
                                 ->grow(false),
                             Forms\Components\TextInput::make('label')
