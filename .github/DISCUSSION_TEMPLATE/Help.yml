@@ -28,6 +28,6 @@ body:
     id: description
     attributes:
       label: How can we help you?
-      description: Please provide detailed information about the issue you're experiencing. Include details such as what is happening, what you are trying to achieve, steps you've taken, and any error messages encountered.  Add code examples. Include them inside triple backticks so Github can format them. Trim needless indentation so people on mobile can read your code. **Don’t send screenshots of code**.
+      description: Please provide detailed information about the issue you're experiencing. Include details such as what is happening, what you are trying to achieve, steps you've taken, and any error messages encountered.  Add code examples. Include them inside triple backticks so GitHub can format them. Trim needless indentation so people on mobile can read your code. **Don’t send screenshots of code**.
     validations:
       required: true
