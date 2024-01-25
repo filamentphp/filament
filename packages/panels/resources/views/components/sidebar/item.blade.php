@@ -4,6 +4,7 @@
     'activeIcon' => null,
     'badge' => null,
     'badgeColor' => null,
+    'badgeTooltip' => null,
     'childItems' => [],
     'first' => false,
     'grouped' => false,
