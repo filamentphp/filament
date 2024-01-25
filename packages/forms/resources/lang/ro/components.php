@@ -269,7 +269,7 @@ return [
             'add_between' => [
                 'label' => 'Inserează',
             ],
-            
+
             'delete' => [
                 'label' => 'Ștergere',
             ],
