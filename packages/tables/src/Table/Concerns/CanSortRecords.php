@@ -14,12 +14,16 @@ trait CanSortRecords
 
     protected ?Closure $defaultSortQuery = null;
 
+    protected bool $isDefaultSortEnabled = true;
+
     protected bool | Closure | null $persistsSortInSession = false;
 
-    public function defaultSort(string | Closure | null $column, string | Closure | null $direction = 'asc'): static
+    public function defaultSort(string | Closure | bool | null $column, string | Closure | null $direction = 'asc'): static
     {
         if ($column instanceof Closure) {
             $this->defaultSortQuery = $column;
+        } else if (is_bool($column)) {
+            $this->isDefaultSortEnabled = $column;
         } else {
             $this->defaultSortColumn = $column;
         }
@@ -74,6 +78,11 @@ trait CanSortRecords
     public function getDefaultSortQuery(): ?Closure
     {
         return $this->defaultSortQuery;
+    }
+
+    public function getIsDefaultSortEnabled(): bool
+    {
+        return $this->isDefaultSortEnabled;
     }
 
     public function getSortColumn(): ?string
