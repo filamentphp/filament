@@ -108,7 +108,7 @@ Action::make('delete_post')
 
  it will look for a function named delete_pust, example: 
 
-``php
+```php
 public function delete_post() {
  // 
 } 
