@@ -58,7 +58,6 @@ export default function fileUploadFormComponent({
     panelAspectRatio,
     panelLayout,
     placeholder,
-    processingMessage,
     removeUploadedFileButtonPosition,
     removeUploadedFileUsing,
     reorderUploadedFilesUsing,
@@ -67,6 +66,7 @@ export default function fileUploadFormComponent({
     shouldTransformImage,
     state,
     uploadButtonPosition,
+    uploadingMessage,
     uploadProgressIndicatorPosition,
     uploadUsing,
 }) {
@@ -274,8 +274,8 @@ export default function fileUploadFormComponent({
                     return
                 }
 
-                this.dispatchFormEvent('field-processing-started', {
-                    message: processingMessage,
+                this.dispatchFormEvent('form-processing-started', {
+                    message: uploadingMessage,
                 })
             })
 
@@ -294,7 +294,7 @@ export default function fileUploadFormComponent({
                     return
                 }
 
-                this.dispatchFormEvent('field-processing-finished')
+                this.dispatchFormEvent('form-processing-finished')
             }
 
             this.pond.on('processfile', handleFileProcessing)

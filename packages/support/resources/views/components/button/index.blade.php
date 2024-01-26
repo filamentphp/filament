@@ -129,8 +129,8 @@
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
-    $hasFieldProcessingLoadingIndicator = $type === 'submit' && filled($form);
-    $hasLoadingIndicator = filled($wireTarget) || $hasFieldProcessingLoadingIndicator;
+    $hasFormProcessingLoadingIndicator = $type === 'submit' && filled($form);
+    $hasLoadingIndicator = filled($wireTarget) || $hasFormProcessingLoadingIndicator;
 
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
@@ -174,7 +174,7 @@
     @if ($tag === 'a')
         {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
     @endif
-    @if (($keyBindings || $hasTooltip) && (! $hasFieldProcessingLoadingIndicator))
+    @if (($keyBindings || $hasTooltip) && (! $hasFormProcessingLoadingIndicator))
         x-data="{}"
     @endif
     @if ($keyBindings)
@@ -186,25 +186,25 @@
             theme: $store.theme,
         }"
     @endif
-    @if ($hasFieldProcessingLoadingIndicator)
+    @if ($hasFormProcessingLoadingIndicator)
         x-data="{
             form: null,
-            isProcessingField: false,
+            isProcessing: false,
             processingMessage: null,
         }"
         x-init="
             form = $el.closest('form')
 
-            form?.addEventListener('field-processing-started', (event) => {
-                isProcessingField = true
+            form?.addEventListener('form-processing-started', (event) => {
+                isProcessing = true
                 processingMessage = event.detail.message
             })
 
-            form?.addEventListener('field-processing-finished', () => {
-                isProcessingField = false
+            form?.addEventListener('form-processing-finished', () => {
+                isProcessing = false
             })
         "
-        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isProcessingField }"
+        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isProcessing }"
     @endif
     {{
         $attributes
@@ -213,7 +213,7 @@
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-                'x-bind:disabled' => $hasFieldProcessingLoadingIndicator ? 'isProcessingField' : null,
+                'x-bind:disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing' : null,
             ], escape: false)
             ->class([$buttonClasses])
             ->style([$buttonStyles])
@@ -248,28 +248,28 @@
             />
         @endif
 
-        @if ($hasFieldProcessingLoadingIndicator)
+        @if ($hasFormProcessingLoadingIndicator)
             <x-filament::loading-indicator
                 x-cloak="x-cloak"
-                x-show="isProcessingField"
+                x-show="isProcessing"
                 :class="$iconClasses"
             />
         @endif
     @endif
 
     <span
-        @if ($hasFieldProcessingLoadingIndicator)
-            x-show="! isProcessingField"
+        @if ($hasFormProcessingLoadingIndicator)
+            x-show="! isProcessing"
         @endif
         class="{{ $labelClasses }}"
     >
         {{ $slot }}
     </span>
 
-    @if ($hasFieldProcessingLoadingIndicator)
+    @if ($hasFormProcessingLoadingIndicator)
         <span
             x-cloak
-            x-show="isProcessingField"
+            x-show="isProcessing"
             x-text="processingMessage"
             class="{{ $labelClasses }}"
         ></span>
@@ -304,7 +304,7 @@
             />
         @endif
 
-        @if ($hasFieldProcessingLoadingIndicator)
+        @if ($hasFormProcessingLoadingIndicator)
             <x-filament::loading-indicator
                 x-cloak="x-cloak"
                 x-show="isUploadingFile"

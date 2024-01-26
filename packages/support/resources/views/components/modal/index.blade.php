@@ -88,7 +88,6 @@
         x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
     @endif
     x-trap.noscroll="isOpen"
-    wire:ignore.self
     x-bind:class="{
         'fi-modal-open': isOpen,
     }"

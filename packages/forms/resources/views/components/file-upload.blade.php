@@ -67,7 +67,6 @@
                     panelAspectRatio: @js($getPanelAspectRatio()),
                     panelLayout: @js($getPanelLayout()),
                     placeholder: @js($getPlaceholder()),
-                    processingMessage: @js($getProcessingMessage()),
                     maxFiles: @js($getMaxFiles()),
                     maxSize: @js(($size = $getMaxSize()) ? "{$size}KB" : null),
                     minSize: @js(($size = $getMinSize()) ? "{$size}KB" : null),
@@ -83,6 +82,7 @@
                     shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
                     state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     uploadButtonPosition: @js($getUploadButtonPosition()),
+                    uploadingMessage: @js($getUploadingMessage()),
                     uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
                     uploadUsing: (fileKey, file, success, error, progress) => {
                         $wire.upload(

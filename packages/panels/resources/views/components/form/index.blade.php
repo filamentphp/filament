@@ -1,8 +1,8 @@
 <form
-    x-data="{ isProcessingField: false }"
-    x-on:submit="if (isProcessingField) $event.preventDefault()"
-    x-on:field-processing-started="isProcessingField = true"
-    x-on:field-processing-finished="isProcessingField = false"
+    x-data="{ isProcessing: false }"
+    x-on:submit="if (isProcessing) $event.preventDefault()"
+    x-on:form-processing-started="isProcessing = true"
+    x-on:form-processing-finished="isProcessing = false"
     {{ $attributes->class(['fi-form grid gap-y-6']) }}
 >
     {{ $slot }}
