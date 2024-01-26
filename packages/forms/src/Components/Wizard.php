@@ -81,7 +81,9 @@ class Wizard extends Component
                             return;
                         }
                         $currentStep->getChildComponentContainer()->validate();
-                        $currentStep->callAfterValidation();
+                        if(false === $currentStep->callAfterValidation()) {
+                            return;
+                        }
                     }
 
                     /** @var LivewireComponent $livewire */
