@@ -88,10 +88,9 @@
         x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
     @endif
     x-trap.noscroll="isOpen"
-    wire:ignore.self
-    {{-- x-bind:class="{
+    x-bind:class="{
         'fi-modal-open': isOpen,
-    }" --}}
+    }"
     @class([
         'fi-modal',
         'fi-width-screen' => $width === MaxWidth::Screen,
