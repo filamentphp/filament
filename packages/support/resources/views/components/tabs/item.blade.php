@@ -108,8 +108,8 @@
     @if (filled($badge))
         <x-filament::badge
             :color="$badgeColor"
-            :tooltip="$badgeTooltip"
             size="sm"
+            :tooltip="$badgeTooltip"
             class="w-max"
         >
             {{ $badge }}
