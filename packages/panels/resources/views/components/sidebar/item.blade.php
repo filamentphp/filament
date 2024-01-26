@@ -110,13 +110,6 @@
 
         @if (filled($badge))
             <span
-                @if (filled($badgeTooltip))
-                    x-data="{}"
-                    x-tooltip="{
-                        content: @js($badgeTooltip),
-                        theme: $store.theme,
-                    }"
-                @endif
                 @if ($sidebarCollapsible)
                     x-show="$store.sidebar.isOpen"
                     x-transition:enter="lg:transition lg:delay-100"
@@ -124,7 +117,7 @@
                     x-transition:enter-end="opacity-100"
                 @endif
             >
-                <x-filament::badge :color="$badgeColor">
+                <x-filament::badge :color="$badgeColor" :tooltip="$badgeTooltip">
                     {{ $badge }}
                 </x-filament::badge>
             </span>
