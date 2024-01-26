@@ -18,7 +18,7 @@
                               ]
                             : []),
                     ].length &&
-                    ! $wire?.__instance?.effects?.redirect
+                    (! $wire?.__instance?.effects?.redirect)
                 ) {
                     event.preventDefault()
                     event.returnValue = true

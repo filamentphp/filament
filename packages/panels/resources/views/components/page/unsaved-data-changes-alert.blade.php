@@ -7,9 +7,10 @@
         <script>
             window.addEventListener('beforeunload', (event) => {
                 if (
-                    window.jsMd5(
+                    (window.jsMd5(
                         JSON.stringify($wire.data).replace(/\\/g, ''),
-                    ) === $wire.savedDataHash
+                    ) === $wire.savedDataHash) &&
+                    (! $wire?.__instance?.effects?.redirect)
                 ) {
                     return
                 }
