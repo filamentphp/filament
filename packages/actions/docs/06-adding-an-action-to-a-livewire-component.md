@@ -89,12 +89,12 @@ You also need `<x-filament-actions::modals />` which injects the HTML required t
 It is important to note, that the name of the action function should match that of the action. For example, this function: 
 
 ```php
-    public function deleteAction(): Action
-    {
-        return Action::make('delete')
-            ->requiresConfirmation()
-            ->action(fn () => $this->post->delete());
-    }
+public function deleteAction(): Action
+{
+    return Action::make('delete')
+        ->requiresConfirmation()
+        ->action(fn () => $this->post->delete());
+}
 ```
 should ensure that the action is named 'delete' with the make, see: 
 
@@ -110,7 +110,7 @@ Action::make('delete_post')
 
 ```php
 public function delete_post() {
- // 
+    // 
 } 
 ```
 ## Passing action arguments
