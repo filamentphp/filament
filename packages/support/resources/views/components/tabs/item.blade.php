@@ -7,6 +7,7 @@
     'alpineActive' => null,
     'badge' => null,
     'badgeColor' => null,
+    'badgeTooltip' => null,
     'href' => null,
     'icon' => null,
     'iconColor' => 'gray',
@@ -105,7 +106,12 @@
     @endif
 
     @if (filled($badge))
-        <x-filament::badge :color="$badgeColor" size="sm" class="w-max">
+        <x-filament::badge
+            :color="$badgeColor"
+            :tooltip="$badgeTooltip"
+            size="sm"
+            class="w-max"
+        >
             {{ $badge }}
         </x-filament::badge>
     @endif

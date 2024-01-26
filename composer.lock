@@ -129,16 +129,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.297.0",
+            "version": "3.297.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ad1f7be78d74d48628a6fe345818ce53bae64169"
+                "reference": "5be6a9c74e1d72af75f24b4f4a9cfac51ccd6a56"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ad1f7be78d74d48628a6fe345818ce53bae64169",
-                "reference": "ad1f7be78d74d48628a6fe345818ce53bae64169",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/5be6a9c74e1d72af75f24b4f4a9cfac51ccd6a56",
+                "reference": "5be6a9c74e1d72af75f24b4f4a9cfac51ccd6a56",
                 "shasum": ""
             },
             "require": {
@@ -218,9 +218,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.297.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.297.1"
             },
-            "time": "2024-01-24T19:09:39+00:00"
+            "time": "2024-01-25T19:18:40+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -896,16 +896,16 @@
         },
         {
             "name": "doctrine/dbal",
-            "version": "3.7.3",
+            "version": "3.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal.git",
-                "reference": "ce594cbc39a4866c544f1a970d285ff0548221ad"
+                "reference": "d244f2e6e6bf32bff5174e6729b57214923ecec9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/dbal/zipball/ce594cbc39a4866c544f1a970d285ff0548221ad",
-                "reference": "ce594cbc39a4866c544f1a970d285ff0548221ad",
+                "url": "https://api.github.com/repos/doctrine/dbal/zipball/d244f2e6e6bf32bff5174e6729b57214923ecec9",
+                "reference": "d244f2e6e6bf32bff5174e6729b57214923ecec9",
                 "shasum": ""
             },
             "require": {
@@ -989,7 +989,7 @@
             ],
             "support": {
                 "issues": "https://github.com/doctrine/dbal/issues",
-                "source": "https://github.com/doctrine/dbal/tree/3.7.3"
+                "source": "https://github.com/doctrine/dbal/tree/3.8.0"
             },
             "funding": [
                 {
@@ -1005,7 +1005,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-01-21T07:53:09+00:00"
+            "time": "2024-01-25T21:44:02+00:00"
         },
         {
             "name": "doctrine/deprecations",
@@ -5343,16 +5343,16 @@
         },
         {
             "name": "pestphp/pest",
-            "version": "v2.32.3",
+            "version": "v2.33.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pestphp/pest.git",
-                "reference": "4febd8a11bb1e25b7dc6446ba59546507d6a7556"
+                "reference": "19e748f0d4a8708d51c0ef55d028d9967f30129f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pestphp/pest/zipball/4febd8a11bb1e25b7dc6446ba59546507d6a7556",
-                "reference": "4febd8a11bb1e25b7dc6446ba59546507d6a7556",
+                "url": "https://api.github.com/repos/pestphp/pest/zipball/19e748f0d4a8708d51c0ef55d028d9967f30129f",
+                "reference": "19e748f0d4a8708d51c0ef55d028d9967f30129f",
                 "shasum": ""
             },
             "require": {
@@ -5435,7 +5435,7 @@
             ],
             "support": {
                 "issues": "https://github.com/pestphp/pest/issues",
-                "source": "https://github.com/pestphp/pest/tree/v2.32.3"
+                "source": "https://github.com/pestphp/pest/tree/v2.33.0"
             },
             "funding": [
                 {
@@ -5447,7 +5447,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-01-25T10:17:36+00:00"
+            "time": "2024-01-26T01:58:03+00:00"
         },
         {
             "name": "pestphp/pest-plugin",
@@ -5521,26 +5521,26 @@
         },
         {
             "name": "pestphp/pest-plugin-arch",
-            "version": "v2.6.1",
+            "version": "v2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/pestphp/pest-plugin-arch.git",
-                "reference": "99e86316325e55edf66c1f86dd9f990e4e2c2321"
+                "reference": "d23b2d7498475354522c3818c42ef355dca3fcda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pestphp/pest-plugin-arch/zipball/99e86316325e55edf66c1f86dd9f990e4e2c2321",
-                "reference": "99e86316325e55edf66c1f86dd9f990e4e2c2321",
+                "url": "https://api.github.com/repos/pestphp/pest-plugin-arch/zipball/d23b2d7498475354522c3818c42ef355dca3fcda",
+                "reference": "d23b2d7498475354522c3818c42ef355dca3fcda",
                 "shasum": ""
             },
             "require": {
-                "nunomaduro/collision": "^7.10.0|^8.0.1",
+                "nunomaduro/collision": "^7.10.0|^8.1.0",
                 "pestphp/pest-plugin": "^2.1.1",
                 "php": "^8.1",
                 "ta-tikoma/phpunit-architecture-test": "^0.8.4"
             },
             "require-dev": {
-                "pestphp/pest": "^2.30.0",
+                "pestphp/pest": "^2.33.0",
                 "pestphp/pest-dev-tools": "^2.16.0"
             },
             "type": "library",
@@ -5576,7 +5576,7 @@
                 "unit"
             ],
             "support": {
-                "source": "https://github.com/pestphp/pest-plugin-arch/tree/v2.6.1"
+                "source": "https://github.com/pestphp/pest-plugin-arch/tree/v2.7.0"
             },
             "funding": [
                 {
@@ -5588,7 +5588,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-01-11T11:21:05+00:00"
+            "time": "2024-01-26T09:46:42+00:00"
         },
         {
             "name": "pestphp/pest-plugin-laravel",
@@ -13029,5 +13029,5 @@
         "composer-runtime-api": "^2.1"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.3.0"
 }

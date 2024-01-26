@@ -89,6 +89,7 @@
                                         <x-filament::dropdown.list.item
                                             :badge="$item->getBadge()"
                                             :badge-color="$item->getBadgeColor()"
+                                            :badge-tooltip="$item->getBadgeTooltip()"
                                             :color="$isActive ? 'primary' : 'gray'"
                                             :href="$item->getUrl()"
                                             :icon="$isActive ? ($item->getActiveIcon() ?? $icon) : $icon"
@@ -107,6 +108,7 @@
                                     :active-icon="$item->getActiveIcon()"
                                     :badge="$item->getBadge()"
                                     :badge-color="$item->getBadgeColor()"
+                                    :badge-tooltip="$item->getBadgeTooltip()"
                                     :icon="$item->getIcon()"
                                     :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
                                     :url="$item->getUrl()"

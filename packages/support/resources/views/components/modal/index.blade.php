@@ -89,11 +89,9 @@
     @endif
     x-trap.noscroll="isOpen"
     wire:ignore.self
-    {{--
     x-bind:class="{
-    'fi-modal-open': isOpen,
+        'fi-modal-open': isOpen,
     }"
---}}
     @class([
         'fi-modal',
         'fi-width-screen' => $width === MaxWidth::Screen,
