@@ -29,7 +29,6 @@
     @elseif (filled($logo))
         <img
             alt="{{ $brandName }}"
-            loading="lazy"
             src="{{ $logo }}"
             {{
                 $attributes
