@@ -214,7 +214,7 @@ This can be easily be done using the `ignoreRecord` argument.
 use Filament\Forms\Components\Select;
 
 Select::make('parent_id')
-    ->relationship('parent', 'name', ignoreRecord: true)
+    ->relationship(name: 'parent', titleAttribute: 'name', ignoreRecord: true)
 ```
 
 ### Customizing the relationship query
