@@ -77,11 +77,11 @@ class Wizard extends Component
                                 ->getComponents()
                         )[$currentStepIndex];
 
-                        if(false === $currentStep->callBeforeValidation()) {
+                        if ($currentStep->callBeforeValidation() === false) {
                             return;
                         }
                         $currentStep->getChildComponentContainer()->validate();
-                        if(false === $currentStep->callAfterValidation()) {
+                        if ($currentStep->callAfterValidation() === false) {
                             return;
                         }
                     }
