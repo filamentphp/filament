@@ -73,12 +73,18 @@ public static function getNavigationBadgeColor(): ?string
 }
 ```
 
-A custom tooltip for the navigation badge can be returned by `getNavigationBadgeTooltip()`:
+A custom tooltip for the navigation badge can be set in `$navigationBadgeTooltip`:
+
+```php
+protected static ?string $navigationBadgeTooltip = 'The number of users';
+```
+
+Or it can be returned from `getNavigationBadgeTooltip()`:
 
 ```php
 public static function getNavigationBadgeTooltip(): ?string
 {
-    return 'Custom Tooltip';
+    return 'The number of users';
 }
 ```
 
