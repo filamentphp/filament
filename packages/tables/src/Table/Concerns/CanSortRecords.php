@@ -22,7 +22,7 @@ trait CanSortRecords
     {
         if ($column instanceof Closure) {
             $this->defaultSortQuery = $column;
-        } else if (is_bool($column)) {
+        } elseif (is_bool($column)) {
             $this->isDefaultSortEnabled = $column;
         } else {
             $this->defaultSortColumn = $column;
