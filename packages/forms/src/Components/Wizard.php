@@ -77,7 +77,9 @@ class Wizard extends Component
                                 ->getComponents()
                         )[$currentStepIndex];
 
-                        $currentStep->callBeforeValidation();
+                        if(false === $currentStep->callBeforeValidation()) {
+                            return;
+                        }
                         $currentStep->getChildComponentContainer()->validate();
                         $currentStep->callAfterValidation();
                     }
