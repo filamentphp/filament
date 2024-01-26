@@ -28,9 +28,6 @@ class NavigationItem extends Component
      */
     protected string | array | Closure | null $badgeColor = null;
 
-    /**
-     * @var string | string | Closure | null
-     */
     protected string | Closure | null $badgeTooltip = null;
 
     protected bool | Closure $shouldOpenUrlInNewTab = false;
@@ -172,7 +169,7 @@ class NavigationItem extends Component
         return $this->evaluate($this->badgeColor);
     }
 
-    public function getBadgeTooltip(): string | Closure | null
+    public function getBadgeTooltip(): ?string
     {
         return $this->evaluate($this->badgeTooltip);
     }
@@ -200,7 +197,7 @@ class NavigationItem extends Component
 
     public function isVisible(): bool
     {
-        return !$this->isHidden();
+        return ! $this->isHidden();
     }
 
     public function isHidden(): bool
@@ -209,7 +206,7 @@ class NavigationItem extends Component
             return true;
         }
 
-        return !$this->evaluate($this->isVisible);
+        return ! $this->evaluate($this->isVisible);
     }
 
     public function getActiveIcon(): ?string
