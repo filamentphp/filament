@@ -165,6 +165,8 @@ Wizard\Step::make('Order')
     ]),
 ```
 
+If you need to prevent going to the next step, return `false` inside `afterValidation()` or `beforeValidation()` methods.
+
 ## Using grid columns within a step
 
 You may use the `columns()` method to customize the [grid](grid) within the step:
