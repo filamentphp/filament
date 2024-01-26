@@ -4,6 +4,7 @@
     'activeIcon' => null,
     'badge' => null,
     'badgeColor' => null,
+    'badgeTooltip' => null,
     'childItems' => [],
     'first' => false,
     'grouped' => false,
@@ -116,7 +117,7 @@
                     x-transition:enter-end="opacity-100"
                 @endif
             >
-                <x-filament::badge :color="$badgeColor">
+                <x-filament::badge :color="$badgeColor" :tooltip="$badgeTooltip">
                     {{ $badge }}
                 </x-filament::badge>
             </span>
@@ -132,6 +133,7 @@
                     :active-icon="$childItem->getActiveIcon()"
                     :badge="$childItem->getBadge()"
                     :badge-color="$childItem->getBadgeColor()"
+                    :badge-tooltip="$childItem->getBadgeTooltip()"
                     :first="$loop->first"
                     grouped
                     :icon="$childItem->getIcon()"
