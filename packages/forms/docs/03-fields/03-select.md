@@ -208,7 +208,7 @@ Select::make('author_id')
 
 When working with recursive relationships, you will likely want to remove the current record from the set of results.
 
-This can be easily be done using the `ignoreRecord` argument.
+This can be easily be done using the `ignoreRecord` argument:
 
 ```php
 use Filament\Forms\Components\Select;
