@@ -15,6 +15,8 @@ trait HasGlobalSearch
 
     protected string | bool $globalSearchProvider = true;
 
+    protected string | bool $globalSearchDebounce = '500ms';
+
     public function globalSearch(string | bool $provider = true): static
     {
         if (is_string($provider) && (! in_array(GlobalSearchProvider::class, class_implements($provider)))) {
@@ -37,11 +39,29 @@ trait HasGlobalSearch
     }
 
     /**
+     * @param  <string>  $debounce
+     */
+    public function globalSearchDebounce(string $debounce = '500ms'): static
+    {
+        $this->globalSearchDebounce = $debounce;
+
+        return $this;
+    }
+
+    /**
      * @return array<string>
      */
     public function getGlobalSearchKeyBindings(): array
     {
         return $this->globalSearchKeyBindings;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGlobalSearchDebounce(): string
+    {
+        return $this->globalSearchDebounce;
     }
 
     public function getGlobalSearchProvider(): ?GlobalSearchProvider

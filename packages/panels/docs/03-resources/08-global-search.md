@@ -155,3 +155,11 @@ public function panel(Panel $panel): Panel
         ->globalSearchKeyBindings(['command+k', 'ctrl+k']);
 }
 ```
+
+## Setting global search debounce
+
+Global search has a default debounce time of 500ms. You can alter this by using the `globalSearchDebounce()` method at the AdminPanelProvider. E.g.:
+
+```php
+->globalSearchDebounce('100ms')
+```
