@@ -307,7 +307,7 @@
         @if ($hasFormProcessingLoadingIndicator)
             <x-filament::loading-indicator
                 x-cloak="x-cloak"
-                x-show="isUploadingFile"
+                x-show="isProcessing"
                 :class="$iconClasses"
             />
         @endif
