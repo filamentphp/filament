@@ -28,6 +28,8 @@ abstract class Page extends BasePage
 
     protected static ?string $navigationGroup = null;
 
+    protected static ?string $navigationBadgeTooltip = null;
+
     protected static ?string $navigationParentItem = null;
 
     protected static ?string $navigationIcon = null;
@@ -97,6 +99,7 @@ abstract class Page extends BasePage
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getNavigationItemActiveRoutePattern()))
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
+                ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->url(static::getNavigationUrl()),
         ];
     }
@@ -167,6 +170,11 @@ abstract class Page extends BasePage
     public static function getNavigationBadgeColor(): string | array | null
     {
         return null;
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return static::$navigationBadgeTooltip;
     }
 
     public static function getNavigationSort(): ?int

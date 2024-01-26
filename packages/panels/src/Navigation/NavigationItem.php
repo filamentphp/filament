@@ -92,7 +92,7 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function tooltip(string | Closure | null $tooltip): static
+    public function badgeTooltip(string | Closure | null $tooltip): static
     {
         $this->badgeTooltip = $tooltip;
 

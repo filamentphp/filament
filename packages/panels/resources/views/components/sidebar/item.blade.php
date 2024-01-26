@@ -117,7 +117,10 @@
                     x-transition:enter-end="opacity-100"
                 @endif
             >
-                <x-filament::badge :color="$badgeColor" :tooltip="$badgeTooltip">
+                <x-filament::badge
+                    :color="$badgeColor"
+                    :tooltip="$badgeTooltip"
+                >
                     {{ $badge }}
                 </x-filament::badge>
             </span>

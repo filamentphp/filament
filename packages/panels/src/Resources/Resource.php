@@ -65,7 +65,7 @@ abstract class Resource
     protected static ?string $modelLabel = null;
 
     protected static ?string $model = null;
-    
+
     protected static ?string $navigationBadgeTooltip = null;
 
     protected static ?string $navigationGroup = null;
@@ -169,7 +169,7 @@ abstract class Resource
                 ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*'))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
-                ->tooltip(static::getNavigationBadgeTooltip())
+                ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
