@@ -714,7 +714,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
-            if ($ignoreRecord && $record = $component->getRecord()) {
+            if ($ignoreRecord && ($record = $component->getRecord())) {
                 $relationshipQuery->where($record->getQualifiedKeyName(), '!=', $record->getKey());
             }
 
@@ -776,7 +776,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
-            if ($ignoreRecord && $record = $component->getRecord()) {
+            if ($ignoreRecord && ($record = $component->getRecord())) {
                 $relationshipQuery->where($record->getQualifiedKeyName(), '!=', $record->getKey());
             }
 
