@@ -133,6 +133,7 @@
                     :active-icon="$childItem->getActiveIcon()"
                     :badge="$childItem->getBadge()"
                     :badge-color="$childItem->getBadgeColor()"
+                    :badge-tooltip="$childItem->getBadgeTooltip()"
                     :first="$loop->first"
                     grouped
                     :icon="$childItem->getIcon()"
