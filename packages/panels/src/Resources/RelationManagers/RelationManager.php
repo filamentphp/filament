@@ -82,6 +82,8 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
     protected static ?string $badge = null;
 
+    protected static ?string $badgeColor = null;
+
     protected static bool $isLazy = true;
 
     public function mount(): void
@@ -147,6 +149,11 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
         return static::$badge;
+    }
+
+    public static function getBadgeColor(Model $ownerRecord, string $pageClass): ?string
+    {
+        return static::$badgeColor;
     }
 
     public static function getTitle(Model $ownerRecord, string $pageClass): string
