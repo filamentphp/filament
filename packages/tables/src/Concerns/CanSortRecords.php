@@ -97,7 +97,7 @@ trait CanSortRecords
 
     protected function applyDefaultSortingToTableQuery(Builder $query): Builder
     {
-        if (!$this->getTable()->getIsDefaultSortEnabled()) {
+        if (! $this->getTable()->getIsDefaultSortEnabled()) {
             return $query;
         }
 
