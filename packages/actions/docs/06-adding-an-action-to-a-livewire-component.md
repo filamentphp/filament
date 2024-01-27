@@ -45,7 +45,7 @@ class ManagePost extends Component implements HasForms, HasActions
 
 ## Adding the action
 
-Add a method that returns your action:
+Add a method that returns your action. The method must share the exact same name as the action, or the name followed by `Action`:
 
 ```php
 use App\Models\Post;
@@ -69,6 +69,12 @@ class ManagePost extends Component implements HasForms, HasActions
             ->requiresConfirmation()
             ->action(fn () => $this->post->delete());
     }
+    
+    // This method name also works, since the action name is `delete`:
+    // public function delete(): Action
+    
+    // This method name does not work, since the action name is `delete`, not `deletePost`:
+    // public function deletePost(): Action
 
     // ...
 }
