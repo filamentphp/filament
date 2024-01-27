@@ -965,6 +965,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) {
             $relationship = $component->getRelationship();
 
+            if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+                return;
+            }
+            
             if (! $relationship instanceof BelongsToMany) {
                 $relationship->associate($state);
 
