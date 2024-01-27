@@ -74,14 +74,14 @@ class Step extends Component implements CanConcealComponents
         return $this;
     }
 
-    public function callAfterValidation(): mixed
+    public function callAfterValidation(): void
     {
-        return $this->evaluate($this->afterValidation);
+        $this->evaluate($this->afterValidation);
     }
 
-    public function callBeforeValidation(): mixed
+    public function callBeforeValidation(): void
     {
-        return $this->evaluate($this->beforeValidation);
+        $this->evaluate($this->beforeValidation);
     }
 
     public function getDescription(): ?string
