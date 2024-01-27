@@ -968,7 +968,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
                 return;
             }
-            
+
             if (! $relationship instanceof BelongsToMany) {
                 $relationship->associate($state);
 
