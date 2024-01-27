@@ -59,6 +59,7 @@ class PrepareCsvExport implements ShouldQueue
 
         $query = EloquentSerializeFacade::unserialize($this->query);
         $keyName = $query->getModel()->getKeyName();
+        $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
 
         $exportCsvJob = $this->getExportCsvJob();
 
@@ -103,18 +104,37 @@ class PrepareCsvExport implements ShouldQueue
             return;
         }
 
-        $baseQuery = $query->toBase();
-        $sortDirection = $baseQuery->orders[0]['direction'] ?? 'asc';
+        $chunkKeySize = $this->chunkSize * 10;
 
-        $baseQuery
-            ->select([$query->getModel()->getQualifiedKeyName()])
-            ->orderedChunkById(
-                $this->chunkSize * 10,
+        $baseQuery = $query->toBase();
+        $baseQueryOrders = $baseQuery->orders ?? [];
+        $baseQueryOrdersCount = count($baseQueryOrders);
+
+        if (
+            (
+                ($baseQueryOrdersCount === 1) &&
+                (! in_array($baseQueryOrders[0]['column'] ?? null, [$keyName, $qualifiedKeyName]))
+            ) ||
+            ($baseQueryOrdersCount > 1)
+        ) {
+            $baseQuery->chunk(
+                $this->chunkSize,
                 fn (Collection $records) => $dispatchRecords(
                     Arr::pluck($records->all(), $keyName),
                 ),
-                $keyName,
-                descending: $sortDirection === 'desc',
+            );
+
+            return;
+        }
+
+        $baseQuery
+            ->select([$qualifiedKeyName])
+            ->orderedChunkById(
+                $chunkKeySize,
+                fn (Collection $records) => $dispatchRecords(
+                    Arr::pluck($records->all(), $keyName),
+                ),
+                descending: ($baseQueryOrders[0]['direction'] ?? 'asc') === 'desc',
             );
     }
 
