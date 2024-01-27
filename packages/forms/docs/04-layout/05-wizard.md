@@ -165,26 +165,21 @@ Wizard\Step::make('Order')
     ]),
 ```
 
-## Halting the step lifecycle hooks
+### Preventing the next step from being loaded
 
-At any time, you may throw `Filament\Support\Exceptions\Halt` from inside the step lifecycle hook, which will halt the entire process and prevent going to the next step of the wizard:
+Inside `afterValidation()` or `beforeValidation()`, you may throw `Filament\Support\Exceptions\Halt`, which will prevent the wizard from loading the next step:
 
 ```php
 use Filament\Forms\Components\Wizard;
-use Filament\Forms\Get;
 use Filament\Support\Exceptions\Halt;
 
-Wizard\Step::make('place_order')
-        ->afterValidation(function (Get $get) {
-            // ...
-
-            if ( /* Condition which requires stopping the execution and staying on the current step */ ) {
-                throw new Halt();
-            }
-        }
-    })
-    ->beforeValidation(function () {
+Wizard\Step::make('Order')
+    ->afterValidation(function () {
         // ...
+
+        if (true) {
+            throw new Halt();
+        }
     })
     ->schema([
         // ...

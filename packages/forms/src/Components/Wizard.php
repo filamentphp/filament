@@ -70,26 +70,26 @@ class Wizard extends Component
                         return;
                     }
 
-                    try {
-                        if (! $component->isSkippable()) {
-                            /** @var Step $currentStep */
-                            $currentStep = array_values(
-                                $component
-                                    ->getChildComponentContainer()
-                                    ->getComponents()
-                            )[$currentStepIndex];
+                    if (! $component->isSkippable()) {
+                        /** @var Step $currentStep */
+                        $currentStep = array_values(
+                            $component
+                                ->getChildComponentContainer()
+                                ->getComponents()
+                        )[$currentStepIndex];
 
+                        try {
                             $currentStep->callBeforeValidation();
                             $currentStep->getChildComponentContainer()->validate();
                             $currentStep->callAfterValidation();
+                        } catch (Halt $exception) {
+                            return;
                         }
-
-                        /** @var LivewireComponent $livewire */
-                        $livewire = $component->getLivewire();
-                        $livewire->dispatch('next-wizard-step', statePath: $statePath);
-                    } catch (Halt $exception) {
-                        return;
                     }
+
+                    /** @var LivewireComponent $livewire */
+                    $livewire = $component->getLivewire();
+                    $livewire->dispatch('next-wizard-step', statePath: $statePath);
                 },
             ],
         ]);
