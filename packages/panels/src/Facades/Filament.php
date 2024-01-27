@@ -48,6 +48,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getFontProvider()
  * @method static string | null getFontUrl()
  * @method static array<string> getGlobalSearchKeyBindings()
+ * @method static string getGlobalSearchDebounce()
  * @method static GlobalSearchProvider | null getGlobalSearchProvider()
  * @method static string | null getHomeUrl()
  * @method static string | null getLoginUrl(array $parameters = [])
