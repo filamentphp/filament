@@ -165,7 +165,30 @@ Wizard\Step::make('Order')
     ]),
 ```
 
-If you need to prevent going to the next step, return `false` inside `afterValidation()` or `beforeValidation()` methods.
+## Halting the step lifecycle hooks
+
+At any time, you may call `$this->halt()` from inside the step lifecycle hook, which will halt the entire process and prevent going to the next step of the wizard:
+
+```php
+use Filament\Forms\Components\Wizard;
+use Filament\Forms\Get;
+
+Wizard\Step::make('place_order')
+        ->afterValidation(function (Get $get) {
+            // ...
+
+            if ( /* Condition which requires stopping the execution and staying on the current step */ ) {
+                $this->halt();
+            }
+        }
+    })
+    ->beforeValidation(function () {
+        // ...
+    })
+    ->schema([
+        // ...
+    ]),
+```
 
 ## Using grid columns within a step
 
