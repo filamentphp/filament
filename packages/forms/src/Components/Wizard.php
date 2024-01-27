@@ -7,6 +7,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Component as LivewireComponent;
 
@@ -69,22 +70,26 @@ class Wizard extends Component
                         return;
                     }
 
-                    if (! $component->isSkippable()) {
-                        /** @var Step $currentStep */
-                        $currentStep = array_values(
-                            $component
-                                ->getChildComponentContainer()
-                                ->getComponents()
-                        )[$currentStepIndex];
+                    try {
+                        if (! $component->isSkippable()) {
+                            /** @var Step $currentStep */
+                            $currentStep = array_values(
+                                $component
+                                    ->getChildComponentContainer()
+                                    ->getComponents()
+                            )[$currentStepIndex];
 
-                        $currentStep->callBeforeValidation();
-                        $currentStep->getChildComponentContainer()->validate();
-                        $currentStep->callAfterValidation();
+                            $currentStep->callBeforeValidation();
+                            $currentStep->getChildComponentContainer()->validate();
+                            $currentStep->callAfterValidation();
+                        }
+
+                        /** @var LivewireComponent $livewire */
+                        $livewire = $component->getLivewire();
+                        $livewire->dispatch('next-wizard-step', statePath: $statePath);
+                    } catch (Halt $exception) {
+                        return;
                     }
-
-                    /** @var LivewireComponent $livewire */
-                    $livewire = $component->getLivewire();
-                    $livewire->dispatch('next-wizard-step', statePath: $statePath);
                 },
             ],
         ]);
