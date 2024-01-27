@@ -9,8 +9,8 @@
                 if (
                     window.jsMd5(
                         JSON.stringify($wire.data).replace(/\\/g, ''),
-                    ) === $wire.savedDataHash &&
-                    !$wire?.__instance?.effects?.redirect
+                    ) === $wire.savedDataHash ||
+                    $wire?.__instance?.effects?.redirect
                 ) {
                     return
                 }
