@@ -45,7 +45,7 @@ class ManagePost extends Component implements HasForms, HasActions
 
 ## Adding the action
 
-Add a method that returns your action:
+Add a method that returns your action. The method must share the exact same name as the action, or the name followed by `Action`:
 
 ```php
 use App\Models\Post;
@@ -69,6 +69,12 @@ class ManagePost extends Component implements HasForms, HasActions
             ->requiresConfirmation()
             ->action(fn () => $this->post->delete());
     }
+    
+    // This method name also works, since the action name is `delete`:
+    // public function delete(): Action
+    
+    // This method name does not work, since the action name is `delete`, not `deletePost`:
+    // public function deletePost(): Action
 
     // ...
 }
@@ -86,33 +92,6 @@ Finally, you need to render the action in your view. To do this, you can use `{{
 
 You also need `<x-filament-actions::modals />` which injects the HTML required to render action modals. This only needs to be included within the Livewire component once, regardless of how many actions you have for that component.
 
-It is important to note, that the name of the action function should match that of the action. For example, this function: 
-
-```php
-public function deleteAction(): Action
-{
-    return Action::make('delete')
-        ->requiresConfirmation()
-        ->action(fn () => $this->post->delete());
-}
-```
-should ensure that the action is named 'delete' with the make, see: 
-
-```php
-Action::make('delete')
-```
-If you do not do this, the action will look for a function within the Livewire component. For example if you use: 
-```php
-Action::make('delete_post')
-```
-
- it will look for a function named delete_pust, example: 
-
-```php
-public function delete_post() {
-    // 
-} 
-```
 ## Passing action arguments
 
 Sometimes, you may wish to pass arguments to your action. For example, if you're rendering the same action multiple times in the same view, but each time for a different model, you could pass the model ID as an argument, and then retrieve it later. To do this, you can invoke the action in your view and pass in the arguments as an array:
