@@ -167,6 +167,10 @@ trait CanExportRecords
             $jobQueue = $exporter->getJobQueue();
             $jobConnection = $exporter->getJobConnection();
 
+            // We do not want to send the loaded user relationship to the queue in job payloads,
+            // in case it contains attributes that are not serializable, such as binary columns.
+            $export->unsetRelation('user');
+
             $makeCreateXlsxFileJob = fn (): CreateXlsxFile => app(CreateXlsxFile::class, [
                 'export' => $export,
                 'columnMap' => $columnMap,

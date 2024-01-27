@@ -66,6 +66,10 @@ class PrepareCsvExport implements ShouldQueue
         $totalRows = 0;
         $page = 1;
 
+        // We do not want to send the loaded user relationship to the queue in job payloads,
+        // in case it contains attributes that are not serializable, such as binary columns.
+        $this->export->unsetRelation('user');
+
         $dispatchRecords = function (array $records) use ($exportCsvJob, &$page, &$totalRows) {
             $recordsCount = count($records);
 

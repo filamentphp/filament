@@ -211,6 +211,10 @@ trait CanImportRecords
                 Arr::except($data, ['file', 'columnMap']),
             );
 
+            // We do not want to send the loaded user relationship to the queue in job payloads,
+            // in case it contains attributes that are not serializable, such as binary columns.
+            $import->unsetRelation('user');
+
             $importJobs = collect($importChunks)
                 ->map(fn (array $importChunk): object => new ($job)(
                     $import,
