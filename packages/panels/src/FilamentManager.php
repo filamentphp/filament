@@ -179,9 +179,6 @@ class FilamentManager
         return $this->getCurrentPanel()->getGlobalSearchKeyBindings();
     }
 
-    /**
-     * @return string
-     */
     public function getGlobalSearchDebounce(): string
     {
         return $this->getCurrentPanel()->getGlobalSearchDebounce();
