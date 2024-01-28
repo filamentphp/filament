@@ -110,6 +110,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasTenantRegistration()
  * @method static bool hasTopNavigation()
  * @method static bool hasUnsavedChangesAlerts()
+ * @method static bool isProfilePageSimple()
  * @method static bool isServing()
  * @method static bool isSidebarCollapsibleOnDesktop()
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
