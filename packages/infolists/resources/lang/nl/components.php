@@ -31,6 +31,10 @@ return [
 
         ],
 
+        'empty' => [
+            'label' => 'Geen gegevens',
+        ],
+
     ],
 
 ];

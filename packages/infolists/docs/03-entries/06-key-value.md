@@ -51,3 +51,14 @@ use Filament\Infolists\Components\KeyValueEntry;
 KeyValueEntry::make('meta')
     ->valueLabel('Property value')
 ```
+
+## Customizing the empty value pair's label
+
+You may customize the label for the empty value pair using the `emptyLabel()` method:
+
+```php
+use Filament\Infolists\Components\KeyValueEntry;
+
+KeyValueEntry::make('meta')
+    ->emptyLabel('No properties added yet')
+```

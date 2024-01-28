@@ -29,6 +29,10 @@ return [
 
             ],
 
+            'empty' => [
+                'label' => 'Ma\'lumot yo\'q',
+            ],
+
         ],
 
     ],

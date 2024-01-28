@@ -29,6 +29,10 @@ return [
 
             ],
 
+            'empty' => [
+                'label' => 'No hi ha entrades',
+            ],
+
         ],
 
     ],
