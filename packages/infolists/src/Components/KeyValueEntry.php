@@ -23,7 +23,7 @@ class KeyValueEntry extends Entry
         $state = parent::getState();
 
         if ($state === null) {
-            return [];
+            return collect();
         }
 
         if (is_array($state)) {
