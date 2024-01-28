@@ -89,10 +89,10 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             $record = $record->getRelationValue($this->getRelationshipName());
         }
 
-        return $record->getRelationValue('media')
+        return $record?->getRelationValue('media')
             ->filter(fn (Media $media): bool => blank($collection) || ($media->getAttributeValue('collection_name') === $collection))
             ->sortBy('order_column')
             ->map(fn (Media $media): string => $media->uuid)
-            ->all();
+            ->all() ?? [];
     }
 }
