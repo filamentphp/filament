@@ -7,7 +7,7 @@
         </x-slot>
     @endif
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_AUTH_REGISTER_FORM_BEFORE) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_REGISTER_FORM_BEFORE) }}
 
     <x-filament-panels::form wire:submit="register">
         {{ $this->form }}
@@ -18,5 +18,5 @@
         />
     </x-filament-panels::form>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_AUTH_REGISTER_FORM_AFTER) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_REGISTER_FORM_AFTER) }}
 </x-filament-panels::page.simple>

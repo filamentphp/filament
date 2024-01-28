@@ -18,7 +18,7 @@
         ])
     }}
 >
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_PAGE_START, scopes: $this->getRenderHookScopes()) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
     <section
         @class([
@@ -71,7 +71,7 @@
                     'h-full' => $fullHeight,
                 ])
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_PAGE_HEADER_WIDGETS_BEFORE, scopes: $this->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_WIDGETS_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
                 @if ($headerWidgets = $this->getVisibleHeaderWidgets())
                     <x-filament-widgets::widgets
@@ -82,11 +82,11 @@
                     />
                 @endif
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_PAGE_HEADER_WIDGETS_AFTER, scopes: $this->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_WIDGETS_AFTER, scopes: $this->getRenderHookScopes()) }}
 
                 {{ $slot }}
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_PAGE_FOOTER_WIDGETS_BEFORE, scopes: $this->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_FOOTER_WIDGETS_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
                 @if ($footerWidgets = $this->getVisibleFooterWidgets())
                     <x-filament-widgets::widgets
@@ -97,7 +97,7 @@
                     />
                 @endif
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_PAGE_FOOTER_WIDGETS_AFTER, scopes: $this->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER, scopes: $this->getRenderHookScopes()) }}
             </div>
 
             @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
@@ -126,7 +126,7 @@
         ></div>
     @endif
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_PAGE_END, scopes: $this->getRenderHookScopes()) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_END, scopes: $this->getRenderHookScopes()) }}
 
     <x-filament-panels::unsaved-action-changes-alert />
 </div>

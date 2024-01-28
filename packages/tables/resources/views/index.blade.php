@@ -169,10 +169,10 @@
                 x-show="@js($hasHeaderToolbar) || (selectedRecords.length && @js(count($bulkActions)))"
                 class="fi-ta-header-toolbar flex items-center justify-between gap-x-4 px-4 py-3 sm:px-6"
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::TABLES_TOOLBAR_START, scopes: static::class) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
 
                 <div class="flex shrink-0 items-center gap-x-4">
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::TABLES_TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
 
                     @if ($isReorderable)
                         <span x-show="! selectedRecords.length">
@@ -180,7 +180,7 @@
                         </span>
                     @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::TABLES_TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
 
                     @if ((! $isReordering) && count($bulkActions))
                         <x-filament-tables::actions
@@ -190,7 +190,7 @@
                         />
                     @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::TABLES_TOOLBAR_GROUPING_SELECTOR_BEFORE, scopes: static::class) }}
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE, scopes: static::class) }}
 
                     @if ($areGroupingSettingsVisible)
                         <x-filament-tables::groups
@@ -200,12 +200,12 @@
                         />
                     @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::TABLES_TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
                 </div>
 
                 @if ($isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown)
                     <div class="ms-auto flex items-center gap-x-4">
-                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::TABLES_TOOLBAR_SEARCH_BEFORE, scopes: static::class) }}
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_SEARCH_BEFORE, scopes: static::class) }}
 
                         @if ($isGlobalSearchVisible)
                             <x-filament-tables::search-field
@@ -215,7 +215,7 @@
                             />
                         @endif
 
-                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::TABLES_TOOLBAR_SEARCH_AFTER, scopes: static::class) }}
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_SEARCH_AFTER, scopes: static::class) }}
 
                         @if ($hasFiltersDialog || $hasColumnToggleDropdown)
                             @if ($hasFiltersDialog)
@@ -230,7 +230,7 @@
                                 />
                             @endif
 
-                            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::TABLES_TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE, scopes: static::class) }}
+                            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE, scopes: static::class) }}
 
                             @if ($hasColumnToggleDropdown)
                                 <x-filament-tables::column-toggle.dropdown
@@ -241,12 +241,12 @@
                                 />
                             @endif
 
-                            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::TABLES_TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER, scopes: static::class) }}
+                            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER, scopes: static::class) }}
                         @endif
                     </div>
                 @endif
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::TABLES_TOOLBAR_END) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_END) }}
             </div>
         </div>
 

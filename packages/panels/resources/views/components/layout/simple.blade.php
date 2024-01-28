@@ -47,6 +47,6 @@
             </main>
         </div>
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Support\View\RenderHook::PANELS_FOOTER) }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::FOOTER) }}
     </div>
 </x-filament-panels::layout.base>
