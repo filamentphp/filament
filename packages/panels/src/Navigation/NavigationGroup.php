@@ -5,10 +5,15 @@ namespace Filament\Navigation;
 use Closure;
 use Exception;
 use Filament\Support\Components\Component;
+use Filament\Support\Concerns\HasExtraSidebarAttributes;
+use Filament\Support\Concerns\HasExtraTopbarAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 
 class NavigationGroup extends Component
 {
+    use HasExtraSidebarAttributes;
+    use HasExtraTopbarAttributes;
+
     protected string $evaluationIdentifier = 'group';
 
     protected bool | Closure $isCollapsed = false;
@@ -114,7 +119,7 @@ class NavigationGroup extends Component
     public function isActive(): bool
     {
         foreach ($this->getItems() as $item) {
-            if (! $item->isActive()) {
+            if (!$item->isActive()) {
                 continue;
             }
 
@@ -130,7 +135,7 @@ class NavigationGroup extends Component
         $hasNoIconCount = 0;
 
         foreach ($this->getItems() as $item) {
-            if (! $item instanceof NavigationItem) {
+            if (!$item instanceof NavigationItem) {
                 continue;
             }
 

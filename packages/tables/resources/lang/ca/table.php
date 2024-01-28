@@ -11,7 +11,14 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Mostrar :count menys',
+                'expand_list' => 'Mostrar :count més',
+            ],
+
             'more_list_items' => 'i :count més',
+
         ],
 
     ],
@@ -19,15 +26,15 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Seleccionar/deseleccionar tots els elements per accions massives.',
+            'label' => 'Seleccionar/desseleccionar tots els elements per les accions massives.',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Seleccionar/deseleccionar element :key per accions massives.',
+            'label' => 'Seleccionar/desseleccionar l\'element :key per accions massives.',
         ],
 
         'bulk_select_group' => [
-            'label' => 'Seleccionar/deseleccionar grup :title per accions massives.',
+            'label' => 'Seleccionar/desseleccionar grup :title per accions massives.',
         ],
 
         'search' => [
@@ -69,7 +76,7 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Aturar de reorganitzar registres',
+            'label' => 'Acabar de reorganitzar registres',
         ],
 
         'enable_reordering' => [
@@ -96,7 +103,7 @@ return [
 
     'empty' => [
 
-        'heading' => 'No s\'ha trobat cap registre de :model',
+        'heading' => 'No s\'han trobat registres',
 
         'description' => 'Crea un :model per començar.',
 
@@ -105,6 +112,10 @@ return [
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'Aplicar filtres',
+            ],
 
             'remove' => [
                 'label' => 'Esborrar filtre',
@@ -180,11 +191,11 @@ return [
         'actions' => [
 
             'select_all' => [
-                'label' => 'Selecciona :count',
+                'label' => 'Selecciona\'ls tots :count',
             ],
 
             'deselect_all' => [
-                'label' => 'Deselecciona tot',
+                'label' => 'Desselecciona\'ls tots',
             ],
 
         ],

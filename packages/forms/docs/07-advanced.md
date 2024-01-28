@@ -589,13 +589,29 @@ In this example, the customer's name is not `required()`, and the email address 
 
 ## Inserting Livewire components into a form
 
-You may use insert a Livewire component directly into a form:
+You may insert a Livewire component directly into a form:
 
 ```php
 use Filament\Forms\Components\Livewire;
 use App\Livewire\Foo;
 
 Livewire::make(Foo::class)
+```
+
+If you are rendering multiple of the same Livewire component, please make sure to pass a unique `key()` to each:
+
+```php
+use Filament\Forms\Components\Livewire;
+use App\Livewire\Foo;
+
+Livewire::make(Foo::class)
+    ->key('foo-first')
+
+Livewire::make(Foo::class)
+    ->key('foo-second')
+
+Livewire::make(Foo::class)
+    ->key('foo-third')
 ```
 
 ### Passing parameters to a Livewire component

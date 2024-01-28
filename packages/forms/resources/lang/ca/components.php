@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'builder' => [
 
         'actions' => [
@@ -58,11 +59,11 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'Deseleccionar tot',
+                'label' => 'Desseleccionar tots',
             ],
 
             'select_all' => [
-                'label' => 'Seleccionar tot',
+                'label' => 'Seleccionar tots',
             ],
 
         ],
@@ -154,7 +155,7 @@ return [
 
                 'rotation' => [
                     'label' => 'Rotació',
-                    'unit' => 'deg',
+                    'unit' => 'graus',
                 ],
 
                 'width' => [
@@ -245,6 +246,15 @@ return [
             'strike' => 'Ratllat',
             'table' => 'Taula',
             'undo' => 'Desfer',
+        ],
+
+    ],
+
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Sí',
+            'false' => 'No',
         ],
 
     ],
@@ -348,7 +358,7 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'Crear',
+                    'heading' => 'Nou',
 
                     'actions' => [
 
@@ -357,7 +367,7 @@ return [
                         ],
 
                         'create_another' => [
-                            'label' => 'Crear i crear un altre',
+                            'label' => 'Crear i crear-ne un altre',
                         ],
 
                     ],
@@ -387,7 +397,7 @@ return [
         ],
 
         'boolean' => [
-            'true' => 'Si',
+            'true' => 'Sí',
             'false' => 'No',
         ],
 
@@ -407,6 +417,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Nova etiqueta',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Ocultar contrasenya',
+            ],
+
+            'show_password' => [
+                'label' => 'Mostrar contrasenya',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Sí',
+            'false' => 'No',
+        ],
+
     ],
 
     'wizard' => [

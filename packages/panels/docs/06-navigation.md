@@ -73,6 +73,21 @@ public static function getNavigationBadgeColor(): ?string
 }
 ```
 
+A custom tooltip for the navigation badge can be set in `$navigationBadgeTooltip`:
+
+```php
+protected static ?string $navigationBadgeTooltip = 'The number of users';
+```
+
+Or it can be returned from `getNavigationBadgeTooltip()`:
+
+```php
+public static function getNavigationBadgeTooltip(): ?string
+{
+    return 'The number of users';
+}
+```
+
 ## Grouping navigation items
 
 You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources/getting-started) and [custom page](pages):
@@ -148,7 +163,7 @@ $panel
     ])
 ```
 
-### Making navigation groups not collapsible
+#### Making navigation groups not collapsible
 
 By default, navigation groups are collapsible. You may disable this behavior by calling `collapsible(false)` on the `NavigationGroup` object:
 
@@ -173,6 +188,18 @@ public function panel(Panel $panel): Panel
         ->collapsibleNavigationGroups(false);
 }
 ```
+
+#### Adding extra HTML attributes to navigation groups
+
+You can pass extra HTML attributes to the navigation group, which will be merged onto the outer DOM element. Pass an array of attributes to the `extraSidebarAttributes()` or `extraTopbarAttributes()` method, where the key is the attribute name and the value is the attribute value:
+
+```php
+NavigationGroup::make()
+    ->extraSidebarAttributes(['class' => 'featured-sidebar-group']),
+    ->extraTopbarAttributes(['class' => 'featured-topbar-group']),
+```
+
+The `extraSidebarAttributes()` will be applied to navigation group elements contained in the sidebar, and the `extraTopbarAttributes()` will only be applied to topbar navigation group dropdowns when using [top navigation](#using-top-navigation).
 
 ## Collapsible sidebar on desktop
 

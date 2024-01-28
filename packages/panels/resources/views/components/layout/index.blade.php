@@ -13,7 +13,7 @@
                 x-on:click="$store.sidebar.close()"
                 x-show="$store.sidebar.isOpen"
                 x-transition.opacity.300ms
-                class="fi-sidebar-close-overlay fixed inset-0 z-30 bg-gray-950/50 transition duration-500 lg:hidden dark:bg-gray-950/75"
+                class="fi-sidebar-close-overlay fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-gray-950/75 lg:hidden"
             ></div>
 
             <x-filament-panels::sidebar :navigation="$navigation" />
@@ -44,11 +44,11 @@
             ])
         >
             @if (filament()->hasTopbar())
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.before') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.before', scopes: $livewire->getRenderHookScopes()) }}
 
                 <x-filament-panels::topbar :navigation="$navigation" />
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.after') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.after', scopes: $livewire->getRenderHookScopes()) }}
             @endif
 
             <main
@@ -80,14 +80,14 @@
                     },
                 ])
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.start') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.start', scopes: $livewire->getRenderHookScopes()) }}
 
                 {{ $slot }}
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.end') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.end', scopes: $livewire->getRenderHookScopes()) }}
             </main>
 
-            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer') }}
+            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer', scopes: $livewire->getRenderHookScopes()) }}
         </div>
     </div>
 </x-filament-panels::layout.base>

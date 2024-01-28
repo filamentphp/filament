@@ -341,6 +341,8 @@ trait HasActions
             $this->defaultTableActionArguments = [];
             $this->defaultTableActionRecord = [];
 
+            $this->selectedTableRecords = [];
+
             return;
         }
 

@@ -14,12 +14,41 @@ use Illuminate\Database\Eloquent\Model;
 class Action extends MountableAction implements Groupable, HasRecord, HasTable
 {
     use Concerns\BelongsToTable;
+    use Concerns\CanAccessSelectedRecords;
+    use Concerns\CanDeselectRecordsAfterCompletion;
+    use Concerns\CanFetchSelectedRecords;
     use HasMountableArguments;
     use InteractsWithRecord;
 
     public function getLivewireCallMountedActionName(): string
     {
         return 'callMountedTableAction';
+    }
+
+    public function getAlpineClickHandler(): ?string
+    {
+        if (filled($handler = parent::getAlpineClickHandler())) {
+            return $handler;
+        }
+
+        if (! $this->canAccessSelectedRecords()) {
+            return null;
+        }
+
+        return $this->generateJavaScriptClickHandler('mountAction');
+    }
+
+    public function getLivewireTarget(): ?string
+    {
+        if (filled($target = parent::getLivewireTarget())) {
+            return $target;
+        }
+
+        if (! $this->canAccessSelectedRecords()) {
+            return null;
+        }
+
+        return $this->generateJavaScriptClickHandler('mountTableAction');
     }
 
     public function getLivewireClickHandler(): ?string
@@ -36,13 +65,22 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
             return $event;
         }
 
+        if ($this->canAccessSelectedRecords()) {
+            return null;
+        }
+
+        return $this->generateJavaScriptClickHandler('mountTableAction');
+    }
+
+    protected function generateJavaScriptClickHandler(string $method): string
+    {
         if ($record = $this->getRecord()) {
             $recordKey = $this->getLivewire()->getTableRecordKey($record);
 
-            return "mountTableAction('{$this->getName()}', '{$recordKey}')";
+            return "{$method}('{$this->getName()}', '{$recordKey}')";
         }
 
-        return "mountTableAction('{$this->getName()}')";
+        return "{$method}('{$this->getName()}')";
     }
 
     /**
@@ -53,6 +91,7 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
         return match ($parameterName) {
             'model' => [$this->getModel()],
             'record' => [$this->getRecord()],
+            'selectedRecords' => [$this->getSelectedRecords()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
@@ -118,5 +157,19 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
     public function getInfolistName(): string
     {
         return 'mountedTableActionInfolist';
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public function call(array $parameters = []): mixed
+    {
+        try {
+            return parent::call($parameters);
+        } finally {
+            if ($this->shouldDeselectRecordsAfterCompletion()) {
+                $this->getLivewire()->deselectAllTableRecords();
+            }
+        }
     }
 }

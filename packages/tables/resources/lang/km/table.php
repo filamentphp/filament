@@ -11,7 +11,14 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'បង្ហាញ :count តិច',
+                'expand_list' => 'បង្ហាញ :count ច្រើនទៀត',
+            ],
+
             'more_list_items' => 'និង :count ច្រើនទៀត',
+
         ],
 
     ],
@@ -105,6 +112,10 @@ return [
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'អនុវត្តតម្រង',
+            ],
 
             'remove' => [
                 'label' => 'យកតម្រងចេញ',

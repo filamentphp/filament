@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label - ko\'rish',
+            'heading' => ':labelni ko\'rish',
 
             'actions' => [
 

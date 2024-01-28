@@ -211,10 +211,14 @@ trait CanImportRecords
                 Arr::except($data, ['file', 'columnMap']),
             );
 
+            // We do not want to send the loaded user relationship to the queue in job payloads,
+            // in case it contains attributes that are not serializable, such as binary columns.
+            $import->unsetRelation('user');
+
             $importJobs = collect($importChunks)
                 ->map(fn (array $importChunk): object => new ($job)(
                     $import,
-                    rows: $importChunk,
+                    rows: base64_encode(serialize($importChunk)),
                     columnMap: $data['columnMap'],
                     options: $options,
                 ));
@@ -266,7 +270,7 @@ trait CanImportRecords
                                         'count' => format_number($failedRowsCount),
                                     ]))
                                     ->color('danger')
-                                    ->url(route('filament.imports.failed-rows.download', ['import' => $import]), shouldOpenInNewTab: true)
+                                    ->url(route('filament.imports.failed-rows.download', ['import' => $import], absolute: false), shouldOpenInNewTab: true)
                                     ->markAsRead(),
                             ]),
                         )

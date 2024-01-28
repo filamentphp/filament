@@ -266,6 +266,44 @@ ExportColumn::make('users_avg_age')->avg([
 ], 'age')
 ```
 
+## Configuring the export formats
+
+By default, the export action will allow the user to choose between both CSV and XLSX formats. You can use the `ExportFormat` enum to customize this, by passing an array of formats to the `formats()` method on the action:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->formats([
+        ExportFormat::Csv,
+    ])
+    // or
+    ->formats([
+        ExportFormat::Xlsx,
+    ])
+    // or
+    ->formats([
+        ExportFormat::Xlsx,
+        ExportFormat::Csv,
+    ])
+```
+
+Alternatively, you can override the `getFormats()` method on the exporter class, which will set the default formats for all actions that use that exporter:
+
+```php
+use Filament\Actions\Exports\Enums\ExportFormat;
+
+public function getFormats(): array
+{
+    return [
+        ExportFormat::Csv,
+    ];
+}
+```
+
 ## Configuring the export filesystem
 
 ### Customizing the storage disk
@@ -445,7 +483,7 @@ The default job for processing exports is `Filament\Actions\Exports\Jobs\Prepare
 
 ```php
 use App\Jobs\PrepareCsvExport;
-use Filament\Actions\Exports\Jobs\PrepareCsvExport::class as BasePrepareCsvExport;
+use Filament\Actions\Exports\Jobs\PrepareCsvExport as BasePrepareCsvExport;
 
 $this->app->bind(BasePrepareCsvExport::class, PrepareCsvExport::class);
 ```

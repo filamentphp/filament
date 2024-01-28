@@ -76,7 +76,7 @@ trait InteractsWithTableQuery
 
         $isSearchForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
-        $search = generate_search_term_expression($search, $isSearchForcedCaseInsensitive, $databaseConnection);
+        $nonTranslatableSearch = generate_search_term_expression($search, $isSearchForcedCaseInsensitive, $databaseConnection);
 
         $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
@@ -92,12 +92,12 @@ trait InteractsWithTableQuery
                         $this->getRelationshipName(),
                         generate_search_column_expression($searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection),
                         'like',
-                        "%{$search}%",
+                        "%{$nonTranslatableSearch}%",
                     ),
                     fn (EloquentBuilder $query): EloquentBuilder => $query->{$whereClause}(
                         generate_search_column_expression($searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection),
                         'like',
-                        "%{$search}%",
+                        "%{$nonTranslatableSearch}%",
                     ),
                 ),
             );

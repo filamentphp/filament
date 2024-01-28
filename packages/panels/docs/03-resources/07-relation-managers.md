@@ -643,6 +643,93 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
 }
 ```
 
+## Adding badges to relation manager tabs
+
+You can add a badge to a relation manager tab by setting the `$badge` property:
+
+```php
+protected static ?string $badge = 'new';
+```
+
+Alternatively, you can override the `getBadge()` method:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+{
+    return static::$badge;
+}
+```
+
+Or, if you are using a [relation group](#grouping-relation-managers), you can use the `badge()` method:
+
+```php
+use Filament\Resources\RelationManagers\RelationGroup;
+
+RelationGroup::make('Contacts', [
+    // ...
+])->badge('new');
+```
+
+### Changing the color of relation manager tab badges
+
+If a badge value is defined, it will display using the primary color by default. To style the badge contextually, set the `$badgeColor` to either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+
+```php
+protected static ?string $badgeColor = 'danger';
+```
+
+Alternatively, you can override the `getBadgeColor()` method:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+public static function getBadgeColor(Model $ownerRecord, string $pageClass): ?string
+{
+    return 'danger';
+}
+```
+
+Or, if you are using a [relation group](#grouping-relation-managers), you can use the `badgeColor()` method:
+
+```php
+use Filament\Resources\RelationManagers\RelationGroup;
+
+RelationGroup::make('Contacts', [
+    // ...
+])->badgeColor('danger');
+```
+
+### Adding a tooltip to relation manager tab badges
+
+If a badge value is defined, you can add a tooltip to it by setting the `$badgeTooltip` property:
+
+```php
+protected static ?string $badgeTooltip = 'There are new posts';
+```
+
+Alternatively, you can override the `getBadgeTooltip()` method:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+public static function getBadgeTooltip(Model $ownerRecord, string $pageClass): ?string
+{
+    return 'There are new posts';
+}
+```
+
+Or, if you are using a [relation group](#grouping-relation-managers), you can use the `badgeTooltip()` method:
+
+```php
+use Filament\Resources\RelationManagers\RelationGroup;
+
+RelationGroup::make('Contacts', [
+    // ...
+])->badgeTooltip('There are new posts');
+```
+
 ## Sharing a resource's form and table with a relation manager
 
 You may decide that you want a resource's form and table to be identical to a relation manager's, and subsequently want to reuse the code you previously wrote. This is easy, by calling the `form()` and `table()` methods of the resource from the relation manager:

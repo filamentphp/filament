@@ -4,7 +4,7 @@ return [
 
     'label' => 'Sahifalar navigatsiyasi',
 
-    'overview' => '{1} 1 natija ko\'rsatilmoqda |[2,*] :first dan :last gacha jami natijalar :total',
+    'overview' => '{1} 1 natija ko\'rsatilmoqda |[2,*] :firstdan :lastgacha jami natijalar :totalta',
 
     'fields' => [
 
@@ -23,7 +23,7 @@ return [
     'actions' => [
 
         'go_to_page' => [
-            'label' => ':page - sahifaga o\'tish',
+            'label' => ':pagechi sahifaga o\'tish',
         ],
 
         'next' => [

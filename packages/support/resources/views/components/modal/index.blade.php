@@ -62,10 +62,21 @@
             this.$refs.modalContainer.dispatchEvent(
                 new CustomEvent('modal-closed', { id: '{{ $id }}' }),
             )
+
+            {{-- this.$nextTick(() => {
+                if (document.getElementsByClassName('fi-modal-open').length) {
+                    return
+                }
+
+                window.clearAllBodyScrollLocks()
+            }) --}}
         },
 
         open: function () {
             this.isOpen = true
+
+            {{-- window.clearAllBodyScrollLocks()
+            window.disableBodyScroll(this.$root) --}}
 
             this.$refs.modalContainer.dispatchEvent(
                 new CustomEvent('modal-opened', { id: '{{ $id }}' }),
@@ -77,7 +88,9 @@
         x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
     @endif
     x-trap.noscroll="isOpen"
-    wire:ignore.self
+    x-bind:class="{
+        'fi-modal-open': isOpen,
+    }"
     @class([
         'fi-modal',
         'fi-width-screen' => $width === MaxWidth::Screen,
@@ -160,7 +173,9 @@
                 @class([
                     'fi-modal-window pointer-events-auto relative flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                     'fi-modal-slide-over-window ms-auto overflow-y-auto' => $slideOver,
-                    'h-screen' => $slideOver || ($width === MaxWidth::Screen),
+                    // Using an arbitrary value instead of the h-dvh class that was added in Tailwind CSS v3.4.0
+                    // to ensure compatibility with custom themes that may use an older version of Tailwind CSS.
+                    'h-[100dvh]' => $slideOver || ($width === MaxWidth::Screen),
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === MaxWidth::Screen)),
                     'hidden' => ! $visible,
                     match ($width) {

@@ -2049,6 +2049,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'tables/columns/vertical-alignment': {
+        url: 'tables?table=columnVerticalAlignment',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'tables/columns/grouping': {
         url: 'tables?table=columnGrouping',
         selector: 'body',

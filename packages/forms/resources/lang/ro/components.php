@@ -185,6 +185,14 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Modificarea fișierelor de tip SVG nu este recomandată deoarece poate cauza în pierderea calității în procesul de schimbare a dimensiunii.\n Sunteți sigur că doriți să continuați?',
+                    'disabled' => 'Editarea fișierelor de tip SVG este dezactivată deoarece poate cauza în pierderea calității în procesul de schimbare a dimensiunii.',
+                ],
+
+            ],
         ],
 
     ],
@@ -241,12 +249,25 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Da',
+            'false' => 'Nu',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
 
             'add' => [
                 'label' => 'Adăugare la :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Inserează',
             ],
 
             'delete' => [
@@ -395,6 +416,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Adăugați tag-uri',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Ascunde parola',
+            ],
+
+            'show_password' => [
+                'label' => 'Afișează parola',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Da',
+            'false' => 'Nu',
+        ],
+
     ],
 
     'wizard' => [

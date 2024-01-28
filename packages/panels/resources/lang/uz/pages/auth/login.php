@@ -10,7 +10,7 @@ return [
 
         'register' => [
             'before' => 'yoki',
-            'label' => 'hisob qaydnomasini ro\'yxatdan o\'tkazish',
+            'label' => 'hisob qaydnomasini ro\'yxatdan o\'tkazing',
         ],
 
         'request_password_reset' => [
@@ -36,7 +36,7 @@ return [
         'actions' => [
 
             'authenticate' => [
-                'label' => 'Hisobga kirish',
+                'label' => 'Hisob qaydnomasiga kirish',
             ],
 
         ],
@@ -52,7 +52,7 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Kirish urinishlari juda koʻp',
+            'title' => 'Kirish uchun urinishlar soni juda koʻp',
             'body' => 'Iltimos, :seconds soniyadan keyin qayta urinib ko\'ring.',
         ],
 
