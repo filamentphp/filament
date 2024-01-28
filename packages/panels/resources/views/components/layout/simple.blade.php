@@ -47,6 +47,6 @@
             </main>
         </div>
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer', scopes: $livewire->getRenderHookScopes()) }}
     </div>
 </x-filament-panels::layout.base>
