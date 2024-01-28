@@ -13,7 +13,6 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns;
 use Filament\Pages\Page;
-use Filament\Pages\SimplePage;
 use Filament\Panel;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
