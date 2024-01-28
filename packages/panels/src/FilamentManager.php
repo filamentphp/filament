@@ -300,6 +300,11 @@ class FilamentManager
         return $this->getCurrentPanel()->getProfileUrl($parameters);
     }
 
+    public function isProfilePageSimple(): bool
+    {
+        return $this->getCurrentPanel()->isProfilePageSimple();
+    }
+
     /**
      * @param  array<mixed>  $parameters
      */

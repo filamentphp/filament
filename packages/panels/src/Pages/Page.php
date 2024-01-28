@@ -19,7 +19,7 @@ abstract class Page extends BasePage
     use Concerns\HasSubNavigation;
     use Concerns\InteractsWithHeaderActions;
 
-    protected static string $layout = 'filament-panels::components.layout.index';
+    protected static string $layout;
 
     /** @var class-string<Cluster> | null */
     protected static ?string $cluster = null;
@@ -41,6 +41,11 @@ abstract class Page extends BasePage
     protected static ?int $navigationSort = null;
 
     protected static bool $shouldRegisterNavigation = true;
+
+    public function getLayout(): string
+    {
+        return static::$layout ?? 'filament-panels::components.layout.index';
+    }
 
     /**
      * @param  array<mixed>  $parameters
