@@ -251,7 +251,7 @@ protected function getPasswordFormComponent(): Component
 
 ### Using a sidebar on the profile page
 
-By default, the profile page does not use the standard page layout with a sidebar. This is so works with the [tenancy](tenancy) feature, otherwise it would not be accessible if the user had no tenants, since the sidebar links are routed to the current tenant.
+By default, the profile page does not use the standard page layout with a sidebar. This is so that it works with the [tenancy](tenancy) feature, otherwise it would not be accessible if the user had no tenants, since the sidebar links are routed to the current tenant.
 
 If you aren't using [tenancy](tenancy) in your panel, and you'd like the profile page to use the standard page layout with a sidebar, you can pass the `isSimple: false` parameter to `$panel->profile()` when registering the page:
 
