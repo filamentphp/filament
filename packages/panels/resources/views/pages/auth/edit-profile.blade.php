@@ -1,4 +1,6 @@
-<x-dynamic-component :component="static::isSimple() ? 'filament-panels::page.simple' : 'filament-panels::page'">
+<x-dynamic-component
+    :component="static::isSimple() ? 'filament-panels::page.simple' : 'filament-panels::page'"
+>
     <x-filament-panels::form wire:submit="save">
         {{ $this->form }}
 
