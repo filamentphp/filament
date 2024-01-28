@@ -1,6 +1,6 @@
 @php
-    $keyBindings = filament()->getGlobalSearchKeyBindings();
     $debounce = filament()->getGlobalSearchDebounce();
+    $keyBindings = filament()->getGlobalSearchKeyBindings();
 @endphp
 
 <div

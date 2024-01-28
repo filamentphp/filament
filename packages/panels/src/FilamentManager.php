@@ -171,17 +171,17 @@ class FilamentManager
         return $this->getCurrentPanel()->getFontUrl();
     }
 
+    public function getGlobalSearchDebounce(): string
+    {
+        return $this->getCurrentPanel()->getGlobalSearchDebounce();
+    }
+
     /**
      * @return array<string>
      */
     public function getGlobalSearchKeyBindings(): array
     {
         return $this->getCurrentPanel()->getGlobalSearchKeyBindings();
-    }
-
-    public function getGlobalSearchDebounce(): string
-    {
-        return $this->getCurrentPanel()->getGlobalSearchDebounce();
     }
 
     public function getGlobalSearchProvider(): ?GlobalSearchProvider

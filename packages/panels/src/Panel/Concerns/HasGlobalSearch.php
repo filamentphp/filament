@@ -9,14 +9,14 @@ use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 
 trait HasGlobalSearch
 {
+    protected string | Closure | null $globalSearchDebounce = null;
+
     /**
      * @var array<string>
      */
     protected array $globalSearchKeyBindings = [];
 
     protected string | bool $globalSearchProvider = true;
-
-    protected string | Closure | null $globalSearchDebounce = null;
 
     public function globalSearch(string | bool $provider = true): static
     {
@@ -25,6 +25,13 @@ trait HasGlobalSearch
         }
 
         $this->globalSearchProvider = $provider;
+
+        return $this;
+    }
+
+    public function globalSearchDebounce(string | Closure | null $debounce): static
+    {
+        $this->globalSearchDebounce = $debounce;
 
         return $this;
     }
@@ -39,11 +46,9 @@ trait HasGlobalSearch
         return $this;
     }
 
-    public function globalSearchDebounce(string | Closure | null $debounce): static
+    public function getGlobalSearchDebounce(): string
     {
-        $this->globalSearchDebounce = $debounce;
-
-        return $this;
+        return $this->evaluate($this->globalSearchDebounce) ?? '500ms';
     }
 
     /**
@@ -52,11 +57,6 @@ trait HasGlobalSearch
     public function getGlobalSearchKeyBindings(): array
     {
         return $this->globalSearchKeyBindings;
-    }
-
-    public function getGlobalSearchDebounce(): string
-    {
-        return $this->evaluate($this->globalSearchDebounce) ?? '500ms';
     }
 
     public function getGlobalSearchProvider(): ?GlobalSearchProvider
