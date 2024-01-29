@@ -30,7 +30,7 @@ return [
             ],
 
             'empty' => [
-                'label' => 'Ma\'lumot yo\'q',
+                'message' => 'Ma\'lumot yo\'q',
             ],
 
         ],

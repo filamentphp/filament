@@ -32,7 +32,7 @@ return [
         ],
 
         'empty' => [
-            'label' => 'Geen gegevens',
+            'message' => 'Geen gegevens',
         ],
 
     ],

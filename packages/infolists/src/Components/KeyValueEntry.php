@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Illuminate\Support\Collection;
 
 class KeyValueEntry extends Entry
 {
@@ -16,22 +15,7 @@ class KeyValueEntry extends Entry
 
     protected string | Closure | null $valueLabel = null;
 
-    protected string | Closure | null $emptyLabel = null;
-
-    public function getState(): mixed
-    {
-        $state = parent::getState();
-
-        if ($state === null) {
-            return collect();
-        }
-
-        if (is_array($state)) {
-            return collect($state);
-        }
-
-        return $state;
-    }
+    protected string | Closure | null $emptyMessage = null;
 
     public function keyLabel(string | Closure | null $label): static
     {
@@ -47,9 +31,9 @@ class KeyValueEntry extends Entry
         return $this;
     }
 
-    public function emptyLabel(string | Closure | null $label): static
+    public function emptyMessage(string | Closure | null $message): static
     {
-        $this->emptyLabel = $label;
+        $this->emptyMessage = $message;
 
         return $this;
     }
@@ -64,8 +48,8 @@ class KeyValueEntry extends Entry
         return $this->evaluate($this->valueLabel) ?? __('filament-infolists::components.entries.key_value.columns.value.label');
     }
 
-    public function getEmptyLabel(): string
+    public function getEmptyMessage(): string
     {
-        return $this->evaluate($this->emptyLabel) ?? __('filament-infolists::components.entries.key_value.empty.label');
+        return $this->evaluate($this->emptyMessage) ?? __('filament-infolists::components.entries.key_value.empty.message');
     }
 }
