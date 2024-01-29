@@ -52,9 +52,9 @@ KeyValueEntry::make('meta')
     ->valueLabel('Property value')
 ```
 
-## Customizing the empty value pair's label
+## Customizing the empty message
 
-You may customize the message for empty value pairs using the `emptyMessage()` method:
+You may customize the message that is displayed when the entry is empty using the `emptyMessage()` method:
 
 ```php
 use Filament\Infolists\Components\KeyValueEntry;
