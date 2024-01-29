@@ -31,6 +31,10 @@ return [
 
         ],
 
+        'empty' => [
+            'message' => 'Geen gegevens',
+        ],
+
     ],
 
 ];

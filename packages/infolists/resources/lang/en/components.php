@@ -29,6 +29,10 @@ return [
 
             ],
 
+            'empty' => [
+                'message' => 'No entries',
+            ],
+
         ],
 
     ],

@@ -30,7 +30,8 @@
             <tbody
                 class="divide-y divide-gray-200 font-mono text-base dark:divide-white/5 sm:text-sm sm:leading-6"
             >
-                @foreach ($getState() as $key => $value)
+            @if(filled($state = ($getState() ?? [])))
+                @foreach ($state as $key => $value)
                     <tr
                         class="divide-x divide-gray-200 dark:divide-white/5 rtl:divide-x-reverse"
                     >
@@ -43,6 +44,16 @@
                         </td>
                     </tr>
                 @endforeach
+            @else
+                <tr>
+                    <td
+                        class="px-3 py-2 text-center text-sm font-medium text-gray-700 dark:text-gray-200"
+                        colspan="2"
+                    >
+                        {{ $getEmptyMessage() }}
+                    </td>
+                </tr>
+            @endif
             </tbody>
         </table>
     </div>
