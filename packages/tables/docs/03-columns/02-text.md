@@ -327,6 +327,17 @@ TextColumn::make('email')
 
 <AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon in the primary color" version="3.x" />
 
+## Customizing the column width
+
+To control the width of a column, you may use the `columnWidth()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('id')
+    ->columnWidth('1%')
+```
+
 ## Customizing the text size
 
 Text columns have small font size by default, but you may change this to `TextColumnSize::ExtraSmall`, `TextColumnSize::Medium`, or `TextColumnSize::Large`.
