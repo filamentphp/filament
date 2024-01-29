@@ -10,6 +10,7 @@
 >
     <a
         {{ \Filament\Support\generate_href_html($url) }}
+        x-on:click="close()"
         @class([
             'fi-global-search-result-link block outline-none',
             'pe-4 ps-4 pt-4' => $actions,
