@@ -350,7 +350,7 @@ export default function fileUploadFormComponent({
                     options: {
                         type: 'local',
                         ...(!uploadedFile.type ||
-                        /^image/.test(uploadedFile.type)
+                        /^image/.test(uploadedFile.type) || /^video/.test(uploadedFile.type) || /^audio/.test(uploadedFile.type)
                             ? {}
                             : {
                                   file: {
