@@ -51,14 +51,3 @@ use Filament\Infolists\Components\KeyValueEntry;
 KeyValueEntry::make('meta')
     ->valueLabel('Property value')
 ```
-
-## Customizing the empty message
-
-You may customize the message that is displayed when the entry is empty using the `emptyMessage()` method:
-
-```php
-use Filament\Infolists\Components\KeyValueEntry;
-
-KeyValueEntry::make('meta')
-    ->emptyMessage('No properties added yet')
-```

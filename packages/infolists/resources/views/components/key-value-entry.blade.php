@@ -48,7 +48,7 @@
                             colspan="2"
                             class="px-3 py-2 text-center font-sans text-sm text-gray-400 dark:text-gray-500"
                         >
-                            {{ $getEmptyMessage() }}
+                            {{ $getPlaceholder() }}
                         </td>
                     </tr>
                 @endforelse

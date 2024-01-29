@@ -15,7 +15,12 @@ class KeyValueEntry extends Entry
 
     protected string | Closure | null $valueLabel = null;
 
-    protected string | Closure | null $emptyMessage = null;
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->placeholder(__('filament-infolists::components.entries.key_value.placeholder'));
+    }
 
     public function keyLabel(string | Closure | null $label): static
     {
@@ -31,9 +36,12 @@ class KeyValueEntry extends Entry
         return $this;
     }
 
+    /**
+     * @deprecated Use `placeholder()` instead.
+     */
     public function emptyMessage(string | Closure | null $message): static
     {
-        $this->emptyMessage = $message;
+        $this->placeholder($message);
 
         return $this;
     }
@@ -46,10 +54,5 @@ class KeyValueEntry extends Entry
     public function getValueLabel(): string
     {
         return $this->evaluate($this->valueLabel) ?? __('filament-infolists::components.entries.key_value.columns.value.label');
-    }
-
-    public function getEmptyMessage(): string
-    {
-        return $this->evaluate($this->emptyMessage) ?? __('filament-infolists::components.entries.key_value.empty.message');
     }
 }
