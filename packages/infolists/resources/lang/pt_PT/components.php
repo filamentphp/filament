@@ -29,9 +29,7 @@ return [
 
             ],
 
-            'empty' => [
-                'message' => 'Sem dados',
-            ],
+            'placeholder' => 'Sem dados',
 
         ],
 

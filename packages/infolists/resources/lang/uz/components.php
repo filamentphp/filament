@@ -29,9 +29,7 @@ return [
 
             ],
 
-            'empty' => [
-                'message' => 'Ma\'lumot yo\'q',
-            ],
+            'placeholder' => 'Ma\'lumot yo\'q',
 
         ],
 

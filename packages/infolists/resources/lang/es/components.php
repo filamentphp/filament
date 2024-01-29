@@ -29,9 +29,7 @@ return [
 
             ],
 
-            'empty' => [
-                'message' => 'No hay entradas',
-            ],
+            'placeholder' => 'No hay entradas',
 
         ],
 

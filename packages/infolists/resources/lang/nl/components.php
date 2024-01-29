@@ -31,9 +31,7 @@ return [
 
         ],
 
-        'empty' => [
-            'message' => 'Geen gegevens',
-        ],
+        'placeholder' => 'Geen gegevens',
 
     ],
 
