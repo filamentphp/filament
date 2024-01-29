@@ -11,7 +11,7 @@
     }}
 >
     <nav
-        class="flex h-16 items-center gap-x-4 bg-white px-4 shadow-sm ring-1 ring-gray-950/5 md:px-6 lg:px-8 dark:bg-gray-900 dark:ring-white/10"
+        class="flex h-16 items-center gap-x-4 bg-white px-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:px-6 lg:px-8"
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.start') }}
 
@@ -83,13 +83,16 @@
                                     @foreach ($group->getItems() as $item)
                                         @php
                                             $icon = $item->getIcon();
+                                            $isActive = $item->isActive();
                                         @endphp
 
                                         <x-filament::dropdown.list.item
                                             :badge="$item->getBadge()"
                                             :badge-color="$item->getBadgeColor()"
+                                            :badge-tooltip="$item->getBadgeTooltip()"
+                                            :color="$isActive ? 'primary' : 'gray'"
                                             :href="$item->getUrl()"
-                                            :icon="$item->isActive() ? ($item->getActiveIcon() ?? $icon) : $icon"
+                                            :icon="$isActive ? ($item->getActiveIcon() ?? $icon) : $icon"
                                             tag="a"
                                             :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
                                         >
@@ -105,6 +108,7 @@
                                     :active-icon="$item->getActiveIcon()"
                                     :badge="$item->getBadge()"
                                     :badge-color="$item->getBadgeColor()"
+                                    :badge-tooltip="$item->getBadgeTooltip()"
                                     :icon="$item->getIcon()"
                                     :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
                                     :url="$item->getUrl()"

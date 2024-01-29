@@ -50,12 +50,22 @@ abstract class BasePage extends Component implements HasActions, HasForms, HasIn
 
     public function render(): View
     {
-        return view(static::$view, $this->getViewData())
-            ->layout(static::$layout, [
+        return view($this->getView(), $this->getViewData())
+            ->layout($this->getLayout(), [
                 'livewire' => $this,
                 'maxContentWidth' => $this->getMaxContentWidth(),
                 ...$this->getLayoutData(),
             ]);
+    }
+
+    public function getView(): string
+    {
+        return static::$view;
+    }
+
+    public function getLayout(): string
+    {
+        return static::$layout;
     }
 
     public function getHeading(): string | Htmlable

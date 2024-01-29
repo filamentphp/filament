@@ -1,8 +1,8 @@
 <form
-    x-data="{ isUploadingFile: false }"
-    x-on:submit="if (isUploadingFile) $event.preventDefault()"
-    x-on:file-upload-started="isUploadingFile = true"
-    x-on:file-upload-finished="isUploadingFile = false"
+    x-data="{ isProcessing: false }"
+    x-on:submit="if (isProcessing) $event.preventDefault()"
+    x-on:form-processing-started="isProcessing = true"
+    x-on:form-processing-finished="isProcessing = false"
     {{ $attributes->class(['fi-form grid gap-y-6']) }}
 >
     {{ $slot }}

@@ -28,6 +28,8 @@ class NavigationItem extends Component
      */
     protected string | array | Closure | null $badgeColor = null;
 
+    protected string | Closure | null $badgeTooltip = null;
+
     protected bool | Closure $shouldOpenUrlInNewTab = false;
 
     protected int | Closure | null $sort = null;
@@ -86,6 +88,13 @@ class NavigationItem extends Component
     public function icon(string | Closure | null $icon): static
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function badgeTooltip(string | Closure | null $tooltip): static
+    {
+        $this->badgeTooltip = $tooltip;
 
         return $this;
     }
@@ -158,6 +167,11 @@ class NavigationItem extends Component
     public function getBadgeColor(): string | array | null
     {
         return $this->evaluate($this->badgeColor);
+    }
+
+    public function getBadgeTooltip(): ?string
+    {
+        return $this->evaluate($this->badgeTooltip);
     }
 
     public function getGroup(): ?string
