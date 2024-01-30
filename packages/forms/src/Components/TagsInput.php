@@ -8,12 +8,12 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Illuminate\Contracts\Support\Arrayable;
 
-class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationRules, Contracts\HasAffixActions
+class TagsInput extends Field implements Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
+    use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasPlaceholder;
-    use Concerns\HasAffixes;
     use HasColor;
     use HasExtraAlpineAttributes;
     use HasReorderAnimationDuration;
