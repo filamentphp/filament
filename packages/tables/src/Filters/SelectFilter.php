@@ -5,6 +5,7 @@ namespace Filament\Tables\Filters;
 use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 
 class SelectFilter extends BaseFilter
@@ -81,7 +82,11 @@ class SelectFilter extends BaseFilter
 
             if ($filter->queriesRelationships()) {
                 $label = $filter->getRelationshipQuery()
-                    ->whereKey($state['value'])
+                    ->when(
+                        $this->getRelationshipKey(),
+                        fn($query) => $query->where($this->getRelationshipKey(), $state['value']),
+                        fn($query) => $query->whereKey($state['value'])
+                    )
                     ->first()
                     ?->getAttributeValue($filter->getRelationshipTitleAttribute());
             } else {
@@ -153,7 +158,12 @@ class SelectFilter extends BaseFilter
                     ]) ?? $query;
                 }
 
-                return $query->whereKey($values);
+                return $query
+                    ->when(
+                        $this->getRelationshipKey(),
+                        fn($query) => $query->where($this->getRelationshipKey(), $values),
+                        fn($query) => $query->whereKey($values)
+                    );
             },
         );
     }
