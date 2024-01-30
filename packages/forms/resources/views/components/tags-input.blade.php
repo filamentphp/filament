@@ -7,6 +7,15 @@
     $isDisabled = $isDisabled();
     $isReorderable = $isReorderable();
     $statePath = $getStatePath();
+
+    $isPrefixInline = $isPrefixInline();
+    $isSuffixInline = $isSuffixInline();
+    $prefixActions = $getPrefixActions();
+    $prefixIcon = $getPrefixIcon();
+    $prefixLabel = $getPrefixLabel();
+    $suffixActions = $getSuffixActions();
+    $suffixIcon = $getSuffixIcon();
+    $suffixLabel = $getSuffixLabel();
 @endphp
 
 <x-dynamic-component
@@ -25,6 +34,16 @@
 
     <x-filament::input.wrapper
         :disabled="$isDisabled"
+        :inline-prefix="$isPrefixInline"
+        :inline-suffix="$isSuffixInline"
+        :prefix="$prefixLabel"
+        :prefix-actions="$prefixActions"
+        :prefix-icon="$prefixIcon"
+        :prefix-icon-color="$getPrefixIconColor()"
+        :suffix="$suffixLabel"
+        :suffix-actions="$suffixActions"
+        :suffix-icon="$suffixIcon"
+        :suffix-icon-color="$getSuffixIconColor()"
         :valid="! $errors->has($statePath)"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
@@ -55,6 +74,8 @@
                 :placeholder="$getPlaceholder()"
                 type="text"
                 x-bind="input"
+                :inlinePrefix="$isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel))"
+                :inlineSuffix="$isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel))"
                 :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())"
             />
 
