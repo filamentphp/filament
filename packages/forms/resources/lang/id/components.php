@@ -93,7 +93,7 @@ return [
                 ],
 
                 'flip_vertical' => [
-                    'label' => 'Balik gambar vertical',
+                    'label' => 'Balik gambar secara vertikal',
                 ],
 
                 'move_down' => [
@@ -424,11 +424,11 @@ return [
         'actions' => [
 
             'hide_password' => [
-                'label' => 'Sembunyikan password',
+                'label' => 'Sembunyikan kata sandi',
             ],
 
             'show_password' => [
-                'label' => 'Tampilkan password',
+                'label' => 'Tampilkan kata sandi',
             ],
 
         ],
