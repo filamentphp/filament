@@ -111,7 +111,7 @@
         x-show="isOpen"
         x-transition.duration.300ms.opacity
         @class([
-            'fixed inset-0 z-40 min-h-full transition overflow-hidden',
+            'fixed inset-0 z-40 min-h-full overflow-hidden transition',
             'flex items-center justify-center' => ! $slideOver,
         ])
     >
@@ -306,7 +306,7 @@
                 @if (! \Filament\Support\is_slot_empty($slot))
                     <div
                         @class([
-                            'fi-modal-content flex flex-col gap-y-4 py-6 overflow-y-auto',
+                            'fi-modal-content flex flex-col gap-y-4 overflow-y-auto py-6',
                             'max-h-[calc(80vh-4rem)]' => ! $slideOver,
                             'flex-1' => ($width === MaxWidth::Screen) || $slideOver,
                             'pe-6 ps-[5.25rem]' => $icon && ($alignment === Alignment::Start),
