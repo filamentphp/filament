@@ -118,7 +118,7 @@ trait CanExportRecords
                     ->body(trans_choice('filament-actions::export.notifications.max_rows.body', $maxRows, [
                         'count' => format_number($maxRows),
                     ]))
-                    ->success()
+                    ->danger()
                     ->send();
 
                 return;

@@ -183,7 +183,7 @@ trait CanImportRecords
                     ->body(trans_choice('filament-actions::import.notifications.max_rows.body', $maxRows, [
                         'count' => format_number($maxRows),
                     ]))
-                    ->success()
+                    ->danger()
                     ->send();
 
                 return;
