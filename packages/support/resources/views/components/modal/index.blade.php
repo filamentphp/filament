@@ -111,8 +111,8 @@
         x-show="isOpen"
         x-transition.duration.300ms.opacity
         @class([
-            'fixed inset-0 z-40 min-h-full overflow-y-auto overflow-x-hidden transition',
-            'flex items-center' => ! $slideOver,
+            'fixed inset-0 z-40 min-h-full transition overflow-hidden',
+            'flex items-center justify-center' => ! $slideOver,
         ])
     >
         <div
@@ -137,7 +137,7 @@
             {{
                 $attributes->class([
                     'pointer-events-none relative w-full transition',
-                    'my-auto p-4' => ! ($slideOver || ($width === MaxWidth::Screen)),
+                    'mb-auto mt-8 p-4' => ! ($slideOver || ($width === MaxWidth::Screen)),
                 ])
             }}
         >
@@ -172,7 +172,7 @@
                 @endif
                 @class([
                     'fi-modal-window pointer-events-auto relative flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
-                    'fi-modal-slide-over-window ms-auto overflow-y-auto' => $slideOver,
+                    'fi-modal-slide-over-window ms-auto' => $slideOver,
                     // Using an arbitrary value instead of the h-dvh class that was added in Tailwind CSS v3.4.0
                     // to ensure compatibility with custom themes that may use an older version of Tailwind CSS.
                     'h-[100dvh]' => $slideOver || ($width === MaxWidth::Screen),
@@ -306,7 +306,8 @@
                 @if (! \Filament\Support\is_slot_empty($slot))
                     <div
                         @class([
-                            'fi-modal-content flex flex-col gap-y-4 py-6',
+                            'fi-modal-content flex flex-col gap-y-4 py-6 overflow-y-auto',
+                            'max-h-[calc(80vh-4rem)]' => ! $slideOver,
                             'flex-1' => ($width === MaxWidth::Screen) || $slideOver,
                             'pe-6 ps-[5.25rem]' => $icon && ($alignment === Alignment::Start),
                             'px-6' => ! ($icon && ($alignment === Alignment::Start)),
