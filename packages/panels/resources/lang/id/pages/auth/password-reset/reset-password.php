@@ -9,12 +9,12 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Email address',
+            'label' => 'Alamat email',
         ],
 
         'password' => [
             'label' => 'Kata sandi baru',
-            'validation_attribute' => 'password',
+            'validation_attribute' => 'kata sandi',
         ],
 
         'password_confirmation' => [

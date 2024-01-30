@@ -66,7 +66,7 @@ return [
         ],
 
         'started' => [
-            'title' => 'Export started',
+            'title' => 'Ekspor dimulai',
             'body' => 'Mulai mengekspor :count baris dan proses akan berjalan di belakang layar.',
         ],
 
