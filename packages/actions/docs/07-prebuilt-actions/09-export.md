@@ -113,6 +113,17 @@ ExportColumn::make('sku')
     ->label('SKU')
 ```
 
+### Configuring the default column selection
+
+By default, all columns will be selected when the user is asked which columns they would like to export. You can customize the default selection state for a column with the `enabledByDefault()` method:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('description')
+    ->enabledByDefault(false)
+```
+
 ### Calculated export column state
 
 Sometimes you need to calculate the state of a column, instead of directly reading it from a database column.
