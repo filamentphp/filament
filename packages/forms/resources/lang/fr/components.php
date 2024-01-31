@@ -183,13 +183,13 @@ return [
                     'label' => 'Libre',
                 ],
 
-                'svg' => [
+            ],
 
-                    'messages' => [
-                        'confirmation' => 'La modification des fichiers SVG n\'est pas recommandée car elle peut entraîner une perte de qualité lors de la mise à l\'échelle.\n Êtes-vous sûr de vouloir continuer ?',
-                        'disabled' => 'La modification des fichiers SVG est désactivée car elle peut entraîner une perte de qualité lors de la mise à l\'échelle.',
-                    ],
+            'svg' => [
 
+                'messages' => [
+                    'confirmation' => 'La modification des fichiers SVG n\'est pas recommandée car elle peut entraîner une perte de qualité lors de la mise à l\'échelle.\n Êtes-vous sûr de vouloir continuer ?',
+                    'disabled' => 'La modification des fichiers SVG est désactivée car elle peut entraîner une perte de qualité lors de la mise à l\'échelle.',
                 ],
 
             ],
