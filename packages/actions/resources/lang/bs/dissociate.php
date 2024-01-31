@@ -22,7 +22,7 @@ return [
 
         'notifications' => [
 
-            'dissociate' => [
+            'dissociated' => [
                 'title' => 'Odvojeno',
             ],
 
@@ -50,7 +50,7 @@ return [
 
         'notifications' => [
 
-            'dissociate' => [
+            'dissociated' => [
                 'title' => 'Odvojeno',
             ],
 
