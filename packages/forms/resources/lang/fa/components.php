@@ -184,7 +184,7 @@ return [
                 ],
 
             ],
-            
+
             'svg' => [
 
                 'messages' => [
@@ -249,7 +249,7 @@ return [
         ],
 
     ],
-    
+
     'radio' => [
 
         'boolean' => [
