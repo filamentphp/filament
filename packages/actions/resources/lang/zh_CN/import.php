@@ -71,4 +71,5 @@ return [
         'error_header' => '错误',
         'system_error' => '系统错误，请联系支持。',
     ],
+
 ];
