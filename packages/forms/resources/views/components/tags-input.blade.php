@@ -70,12 +70,12 @@
                 :autofocus="$isAutofocused()"
                 :disabled="$isDisabled"
                 :id="$id"
+                :inline-refix="$isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel))"
+                :inline-suffix="$isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel))"
                 :list="$id . '-suggestions'"
                 :placeholder="$getPlaceholder()"
                 type="text"
                 x-bind="input"
-                :inlinePrefix="$isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel))"
-                :inlineSuffix="$isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel))"
                 :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())"
             />
 
