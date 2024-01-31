@@ -5,14 +5,13 @@
     $hasInlineLabel = $hasInlineLabel();
     $id = $getId();
     $isDisabled = $isDisabled();
-    $isReorderable = $isReorderable();
-    $statePath = $getStatePath();
-
     $isPrefixInline = $isPrefixInline();
+    $isReorderable = $isReorderable();
     $isSuffixInline = $isSuffixInline();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
+    $statePath = $getStatePath();
     $suffixActions = $getSuffixActions();
     $suffixIcon = $getSuffixIcon();
     $suffixLabel = $getSuffixLabel();
