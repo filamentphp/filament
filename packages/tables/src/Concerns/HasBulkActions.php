@@ -79,6 +79,8 @@ trait HasBulkActions
             ]);
 
             $result = $action->callAfter() ?? $result;
+
+            $this->flushCache();
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
