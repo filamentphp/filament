@@ -81,11 +81,11 @@ return [
                 ],
 
                 'drag_crop' => [
-                    'label' => `Mode d'arrossegament "retallar"`,
+                    'label' => 'Mode d\'arrossegament "retallar"',
                 ],
 
                 'drag_move' => [
-                    'label' => `Mode d'arrossegament "moure"`,
+                    'label' => 'Mode d\'arrossegament "moure"',
                 ],
 
                 'flip_horizontal' => [
