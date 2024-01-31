@@ -11,29 +11,28 @@ return [
                 'expand_list' => 'Показать еще :count',
             ],
 
-        'more_list_items' => 'и еще :count',
+            'more_list_items' => 'и еще :count',
 
-    ],
-
-
-'key_value' => [
-
-    'columns' => [
-
-        'key' => [
-            'label' => 'Ключ',
         ],
 
-        'value' => [
-            'label' => 'Значение',
+        'key_value' => [
+
+            'columns' => [
+
+                'key' => [
+                    'label' => 'Ключ',
+                ],
+
+                'value' => [
+                    'label' => 'Значение',
+                ],
+
+            ],
+
+            'placeholder' => 'Нет записей',
+
         ],
 
     ],
-
-    'placeholder' => 'Нет записей',
-
-],
-
-],
 
 ];
