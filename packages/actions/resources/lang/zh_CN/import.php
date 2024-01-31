@@ -50,7 +50,7 @@ return [
             ],
 
         ],
-    
+
         'max_rows' => [
             'title' => '上传的 CSV 文件过大',
             'body' => '你不能够一次性导入超过 1 行记录。|你不能够一次性导入超过 :count 行记录。',
@@ -62,7 +62,7 @@ return [
         ],
 
     ],
-    
+
     'example_csv' => [
         'file_name' => ':importer-example',
     ],
