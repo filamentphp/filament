@@ -70,7 +70,7 @@
                 :autofocus="$isAutofocused()"
                 :disabled="$isDisabled"
                 :id="$id"
-                :inline-refix="$isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel))"
+                :inline-prefix="$isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel))"
                 :inline-suffix="$isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel))"
                 :list="$id . '-suggestions'"
                 :placeholder="$getPlaceholder()"
