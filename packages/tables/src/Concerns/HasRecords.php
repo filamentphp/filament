@@ -14,6 +14,8 @@ use function Livewire\invade;
 
 trait HasRecords
 {
+    use CachesQueries;
+
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
@@ -94,7 +96,9 @@ trait HasRecords
             (! $this->getTable()->isPaginated()) ||
             ($this->isTableReordering() && (! $this->getTable()->isPaginatedWhileReordering()))
         ) {
-            return $setRecordLocales($this->cachedTableRecords = $this->hydratePivotRelationForTableRecords($query->get()));
+            $records = $this->remember(md5($query->toRawSql()), fn () => $query->get());
+
+            return $setRecordLocales($this->cachedTableRecords = $this->hydratePivotRelationForTableRecords($records));
         }
 
         return $setRecordLocales($this->cachedTableRecords = $this->hydratePivotRelationForTableRecords($this->paginateTableQuery($query)));

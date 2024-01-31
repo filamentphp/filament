@@ -6,9 +6,11 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 
 trait CanPaginateRecords
 {
+    use CachesQueries;
     /**
      * @var int | string | null
      */
@@ -30,11 +32,13 @@ trait CanPaginateRecords
         $perPage = $this->getTableRecordsPerPage();
 
         /** @var LengthAwarePaginator $records */
-        $records = $query->paginate(
-            $perPage === 'all' ? $query->count() : $perPage,
-            ['*'],
-            $this->getTablePaginationPageName(),
-        );
+        $records = $this->remember(
+            key: md5($query->toRawSql() . $perPage),
+            callback: fn () => $query->paginate(
+                $perPage === 'all' ? $query->count() : $perPage,
+                ['*'],
+                $this->getTablePaginationPageName()
+            ));
 
         return $records->onEachSide(0);
     }

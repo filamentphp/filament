@@ -108,6 +108,8 @@ trait HasActions
             ]);
 
             $result = $action->callAfter() ?? $result;
+
+            $this->flushCache();
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
@@ -168,6 +170,7 @@ trait HasActions
 
         if (filled($record) && ($action->getRecord() === null)) {
             $this->unmountTableAction();
+            $this->flushCache();
 
             return null;
         }
