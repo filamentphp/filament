@@ -77,7 +77,7 @@ class ExportColumn extends Component
 
     public function isEnabledByDefault(): bool
     {
-        return $this->evaluate($this->isEnabledByDefault) ?? true;
+        return (bool) $this->evaluate($this->isEnabledByDefault)
     }
 
     public function getRecord(): ?Model
