@@ -130,8 +130,6 @@ public function table(Table $table): Table
 }
 ```
 
-All tables without a `defaultSort()` specified are sorted using the primary key of the model. You can disable ths behavior by passing `false` to `defaultSort()`.
-
 ### Persist sort in session
 
 To persist the sorting in the user's session, use the `persistSortInSession()` method:
