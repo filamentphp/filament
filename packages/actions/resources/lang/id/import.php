@@ -58,7 +58,7 @@ return [
         ],
 
         'started' => [
-            'title' => 'Import started',
+            'title' => 'Impor dimulai',
             'body' => 'Mulai mengimpor :count baris dan proses akan berjalan di belakang layar.',
         ],
 
@@ -70,7 +70,7 @@ return [
 
     'failure_csv' => [
         'file_name' => 'impor-:import_id-:csv_name-gagal',
-        'error_header' => 'error',
+        'error_header' => 'kesalahan',
         'system_error' => 'Terjadi kesalahan sistem, harap hubungi tim support.',
     ],
 

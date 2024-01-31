@@ -32,8 +32,12 @@ class SpatieTagsColumn extends TagsColumn
 
         $record = $this->getRecord();
 
-        if ($this->queriesRelationships($record)) {
+        if ($this->hasRelationship($record)) {
             $record = $record->getRelationValue($this->getRelationshipName());
+        }
+
+        if (! $record) {
+            return [];
         }
 
         if (! (method_exists($record, 'tags') && method_exists($record, 'tagsWithType'))) {
@@ -75,7 +79,7 @@ class SpatieTagsColumn extends TagsColumn
             return $query;
         }
 
-        if ($this->queriesRelationships($query->getModel())) {
+        if ($this->hasRelationship($query->getModel())) {
             return $query->with(["{$this->getRelationshipName()}.tags"]);
         }
 

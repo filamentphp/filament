@@ -41,7 +41,7 @@ class EditProfile extends Page
 
     protected ?string $maxWidth = null;
 
-    protected static bool $isDiscovered = true;
+    protected static bool $isDiscovered = false;
 
     public function getLayout(): string
     {

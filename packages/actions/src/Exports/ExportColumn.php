@@ -106,7 +106,7 @@ class ExportColumn extends Component
 
     public function applyEagerLoading(EloquentBuilder $query): EloquentBuilder
     {
-        if (! $this->queriesRelationships($query->getModel())) {
+        if (! $this->hasRelationship($query->getModel())) {
             return $query;
         }
 

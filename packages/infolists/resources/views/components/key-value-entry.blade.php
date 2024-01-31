@@ -30,7 +30,7 @@
             <tbody
                 class="divide-y divide-gray-200 font-mono text-base dark:divide-white/5 sm:text-sm sm:leading-6"
             >
-                @foreach ($getState() as $key => $value)
+                @forelse (($getState() ?? []) as $key => $value)
                     <tr
                         class="divide-x divide-gray-200 dark:divide-white/5 rtl:divide-x-reverse"
                     >
@@ -42,7 +42,16 @@
                             {{ $value }}
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td
+                            colspan="2"
+                            class="px-3 py-2 text-center font-sans text-sm text-gray-400 dark:text-gray-500"
+                        >
+                            {{ $getPlaceholder() }}
+                        </td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

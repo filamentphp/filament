@@ -249,6 +249,15 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Так',
+            'false' => 'Ні',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
@@ -405,6 +414,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Новий тег',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Приховати пароль',
+            ],
+
+            'show_password' => [
+                'label' => 'Показати пароль',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Так',
+            'false' => 'Ні',
+        ],
+
     ],
 
     'wizard' => [

@@ -15,7 +15,6 @@
         },
     }"
     x-init="$nextTick(() => open())"
-    x-on:click="close()"
     x-on:click.away="close()"
     x-on:keydown.escape.window="close()"
     x-on:keydown.up.prevent="$focus.wrap().previous()"
