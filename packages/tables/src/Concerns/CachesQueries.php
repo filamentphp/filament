@@ -2,8 +2,10 @@
 
 namespace Filament\Tables\Concerns;
 
-use Closure;
-use Filament\Resources\Pages\ListRecords;
+use Illuminate\Contracts\Pagination\CursorPaginator;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 
 trait CachesQueries
@@ -38,13 +40,12 @@ trait CachesQueries
 
     protected function getCacheTag(): string
     {
-        return $this instanceof ListRecords
-            ? $this->getId()
-            : $this->getLivewire()->getId();
+        return $this->getId();
     }
 
-    protected function remember(string $key, Closure $callback): mixed
+    protected function remember(string $key, \Closure $callback): mixed
     {
+        /** @var \Closure(): Paginator|CursorPaginator|Collection  $callback */
         return $this->isCachingQueries()
             ? Cache::tags([$this->getCacheTag()])
                 ->remember(

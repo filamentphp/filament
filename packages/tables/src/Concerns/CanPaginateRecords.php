@@ -9,8 +9,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 trait CanPaginateRecords
 {
-    use CachesQueries;
-
     /**
      * @var int | string | null
      */
@@ -30,10 +28,12 @@ trait CanPaginateRecords
     protected function paginateTableQuery(Builder $query): Paginator | CursorPaginator
     {
         $perPage = $this->getTableRecordsPerPage();
+        /** @var string $sql phpstan thinks `->toRawSql()` returns a Builder 🤷🏻 */
+        $sql = $query->toRawSql();
 
         /** @var LengthAwarePaginator $records */
         $records = $this->remember(
-            key: md5($query->toRawSql() . $perPage),
+            key: md5($sql . $perPage),
             callback: fn () => $query->paginate(
                 $perPage === 'all' ? $query->count() : $perPage,
                 ['*'],

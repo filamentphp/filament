@@ -14,6 +14,7 @@ use Livewire\WithPagination;
 
 trait InteractsWithTable
 {
+    use CachesQueries;
     use CanBeStriped;
     use CanDeferLoading;
     use CanGroupRecords;
