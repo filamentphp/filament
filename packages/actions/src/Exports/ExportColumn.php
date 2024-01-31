@@ -58,9 +58,9 @@ class ExportColumn extends Component
         return $this;
     }
 
-    public function enabledByDefault(bool | Closure $isEnabledByDefault): static
+    public function enabledByDefault(bool | Closure $condition): static
     {
-        $this->isEnabledByDefault = $isEnabledByDefault;
+        $this->isEnabledByDefault = $condition;
 
         return $this;
     }
