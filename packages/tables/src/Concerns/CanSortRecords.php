@@ -122,6 +122,10 @@ trait CanSortRecords
             return $query;
         }
 
+        if (filled($query->toBase()->orders)) {
+            return $query;
+        }
+
         return $query->orderBy($query->getModel()->getQualifiedKeyName());
     }
 
