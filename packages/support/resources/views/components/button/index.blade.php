@@ -262,9 +262,7 @@
             x-show="! isProcessing"
         @endif
         class="{{ $labelClasses }}"
-    >
-        {{ $slot }}
-    </span>
+    >{{ $slot }}</span>
 
     @if ($hasFormProcessingLoadingIndicator)
         <span
