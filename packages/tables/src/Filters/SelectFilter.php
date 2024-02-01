@@ -53,7 +53,11 @@ class SelectFilter extends BaseFilter
                             $filter->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough,
                             fn (Builder $query) => $query->distinct(),
                         )
-                        ->whereKey($state['values'])
+                        ->when(
+                            $this->getRelationshipKey(),
+                            fn (Builder $query) => $query->whereIn($this->getRelationshipKey(), $state['values']),
+                            fn (Builder $query) => $query->whereKey($state['values'])
+                        )
                         ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
                         ->all();
                 } else {
@@ -81,7 +85,11 @@ class SelectFilter extends BaseFilter
 
             if ($filter->queriesRelationships()) {
                 $label = $filter->getRelationshipQuery()
-                    ->whereKey($state['value'])
+                    ->when(
+                        $this->getRelationshipKey(),
+                        fn (Builder $query) => $query->where($this->getRelationshipKey(), $state['value']),
+                        fn (Builder $query) => $query->whereKey($state['value'])
+                    )
                     ->first()
                     ?->getAttributeValue($filter->getRelationshipTitleAttribute());
             } else {
@@ -146,11 +154,18 @@ class SelectFilter extends BaseFilter
 
         return $query->whereHas(
             $this->getRelationshipName(),
-            function (Builder $query) use ($values) {
+            function (Builder $query) use ($isMultiple, $values) {
                 if ($this->modifyRelationshipQueryUsing) {
                     $query = $this->evaluate($this->modifyRelationshipQueryUsing, [
                         'query' => $query,
                     ]) ?? $query;
+                }
+
+                if ($relationshipKey = $this->getRelationshipKey()) {
+                    return $query->{$isMultiple ? 'whereIn' : 'where'}(
+                        $relationshipKey,
+                        $values,
+                    );
                 }
 
                 return $query->whereKey($values);
