@@ -113,16 +113,16 @@ trait CanSortRecords
             return $query->orderBy($sortColumnName, $sortDirection);
         }
 
-        if (filled($query->toBase()->orders)) {
-            return $query;
-        }
-
         if ($sortQueryUsing = $this->getTable()->getDefaultSortQuery()) {
             app()->call($sortQueryUsing, [
                 'direction' => $sortDirection,
                 'query' => $query,
             ]);
 
+            return $query;
+        }
+
+        if (filled($query->toBase()->orders)) {
             return $query;
         }
 
