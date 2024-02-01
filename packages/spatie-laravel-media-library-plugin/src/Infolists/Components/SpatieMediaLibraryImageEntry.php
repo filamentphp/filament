@@ -49,6 +49,10 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             $record = $record->getRelationValue($this->getRelationshipName());
         }
 
+        if (! $record) {
+            return null;
+        }
+
         /** @var ?Media $media */
         $media = $record->media->first(fn (Media $media): bool => $media->uuid === $state);
 
@@ -79,10 +83,16 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
     {
         $collection = $this->getCollection();
 
-        return $this->getRecord()->getRelationValue('media')
+        $record = $this->getRecord();
+
+        if ($this->hasRelationship($record)) {
+            $record = $record->getRelationValue($this->getRelationshipName());
+        }
+
+        return $record?->getRelationValue('media')
             ->filter(fn (Media $media): bool => blank($collection) || ($media->getAttributeValue('collection_name') === $collection))
             ->sortBy('order_column')
             ->map(fn (Media $media): string => $media->uuid)
-            ->all();
+            ->all() ?? [];
     }
 }

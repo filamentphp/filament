@@ -379,6 +379,17 @@ FileUpload::make('attachment')
     ->fetchFileInformation(false)
 ```
 
+## Customizing the uploading message
+
+You may customize the uploading message that is displayed in the form's submit button using the `uploadingMessage()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->uploadingMessage('Uploading attachment...')
+```
+
 ## File upload validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to file uploads.

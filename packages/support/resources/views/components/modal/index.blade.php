@@ -63,20 +63,20 @@
                 new CustomEvent('modal-closed', { id: '{{ $id }}' }),
             )
 
-            this.$nextTick(() => {
+            {{-- this.$nextTick(() => {
                 if (document.getElementsByClassName('fi-modal-open').length) {
                     return
                 }
 
                 window.clearAllBodyScrollLocks()
-            })
+            }) --}}
         },
 
         open: function () {
             this.isOpen = true
 
-            window.clearAllBodyScrollLocks()
-            window.disableBodyScroll(this.$root)
+            {{-- window.clearAllBodyScrollLocks()
+            window.disableBodyScroll(this.$root) --}}
 
             this.$refs.modalContainer.dispatchEvent(
                 new CustomEvent('modal-opened', { id: '{{ $id }}' }),
@@ -87,8 +87,7 @@
         x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') close()"
         x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
     @endif
-    x-trap="isOpen"
-    wire:ignore.self
+    x-trap.noscroll="isOpen"
     x-bind:class="{
         'fi-modal-open': isOpen,
     }"
@@ -112,7 +111,7 @@
         x-show="isOpen"
         x-transition.duration.300ms.opacity
         @class([
-            'fixed inset-0 z-40 min-h-full overflow-y-auto overflow-x-hidden transition',
+            'fixed inset-0 z-40 min-h-full',
             'flex items-center' => ! $slideOver,
         ])
     >
@@ -129,7 +128,6 @@
                 'fi-modal-close-overlay fixed inset-0 bg-gray-950/50 dark:bg-gray-950/75',
                 'cursor-pointer' => $closeByClickingAway,
             ])
-            style="will-change: transform"
         ></div>
 
         <div
@@ -137,8 +135,8 @@
             x-ref="modalContainer"
             {{
                 $attributes->class([
-                    'pointer-events-none relative w-full transition',
-                    'my-auto p-4' => ! ($slideOver || ($width === MaxWidth::Screen)),
+                    'pointer-events-none relative max-h-full w-full transition',
+                    'my-auto overflow-y-auto p-4' => ! ($slideOver || ($width === MaxWidth::Screen)),
                 ])
             }}
         >
@@ -174,7 +172,9 @@
                 @class([
                     'fi-modal-window pointer-events-auto relative flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                     'fi-modal-slide-over-window ms-auto overflow-y-auto' => $slideOver,
-                    'h-screen' => $slideOver || ($width === MaxWidth::Screen),
+                    // Using an arbitrary value instead of the h-dvh class that was added in Tailwind CSS v3.4.0
+                    // to ensure compatibility with custom themes that may use an older version of Tailwind CSS.
+                    'h-[100dvh]' => $slideOver || ($width === MaxWidth::Screen),
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === MaxWidth::Screen)),
                     'hidden' => ! $visible,
                     match ($width) {

@@ -141,7 +141,7 @@ return [
 
         'trashed' => [
 
-            'label' => 'Elimina record',
+            'label' => 'Record eliminati',
 
             'only_trashed' => 'Solo record eliminati',
 

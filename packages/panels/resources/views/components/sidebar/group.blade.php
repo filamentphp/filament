@@ -73,6 +73,7 @@
                 :active-icon="$item->getActiveIcon()"
                 :badge="$item->getBadge()"
                 :badge-color="$item->getBadgeColor()"
+                :badge-tooltip="$item->getBadgeTooltip()"
                 :child-items="$item->getChildItems()"
                 :first="$loop->first"
                 :grouped="filled($label)"

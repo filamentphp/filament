@@ -73,6 +73,21 @@ public static function getNavigationBadgeColor(): ?string
 }
 ```
 
+A custom tooltip for the navigation badge can be set in `$navigationBadgeTooltip`:
+
+```php
+protected static ?string $navigationBadgeTooltip = 'The number of users';
+```
+
+Or it can be returned from `getNavigationBadgeTooltip()`:
+
+```php
+public static function getNavigationBadgeTooltip(): ?string
+{
+    return 'The number of users';
+}
+```
+
 ## Grouping navigation items
 
 You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources/getting-started) and [custom page](pages):

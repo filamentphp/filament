@@ -2,12 +2,15 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
 use Exception;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 
 trait HasGlobalSearch
 {
+    protected string | Closure | null $globalSearchDebounce = null;
+
     /**
      * @var array<string>
      */
@@ -26,6 +29,13 @@ trait HasGlobalSearch
         return $this;
     }
 
+    public function globalSearchDebounce(string | Closure | null $debounce): static
+    {
+        $this->globalSearchDebounce = $debounce;
+
+        return $this;
+    }
+
     /**
      * @param  array<string>  $keyBindings
      */
@@ -34,6 +44,11 @@ trait HasGlobalSearch
         $this->globalSearchKeyBindings = $keyBindings;
 
         return $this;
+    }
+
+    public function getGlobalSearchDebounce(): string
+    {
+        return $this->evaluate($this->globalSearchDebounce) ?? '500ms';
     }
 
     /**

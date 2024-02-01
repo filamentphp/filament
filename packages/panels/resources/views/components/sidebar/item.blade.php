@@ -4,6 +4,7 @@
     'activeIcon' => null,
     'badge' => null,
     'badgeColor' => null,
+    'badgeTooltip' => null,
     'childItems' => [],
     'first' => false,
     'grouped' => false,
@@ -99,7 +100,7 @@
                 x-transition:enter-end="opacity-100"
             @endif
             @class([
-                'fi-sidebar-item-label flex-1 truncate font-medium text-sm',
+                'fi-sidebar-item-label flex-1 truncate text-sm font-medium',
                 'text-gray-700 dark:text-gray-200' => ! $active,
                 'text-primary-600 dark:text-primary-400' => $active,
             ])
@@ -116,7 +117,10 @@
                     x-transition:enter-end="opacity-100"
                 @endif
             >
-                <x-filament::badge :color="$badgeColor">
+                <x-filament::badge
+                    :color="$badgeColor"
+                    :tooltip="$badgeTooltip"
+                >
                     {{ $badge }}
                 </x-filament::badge>
             </span>
@@ -132,6 +136,7 @@
                     :active-icon="$childItem->getActiveIcon()"
                     :badge="$childItem->getBadge()"
                     :badge-color="$childItem->getBadgeColor()"
+                    :badge-tooltip="$childItem->getBadgeTooltip()"
                     :first="$loop->first"
                     grouped
                     :icon="$childItem->getIcon()"

@@ -183,7 +183,7 @@ trait CanImportRecords
                     ->body(trans_choice('filament-actions::import.notifications.max_rows.body', $maxRows, [
                         'count' => format_number($maxRows),
                     ]))
-                    ->success()
+                    ->danger()
                     ->send();
 
                 return;
@@ -210,6 +210,10 @@ trait CanImportRecords
                 $action->getOptions(),
                 Arr::except($data, ['file', 'columnMap']),
             );
+
+            // We do not want to send the loaded user relationship to the queue in job payloads,
+            // in case it contains attributes that are not serializable, such as binary columns.
+            $import->unsetRelation('user');
 
             $importJobs = collect($importChunks)
                 ->map(fn (array $importChunk): object => new ($job)(

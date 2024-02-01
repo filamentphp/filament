@@ -7,7 +7,7 @@
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @if ($isDisabled())
         <div
-            class="fi-fo-markdown-editor fi-disabled prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert sm:text-sm dark:bg-transparent dark:text-gray-400 dark:ring-white/10"
+            class="fi-fo-markdown-editor fi-disabled prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert dark:bg-transparent dark:text-gray-400 dark:ring-white/10 sm:text-sm"
         >
             {!! str($getState())->markdown()->sanitizeHtml() !!}
         </div>

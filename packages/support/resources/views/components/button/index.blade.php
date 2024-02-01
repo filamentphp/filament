@@ -120,7 +120,7 @@
         '[:checked+*>&]:text-white' => $tag === 'label',
     ]);
 
-    $badgeContainerClasses = 'fi-btn-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
+    $badgeContainerClasses = 'fi-btn-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-label',
@@ -129,8 +129,8 @@
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
-    $hasFileUploadLoadingIndicator = $type === 'submit' && filled($form);
-    $hasLoadingIndicator = filled($wireTarget) || $hasFileUploadLoadingIndicator;
+    $hasFormProcessingLoadingIndicator = $type === 'submit' && filled($form);
+    $hasLoadingIndicator = filled($wireTarget) || $hasFormProcessingLoadingIndicator;
 
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
@@ -174,7 +174,7 @@
     @if ($tag === 'a')
         {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
     @endif
-    @if (($keyBindings || $hasTooltip) && (! $hasFileUploadLoadingIndicator))
+    @if (($keyBindings || $hasTooltip) && (! $hasFormProcessingLoadingIndicator))
         x-data="{}"
     @endif
     @if ($keyBindings)
@@ -186,23 +186,25 @@
             theme: $store.theme,
         }"
     @endif
-    @if ($hasFileUploadLoadingIndicator)
+    @if ($hasFormProcessingLoadingIndicator)
         x-data="{
             form: null,
-            isUploadingFile: false,
+            isProcessing: false,
+            processingMessage: null,
         }"
         x-init="
             form = $el.closest('form')
 
-            form?.addEventListener('file-upload-started', () => {
-                isUploadingFile = true
+            form?.addEventListener('form-processing-started', (event) => {
+                isProcessing = true
+                processingMessage = event.detail.message
             })
 
-            form?.addEventListener('file-upload-finished', () => {
-                isUploadingFile = false
+            form?.addEventListener('form-processing-finished', () => {
+                isProcessing = false
             })
         "
-        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
+        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isProcessing }"
     @endif
     {{
         $attributes
@@ -211,7 +213,7 @@
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-                'x-bind:disabled' => $hasFileUploadLoadingIndicator ? 'isUploadingFile' : null,
+                'x-bind:disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing' : null,
             ], escape: false)
             ->class([$buttonClasses])
             ->style([$buttonStyles])
@@ -246,28 +248,31 @@
             />
         @endif
 
-        @if ($hasFileUploadLoadingIndicator)
+        @if ($hasFormProcessingLoadingIndicator)
             <x-filament::loading-indicator
                 x-cloak="x-cloak"
-                x-show="isUploadingFile"
+                x-show="isProcessing"
                 :class="$iconClasses"
             />
         @endif
     @endif
 
     <span
-        @if ($hasFileUploadLoadingIndicator)
-            x-show="! isUploadingFile"
+        @if ($hasFormProcessingLoadingIndicator)
+            x-show="! isProcessing"
         @endif
         class="{{ $labelClasses }}"
     >
         {{ $slot }}
     </span>
 
-    @if ($hasFileUploadLoadingIndicator)
-        <span x-cloak x-show="isUploadingFile" class="{{ $labelClasses }}">
-            {{ __('filament::components/button.messages.uploading_file') }}
-        </span>
+    @if ($hasFormProcessingLoadingIndicator)
+        <span
+            x-cloak
+            x-show="isProcessing"
+            x-text="processingMessage"
+            class="{{ $labelClasses }}"
+        ></span>
     @endif
 
     @if ($iconPosition === IconPosition::After)
@@ -299,10 +304,10 @@
             />
         @endif
 
-        @if ($hasFileUploadLoadingIndicator)
+        @if ($hasFormProcessingLoadingIndicator)
             <x-filament::loading-indicator
                 x-cloak="x-cloak"
-                x-show="isUploadingFile"
+                x-show="isProcessing"
                 :class="$iconClasses"
             />
         @endif

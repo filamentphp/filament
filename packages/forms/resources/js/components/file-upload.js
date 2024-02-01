@@ -66,6 +66,7 @@ export default function fileUploadFormComponent({
     shouldTransformImage,
     state,
     uploadButtonPosition,
+    uploadingMessage,
     uploadProgressIndicatorPosition,
     uploadUsing,
 }) {
@@ -273,7 +274,9 @@ export default function fileUploadFormComponent({
                     return
                 }
 
-                this.dispatchFormEvent('file-upload-started')
+                this.dispatchFormEvent('form-processing-started', {
+                    message: uploadingMessage,
+                })
             })
 
             const handleFileProcessing = async () => {
@@ -291,7 +294,7 @@ export default function fileUploadFormComponent({
                     return
                 }
 
-                this.dispatchFormEvent('file-upload-finished')
+                this.dispatchFormEvent('form-processing-finished')
             }
 
             this.pond.on('processfile', handleFileProcessing)
@@ -308,11 +311,12 @@ export default function fileUploadFormComponent({
             this.pond = null
         },
 
-        dispatchFormEvent: function (name) {
+        dispatchFormEvent: function (name, detail = {}) {
             this.$el.closest('form')?.dispatchEvent(
                 new CustomEvent(name, {
                     composed: true,
                     cancelable: true,
+                    detail,
                 }),
             )
         },

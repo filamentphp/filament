@@ -52,11 +52,6 @@ class SupportServiceProvider extends PackageServiceProvider
             fn () => new AssetManager(),
         );
 
-        $this->app->singleton(
-            ComponentManager::class,
-            fn () => new ComponentManager(),
-        );
-
         $this->app->scoped(
             ScopedComponentManager::class,
             fn () => $this->app->make(ComponentManager::class)->clone(),

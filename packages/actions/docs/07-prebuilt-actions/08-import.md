@@ -706,3 +706,30 @@ class ProductImporter extends Importer
 Inside these hooks, you can access the current row's data using `$this->data`. You can also access the original row of data from the CSV, before it was [cast](#casting-state) or mapped, using `$this->originalData`.
 
 The current record (if it exists yet) is accessible in `$this->record`, and the [import form options](#using-import-options) using `$this->options`.
+
+## Authorization
+
+By default, only the user who started the import may access the failure CSV file that gets generated if part of an import fails. If you'd like to customize the authorization logic, you may create an `ImportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/10.x/authorization#registering-policies):
+
+```php
+use App\Policies\ImportPolicy;
+use Filament\Actions\Imports\Models\Import;
+
+protected $policies = [
+    Import::class => ImportPolicy::class,
+];
+```
+
+The `view()` method of the policy will be used to authorize access to the failure CSV file.
+
+Please note that if you define a policy, the existing logic of ensuring only the user who started the import can access the failure CSV file will be removed. You will need to add that logic to your policy if you want to keep it:
+
+```php
+use App\Models\User;
+use Filament\Actions\Imports\Models\Import;
+
+public function view(User $user, Import $import): bool
+{
+    return $import->user()->is($user);
+}
+```

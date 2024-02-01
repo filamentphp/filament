@@ -10,6 +10,7 @@ use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasCellState;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasPlaceholder;
+use Filament\Support\Concerns\HasVerticalAlignment;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
@@ -45,6 +46,7 @@ class Column extends ViewComponent
     use HasCellState;
     use HasExtraAttributes;
     use HasPlaceholder;
+    use HasVerticalAlignment;
 
     protected string $evaluationIdentifier = 'column';
 
