@@ -12,7 +12,7 @@
     $items = \Illuminate\Support\Arr::except($items, ['account', 'logout', 'profile']);
 @endphp
 
-{{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.before') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_BEFORE) }}
 
 <x-filament::dropdown
     placement="bottom-end"
@@ -33,7 +33,7 @@
     </x-slot>
 
     @if ($profileItem?->isVisible() ?? true)
-        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.profile.before') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_BEFORE) }}
 
         @if ($hasProfileItem)
             <x-filament::dropdown.list>
@@ -56,7 +56,7 @@
             </x-filament::dropdown.header>
         @endif
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.profile.after') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_PROFILE_AFTER) }}
     @endif
 
     @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
@@ -90,4 +90,4 @@
     </x-filament::dropdown.list>
 </x-filament::dropdown>
 
-{{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.after') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::USER_MENU_AFTER) }}

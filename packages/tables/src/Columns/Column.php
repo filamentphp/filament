@@ -40,6 +40,7 @@ class Column extends ViewComponent
     use Concerns\HasRecord;
     use Concerns\HasRowLoopObject;
     use Concerns\HasTooltip;
+    use Concerns\HasWidth;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
     use HasAlignment;
