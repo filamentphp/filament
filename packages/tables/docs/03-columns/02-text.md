@@ -17,7 +17,7 @@ TextColumn::make('title')
 
 ## Displaying as a "badge"
 
-By default, text is quite plain and has no background color. You can make it appear as a "badge" instead using the `badge()` method. A great use case for this is with statuses, where may want to display a badge with a [color](#customizing-the-color) that matches the status:
+By default, the text is quite plain and has no background color. You can make it appear as a "badge" instead using the `badge()` method. A great use case for this is with statuses, where may want to display a badge with a [color](#customizing-the-color) that matches the status:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -326,17 +326,6 @@ TextColumn::make('email')
 ```
 
 <AutoScreenshot name="tables/columns/text/icon-color" alt="Text column with icon in the primary color" version="3.x" />
-
-## Customizing the column width
-
-To control the width of a column, you may use the `columnWidth()` method:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('id')
-    ->columnWidth('1%')
-```
 
 ## Customizing the text size
 

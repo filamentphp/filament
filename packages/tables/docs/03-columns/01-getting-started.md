@@ -527,6 +527,28 @@ TextColumn::make('name')
     ->wrapHeader()
 ```
 
+## Controlling the width of columns
+
+By default, columns will take up as much space as they need. You may allow some columns to consume more space than others by using the `grow()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->grow()
+```
+
+Alternatively, you can define a width for the column, which is passed to the header cell using the `style` attribute, so you can use any valid CSS value:
+
+```php
+use Filament\Tables\Columns\IconColumn;
+
+IconColumn::make('is_paid')
+    ->label('Paid')
+    ->boolean()
+    ->width('1%')
+```
+
 ## Grouping columns
 
 You group multiple columns together underneath a single heading using a `ColumnGroup` object:

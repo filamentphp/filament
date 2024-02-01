@@ -811,6 +811,10 @@
                         @endif
 
                         @foreach ($columns as $column)
+                            @php
+                                $columnWidth = $column->getWidth();
+                            @endphp
+
                             <x-filament-tables::header-cell
                                 :actively-sorted="$getSortColumn() === $column->getName()"
                                 :alignment="$column->getAlignment()"
@@ -822,9 +826,12 @@
                                     \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
                                         ->class([
                                             'fi-table-header-cell-' . str($column->getName())->camel()->kebab(),
-                                            'w-full' => $column->canGrow(default: false),
+                                            'w-full' => blank($columnWidth) && $column->canGrow(default: false),
                                             '[&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e border-gray-200 dark:border-white/5' => $column->getGroup(),
                                             $getHiddenClasses($column),
+                                        ])
+                                        ->style([
+                                            'width' => $columnWidth,
                                         ])
                                 "
                             >
