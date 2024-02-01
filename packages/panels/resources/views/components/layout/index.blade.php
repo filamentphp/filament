@@ -44,11 +44,11 @@
             ])
         >
             @if (filament()->hasTopbar())
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.before', scopes: $livewire->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_BEFORE, scopes: $livewire->getRenderHookScopes()) }}
 
                 <x-filament-panels::topbar :navigation="$navigation" />
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.after', scopes: $livewire->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_AFTER, scopes: $livewire->getRenderHookScopes()) }}
             @endif
 
             <main
@@ -80,14 +80,14 @@
                     },
                 ])
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.start', scopes: $livewire->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::CONTENT_START, scopes: $livewire->getRenderHookScopes()) }}
 
                 {{ $slot }}
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.end', scopes: $livewire->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::CONTENT_END, scopes: $livewire->getRenderHookScopes()) }}
             </main>
 
-            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer', scopes: $livewire->getRenderHookScopes()) }}
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::FOOTER, scopes: $livewire->getRenderHookScopes()) }}
         </div>
     </div>
 </x-filament-panels::layout.base>

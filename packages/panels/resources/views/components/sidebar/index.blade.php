@@ -98,7 +98,7 @@
         class="fi-sidebar-nav flex-grow flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"
         style="scrollbar-gutter: stable"
     >
-        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.start') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_START) }}
 
         @if (filament()->hasTenancy() && filament()->hasTenantMenu())
             <div
@@ -167,9 +167,9 @@
                 })
         </script>
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.end') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_NAV_END) }}
     </nav>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.footer') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIDEBAR_FOOTER) }}
 </aside>
 {{-- format-ignore-end --}}
