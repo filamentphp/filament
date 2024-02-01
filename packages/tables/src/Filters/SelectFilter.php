@@ -5,7 +5,6 @@ namespace Filament\Tables\Filters;
 use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 
 class SelectFilter extends BaseFilter
@@ -54,7 +53,11 @@ class SelectFilter extends BaseFilter
                             $filter->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough,
                             fn (Builder $query) => $query->distinct(),
                         )
-                        ->whereKey($state['values'])
+                        ->when(
+                            $this->getRelationshipKey(),
+                            fn (Builder $query) => $query->whereIn($this->getRelationshipKey(), $state['values']),
+                            fn (Builder $query) => $query->whereKey($state['values'])
+                        )
                         ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
                         ->all();
                 } else {
@@ -84,8 +87,8 @@ class SelectFilter extends BaseFilter
                 $label = $filter->getRelationshipQuery()
                     ->when(
                         $this->getRelationshipKey(),
-                        fn($query) => $query->where($this->getRelationshipKey(), $state['value']),
-                        fn($query) => $query->whereKey($state['value'])
+                        fn (Builder $query) => $query->where($this->getRelationshipKey(), $state['value']),
+                        fn (Builder $query) => $query->whereKey($state['value'])
                     )
                     ->first()
                     ?->getAttributeValue($filter->getRelationshipTitleAttribute());
@@ -151,19 +154,21 @@ class SelectFilter extends BaseFilter
 
         return $query->whereHas(
             $this->getRelationshipName(),
-            function (Builder $query) use ($values) {
+            function (Builder $query) use ($isMultiple, $values) {
                 if ($this->modifyRelationshipQueryUsing) {
                     $query = $this->evaluate($this->modifyRelationshipQueryUsing, [
                         'query' => $query,
                     ]) ?? $query;
                 }
 
-                return $query
-                    ->when(
-                        $this->getRelationshipKey(),
-                        fn($query) => $query->where($this->getRelationshipKey(), $values),
-                        fn($query) => $query->whereKey($values)
+                if ($relationshipKey = $this->getRelationshipKey()) {
+                    return $query->{$isMultiple ? 'whereIn' : 'where'}(
+                        $relationshipKey,
+                        $values,
                     );
+                }
+
+                return $query->whereKey($values);
             },
         );
     }
