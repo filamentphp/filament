@@ -123,7 +123,7 @@
                                             x-on:click.stop="isCollapsed = !isCollapsed"
                                         @endif
                                         @class([
-                                            'text-sm font-medium text-gray-950 dark:text-white',
+                                            'text-sm font-medium text-gray-950 dark:text-white flex-grow',
                                             'truncate' => $isBlockLabelTruncated(),
                                             'cursor-pointer select-none' => $isCollapsible,
                                         ])
