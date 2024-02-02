@@ -419,6 +419,31 @@ return [
         'placeholder' => 'Nouveau tag',
     ],
 
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Masquer le mot de passe',
+            ],
+
+            'show_password' => [
+                'label' => 'Montrer le mot de passe',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Oui',
+            'false' => 'Non',
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [
