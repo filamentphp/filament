@@ -59,6 +59,8 @@ trait CanExportRecords
      */
     protected array | Closure | null $formats = null;
 
+    protected ?Closure $modifyQueryUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -107,6 +109,14 @@ trait CanExportRecords
                 $query = $action->getExporter()::getModel()::query();
             }
 
+            if($this->modifyQueryUsing) {
+                $query = $this->evaluate($this->modifyQueryUsing, [
+                    'query' => $query,
+                    'data' => $data,
+                    'livewire' => $livewire,
+                    'action' => $action,
+                ]);
+            }
             $records = $action instanceof ExportTableBulkAction ? $action->getRecords() : null;
 
             $totalRows = $records ? $records->count() : $query->count();
@@ -366,5 +376,16 @@ trait CanExportRecords
     public function getFormats(): ?array
     {
         return $this->evaluate($this->formats);
+    }
+
+    /**
+     * @param  Closure  $callback
+     * @return static
+     */
+    public function modifyQueryUsing(Closure $callback): static
+    {
+        $this->modifyQueryUsing = $callback;
+
+        return $this;
     }
 }
