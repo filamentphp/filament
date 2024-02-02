@@ -133,7 +133,7 @@
         <x-filament::dropdown.list>
             @foreach ($tenants as $tenant)
                 <x-filament::dropdown.list.item
-                    :href="filament()->getUrl($tenant)"
+                    :href="(Route::current()->getController()->canAccess()) ? route(Route::currentRouteName(), ['tenant' => $tenant->id]) : filament()->getUrl($tenant)"
                     :image="filament()->getTenantAvatarUrl($tenant)"
                     tag="a"
                 >
