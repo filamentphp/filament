@@ -133,7 +133,7 @@
         <x-filament::dropdown.list>
             @foreach ($tenants as $tenant)
                 <x-filament::dropdown.list.item
-                    :href="(Route::current()->getController()->canAccess()) ? route(Route::currentRouteName(), \Arr::collapse([Route::current()->parameters(),['tenant' => $tenant->id]])) : filament()->getUrl($tenant)"
+                    :href="(Route::current()->getController()->canAccess() && method_exists(Route::current()->getController(),'getResource') && !app(Route::current()->getController()->getResource())->isScopedToTenant()) ? route(Route::currentRouteName(), \Arr::collapse([Route::current()->parameters(),['tenant' => $tenant->id]])) : filament()->getUrl($tenant)"
                     :image="filament()->getTenantAvatarUrl($tenant)"
                     tag="a"
                 >
