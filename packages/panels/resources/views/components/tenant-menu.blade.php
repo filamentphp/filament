@@ -39,7 +39,6 @@
             $tenantUrlModel = app($tenantUrlResource::getModel());
 
             if (isset($routeParams['record'])) {
-                $resourceRecord = $tenantUrlModel->find($routeParams['record']);
                 $record = $routeController::getResource()::resolveRecordRouteBinding($routeParams['record']);
                 $tenantUrlResourceAction = array_values(array_intersect(array_keys($tenantUrlResource->getPages()), explode('.', Route::current()->getAction()['as'])))[0];
                 $recordAccess = $tenantUrlResource::can($tenantUrlResourceAction, $tenantUrlModel->find($routeParams['record']));
