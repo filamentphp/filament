@@ -109,7 +109,7 @@ trait CanExportRecords
                 $query = $action->getExporter()::getModel()::query();
             }
 
-            if($this->modifyQueryUsing) {
+            if ($this->modifyQueryUsing) {
                 $query = $this->evaluate($this->modifyQueryUsing, [
                     'query' => $query,
                     'data' => $data,
@@ -117,6 +117,7 @@ trait CanExportRecords
                     'action' => $action,
                 ]);
             }
+
             $records = $action instanceof ExportTableBulkAction ? $action->getRecords() : null;
 
             $totalRows = $records ? $records->count() : $query->count();
@@ -378,10 +379,6 @@ trait CanExportRecords
         return $this->evaluate($this->formats);
     }
 
-    /**
-     * @param  Closure  $callback
-     * @return static
-     */
     public function modifyQueryUsing(Closure $callback): static
     {
         $this->modifyQueryUsing = $callback;
