@@ -24,6 +24,41 @@
     ));
 
     $items = \Illuminate\Support\Arr::except($items, ['billing', 'profile', 'register']);
+
+    function hasTenantRouteSwitchingAccess($tenantId): bool
+    {
+        $routeParams = Route::current()->parameters();
+        $routeController = Route::current()->getController();
+        $tenantUrlTenantModel = app(filament()->getTenantModel());
+
+        if (method_exists($routeController, 'getResource')) {
+            $tenantUrl = $tenantUrlTenantModel->find($tenantId);
+            $originalTenant = filament()->getTenant();
+            filament()->setTenant($tenantUrl, true);
+            $tenantUrlResource = app($routeController->getResource());
+            $tenantUrlModel = app($tenantUrlResource::getModel());
+
+            if (isset($routeParams['record'])) {
+                $resourceRecord = $tenantUrlModel->find($routeParams['record']);
+                $record = $routeController::getResource()::resolveRecordRouteBinding($routeParams['record']);
+                $tenantUrlResourceAction = array_values(array_intersect(array_keys($tenantUrlResource->getPages()), explode('.', Route::current()->getAction()['as'])))[0];
+                $recordAccess = $tenantUrlResource::can($tenantUrlResourceAction, $tenantUrlModel->find($routeParams['record']));
+                filament()->setTenant($originalTenant, true);
+                if (!empty($record) && $recordAccess) {
+                    return true;
+                }
+            }
+            filament()->setTenant($originalTenant, true);
+
+            if ($routeController->canAccess()) {
+                return true;
+            }
+        }
+        if ($routeController->canAccess()) {
+            return true;
+        }
+        return false;
+    }
 @endphp
 
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TENANT_MENU_BEFORE) }}
@@ -133,7 +168,12 @@
         <x-filament::dropdown.list>
             @foreach ($tenants as $tenant)
                 <x-filament::dropdown.list.item
-                    :href="(Route::current()->getController()->canAccess() && method_exists(Route::current()->getController(),'getResource') && !app(Route::current()->getController()->getResource())->isScopedToTenant()) ? route(Route::currentRouteName(), \Arr::collapse([Route::current()->parameters(),['tenant' => $tenant->id]])) : filament()->getUrl($tenant)"
+                    :href="hasTenantRouteSwitchingAccess($tenant->id)
+                    ? route(
+                        Route::currentRouteName(),
+                        \Arr::collapse([Route::current()->parameters(), ['tenant' => $tenant->id]]),
+                    )
+                    : filament()->getUrl($tenant)"
                     :image="filament()->getTenantAvatarUrl($tenant)"
                     tag="a"
                 >
