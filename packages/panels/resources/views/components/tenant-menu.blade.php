@@ -27,8 +27,8 @@
 
     function hasTenantRouteSwitchingAccess(\Illuminate\Database\Eloquent\Model $tenant): bool
     {
-        $routeParams = Route::current()->parameters();
-        $routeController = Route::current()->getController();
+        $routeParams = \Illuminate\Support\Facades\Route::current()->parameters();
+        $routeController = \Illuminate\Support\Facades\Route::current()->getController();
         $tenantUrlTenantModel = app(filament()->getTenantModel());
 
         if (method_exists($routeController, 'getResource')) {
@@ -40,7 +40,7 @@
 
             if (isset($routeParams['record'])) {
                 $record = $routeController::getResource()::resolveRecordRouteBinding($routeParams['record']);
-                $tenantUrlResourceAction = array_values(array_intersect(array_keys($tenantUrlResource->getPages()), explode('.', Route::current()->getAction()['as'])))[0];
+                $tenantUrlResourceAction = array_values(array_intersect(array_keys($tenantUrlResource->getPages()), explode('.', \Illuminate\Support\Facades\Route::current()->getAction()['as'])))[0];
                 $recordAccess = $tenantUrlResource::can($tenantUrlResourceAction, $tenantUrlModel->find($routeParams['record']));
                 filament()->setTenant($originalTenant, true);
                 if (!empty($record) && $recordAccess) {
@@ -169,8 +169,8 @@
                 <x-filament::dropdown.list.item
                     :href="hasTenantRouteSwitchingAccess($tenant)
                     ? route(
-                        Route::currentRouteName(),
-                        \Arr::collapse([Route::current()->parameters(), ['tenant' => $tenant->id]]),
+                        \Illuminate\Support\Facades\Route::currentRouteName(),
+                        \Illuminate\Support\Arr::collapse([\Illuminate\Support\Facades\Route::current()->parameters(), ['tenant' => $tenant->id]]),
                     )
                     : filament()->getUrl($tenant)"
                     :image="filament()->getTenantAvatarUrl($tenant)"
