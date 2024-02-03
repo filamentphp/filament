@@ -25,14 +25,14 @@
 
     $items = \Illuminate\Support\Arr::except($items, ['billing', 'profile', 'register']);
 
-    function hasTenantRouteSwitchingAccess($tenantId): bool
+    function hasTenantRouteSwitchingAccess(\Illuminate\Database\Eloquent\Model $tenant): bool
     {
         $routeParams = Route::current()->parameters();
         $routeController = Route::current()->getController();
         $tenantUrlTenantModel = app(filament()->getTenantModel());
 
         if (method_exists($routeController, 'getResource')) {
-            $tenantUrl = $tenantUrlTenantModel->find($tenantId);
+            $tenantUrl = $tenantUrlTenantModel->find($tenant->id);
             $originalTenant = filament()->getTenant();
             filament()->setTenant($tenantUrl, true);
             $tenantUrlResource = app($routeController->getResource());
@@ -167,7 +167,7 @@
         <x-filament::dropdown.list>
             @foreach ($tenants as $tenant)
                 <x-filament::dropdown.list.item
-                    :href="hasTenantRouteSwitchingAccess($tenant->id)
+                    :href="hasTenantRouteSwitchingAccess($tenant)
                     ? route(
                         Route::currentRouteName(),
                         \Arr::collapse([Route::current()->parameters(), ['tenant' => $tenant->id]]),
