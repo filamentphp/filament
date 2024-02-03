@@ -1,5 +1,5 @@
 @if ($this instanceof \Filament\Actions\Contracts\HasActions && (! $this->hasActionsModalRendered))
-    <form wire:submit.prevent="callMountedAction">
+    <form wire:submit.prevent="callMountedAction" class="fi-action-form">
         @php
             $action = $this->getMountedAction();
         @endphp
@@ -58,7 +58,7 @@
 @endif
 
 @if ($this instanceof \Filament\Tables\Contracts\HasTable && (! $this->hasTableModalRendered))
-    <form wire:submit.prevent="callMountedTableAction">
+    <form wire:submit.prevent="callMountedTableAction" class="fi-action-form">
         @php
             $action = $this->getMountedTableAction();
         @endphp
@@ -111,7 +111,7 @@
         </x-filament::modal>
     </form>
 
-    <form wire:submit.prevent="callMountedTableBulkAction">
+    <form wire:submit.prevent="callMountedTableBulkAction" class="fi-action-form">
         @php
             $action = $this->getMountedTableBulkAction();
         @endphp
@@ -170,7 +170,7 @@
 @endif
 
 @if ($this instanceof \Filament\Infolists\Contracts\HasInfolists && (! $this->hasInfolistsModalRendered))
-    <form wire:submit.prevent="callMountedInfolistAction">
+    <form wire:submit.prevent="callMountedInfolistAction" class="fi-action-form">
         @php
             $action = $this->getMountedInfolistAction();
         @endphp
@@ -233,7 +233,7 @@
         $action = $this->getMountedFormComponentAction();
     @endphp
 
-    <form wire:submit.prevent="callMountedFormComponentAction">
+    <form wire:submit.prevent="callMountedFormComponentAction" class="fi-action-form">
         <x-filament::modal
             :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
