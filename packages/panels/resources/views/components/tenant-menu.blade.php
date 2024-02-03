@@ -24,40 +24,6 @@
     ));
 
     $items = \Illuminate\Support\Arr::except($items, ['billing', 'profile', 'register']);
-
-    function hasTenantRouteSwitchingAccess(\Illuminate\Database\Eloquent\Model $tenant): bool
-    {
-        $routeParams = \Illuminate\Support\Facades\Route::current()->parameters();
-        $routeController = \Illuminate\Support\Facades\Route::current()->getController();
-        $tenantUrlTenantModel = app(filament()->getTenantModel());
-
-        if (method_exists($routeController, 'getResource')) {
-            $tenantUrl = $tenantUrlTenantModel->find($tenant->id);
-            $originalTenant = filament()->getTenant();
-            filament()->setTenant($tenantUrl, true);
-            $tenantUrlResource = app($routeController->getResource());
-            $tenantUrlModel = app($tenantUrlResource::getModel());
-
-            if (isset($routeParams['record'])) {
-                $record = $routeController::getResource()::resolveRecordRouteBinding($routeParams['record']);
-                $tenantUrlResourceAction = array_values(array_intersect(array_keys($tenantUrlResource->getPages()), explode('.', \Illuminate\Support\Facades\Route::current()->getAction()['as'])))[0];
-                $recordAccess = $tenantUrlResource::can($tenantUrlResourceAction, $tenantUrlModel->find($routeParams['record']));
-                filament()->setTenant($originalTenant, true);
-                if (!empty($record) && $recordAccess) {
-                    return true;
-                }
-            }
-            filament()->setTenant($originalTenant, true);
-
-            if ($routeController->canAccess()) {
-                return true;
-            }
-        }
-        if ($routeController->canAccess()) {
-            return true;
-        }
-        return false;
-    }
 @endphp
 
 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TENANT_MENU_BEFORE) }}
@@ -166,8 +132,40 @@
     @if ($canSwitchTenants)
         <x-filament::dropdown.list>
             @foreach ($tenants as $tenant)
+                @php
+                    $hasAccess = false;
+                    $routeParams = \Illuminate\Support\Facades\Route::current()->parameters();
+                    $routeController = \Illuminate\Support\Facades\Route::current()->getController();
+                    $tenantUrlTenantModel = app(filament()->getTenantModel());
+
+                    if (method_exists($routeController, 'getResource')) {
+                        $tenantUrl = $tenantUrlTenantModel->find($tenant->id);
+                        $originalTenant = filament()->getTenant();
+                        filament()->setTenant($tenantUrl, true);
+                        $tenantUrlResource = app($routeController->getResource());
+                        $tenantUrlModel = app($tenantUrlResource::getModel());
+
+                        if (isset($routeParams['record'])) {
+                            $record = $routeController::getResource()::resolveRecordRouteBinding($routeParams['record']);
+                            $tenantUrlResourceAction = array_values(array_intersect(array_keys($tenantUrlResource->getPages()), explode('.', \Illuminate\Support\Facades\Route::current()->getAction()['as'])))[0];
+                            $recordAccess = $tenantUrlResource::can($tenantUrlResourceAction, $tenantUrlModel->find($routeParams['record']));
+                            filament()->setTenant($originalTenant, true);
+                            if (!empty($record) && $recordAccess) {
+                                return true;
+                            }
+                        }
+                        filament()->setTenant($originalTenant, true);
+
+                        if ($routeController->canAccess()) {
+                            $hasAccess = true;
+                        }
+                    }
+                    if ($routeController->canAccess()) {
+                        $hasAccess = true;
+                    }
+                @endphp
                 <x-filament::dropdown.list.item
-                    :href="hasTenantRouteSwitchingAccess($tenant)
+                    :href="($hasAccess)
                     ? route(
                         \Illuminate\Support\Facades\Route::currentRouteName(),
                         \Illuminate\Support\Arr::collapse([\Illuminate\Support\Facades\Route::current()->parameters(), ['tenant' => $tenant->id]]),
