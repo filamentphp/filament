@@ -112,6 +112,10 @@ return [
 
         'actions' => [
 
+            'apply' => [
+                'label' => 'Áp dụng bộ lọc',
+            ],
+
             'remove' => [
                 'label' => 'Xóa bộ lọc',
             ],
