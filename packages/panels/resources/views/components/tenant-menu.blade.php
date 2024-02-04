@@ -151,17 +151,18 @@
                             $recordAccess = $tenantUrlResource::can($tenantUrlResourceAction, $tenantUrlModel->find($routeParams['record']));
                             filament()->setTenant($originalTenant, true);
                             if (!empty($record) && $recordAccess) {
-                                return true;
+                                $hasAccess = true;
+                            }
+                        } else {
+                            filament()->setTenant($originalTenant, true);
+                            if ($routeController->canAccess()) {
+                                $hasAccess = true;
                             }
                         }
-                        filament()->setTenant($originalTenant, true);
-
+                    } else {
                         if ($routeController->canAccess()) {
                             $hasAccess = true;
                         }
-                    }
-                    if ($routeController->canAccess()) {
-                        $hasAccess = true;
                     }
                 @endphp
                 <x-filament::dropdown.list.item
