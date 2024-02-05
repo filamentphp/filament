@@ -112,10 +112,7 @@ trait CanExportRecords
             if ($this->modifyQueryUsing) {
                 $query = $this->evaluate($this->modifyQueryUsing, [
                     'query' => $query,
-                    'data' => $data,
-                    'livewire' => $livewire,
-                    'action' => $action,
-                ]);
+                ]) ?? $query;
             }
 
             $records = $action instanceof ExportTableBulkAction ? $action->getRecords() : null;
