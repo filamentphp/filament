@@ -111,7 +111,7 @@
         x-show="isOpen"
         x-transition.duration.300ms.opacity
         @class([
-            'fixed inset-0 z-40 min-h-full',
+            'fixed inset-0 z-40 min-h-full overflow-y-auto overflow-x-hidden transition',
             'flex items-center' => ! $slideOver,
         ])
     >
@@ -128,6 +128,7 @@
                 'fi-modal-close-overlay fixed inset-0 bg-gray-950/50 dark:bg-gray-950/75',
                 'cursor-pointer' => $closeByClickingAway,
             ])
+            style="will-change: transform"
         ></div>
 
         <div
@@ -135,8 +136,8 @@
             x-ref="modalContainer"
             {{
                 $attributes->class([
-                    'pointer-events-none relative max-h-full w-full transition',
-                    'my-auto overflow-y-auto p-4' => ! ($slideOver || ($width === MaxWidth::Screen)),
+                    'pointer-events-none relative w-full transition',
+                    'my-auto p-4' => ! ($slideOver || ($width === MaxWidth::Screen)),
                 ])
             }}
         >
