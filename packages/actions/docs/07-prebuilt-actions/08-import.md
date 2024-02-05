@@ -446,6 +446,13 @@ ImportColumn::make('sku')
     ->example('ABC123')
 ```
 
+You can customize the header of the example file using the `exampleHeader()` function.
+
+```php
+ImportColumn::make('sku')
+    ->exampleHeader('SKU')
+```
+
 ## Using a custom user model
 
 By default, the `imports` table has a `user_id` column. That column is constrained to the `users` table:
