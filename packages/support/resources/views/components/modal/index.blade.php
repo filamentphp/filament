@@ -41,6 +41,8 @@
     if (! $width instanceof MaxWidth) {
         $width = filled($width) ? (MaxWidth::tryFrom($width) ?? $width) : null;
     }
+
+    $closeEventHandler = filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()';
 @endphp
 
 <div
@@ -117,13 +119,6 @@
     >
         <div
             aria-hidden="true"
-            @if ($closeByClickingAway)
-                @if (filled($id))
-                    x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
-                @else
-                    x-on:click="close()"
-                @endif
-            @endif
             @class([
                 'fi-modal-close-overlay fixed inset-0 bg-gray-950/50 dark:bg-gray-950/75',
                 'cursor-pointer' => $closeByClickingAway,
@@ -135,8 +130,9 @@
             x-ref="modalContainer"
             {{
                 $attributes->class([
-                    'pointer-events-none relative max-h-full w-full transition',
-                    'my-auto overflow-y-auto p-4' => ! ($slideOver || ($width === MaxWidth::Screen)),
+                    'relative max-h-full w-full transition',
+                    'overflow-y-auto p-4' => ! ($slideOver || ($width === MaxWidth::Screen)),
+                    'cursor-pointer' => $closeByClickingAway,
                 ])
             }}
         >
@@ -149,6 +145,9 @@
                         $watch('isOpen', () => (isShown = isOpen))
                     })
                 "
+                @if ($closeByClickingAway)
+                    x-on:click.outside="{{ $closeEventHandler }}"
+                @endif
                 @if (filled($id))
                     x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
                 @else
@@ -232,7 +231,7 @@
                                     icon-size="lg"
                                     :label="__('filament::components/modal.actions.close.label')"
                                     tabindex="-1"
-                                    :x-on:click="filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()'"
+                                    :x-on:click="$closeEventHandler"
                                     class="fi-modal-close-btn"
                                 />
                             </div>
