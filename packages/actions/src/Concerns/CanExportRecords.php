@@ -376,7 +376,7 @@ trait CanExportRecords
         return $this->evaluate($this->formats);
     }
 
-    public function modifyQueryUsing(Closure $callback): static
+    public function modifyQueryUsing(?Closure $callback): static
     {
         $this->modifyQueryUsing = $callback;
 
