@@ -449,6 +449,8 @@ ImportColumn::make('sku')
 By default, the name of the column is used in the header of the example CSV. You can customize the header per-column using `exampleHeader()`:
 
 ```php
+use Filament\Actions\Imports\ImportColumn;
+
 ImportColumn::make('sku')
     ->exampleHeader('SKU')
 ```
