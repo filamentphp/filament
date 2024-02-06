@@ -99,6 +99,28 @@ class MorphToSelect extends Component
         ];
     }
 
+    /**
+     * @param  array<string, mixed>  $state
+     */
+    public function dehydrateState(array &$state, bool $isDehydrated = true): void
+    {
+        parent::dehydrateState($state, $isDehydrated);
+
+        if ($this->isRequired()) {
+            return;
+        }
+
+        $relationship = $this->getRelationship();
+        $typeColumn = $relationship->getMorphType();
+        $keyColumn = $relationship->getForeignKeyName();
+
+        $statePath = $this->getStatePath();
+
+        if (blank(data_get($state, "{$statePath}.{$typeColumn}"))) {
+            data_set($state, "{$statePath}.{$keyColumn}", null);
+        }
+    }
+
     public function optionsLimit(int | Closure $limit): static
     {
         $this->optionsLimit = $limit;
