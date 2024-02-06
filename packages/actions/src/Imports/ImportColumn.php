@@ -295,9 +295,9 @@ class ImportColumn extends Component
         return $this->name;
     }
 
-    public function getExampleHeader(): ?string
+    public function getExampleHeader(): string
     {
-        return $this->evaluate($this->exampleHeader);
+        return $this->evaluate($this->exampleHeader) ?? $this->getName();
     }
 
     /**
