@@ -446,7 +446,7 @@ ImportColumn::make('sku')
     ->example('ABC123')
 ```
 
-You can customize the header of the example file using the `exampleHeader()` function.
+By default, the name of the column is used in the header of the example CSV. You can customize the header per-column using `exampleHeader()`:
 
 ```php
 ImportColumn::make('sku')
