@@ -74,7 +74,7 @@ class PrepareCsvExport implements ShouldQueue
             $recordsCount = count($records);
 
             if (($totalRows + $recordsCount) > $this->export->total_rows) {
-                $records = array_slice(array_unique($records), 0, $this->export->total_rows - $totalRows);
+                $records = array_slice($records, 0, $this->export->total_rows - $totalRows);
                 $recordsCount = count($records);
             }
 
@@ -111,6 +111,7 @@ class PrepareCsvExport implements ShouldQueue
         $chunkKeySize = $this->chunkSize * 10;
 
         $baseQuery = $query->toBase();
+        $baseQuery->distinct($qualifiedKeyName);
 
         /** @phpstan-ignore-next-line */
         $baseQueryOrders = $baseQuery->orders ?? [];
