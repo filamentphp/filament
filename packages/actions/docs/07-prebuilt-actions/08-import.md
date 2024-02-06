@@ -446,6 +446,15 @@ ImportColumn::make('sku')
     ->example('ABC123')
 ```
 
+By default, the name of the column is used in the header of the example CSV. You can customize the header per-column using `exampleHeader()`:
+
+```php
+use Filament\Actions\Imports\ImportColumn;
+
+ImportColumn::make('sku')
+    ->exampleHeader('SKU')
+```
+
 ## Using a custom user model
 
 By default, the `imports` table has a `user_id` column. That column is constrained to the `users` table:

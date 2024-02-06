@@ -304,7 +304,7 @@ trait CanImportRecords
                     }
 
                     $csv->insertOne(array_map(
-                        fn (ImportColumn $column): string => $column->getName(),
+                        fn (ImportColumn $column): string => $column->getExampleHeader(),
                         $columns,
                     ));
 
