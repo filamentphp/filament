@@ -52,7 +52,7 @@ class ImportColumn extends Component
 
     protected mixed $example = null;
 
-    protected ?string $exampleHeader = null;
+    protected string | Closure | null $exampleHeader = null;
 
     protected string | Closure | null $relationship = null;
 
@@ -110,9 +110,9 @@ class ImportColumn extends Component
         return $this;
     }
 
-    public function exampleHeader(string $exampleHeader): static
+    public function exampleHeader(string | Closure | null $header): static
     {
-        $this->exampleHeader = $exampleHeader;
+        $this->exampleHeader = $header;
 
         return $this;
     }
@@ -297,7 +297,7 @@ class ImportColumn extends Component
 
     public function getExampleHeader(): ?string
     {
-        return $this->exampleHeader;
+        return $this->evaluate($this->exampleHeader);
     }
 
     /**
