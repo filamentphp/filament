@@ -119,7 +119,6 @@
         ></div>
 
         <div
-            x-ref="modalContainer"
             @class([
                 'fixed inset-0 z-40',
                 'overflow-y-auto' => ! ($slideOver || ($width === MaxWidth::Screen)),
@@ -127,6 +126,7 @@
             ])
         >
             <div
+                x-ref="modalContainer"
                 {{
                     $attributes->class([
                         'relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr]',
