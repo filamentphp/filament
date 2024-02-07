@@ -1226,7 +1226,7 @@
              ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
             <x-filament::pagination
                 :page-options="$getPaginationPageOptions()"
-                :has-first-last-page-links="$hasPaginationFirstAndLastPageLinks()"
+                :extreme-links="$hasExtremePaginationLinks()"
                 :paginator="$records"
                 class="fi-ta-pagination px-3 py-3 sm:px-6"
             />

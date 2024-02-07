@@ -1,8 +1,8 @@
 @props([
+    'currentPageOptionProperty' => 'tableRecordsPerPage',
+    'extremeLinks' => false,
     'paginator',
     'pageOptions' => [],
-    'hasFirstLastPageLinks' => false,
-    'currentPageOptionProperty' => 'tableRecordsPerPage',
 ])
 
 @php
@@ -123,7 +123,7 @@
             class="fi-pagination-items justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20"
         >
             @if (! $paginator->onFirstPage())
-                @if($hasFirstLastPageLinks)
+                @if ($extremeLinks)
                     <x-filament::pagination.item
                         :aria-label="__('filament::components/pagination.actions.first.label')"
                         :icon="$isRtl ? 'heroicon-m-chevron-double-right' : 'heroicon-m-chevron-double-left'"
@@ -175,7 +175,7 @@
                     :wire:key="$this->getId() . '.pagination.next'"
                 />
 
-                @if($hasFirstLastPageLinks)
+                @if ($extremeLinks)
                     <x-filament::pagination.item
                         :aria-label="__('filament::components/pagination.actions.last.label')"
                         :icon="$isRtl ? 'heroicon-m-chevron-double-left' : 'heroicon-m-chevron-double-right'"

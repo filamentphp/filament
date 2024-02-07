@@ -66,6 +66,16 @@ class ListUsers extends Component
     :paginator="$users"
     :page-options="[5, 10, 20, 50, 100, 'all']"
     :current-page-option-property="perPage"
-    :has-first-last-page-links="true"
+/>
+```
+
+## Displaying links to the first and the last page
+
+Extreme links are the first and last page links. You can add them by passing the `extreme-links` attribute to the component:
+
+```blade
+<x-filament::pagination
+    :paginator="$users"
+    extreme-links
 />
 ```
