@@ -34,11 +34,6 @@ use Illuminate\Support\Facades\Event;
 
 class FilamentManager
 {
-    /**
-     * @var array<string, Panel>
-     */
-    protected array $panels = [];
-
     protected ?Panel $currentPanel = null;
 
     protected bool $isServing = false;
@@ -126,11 +121,7 @@ class FilamentManager
      */
     public function getDefaultPanel(): Panel
     {
-        return Arr::first(
-            $this->panels,
-            fn (Panel $panel): bool => $panel->isDefault(),
-            fn () => throw NoDefaultPanelSetException::make(),
-        );
+        return app(PanelRegistry::class)->getDefault();
     }
 
     /**
@@ -276,7 +267,7 @@ class FilamentManager
 
     public function getPanel(?string $id = null): Panel
     {
-        return $this->panels[$id] ?? $this->getDefaultPanel();
+        return app(PanelRegistry::class)->get($id);
     }
 
     /**
@@ -284,7 +275,7 @@ class FilamentManager
      */
     public function getPanels(): array
     {
-        return $this->panels;
+        return app(PanelRegistry::class)->all();
     }
 
     public function getPlugin(string $id): Plugin
@@ -655,20 +646,9 @@ class FilamentManager
         return $this->getCurrentPanel()->isSidebarFullyCollapsibleOnDesktop();
     }
 
-    public function mountNavigation(): void
+    public function registerPanel(Panel | Closure $panel): void
     {
-        $this->getCurrentPanel()->mountNavigation();
-    }
-
-    public function registerPanel(Panel $panel): void
-    {
-        $this->panels[$panel->getId()] = $panel;
-
-        $panel->register();
-
-        if ($panel->isDefault()) {
-            $this->setCurrentPanel($panel);
-        }
+        app(PanelRegistry::class)->register($panel);
     }
 
     /**
