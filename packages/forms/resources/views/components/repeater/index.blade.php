@@ -104,24 +104,26 @@
                                     ])
                                 >
                                     @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
-                                        <ul
-                                            x-on:click.stop
-                                            class="flex items-center gap-x-3"
-                                        >
+                                        <ul class="flex items-center gap-x-3">
                                             @if ($isReorderableWithDragAndDrop)
-                                                <li x-sortable-handle>
+                                                <li
+                                                    x-sortable-handle
+                                                    x-on:click.stop
+                                                >
                                                     {{ $reorderAction }}
                                                 </li>
                                             @endif
 
                                             @if ($isReorderableWithButtons)
                                                 <li
+                                                    x-on:click.stop
                                                     class="flex items-center justify-center"
                                                 >
                                                     {{ $moveUpAction(['item' => $uuid])->disabled($loop->first) }}
                                                 </li>
 
                                                 <li
+                                                    x-on:click.stop
                                                     class="flex items-center justify-center"
                                                 >
                                                     {{ $moveDownAction(['item' => $uuid])->disabled($loop->last) }}
@@ -142,24 +144,21 @@
                                     @endif
 
                                     @if ($isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
-                                        <ul
-                                            x-on:click.stop
-                                            class="ms-auto flex items-center gap-x-3"
-                                        >
+                                        <ul class="ms-auto flex items-center gap-x-3">
                                             @foreach ($visibleExtraItemActions as $extraItemAction)
-                                                <li>
+                                                <li x-on:click.stop>
                                                     {{ $extraItemAction(['item' => $uuid]) }}
                                                 </li>
                                             @endforeach
 
                                             @if ($isCloneable)
-                                                <li>
+                                                <li x-on:click.stop>
                                                     {{ $cloneAction(['item' => $uuid]) }}
                                                 </li>
                                             @endif
 
                                             @if ($isDeletable)
-                                                <li>
+                                                <li x-on:click.stop>
                                                     {{ $deleteAction(['item' => $uuid]) }}
                                                 </li>
                                             @endif
