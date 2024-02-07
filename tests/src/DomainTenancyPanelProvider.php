@@ -6,9 +6,12 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\IdentifyTenant;
+use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\Models\DomainTeam;
+use Filament\Tests\Panels\Fixtures\Pages\Settings;
 use Filament\Tests\Panels\Fixtures\Resources\PostCategoryResource;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\ProductResource;
@@ -27,6 +30,7 @@ class DomainTenancyPanelProvider extends PanelProvider
     {
         return $panel
             ->id('domain-tenancy')
+            ->path('/domain-tenancy')
             ->tenant(DomainTeam::class)
             ->tenantDomain('{tenant}', 'domain')
             ->login()
@@ -40,7 +44,9 @@ class DomainTenancyPanelProvider extends PanelProvider
                 UserResource::class,
             ])
             ->pages([
-
+                Pages\Dashboard::class,
+                Actions::class,
+                Settings::class,
             ])
             ->middleware([
                 EncryptCookies::class,

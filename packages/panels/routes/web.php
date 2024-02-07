@@ -126,18 +126,24 @@ Route::name('filament.')
                                             $resource::registerRoutes($panel);
                                         }
                                     });
-
                             });
 
                         if ($hasTenancy) {
-                            Route::middleware($panel->getTenantMiddleware())
-                                ->prefix((($tenantRoutePrefix) ? "{$tenantRoutePrefix}/" : '') . '{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}')
+                            $route = Route::middleware($panel->getTenantMiddleware())
+                                ->prefix((($tenantRoutePrefix) ? "{$tenantRoutePrefix}/" : '') . '{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}');
+
+                            if ($tenantDomain) {
+                                $route->domain($tenantDomain);
+                            }
+
+                            $route
                                 ->group(function () use ($panel): void {
                                     if ($routes = $panel->getTenantRoutes()) {
                                         $routes($panel);
                                     }
                                 });
                         }
+
                     });
             }
         }
