@@ -79,6 +79,7 @@ class Notification extends ViewComponent implements Arrayable
             'title' => $this->getTitle(),
             'view' => $this->getView(),
             'viewData' => $this->getViewData(),
+            'user_id'=> $this->getAuthUser(),
         ];
     }
 
@@ -309,5 +310,11 @@ class Notification extends ViewComponent implements Arrayable
                 'The notification with the given title was sent'
             );
         }
+    }
+
+    public function getAuthUser()
+    {
+        $user = Auth::user(); // Attempt to get the authenticated user
+        return $user ? $user->id : null; // Return user ID if authenticated, otherwise return null
     }
 }
