@@ -4,8 +4,8 @@ namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
 use Filament\Tables\Filters\Indicator;
-use Illuminate\Support\Arr;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
 
 trait HasIndicators
 {
