@@ -16,6 +16,7 @@
     'iconPosition' => IconPosition::Before,
     'iconSize' => null,
     'keyBindings' => null,
+    'labelSrOnly' => false,
     'loadingIndicator' => true,
     'size' => ActionSize::Medium,
     'tag' => 'a',
@@ -64,7 +65,7 @@
     ]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
-        'font-semibold group-hover/link:underline group-focus-visible/link:underline',
+        'font-semibold group-hover/link:underline group-focus-visible/link:underline' => ! $labelSrOnly,
         match ($size) {
             ActionSize::ExtraSmall => 'text-xs',
             ActionSize::Small => 'text-sm',
@@ -72,11 +73,12 @@
             ActionSize::Large => 'text-sm',
             ActionSize::ExtraLarge => 'text-sm',
             default => null,
-        },
+        } => ! $labelSrOnly,
         match ($color) {
             'gray' => 'text-gray-700 dark:text-gray-200',
             default => 'text-custom-600 dark:text-custom-400',
-        },
+        } => ! $labelSrOnly,
+        'sr-only' => $labelSrOnly,
     ]);
 
     $labelStyles = \Illuminate\Support\Arr::toCssStyles([
