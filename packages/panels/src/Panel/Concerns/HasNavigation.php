@@ -94,9 +94,13 @@ trait HasNavigation
      */
     public function getNavigation(): array
     {
-        $this->navigationManager ??= app(NavigationManager::class);
+        $this->navigationManager = app(NavigationManager::class);
 
-        return $this->navigationManager->get();
+        try {
+            return app(NavigationManager::class)->get();
+        } finally {
+            $this->navigationManager = null;
+        }
     }
 
     /**
@@ -104,10 +108,6 @@ trait HasNavigation
      */
     public function getNavigationGroups(): array
     {
-        if (isset($this->navigationManager)) {
-            return $this->navigationManager->getNavigationGroups();
-        }
-
         return $this->navigationGroups;
     }
 
@@ -116,10 +116,6 @@ trait HasNavigation
      */
     public function getNavigationItems(): array
     {
-        if (isset($this->navigationManager)) {
-            return $this->navigationManager->getNavigationItems();
-        }
-
         return $this->navigationItems;
     }
 }

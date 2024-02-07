@@ -44,9 +44,9 @@ class NavigationManager
             $this->mountNavigation();
         }
 
-        $groups = collect($this->panel->getNavigationGroups());
+        $groups = collect($this->getNavigationGroups());
 
-        return collect($this->panel->getNavigationItems())
+        return collect($this->getNavigationItems())
             ->filter(fn (NavigationItem $item): bool => $item->isVisible())
             ->sortBy(fn (NavigationItem $item): int => $item->getSort())
             ->groupBy(fn (NavigationItem $item): ?string => $item->getGroup())
@@ -97,7 +97,7 @@ class NavigationManager
                     return -1;
                 }
 
-                $registeredGroups = $this->panel->getNavigationGroups();
+                $registeredGroups = $this->getNavigationGroups();
 
                 $groupsToSearch = $registeredGroups;
 

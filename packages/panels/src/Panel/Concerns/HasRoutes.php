@@ -158,7 +158,6 @@ trait HasRoutes
             Filament::setTenant($tenant, isQuiet: true);
         }
 
-        $originalNavigationManager = $this->navigationManager;
         $this->navigationManager = new NavigationManager();
 
         $navigation = $this->navigationManager->get();
@@ -182,7 +181,7 @@ trait HasRoutes
                 Filament::setTenant($originalTenant, isQuiet: true);
             }
 
-            $this->navigationManager = $originalNavigationManager;
+            $this->navigationManager = null;
         }
     }
 }
