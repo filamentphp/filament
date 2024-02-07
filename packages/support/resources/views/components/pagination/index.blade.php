@@ -127,8 +127,7 @@
                     <x-filament::pagination.item
                         :aria-label="__('filament::components/pagination.actions.first.label')"
                         :icon="$isRtl ? 'heroicon-m-chevron-double-right' : 'heroicon-m-chevron-double-left'"
-                        {{-- @deprecated Use `pagination.previous-button.rtl` instead of `pagination.previous-button` for RTL. --}}
-                        :icon-alias="$isRtl ? ['pagination.first-button.rtl', 'pagination.first-button'] : 'pagination.first-button'"
+                        :icon-alias="$isRtl ? 'pagination.first-button.rtl' : 'pagination.first-button'"
                         rel="first"
                         :wire:click="'gotoPage(1, \'' . $paginator->getPageName() . '\')'"
                         :wire:key="$this->getId() . '.pagination.first'"
@@ -179,8 +178,7 @@
                     <x-filament::pagination.item
                         :aria-label="__('filament::components/pagination.actions.last.label')"
                         :icon="$isRtl ? 'heroicon-m-chevron-double-left' : 'heroicon-m-chevron-double-right'"
-                        {{-- @deprecated Use `pagination.previous-button.rtl` instead of `pagination.previous-button` for RTL. --}}
-                        :icon-alias="$isRtl ? ['pagination.last-button.rtl', 'pagination.last-button'] : 'pagination.last-button'"
+                        :icon-alias="$isRtl ? 'pagination.last-button.rtl' : 'pagination.last-button'"
                         rel="last"
                         :wire:click="'gotoPage(' . $paginator->lastPage() . ', \'' . $paginator->getPageName() . '\')'"
                         :wire:key="$this->getId() . '.pagination.last'"
