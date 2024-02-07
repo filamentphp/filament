@@ -129,11 +129,15 @@ Route::name('filament.')
                             });
 
                         if ($hasTenancy) {
-                            $route = Route::middleware($panel->getTenantMiddleware())
-                                ->prefix((($tenantRoutePrefix) ? "{$tenantRoutePrefix}/" : '') . '{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}');
+
+                            $prefix = (($tenantRoutePrefix) ? "{$tenantRoutePrefix}/" : '') . '{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}';
+
+                            $route = Route::middleware($panel->getTenantMiddleware());
 
                             if ($tenantDomain) {
                                 $route->domain($tenantDomain);
+                            } else {
+                                $route->prefix($prefix);
                             }
 
                             $route
