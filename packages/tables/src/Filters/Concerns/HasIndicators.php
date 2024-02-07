@@ -60,7 +60,7 @@ trait HasIndicators
         return $indicators;
     }
 
-    public function getIndicator(): Indicator | string
+    public function getIndicator(): Indicator | string | Htmlable
     {
         $state = $this->getState();
 
