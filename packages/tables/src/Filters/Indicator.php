@@ -55,14 +55,14 @@ class Indicator extends Component
         return (bool) $this->evaluate($this->isRemovable);
     }
 
-    public function removeField(string | Htmlable | Closure | null $name): static
+    public function removeField(string | Closure | null $name): static
     {
         $this->removeField = $name;
 
         return $this;
     }
 
-    public function getRemoveField(): string | Htmlable | null
+    public function getRemoveField(): ?string
     {
         return $this->evaluate($this->removeField);
     }
