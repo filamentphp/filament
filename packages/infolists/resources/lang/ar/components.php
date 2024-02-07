@@ -15,6 +15,24 @@ return [
 
         ],
 
+        'key_value' => [
+
+            'columns' => [
+
+                'key' => [
+                    'label' => 'المفتاح',
+                ],
+
+                'value' => [
+                    'label' => 'القيمة',
+                ],
+
+            ],
+
+            'placeholder' => 'لا توجد مدخلات',
+
+        ],
+
     ],
 
 ];
