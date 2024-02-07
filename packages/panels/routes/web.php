@@ -14,6 +14,7 @@ Route::name('filament.')
             $panelId = $panel->getId();
             $hasTenancy = $panel->hasTenancy();
             $tenantRoutePrefix = $panel->getTenantRoutePrefix();
+            $tenantDomain = $panel->getTenantDomain();
             $tenantSlugAttribute = $panel->getTenantSlugAttribute();
             $domains = $panel->getDomains();
 
@@ -22,7 +23,7 @@ Route::name('filament.')
                     ->middleware($panel->getMiddleware())
                     ->name("{$panelId}.")
                     ->prefix($panel->getPath())
-                    ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute) {
+                    ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantDomain, $tenantSlugAttribute) {
                         if ($routes = $panel->getRoutes()) {
                             $routes($panel);
                         }
@@ -52,7 +53,7 @@ Route::name('filament.')
                         });
 
                         Route::middleware($panel->getAuthMiddleware())
-                            ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute): void {
+                            ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantDomain, $tenantSlugAttribute): void {
                                 if ($routes = $panel->getAuthenticatedRoutes()) {
                                     $routes($panel);
                                 }
@@ -89,8 +90,16 @@ Route::name('filament.')
                                         }
                                     });
 
-                                Route::middleware($hasTenancy ? $panel->getTenantMiddleware() : [])
-                                    ->prefix($hasTenancy ? (($tenantRoutePrefix) ? "{$tenantRoutePrefix}/" : '') . ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
+                                $prefix = ($hasTenancy && ! $tenantDomain) ? (($tenantRoutePrefix) ? "{$tenantRoutePrefix}/" : '') . ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '';
+                                $route = Route::middleware($hasTenancy ? $panel->getTenantMiddleware() : []);
+
+                                if ($tenantDomain) {
+                                    $route->domain($tenantDomain);
+                                } else {
+                                    $route->prefix($prefix);
+                                }
+
+                                $route
                                     ->group(function () use ($panel): void {
                                         if ($routes = $panel->getAuthenticatedTenantRoutes()) {
                                             $routes($panel);
