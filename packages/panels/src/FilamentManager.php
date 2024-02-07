@@ -646,11 +646,6 @@ class FilamentManager
         return $this->getCurrentPanel()->isSidebarFullyCollapsibleOnDesktop();
     }
 
-    public function mountNavigation(): void
-    {
-        $this->getCurrentPanel()->mountNavigation();
-    }
-
     public function registerPanel(Panel | Closure $panel): void
     {
         app(PanelRegistry::class)->register($panel);
