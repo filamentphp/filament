@@ -29,6 +29,8 @@ return [
 
             ],
 
+            'placeholder' => 'Ma\'lumot yo\'q',
+
         ],
 
     ],

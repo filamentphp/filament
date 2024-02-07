@@ -59,6 +59,8 @@ trait CanExportRecords
      */
     protected array | Closure | null $formats = null;
 
+    protected ?Closure $modifyQueryUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -81,7 +83,7 @@ trait CanExportRecords
                             Forms\Components\Checkbox::make('isEnabled')
                                 ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
                                 ->hiddenLabel()
-                                ->default(true)
+                                ->default($column->isEnabledByDefault())
                                 ->live()
                                 ->grow(false),
                             Forms\Components\TextInput::make('label')
@@ -107,6 +109,12 @@ trait CanExportRecords
                 $query = $action->getExporter()::getModel()::query();
             }
 
+            if ($this->modifyQueryUsing) {
+                $query = $this->evaluate($this->modifyQueryUsing, [
+                    'query' => $query,
+                ]) ?? $query;
+            }
+
             $records = $action instanceof ExportTableBulkAction ? $action->getRecords() : null;
 
             $totalRows = $records ? $records->count() : $query->count();
@@ -118,7 +126,7 @@ trait CanExportRecords
                     ->body(trans_choice('filament-actions::export.notifications.max_rows.body', $maxRows, [
                         'count' => format_number($maxRows),
                     ]))
-                    ->success()
+                    ->danger()
                     ->send();
 
                 return;
@@ -166,6 +174,10 @@ trait CanExportRecords
             $job = $action->getJob();
             $jobQueue = $exporter->getJobQueue();
             $jobConnection = $exporter->getJobConnection();
+
+            // We do not want to send the loaded user relationship to the queue in job payloads,
+            // in case it contains attributes that are not serializable, such as binary columns.
+            $export->unsetRelation('user');
 
             $makeCreateXlsxFileJob = fn (): CreateXlsxFile => app(CreateXlsxFile::class, [
                 'export' => $export,
@@ -362,5 +374,12 @@ trait CanExportRecords
     public function getFormats(): ?array
     {
         return $this->evaluate($this->formats);
+    }
+
+    public function modifyQueryUsing(?Closure $callback): static
+    {
+        $this->modifyQueryUsing = $callback;
+
+        return $this;
     }
 }

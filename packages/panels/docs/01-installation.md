@@ -43,6 +43,32 @@ Not sure where to start? Review the [Getting Started guide](getting-started) to 
 ## Using other Filament packages
 The Filament Panel Builder pre-installs the [Form Builder](/docs/forms), [Table Builder](/docs/tables), [Notifications](/docs/notifications), [Actions](/docs/actions), [Infolists](/docs/infolists), and [Widgets](/docs/widgets) packages. No other installation steps are required to use these packages within a panel.
 
+## Improving Filament panel performance
+
+### Caching Blade Icons
+
+You may wish to consider running `php artisan icons:cache` locally, and also in your deployment script. This is because Filament uses the [Blade Icons](https://blade-ui-kit.com/blade-icons) package, which can be much more performant when cached.
+
+### Caching Filament components
+
+You may also wish to consider running `php artisan filament:cache-components` in your deployment script, especially if you have large numbers of components (resources, pages, widgets, relation managers, custom Livewire components, etc.). This will create cache files in the `bootstrap/cache/filament` directory of your application, which contain indexes for each type of component. This can significantly improve the performance of Filament in some apps, as it reduces the number of files that need to be scanned and auto-discovered for components.
+
+However, if you are actively developing your app locally, you should avoid using this command, as it will prevent any new components from being discovered until the cache is cleared or rebuilt.
+
+You can clear the cache at any time without rebuilding it by running `php artisan filament:clear-cached-components`.
+
+### Enabling OPcache on your server
+
+From the [Laravel Forge documentation](https://forge.laravel.com/docs/servers/php.html#opcache):
+
+> Optimizing the PHP OPcache for production will configure OPcache to store your compiled PHP code in memory to greatly improve performance.
+
+Please use a search engine to find the relevant OPcache setup instructions for your environment.
+
+### Optimizing your Laravel app
+
+You should also consider optimizing your Laravel app for production by running `php artisan optimize` in your deployment script. This will cache the configuration files and routes.
+
 ## Deploying to production
 
 ### Allowing users to access a panel
@@ -72,10 +98,6 @@ class User extends Authenticatable implements FilamentUser
 > If you don't complete these steps, a 403 Forbidden error will be returned when accessing the app in production.
 
 Learn more about [users](users).
-
-### Caching Blade Icons
-
-You may wish to consider using `php artisan icons:cache` in your deployment process, as Filament uses the [Blade Icons](https://blade-ui-kit.com/blade-icons) package, which can be much more performant when cached. This is very hardware-dependant though, and many servers do not require this command for Filament to run smoothly.
 
 ## Publishing configuration
 

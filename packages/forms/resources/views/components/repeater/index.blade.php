@@ -70,7 +70,7 @@
                     :wire:end.stop="'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })'"
                     x-sortable
                     :data-sortable-animation-duration="$getReorderAnimationDuration()"
-                    class="gap-4 items-start"
+                    class="items-start gap-4"
                 >
                     @foreach ($containers as $uuid => $item)
                         @php

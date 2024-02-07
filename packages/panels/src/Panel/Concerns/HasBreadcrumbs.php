@@ -2,11 +2,13 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
+
 trait HasBreadcrumbs
 {
-    protected bool $hasBreadcrumbs = true;
+    protected bool | Closure $hasBreadcrumbs = true;
 
-    public function breadcrumbs(bool $condition = true): static
+    public function breadcrumbs(bool | Closure $condition = true): static
     {
         $this->hasBreadcrumbs = $condition;
 
@@ -15,6 +17,6 @@ trait HasBreadcrumbs
 
     public function hasBreadcrumbs(): bool
     {
-        return $this->hasBreadcrumbs;
+        return (bool) $this->evaluate($this->hasBreadcrumbs);
     }
 }

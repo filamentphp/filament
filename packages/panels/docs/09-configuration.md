@@ -68,6 +68,7 @@ Make sure your `routes/web.php` file doesn't already define the `''` or `'/'` ro
 
 ```php
 use Filament\Panel;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
 
 public function panel(Panel $panel): Panel
@@ -75,7 +76,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->renderHook(
-            'panels::body.start',
+            PanelsRenderHook::BODY_START,
             fn (): string => Blade::render('@livewire(\'livewire-ui-modal\')'),
         );
 }

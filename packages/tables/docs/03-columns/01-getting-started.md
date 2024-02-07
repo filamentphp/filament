@@ -501,7 +501,7 @@ use Filament\Support\Enums\VerticalAlignment;
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
-    ->alignment(VerticalAlignment::Start)
+    ->verticalAlignment(VerticalAlignment::Start)
 ```
 
 <AutoScreenshot name="tables/columns/vertical-alignment" alt="Table with column vertically aligned to the start" version="3.x" />
@@ -525,6 +525,28 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
     ->wrapHeader()
+```
+
+## Controlling the width of columns
+
+By default, columns will take up as much space as they need. You may allow some columns to consume more space than others by using the `grow()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->grow()
+```
+
+Alternatively, you can define a width for the column, which is passed to the header cell using the `style` attribute, so you can use any valid CSS value:
+
+```php
+use Filament\Tables\Columns\IconColumn;
+
+IconColumn::make('is_paid')
+    ->label('Paid')
+    ->boolean()
+    ->width('1%')
 ```
 
 ## Grouping columns

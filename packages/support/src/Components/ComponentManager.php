@@ -34,6 +34,11 @@ class ComponentManager implements ScopedComponentManager
             return static::resolveScoped();
         }
 
+        app()->singletonIf(
+            ComponentManager::class,
+            fn () => new ComponentManager(),
+        );
+
         return app(ComponentManager::class);
     }
 

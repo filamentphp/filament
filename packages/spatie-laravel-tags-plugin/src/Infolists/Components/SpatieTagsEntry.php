@@ -40,6 +40,10 @@ class SpatieTagsEntry extends TextEntry
             $record = $record->getRelationValue($this->getRelationshipName());
         }
 
+        if (! $record) {
+            return [];
+        }
+
         if (! (method_exists($record, 'tags') && method_exists($record, 'tagsWithType'))) {
             return [];
         }

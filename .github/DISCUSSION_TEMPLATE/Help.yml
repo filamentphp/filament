@@ -1,0 +1,33 @@
+body:
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: Select the specific package you need assistance with
+      options:
+        - Panel builder
+        - Table builder
+        - Form builder
+        - Infolist builder
+        - Actions
+        - Notifications
+        - Widgets
+        - Other
+      default: 0
+    validations:
+      required: true
+  - type: input
+    id: package-version
+    attributes:
+      label: Package Version
+      description: Provide the full version number of the package you have installed (e.g., v3.0.0).
+      placeholder: v3.0.0
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: How can we help you?
+      description: Please provide detailed information about the issue you're experiencing. Include details such as what is happening, what you are trying to achieve, steps you've taken, and any error messages encountered.  Add code examples. Include them inside triple backticks so GitHub can format them. Trim needless indentation so people on mobile can read your code. **Don’t send screenshots of code**.
+    validations:
+      required: true

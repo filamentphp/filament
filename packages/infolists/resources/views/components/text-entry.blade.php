@@ -118,7 +118,7 @@
                                 $weight = $getWeight($state);
 
                                 $proseClasses = \Illuminate\Support\Arr::toCssClasses([
-                                    'prose max-w-none dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
+                                    'fi-in-text-item-prose prose max-w-none dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
                                     'pt-2' => ! $isLabelHidden(),
                                     match ($size) {
                                         TextEntrySize::ExtraSmall, 'xs' => 'prose-xs',

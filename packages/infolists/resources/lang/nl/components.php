@@ -31,6 +31,8 @@ return [
 
         ],
 
+        'placeholder' => 'Geen gegevens',
+
     ],
 
 ];

@@ -6,39 +6,39 @@ return [
 
         'actions' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Хуулбарлах',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Нэмэх :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Оруулах',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Устгах',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Зөөх',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Доош зөөх',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Дээш зөөх',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Хаах',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Нээх',
             ],
 
@@ -123,35 +123,35 @@ return [
 
         'actions' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Нэмэх :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Устгах',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Хуулбарлах',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Зөөх',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Доош зөөх',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Дээш зөөх',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Хаах',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Нээх',
             ],
 

@@ -70,6 +70,134 @@ return [
 
     ],
 
+    'file_upload' => [
+
+        'editor' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'Abbrechen',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'Drag Modus "beschneiden"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'Drag Modus "verschieben"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'Bild horizontal spiegeln',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'Bild vertikal spiegeln',
+                ],
+
+                'move_down' => [
+                    'label' => 'Bild nach unten',
+                ],
+
+                'move_left' => [
+                    'label' => 'Bild nach links',
+                ],
+
+                'move_right' => [
+                    'label' => 'Bild nach rechts',
+                ],
+
+                'move_up' => [
+                    'label' => 'Bild nach oben',
+                ],
+
+                'reset' => [
+                    'label' => 'Zurücksetzen',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'Bild nach links kippen',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'Bild nach rechts kippen',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'Seitenverhältnis festlegen :ratio',
+                ],
+
+                'save' => [
+                    'label' => 'Speichern',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'Bild Zoom 100%',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'Hereinzoomen',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'Herauszoomen',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'Höhe',
+                    'unit' => 'px',
+                ],
+
+                'rotation' => [
+                    'label' => 'Drehung',
+                    'unit' => 'deg',
+                ],
+
+                'width' => [
+                    'label' => 'Breite',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'Seitenverhältnisse',
+
+                'no_fixed' => [
+                    'label' => 'Frei',
+                ],
+
+            ],
+
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Das Bearbeiten von SVG Dateien ist nicht empfohlen, da es Qualitätsverluste beim Verändern der Größe geben kann.\n Wirklich fortfahren?',
+                    'disabled' => 'Das Bearbeiten von SVG Dateien ist deaktiviert, da es Qualitätsverluste beim Verändern der Größe geben kann.',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'actions' => [

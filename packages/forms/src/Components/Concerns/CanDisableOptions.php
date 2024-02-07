@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Illuminate\Support\Collection;
 
 trait CanDisableOptions
 {
@@ -20,11 +21,16 @@ trait CanDisableOptions
      */
     public function getEnabledOptions(): array
     {
-        return array_filter(
-            $this->getOptions(),
-            fn ($label, $value) => ! $this->isOptionDisabled($value, $label),
-            ARRAY_FILTER_USE_BOTH,
-        );
+        return collect($this->getOptions())
+            ->reduce(function (Collection $carry, $label, $value): Collection {
+                if (is_array($label)) {
+                    return $carry->merge($label);
+                }
+
+                return $carry->put($value, $label);
+            }, collect())
+            ->filter(fn ($label, $value) => ! $this->isOptionDisabled($value, $label))
+            ->all();
     }
 
     /**

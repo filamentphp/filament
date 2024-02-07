@@ -82,6 +82,7 @@
                     shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
                     state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     uploadButtonPosition: @js($getUploadButtonPosition()),
+                    uploadingMessage: @js($getUploadingMessage()),
                     uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
                     uploadUsing: (fileKey, file, success, error, progress) => {
                         $wire.upload(
@@ -162,7 +163,7 @@
                     class="isolate z-10 flex h-full w-full items-center justify-center"
                 >
                     <div
-                        class="mx-auto flex h-full w-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-gray-900/10 lg:flex-row dark:bg-gray-800 dark:ring-gray-50/10"
+                        class="mx-auto flex h-full w-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10 lg:flex-row"
                     >
                         <div class="w-full flex-1 overflow-auto p-4 lg:h-full">
                             <div class="h-full w-full">
@@ -171,7 +172,7 @@
                         </div>
 
                         <div
-                            class="shadow-top z-[1] flex h-96 w-full flex-col overflow-auto bg-gray-50 lg:h-full lg:max-w-xs lg:shadow-none dark:bg-gray-900/30"
+                            class="shadow-top z-[1] flex h-96 w-full flex-col overflow-auto bg-gray-50 dark:bg-gray-900/30 lg:h-full lg:max-w-xs lg:shadow-none"
                         >
                             <div class="flex-1 overflow-hidden">
                                 <div
