@@ -214,4 +214,8 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `pagination.previous-button.rtl` - Button to go to the previous page (right-to-left direction)
 - `pagination.next-button` - Button to go to the next page
 - `pagination.next-button.rtl` - Button to go to the next page (right-to-left direction)
+- `pagination.first-button` - Button to go to the first page
+- `pagination.first-button.rtl` - Button to go to the first page (right-to-left direction)
+- `pagination.last-button` - Button to go to the last page
+- `pagination.last-button.rtl` - Button to go to the last page (right-to-left direction)
 - `section.collapse-button` - Button to collapse a section

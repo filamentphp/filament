@@ -34,6 +34,14 @@ return [
             'label' => 'Previous',
         ],
 
+        'first' => [
+            'label' => 'First',
+        ],
+
+        'last' => [
+            'label' => 'Last',
+        ],
+
     ],
 
 ];

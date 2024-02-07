@@ -66,5 +66,6 @@ class ListUsers extends Component
     :paginator="$users"
     :page-options="[5, 10, 20, 50, 100, 'all']"
     :current-page-option-property="perPage"
+    :has-first-last-page-links="true"
 />
 ```

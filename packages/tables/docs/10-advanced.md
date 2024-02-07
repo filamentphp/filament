@@ -63,6 +63,20 @@ public function table(Table $table): Table
 }
 ```
 
+### Displaying links to the first and the last page
+
+To display links to the first and the last page use the `paginationWithFirstAndLastPageLink()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->paginationWithFirstAndLastPageLinks();
+}
+```
+
 ### Using simple pagination
 
 You may use simple pagination by overriding `paginateTableQuery()` method.

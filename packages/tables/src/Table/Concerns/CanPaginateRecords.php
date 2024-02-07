@@ -18,6 +18,11 @@ trait CanPaginateRecords
      */
     protected array | Closure | null $paginationPageOptions = null;
 
+    /**
+     * @var bool
+     */
+    protected bool $hasFirstAndLastPageLinks = false;
+
     public function defaultPaginationPageOption(int | string | Closure | null $option): static
     {
         $this->defaultPaginationPageOption = $option;
@@ -57,6 +62,13 @@ trait CanPaginateRecords
         return $this;
     }
 
+    public function paginationWithFirstAndLastPageLinks(bool $condition = true): static
+    {
+        $this->hasFirstAndLastPageLinks = $condition;
+
+        return $this;
+    }
+
     public function getDefaultPaginationPageOption(): int | string | null
     {
         $option = $this->evaluate($this->defaultPaginationPageOption);
@@ -90,5 +102,10 @@ trait CanPaginateRecords
     public function isPaginatedWhileReordering(): bool
     {
         return (bool) $this->evaluate($this->isPaginatedWhileReordering);
+    }
+
+    public function hasPaginationFirstAndLastPageLinks(): bool
+    {
+        return (bool) $this->evaluate($this->hasFirstAndLastPageLinks);
     }
 }
