@@ -677,6 +677,57 @@ public function panel(Panel $panel): Panel
 
 Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1`.
 
+## Using a domain to identify the tenant
+
+When using a tenant, you might want to use domain or subdomain routing like `admin.example.com/posts` instead of a route prefix like `/admin/posts` . You can do that with the `tenantDomain()` method, alongside the `tenant()` configuration method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenant(Team::class)
+        ->tenantDomain('{tenant}.example.com', , slugAttribute: 'slug');
+}
+```
+
+You can even use full domains for the routing:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenant(Team::class)
+        ->tenantDomain('{tenant}', , slugAttribute: 'domain');
+}
+```
+
+Remember that the model itself should also be updated to use the correct `getRouteKeyName()` method or similar, and that the model field name should contain a valid domain host, like `example.com` or `subdomain.example.com`. if you are using a full domain routing instead of the previous subdomain routing example.
+
+```php
+<?php
+
+namespace App\Models;
+
+use Filament\Models\Contracts\HasCurrentTenantLabel;
+use Illuminate\Database\Eloquent\Model;
+
+class Team extends Model
+{
+    // ...
+    
+    public function getRouteKeyName(): string
+    {
+        return 'domain';
+    }
+}
+```
+
 ## Disabling tenancy for a resource
 
 By default, all resources within a panel with tenancy will be scoped to the current tenant. If you have resources that are shared between tenants, you can disable tenancy for them by setting the `$isScopedToTenant` static property to `false` on the resource class:
