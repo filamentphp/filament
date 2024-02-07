@@ -5,6 +5,7 @@ namespace Filament\Tables\Filters;
 use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasColor;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Indicator extends Component
 {
@@ -12,7 +13,7 @@ class Indicator extends Component
 
     protected bool | Closure $isRemovable = true;
 
-    protected string | Closure $label;
+    protected string | Htmlable | Closure $label;
 
     protected string | Closure | null $removeField = null;
 
@@ -20,24 +21,24 @@ class Indicator extends Component
 
     protected string $evaluationIdentifier = 'indicator';
 
-    final public function __construct(string | Closure $label)
+    final public function __construct(string | Htmlable | Closure $label)
     {
         $this->label($label);
     }
 
-    public static function make(string | Closure $label): static
+    public static function make(string | Htmlable | Closure $label): static
     {
         return app(static::class, ['label' => $label]);
     }
 
-    public function label(string | Closure $label): static
+    public function label(string | Htmlable | Closure $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable
     {
         return $this->evaluate($this->label);
     }
@@ -54,14 +55,14 @@ class Indicator extends Component
         return (bool) $this->evaluate($this->isRemovable);
     }
 
-    public function removeField(string | Closure | null $name): static
+    public function removeField(string | Htmlable | Closure | null $name): static
     {
         $this->removeField = $name;
 
         return $this;
     }
 
-    public function getRemoveField(): ?string
+    public function getRemoveField(): string | Htmlable | null
     {
         return $this->evaluate($this->removeField);
     }
