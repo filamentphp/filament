@@ -18,6 +18,7 @@ use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Http\Responses\Auth\PasswordResetResponse;
 use Filament\Http\Responses\Auth\RegistrationResponse;
+use Filament\Navigation\NavigationManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
@@ -45,6 +46,14 @@ class FilamentServiceProvider extends PackageServiceProvider
     {
         $this->app->scoped('filament', function (): FilamentManager {
             return new FilamentManager();
+        });
+
+        $this->app->singleton(PanelRegistry::class, function (): PanelRegistry {
+            return new PanelRegistry();
+        });
+
+        $this->app->scoped(NavigationManager::class, function (): NavigationManager {
+            return new NavigationManager();
         });
 
         $this->app->bind(EmailVerificationResponseContract::class, EmailVerificationResponse::class);
