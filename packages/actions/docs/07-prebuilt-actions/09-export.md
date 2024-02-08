@@ -581,16 +581,14 @@ If you'd like to customize the tags that are applied to jobs of a certain export
 
 ### Customizing the export job batch name
 
-By default, the export system doesn't define any name for the job batches.
+By default, the export system doesn't define any name for the job batches. If you'd like to customize the name that is applied to job batches of a certain exporter, you may override the `getJobBatchName()` method in your exporter class:
 
 ```php
 public function getJobBatchName(): ?string
 {
-    return null;
+    return 'product-export';
 }
 ```
-
-If you'd like to customize the name that are applied to job batches of a certain exporter, you may override this method in your exporter class.
 
 ## Authorization
 
