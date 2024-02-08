@@ -36,7 +36,7 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $isAvatar = false;
 
-    protected int | Closure | null $itemAspectRatio = null;
+    protected int | float | Closure | null $itemAspectRatio = null;
 
     protected string | Closure $loadingIndicatorPosition = 'right';
 
@@ -162,7 +162,7 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function itemAspectRatio(int | Closure | null $ratio): static
+    public function itemAspectRatio(int | float | Closure | null $ratio): static
     {
         $this->itemAspectRatio = $ratio;
 
@@ -203,10 +203,6 @@ class FileUpload extends BaseFileUpload
     public function panelLayout(string | Closure | null $layout): static
     {
         $this->panelLayout = $layout;
-
-        if($layout === 'grid') {
-            $this->itemAspectRatio(1);
-        }
 
         return $this;
     }
@@ -262,9 +258,15 @@ class FileUpload extends BaseFileUpload
         return (bool) $this->evaluate($this->imageResizeUpscale);
     }
 
-    public function getItemAspectRatio(): ?int
+    public function getItemAspectRatio(): int | float | null
     {
-        return (int) $this->evaluate($this->itemAspectRatio) ?: null;
+        $itemAspectRatio = $this->evaluate($this->itemAspectRatio) ?: null;
+
+        if($this->getPanelLayout() === 'grid' && is_null($itemAspectRatio) ) {
+            return 1;
+        }
+        
+        return $itemAspectRatio;
     }
 
     public function getLoadingIndicatorPosition(): string
