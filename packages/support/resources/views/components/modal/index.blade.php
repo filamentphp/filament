@@ -111,9 +111,6 @@
     <div
         x-cloak
         x-show="isOpen"
-        @if ($closeByClickingAway)
-            x-on:click="{{ $closeEventHandler }}"
-        @endif
     >
         <div
             aria-hidden="true"
@@ -133,6 +130,9 @@
         >
             <div
                 x-ref="modalContainer"
+                @if ($closeByClickingAway)
+                    x-on:click.self="{{ $closeEventHandler }}"
+                @endif
                 {{
                     $attributes->class([
                         'relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr]',
@@ -148,9 +148,6 @@
                             $watch('isOpen', () => (isShown = isOpen))
                         })
                     "
-                    @if ($closeByClickingAway)
-                        x-on:click.stop
-                    @endif
                     x-on:keydown.window.escape="{{ $closeEventHandler }}"
                     x-show="isShown"
                     x-transition:enter="duration-300"
@@ -158,14 +155,14 @@
                     @if ($width === MaxWidth::Screen)
                     @elseif ($slideOver)
                         x-transition:enter-start="translate-x-full rtl:-translate-x-full"
-                    x-transition:enter-end="translate-x-0"
-                    x-transition:leave-start="translate-x-0"
-                    x-transition:leave-end="translate-x-full rtl:-translate-x-full"
+                        x-transition:enter-end="translate-x-0"
+                        x-transition:leave-start="translate-x-0"
+                        x-transition:leave-end="translate-x-full rtl:-translate-x-full"
                     @else
                         x-transition:enter-start="scale-95 opacity-0"
-                    x-transition:enter-end="scale-100 opacity-100"
-                    x-transition:leave-start="scale-100 opacity-100"
-                    x-transition:leave-end="scale-95 opacity-0"
+                        x-transition:enter-end="scale-100 opacity-100"
+                        x-transition:leave-start="scale-100 opacity-100"
+                        x-transition:leave-end="scale-95 opacity-0"
                     @endif
                     @class([
                         'fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
