@@ -262,10 +262,10 @@ class FileUpload extends BaseFileUpload
     {
         $itemAspectRatio = $this->evaluate($this->itemAspectRatio) ?: null;
 
-        if($this->getPanelLayout() === 'grid' && is_null($itemAspectRatio) ) {
+        if ($this->getPanelLayout() === 'grid' && is_null($itemAspectRatio)) {
             return 1;
         }
-        
+
         return $itemAspectRatio;
     }
 
