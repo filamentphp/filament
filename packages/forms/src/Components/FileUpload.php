@@ -264,7 +264,7 @@ class FileUpload extends BaseFileUpload
 
     public function getItemAspectRatio(): ?int
     {
-        return (int) $this->evaluate($this->itemAspectRatio);
+        return (int) $this->evaluate($this->itemAspectRatio) ?: null;
     }
 
     public function getLoadingIndicatorPosition(): string
