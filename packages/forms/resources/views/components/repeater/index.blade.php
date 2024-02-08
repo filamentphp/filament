@@ -144,7 +144,9 @@
                                     @endif
 
                                     @if ($isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
-                                        <ul class="ms-auto flex items-center gap-x-3">
+                                        <ul
+                                            class="ms-auto flex items-center gap-x-3"
+                                        >
                                             @foreach ($visibleExtraItemActions as $extraItemAction)
                                                 <li x-on:click.stop>
                                                     {{ $extraItemAction(['item' => $uuid]) }}
