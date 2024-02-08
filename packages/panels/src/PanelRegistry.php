@@ -2,7 +2,6 @@
 
 namespace Filament;
 
-use Closure;
 use Filament\Exceptions\NoDefaultPanelSetException;
 use Illuminate\Support\Arr;
 
@@ -13,10 +12,8 @@ class PanelRegistry
      */
     public array $panels = [];
 
-    public function register(Panel | Closure $panel): void
+    public function register(Panel $panel): void
     {
-        $panel = value($panel);
-
         $this->panels[$panel->getId()] = $panel;
 
         $panel->register();

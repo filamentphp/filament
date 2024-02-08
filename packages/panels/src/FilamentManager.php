@@ -646,7 +646,7 @@ class FilamentManager
         return $this->getCurrentPanel()->isSidebarFullyCollapsibleOnDesktop();
     }
 
-    public function registerPanel(Panel | Closure $panel): void
+    public function registerPanel(Panel $panel): void
     {
         app(PanelRegistry::class)->register($panel);
     }

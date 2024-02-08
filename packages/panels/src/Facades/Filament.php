@@ -13,6 +13,7 @@ use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
+use Filament\PanelRegistry;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -126,5 +127,13 @@ class Filament extends Facade
     protected static function getFacadeAccessor(): string
     {
         return 'filament';
+    }
+
+    public static function registerPanel(Panel | Closure $panel): void
+    {
+        static::getFacadeApplication()->resolving(
+            PanelRegistry::class,
+            fn (PanelRegistry $registry) => $registry->register(value($panel)),
+        );
     }
 }
