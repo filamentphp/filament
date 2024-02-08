@@ -277,7 +277,7 @@ class ImageColumn extends Column
         return $this->evaluate($this->overlap);
     }
 
-    public function ring(string | Closure | null $ring): static
+    public function ring(int | Closure | null $ring): static
     {
         $this->ring = $ring;
 

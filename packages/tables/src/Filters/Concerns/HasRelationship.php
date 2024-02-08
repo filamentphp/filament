@@ -5,6 +5,9 @@ namespace Filament\Tables\Filters\Concerns;
 use Closure;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait HasRelationship
@@ -91,5 +94,28 @@ trait HasRelationship
         }
 
         return $relationshipQuery;
+    }
+
+    public function getRelationshipKey(): ?string
+    {
+        $relationship = $this->getRelationship();
+
+        if ($relationship instanceof BelongsToMany) {
+            return $relationship->getQualifiedRelatedKeyName();
+        }
+
+        if ($relationship instanceof HasManyThrough) {
+            return $relationship->getQualifiedForeignKeyName();
+        }
+
+        if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+            $keyColumn = $relationship->getRelated()->getQualifiedKeyName();
+        }
+
+        if ($relationship instanceof BelongsTo) {
+            return $relationship->getQualifiedOwnerKeyName();
+        }
+
+        return null;
     }
 }

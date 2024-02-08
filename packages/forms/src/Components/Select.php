@@ -971,6 +971,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             if (! $relationship instanceof BelongsToMany) {
                 $relationship->associate($state);
+                $record->wasRecentlyCreated && $record->save();
 
                 return;
             }

@@ -11,29 +11,28 @@ return [
                 'expand_list' => 'Показати ще :count',
             ],
 
-        'more_list_items' => 'ще :count',
+            'more_list_items' => 'ще :count',
 
-    ],
-
-
-'key_value' => [
-
-    'columns' => [
-
-        'key' => [
-            'label' => 'Ключ',
         ],
 
-        'value' => [
-            'label' => 'Значення',
+        'key_value' => [
+
+            'columns' => [
+
+                'key' => [
+                    'label' => 'Ключ',
+                ],
+
+                'value' => [
+                    'label' => 'Значення',
+                ],
+
+            ],
+
+            'placeholder' => 'Немає записів',
+
         ],
 
     ],
-
-    'placeholder' => 'Немає записів',
-
-],
-
-],
 
 ];

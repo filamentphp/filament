@@ -170,10 +170,10 @@
                 x-show="@js($hasHeaderToolbar) || (selectedRecords.length && @js(count($bulkActions)))"
                 class="fi-ta-header-toolbar flex items-center justify-between gap-x-4 px-4 py-3 sm:px-6"
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.start', scopes: static::class) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_START, scopes: static::class) }}
 
                 <div class="flex shrink-0 items-center gap-x-4">
-                    {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.reorder-trigger.before', scopes: static::class) }}
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE, scopes: static::class) }}
 
                     @if ($isReorderable)
                         <span x-show="! selectedRecords.length">
@@ -181,7 +181,7 @@
                         </span>
                     @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.reorder-trigger.after', scopes: static::class) }}
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
 
                     @if ((! $isReordering) && count($bulkActions))
                         <x-filament-tables::actions
@@ -191,7 +191,7 @@
                         />
                     @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.grouping-selector.before', scopes: static::class) }}
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE, scopes: static::class) }}
 
                     @if ($areGroupingSettingsVisible)
                         <x-filament-tables::groups
@@ -201,12 +201,12 @@
                         />
                     @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.grouping-selector.after', scopes: static::class) }}
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
                 </div>
 
                 @if ($isGlobalSearchVisible || $hasFiltersDialog || $hasColumnToggleDropdown)
                     <div class="ms-auto flex items-center gap-x-4">
-                        {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.before', scopes: static::class) }}
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_SEARCH_BEFORE, scopes: static::class) }}
 
                         @if ($isGlobalSearchVisible)
                             <x-filament-tables::search-field
@@ -216,7 +216,7 @@
                             />
                         @endif
 
-                        {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.after', scopes: static::class) }}
+                        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_SEARCH_AFTER, scopes: static::class) }}
 
                         @if ($hasFiltersDialog || $hasColumnToggleDropdown)
                             @if ($hasFiltersDialog)
@@ -231,7 +231,7 @@
                                 />
                             @endif
 
-                            {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.toggle-column-trigger.before', scopes: static::class) }}
+                            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE, scopes: static::class) }}
 
                             @if ($hasColumnToggleDropdown)
                                 <x-filament-tables::column-toggle.dropdown
@@ -242,12 +242,12 @@
                                 />
                             @endif
 
-                            {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.toggle-column-trigger.after', scopes: static::class) }}
+                            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER, scopes: static::class) }}
                         @endif
                     </div>
                 @endif
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.end') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_END) }}
             </div>
         </div>
 
@@ -811,6 +811,10 @@
                         @endif
 
                         @foreach ($columns as $column)
+                            @php
+                                $columnWidth = $column->getWidth();
+                            @endphp
+
                             <x-filament-tables::header-cell
                                 :actively-sorted="$getSortColumn() === $column->getName()"
                                 :alignment="$column->getAlignment()"
@@ -822,9 +826,12 @@
                                     \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
                                         ->class([
                                             'fi-table-header-cell-' . str($column->getName())->camel()->kebab(),
-                                            'w-full' => $column->canGrow(default: false),
+                                            'w-full' => blank($columnWidth) && $column->canGrow(default: false),
                                             '[&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e border-gray-200 dark:border-white/5' => $column->getGroup(),
                                             $getHiddenClasses($column),
+                                        ])
+                                        ->style([
+                                            ('width: ' . $columnWidth) => filled($columnWidth),
                                         ])
                                 "
                             >
@@ -1218,6 +1225,7 @@
         @if ((($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) &&
              ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
             <x-filament::pagination
+                :extreme-links="$hasExtremePaginationLinks()"
                 :page-options="$getPaginationPageOptions()"
                 :paginator="$records"
                 class="fi-ta-pagination px-3 py-3 sm:px-6"

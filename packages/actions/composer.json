@@ -17,7 +17,7 @@
         "illuminate/contracts": "^10.0",
         "illuminate/database": "^10.0",
         "illuminate/support": "^10.0",
-        "league/csv": "9.11.0",
+        "league/csv": "^9.14",
         "openspout/openspout": "^4.23",
         "spatie/laravel-package-tools": "^1.9"
     },

@@ -1,4 +1,4 @@
-reset-password.php <?php
+<?php
 
 return [
 

@@ -238,6 +238,10 @@ trait CanImportRecords
                     filled($jobConnection = $importer->getJobConnection()),
                     fn (PendingBatch $batch) => $batch->onConnection($jobConnection),
                 )
+                ->when(
+                    filled($jobBatchName = $importer->getJobBatchName()),
+                    fn (PendingBatch $batch) => $batch->name($jobBatchName),
+                )
                 ->finally(function () use ($import) {
                     $import->touch('completed_at');
 
@@ -304,7 +308,7 @@ trait CanImportRecords
                     }
 
                     $csv->insertOne(array_map(
-                        fn (ImportColumn $column): string => $column->getName(),
+                        fn (ImportColumn $column): string => $column->getExampleHeader(),
                         $columns,
                     ));
 

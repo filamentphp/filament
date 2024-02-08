@@ -12,10 +12,11 @@ To register render hooks, you can call `FilamentView::registerRenderHook()` from
 
 ```php
 use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
 
 FilamentView::registerRenderHook(
-    'panels::body.start',
+    PanelsRenderHook::BODY_START,
     fn (): string => Blade::render('@livewire(\'livewire-ui-modal\')'),
 );
 ```
@@ -24,10 +25,11 @@ You could also render view content from a file:
 
 ```php
 use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
 
 FilamentView::registerRenderHook(
-    'panels::body.start',
+    PanelsRenderHook::BODY_START,
     fn (): View => view('impersonation-banner'),
 );
 ```
@@ -36,76 +38,95 @@ FilamentView::registerRenderHook(
 
 ### Panel Builder render hooks
 
-- `panels::auth.login.form.after` - After login form
-- `panels::auth.login.form.before` - Before login form
-- `panels::auth.password-reset.request.form.after` - After password reset request form
-- `panels::auth.password-reset.request.form.before` - Before password reset request form
-- `panels::auth.password-reset.reset.form.after` - After password reset form
-- `panels::auth.password-reset.reset.form.before` - Before password reset form
-- `panels::auth.register.form.after` - After register form
-- `panels::auth.register.form.before` - Before register form
-- `panels::body.end` - Before `</body>`
-- `panels::body.start` - After `<body>`
-- `panels::content.end` - After page content, inside `<main>`
-- `panels::content.start` - Before page content, inside `<main>`
-- `panels::footer` - Footer of the page
-- `panels::global-search.after` - After the [global search](../panels/resources/global-search) container, inside the topbar
-- `panels::global-search.before` - Before the [global search](../panels/resources/global-search) container, inside the topbar
-- `panels::global-search.end` - The end of the [global search](../panels/resources/global-search) container
-- `panels::global-search.start` - The start of the [global search](../panels/resources/global-search) container
-- `panels::head.end` - Before `</head>`
-- `panels::head.start` - After `<head>`
-- `panels::page.end` - End of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::page.footer-widgets.after` - After the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::page.footer-widgets.before` - Before the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::page.header.actions.after` - After the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::page.header.actions.before` - Before the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::page.header-widgets.after` - After the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::page.header-widgets.before` - Before the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::page.start` - Start of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::resource.pages.list-records.table.after` - After the resource table, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::resource.pages.list-records.table.before` - Before the resource table, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::resource.pages.list-records.tabs.end` - The end of the filter tabs (after the last tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::resource.pages.list-records.tabs.start` - The start of the filter tabs (before the first tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::resource.relation-manager.after` - After the relation manager table, also [can be scoped](#scoping-render-hooks) to the page or relation manager class
-- `panels::resource.relation-manager.before` - Before the relation manager table, also [can be scoped](#scoping-render-hooks) to the page or relation manager class
-- `panels::scripts.after` - After scripts are defined
-- `panels::scripts.before` - Before scripts are defined
-- `panels::sidebar.nav.end` - In the [sidebar](../panels/navigation), before `</nav>`
-- `panels::sidebar.nav.start` - In the [sidebar](../panels/navigation), after `<nav>`
-- `panels::sidebar.footer` - Pinned to the bottom of the sidebar, below the content
-- `panels::styles.after` - After styles are defined
-- `panels::styles.before` - Before styles are defined
-- `panels::tenant-menu.after` - After the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
-- `panels::tenant-menu.before` - Before the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
-- `panels::topbar.after` - Below the topbar
-- `panels::topbar.before` - Above the topbar
-- `panels::topbar.end` - End of the topbar container
-- `panels::topbar.start` - Start of the topbar container
-- `panels::user-menu.after` - After the [user menu](../panels/navigation#customizing-the-user-menu)
-- `panels::user-menu.before` - Before the [user menu](../panels/navigation#customizing-the-user-menu)
-- `panels::user-menu.profile.after` - After the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
-- `panels::user-menu.profile.before` - Before the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
+```php
+    use Filament\View\PanelsRenderHook;
+```
+
+- `PanelsRenderHook::AUTH_LOGIN_FORM_AFTER` - After login form
+- `PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE` - Before login form
+- `PanelsRenderHook::AUTH_PASSWORD_RESET_REQUEST_FORM_AFTER` - After password reset request form
+- `PanelsRenderHook::AUTH_PASSWORD_RESET_REQUEST_FORM_BEFORE` - Before password reset request form
+- `PanelsRenderHook::AUTH_PASSWORD_RESET_RESET_FORM_AFTER` - After password reset form
+- `PanelsRenderHook::AUTH_PASSWORD_RESET_RESET_FORM_BEFORE` - Before password reset form
+- `PanelsRenderHook::AUTH_REGISTER_FORM_AFTER` - After register form
+- `PanelsRenderHook::AUTH_REGISTER_FORM_BEFORE` - Before register form
+- `PanelsRenderHook::BODY_END` - Before `</body>`
+- `PanelsRenderHook::BODY_START` - After `<body>`
+- `PanelsRenderHook::CONTENT_END` - After page content, inside `<main>`
+- `PanelsRenderHook::CONTENT_START` - Before page content, inside `<main>`
+- `PanelsRenderHook::FOOTER` - Footer of the page
+- `PanelsRenderHook::GLOBAL_SEARCH_AFTER` - After the [global search](../panels/resources/global-search) container, inside the topbar
+- `PanelsRenderHook::GLOBAL_SEARCH_BEFORE` - Before the [global search](../panels/resources/global-search) container, inside the topbar
+- `PanelsRenderHook::GLOBAL_SEARCH_END` - The end of the [global search](../panels/resources/global-search) container
+- `PanelsRenderHook::GLOBAL_SEARCH_START` - The start of the [global search](../panels/resources/global-search) container
+- `PanelsRenderHook::HEAD_END` - Before `</head>`
+- `PanelsRenderHook::HEAD_START` - After `<head>`
+- `PanelsRenderHook::PAGE_END` - End of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER` - After the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_FOOTER_WIDGETS_BEFORE` - Before the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_HEADER_ACTIONS_AFTER` - After the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_HEADER_ACTIONS_BEFORE` - Before the page header actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_HEADER_WIDGETS_AFTER` - After the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_HEADER_WIDGETS_BEFORE` - Before the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::PAGE_START` - Start of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_AFTER` - After the resource table, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABLE_BEFORE` - Before the resource table, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABS_END` - The end of the filter tabs (after the last tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABS_START` - The start of the filter tabs (before the first tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_AFTER` - After the relation manager table, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_BEFORE` - Before the relation manager table, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::RESOURCE_RELATION_MANAGER_AFTER` - After the relation manager table, also [can be scoped](#scoping-render-hooks) to the page or relation manager class
+- `PanelsRenderHook::RESOURCE_RELATION_MANAGER_BEFORE` - Before the relation manager table, also [can be scoped](#scoping-render-hooks) to the page or relation manager class
+- `PanelsRenderHook::RESOURCE_TABS_END` - The end of the resource tabs (after the last tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::RESOURCE_TABS_START` - The start of the resource tabs (before the first tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `PanelsRenderHook::SCRIPTS_AFTER` - After scripts are defined
+- `PanelsRenderHook::SCRIPTS_BEFORE` - Before scripts are defined
+- `PanelsRenderHook::SIDEBAR_NAV_END` - In the [sidebar](../panels/navigation), before `</nav>`
+- `PanelsRenderHook::SIDEBAR_NAV_START` - In the [sidebar](../panels/navigation), after `<nav>`
+- `PanelsRenderHook::SIDEBAR_FOOTER` - Pinned to the bottom of the sidebar, below the content
+- `PanelsRenderHook::STYLES_AFTER` - After styles are defined
+- `PanelsRenderHook::STYLES_BEFORE` - Before styles are defined
+- `PanelsRenderHook::TENANT_MENU_AFTER` - After the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
+- `PanelsRenderHook::TENANT_MENU_BEFORE` - Before the [tenant menu](../panels/tenancy#customizing-the-tenant-menu)
+- `PanelsRenderHook::TOPBAR_AFTER` - Below the topbar
+- `PanelsRenderHook::TOPBAR_BEFORE` - Above the topbar
+- `PanelsRenderHook::TOPBAR_END` - End of the topbar container
+- `PanelsRenderHook::TOPBAR_START` - Start of the topbar container
+- `PanelsRenderHook::USER_MENU_AFTER` - After the [user menu](../panels/navigation#customizing-the-user-menu)
+- `PanelsRenderHook::USER_MENU_BEFORE` - Before the [user menu](../panels/navigation#customizing-the-user-menu)
+- `PanelsRenderHook::USER_MENU_PROFILE_AFTER` - After the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
+- `PanelsRenderHook::USER_MENU_PROFILE_BEFORE` - Before the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
+
 
 ### Table Builder render hooks
 
 All these render hooks [can be scoped](#scoping-render-hooks) to any table Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager. Table widgets are also Livewire component classes.
 
-- `tables::toolbar.end` - The end of the toolbar
-- `tables::toolbar.grouping-selector.after` - After the [grouping](../tables/grouping) selector
-- `tables::toolbar.grouping-selector.before` - Before the [grouping](../tables/grouping) selector
-- `tables::toolbar.reorder-trigger.after` - After the [reorder](../tables/advanced#reordering-records) trigger
-- `tables::toolbar.reorder-trigger.before` - Before the [reorder](../tables/advanced#reordering-records) trigger
-- `tables::toolbar.search.after` - After the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
-- `tables::toolbar.search.before` - Before the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
-- `tables::toolbar.start` - The start of the toolbar
-- `tables::toolbar.toggle-column-trigger.after` - After the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
-- `tables::toolbar.toggle-column-trigger.before` - Before the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+```php
+    use Filament\Tables\View\TablesRenderHook;
+```
+
+- `TablesRenderHook::TOOLBAR_END` - The end of the toolbar
+- `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER` - After the [grouping](../tables/grouping) selector
+- `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE` - Before the [grouping](../tables/grouping) selector
+- `TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER` - After the [reorder](../tables/advanced#reordering-records) trigger
+- `TablesRenderHook::TOOLBAR_REORDER_TRIGGER_BEFORE` - Before the [reorder](../tables/advanced#reordering-records) trigger
+- `TablesRenderHook::TOOLBAR_SEARCH_AFTER` - After the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `TablesRenderHook::TOOLBAR_SEARCH_BEFORE` - Before the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `TablesRenderHook::TOOLBAR_START` - The start of the toolbar
+- `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER` - After the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+- `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE` - Before the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+
 
 ### Widgets render hooks
 
-- `widgets::table-widget.end` - End of the [table widget](../panels/dashboard#table-widgets), after the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
-- `widgets::table-widget.start` - Start of the [table widget](../panels/dashboard#table-widgets), before the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+```php
+    use Filament\Widgets\View\WidgetsRenderHook;
+```
+
+- `WidgetsRenderHook::TABLE_WIDGET_END` - End of the [table widget](../panels/dashboard#table-widgets), after the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+- `WidgetsRenderHook::TABLE_WIDGET_START` - Start of the [table widget](../panels/dashboard#table-widgets), before the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+
 
 ## Scoping render hooks
 
@@ -113,10 +134,11 @@ Some render hooks can be given a "scope", which allows them to only be output on
 
 ```php
 use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Support\Facades\Blade;
 
 FilamentView::registerRenderHook(
-    'panels::page.start',
+    PanelsRenderHook::PAGE_START,
     fn (): View => view('warning-banner'),
     scopes: \App\Filament\Resources\UserResource\Pages\EditUser::class,
 );
@@ -126,9 +148,10 @@ You can also pass an array of scopes to register the render hook for:
 
 ```php
 use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 
 FilamentView::registerRenderHook(
-    'panels::page.start',
+    PanelsRenderHook::PAGE_START,
     fn (): View => view('warning-banner'),
     scopes: [
         \App\Filament\Resources\UserResource\Pages\CreateUser::class,
@@ -141,9 +164,10 @@ Some render hooks for the [Panel Builder](#panel-builder-render-hooks) allow you
 
 ```php
 use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 
 FilamentView::registerRenderHook(
-    'panels::page.start',
+    PanelsRenderHook::PAGE_START,
     fn (): View => view('warning-banner'),
     scopes: \App\Filament\Resources\UserResource::class,
 );
@@ -155,9 +179,10 @@ The `$scopes` are passed to the render hook function, and you can use them to de
 
 ```php
 use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 
 FilamentView::registerRenderHook(
-    'panels::page.start',
+    PanelsRenderHook::PAGE_START,
     fn (array $scopes): View => view('warning-banner', ['scopes' => $scopes]),
     scopes: \App\Filament\Resources\UserResource::class,
 );
@@ -168,17 +193,17 @@ FilamentView::registerRenderHook(
 Plugin developers might find it useful to expose render hooks to their users. You do not need to register them anywhere, simply output them in Blade like so:
 
 ```blade
-{{ \Filament\Support\Facades\FilamentView::renderHook('panels::body.start') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START) }}
 ```
 
 To provide scope your render hook, you can pass it as the second argument to `renderHook()`. For instance, if your hook is inside a Livewire component, you can pass the class of the component using `static::class`:
 
 ```blade
-{{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.start', scopes: $this->getRenderHookScopes()) }}
+{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: $this->getRenderHookScopes()) }}
 ```
 
 You can even pass multiple scopes as an array, and all render hooks that match any of the scopes will be rendered:
 
 ```blade
-{{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.start', scopes: [static::class, \App\Filament\Resources\UserResource::class]) }}
+{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: [static::class, \App\Filament\Resources\UserResource::class]) }}
 ```

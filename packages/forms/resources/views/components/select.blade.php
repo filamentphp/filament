@@ -32,8 +32,10 @@
         :suffix-icon="$suffixIcon"
         :suffix-icon-color="$getSuffixIconColor()"
         :valid="! $errors->has($statePath)"
-        class="fi-fo-select"
-        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
+        :attributes="
+            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+                ->class(['fi-fo-select'])
+        "
     >
         @if ((! ($isSearchable() || $isMultiple()) && $isNative()))
             <x-filament::input.select
@@ -141,7 +143,6 @@
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 {{
                     $attributes
-                        ->merge($getExtraAttributes(), escape: false)
                         ->merge($getExtraAlpineAttributes(), escape: false)
                         ->class([
                             '[&_.choices\_\_inner]:ps-0' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
