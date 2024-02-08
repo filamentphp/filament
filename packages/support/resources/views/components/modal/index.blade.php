@@ -87,7 +87,7 @@
     }"
     @if ($id)
         x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') close()"
-    x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
+        x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
     @endif
     x-trap.noscroll="isOpen"
     x-bind:class="{
@@ -108,10 +108,7 @@
         </div>
     @endif
 
-    <div
-        x-cloak
-        x-show="isOpen"
-    >
+    <div x-cloak x-show="isOpen">
         <div
             aria-hidden="true"
             x-show="isOpen"
