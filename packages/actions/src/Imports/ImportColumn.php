@@ -532,6 +532,7 @@ class ImportColumn extends Component
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
+            'column' => [$this],
             'data' => [$this->getImporter()->getData()],
             'importer' => [$this->getImporter()],
             'options' => [$this->getImporter()->getOptions()],
@@ -546,6 +547,7 @@ class ImportColumn extends Component
         $record = $this->getRecord();
 
         return match ($parameterType) {
+            ImportColumn::class => [$this],
             Importer::class => [$this->getImporter()],
             Model::class, $record ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),

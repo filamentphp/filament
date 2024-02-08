@@ -136,6 +136,7 @@ class ExportColumn extends Component
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
+            'column' => [$this],
             'exporter' => [$this->getExporter()],
             'options' => [$this->getExporter()->getOptions()],
             'record' => [$this->getRecord()],
@@ -148,6 +149,7 @@ class ExportColumn extends Component
         $record = $this->getRecord();
 
         return match ($parameterType) {
+            ExportColumn::class => [$this],
             Exporter::class => [$this->getExporter()],
             Model::class, $record ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
