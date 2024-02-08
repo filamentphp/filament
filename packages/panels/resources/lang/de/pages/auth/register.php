@@ -49,7 +49,6 @@ return [
         'throttled' => [
             'title' => 'Zu viele Anmeldeversuche.',
             'body' => 'Bitte in :seconds Sekunden nochmal versuchen.',
-
         ],
 
     ],
