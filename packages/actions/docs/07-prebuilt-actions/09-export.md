@@ -579,6 +579,19 @@ public function getJobTags(): array
 
 If you'd like to customize the tags that are applied to jobs of a certain exporter, you may override this method in your exporter class.
 
+### Customizing the export job batch name
+
+By default, the export system doesn't define any name for the job batches.
+
+```php
+public function getJobBatchName(): ?string
+{
+    return null;
+}
+```
+
+If you'd like to customize the name that are applied to job batches of a certain exporter, you may override this method in your exporter class.
+
 ## Authorization
 
 By default, only the user who started the export may download files that get generated. If you'd like to customize the authorization logic, you may create an `ExportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/10.x/authorization#registering-policies):

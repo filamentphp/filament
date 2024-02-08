@@ -264,6 +264,11 @@ abstract class Importer
         return null;
     }
 
+    public function getJobBatchName(): ?string
+    {
+        return null;
+    }
+
     /**
      * @return array<ImportColumn>
      */
