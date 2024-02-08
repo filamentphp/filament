@@ -614,16 +614,14 @@ If you'd like to customize the tags that are applied to jobs of a certain import
 
 ### Customizing the import job batch name
 
-By default, the import system doesn't define any name for the job batches.
+By default, the import system doesn't define any name for the job batches. If you'd like to customize the name that is applied to job batches of a certain importer, you may override the `getJobBatchName()` method in your importer class:
 
 ```php
 public function getJobBatchName(): ?string
 {
-    return null;
+    return 'product-import';
 }
 ```
-
-If you'd like to customize the name that are applied to job batches of a certain importer, you may override this method in your importer class.
 
 ## Customizing import validation messages
 
