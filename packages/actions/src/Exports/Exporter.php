@@ -105,6 +105,11 @@ abstract class Exporter
         return null;
     }
 
+    public function getJobBatchName(): ?string
+    {
+        return null;
+    }
+
     /**
      * @return array<ExportColumn>
      */

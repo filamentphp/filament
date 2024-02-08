@@ -612,6 +612,17 @@ public function getJobTags(): array
 
 If you'd like to customize the tags that are applied to jobs of a certain importer, you may override this method in your importer class.
 
+### Customizing the import job batch name
+
+By default, the import system doesn't define any name for the job batches. If you'd like to customize the name that is applied to job batches of a certain importer, you may override the `getJobBatchName()` method in your importer class:
+
+```php
+public function getJobBatchName(): ?string
+{
+    return 'product-import';
+}
+```
+
 ## Customizing import validation messages
 
 The import system will automatically validate the CSV file before it is imported. If there are any errors, the user will be shown a list of them, and the import will not be processed. If you'd like to override any default validation messages, you may do so by overriding the `getValidationMessages()` method on your importer class:

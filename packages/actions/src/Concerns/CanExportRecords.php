@@ -174,6 +174,7 @@ trait CanExportRecords
             $job = $action->getJob();
             $jobQueue = $exporter->getJobQueue();
             $jobConnection = $exporter->getJobConnection();
+            $jobBatchName = $exporter->getJobBatchName();
 
             // We do not want to send the loaded user relationship to the queue in job payloads,
             // in case it contains attributes that are not serializable, such as binary columns.
@@ -201,6 +202,10 @@ trait CanExportRecords
                     ->when(
                         filled($jobConnection),
                         fn (PendingBatch $batch) => $batch->onConnection($jobConnection),
+                    )
+                    ->when(
+                        filled($jobBatchName),
+                        fn (PendingBatch $batch) => $batch->name($jobBatchName),
                     )
                     ->allowFailures(),
                 ...(($hasXlsx && (! $hasCsv)) ? [$makeCreateXlsxFileJob()] : []),
