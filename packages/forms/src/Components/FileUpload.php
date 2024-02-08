@@ -204,7 +204,7 @@ class FileUpload extends BaseFileUpload
     {
         $this->panelLayout = $layout;
 
-        if($layout === 'grid') {
+        if ($layout === 'grid') {
             $this->itemAspectRatio(1);
         }
 
