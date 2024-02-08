@@ -219,6 +219,22 @@ Repeater::make('qualifications')
     ])
 ```
 
+When using a Select field depending on a relationship nested within the Repeater schema, it may be necesary to use `saveRelationshipsUsing(null)` if you experience an `Call to undefined method Illuminate\Database\Eloquent\Relations\HasOne::associate()` exception.
+
+```php
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
+
+Repeater::make('specimens')
+    ->relationship('specimens')
+    ->schema([
+         Select::make('specimen_container_id')
+             ->relationship('specimen_container')
+             ->saveRelationshipsUsing(null),
+        // ...
+    ])
+```
+
 When using `disabled()` with `relationship()`, ensure that `disabled()` is called before `relationship()`. This ensures that the `dehydrated()` call from within `relationship()` is not overridden by the call from `disabled()`:
 
 ```php
