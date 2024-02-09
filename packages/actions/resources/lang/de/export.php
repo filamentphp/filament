@@ -62,12 +62,12 @@ return [
 
         'max_rows' => [
             'title' => 'Der Export ist zu groß',
-            'body' => 'Nicht mehr als eine Zeile auf einmal exportieren.|Nicht mehr als :count Zeilen auf einmal exportieren.',
+            'body' => 'Nicht mehr als 1 Zeile auf einmal exportieren.|Nicht mehr als :count Zeilen auf einmal exportieren.',
         ],
 
         'started' => [
-            'title' => 'Der Export ist gestartet',
-            'body' => 'Der Export ist gestartet und eine Zeile wird im Hintergrund verarbeitet.| Der Export ist gestartet und :count Zeilen werden im Hintergrund verarbeitet.',
+            'title' => 'Export gestartet',
+            'body' => 'Der Export wurde gestartet und 1 Zeile wird im Hintergrund verarbeitet.| Der Export wurde gestartet und :count Zeilen werden im Hintergrund verarbeitet.',
         ],
 
     ],

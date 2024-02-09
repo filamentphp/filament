@@ -158,6 +158,17 @@ TextColumn::make('description')
     ->words(10)
 ```
 
+## Limiting text to a specific number of lines
+
+You may want to limit text to a specific number of lines instead of limiting it to a fixed length. Clamping text to a number of lines is useful in responsive interfaces where you want to ensure a consistent experience across all screen sizes. This can be achieved using the `lineClamp()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')
+    ->lineClamp(2)
+```
+
 ## Adding a prefix or suffix
 
 You may add a prefix or suffix to the cell's value:
