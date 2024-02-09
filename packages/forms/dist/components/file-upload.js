@@ -25,7 +25,7 @@ In order to be iterable, non-array objects must have a [Symbol.iterator]() metho
 <g>${v.replace(/&nbsp;/g," ")}</g>
 
 `}let R=t.aspectRatio||I/y,S=y,D=S*R,x=typeof t.scaleToFit>"u"||t.scaleToFit,O=t.center?t.center.x:.5,z=t.center?t.center.y:.5,A=lo({width:y,height:I},so({width:S,height:D},R),t.rotation,x?{x:O,y:z}:{x:.5,y:.5}),F=t.zoom*A,w=t.rotation*(180/Math.PI),L={x:S*.5,y:D*.5},C={x:L.x-y*O,y:L.y-I*z},P=[`rotate(${w} ${L.x} ${L.y})`,`translate(${L.x} ${L.y})`,`scale(${F})`,`translate(${-L.x} ${-L.y})`,`translate(${C.x} ${C.y})`],G=t.flip&&t.flip.horizontal,B=t.flip&&t.flip.vertical,X=[`scale(${G?-1:1} ${B?-1:1})`,`translate(${G?-y:0} ${B?-I:0})`],q=`<?xml version="1.0" encoding="UTF-8"?>
-<svg width="${S}${b}" height="${D}${E}"
+<svg width="${S}${b}" height="${D}${E}" 
 viewBox="0 0 ${S} ${D}" ${r?'style="background:'+r+'" ':""}
 preserveAspectRatio="xMinYMin"
 xmlns:xlink="http://www.w3.org/1999/xlink"
