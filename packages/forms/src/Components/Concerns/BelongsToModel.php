@@ -34,7 +34,7 @@ trait BelongsToModel
             return;
         }
 
-        if ($this->getRecord() === null || (!$this->getRecord()?->exists && !$this->getRecord()?->isDirty())) {
+        if ($this->getRecord() === null || (! $this->getRecord()?->exists && ! $this->getRecord()?->isDirty())) {
             return;
         }
 

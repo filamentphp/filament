@@ -21,8 +21,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
-
 use ReflectionClass;
+
 use function Filament\Support\is_app_url;
 
 /**
@@ -189,11 +189,12 @@ class EditRecord extends Page
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record->update($this->filterRelationships($record, $data));
+
         return $record;
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     protected function filterRelationships(Model $record, array $data): array
     {
@@ -209,6 +210,7 @@ class EditRecord extends Page
             }
         }
         $relations = array_diff($relations, $record->getFillable());
+
         return array_diff_key($data, array_fill_keys($relations, true));
     }
 

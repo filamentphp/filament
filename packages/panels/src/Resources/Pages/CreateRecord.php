@@ -15,8 +15,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-
 use ReflectionClass;
+
 use function Filament\Support\is_app_url;
 
 /**
@@ -165,7 +165,7 @@ class CreateRecord extends Page
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     protected function filterRelationships(Model $record, array $data): array
     {
@@ -181,6 +181,7 @@ class CreateRecord extends Page
             }
         }
         $relations = array_diff($relations, $record->getFillable());
+
         return array_diff_key($data, array_fill_keys($relations, true));
     }
 
