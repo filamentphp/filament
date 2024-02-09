@@ -62,6 +62,7 @@
                     isOpenable: @js($isOpenable()),
                     isPreviewable: @js($isPreviewable()),
                     isReorderable: @js($isReorderable()),
+                    itemPanelAspectRatio: @js($getItemPanelAspectRatio()),
                     loadingIndicatorPosition: @js($getLoadingIndicatorPosition()),
                     locale: @js(app()->getLocale()),
                     panelAspectRatio: @js($getPanelAspectRatio()),
