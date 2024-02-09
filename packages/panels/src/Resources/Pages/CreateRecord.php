@@ -13,8 +13,10 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
+use ReflectionClass;
 use function Filament\Support\is_app_url;
 
 /**
@@ -86,8 +88,6 @@ class CreateRecord extends Page
 
             $this->record = $this->handleRecordCreation($data);
 
-            $this->form->model($this->getRecord())->saveRelationships();
-
             $this->callHook('afterCreate');
         } catch (Halt $exception) {
             return;
@@ -148,7 +148,8 @@ class CreateRecord extends Page
      */
     protected function handleRecordCreation(array $data): Model
     {
-        $record = new ($this->getModel())($data);
+        $record = new ($this->getModel());
+        $record->fill($this->filterRelationships($record, $data));
 
         if (
             static::getResource()::isScopedToTenant() &&
@@ -157,9 +158,30 @@ class CreateRecord extends Page
             return $this->associateRecordWithTenant($record, $tenant);
         }
 
+        $this->form->model($record)->saveRelationships();
         $record->save();
 
         return $record;
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    protected function filterRelationships(Model $record, array $data): array
+    {
+        if ($record::isUnguarded()) {
+            return $data;
+        }
+        $relations = [];
+        foreach ((new ReflectionClass($record))->getMethods() as $reflectionMethod) {
+            if ($returnType = $reflectionMethod->getReturnType()) {
+                if (in_array($returnType->getName(), [BelongsTo::class])) {
+                    $relations[] = $reflectionMethod->name;
+                }
+            }
+        }
+        $relations = array_diff($relations, $record->getFillable());
+        return array_diff_key($data, array_fill_keys($relations, true));
     }
 
     protected function associateRecordWithTenant(Model $record, Model $tenant): Model

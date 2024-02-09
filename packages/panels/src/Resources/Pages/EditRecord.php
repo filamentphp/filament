@@ -19,8 +19,10 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 
+use ReflectionClass;
 use function Filament\Support\is_app_url;
 
 /**
@@ -186,9 +188,28 @@ class EditRecord extends Page
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $record->update($data);
-
+        $record->update($this->filterRelationships($record, $data));
         return $record;
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    protected function filterRelationships(Model $record, array $data): array
+    {
+        if ($record::isUnguarded()) {
+            return $data;
+        }
+        $relations = [];
+        foreach ((new ReflectionClass($record))->getMethods() as $reflectionMethod) {
+            if ($returnType = $reflectionMethod->getReturnType()) {
+                if (in_array($returnType->getName(), [BelongsTo::class])) {
+                    $relations[] = $reflectionMethod->name;
+                }
+            }
+        }
+        $relations = array_diff($relations, $record->getFillable());
+        return array_diff_key($data, array_fill_keys($relations, true));
     }
 
     /**
