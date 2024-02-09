@@ -223,7 +223,6 @@ trait HasState
     public function getState(bool $shouldCallHooksBefore = true): array
     {
 
-
         $state = $this->validate();
 
         if ($shouldCallHooksBefore) {

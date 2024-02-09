@@ -187,6 +187,7 @@ class EditRecord extends Page
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record->forceFill($data)->save();
+
         return $record;
     }
 
