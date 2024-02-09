@@ -18,7 +18,7 @@ class MakeIssueCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Generates a link to the Filament issue template with version informations pre-filled.';
+    protected $description = 'Generates a link to the Filament issue page and pre-fills the issue template.';
 
     /**
      * Execute the console command.
