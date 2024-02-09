@@ -194,13 +194,13 @@ class EditRecord extends Page
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function filterRelationships(Model $record, array $data): array
+    protected function filterRelationships(Model $record, array $data, ?array $syncedRelations = null): array
     {
         if ($record::isUnguarded()) {
             return $data;
         }
 
-        $relations = array_diff(array_keys($this->form->model($record)->getRelationships()), $record->getFillable());
+        $relations = array_diff(array_keys($syncedRelations ?? $this->form->model($record)->getRelationships()), $record->getFillable());
 
         return array_diff_key($data, array_fill_keys($relations, true));
     }

@@ -147,7 +147,8 @@ class CreateRecord extends Page
     protected function handleRecordCreation(array $data): Model
     {
         $record = new ($this->getModel());
-        $record->fill($this->filterRelationships($record, $data));
+        $syncedRelations = $this->form->model($record)->syncRelationships();
+        $record->fill($this->filterRelationships($record, $data, $syncedRelations));
 
         if (
             static::getResource()::isScopedToTenant() &&
@@ -155,9 +156,8 @@ class CreateRecord extends Page
         ) {
             return $this->associateRecordWithTenant($record, $tenant);
         }
-
-        $this->form->model($record)->saveRelationships();
         $record->save();
+        $this->form->model($record)->saveRelationships();
 
         return $record;
     }
@@ -165,13 +165,13 @@ class CreateRecord extends Page
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function filterRelationships(Model $record, array $data): array
+    protected function filterRelationships(Model $record, array $data, ?array $syncedRelations = null): array
     {
         if ($record::isUnguarded()) {
             return $data;
         }
 
-        $relations = array_diff(array_keys($this->form->model($record)->getRelationships()), $record->getFillable());
+        $relations = array_diff(array_keys($syncedRelations ?? $this->form->model($record)->getRelationships()), $record->getFillable());
 
         return array_diff_key($data, array_fill_keys($relations, true));
     }

@@ -26,7 +26,7 @@ trait BelongsToModel
         return $this;
     }
 
-    public function saveRelationships(): void
+    public function saveRelationships(bool $recordShouldExist = true): void
     {
         $callback = $this->saveRelationshipsUsing;
 
@@ -34,7 +34,7 @@ trait BelongsToModel
             return;
         }
 
-        if ($this->getRecord() === null || (! $this->getRecord()?->exists && ! $this->getRecord()?->isDirty())) {
+        if ($this->getRecord() === null || ($recordShouldExist && ! $this->getRecord()->exists)) {
             return;
         }
 

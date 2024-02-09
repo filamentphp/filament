@@ -3,6 +3,7 @@
 namespace Filament\Forms\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait BelongsToModel
 {
@@ -13,6 +14,33 @@ trait BelongsToModel
         $this->model = $model;
 
         return $this;
+    }
+
+    public function syncRelationships($syncedRelationships = []): array
+    {
+        foreach ($this->getComponents(withHidden: true) as $component) {
+            $component->saveRelationshipsBeforeChildren();
+
+            $shouldSaveRelationshipsWhenDisabled = $component->shouldSaveRelationshipsWhenDisabled();
+
+            foreach ($component->getChildComponentContainers(withHidden: $component->shouldSaveRelationshipsWhenHidden()) as $container) {
+                if ((! $shouldSaveRelationshipsWhenDisabled) && $container->isDisabled()) {
+                    continue;
+                }
+
+                $syncedRelationships = $container->syncRelationships($syncedRelationships);
+            }
+            if (
+                method_exists($component, 'getRelationship')
+                && method_exists($component, 'getName')
+                && $component->getRelationship() instanceof BelongsTo
+            ) {
+                $component->saveRelationships(false);
+                $syncedRelationships[$component->getName()] = $component->getRelationship();
+            }
+        }
+
+        return $syncedRelationships;
     }
 
     public function saveRelationships(): void
