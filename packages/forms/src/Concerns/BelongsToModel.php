@@ -16,7 +16,7 @@ trait BelongsToModel
         return $this;
     }
 
-    public function syncRelationships($syncedRelationships = []): array
+    public function associateRelationships($associatedRelationships = []): array
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
             $component->saveRelationshipsBeforeChildren();
@@ -28,7 +28,7 @@ trait BelongsToModel
                     continue;
                 }
 
-                $syncedRelationships = $container->syncRelationships($syncedRelationships);
+                $associatedRelationships = $container->associateRelationships($associatedRelationships);
             }
             if (
                 method_exists($component, 'getRelationship')
@@ -36,11 +36,11 @@ trait BelongsToModel
                 && $component->getRelationship() instanceof BelongsTo
             ) {
                 $component->saveRelationships(false);
-                $syncedRelationships[$component->getName()] = $component->getRelationship();
+                $associatedRelationships[$component->getName()] = $component->getRelationship();
             }
         }
 
-        return $syncedRelationships;
+        return $associatedRelationships;
     }
 
     public function saveRelationships(): void

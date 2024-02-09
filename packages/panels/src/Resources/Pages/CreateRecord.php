@@ -147,8 +147,8 @@ class CreateRecord extends Page
     protected function handleRecordCreation(array $data): Model
     {
         $record = new ($this->getModel());
-        $syncedRelations = $this->form->model($record)->syncRelationships();
-        $record->fill($this->filterRelationships($record, $data, $syncedRelations));
+        $associatedRelations = $this->form->model($record)->associateRelationships();
+        $record->fill($this->filterRelationships($record, $data, $associatedRelations));
 
         if (
             static::getResource()::isScopedToTenant() &&
