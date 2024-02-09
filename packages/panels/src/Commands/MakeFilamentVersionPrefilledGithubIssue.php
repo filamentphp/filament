@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Filament\Commands;
 
 use Illuminate\Console\Command;
 
