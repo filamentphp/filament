@@ -86,6 +86,8 @@ class CreateRecord extends Page
 
             $this->record = $this->handleRecordCreation($data);
 
+            $this->form->model($this->getRecord())->saveRelationships();
+
             $this->callHook('afterCreate');
         } catch (Halt $exception) {
             return;
@@ -156,8 +158,6 @@ class CreateRecord extends Page
             return $this->associateRecordWithTenant($record, $tenant);
         }
         $record->save();
-        $this->form->model($record)->saveRelationships();
-
         return $record;
     }
 
