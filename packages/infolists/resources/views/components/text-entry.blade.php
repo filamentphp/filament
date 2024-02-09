@@ -114,6 +114,7 @@
                                 $icon = $getIcon($state);
                                 $iconColor = $getIconColor($state);
                                 $itemIsCopyable = $isCopyable($state);
+                                $lineClamp = $getLineClamp($state);
                                 $size = $getSize($state);
                                 $weight = $getWeight($state);
 
@@ -200,6 +201,7 @@
                                             @class([
                                                 'group-hover/item:underline group-focus-visible/item:underline' => $url,
                                                 $proseClasses => $isProse || $isMarkdown,
+                                                'line-clamp-[--line-clamp]' => $lineClamp,
                                                 match ($size) {
                                                     TextEntrySize::ExtraSmall, 'xs' => 'text-xs',
                                                     TextEntrySize::Small, 'sm', null => 'text-sm leading-6',
@@ -236,6 +238,7 @@
                                                     shades: [400, 600],
                                                     alias: 'infolists::components.text-entry.item.label',
                                                 ) => ! in_array($color, [null, 'gray']),
+                                                "--line-clamp: {$lineClamp}" => $lineClamp,
                                             ])
                                         >
                                             {{ $formattedState }}

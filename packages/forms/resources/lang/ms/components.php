@@ -422,19 +422,19 @@ return [
     'text_input' => [
 
         'actions' => [
-    
+
             'hide_password' => [
                 'label' => 'Sembunyikan kata laluan',
             ],
-    
+
             'show_password' => [
                 'label' => 'Tunjukkan kata laluan',
             ],
-    
+
         ],
-    
+
     ],
-    
+
     'toggle_buttons' => [
 
         'boolean' => [
