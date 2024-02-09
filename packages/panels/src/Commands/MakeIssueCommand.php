@@ -23,7 +23,7 @@ class MakeIssueCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         $filament = \Composer\InstalledVersions::getPrettyVersion('filament/filament');
         $laravel = \Composer\InstalledVersions::getPrettyVersion('laravel/framework');
