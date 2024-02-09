@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class MorphToSelect extends Component
 {
     use Concerns\CanAllowHtml;
+    use Concerns\CanBeNative;
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\HasLoadingMessage;
@@ -20,8 +21,6 @@ class MorphToSelect extends Component
      * @var view-string
      */
     protected string $view = 'filament-forms::components.fieldset';
-
-    protected bool | Closure $isNative = true;
 
     protected bool | Closure $isRequired = false;
 
@@ -104,13 +103,6 @@ class MorphToSelect extends Component
         ];
     }
 
-    public function native(bool | Closure $condition = true): static
-    {
-        $this->isNative = $condition;
-
-        return $this;
-    }
-
     public function optionsLimit(int | Closure $limit): static
     {
         $this->optionsLimit = $limit;
@@ -152,11 +144,6 @@ class MorphToSelect extends Component
         }
 
         return $types;
-    }
-
-    public function isNative(): bool
-    {
-        return (bool) $this->evaluate($this->isNative);
     }
 
     public function isRequired(): bool
