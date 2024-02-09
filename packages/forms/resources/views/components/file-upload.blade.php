@@ -123,7 +123,7 @@
                     },
                 ])
                 ->style([
-                    "--grid-cols: $gridColumns;" => $gridColumns
+                    "--grid-cols: $gridColumns;" => $gridColumns,
                 ])
         }}
     >
@@ -161,19 +161,19 @@
             >
                 <div
                     aria-hidden="true"
-                    class="fixed inset-0 w-full h-full cursor-pointer bg-black/50"
+                    class="fixed inset-0 h-full w-full cursor-pointer bg-black/50"
                     style="will-change: transform"
                 ></div>
 
                 <div
-                    class="z-10 flex items-center justify-center w-full h-full isolate"
+                    class="isolate z-10 flex h-full w-full items-center justify-center"
                 >
                     <div
-                        class="flex flex-col w-full h-full mx-auto overflow-hidden bg-white rounded-xl ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10 lg:flex-row"
+                        class="mx-auto flex h-full w-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10 lg:flex-row"
                     >
-                        <div class="flex-1 w-full p-4 overflow-auto lg:h-full">
-                            <div class="w-full h-full">
-                                <img x-ref="editor" class="w-auto h-full" />
+                        <div class="w-full flex-1 overflow-auto p-4 lg:h-full">
+                            <div class="h-full w-full">
+                                <img x-ref="editor" class="h-full w-auto" />
                             </div>
                         </div>
 
@@ -182,10 +182,10 @@
                         >
                             <div class="flex-1 overflow-hidden">
                                 <div
-                                    class="flex flex-col h-full overflow-y-auto"
+                                    class="flex h-full flex-col overflow-y-auto"
                                 >
                                     <div class="flex-1 overflow-auto">
-                                        <div class="p-4 space-y-6">
+                                        <div class="space-y-6 p-4">
                                             <div class="w-full space-y-3">
                                                 @foreach ([
                                                     [
@@ -220,10 +220,10 @@
                                                     ],
                                                 ] as $input)
                                                     <label
-                                                        class="flex items-center w-full text-sm bg-gray-100 border border-gray-300 rounded-lg shadow-sm dark:border-gray-700 dark:bg-gray-800"
+                                                        class="flex w-full items-center rounded-lg border border-gray-300 bg-gray-100 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-800"
                                                     >
                                                         <span
-                                                            class="flex items-center self-stretch justify-center w-20 px-2 border-gray-300 shrink-0 border-e dark:border-gray-700"
+                                                            class="flex w-20 shrink-0 items-center justify-center self-stretch border-e border-gray-300 px-2 dark:border-gray-700"
                                                         >
                                                             {{ $input['label'] }}
                                                         </span>
@@ -240,7 +240,7 @@
                                                         />
 
                                                         <span
-                                                            class="flex items-center self-stretch justify-center w-16 px-2 border-gray-300 border-s dark:border-gray-700"
+                                                            class="flex w-16 items-center justify-center self-stretch border-s border-gray-300 px-2 dark:border-gray-700"
                                                         >
                                                             {{ $input['unit'] }}
                                                         </span>
