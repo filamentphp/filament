@@ -277,6 +277,17 @@ ExportColumn::make('users_avg_age')->avg([
 ], 'age')
 ```
 
+### Injecting current column instance
+
+If you wish to access the current column instance, define a `$column` on the `Closure` parameter:
+
+```php
+use Filament\Actions\Exports\ExportColumn;
+
+ExportColumn::make('birth_date')
+    ->label(fn (ExportColumn $column) => $column->getName())
+```
+
 ## Configuring the export formats
 
 By default, the export action will allow the user to choose between both CSV and XLSX formats. You can use the `ExportFormat` enum to customize this, by passing an array of formats to the `formats()` method on the action:

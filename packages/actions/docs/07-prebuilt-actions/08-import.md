@@ -320,6 +320,18 @@ ImportColumn::make('sku')
     })
 ```
 
+### Injecting current column instance
+
+If you wish to access the current column instance, define a `$column` on the `Closure` parameter:
+
+```php
+use Filament\Actions\Imports\ImportColumn;
+
+ImportColumn::make('birth_date')
+    ->label('Date of birth')
+    ->exampleHeader(fn (ImportColumn $column) => $column->getLabel())
+```
+
 ## Updating existing records when importing
 
 When generating an importer class, you will see this `resolveRecord()` method:
