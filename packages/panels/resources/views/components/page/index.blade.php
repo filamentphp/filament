@@ -32,10 +32,12 @@
             <x-filament-panels::header
                 :actions="$this->getCachedHeaderActions()"
                 :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
-                :attributes="new \Illuminate\View\ComponentAttributeBag([
-                    'heading' => $heading,
-                    'subheading' => $this->getSubheading(),
-                ])"
+                :attributes="
+                    new \Illuminate\View\ComponentAttributeBag([
+                        'heading' => $heading,
+                        'subheading' => $this->getSubheading(),
+                    ])
+                "
             />
         @endif
 
