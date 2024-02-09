@@ -13,9 +13,7 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use ReflectionClass;
 
 use function Filament\Support\is_app_url;
 
@@ -172,15 +170,8 @@ class CreateRecord extends Page
         if ($record::isUnguarded()) {
             return $data;
         }
-        $relations = [];
-        foreach ((new ReflectionClass($record))->getMethods() as $reflectionMethod) {
-            if ($returnType = $reflectionMethod->getReturnType()) {
-                if (in_array($returnType->getName(), [BelongsTo::class])) {
-                    $relations[] = $reflectionMethod->name;
-                }
-            }
-        }
-        $relations = array_diff($relations, $record->getFillable());
+
+        $relations = array_diff(array_keys($this->form->model($record)->getRelationships()), $record->getFillable());
 
         return array_diff_key($data, array_fill_keys($relations, true));
     }
