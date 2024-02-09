@@ -4,7 +4,7 @@ namespace Filament\Commands;
 
 use Illuminate\Console\Command;
 
-class MakeFilamentVersionPrefilledGithubIssue extends Command
+class MakeIssueCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -18,7 +18,7 @@ class MakeFilamentVersionPrefilledGithubIssue extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Generates a link to the Filament issue template with version informations pre-filled.';
 
     /**
      * Execute the console command.
