@@ -44,8 +44,6 @@ class FileUpload extends BaseFileUpload
 
     protected string | Closure | null $panelLayout = 'compact';
 
-    protected int | Closure | null $gridColumns = null;
-
     protected string | Closure $removeUploadedFileButtonPosition = 'left';
 
     protected bool | Closure $shouldAppendFiles = false;
@@ -209,16 +207,6 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function grid(int | Closure | null $columns = null): static
-    {
-        $this->panelLayout('grid');
-        $this->itemAspectRatio(1);
-
-        $this->gridColumns = $columns;
-
-        return $this;
-    }
-
     public function removeUploadedFileButtonPosition(string | Closure | null $position): static
     {
         $this->removeUploadedFileButtonPosition = $position;
@@ -294,11 +282,6 @@ class FileUpload extends BaseFileUpload
     public function getPanelLayout(): ?string
     {
         return $this->evaluate($this->panelLayout);
-    }
-
-    public function getGridColumns(): ?int
-    {
-        return (int) $this->evaluate($this->gridColumns) ?: null;
     }
 
     public function getRemoveUploadedFileButtonPosition(): string

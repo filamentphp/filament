@@ -30,12 +30,12 @@
 
 .filepond--root[data-style-panel-layout='grid'] .filepond--item {
     @apply inline;
-    width: calc(100% / var(--grid-cols, 2) - 0.5rem);
+    width: calc(50% - 0.5rem);
 }
 
 @media screen(lg) {
     .filepond--root[data-style-panel-layout='grid'] .filepond--item {
-        width: calc(100% / var(--grid-cols, 3) - 0.5rem);
+        width: calc(33.33% - 0.5rem);
     }
 }
 

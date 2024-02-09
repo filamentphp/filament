@@ -16,8 +16,6 @@
     if (! $alignment instanceof Alignment) {
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
     }
-
-    $gridColumns = $getGridColumns();
 @endphp
 
 <x-dynamic-component
@@ -121,9 +119,6 @@
                         Alignment::Between, Alignment::Justify => 'justify-between',
                         default => $alignment,
                     },
-                ])
-                ->style([
-                    "--grid-cols: $gridColumns;" => $gridColumns,
                 ])
         }}
     >
