@@ -21,6 +21,8 @@ class MorphToSelect extends Component
      */
     protected string $view = 'filament-forms::components.fieldset';
 
+    protected bool | Closure $isNative = true;
+
     protected bool | Closure $isRequired = false;
 
     protected int | Closure $optionsLimit = 50;
@@ -66,6 +68,7 @@ class MorphToSelect extends Component
                     fn (Type $type): string => $type->getLabel(),
                     $types,
                 ))
+                ->native($this->isNative())
                 ->required($isRequired)
                 ->live()
                 ->afterStateUpdated(function (Set $set) use ($keyColumn) {
@@ -78,6 +81,7 @@ class MorphToSelect extends Component
                 ->options($selectedType?->getOptionsUsing)
                 ->getSearchResultsUsing($selectedType?->getSearchResultsUsing)
                 ->getOptionLabelUsing($selectedType?->getOptionLabelUsing)
+                ->native($this->isNative())
                 ->required(filled($selectedType))
                 ->hidden(blank($selectedType))
                 ->dehydratedWhenHidden()
@@ -98,6 +102,13 @@ class MorphToSelect extends Component
                     $this->callAfterStateUpdated();
                 }),
         ];
+    }
+
+    public function native(bool | Closure $condition = true): static
+    {
+        $this->isNative = $condition;
+
+        return $this;
     }
 
     public function optionsLimit(int | Closure $limit): static
@@ -141,6 +152,11 @@ class MorphToSelect extends Component
         }
 
         return $types;
+    }
+
+    public function isNative(): bool
+    {
+        return (bool) $this->evaluate($this->isNative);
     }
 
     public function isRequired(): bool
