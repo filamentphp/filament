@@ -613,7 +613,7 @@ abstract class Resource
 
     public static function routes(Panel $panel): void
     {
-        Route::name(static::getRelativeRouteName())
+        Route::name(static::getRelativeRouteName() . '.')
             ->prefix(static::getRoutePrefix())
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
@@ -627,8 +627,7 @@ abstract class Resource
     public static function getRelativeRouteName(): string
     {
         return (string) str(static::getSlug())
-            ->replace('/', '.')
-            ->append('.');
+            ->replace('/', '.');
     }
 
     public static function getRoutePrefix(): string
