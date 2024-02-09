@@ -975,6 +975,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
                 return;
             }
+
             $relationship->sync($state ?? []);
         });
 
