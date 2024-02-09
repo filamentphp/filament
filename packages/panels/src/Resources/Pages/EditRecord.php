@@ -186,23 +186,8 @@ class EditRecord extends Page
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $record->update($this->filterRelationships($record, $data));
-
+        $record->forceFill($data)->save();
         return $record;
-    }
-
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    protected function filterRelationships(Model $record, array $data, ?array $syncedRelations = null): array
-    {
-        if ($record::isUnguarded()) {
-            return $data;
-        }
-
-        $relations = array_diff(array_keys($syncedRelations ?? $this->form->model($record)->getRelationships()), $record->getFillable());
-
-        return array_diff_key($data, array_fill_keys($relations, true));
     }
 
     /**

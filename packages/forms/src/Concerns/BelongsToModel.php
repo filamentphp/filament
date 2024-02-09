@@ -16,33 +16,6 @@ trait BelongsToModel
         return $this;
     }
 
-    public function associateRelationships($associatedRelationships = []): array
-    {
-        foreach ($this->getComponents(withHidden: true) as $component) {
-            $component->saveRelationshipsBeforeChildren();
-
-            $shouldSaveRelationshipsWhenDisabled = $component->shouldSaveRelationshipsWhenDisabled();
-
-            foreach ($component->getChildComponentContainers(withHidden: $component->shouldSaveRelationshipsWhenHidden()) as $container) {
-                if ((! $shouldSaveRelationshipsWhenDisabled) && $container->isDisabled()) {
-                    continue;
-                }
-
-                $associatedRelationships = $container->associateRelationships($associatedRelationships);
-            }
-            if (
-                method_exists($component, 'getRelationship')
-                && method_exists($component, 'getName')
-                && $component->getRelationship() instanceof BelongsTo
-            ) {
-                $component->saveRelationships(false);
-                $associatedRelationships[$component->getName()] = $component->getRelationship();
-            }
-        }
-
-        return $associatedRelationships;
-    }
-
     public function saveRelationships(): void
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
@@ -60,20 +33,6 @@ trait BelongsToModel
 
             $component->saveRelationships();
         }
-    }
-
-    public function getRelationships($relations = []): array
-    {
-        foreach ($this->getComponents(withHidden: true) as $component) {
-            foreach ($component->getChildComponentContainers(withHidden: true) as $container) {
-                $relations = $container->getRelationships($relations);
-            }
-            if (method_exists($component, 'getRelationship') && method_exists($component, 'getName')) {
-                $relations[$component->getName()] = $component->getRelationship();
-            }
-        }
-
-        return $relations;
     }
 
     public function loadStateFromRelationships(bool $andHydrate = false): void
