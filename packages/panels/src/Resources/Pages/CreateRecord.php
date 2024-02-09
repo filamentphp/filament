@@ -14,6 +14,7 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Facades\DB;
 
 use function Filament\Support\is_app_url;
 
@@ -74,6 +75,8 @@ class CreateRecord extends Page
         $this->authorizeAccess();
 
         try {
+            DB::beginTransaction();
+
             $this->callHook('beforeValidate');
 
             $data = $this->form->getState();
@@ -89,7 +92,11 @@ class CreateRecord extends Page
             $this->form->model($this->getRecord())->saveRelationships();
 
             $this->callHook('afterCreate');
+
+            DB::commit();
         } catch (Halt $exception) {
+            DB::rollBack();
+
             return;
         }
 

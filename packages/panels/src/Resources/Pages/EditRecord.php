@@ -20,6 +20,7 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 use function Filament\Support\is_app_url;
 
@@ -129,6 +130,7 @@ class EditRecord extends Page
         $this->authorizeAccess();
 
         try {
+            DB::beginTransaction();
             $this->callHook('beforeValidate');
 
             $data = $this->form->getState();
@@ -142,7 +144,11 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
+
+            DB::commit();
         } catch (Halt $exception) {
+            DB::rollBack();
+
             return;
         }
 
