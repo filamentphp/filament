@@ -158,6 +158,7 @@ class CreateRecord extends Page
             return $this->associateRecordWithTenant($record, $tenant);
         }
         $record->save();
+
         return $record;
     }
 
