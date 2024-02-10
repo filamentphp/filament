@@ -70,19 +70,6 @@ Schema::create('treatments', function (Blueprint $table) {
 
 Run the migrations using `php artisan migrate`.
 
-### Unguarding all models
-
-For brevity in this guide, we will disable Laravel's [mass assignment protection](https://laravel.com/docs/eloquent#mass-assignment). Filament only saves valid data to models so the models can be unguarded safely. To unguard all Laravel models at once, add `Model::unguard()` to the `boot()` method of `app/Providers/AppServiceProvider.php`:
-
-```php
-use Illuminate\Database\Eloquent\Model;
-
-public function boot(): void
-{
-    Model::unguard();
-}
-```
-
 ### Setting up relationships between models
 
 Let's set up relationships between the models. For our system, pet owners can own multiple pets (patients), and patients can have many treatments:
