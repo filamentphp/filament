@@ -626,8 +626,7 @@ abstract class Resource
 
     public static function getRelativeRouteName(): string
     {
-        return (string) str(static::getSlug())
-            ->replace('/', '.');
+        return (string) str(static::getSlug())->replace('/', '.');
     }
 
     public static function getRoutePrefix(): string
