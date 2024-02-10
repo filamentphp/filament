@@ -108,13 +108,13 @@ class FilamentServiceProvider extends PackageServiceProvider
             Commands\CacheComponentsCommand::class,
             Commands\ClearCachedComponentsCommand::class,
             Commands\MakeClusterCommand::class,
+            Commands\MakeIssueCommand::class,
             Commands\MakePageCommand::class,
             Commands\MakePanelCommand::class,
             Commands\MakeRelationManagerCommand::class,
             Commands\MakeResourceCommand::class,
             Commands\MakeThemeCommand::class,
             Commands\MakeUserCommand::class,
-            Commands\MakeIssueCommand::class,
         ];
 
         $aliases = [];
@@ -122,7 +122,7 @@ class FilamentServiceProvider extends PackageServiceProvider
         foreach ($commands as $command) {
             $class = 'Filament\\Commands\\Aliases\\' . class_basename($command);
 
-            if (!class_exists($class)) {
+            if (! class_exists($class)) {
                 continue;
             }
 

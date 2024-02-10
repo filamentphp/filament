@@ -2,6 +2,7 @@
 
 namespace Filament\Commands;
 
+use Composer\InstalledVersions;
 use Illuminate\Console\Command;
 
 class MakeIssueCommand extends Command
@@ -18,20 +19,20 @@ class MakeIssueCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Generates a link to the Filament issue page and pre-fills the issue template.';
+    protected $description = 'Generates a link to the Filament issue page and pre-fills the version numbers.';
 
     /**
      * Execute the console command.
      */
     public function handle(): void
     {
-        $filament = \Composer\InstalledVersions::getPrettyVersion('filament/filament');
-        $laravel = \Composer\InstalledVersions::getPrettyVersion('laravel/framework');
-        $livewire = \Composer\InstalledVersions::getPrettyVersion('livewire/livewire');
+        $filament = InstalledVersions::getPrettyVersion('filament/filament');
+        $laravel = InstalledVersions::getPrettyVersion('laravel/framework');
+        $livewire = InstalledVersions::getPrettyVersion('livewire/livewire');
         $php = \PHP_VERSION;
 
         $issueTemplate = 'bug_report.yml';
-        $baseGithubUrl = 'https://github.com/filamentphp/filament/issues/new';
+        $baseGithubUrl = 'https://github.com/filamentphp/filament/issues/new?';
 
         $queryParams = [
             'template' => $issueTemplate,
@@ -41,10 +42,21 @@ class MakeIssueCommand extends Command
             'php-version' => $php,
         ];
 
-        $queryString = http_build_query($queryParams);
+        $fullUrl = "{$baseGithubUrl}" . http_build_query($queryParams);
 
-        $fullUrl = $baseGithubUrl . '?' . $queryString;
+        $this->openGithubIssueInBrowser($fullUrl);
+    }
 
-        $this->info('Please fill out the issue template at ' . $fullUrl);
+    public function openGithubIssueInBrowser(string $url): void
+    {
+        if (PHP_OS_FAMILY === 'Darwin') {
+            exec('open "' . $url . '"');
+        }
+        if (PHP_OS_FAMILY === 'Linux') {
+            exec('xdg-open "' . $url . '"');
+        }
+        if (PHP_OS_FAMILY === 'Windows') {
+            exec('start "" "' . $url . '"');
+        }
     }
 }
