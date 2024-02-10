@@ -367,27 +367,7 @@ MorphToSelect::make('commentable')
     ])
 ```
 
-#### Allowing select to be non-native
-
-You may enable a more customizable JavaScript select using the `native(false)` method:
-
-```php
-use Filament\Forms\Components\MorphToSelect;
-use Illuminate\Database\Eloquent\Builder;
-
-MorphToSelect::make('commentable')
-    ->native(false)
-    ->types([
-        MorphToSelect\Type::make(Product::class)
-            ->titleAttribute('name')
-            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
-        MorphToSelect\Type::make(Post::class)
-            ->titleAttribute('title')
-            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
-    ])
-```
-
-> Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
+> Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 
 ## Allowing HTML in the option labels
 
