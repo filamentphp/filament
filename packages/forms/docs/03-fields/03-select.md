@@ -367,7 +367,7 @@ MorphToSelect::make('commentable')
     ])
 ```
 
-> Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
+> Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 
 ## Allowing HTML in the option labels
 

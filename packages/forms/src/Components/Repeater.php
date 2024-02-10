@@ -898,7 +898,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
                     $translatableContentDriver ?
                         $translatableContentDriver->updateRecord($record, $itemData) :
-                        $record->fill($itemData)->save();
+                        $record->forceFill($itemData)->save();
 
                     continue;
                 }
@@ -915,7 +915,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                     $record = $translatableContentDriver->makeRecord($relatedModel, $itemData);
                 } else {
                     $record = new $relatedModel();
-                    $record->fill($itemData);
+                    $record->forceFill($itemData);
                 }
 
                 $record = $relationship->save($record);

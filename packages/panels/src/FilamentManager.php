@@ -42,6 +42,13 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
+    public function __construct()
+    {
+        // Resolve the panel registry to set the current panel
+        // as the default, which uses a `resolving()` callback.
+        app()->resolved(PanelRegistry::class) || app(PanelRegistry::class);
+    }
+
     public function auth(): Guard
     {
         return $this->getCurrentPanel()->auth();
@@ -98,7 +105,7 @@ class FilamentManager
 
     public function getCurrentPanel(): ?Panel
     {
-        return $this->currentPanel ?? null;
+        return $this->currentPanel;
     }
 
     public function getDarkModeBrandLogo(): string | Htmlable | null
@@ -646,7 +653,7 @@ class FilamentManager
         return $this->getCurrentPanel()->isSidebarFullyCollapsibleOnDesktop();
     }
 
-    public function registerPanel(Panel | Closure $panel): void
+    public function registerPanel(Panel $panel): void
     {
         app(PanelRegistry::class)->register($panel);
     }

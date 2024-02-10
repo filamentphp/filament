@@ -132,6 +132,17 @@ TextEntry::make('description')
     ->words(10)
 ```
 
+## Limiting text to a specific number of lines
+
+You may want to limit text to a specific number of lines instead of limiting it to a fixed length. Clamping text to a number of lines is useful in responsive interfaces where you want to ensure a consistent experience across all screen sizes. This can be achieved using the `lineClamp()` method:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('description')
+    ->lineClamp(2)
+```
+
 ## Listing multiple values
 
 By default, if there are multiple values inside your text entry, they will be comma-separated. You may use the `listWithLineBreaks()` method to display them on new lines instead:

@@ -27,8 +27,14 @@ class NavigationManager
     {
         $this->panel = Filament::getCurrentPanel();
 
-        $this->navigationGroups = $this->panel->getNavigationGroups();
-        $this->navigationItems = $this->panel->getNavigationItems();
+        $this->navigationGroups = array_map(
+            fn (NavigationGroup | string $group): NavigationGroup | string => $group instanceof NavigationGroup ? (clone $group) : $group,
+            $this->panel->getNavigationGroups(),
+        );
+        $this->navigationItems = array_map(
+            fn (NavigationItem $item): NavigationItem => clone $item,
+            $this->panel->getNavigationItems(),
+        );
     }
 
     /**

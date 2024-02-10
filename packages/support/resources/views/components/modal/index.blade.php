@@ -108,13 +108,7 @@
         </div>
     @endif
 
-    <div
-        x-cloak
-        x-show="isOpen"
-        @if ($closeByClickingAway)
-            x-on:click="{{ $closeEventHandler }}"
-        @endif
-    >
+    <div x-cloak x-show="isOpen">
         <div
             aria-hidden="true"
             x-show="isOpen"
@@ -133,6 +127,9 @@
         >
             <div
                 x-ref="modalContainer"
+                @if ($closeByClickingAway)
+                    x-on:click.self="{{ $closeEventHandler }}"
+                @endif
                 {{
                     $attributes->class([
                         'relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr]',
@@ -148,9 +145,6 @@
                             $watch('isOpen', () => (isShown = isOpen))
                         })
                     "
-                    @if ($closeByClickingAway)
-                        x-on:click.stop
-                    @endif
                     x-on:keydown.window.escape="{{ $closeEventHandler }}"
                     x-show="isShown"
                     x-transition:enter="duration-300"

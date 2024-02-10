@@ -68,6 +68,8 @@ class ImportColumn extends Component
 
     protected string | Closure | null $validationAttribute = null;
 
+    protected string $evaluationIdentifier = 'column';
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -453,7 +455,7 @@ class ImportColumn extends Component
 
     public function getRecord(): ?Model
     {
-        return $this->getImporter()->getRecord();
+        return $this->getImporter()?->getRecord();
     }
 
     public function isMappingRequired(): bool

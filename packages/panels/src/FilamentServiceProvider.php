@@ -108,6 +108,7 @@ class FilamentServiceProvider extends PackageServiceProvider
             Commands\CacheComponentsCommand::class,
             Commands\ClearCachedComponentsCommand::class,
             Commands\MakeClusterCommand::class,
+            Commands\MakeIssueCommand::class,
             Commands\MakePageCommand::class,
             Commands\MakePanelCommand::class,
             Commands\MakeRelationManagerCommand::class,
