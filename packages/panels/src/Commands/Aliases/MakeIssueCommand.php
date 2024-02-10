@@ -8,5 +8,5 @@ class MakeIssueCommand extends Commands\MakeIssueCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'make:filament-issue';
+    protected $signature = 'filament:issue';
 }
