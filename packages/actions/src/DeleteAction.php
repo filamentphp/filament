@@ -2,9 +2,7 @@
 
 namespace Filament\Actions;
 
-use Closure;
 use Illuminate\Database\Eloquent\Model;
-use Filament\Notifications\Notification;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Concerns\CanDeleteRecords;
 use Filament\Actions\Concerns\CanCustomizeProcess;
@@ -51,11 +49,7 @@ class DeleteAction extends Action
 
         $this->action(function (): void {
             if (! $this->isDeletable()) {
-                Notification::make()
-                    ->title($this->getNotDeletableNotificationTitle())
-                    ->body($this->getNotDeletableNotificationBody())
-                    ->danger()
-                    ->send();
+                $this->sendNotDeletableNotification();
 
                 return;
             }

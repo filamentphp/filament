@@ -3,6 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Filament\Notifications\Notification;
 
 trait CanDeleteRecords
 {
@@ -46,5 +47,14 @@ trait CanDeleteRecords
     public function getNotDeletableNotificationBody(): string
     {
         return $this->evaluate($this->notDeletableNotificationBody);
+    }
+
+    public function sendNotDeletableNotification(): void
+    {
+        Notification::make()
+            ->title($this->getNotDeletableNotificationTitle())
+            ->body($this->getNotDeletableNotificationBody())
+            ->danger()
+            ->send();
     }
 }
