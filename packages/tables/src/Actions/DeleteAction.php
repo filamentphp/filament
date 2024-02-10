@@ -5,10 +5,12 @@ namespace Filament\Tables\Actions;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Support\Concerns\CanDeleteRecords;
 
 class DeleteAction extends Action
 {
     use CanCustomizeProcess;
+    use CanDeleteRecords;
 
     public static function getDefaultName(): ?string
     {
@@ -44,6 +46,12 @@ class DeleteAction extends Action
         });
 
         $this->action(function (): void {
+            if (! $this->isDeletable()) {
+                $this->sendNotDeletableNotification();
+
+                return;
+            }
+
             $result = $this->process(static fn (Model $record) => $record->delete());
 
             if (! $result) {

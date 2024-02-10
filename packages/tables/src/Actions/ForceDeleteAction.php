@@ -5,10 +5,12 @@ namespace Filament\Tables\Actions;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Support\Concerns\CanDeleteRecords;
 
 class ForceDeleteAction extends Action
 {
     use CanCustomizeProcess;
+    use CanDeleteRecords;
 
     public static function getDefaultName(): ?string
     {
@@ -36,6 +38,12 @@ class ForceDeleteAction extends Action
         $this->modalIcon(FilamentIcon::resolve('actions::force-delete-action.modal') ?? 'heroicon-o-trash');
 
         $this->action(function (): void {
+            if (! $this->isDeletable()) {
+                $this->sendNotDeletableNotification();
+
+                return;
+            }
+
             $result = $this->process(static fn (Model $record) => $record->forceDelete());
 
             if (! $result) {
