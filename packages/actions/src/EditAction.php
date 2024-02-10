@@ -7,6 +7,7 @@ use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class EditAction extends Action
 {
@@ -48,14 +49,15 @@ class EditAction extends Action
         });
 
         $this->action(function (): void {
-            $this->process(function (array $data, HasActions $livewire, Model $record) {
-                if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
-                    $translatableContentDriver->updateRecord($record, $data);
-                } else {
-                    $record->forceFill($data)->save();
-                }
+            DB::transaction(function () {
+                $this->process(function (array $data, HasActions $livewire, Model $record) {
+                    if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
+                        $translatableContentDriver->updateRecord($record, $data);
+                    } else {
+                        $record->forceFill($data)->save();
+                    }
+                });
             });
-
             $this->success();
         });
     }

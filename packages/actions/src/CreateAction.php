@@ -10,6 +10,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\DB;
 
 class CreateAction extends Action
 {
@@ -48,31 +49,32 @@ class CreateAction extends Action
         $this->record(null);
 
         $this->action(function (array $arguments, Form $form): void {
+
             $model = $this->getModel();
+            DB::transaction(function () use ($model, $form) {
+                $record = $this->process(function (array $data, HasActions $livewire) use ($model): Model {
+                    if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
+                        $record = $translatableContentDriver->makeRecord($model, $data);
+                    } else {
+                        $record = new $model();
+                        $record->forceFill($data);
+                    }
 
-            $record = $this->process(function (array $data, HasActions $livewire) use ($model): Model {
-                if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
-                    $record = $translatableContentDriver->makeRecord($model, $data);
-                } else {
-                    $record = new $model();
-                    $record->forceFill($data);
-                }
+                    if ($relationship = $this->getRelationship()) {
+                        /** @phpstan-ignore-next-line */
+                        $relationship->save($record);
 
-                if ($relationship = $this->getRelationship()) {
-                    /** @phpstan-ignore-next-line */
-                    $relationship->save($record);
+                        return $record;
+                    }
+
+                    $record->save();
 
                     return $record;
-                }
+                });
 
-                $record->save();
-
-                return $record;
+                $this->record($record);
+                $form->model($record)->saveRelationships();
             });
-
-            $this->record($record);
-            $form->model($record)->saveRelationships();
-
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
                 $this->sendSuccessNotification();
