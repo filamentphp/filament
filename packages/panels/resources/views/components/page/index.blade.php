@@ -32,6 +32,7 @@
             <x-filament-panels::header
                 :actions="$this->getCachedHeaderActions()"
                 :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
+                {{-- These are passed through in the bag otherwise Laravel converts View objects to strings prematurely --}}
                 :attributes="
                     new \Illuminate\View\ComponentAttributeBag([
                         'heading' => $heading,
