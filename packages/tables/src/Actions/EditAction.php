@@ -65,7 +65,7 @@ class EditAction extends Action
                         if ($translatableContentDriver) {
                             $translatableContentDriver->updateRecord($pivot, $pivotData);
                         } else {
-                            $pivot->update($pivotData);
+                            $pivot->forceFill($pivotData)->save();
                         }
                     }
 
@@ -75,7 +75,7 @@ class EditAction extends Action
                 if ($translatableContentDriver) {
                     $translatableContentDriver->updateRecord($record, $data);
                 } else {
-                    $record->update($data);
+                    $record->forceFill($data)->save();
                 }
             });
 

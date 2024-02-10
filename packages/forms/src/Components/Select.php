@@ -981,7 +981,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $this->createOptionUsing(static function (Select $component, array $data, Form $form) {
             $record = $component->getRelationship()->getRelated();
-            $record->fill($data);
+            $record->forceFill($data);
             $record->save();
 
             $form->model($record)->saveRelationships();
@@ -994,7 +994,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         });
 
         $this->updateOptionUsing(static function (array $data, Form $form) {
-            $form->getRecord()?->update($data);
+            $form->getRecord()?->forceFill($data)->save();
         });
 
         $this->dehydrated(fn (Select $component): bool => ! $component->isMultiple());

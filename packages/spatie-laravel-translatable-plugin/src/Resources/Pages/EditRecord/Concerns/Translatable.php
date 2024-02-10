@@ -26,7 +26,7 @@ trait Translatable
     {
         $translatableAttributes = static::getResource()::getTranslatableAttributes();
 
-        $record->fill(Arr::except($data, $translatableAttributes));
+        $record->forceFill(Arr::except($data, $translatableAttributes));
 
         foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
             $record->setTranslation($key, $this->activeLocale, $value);
