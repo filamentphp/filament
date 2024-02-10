@@ -12,51 +12,51 @@ class DeleteAction extends Action
 {
     use CanCustomizeProcess;
 
-    protected bool | Closure $allowedToDelete = true;
+    protected bool | Closure $deletable = true;
 
-    protected string | Closure $deleteNotAllowedNotificationTitle;
+    protected string | Closure $notDeletableNotificationTitle;
 
-    protected string | Closure $deleteNotAllowedNotificationBody;
+    protected string | Closure $notDeletableNotificationBody;
 
     public static function getDefaultName(): ?string
     {
         return 'delete';
     }
 
-    public function allowedToDelete(bool | Closure $condition = true): static
+    public function deletable(bool | Closure $condition = true): static
     {
-        $this->allowedToDelete = $condition;
+        $this->deletable = $condition;
 
         return $this;
     }
 
-    public function isAllowedToDelete(): bool
+    public function isDeletable(): bool
     {
-        return (bool) $this->evaluate($this->allowedToDelete);
+        return (bool) $this->evaluate($this->deletable);
     }
 
-    public function deleteNotAllowedNotificationTitle(string | Closure $deleteNotAllowedNotificationTitle): static
+    public function notDeletableNotificationTitle(string | Closure $notDeletableNotificationTitle): static
     {
-        $this->deleteNotAllowedNotificationTitle = $deleteNotAllowedNotificationTitle;
+        $this->notDeletableNotificationTitle = $notDeletableNotificationTitle;
 
         return $this;
     }
 
-    public function getDeletionNotAllowedNotificationTitle(): string
+    public function getNotDeletableNotificationTitle(): string
     {
-        return $this->evaluate($this->deleteNotAllowedNotificationTitle);
+        return $this->evaluate($this->notDeletableNotificationTitle);
     }
 
-    public function deleteNotAllowedNotificationBody(string | Closure $deleteNotAllowedNotificationBody): static
+    public function notDeletableNotificationBody(string | Closure $notDeletableNotificationBody): static
     {
-        $this->deleteNotAllowedNotificationBody = $deleteNotAllowedNotificationBody;
+        $this->notDeletableNotificationBody = $notDeletableNotificationBody;
 
         return $this;
     }
 
-    public function getDeletionNotAllowedNotificationBody(): string
+    public function getNotDeletableNotificationBody(): string
     {
-        return $this->evaluate($this->deleteNotAllowedNotificationBody);
+        return $this->evaluate($this->notDeletableNotificationBody);
     }
 
     protected function setUp(): void
@@ -90,10 +90,10 @@ class DeleteAction extends Action
         });
 
         $this->action(function (): void {
-            if (! $this->isAllowedToDelete()) {
+            if (! $this->isDeletable()) {
                 Notification::make()
-                    ->title($this->getDeletionNotAllowedNotificationTitle())
-                    ->body($this->getDeletionNotAllowedNotificationBody())
+                    ->title($this->getNotDeletableNotificationTitle())
+                    ->body($this->getNotDeletableNotificationBody())
                     ->danger()
                     ->send();
 
