@@ -29,7 +29,7 @@ class MakeIssueCommand extends Command
         $filament = InstalledVersions::getPrettyVersion('filament/filament');
         $laravel = InstalledVersions::getPrettyVersion('laravel/framework');
         $livewire = InstalledVersions::getPrettyVersion('livewire/livewire');
-        $php = \PHP_VERSION;
+        $php = PHP_VERSION;
 
         $issueTemplate = 'bug_report.yml';
         $baseGithubUrl = 'https://github.com/filamentphp/filament/issues/new?';
