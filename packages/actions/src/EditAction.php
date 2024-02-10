@@ -52,7 +52,7 @@ class EditAction extends Action
                 if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                     $translatableContentDriver->updateRecord($record, $data);
                 } else {
-                    $record->update($data);
+                    $record->forceFill($data)->save();
                 }
             });
 
