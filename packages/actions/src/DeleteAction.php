@@ -6,57 +6,17 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Notifications\Notification;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Concerns\CanDeleteRecords;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 
 class DeleteAction extends Action
 {
     use CanCustomizeProcess;
-
-    protected bool | Closure $deletable = true;
-
-    protected string | Closure $notDeletableNotificationTitle;
-
-    protected string | Closure $notDeletableNotificationBody;
+    use CanDeleteRecords;
 
     public static function getDefaultName(): ?string
     {
         return 'delete';
-    }
-
-    public function deletable(bool | Closure $condition = true): static
-    {
-        $this->deletable = $condition;
-
-        return $this;
-    }
-
-    public function isDeletable(): bool
-    {
-        return (bool) $this->evaluate($this->deletable);
-    }
-
-    public function notDeletableNotificationTitle(string | Closure $notDeletableNotificationTitle): static
-    {
-        $this->notDeletableNotificationTitle = $notDeletableNotificationTitle;
-
-        return $this;
-    }
-
-    public function getNotDeletableNotificationTitle(): string
-    {
-        return $this->evaluate($this->notDeletableNotificationTitle);
-    }
-
-    public function notDeletableNotificationBody(string | Closure $notDeletableNotificationBody): static
-    {
-        $this->notDeletableNotificationBody = $notDeletableNotificationBody;
-
-        return $this;
-    }
-
-    public function getNotDeletableNotificationBody(): string
-    {
-        return $this->evaluate($this->notDeletableNotificationBody);
     }
 
     protected function setUp(): void
