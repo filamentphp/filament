@@ -613,13 +613,8 @@ abstract class Resource
 
     public static function routes(Panel $panel): void
     {
-        $slug = static::getSlug();
-        $routeBaseName = (string) str($slug)
-            ->replace('/', '.')
-            ->append('.');
-
-        Route::name($routeBaseName)
-            ->prefix($slug)
+        Route::name(static::getRelativeRouteName() . '.')
+            ->prefix(static::getRoutePrefix())
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->group(function () use ($panel) {
@@ -627,6 +622,17 @@ abstract class Resource
                     $page->registerRoute($panel)?->name($name);
                 }
             });
+    }
+
+    public static function getRelativeRouteName(): string
+    {
+        return (string) str(static::getSlug())
+            ->replace('/', '.');
+    }
+
+    public static function getRoutePrefix(): string
+    {
+        return static::getSlug();
     }
 
     /**
