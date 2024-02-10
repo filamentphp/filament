@@ -10,7 +10,7 @@ Please make sure to include as much information as possible, including the versi
 Remember, bug reports are created in the hope that others with the same problem will be able to collaborate with you on solving it. Do not expect that the bug report will automatically see any activity or that others will jump to fix it. Creating a bug report serves to help yourself and others start on the path of fixing the problem.
 
 ## Development of Core Features
-If you would like to propose a new feature or improvement to Filament, you may use our [discussion form]() hosted on Github or if you prefer via [Discord]().
+If you would like to propose a new feature or improvement to Filament, you may use our [discussion form](https://github.com/filamentphp/filament/discussions) hosted on Github or if you prefer via [Discord](https://discord.gg/filament).
 
 ## Development of Plugins
 If you would like to develop a plugin for Filament, please refer to the [plugin development section](https://filamentphp.com/docs/3.x/panels/plugins) here in the documentation. Our discord server is also a great place to ask questions and get help with plugin development. You can start a conversation in the [`#plugin-developers-chat`](https://discord.com/channels/883083792112300104/970354547723730955) channel.
