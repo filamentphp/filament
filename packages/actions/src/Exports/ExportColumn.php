@@ -24,6 +24,8 @@ class ExportColumn extends Component
 
     protected bool | Closure $isEnabledByDefault = true;
 
+    protected string $evaluationIdentifier = 'column';
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -82,7 +84,7 @@ class ExportColumn extends Component
 
     public function getRecord(): ?Model
     {
-        return $this->getExporter()->getRecord();
+        return $this->getExporter()?->getRecord();
     }
 
     public function getLabel(): ?string
@@ -136,7 +138,6 @@ class ExportColumn extends Component
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
-            'column' => [$this],
             'exporter' => [$this->getExporter()],
             'options' => [$this->getExporter()->getOptions()],
             'record' => [$this->getRecord()],
@@ -149,7 +150,6 @@ class ExportColumn extends Component
         $record = $this->getRecord();
 
         return match ($parameterType) {
-            ExportColumn::class => [$this],
             Exporter::class => [$this->getExporter()],
             Model::class, $record ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
