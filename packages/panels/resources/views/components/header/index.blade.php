@@ -4,6 +4,7 @@
 ])
 
 @php
+    // These are passed through in the bag otherwise Laravel converts View objects to strings prematurely.
     $heading = $attributes->get('heading');
     $subheading = $attributes->get('subheading');
     $attributes = $attributes->except(['heading', 'subheading']);
