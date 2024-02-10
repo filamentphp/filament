@@ -37,6 +37,21 @@ public function table(Table $table): Table
 }
 ```
 
+## Checking if a record is allowed to be deleted
+
+In some cases, you may need to determine if a record can be deleted based on certain conditions. For example, you might want to prevent a user from being deleted if they are the owner of a "Team" model, to avoid integrity constraint violations.
+
+You can use the `deletable()` method to run pre-deletion logic. This method accepts a callback and should return `true` if the record can be deleted, or `false` otherwise.
+
+If the `deletable()` method returns `false`, the deletion process will be skipped and a notification will be displayed to the user. You can customize the title and body of this notification using the `notDeletableNotificationTitle()` and `notDeletableNotificationBody()` methods:
+
+```php
+DeleteAction::make()
+    ->deletable(fn ($record) => $record->teams->isEmpty())
+    ->notDeletableNotificationTitle('Cannot delete user')
+    ->notDeletableNotificationBody(fn ($user) => "You cannot delete {$user->name} because they are the owner of one or more teams."),
+```
+
 ## Redirecting after deleting
 
 You may set up a custom redirect when the form is submitted using the `successRedirectUrl()` method:
