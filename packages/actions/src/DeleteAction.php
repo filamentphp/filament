@@ -2,17 +2,61 @@
 
 namespace Filament\Actions;
 
-use Filament\Actions\Concerns\CanCustomizeProcess;
-use Filament\Support\Facades\FilamentIcon;
+use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Notifications\Notification;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Actions\Concerns\CanCustomizeProcess;
 
 class DeleteAction extends Action
 {
     use CanCustomizeProcess;
 
+    protected bool | Closure $allowedToDelete = true;
+
+    protected string | Closure $deleteNotAllowedNotificationTitle;
+
+    protected string | Closure $deleteNotAllowedNotificationBody;
+
     public static function getDefaultName(): ?string
     {
         return 'delete';
+    }
+
+    public function allowedToDelete(bool | Closure $condition = true): static
+    {
+        $this->allowedToDelete = $condition;
+
+        return $this;
+    }
+
+    public function isAllowedToDelete(): bool
+    {
+        return (bool) $this->evaluate($this->allowedToDelete);
+    }
+
+    public function deleteNotAllowedNotificationTitle(string | Closure $deleteNotAllowedNotificationTitle): static
+    {
+        $this->deleteNotAllowedNotificationTitle = $deleteNotAllowedNotificationTitle;
+
+        return $this;
+    }
+
+    public function getDeletionNotAllowedNotificationTitle(): string
+    {
+        return $this->evaluate($this->deleteNotAllowedNotificationTitle);
+    }
+
+    public function deleteNotAllowedNotificationBody(string | Closure $deleteNotAllowedNotificationBody): static
+    {
+        $this->deleteNotAllowedNotificationBody = $deleteNotAllowedNotificationBody;
+
+        return $this;
+    }
+
+    public function getDeletionNotAllowedNotificationBody(): string
+    {
+        return $this->evaluate($this->deleteNotAllowedNotificationBody);
     }
 
     protected function setUp(): void
@@ -46,6 +90,16 @@ class DeleteAction extends Action
         });
 
         $this->action(function (): void {
+            if (! $this->isAllowedToDelete()) {
+                Notification::make()
+                    ->title($this->getDeletionNotAllowedNotificationTitle())
+                    ->body($this->getDeletionNotAllowedNotificationBody())
+                    ->danger()
+                    ->send();
+
+                return;
+            }
+
             $result = $this->process(static fn (Model $record) => $record->delete());
 
             if (! $result) {
