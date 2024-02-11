@@ -12,6 +12,8 @@ class ForceDeleteAction extends Action
     use CanCustomizeProcess;
     use CanDeleteRecords;
 
+    protected bool $recordIsDeletable = true;
+
     public static function getDefaultName(): ?string
     {
         return 'forceDelete';
@@ -22,6 +24,8 @@ class ForceDeleteAction extends Action
         parent::setUp();
 
         $this->label(__('filament-actions::force-delete.single.label'));
+
+        $this->modalHidden(fn(): bool => ! ($this->recordIsDeletable = $this->isDeletable()));
 
         $this->modalHeading(fn (): string => __('filament-actions::force-delete.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
@@ -38,7 +42,7 @@ class ForceDeleteAction extends Action
         $this->modalIcon(FilamentIcon::resolve('actions::force-delete-action.modal') ?? 'heroicon-o-trash');
 
         $this->action(function (): void {
-            if (! $this->isDeletable()) {
+            if (! $this->recordIsDeletable) {
                 $this->sendNotDeletableNotification();
 
                 return;

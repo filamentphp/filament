@@ -12,6 +12,8 @@ class DeleteAction extends Action
     use CanCustomizeProcess;
     use CanDeleteRecords;
 
+    protected bool $recordIsDeletable = true;
+
     public static function getDefaultName(): ?string
     {
         return 'delete';
@@ -22,6 +24,8 @@ class DeleteAction extends Action
         parent::setUp();
 
         $this->label(__('filament-actions::delete.single.label'));
+
+        $this->modalHidden(fn(): bool => ! ($this->recordIsDeletable = $this->isDeletable()));
 
         $this->modalHeading(fn (): string => __('filament-actions::delete.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
@@ -46,7 +50,7 @@ class DeleteAction extends Action
         });
 
         $this->action(function (): void {
-            if (! $this->isDeletable()) {
+            if (! $this->recordIsDeletable) {
                 $this->sendNotDeletableNotification();
 
                 return;
