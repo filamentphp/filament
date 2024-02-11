@@ -148,8 +148,7 @@ class CreateRecord extends Page
      */
     protected function handleRecordCreation(array $data): Model
     {
-        $record = new ($this->getModel());
-        $record->forceFill($data);
+        $record = new ($this->getModel())($data);
 
         if (
             static::getResource()::isScopedToTenant() &&

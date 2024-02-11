@@ -42,7 +42,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             $record->getTranslatableAttributes() :
             [];
 
-        $record->forceFill(Arr::except($data, $translatableAttributes));
+        $record->fill(Arr::except($data, $translatableAttributes));
 
         if (method_exists($record, 'setTranslation')) {
             foreach (Arr::only($data, $translatableAttributes) as $key => $value) {
@@ -75,7 +75,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             $record->getTranslatableAttributes() :
             [];
 
-        $record->forceFill(Arr::except($data, $translatableAttributes));
+        $record->fill(Arr::except($data, $translatableAttributes));
 
         if (method_exists($record, 'setTranslation')) {
             foreach (Arr::only($data, $translatableAttributes) as $key => $value) {

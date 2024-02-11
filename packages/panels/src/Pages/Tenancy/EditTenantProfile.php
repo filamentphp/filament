@@ -137,7 +137,7 @@ abstract class EditTenantProfile extends Page
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $record->forceFill($data)->save();
+        $record->update($data);
 
         return $record;
     }
