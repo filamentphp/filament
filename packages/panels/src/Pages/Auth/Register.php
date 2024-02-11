@@ -76,7 +76,7 @@ class Register extends SimplePage
 
         $data = $this->form->getState();
 
-        $user = $this->getUserModel()::create($data);
+        $user = $this->getUserModel()::forceCreate($data);
 
         event(new Registered($user));
 

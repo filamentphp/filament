@@ -57,7 +57,7 @@ class MakeUserCommand extends Command
 
     protected function createUser(): Authenticatable
     {
-        return static::getUserModel()::create($this->getUserData());
+        return static::getUserModel()::forceCreate($this->getUserData());
     }
 
     protected function sendSuccessMessage(Authenticatable $user): void

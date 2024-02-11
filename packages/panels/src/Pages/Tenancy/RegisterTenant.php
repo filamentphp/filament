@@ -99,7 +99,7 @@ abstract class RegisterTenant extends SimplePage
      */
     protected function handleRegistration(array $data): Model
     {
-        return $this->getModel()::create($data);
+        return $this->getModel()::forceCreate($data);
     }
 
     protected function getRedirectUrl(): ?string

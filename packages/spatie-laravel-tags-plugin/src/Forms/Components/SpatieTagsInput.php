@@ -75,7 +75,7 @@ class SpatieTagsInput extends TagsInput
             $tag = $tagClassName::findFromStringOfAnyType($tagName, $locale);
 
             if ($tag?->isEmpty() ?? true) {
-                $tag = $tagClassName::create([
+                $tag = $tagClassName::forceCreate([
                     'name' => [$locale => $tagName],
                 ]);
             }
