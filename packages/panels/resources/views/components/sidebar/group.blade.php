@@ -121,6 +121,12 @@
                 }
             @endphp
 
+            @if (filled($label))
+                <x-filament::dropdown.header>
+                    {{ $label }}
+                </x-filament::dropdown.header>
+            @endif
+
             @foreach ($lists as $list)
                 <x-filament::dropdown.list>
                     @foreach ($list as $item)
