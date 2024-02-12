@@ -73,13 +73,13 @@ trait CanExportRecords
 
         $this->groupedIcon(FilamentIcon::resolve('actions::export-action.grouped') ?? 'heroicon-m-arrow-down-tray');
 
-        $this->form(fn(ExportAction|ExportTableAction|ExportTableBulkAction $action): array => array_merge([
+        $this->form(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): array => array_merge([
             Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
                 ->columns(1)
                 ->inlineLabel()
                 ->schema(function () use ($action): array {
                     return array_map(
-                        fn(ExportColumn $column): Split => Split::make([
+                        fn (ExportColumn $column): Split => Split::make([
                             Forms\Components\Checkbox::make('isEnabled')
                                 ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
                                 ->hiddenLabel()
@@ -91,8 +91,8 @@ trait CanExportRecords
                                 ->hiddenLabel()
                                 ->default($column->getLabel())
                                 ->placeholder($column->getLabel())
-                                ->disabled(fn(Forms\Get $get): bool => !$get('isEnabled'))
-                                ->required(fn(Forms\Get $get): bool => (bool)$get('isEnabled')),
+                                ->disabled(fn (Forms\Get $get): bool => ! $get('isEnabled'))
+                                ->required(fn (Forms\Get $get): bool => (bool) $get('isEnabled')),
                         ])
                             ->verticallyAlignCenter()
                             ->statePath($column->getName()),
@@ -100,7 +100,7 @@ trait CanExportRecords
                     );
                 })
                 ->statePath('columnMap'),
-            ], $action->getExporter()::getOptionsFormComponents()));
+        ], $action->getExporter()::getOptionsFormComponents()));
 
         $this->action(function (ExportAction | ExportTableAction | ExportTableBulkAction $action, array $data, Component $livewire) {
             if ($livewire instanceof HasTable) {
