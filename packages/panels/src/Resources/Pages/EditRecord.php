@@ -130,9 +130,7 @@ class EditRecord extends Page
         $this->authorizeAccess();
 
         try {
-
             $this->callHook('beforeValidate');
-
             DB::transaction(function () {
                 $data = $this->form->getState();
 
@@ -144,9 +142,7 @@ class EditRecord extends Page
 
                 $this->handleRecordUpdate($this->getRecord(), $data);
             });
-
             $this->callHook('afterSave');
-
         } catch (Halt $exception) {
             return;
         }
