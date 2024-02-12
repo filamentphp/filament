@@ -61,8 +61,6 @@ trait CanExportRecords
 
     protected ?Closure $modifyQueryUsing = null;
 
-    protected bool $skippableSelection = false;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -141,7 +139,7 @@ trait CanExportRecords
                 Arr::except($data, ['columnMap']),
             );
 
-            if ($this->skippableSelection) {
+            if (! $this->form) {
                 $columnMap = collect($action->getExporter()::getColumns())
                     ->mapWithKeys(fn(ExportColumn $column): array => [$column->getName() => $column->getLabel()]
                 )->all();
@@ -392,13 +390,6 @@ trait CanExportRecords
     public function modifyQueryUsing(?Closure $callback): static
     {
         $this->modifyQueryUsing = $callback;
-
-        return $this;
-    }
-
-    public function skippableSelection(bool $skippable = true): static
-    {
-        $this->skippableSelection = $skippable;
 
         return $this;
     }
