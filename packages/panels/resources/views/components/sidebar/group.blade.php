@@ -1,4 +1,5 @@
 @props([
+    'active' => false,
     'collapsible' => true,
     'icon' => null,
     'items' => [],
@@ -6,6 +7,11 @@
     'sidebarCollapsible' => true,
     'subNavigation' => false,
 ])
+
+@php
+    $sidebarCollapsible = $sidebarCollapsible && filament()->isSidebarCollapsibleOnDesktop();
+    $hasDropdown = filled($label) && filled($icon) && $sidebarCollapsible;
+@endphp
 
 <li
     x-data="{ label: @js($subNavigation ? "sub_navigation_{$label}" : $label) }"
@@ -17,7 +23,7 @@
             @if ($collapsible)
                 x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
             @endif
-            @if (filament()->isSidebarCollapsibleOnDesktop())
+            @if ($sidebarCollapsible)
                 x-show="$store.sidebar.isOpen"
                 x-transition:enter="delay-100 lg:transition"
                 x-transition:enter-start="opacity-0"
@@ -56,14 +62,104 @@
         </div>
     @endif
 
+    @if ($hasDropdown)
+        <x-filament::dropdown
+            :placement="(__('filament-panels::layout.direction') === 'rtl') ? 'left-start' : 'right-start'"
+            x-show="! $store.sidebar.isOpen"
+        >
+            <x-slot name="trigger">
+                <button
+                    x-data="{ tooltip: false }"
+                    x-effect="
+                        tooltip = $store.sidebar.isOpen
+                            ? false
+                            : {
+                                  content: @js($label),
+                                  placement: document.dir === 'rtl' ? 'left' : 'right',
+                                  theme: $store.theme,
+                              }
+                    "
+                    x-tooltip.html="tooltip"
+                    class="relative flex flex-1 items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75 hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5"
+                >
+                    <x-filament::icon
+                        :icon="$icon"
+                        @class([
+                            'h-6 w-6',
+                            'text-gray-400 dark:text-gray-500' => ! $active,
+                            'text-primary-600 dark:text-primary-400' => $active,
+                        ])
+                    />
+                </button>
+            </x-slot>
+
+            @php
+                $lists = [];
+
+                foreach ($items as $item) {
+                    if ($childItems = $item->getChildItems()) {
+                        $lists[] = [
+                            $item,
+                            ...$childItems,
+                        ];
+                        $lists[] = [];
+
+                        continue;
+                    }
+
+                    if (empty($lists)) {
+                        $lists[] = [$item];
+
+                        continue;
+                    }
+
+                    $lists[count($lists) - 1][] = $item;
+                }
+
+                if (empty($lists[count($lists) - 1])) {
+                    array_pop($lists);
+                }
+            @endphp
+
+            @foreach ($lists as $list)
+                <x-filament::dropdown.list>
+                    @foreach ($list as $item)
+                        @php
+                            $itemIsActive = $item->isActive();
+                        @endphp
+
+                        <x-filament::dropdown.list.item
+                            :badge="$item->getBadge()"
+                            :badge-color="$item->getBadgeColor()"
+                            :badge-tooltip="$item->getBadgeTooltip()"
+                            :color="$itemIsActive ? 'primary' : 'gray'"
+                            :href="$item->getUrl()"
+                            :icon="$itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon()"
+                            tag="a"
+                            :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
+                        >
+                            {{ $item->getLabel() }}
+                        </x-filament::dropdown.list.item>
+                    @endforeach
+                </x-filament::dropdown.list>
+            @endforeach
+        </x-filament::dropdown>
+    @endif
+
     <ul
-        x-show="! ($store.sidebar.groupIsCollapsed(label) && ($store.sidebar.isOpen || @js(! filament()->isSidebarCollapsibleOnDesktop())))"
-        @if (filament()->isSidebarCollapsibleOnDesktop())
+        @if (filled($label))
+            @if ($sidebarCollapsible)
+                x-show="$store.sidebar.isOpen ? ! $store.sidebar.groupIsCollapsed(label) : ! @js($hasDropdown)"
+            @else
+                x-show="! $store.sidebar.groupIsCollapsed(label)"
+            @endif
+            x-collapse.duration.200ms
+        @endif
+        @if ($sidebarCollapsible)
             x-transition:enter="delay-100 lg:transition"
             x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100"
         @endif
-        x-collapse.duration.200ms
         class="fi-sidebar-group-items flex flex-col gap-y-1"
     >
         @foreach ($items as $item)
@@ -77,7 +173,7 @@
                 :child-items="$item->getChildItems()"
                 :first="$loop->first"
                 :grouped="filled($label)"
-                :icon="$item->getIcon()"
+                :icon="$icon ? ($hasDropdown ? null : throw new \Exception('Navigation group [' . $label . '] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.')) : $item->getIcon()"
                 :last="$loop->last"
                 :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
                 :sidebar-collapsible="$sidebarCollapsible"

@@ -117,6 +117,7 @@
         <ul class="fi-sidebar-nav-groups -mx-2 flex flex-col gap-y-7">
             @foreach ($navigation as $group)
                 <x-filament-panels::sidebar.group
+                    :active="$group->isActive()"
                     :collapsible="$group->isCollapsible()"
                     :icon="$group->getIcon()"
                     :items="$group->getItems()"
