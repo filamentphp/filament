@@ -229,7 +229,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-### Navigation groups in a collapsible sidebar
+### Navigation groups in a collapsible sidebar on desktop
 
 > This section only applies to `sidebarCollapsibleOnDesktop()`, not `sidebarFullyCollapsibleOnDesktop()`, since the fully collapsible UI simply hides the entire sidebar instead of making its design minimal.
 
