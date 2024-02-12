@@ -82,17 +82,16 @@
                                 <x-filament::dropdown.list>
                                     @foreach ($group->getItems() as $item)
                                         @php
-                                            $icon = $item->getIcon();
-                                            $isActive = $item->isActive();
+                                            $itemIsActive = $item->isActive();
                                         @endphp
 
                                         <x-filament::dropdown.list.item
                                             :badge="$item->getBadge()"
                                             :badge-color="$item->getBadgeColor()"
                                             :badge-tooltip="$item->getBadgeTooltip()"
-                                            :color="$isActive ? 'primary' : 'gray'"
+                                            :color="$itemIsActive ? 'primary' : 'gray'"
                                             :href="$item->getUrl()"
-                                            :icon="$isActive ? ($item->getActiveIcon() ?? $icon) : $icon"
+                                            :icon="$itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon()"
                                             tag="a"
                                             :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
                                         >
