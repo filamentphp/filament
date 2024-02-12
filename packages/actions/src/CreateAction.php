@@ -57,7 +57,7 @@ class CreateAction extends Action
                         $record = $translatableContentDriver->makeRecord($model, $data);
                     } else {
                         $record = new $model();
-                        $record->forceFill($data);
+                        $record->fill($data);
                     }
 
                     if ($relationship = $this->getRelationship()) {
@@ -74,6 +74,7 @@ class CreateAction extends Action
 
                 $this->record($record);
                 $form->model($record)->saveRelationships();
+
             });
             if ($arguments['another'] ?? false) {
                 $this->callAfter();

@@ -65,7 +65,7 @@ trait EntanglesStateWithSingularRelationship
                 $record = $translatableContentDriver->makeRecord($relatedModel, $data);
             } else {
                 $record = new $relatedModel();
-                $record->forceFill($data);
+                $record->fill($data);
             }
 
             $relationship->save($record);
@@ -89,7 +89,7 @@ trait EntanglesStateWithSingularRelationship
 
                 $translatableContentDriver ?
                     $translatableContentDriver->updateRecord($record, $data) :
-                    $record->forceFill($data)->save();
+                    $record->fill($data)->save();
 
                 return;
             }
@@ -108,7 +108,7 @@ trait EntanglesStateWithSingularRelationship
                 $record = $translatableContentDriver->makeRecord($relatedModel, $data);
             } else {
                 $record = new $relatedModel();
-                $record->forceFill($data);
+                $record->fill($data);
             }
 
             $record->save();

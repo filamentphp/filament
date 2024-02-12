@@ -26,14 +26,14 @@ trait CanReorderRecords
                 in_array($orderColumn, $relationship->getPivotColumns())
             ) {
                 foreach ($order as $index => $recordKey) {
-                    $this->getTableRecord($recordKey)->{$relationship->getPivotAccessor()}->forceFill([
+                    $this->getTableRecord($recordKey)->{$relationship->getPivotAccessor()}->update([
                         $orderColumn => $index + 1,
-                    ])->save();
+                    ]);
+
                 }
 
                 return;
             }
-
             $model = app($this->getTable()->getModel());
             $modelKeyName = $model->getKeyName();
 

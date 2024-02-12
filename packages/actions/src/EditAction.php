@@ -49,15 +49,16 @@ class EditAction extends Action
         });
 
         $this->action(function (): void {
-            DB::transaction(function () {
-                $this->process(function (array $data, HasActions $livewire, Model $record) {
+            $this->process(function (array $data, HasActions $livewire, Model $record) {
+                DB::transaction(function () use ($data, $livewire, $record) {
                     if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                         $translatableContentDriver->updateRecord($record, $data);
                     } else {
-                        $record->forceFill($data)->save();
+                        $record->update($data);
                     }
                 });
             });
+
             $this->success();
         });
     }
