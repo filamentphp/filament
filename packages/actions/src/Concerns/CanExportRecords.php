@@ -61,6 +61,8 @@ trait CanExportRecords
 
     protected ?Closure $modifyQueryUsing = null;
 
+    protected bool $skippableSelection = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -73,13 +75,13 @@ trait CanExportRecords
 
         $this->groupedIcon(FilamentIcon::resolve('actions::export-action.grouped') ?? 'heroicon-m-arrow-down-tray');
 
-        $this->form(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): array => array_merge([
+        $this->form(fn(ExportAction|ExportTableAction|ExportTableBulkAction $action): array => array_merge([
             Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
                 ->columns(1)
                 ->inlineLabel()
                 ->schema(function () use ($action): array {
                     return array_map(
-                        fn (ExportColumn $column): Split => Split::make([
+                        fn(ExportColumn $column): Split => Split::make([
                             Forms\Components\Checkbox::make('isEnabled')
                                 ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
                                 ->hiddenLabel()
@@ -91,8 +93,8 @@ trait CanExportRecords
                                 ->hiddenLabel()
                                 ->default($column->getLabel())
                                 ->placeholder($column->getLabel())
-                                ->disabled(fn (Forms\Get $get): bool => ! $get('isEnabled'))
-                                ->required(fn (Forms\Get $get): bool => (bool) $get('isEnabled')),
+                                ->disabled(fn(Forms\Get $get): bool => !$get('isEnabled'))
+                                ->required(fn(Forms\Get $get): bool => (bool)$get('isEnabled')),
                         ])
                             ->verticallyAlignCenter()
                             ->statePath($column->getName()),
@@ -100,7 +102,7 @@ trait CanExportRecords
                     );
                 })
                 ->statePath('columnMap'),
-        ], $action->getExporter()::getOptionsFormComponents()));
+            ], $action->getExporter()::getOptionsFormComponents()));
 
         $this->action(function (ExportAction | ExportTableAction | ExportTableBulkAction $action, array $data, Component $livewire) {
             if ($livewire instanceof HasTable) {
@@ -139,14 +141,20 @@ trait CanExportRecords
                 Arr::except($data, ['columnMap']),
             );
 
-            $columnMap = collect($data['columnMap'])
-                ->dot()
-                ->reduce(fn (Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
-                    Str::beforeLast($key, '.') => [Str::afterLast($key, '.') => $value],
-                ]), collect())
-                ->filter(fn (array $column): bool => $column['isEnabled'] ?? false)
-                ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
-                ->all();
+            if ($this->skippableSelection) {
+                $columnMap = collect($action->getExporter()::getColumns())
+                    ->mapWithKeys(fn(ExportColumn $column): array => [$column->getName() => $column->getLabel()]
+                )->all();
+            } else {
+                $columnMap = collect($data['columnMap'])
+                    ->dot()
+                    ->reduce(fn(Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
+                        Str::beforeLast($key, '.') => [Str::afterLast($key, '.') => $value],
+                    ]), collect())
+                    ->filter(fn(array $column): bool => $column['isEnabled'] ?? false)
+                    ->mapWithKeys(fn(array $column, string $columnName): array => [$columnName => $column['label']])
+                    ->all();
+            }
 
             $export = app(Export::class);
             $export->user()->associate($user);
@@ -384,6 +392,13 @@ trait CanExportRecords
     public function modifyQueryUsing(?Closure $callback): static
     {
         $this->modifyQueryUsing = $callback;
+
+        return $this;
+    }
+
+    public function skippableSelection(bool $skippable = true): static
+    {
+        $this->skippableSelection = $skippable;
 
         return $this;
     }
