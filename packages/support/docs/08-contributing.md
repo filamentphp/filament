@@ -78,9 +78,9 @@ If you've published the translations into your app and you'd like to check those
 php artisan filament:check-translations es --source=app
 ```
 
-## Security Vulnerabilities
+## Security vulnerabilities
 
-If you discover a security vulnerability within Filament, please send an email to [dan@danharrin.com](mailto:dan@danharrin.com). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Filament, please email Dan Harrin via [dan@danharrin.com](mailto:dan@danharrin.com). All security vulnerabilities will be promptly addressed.
 
 ## Code of Conduct
 
