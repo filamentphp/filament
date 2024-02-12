@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class CreateAction extends Action
 {
@@ -45,50 +46,52 @@ class CreateAction extends Action
         $this->action(function (array $arguments, Form $form, HasTable $livewire): void {
             $model = $this->getModel();
 
-            $record = $this->process(function (array $data, Table $table) use ($model): Model {
-                $relationship = $table->getRelationship();
+            DB::transaction(function () use ($model, $form, $livewire) {
+                $record = $this->process(function (array $data, Table $table) use ($model): Model {
+                    $relationship = $table->getRelationship();
 
-                $pivotData = [];
+                    $pivotData = [];
 
-                if ($relationship instanceof BelongsToMany) {
-                    $pivotColumns = $relationship->getPivotColumns();
+                    if ($relationship instanceof BelongsToMany) {
+                        $pivotColumns = $relationship->getPivotColumns();
 
-                    $pivotData = Arr::only($data, $pivotColumns);
-                    $data = Arr::except($data, $pivotColumns);
-                }
+                        $pivotData = Arr::only($data, $pivotColumns);
+                        $data = Arr::except($data, $pivotColumns);
+                    }
 
-                if ($translatableContentDriver = $table->makeTranslatableContentDriver()) {
-                    $record = $translatableContentDriver->makeRecord($model, $data);
-                } else {
-                    $record = new $model();
-                    $record->forceFill($data);
-                }
+                    if ($translatableContentDriver = $table->makeTranslatableContentDriver()) {
+                        $record = $translatableContentDriver->makeRecord($model, $data);
+                    } else {
+                        $record = new $model();
+                        $record->forceFill($data);
+                    }
 
-                if (
-                    (! $relationship) ||
-                    $relationship instanceof HasManyThrough
-                ) {
-                    $record->save();
+                    if (
+                        (! $relationship) ||
+                        $relationship instanceof HasManyThrough
+                    ) {
+                        $record->save();
+
+                        return $record;
+                    }
+
+                    if ($relationship instanceof BelongsToMany) {
+                        $relationship->save($record, $pivotData);
+
+                        return $record;
+                    }
+
+                    /** @phpstan-ignore-next-line */
+                    $relationship->save($record);
 
                     return $record;
-                }
+                });
 
-                if ($relationship instanceof BelongsToMany) {
-                    $relationship->save($record, $pivotData);
+                $this->record($record);
+                $form->model($record)->saveRelationships();
 
-                    return $record;
-                }
-
-                /** @phpstan-ignore-next-line */
-                $relationship->save($record);
-
-                return $record;
+                $livewire->mountedTableActionRecord($record->getKey());
             });
-
-            $this->record($record);
-            $form->model($record)->saveRelationships();
-
-            $livewire->mountedTableActionRecord($record->getKey());
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();

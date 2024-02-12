@@ -130,25 +130,24 @@ class EditRecord extends Page
         $this->authorizeAccess();
 
         try {
-            DB::beginTransaction();
+
             $this->callHook('beforeValidate');
 
-            $data = $this->form->getState();
+            DB::transaction(function () {
+                $data = $this->form->getState();
 
-            $this->callHook('afterValidate');
+                $this->callHook('afterValidate');
 
-            $data = $this->mutateFormDataBeforeSave($data);
+                $data = $this->mutateFormDataBeforeSave($data);
 
-            $this->callHook('beforeSave');
+                $this->callHook('beforeSave');
 
-            $this->handleRecordUpdate($this->getRecord(), $data);
+                $this->handleRecordUpdate($this->getRecord(), $data);
+            });
 
             $this->callHook('afterSave');
 
-            DB::commit();
         } catch (Halt $exception) {
-            DB::rollBack();
-
             return;
         }
 

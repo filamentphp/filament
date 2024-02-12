@@ -15,6 +15,7 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Locked;
 
 use function Filament\authorize;
@@ -110,15 +111,17 @@ abstract class EditTenantProfile extends Page
         try {
             $this->callHook('beforeValidate');
 
-            $data = $this->form->getState();
+            DB::transaction(function () {
+                $data = $this->form->getState();
 
-            $this->callHook('afterValidate');
+                $this->callHook('afterValidate');
 
-            $data = $this->mutateFormDataBeforeSave($data);
+                $data = $this->mutateFormDataBeforeSave($data);
 
-            $this->callHook('beforeSave');
+                $this->callHook('beforeSave');
 
-            $this->handleRecordUpdate($this->tenant, $data);
+                $this->handleRecordUpdate($this->tenant, $data);
+            });
 
             $this->callHook('afterSave');
         } catch (Halt $exception) {

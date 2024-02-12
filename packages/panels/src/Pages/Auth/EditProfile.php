@@ -21,6 +21,7 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Password;
@@ -145,15 +146,17 @@ class EditProfile extends Page
         try {
             $this->callHook('beforeValidate');
 
-            $data = $this->form->getState();
+            DB::transaction(function () {
+                $data = $this->form->getState();
 
-            $this->callHook('afterValidate');
+                $this->callHook('afterValidate');
 
-            $data = $this->mutateFormDataBeforeSave($data);
+                $data = $this->mutateFormDataBeforeSave($data);
 
-            $this->callHook('beforeSave');
+                $this->callHook('beforeSave');
 
-            $this->handleRecordUpdate($this->getUser(), $data);
+                $this->handleRecordUpdate($this->getUser(), $data);
+            });
 
             $this->callHook('afterSave');
         } catch (Halt $exception) {

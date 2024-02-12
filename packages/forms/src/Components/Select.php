@@ -33,7 +33,6 @@ use function Filament\Support\generate_search_term_expression;
 class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanAllowHtml;
-    use Concerns\CanBeNative;
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
@@ -83,6 +82,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected ?Model $cachedSelectedRecord = null;
 
     protected bool | Closure $isMultiple = false;
+
+    protected bool | Closure $isNative = true;
 
     protected ?Closure $getOptionLabelUsing = null;
 
@@ -551,6 +552,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
+    public function native(bool | Closure $condition = true): static
+    {
+        $this->isNative = $condition;
+
+        return $this;
+    }
+
     public function position(string | Closure | null $position): static
     {
         $this->position = $position;
@@ -684,6 +692,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function isMultiple(): bool
     {
         return (bool) $this->evaluate($this->isMultiple);
+    }
+
+    public function isNative(): bool
+    {
+        return (bool) $this->evaluate($this->isNative);
     }
 
     public function isSearchable(): bool
@@ -968,7 +981,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         $this->createOptionUsing(static function (Select $component, array $data, Form $form) {
             $record = $component->getRelationship()->getRelated();
-            $record->forceFill($data);
+            $record->fill($data);
             $record->save();
 
             $form->model($record)->saveRelationships();
@@ -981,7 +994,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         });
 
         $this->updateOptionUsing(static function (array $data, Form $form) {
-            $form->getRecord()?->forceFill($data)->save();
+            $form->getRecord()?->update($data);
         });
 
         $this->dehydrated(fn (Select $component): bool => ! $component->isMultiple());

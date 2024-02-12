@@ -9,6 +9,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class EditAction extends Action
 {
@@ -50,35 +51,36 @@ class EditAction extends Action
         });
 
         $this->action(function (): void {
-            $this->process(function (array $data, Model $record, Table $table) {
-                $relationship = $table->getRelationship();
+            DB::transaction(function () {
+                $this->process(function (array $data, Model $record, Table $table) {
+                    $relationship = $table->getRelationship();
 
-                $translatableContentDriver = $table->makeTranslatableContentDriver();
+                    $translatableContentDriver = $table->makeTranslatableContentDriver();
 
-                if ($relationship instanceof BelongsToMany) {
-                    $pivot = $record->{$relationship->getPivotAccessor()};
+                    if ($relationship instanceof BelongsToMany) {
+                        $pivot = $record->{$relationship->getPivotAccessor()};
 
-                    $pivotColumns = $relationship->getPivotColumns();
-                    $pivotData = Arr::only($data, $pivotColumns);
+                        $pivotColumns = $relationship->getPivotColumns();
+                        $pivotData = Arr::only($data, $pivotColumns);
 
-                    if (count($pivotColumns)) {
-                        if ($translatableContentDriver) {
-                            $translatableContentDriver->updateRecord($pivot, $pivotData);
-                        } else {
-                            $pivot->forceFill($pivotData)->save();
+                        if (count($pivotColumns)) {
+                            if ($translatableContentDriver) {
+                                $translatableContentDriver->updateRecord($pivot, $pivotData);
+                            } else {
+                                $pivot->forceFill($pivotData)->save();
+                            }
                         }
+
+                        $data = Arr::except($data, $pivotColumns);
                     }
 
-                    $data = Arr::except($data, $pivotColumns);
-                }
-
-                if ($translatableContentDriver) {
-                    $translatableContentDriver->updateRecord($record, $data);
-                } else {
-                    $record->forceFill($data)->save();
-                }
+                    if ($translatableContentDriver) {
+                        $translatableContentDriver->updateRecord($record, $data);
+                    } else {
+                        $record->forceFill($data)->save();
+                    }
+                });
             });
-
             $this->success();
         });
     }

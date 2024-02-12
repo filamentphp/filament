@@ -75,27 +75,26 @@ class CreateRecord extends Page
         $this->authorizeAccess();
 
         try {
-            DB::beginTransaction();
 
             $this->callHook('beforeValidate');
 
-            $data = $this->form->getState();
+            DB::transaction(function () {
+                $data = $this->form->getState();
 
-            $this->callHook('afterValidate');
+                $this->callHook('afterValidate');
 
-            $data = $this->mutateFormDataBeforeCreate($data);
+                $data = $this->mutateFormDataBeforeCreate($data);
 
-            $this->callHook('beforeCreate');
+                $this->callHook('beforeCreate');
 
-            $this->record = $this->handleRecordCreation($data);
+                $this->record = $this->handleRecordCreation($data);
 
-            $this->form->model($this->getRecord())->saveRelationships();
+                $this->form->model($this->getRecord())->saveRelationships();
+            });
 
             $this->callHook('afterCreate');
 
-            DB::commit();
         } catch (Halt $exception) {
-            DB::rollBack();
 
             return;
         }
