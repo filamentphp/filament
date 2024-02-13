@@ -61,6 +61,8 @@ trait CanExportRecords
 
     protected ?Closure $modifyQueryUsing = null;
 
+    protected bool $hasColumnMapping = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -73,34 +75,40 @@ trait CanExportRecords
 
         $this->groupedIcon(FilamentIcon::resolve('actions::export-action.grouped') ?? 'heroicon-m-arrow-down-tray');
 
-        $this->form(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): array => array_merge([
-            Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
-                ->columns(1)
-                ->inlineLabel()
-                ->schema(function () use ($action): array {
-                    return array_map(
-                        fn (ExportColumn $column): Split => Split::make([
-                            Forms\Components\Checkbox::make('isEnabled')
-                                ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
-                                ->hiddenLabel()
-                                ->default($column->isEnabledByDefault())
-                                ->live()
-                                ->grow(false),
-                            Forms\Components\TextInput::make('label')
-                                ->label(__('filament-actions::export.modal.form.columns.form.label.label', ['column' => $column->getName()]))
-                                ->hiddenLabel()
-                                ->default($column->getLabel())
-                                ->placeholder($column->getLabel())
-                                ->disabled(fn (Forms\Get $get): bool => ! $get('isEnabled'))
-                                ->required(fn (Forms\Get $get): bool => (bool) $get('isEnabled')),
-                        ])
-                            ->verticallyAlignCenter()
-                            ->statePath($column->getName()),
-                        $action->getExporter()::getColumns(),
-                    );
-                })
-                ->statePath('columnMap'),
-        ], $action->getExporter()::getOptionsFormComponents()));
+        $this->form(function (ExportAction | ExportTableAction | ExportTableBulkAction $action): array {
+            if ($action->hasColumnMapping()) {
+                return array_merge([
+                    Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
+                        ->columns(1)
+                        ->inlineLabel()
+                        ->schema(function () use ($action): array {
+                            return array_map(
+                                fn (ExportColumn $column): Split => Split::make([
+                                    Forms\Components\Checkbox::make('isEnabled')
+                                        ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
+                                        ->hiddenLabel()
+                                        ->default($column->isEnabledByDefault())
+                                        ->live()
+                                        ->grow(false),
+                                    Forms\Components\TextInput::make('label')
+                                        ->label(__('filament-actions::export.modal.form.columns.form.label.label', ['column' => $column->getName()]))
+                                        ->hiddenLabel()
+                                        ->default($column->getLabel())
+                                        ->placeholder($column->getLabel())
+                                        ->disabled(fn (Forms\Get $get): bool => ! $get('isEnabled'))
+                                        ->required(fn (Forms\Get $get): bool => (bool) $get('isEnabled')),
+                                ])
+                                    ->verticallyAlignCenter()
+                                    ->statePath($column->getName()),
+                                $action->getExporter()::getColumns(),
+                            );
+                        })
+                        ->statePath('columnMap'),
+                ], $action->getExporter()::getOptionsFormComponents());
+            } else {
+                return $action->getExporter()::getOptionsFormComponents();
+            }
+        });
 
         $this->action(function (ExportAction | ExportTableAction | ExportTableBulkAction $action, array $data, Component $livewire) {
             if ($livewire instanceof HasTable) {
@@ -139,11 +147,7 @@ trait CanExportRecords
                 Arr::except($data, ['columnMap']),
             );
 
-            if (! $this->form) {
-                $columnMap = collect($action->getExporter()::getColumns())
-                    ->mapWithKeys(fn(ExportColumn $column): array => [$column->getName() => $column->getLabel()]
-                )->all();
-            } else {
+            if ($action->hasColumnMapping()) {
                 $columnMap = collect($data['columnMap'])
                     ->dot()
                     ->reduce(fn(Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
@@ -151,6 +155,10 @@ trait CanExportRecords
                     ]), collect())
                     ->filter(fn(array $column): bool => $column['isEnabled'] ?? false)
                     ->mapWithKeys(fn(array $column, string $columnName): array => [$columnName => $column['label']])
+                    ->all();
+            } else {
+                $columnMap = collect($action->getExporter()::getColumns())
+                    ->mapWithKeys(fn(ExportColumn $column): array => [$column->getName() => $column->getLabel()])
                     ->all();
             }
 
@@ -392,5 +400,17 @@ trait CanExportRecords
         $this->modifyQueryUsing = $callback;
 
         return $this;
+    }
+
+    public function columnMapping(bool $columnMapping): static
+    {
+        $this->hasColumnMapping = $columnMapping;
+
+        return $this;
+    }
+
+    public function hasColumnMapping(): bool
+    {
+        return $this->evaluate($this->hasColumnMapping);
     }
 }
