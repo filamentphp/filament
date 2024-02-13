@@ -170,7 +170,15 @@ abstract class Exporter
     /**
      * @return array<string, mixed>
      */
-    public function getHeadingStyle(): array
+    public function getHeadersAlignment(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array<string|mixed>
+     */
+    public function getHeadersFontStyle(): array
     {
         return [];
     }
