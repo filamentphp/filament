@@ -7,7 +7,6 @@ use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\ColorManager;
-use Filament\Support\Commands\Aliases\MakeIssueCommand as MakeIssueCommandAlias;
 use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
@@ -43,7 +42,6 @@ class SupportServiceProvider extends PackageServiceProvider
                 UpgradeCommand::class,
 
                 MakeIssueCommand::class,
-                MakeIssueCommandAlias::class,
             ])
             ->hasConfigFile()
             ->hasTranslations()
