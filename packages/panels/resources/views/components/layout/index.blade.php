@@ -5,7 +5,7 @@
 @endphp
 
 <x-filament-panels::layout.base :livewire="$livewire">
-    {{-- The sidebar is after the page content in the markup to fix issues with page content overlapping dropdown content from the sidebar --}}
+    {{-- The sidebar is after the page content in the markup to fix issues with page content overlapping dropdown content from the sidebar. --}}
     <div
         class="fi-layout flex min-h-screen w-full flex-row-reverse overflow-x-clip"
     >
