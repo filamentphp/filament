@@ -132,7 +132,7 @@
                 @endif
                 {{
                     $attributes->class([
-                        'relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr]',
+                        'relative grid max-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr]',
                         'p-4' => ! ($slideOver || ($width === MaxWidth::Screen)),
                     ])
                 }}
