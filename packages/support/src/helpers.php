@@ -8,30 +8,29 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
-use NumberFormatter;
 
 if (! function_exists('Filament\Support\format_money')) {
-    function format_money(float | int $money, string $currency, int $divideBy = 0): string
+
+    function format_money(float | int $money, string $currency, int $divideBy = 0, ?string $locale = null): string
     {
-        $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::CURRENCY);
 
         if ($divideBy) {
             $money /= $divideBy;
         }
 
-        return $formatter->formatCurrency($money, $currency);
+        return Number::currency($money, $currency, $locale);
     }
 }
 
 if (! function_exists('Filament\Support\format_number')) {
-    function format_number(float | int $number): string
-    {
-        $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::DECIMAL);
 
-        return $formatter->format($number);
+    function format_number(float | int $number, $precision = null, ?string $locale = null): string
+    {
+        return Number::format($number, $precision, null, $locale);
     }
 }
 

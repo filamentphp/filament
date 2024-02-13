@@ -99,28 +99,28 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
     {
         $this->isMoney = true;
 
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $divideBy): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $divideBy, $locale): ?string {
             if (blank($state)) {
                 return null;
             }
 
             $currency = $column->evaluate($currency) ?? Table::$defaultCurrency;
 
-            return format_money($state, $currency, $divideBy);
+            return format_money($state, $currency, $divideBy, $column->evaluate($locale));
         });
 
         return $this;
     }
 
-    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
+    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = null, string | Closure | null $thousandsSeparator = null, string | Closure | null $locale = null): static
     {
         $this->isNumeric = true;
 
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator, $locale): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -131,6 +131,12 @@ trait CanFormatState
 
             if ($decimalPlaces === null) {
                 return format_number($state);
+            }
+
+            if ($locale !== null ||
+                ($decimalSeparator === null && $thousandsSeparator === null)
+            ) {
+                return format_number($state, $column->evaluate($decimalPlaces), $column->evaluate($locale));
             }
 
             return number_format(

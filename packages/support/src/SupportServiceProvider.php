@@ -21,6 +21,7 @@ use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Laravel\Octane\Events\RequestReceived;
@@ -137,6 +138,8 @@ class SupportServiceProvider extends PackageServiceProvider
             /** @phpstan-ignore-next-line */
             return new Stringable(Str::ucwords($this->value));
         });
+
+        Number::useLocale($this->app->getLocale());
 
         if (class_exists(InstalledVersions::class)) {
             $packages = [

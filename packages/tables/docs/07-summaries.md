@@ -221,8 +221,22 @@ In this example, the table will calculate how many posts are published.
 
 ### Number formatting
 
-The `numeric()` method allows you to format a summary as a number, using PHP's `number_format()`:
+The `numeric()` method allows you to format a summary as a number.
 
+Using `Number::format()` method from Laravel:
+
+```php
+use Filament\Tables\Columns\Summarizers\Average;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('rating')
+    ->summarize(Average::make()->numeric(
+        decimalPlaces: 2,
+        locale: 'de',
+    ))
+```
+
+To use the traditional PHP's `number_format()`, you should define the `decimalSeparator` attribute:
 ```php
 use Filament\Tables\Columns\Summarizers\Average;
 use Filament\Tables\Columns\TextColumn;
@@ -247,6 +261,15 @@ TextColumn::make('price')
     ->summarize(Sum::make()->money('EUR'))
 ```
 
+There is an optional `locale` argument for `money()` to set a locale for the currency formatting.
+```php
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('price')
+    ->summarize(Sum::make()->money('EUR', locale: 'de'))
+```
+
 There is also a `divideBy` argument for `money()` that allows you to divide the original value by a number before formatting it. This could be useful if your database stores the price in cents, for example:
 
 ```php
@@ -256,6 +279,21 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('price')
     ->summarize(Sum::make()->money('EUR', divideBy: 100))
 ```
+
+### Globally set the number and currency formatting
+The `money()` and `number()` methods will follow the formatting of the application locale by default. You can override the default number locale globally, which affects how numbers and currency are formatted by subsequent invocations to the Number class's methods:
+```php
+use Illuminate\Support\Number;
+ 
+/**
+ * Bootstrap any application services.
+ */
+public function boot(): void
+{
+    Number::useLocale('de');
+}
+```
+
 
 ### Limiting text length
 
