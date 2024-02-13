@@ -3,7 +3,6 @@
 
     $isDisabled = $isDisabled();
     $state = $getState();
-    $type = $getType();
     $mask = $getMask();
 
     $alignment = $getAlignment() ?? Alignment::Start;
@@ -14,6 +13,8 @@
 
     if (filled($mask)) {
         $type = 'text';
+    } else {
+        $type = $getType();
     }
 @endphp
 
