@@ -28,7 +28,7 @@ if (! function_exists('Filament\Support\format_money')) {
 
 if (! function_exists('Filament\Support\format_number')) {
 
-    function format_number(float | int $number, $precision = null, ?string $locale = null): string
+    function format_number(float | int $number, ?int $precision = null, ?string $locale = null): string
     {
         return Number::format($number, $precision, null, $locale);
     }
