@@ -46,6 +46,7 @@ class MakePageCommand extends Command
         $resource = null;
         $resourceClass = null;
         $resourcePage = null;
+        $modifyQueryUsing = '';
 
         $resourceInput = $this->option('resource') ?? text(
             label: 'What is the resource you would like to create this in?',
@@ -144,8 +145,6 @@ class MakePageCommand extends Command
                 }
 
                 $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
-
-                $modifyQueryUsing = '';
 
                 if ($hasSoftDeletes) {
                     $modifyQueryUsing .= '->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([';
@@ -266,7 +265,7 @@ class MakePageCommand extends Command
             $this->copyStubToApp('ResourceManageRelatedRecordsPage', $path, [
                 'baseResourcePage' => "Filament\\Resources\\Pages\\{$resourcePage}",
                 'baseResourcePageClass' => $resourcePage,
-                'modifyQueryUsing' => filled($modifyQueryUsing ?? null) ? PHP_EOL . $this->indentString($modifyQueryUsing ?? '', 3) : $modifyQueryUsing ?? '',
+                'modifyQueryUsing' => filled($modifyQueryUsing) ? PHP_EOL . $this->indentString($modifyQueryUsing, 3) : $modifyQueryUsing,
                 'namespace' => "{$resourceNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'recordTitleAttribute' => $recordTitleAttribute ?? null,
                 'relationship' => $relationship ?? null,
