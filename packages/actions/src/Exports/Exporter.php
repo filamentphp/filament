@@ -166,4 +166,12 @@ abstract class Exporter
     {
         return [ExportFormat::Csv, ExportFormat::Xlsx];
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getHeadingStyle(): array
+    {
+        return [];
+    }
 }

@@ -4,6 +4,9 @@ namespace Filament\Actions\Exports\Jobs;
 
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,6 +17,9 @@ use Illuminate\Queue\SerializesModels;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
 use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Entity\Style\CellAlignment;
+use OpenSpout\Common\Entity\Style\CellVerticalAlignment;
+use OpenSpout\Common\Entity\Style\Style;
 use OpenSpout\Writer\XLSX\Writer;
 
 class CreateXlsxFile implements ShouldQueue
@@ -49,19 +55,23 @@ class CreateXlsxFile implements ShouldQueue
         $writer = app(Writer::class);
         $writer->openToFile($temporaryFile = tempnam(sys_get_temp_dir(), $this->export->file_name));
 
+        $headingStyle = $this->mapHeadingStyle($this->exporter->getHeadingStyle());
+
         $csvDelimiter = $this->exporter::getCsvDelimiter();
 
-        $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer) {
+        $writeRowsFromFile = function (string $file, Style $headingStyle = null) use ($csvDelimiter, $disk, $writer) {
             $csvReader = CsvReader::createFromStream($disk->readStream($file));
             $csvReader->setDelimiter($csvDelimiter);
             $csvResults = Statement::create()->process($csvReader);
 
             foreach ($csvResults->getRecords() as $row) {
-                $writer->addRow(Row::fromValues($row));
+                $headingStyle
+                    ? $writer->addRow(Row::fromValues($row, $headingStyle))
+                    : $writer->addRow(Row::fromValues($row));
             }
         };
 
-        $writeRowsFromFile($this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv');
+        $writeRowsFromFile($this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv', $headingStyle);
 
         foreach ($disk->files($this->export->getFileDirectory()) as $file) {
             if (str($file)->endsWith('headers.csv')) {
@@ -85,5 +95,31 @@ class CreateXlsxFile implements ShouldQueue
         );
 
         unlink($temporaryFile);
+    }
+
+    /**
+     * ToDo: Font size, font color, bg color, border(?)
+     *
+     * @param array $styles
+     * @return Style
+     */
+    private function mapHeadingStyle(array $styles): Style
+    {
+        $headingStyle = new Style();
+
+        foreach ($styles as $style) {
+            match ($style) {
+                FontWeight::Bold          => $headingStyle->setFontBold(),
+                VerticalAlignment::Start  => $headingStyle->setCellVerticalAlignment(CellVerticalAlignment::TOP),
+                VerticalAlignment::Center => $headingStyle->setCellVerticalAlignment(CellVerticalAlignment::CENTER),
+                VerticalAlignment::End    => $headingStyle->setCellVerticalAlignment(CellVerticalAlignment::BOTTOM),
+                Alignment::Start          => $headingStyle->setCellAlignment(CellAlignment::LEFT),
+                Alignment::Center         => $headingStyle->setCellAlignment(CellAlignment::CENTER),
+                Alignment::End            => $headingStyle->setCellAlignment(CellAlignment::RIGHT),
+                default                   => null,
+            };
+        }
+
+        return $headingStyle;
     }
 }
