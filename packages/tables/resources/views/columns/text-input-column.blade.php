@@ -4,11 +4,16 @@
     $isDisabled = $isDisabled();
     $state = $getState();
     $type = $getType();
+    $mask = $getMask();
 
     $alignment = $getAlignment() ?? Alignment::Start;
 
     if (! $alignment instanceof Alignment) {
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+    }
+
+    if (filled($mask)) {
+        $type = 'text';
     }
 @endphp
 
@@ -115,6 +120,7 @@
 
                                 isLoading = false
                             ',
+                            'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
                         ])
                         ->class([
                             match ($alignment) {
