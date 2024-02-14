@@ -79,8 +79,6 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
      */
     public function getState(): array
     {
-        $collection = $this->getCollection();
-
         $record = $this->getRecord();
 
         if ($this->hasRelationship($record)) {
@@ -88,7 +86,6 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         }
 
         return $record?->getRelationValue('media')
-            ->filter(fn (Media $media): bool => blank($collection) || ($media->getAttributeValue('collection_name') === $collection))
             ->sortBy('order_column')
             ->map(fn (Media $media): string => $media->uuid)
             ->all() ?? [];
@@ -112,6 +109,9 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             ]);
         }
 
-        return $query->with(['media']);
+        return $query->with(['media' => fn (Builder | Relation $query) => $query->where(
+            'collection_name',
+            $this->getCollection(),
+        )]);
     }
 }
