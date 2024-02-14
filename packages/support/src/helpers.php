@@ -12,6 +12,7 @@ use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
+use NumberFormatter;
 
 if (! function_exists('Filament\Support\format_money')) {
 
@@ -22,7 +23,14 @@ if (! function_exists('Filament\Support\format_money')) {
             $money /= $divideBy;
         }
 
-        return Number::currency($money, $currency, $locale);
+        if (method_exists(Number::class, 'currency')) {
+            return Number::currency($money, $currency, $locale);
+        }
+
+        $formatter = new NumberFormatter($locale ?? app()->getLocale(), NumberFormatter::CURRENCY);
+
+        return $formatter->formatCurrency($money, $currency);
+
     }
 }
 
@@ -30,7 +38,16 @@ if (! function_exists('Filament\Support\format_number')) {
 
     function format_number(float | int $number, ?int $precision = null, ?string $locale = null): string
     {
-        return Number::format($number, $precision, null, $locale);
+        if (method_exists(Number::class, 'format')) {
+            return Number::format($number, $precision, null, $locale);
+        }
+
+        $formatter = new NumberFormatter($locale ?? app()->getLocale(), NumberFormatter::DECIMAL);
+        if (! is_null($precision)) {
+            $formatter->setAttribute(NumberFormatter::FRACTION_DIGITS, $precision);
+        }
+
+        return $formatter->format($number, $precision);
     }
 }
 
