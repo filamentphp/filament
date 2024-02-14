@@ -25,6 +25,7 @@
         "pestphp/pest-plugin-laravel": "^2.0",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "v1.10.54",
+        "laravel/framework": ">=10.33",
         "rector/rector": "^0.17",
         "spatie/laravel-medialibrary": "^10.0|^11.0",
         "spatie/laravel-ray": "^1.29",

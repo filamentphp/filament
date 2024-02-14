@@ -139,9 +139,7 @@ class SupportServiceProvider extends PackageServiceProvider
             return new Stringable(Str::ucwords($this->value));
         });
 
-        if (method_exists(Number::class, 'useLocale')) {
-            Number::useLocale($this->app->getLocale());
-        }
+        Number::useLocale($this->app->getLocale());
 
         if (class_exists(InstalledVersions::class)) {
             $packages = [
