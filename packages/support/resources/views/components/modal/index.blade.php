@@ -30,6 +30,10 @@
 ])
 
 @php
+    $hasDescription = filled($description);
+    $hasHeading = filled($heading);
+    $hasIcon = filled($icon);
+
     if (! $alignment instanceof Alignment) {
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
     }
@@ -207,6 +211,7 @@
                                     Alignment::Center => 'flex-col',
                                     default => null,
                                 },
+                                'items-center' => $hasIcon && $hasHeading && (! $hasDescription) && in_array($alignment, [Alignment::Start, Alignment::Left]),
                             ])
                         >
                             @if ($closeButton)
@@ -233,7 +238,7 @@
                             @if ($header)
                                 {{ $header }}
                             @else
-                                @if ($icon)
+                                @if ($hasIcon)
                                     <div
                                         @class([
                                             'mb-5 flex items-center justify-center' => $alignment === Alignment::Center,
@@ -284,7 +289,7 @@
                                         {{ $heading }}
                                     </x-filament::modal.heading>
 
-                                    @if (filled($description))
+                                    @if ($hasDescription)
                                         <x-filament::modal.description
                                             class="mt-2"
                                         >
@@ -301,8 +306,8 @@
                             @class([
                                 'fi-modal-content flex flex-col gap-y-4 py-6',
                                 'flex-1' => ($width === MaxWidth::Screen) || $slideOver,
-                                'pe-6 ps-[5.25rem]' => $icon && ($alignment === Alignment::Start),
-                                'px-6' => ! ($icon && ($alignment === Alignment::Start)),
+                                'pe-6 ps-[5.25rem]' => $hasIcon && ($alignment === Alignment::Start),
+                                'px-6' => ! ($hasIcon && ($alignment === Alignment::Start)),
                             ])
                         >
                             {{ $slot }}
@@ -313,8 +318,8 @@
                         <div
                             @class([
                                 'fi-modal-footer w-full',
-                                'pe-6 ps-[5.25rem]' => $icon && ($alignment === Alignment::Start) && ($footerActionsAlignment !== Alignment::Center) && (! $stickyFooter),
-                                'px-6' => ! ($icon && ($alignment === Alignment::Start) && ($footerActionsAlignment !== Alignment::Center) && (! $stickyFooter)),
+                                'pe-6 ps-[5.25rem]' => $hasIcon && ($alignment === Alignment::Start) && ($footerActionsAlignment !== Alignment::Center) && (! $stickyFooter),
+                                'px-6' => ! ($hasIcon && ($alignment === Alignment::Start) && ($footerActionsAlignment !== Alignment::Center) && (! $stickyFooter)),
                                 'fi-sticky sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900' => $stickyFooter,
                                 'rounded-b-xl' => $stickyFooter && ! ($slideOver || ($width === MaxWidth::Screen)),
                                 'pb-6' => ! $stickyFooter,
