@@ -196,6 +196,18 @@ CheckboxList::make('technologies')
     ->relationship(titleAttribute: 'name')
 ```
 
+If you're using a `BelongsToMany` relationship and your pivot table has additional columns, you can use the `pivotAttributes()` method to specify the pivot attributes that should be saved:
+
+```php
+use Filament\Forms\Components\Select;
+
+CheckboxList::make('technologies')
+    ->relationship(titleAttribute: 'name')
+    ->pivotAttributes([
+        'is_primary' => true,
+    ])
+```
+
 ### Customizing the relationship query
 
 You may customize the database query that retrieves options using the `modifyOptionsQueryUsing` parameter of the `relationship()` method:
