@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Filament\Tables\Columns;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
@@ -14,6 +17,23 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     protected string | Closure | null $collection = null;
 
     protected string | Closure | null $conversion = null;
+
+    protected mixed $mapColumn = null;
+
+    public function applyEagerLoading(Builder | Relation $query): Builder | Relation
+    {
+        if ($this->isHidden()) {
+            return $query;
+        }
+
+        if ($this->hasRelationship($query->getModel())) {
+            return $query->with([
+                "{$this->getRelationshipName()}.media",
+            ]);
+        }
+
+        return $query->with(['media']);
+    }
 
     public function collection(string | Closure | null $collection): static
     {
@@ -42,25 +62,16 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     public function getImageUrl(?string $state = null): ?string
     {
         $record = $this->getRecord();
+        
+        $media = $record->getFirstMedia(filters: fn(Media $media): bool => $media->uuid === $state);
 
-        if ($this->hasRelationship($record)) {
-            $record = $record->getRelationValue($this->getRelationshipName());
-        }
-
-        if (! $record) {
-            return null;
-        }
-
-        /** @var ?Media $media */
-        $media = $record->media->first(fn (Media $media): bool => $media->uuid === $state);
-
-        if (! $media) {
+        if ( ! $media) {
             return null;
         }
 
         $conversion = $this->getConversion();
 
-        if ($this->getVisibility() === 'private') {
+        if ('private' === $this->getVisibility()) {
             try {
                 return $media->getTemporaryUrl(
                     now()->addMinutes(5),
@@ -74,44 +85,36 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $media->getAvailableUrl(Arr::wrap($conversion));
     }
 
-    /**
-     * @return array<string>
-     */
-    public function getState(): array
+    public function getmapColumn(): mixed
+    {
+        return $this->evaluate($this->mapColumn) ?? 'uuid';
+    }
+
+    public function getStateFromRecord(): mixed
     {
         $record = $this->getRecord();
 
         if ($this->hasRelationship($record)) {
-            $record = $record->getRelationValue($this->getRelationshipName());
+            $record = collect($this->getRelationshipResults($record))->first();
         }
 
-        return $record?->getRelationValue('media')
-            ->sortBy('order_column')
-            ->map(fn (Media $media): string => $media->uuid)
-            ->all() ?? [];
+        $state = $record->getMedia()
+            ->pluck($this->getmapColumn())
+            ->filter(fn($state): bool => filled($state))
+            ->when($this->isDistinctList(), fn(Collection $state) => $state->unique())
+            ->values();
+
+        if ( ! $state->count()) {
+            return null;
+        }
+
+        return $state->all();
     }
 
-    public function applyEagerLoading(Builder | Relation $query): Builder | Relation
+    public function mapColumn(mixed $column): static
     {
-        if ($this->isHidden()) {
-            return $query;
-        }
+        $this->mapColumn = $column;
 
-        if ($this->hasRelationship($query->getModel())) {
-            return $query->with([
-                "{$this->getRelationshipName()}.media" => fn (Builder | Relation $query) => $query->when(
-                    $this->getCollection(),
-                    fn (Builder | Relation $query, string $collection) => $query->where(
-                        'collection_name',
-                        $collection,
-                    ),
-                ),
-            ]);
-        }
-
-        return $query->with(['media' => fn (Builder | Relation $query) => $query->where(
-            'collection_name',
-            $this->getCollection(),
-        )]);
+        return $this;
     }
 }
