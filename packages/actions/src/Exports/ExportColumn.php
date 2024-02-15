@@ -24,6 +24,8 @@ class ExportColumn extends Component
 
     protected bool | Closure $isEnabledByDefault = true;
 
+    protected string $evaluationIdentifier = 'column';
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -82,7 +84,7 @@ class ExportColumn extends Component
 
     public function getRecord(): ?Model
     {
-        return $this->getExporter()->getRecord();
+        return $this->getExporter()?->getRecord();
     }
 
     public function getLabel(): ?string

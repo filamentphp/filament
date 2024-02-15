@@ -446,6 +446,15 @@ ImportColumn::make('sku')
     ->example('ABC123')
 ```
 
+By default, the name of the column is used in the header of the example CSV. You can customize the header per-column using `exampleHeader()`:
+
+```php
+use Filament\Actions\Imports\ImportColumn;
+
+ImportColumn::make('sku')
+    ->exampleHeader('SKU')
+```
+
 ## Using a custom user model
 
 By default, the `imports` table has a `user_id` column. That column is constrained to the `users` table:
@@ -602,6 +611,17 @@ public function getJobTags(): array
 ```
 
 If you'd like to customize the tags that are applied to jobs of a certain importer, you may override this method in your importer class.
+
+### Customizing the import job batch name
+
+By default, the import system doesn't define any name for the job batches. If you'd like to customize the name that is applied to job batches of a certain importer, you may override the `getJobBatchName()` method in your importer class:
+
+```php
+public function getJobBatchName(): ?string
+{
+    return 'product-import';
+}
+```
 
 ## Customizing import validation messages
 

@@ -79,27 +79,56 @@
                                     </x-filament-panels::topbar.item>
                                 </x-slot>
 
-                                <x-filament::dropdown.list>
-                                    @foreach ($group->getItems() as $item)
-                                        @php
-                                            $icon = $item->getIcon();
-                                            $isActive = $item->isActive();
-                                        @endphp
+                                @php
+                                    $lists = [];
 
-                                        <x-filament::dropdown.list.item
-                                            :badge="$item->getBadge()"
-                                            :badge-color="$item->getBadgeColor()"
-                                            :badge-tooltip="$item->getBadgeTooltip()"
-                                            :color="$isActive ? 'primary' : 'gray'"
-                                            :href="$item->getUrl()"
-                                            :icon="$isActive ? ($item->getActiveIcon() ?? $icon) : $icon"
-                                            tag="a"
-                                            :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
-                                        >
-                                            {{ $item->getLabel() }}
-                                        </x-filament::dropdown.list.item>
-                                    @endforeach
-                                </x-filament::dropdown.list>
+                                    foreach ($group->getItems() as $item) {
+                                        if ($childItems = $item->getChildItems()) {
+                                            $lists[] = [
+                                                $item,
+                                                ...$childItems,
+                                            ];
+                                            $lists[] = [];
+
+                                            continue;
+                                        }
+
+                                        if (empty($lists)) {
+                                            $lists[] = [$item];
+
+                                            continue;
+                                        }
+
+                                        $lists[count($lists) - 1][] = $item;
+                                    }
+
+                                    if (empty($lists[count($lists) - 1])) {
+                                        array_pop($lists);
+                                    }
+                                @endphp
+
+                                @foreach ($lists as $list)
+                                    <x-filament::dropdown.list>
+                                        @foreach ($list as $item)
+                                            @php
+                                                $itemIsActive = $item->isActive();
+                                            @endphp
+
+                                            <x-filament::dropdown.list.item
+                                                :badge="$item->getBadge()"
+                                                :badge-color="$item->getBadgeColor()"
+                                                :badge-tooltip="$item->getBadgeTooltip()"
+                                                :color="$itemIsActive ? 'primary' : 'gray'"
+                                                :href="$item->getUrl()"
+                                                :icon="$itemIsActive ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon()"
+                                                tag="a"
+                                                :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
+                                            >
+                                                {{ $item->getLabel() }}
+                                            </x-filament::dropdown.list.item>
+                                        @endforeach
+                                    </x-filament::dropdown.list>
+                                @endforeach
                             </x-filament::dropdown>
                         @else
                             @foreach ($group->getItems() as $item)

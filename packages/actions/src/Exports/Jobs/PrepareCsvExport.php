@@ -111,6 +111,7 @@ class PrepareCsvExport implements ShouldQueue
         $chunkKeySize = $this->chunkSize * 10;
 
         $baseQuery = $query->toBase();
+        $baseQuery->distinct($qualifiedKeyName);
 
         /** @phpstan-ignore-next-line */
         $baseQueryOrders = $baseQuery->orders ?? [];

@@ -52,6 +52,8 @@ class ImportColumn extends Component
 
     protected mixed $example = null;
 
+    protected string | Closure | null $exampleHeader = null;
+
     protected string | Closure | null $relationship = null;
 
     /**
@@ -65,6 +67,8 @@ class ImportColumn extends Component
     protected array $resolvedRelatedRecords = [];
 
     protected string | Closure | null $validationAttribute = null;
+
+    protected string $evaluationIdentifier = 'column';
 
     final public function __construct(string $name)
     {
@@ -104,6 +108,13 @@ class ImportColumn extends Component
     public function example(mixed $example): static
     {
         $this->example = $example;
+
+        return $this;
+    }
+
+    public function exampleHeader(string | Closure | null $header): static
+    {
+        $this->exampleHeader = $header;
 
         return $this;
     }
@@ -286,6 +297,11 @@ class ImportColumn extends Component
         return $this->name;
     }
 
+    public function getExampleHeader(): string
+    {
+        return $this->evaluate($this->exampleHeader) ?? $this->getName();
+    }
+
     /**
      * @return array<mixed>
      */
@@ -439,7 +455,7 @@ class ImportColumn extends Component
 
     public function getRecord(): ?Model
     {
-        return $this->getImporter()->getRecord();
+        return $this->getImporter()?->getRecord();
     }
 
     public function isMappingRequired(): bool

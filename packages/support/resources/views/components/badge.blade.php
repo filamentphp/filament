@@ -17,7 +17,7 @@
     'keyBindings' => null,
     'loadingIndicator' => true,
     'size' => ActionSize::Medium,
-    'tag' => 'div',
+    'tag' => 'span',
     'target' => null,
     'tooltip' => null,
     'type' => 'button',

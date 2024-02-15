@@ -123,6 +123,7 @@
                         $icon = $getIcon($state);
                         $iconColor = $getIconColor($state) ?? $color;
                         $itemIsCopyable = $isCopyable($state);
+                        $lineClamp = $getLineClamp($state);
                         $size = $getSize($state);
                         $weight = $getWeight($state);
 
@@ -197,6 +198,7 @@
                                     @class([
                                         'fi-ta-text-item-label',
                                         'group-hover/item:underline group-focus-visible/item:underline' => $url,
+                                        'line-clamp-[--line-clamp]' => $lineClamp,
                                         match ($size) {
                                             TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
                                             TextColumnSize::Small, 'sm', null => 'text-sm leading-6',
@@ -233,6 +235,7 @@
                                             shades: [400, 600],
                                             alias: 'tables::columns.text-column.item.label',
                                         ) => ! in_array($color, [null, 'gray']),
+                                        "--line-clamp: {$lineClamp}" => $lineClamp,
                                     ])
                                 >
                                     {{ $formattedState }}

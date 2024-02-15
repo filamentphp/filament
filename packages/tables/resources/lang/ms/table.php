@@ -112,6 +112,10 @@ return [
 
         'actions' => [
 
+            'apply' => [
+                'label' => 'Gunakan penapis',
+            ],
+
             'remove' => [
                 'label' => 'Buang penapis',
             ],

@@ -283,7 +283,6 @@ By default, the export action will allow the user to choose between both CSV and
 
 ```php
 use App\Filament\Exports\ProductExporter;
-use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 
 ExportAction::make()
@@ -315,6 +314,19 @@ public function getFormats(): array
 }
 ```
 
+## Modifying the export query
+
+By default, if you are using the `ExportAction` with a table, the action will use the table's currently filtered and sorted query to export the data. If you don't have a table, it will use the model's default query. To modify the query builder before exporting, you can use the `modifyQueryUsing()` method on the action:
+
+```php
+use App\Filament\Exports\ProductExporter;
+use Illuminate\Database\Eloquent\Builder;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->modifyQueryUsing(fn (Builder $query) => $query->where('is_active', true))
+```
+
 ## Configuring the export filesystem
 
 ### Customizing the storage disk
@@ -324,8 +336,6 @@ By default, exported files will be uploaded to the storage disk defined in the [
 If you want to use a different disk for a specific export, you can pass the disk name to the `disk()` method on the action:
 
 ```php
-use Filament\Actions\ExportAction;
-
 ExportAction::make()
     ->exporter(ProductExporter::class)
     ->fileDisk('s3')
@@ -345,7 +355,6 @@ public function getFileDisk(): string
 By default, exported files will have a name generated based on the ID and type of the export. You can also use the `fileName()` method on the action to customize the file name:
 
 ```php
-use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Models\Export;
 
 ExportAction::make()
@@ -385,8 +394,6 @@ public static function getOptionsFormComponents(): array
 Alternatively, you can pass a set of static options to the exporter through the `options()` method on the action:
 
 ```php
-use Filament\Actions\ExportAction;
-
 ExportAction::make()
     ->exporter(ProductExporter::class)
     ->options([
@@ -571,6 +578,17 @@ public function getJobTags(): array
 ```
 
 If you'd like to customize the tags that are applied to jobs of a certain exporter, you may override this method in your exporter class.
+
+### Customizing the export job batch name
+
+By default, the export system doesn't define any name for the job batches. If you'd like to customize the name that is applied to job batches of a certain exporter, you may override the `getJobBatchName()` method in your exporter class:
+
+```php
+public function getJobBatchName(): ?string
+{
+    return 'product-export';
+}
+```
 
 ## Authorization
 

@@ -118,6 +118,7 @@ trait HasCellState
         $state = collect($this->getRelationshipResults($record))
             ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->attributesToArray()))
             ->pluck($relationshipAttribute)
+            ->filter(fn ($state): bool => filled($state))
             ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
             ->values();
 

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 class MorphToSelect extends Component
 {
     use Concerns\CanAllowHtml;
+    use Concerns\CanBeNative;
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\HasLoadingMessage;
@@ -66,6 +67,7 @@ class MorphToSelect extends Component
                     fn (Type $type): string => $type->getLabel(),
                     $types,
                 ))
+                ->native($this->isNative())
                 ->required($isRequired)
                 ->live()
                 ->afterStateUpdated(function (Set $set) use ($keyColumn) {
@@ -78,8 +80,10 @@ class MorphToSelect extends Component
                 ->options($selectedType?->getOptionsUsing)
                 ->getSearchResultsUsing($selectedType?->getSearchResultsUsing)
                 ->getOptionLabelUsing($selectedType?->getOptionLabelUsing)
-                ->required($isRequired)
-                ->hidden(! $selectedType)
+                ->native($this->isNative())
+                ->required(filled($selectedType))
+                ->hidden(blank($selectedType))
+                ->dehydratedWhenHidden()
                 ->searchable($this->isSearchable())
                 ->searchDebounce($this->getSearchDebounce())
                 ->searchPrompt($this->getSearchPrompt())

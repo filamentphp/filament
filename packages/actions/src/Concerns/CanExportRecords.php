@@ -59,6 +59,8 @@ trait CanExportRecords
      */
     protected array | Closure | null $formats = null;
 
+    protected ?Closure $modifyQueryUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -105,6 +107,12 @@ trait CanExportRecords
                 $query = $livewire->getFilteredSortedTableQuery();
             } else {
                 $query = $action->getExporter()::getModel()::query();
+            }
+
+            if ($this->modifyQueryUsing) {
+                $query = $this->evaluate($this->modifyQueryUsing, [
+                    'query' => $query,
+                ]) ?? $query;
             }
 
             $records = $action instanceof ExportTableBulkAction ? $action->getRecords() : null;
@@ -166,6 +174,7 @@ trait CanExportRecords
             $job = $action->getJob();
             $jobQueue = $exporter->getJobQueue();
             $jobConnection = $exporter->getJobConnection();
+            $jobBatchName = $exporter->getJobBatchName();
 
             // We do not want to send the loaded user relationship to the queue in job payloads,
             // in case it contains attributes that are not serializable, such as binary columns.
@@ -193,6 +202,10 @@ trait CanExportRecords
                     ->when(
                         filled($jobConnection),
                         fn (PendingBatch $batch) => $batch->onConnection($jobConnection),
+                    )
+                    ->when(
+                        filled($jobBatchName),
+                        fn (PendingBatch $batch) => $batch->name($jobBatchName),
                     )
                     ->allowFailures(),
                 ...(($hasXlsx && (! $hasCsv)) ? [$makeCreateXlsxFileJob()] : []),
@@ -366,5 +379,12 @@ trait CanExportRecords
     public function getFormats(): ?array
     {
         return $this->evaluate($this->formats);
+    }
+
+    public function modifyQueryUsing(?Closure $callback): static
+    {
+        $this->modifyQueryUsing = $callback;
+
+        return $this;
     }
 }

@@ -50,6 +50,7 @@ export default function fileUploadFormComponent({
     isOpenable,
     isPreviewable,
     isReorderable,
+    itemPanelAspectRatio,
     loadingIndicatorPosition,
     locale,
     maxFiles,
@@ -119,6 +120,7 @@ export default function fileUploadFormComponent({
                 minFileSize: minSize,
                 styleButtonProcessItemPosition: uploadButtonPosition,
                 styleButtonRemoveItemPosition: removeUploadedFileButtonPosition,
+                styleItemPanelAspectRatio: itemPanelAspectRatio,
                 styleLoadIndicatorPosition: loadingIndicatorPosition,
                 stylePanelAspectRatio: panelAspectRatio,
                 stylePanelLayout: panelLayout,
@@ -350,7 +352,10 @@ export default function fileUploadFormComponent({
                     options: {
                         type: 'local',
                         ...(!uploadedFile.type ||
-                        /^image/.test(uploadedFile.type)
+                        (isPreviewable &&
+                            (/^audio/.test(uploadedFile.type) ||
+                                /^image/.test(uploadedFile.type) ||
+                                /^video/.test(uploadedFile.type)))
                             ? {}
                             : {
                                   file: {
