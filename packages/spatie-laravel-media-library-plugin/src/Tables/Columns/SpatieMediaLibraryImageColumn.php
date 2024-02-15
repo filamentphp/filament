@@ -62,6 +62,10 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     public function getImageUrl(?string $state = null): ?string
     {
         $record = $this->getRecord();
+
+        if ($this->hasRelationship($record)) {
+            $record = collect($this->getRelationshipResults($record))->first();
+        }
         
         $media = $record->getFirstMedia(filters: fn(Media $media): bool => $media->uuid === $state);
 
