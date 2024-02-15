@@ -34,6 +34,7 @@
             'gray' => 'hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
             default => 'hover:bg-custom-50 focus-visible:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus-visible:bg-custom-400/10',
         },
+        is_string($color) ? "fi-color-{$color}" : null,
     ]);
 
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([

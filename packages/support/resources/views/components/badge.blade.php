@@ -108,7 +108,7 @@
                     'gray' => 'fi-color-gray bg-gray-50 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
                     default => 'fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
                 },
-                is_string($color) ? "fi-badge-color-{$color}" : null,
+                is_string($color) ? "fi-color-{$color}" : null,
             ])
             ->style([
                 \Filament\Support\get_color_css_variables(

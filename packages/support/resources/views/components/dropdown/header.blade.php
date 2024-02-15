@@ -38,6 +38,7 @@
                     'gray' => 'text-gray-400 dark:text-gray-500',
                     default => 'text-custom-500 dark:text-custom-400',
                 },
+                is_string($color) ? "fi-color-{$color}" : null,
             ])
             @style([
                 \Filament\Support\get_color_css_variables(

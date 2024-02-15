@@ -77,6 +77,7 @@
             'gray' => 'text-gray-700 dark:text-gray-200',
             default => 'text-custom-600 dark:text-custom-400',
         },
+        is_string($color) ? "fi-color-{$color}" : null,
     ]);
 
     $labelStyles = \Illuminate\Support\Arr::toCssStyles([
