@@ -143,7 +143,7 @@ trait CanReadModelSchemas
             : null;
 
         $values = is_null($values) ? [] : match ($type) {
-            'string', 'char', 'binary' => ['length' => (int) $values[0]],
+            'string', 'char', 'binary', 'bit' => ['length' => (int) $values[0]],
             // 'enum', 'set' => ['values' => $values],
             // 'float', 'decimal', 'double' => ['precision' => (int) $values[0], 'scale' => isset($values[1]) ? (int) $values[1] : null],
             // 'datetime', 'timestamp', 'time', 'interval' => ['precision' => (int) $values[0]],
