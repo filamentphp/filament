@@ -6,17 +6,26 @@ use Closure;
 
 trait HasPivotAttributes
 {
-    protected array | Closure | null $pivotAttributes = null;
+    /**
+     * @var array<array<mixed> | Closure>
+     */
+    protected array | Closure $pivotAttributes = [];
 
-    public function pivotAttributes(array | Closure | null $attributes): static
+    /**
+     * @param  array<mixed> | Closure  $attributes
+     */
+    public function pivotAttributes(array | Closure $attributes): static
     {
         $this->pivotAttributes = $attributes;
 
         return $this;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getPivotAttributes(): ?array
     {
-        return $this->evaluate($this->pivotAttributes) ?? [];
+        return $this->evaluate($this->pivotAttributes);
     }
 }
