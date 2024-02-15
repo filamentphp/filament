@@ -14,7 +14,7 @@
         "filament/support": "self.version",
         "illuminate/console": "^10.0|^11.0",
         "illuminate/contracts": "^10.0|^11.0",
-        "illuminate/database": "^10.0|^11.0",
+        "illuminate/database": "^10.38|^11.0",
         "illuminate/filesystem": "^10.0|^11.0",
         "illuminate/support": "^10.0|^11.0",
         "illuminate/view": "^10.0|^11.0",
