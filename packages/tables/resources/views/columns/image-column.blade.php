@@ -10,10 +10,15 @@
     $height = $getHeight() ?? ($isStacked ? '2rem' : '2.5rem');
     $width = $getWidth() ?? (($isCircular || $isSquare) ? $height : null);
 
+    $countState = count($state);
+    $countLimitedState = count($limitedState);
+
     $defaultImageUrl = $getDefaultImageUrl();
 
-    if ((! count($limitedState)) && filled($defaultImageUrl)) {
+    if ((! $countLimitedState) && filled($defaultImageUrl)) {
         $limitedState = [null];
+
+        $countLimitedState = 1;
     }
 
     $ringClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -50,7 +55,7 @@
             ])
     }}
 >
-    @if (count($limitedState))
+    @if ($countLimitedState)
         <div class="flex items-center gap-x-2.5">
             <div
                 @class([
@@ -88,7 +93,7 @@
                     />
                 @endforeach
 
-                @if ($hasLimitedRemainingText && ($loop->iteration < count($limitedState)) && (! $isLimitedRemainingTextSeparate) && $isCircular)
+                @if ($hasLimitedRemainingText && ($countLimitedState < $countState) && (! $isLimitedRemainingTextSeparate) && $isCircular)
                     <div
                         style="
                             @if ($height) height: {{ $height }}; @endif
@@ -106,20 +111,20 @@
                         ])
                     >
                         <span class="-ms-0.5">
-                            +{{ count($state) - count($limitedState) }}
+                            +{{ $countState - $countLimitedState }}
                         </span>
                     </div>
                 @endif
             </div>
 
-            @if ($hasLimitedRemainingText && ($loop->iteration < count($limitedState)) && ($isLimitedRemainingTextSeparate || (! $isCircular)))
+            @if ($hasLimitedRemainingText && ($countLimitedState < $countState) && ($isLimitedRemainingTextSeparate || (! $isCircular)))
                 <div
                     @class([
                         'font-medium text-gray-500 dark:text-gray-400',
                         $limitedRemainingTextSizeClasses,
                     ])
                 >
-                    +{{ count($state) - count($limitedState) }}
+                    +{{ $countState - $countLimitedState }}
                 </div>
             @endif
         </div>
