@@ -1,346 +1,346 @@
 import { v4 as uuid } from 'uuid-browser'
 
 class Notification {
-    constructor() {
-        this.id(uuid())
+  constructor () {
+    this.id(uuid())
 
-        return this
-    }
+    return this
+  }
 
-    id(id) {
-        this.id = id
+  id (id) {
+    this.id = id
 
-        return this
-    }
+    return this
+  }
 
-    title(title) {
-        this.title = title
+  title (title) {
+    this.title = title
 
-        return this
-    }
+    return this
+  }
 
-    body(body) {
-        this.body = body
+  body (body) {
+    this.body = body
 
-        return this
-    }
+    return this
+  }
 
-    actions(actions) {
-        this.actions = actions
+  actions (actions) {
+    this.actions = actions
 
-        return this
-    }
+    return this
+  }
 
-    status(status) {
-        this.status = status
+  status (status) {
+    this.status = status
 
-        return this
-    }
+    return this
+  }
 
-    color(color) {
-        this.color = color
+  color (color) {
+    this.color = color
 
-        return this
-    }
+    return this
+  }
 
-    icon(icon) {
-        this.icon = icon
+  icon (icon) {
+    this.icon = icon
 
-        return this
-    }
+    return this
+  }
 
-    iconColor(color) {
-        this.iconColor = color
+  iconColor (color) {
+    this.iconColor = color
 
-        return this
-    }
+    return this
+  }
 
-    duration(duration) {
-        this.duration = duration
+  duration (duration) {
+    this.duration = duration
 
-        return this
-    }
+    return this
+  }
 
-    seconds(seconds) {
-        this.duration(seconds * 1000)
+  seconds (seconds) {
+    this.duration(seconds * 1000)
 
-        return this
-    }
+    return this
+  }
 
-    persistent() {
-        this.duration('persistent')
+  persistent () {
+    this.duration('persistent')
 
-        return this
-    }
+    return this
+  }
 
-    danger() {
-        this.status('danger')
+  danger () {
+    this.status('danger')
 
-        return this
-    }
+    return this
+  }
 
-    info() {
-        this.status('info')
+  info () {
+    this.status('info')
 
-        return this
-    }
+    return this
+  }
 
-    success() {
-        this.status('success')
+  success () {
+    this.status('success')
 
-        return this
-    }
+    return this
+  }
 
-    warning() {
-        this.status('warning')
+  warning () {
+    this.status('warning')
 
-        return this
-    }
+    return this
+  }
 
-    view(view) {
-        this.view = view
+  view (view) {
+    this.view = view
 
-        return this
-    }
+    return this
+  }
 
-    viewData(viewData) {
-        this.viewData = viewData
+  viewData (viewData) {
+    this.viewData = viewData
 
-        return this
-    }
+    return this
+  }
 
-    send() {
-        window.dispatchEvent(
-            new CustomEvent('notificationSent', {
-                detail: {
-                    notification: this,
-                },
-            }),
-        )
+  send () {
+    window.dispatchEvent(
+      new CustomEvent('notificationSent', {
+        detail: {
+          notification: this
+        }
+      })
+    )
 
-        return this
-    }
+    return this
+  }
 }
 
 class Action {
-    constructor(name) {
-        this.name(name)
+  constructor (name) {
+    this.name(name)
 
-        return this
-    }
+    return this
+  }
 
-    name(name) {
-        this.name = name
+  name (name) {
+    this.name = name
 
-        return this
-    }
+    return this
+  }
 
-    color(color) {
-        this.color = color
+  color (color) {
+    this.color = color
 
-        return this
-    }
+    return this
+  }
 
-    dispatch(event, data) {
-        this.event(event)
-        this.eventData(data)
+  dispatch (event, data) {
+    this.event(event)
+    this.eventData(data)
 
-        return this
-    }
+    return this
+  }
 
-    dispatchSelf(event, data) {
-        this.dispatch(event, data)
-        this.dispatchDirection = 'self'
+  dispatchSelf (event, data) {
+    this.dispatch(event, data)
+    this.dispatchDirection = 'self'
 
-        return this
-    }
+    return this
+  }
 
-    dispatchTo(component, event, data) {
-        this.dispatch(event, data)
-        this.dispatchDirection = 'to'
-        this.dispatchToComponent = component
+  dispatchTo (component, event, data) {
+    this.dispatch(event, data)
+    this.dispatchDirection = 'to'
+    this.dispatchToComponent = component
 
-        return this
-    }
+    return this
+  }
 
-    /**
+  /**
      * @deprecated Use `dispatch()` instead.
      */
-    emit(event, data) {
-        this.dispatch(event, data)
+  emit (event, data) {
+    this.dispatch(event, data)
 
-        return this
-    }
+    return this
+  }
 
-    /**
+  /**
      * @deprecated Use `dispatchSelf()` instead.
      */
-    emitSelf(event, data) {
-        this.dispatchSelf(event, data)
+  emitSelf (event, data) {
+    this.dispatchSelf(event, data)
 
-        return this
-    }
+    return this
+  }
 
-    /**
+  /**
      * @deprecated Use `dispatchTo()` instead.
      */
-    emitTo(component, event, data) {
-        this.dispatchTo(component, event, data)
+  emitTo (component, event, data) {
+    this.dispatchTo(component, event, data)
 
-        return this
-    }
+    return this
+  }
 
-    dispatchDirection(dispatchDirection) {
-        this.dispatchDirection = dispatchDirection
+  dispatchDirection (dispatchDirection) {
+    this.dispatchDirection = dispatchDirection
 
-        return this
-    }
+    return this
+  }
 
-    dispatchToComponent(component) {
-        this.dispatchToComponent = component
+  dispatchToComponent (component) {
+    this.dispatchToComponent = component
 
-        return this
-    }
+    return this
+  }
 
-    event(event) {
-        this.event = event
+  event (event) {
+    this.event = event
 
-        return this
-    }
+    return this
+  }
 
-    eventData(data) {
-        this.eventData = data
+  eventData (data) {
+    this.eventData = data
 
-        return this
-    }
+    return this
+  }
 
-    extraAttributes(attributes) {
-        this.extraAttributes = attributes
+  extraAttributes (attributes) {
+    this.extraAttributes = attributes
 
-        return this
-    }
+    return this
+  }
 
-    icon(icon) {
-        this.icon = icon
+  icon (icon) {
+    this.icon = icon
 
-        return this
-    }
+    return this
+  }
 
-    iconPosition(position) {
-        this.iconPosition = position
+  iconPosition (position) {
+    this.iconPosition = position
 
-        return this
-    }
+    return this
+  }
 
-    outlined(condition = true) {
-        this.isOutlined = condition
+  outlined (condition = true) {
+    this.isOutlined = condition
 
-        return this
-    }
+    return this
+  }
 
-    disabled(condition = true) {
-        this.isDisabled = condition
+  disabled (condition = true) {
+    this.isDisabled = condition
 
-        return this
-    }
+    return this
+  }
 
-    label(label) {
-        this.label = label
+  label (label) {
+    this.label = label
 
-        return this
-    }
+    return this
+  }
 
-    close(condition = true) {
-        this.shouldClose = condition
+  close (condition = true) {
+    this.shouldClose = condition
 
-        return this
-    }
+    return this
+  }
 
-    openUrlInNewTab(condition = true) {
-        this.shouldOpenUrlInNewTab = condition
+  openUrlInNewTab (condition = true) {
+    this.shouldOpenUrlInNewTab = condition
 
-        return this
-    }
+    return this
+  }
 
-    size(size) {
-        this.size = size
+  size (size) {
+    this.size = size
 
-        return this
-    }
+    return this
+  }
 
-    url(url) {
-        this.url = url
+  url (url) {
+    this.url = url
 
-        return this
-    }
+    return this
+  }
 
-    view(view) {
-        this.view = view
+  view (view) {
+    this.view = view
 
-        return this
-    }
+    return this
+  }
 
-    button() {
-        this.view('filament-notifications::actions.button-action')
+  button () {
+    this.view('filament-notifications::actions.button-action')
 
-        return this
-    }
+    return this
+  }
 
-    grouped() {
-        this.view('filament-notifications::actions.grouped-action')
+  grouped () {
+    this.view('filament-notifications::actions.grouped-action')
 
-        return this
-    }
+    return this
+  }
 
-    link() {
-        this.view('filament-notifications::actions.link-action')
+  link () {
+    this.view('filament-notifications::actions.link-action')
 
-        return this
-    }
+    return this
+  }
 }
 
 class ActionGroup {
-    constructor(actions) {
-        this.actions(actions)
+  constructor (actions) {
+    this.actions(actions)
 
-        return this
-    }
+    return this
+  }
 
-    actions(actions) {
-        this.actions = actions.map((action) => action.grouped())
+  actions (actions) {
+    this.actions = actions.map((action) => action.grouped())
 
-        return this
-    }
+    return this
+  }
 
-    color(color) {
-        this.color = color
+  color (color) {
+    this.color = color
 
-        return this
-    }
+    return this
+  }
 
-    icon(icon) {
-        this.icon = icon
+  icon (icon) {
+    this.icon = icon
 
-        return this
-    }
+    return this
+  }
 
-    iconPosition(position) {
-        this.iconPosition = position
+  iconPosition (position) {
+    this.iconPosition = position
 
-        return this
-    }
+    return this
+  }
 
-    label(label) {
-        this.label = label
+  label (label) {
+    this.label = label
 
-        return this
-    }
+    return this
+  }
 
-    tooltip(tooltip) {
-        this.tooltip = tooltip
+  tooltip (tooltip) {
+    this.tooltip = tooltip
 
-        return this
-    }
+    return this
+  }
 }
 
 export { Action, ActionGroup, Notification }
