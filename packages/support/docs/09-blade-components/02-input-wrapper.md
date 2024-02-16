@@ -65,6 +65,21 @@ To disable the input, you must also pass the `disabled` attribute to the wrapper
 </x-filament::input.wrapper>
 ```
 
+## Adding a label above the input
+
+You may place text above the input using the `label` attribute:
+
+```blade
+<x-filament::input.wrapper
+    label="Email address"
+>
+    <x-filament::input
+        type="text"
+        wire:model="email"
+    />
+</x-filament::input.wrapper>
+```
+
 ## Adding affix text aside the input
 
 You may place text before and after the input using the `prefix` and `suffix` slots:
