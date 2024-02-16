@@ -117,7 +117,7 @@ You can [change the color](badge#changing-the-color-of-the-badge) of the badge u
 </x-filament::dropdown.list.item>
 ```
 
-## Addomg a separator to a dropdown list
+## Adding a separator to a dropdown list
 
 The dropdown may be positioned relative to the trigger button by using the `placement` attribute:
 
