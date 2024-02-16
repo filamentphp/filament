@@ -72,7 +72,7 @@
     }
 @endphp
 
-@if ($label)
+@if (filled($label))
     <div class="fi-field-wrp grid gap-y-2">
         <div class="flex items-center justify-between gap-x-3">
             <label class="fi-field-wrp-label inline-flex items-center gap-x-3">
@@ -82,18 +82,18 @@
             </label>
         </div>
 @endif
-    
+        
 <div
     @if ($hasAlpineClasses)
         x-bind:class="{
-            {{ $hasAlpineDisabledClasses ? "'{$enabledWrapperClasses}': ! ({$alpineDisabled})," : null }}
-            {{ $hasAlpineDisabledClasses ? "'{$disabledWrapperClasses}': {$alpineDisabled}," : null }}
-            {{ $hasAlpineValidClasses ? "'{$validWrapperClasses}': {$alpineValid}," : null }}
-            {{ $hasAlpineValidClasses ? "'{$invalidWrapperClasses}': ! ({$alpineValid})," : null }}
-            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledValidWrapperClasses}': ! ({$alpineDisabled}) && {$alpineValid}," : null }}
-            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledInvalidWrapperClasses}': ! ({$alpineDisabled}) && ! ({$alpineValid})," : null }}
-            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$disabledValidWrapperClasses}': {$alpineDisabled} && ! ({$alpineValid})," : null }}
-        }"
+    {{ $hasAlpineDisabledClasses ? "'{$enabledWrapperClasses}': ! ({$alpineDisabled})," : null }}
+    {{ $hasAlpineDisabledClasses ? "'{$disabledWrapperClasses}': {$alpineDisabled}," : null }}
+    {{ $hasAlpineValidClasses ? "'{$validWrapperClasses}': {$alpineValid}," : null }}
+    {{ $hasAlpineValidClasses ? "'{$invalidWrapperClasses}': ! ({$alpineValid})," : null }}
+    {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledValidWrapperClasses}': ! ({$alpineDisabled}) && {$alpineValid}," : null }}
+    {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledInvalidWrapperClasses}': ! ({$alpineDisabled}) && ! ({$alpineValid})," : null }}
+    {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$disabledValidWrapperClasses}': {$alpineDisabled} && ! ({$alpineValid})," : null }}
+}"
     @endif
     {{
         $attributes
@@ -114,8 +114,8 @@
         <div
             @if (! $hasPrefix)
                 wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.flex
-                wire:target="{{ $loadingIndicatorTarget }}"
-                wire:key="{{ \Illuminate\Support\Str::random() }}" {{-- Makes sure the loading indicator gets hidden again. --}}
+            wire:target="{{ $loadingIndicatorTarget }}"
+            wire:key="{{ \Illuminate\Support\Str::random() }}" {{-- Makes sure the loading indicator gets hidden again. --}}
             @endif
             @class([
                 'items-center gap-x-3 ps-3',
@@ -133,52 +133,52 @@
                     @endforeach
                 </div>
             @endif
-
+            
             @if ($prefixIcon)
                 <x-filament::icon
                     :attributes="
-                        \Filament\Support\prepare_inherited_attributes(
-                            new \Illuminate\View\ComponentAttributeBag([
-                                'alias' => $prefixIconAlias,
-                                'icon' => $prefixIcon,
-                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
-                            ])
-                        )
-                            ->class([$getIconClasses($prefixIconColor)])
-                            ->style([$getIconStyles($prefixIconColor)])
-                    "
+                \Filament\Support\prepare_inherited_attributes(
+                    new \Illuminate\View\ComponentAttributeBag([
+                        'alias' => $prefixIconAlias,
+                        'icon' => $prefixIcon,
+                        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                    ])
+                )
+                    ->class([$getIconClasses($prefixIconColor)])
+                    ->style([$getIconStyles($prefixIconColor)])
+            "
                 />
             @endif
-
+            
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
                     :attributes="
-                        \Filament\Support\prepare_inherited_attributes(
-                            new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
-                                'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
-                            ])
-                        )->class([$getIconClasses()])
-                    "
+                \Filament\Support\prepare_inherited_attributes(
+                    new \Illuminate\View\ComponentAttributeBag([
+                        'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
+                        'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
+                    ])
+                )->class([$getIconClasses()])
+            "
                 />
             @endif
-
+            
             @if (filled($prefix))
                 <span class="{{ $labelClasses }}">
-                    {{ $prefix }}
-                </span>
+            {{ $prefix }}
+        </span>
             @endif
         </div>
     @endif
-
+    
     <div
         @if ($hasLoadingIndicator && (! $hasPrefix))
             @if ($inlinePrefix)
                 wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="ps-3"
-            @endif
-
-            wire:target="{{ $loadingIndicatorTarget }}"
+        @endif
+        
+        wire:target="{{ $loadingIndicatorTarget }}"
         @endif
         @class([
             'min-w-0 flex-1',
@@ -187,7 +187,7 @@
     >
         {{ $slot }}
     </div>
-
+    
     @if ($hasSuffix)
         <div
             @class([
@@ -199,10 +199,10 @@
         >
             @if (filled($suffix))
                 <span class="{{ $labelClasses }}">
-                    {{ $suffix }}
-                </span>
+            {{ $suffix }}
+        </span>
             @endif
-
+            
             @if ($suffixIcon)
                 <x-filament::icon
                     :alias="$suffixIconAlias"
@@ -211,7 +211,7 @@
                     :style="$getIconStyles($suffixIconColor)"
                 />
             @endif
-
+            
             @if (count($suffixActions))
                 <div class="{{ $actionsClasses }}">
                     @foreach ($suffixActions as $suffixAction)
@@ -222,7 +222,7 @@
         </div>
     @endif
 </div>
-
-@if ($label)
+        
+@if (filled($label))
     </div>
 @endif
