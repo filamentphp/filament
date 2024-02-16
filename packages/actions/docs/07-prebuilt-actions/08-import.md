@@ -128,7 +128,9 @@ ImportColumn::make('sku')
     ->rules(['required', 'max:32'])
 ```
 
-Any rows that do not pass validation will not be imported. Instead, they will be compiled into a new CSV of "failed rows", which the user can download after the import has finished. The user will be shown a list of validation errors for each row that failed.
+Any rows that do not pass validation will not be imported. Instead of being imported, the details of these rows are compiled into a CSV file labeled "failed rows." This file, which includes an `error` column with specific error descriptions for each row, is made available to the user through a notification. This ensures users can easily identify and rectify any issues with their data.
+
+For this notification feature to function, [database notifications](https://filamentphp.com/docs/3.x/notifications/database-notifications) should be set up in the project.
 
 ### Casting state
 
