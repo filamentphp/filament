@@ -22,6 +22,8 @@ The dropdown component allows you to render a dropdown menu with a button that t
         <x-filament::dropdown.list.item wire:click="openEditModal">
             Edit
         </x-filament::dropdown.list.item>
+
+        </x-filament::dropdown.list.separator />
         
         <x-filament::dropdown.list.item wire:click="openDeleteModal">
             Delete
@@ -115,14 +117,14 @@ You can [change the color](badge#changing-the-color-of-the-badge) of the badge u
 </x-filament::dropdown.list.item>
 ```
 
-## Setting the placement of a dropdown
+## Addomg a separator to a dropdown list
 
 The dropdown may be positioned relative to the trigger button by using the `placement` attribute:
 
 ```blade
-<x-filament::dropdown placement="top-start">
-    {{-- Dropdown items --}}
-</x-filament::dropdown>
+<x-filament::dropdown.list>
+    </x-filament::dropdown.list.separator />
+</x-filament::dropdown.list>
 ```
 
 ## Setting the width of a dropdown
