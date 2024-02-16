@@ -101,10 +101,10 @@ class CreateXlsxFile implements ShouldQueue
     }
 
     /**
-     * @param CellStyle $cellStyle
+     * @param  CellStyle $cellStyle
      * @return Style
      */
-    private function setStyle(CellStyle $cellStyle): Style
+    protected function setStyle(CellStyle $cellStyle): Style
     {
         $headingStyle = new Style();
 

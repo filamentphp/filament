@@ -10,8 +10,11 @@ use Spatie\Color\Rgb;
 class CellStyle
 {
     public bool $bold = false;
+
     public bool $italic = false;
+
     public bool $underline = false;
+
     public bool $strikethrough = false;
 
     public int $size;
@@ -19,8 +22,11 @@ class CellStyle
     public string $family;
 
     public Hex|Rgb $color;
+
     public Hex|Rgb $backgroundColor;
+
     public VerticalAlignment $verticalAlignment;
+    
     public Alignment $alignment;
 
     public static function make(): static
@@ -28,10 +34,6 @@ class CellStyle
         return app(static::class);
     }
 
-    /**
-     * @param bool $bold
-     * @return $this
-     */
     public function bold(bool $bold = true): static
     {
         $this->bold = $bold;
@@ -39,10 +41,6 @@ class CellStyle
         return $this;
     }
 
-    /**
-     * @param bool $italic
-     * @return $this
-     */
     public function italic(bool $italic = true): static
     {
         $this->italic = $italic;
@@ -50,10 +48,6 @@ class CellStyle
         return $this;
     }
 
-    /**
-     * @param bool $underline
-     * @return $this
-     */
     public function underline(bool $underline = true): static
     {
         $this->underline = $underline;
@@ -61,10 +55,6 @@ class CellStyle
         return $this;
     }
 
-    /**
-     * @param bool $strikethrough
-     * @return $this
-     */
     public function strikethrough(bool $strikethrough = true): static
     {
         $this->strikethrough = $strikethrough;
@@ -72,10 +62,6 @@ class CellStyle
         return $this;
     }
 
-    /**
-     * @param int $size
-     * @return $this
-     */
     public function size(int $size): static
     {
         $this->size = $size;
@@ -83,10 +69,6 @@ class CellStyle
         return $this;
     }
 
-    /**
-     * @param string $fontFamily
-     * @return $this
-     */
     public function family(string $fontFamily): static
     {
         $this->family = ucfirst(strtolower($fontFamily));
@@ -94,10 +76,6 @@ class CellStyle
         return $this;
     }
 
-    /**
-     * @param string $color
-     * @return $this
-     */
     public function color(string $color): static
     {
         if (str($color)->startsWith('#')) {
@@ -109,10 +87,6 @@ class CellStyle
         return $this;
     }
 
-    /**
-     * @param string $backgroundColor
-     * @return $this
-     */
     public function backgroundColor(string $backgroundColor): static
     {
         if (str($backgroundColor)->startsWith('#')) {
@@ -124,10 +98,6 @@ class CellStyle
         return $this;
     }
 
-    /**
-     * @param Alignment|string $alignment
-     * @return $this
-     */
     public function alignment(Alignment|string $alignment): static
     {
         if (is_string($alignment)) {
@@ -139,10 +109,6 @@ class CellStyle
         return $this;
     }
 
-    /**
-     * @param VerticalAlignment|string $verticalAlignment
-     * @return $this
-     */
     public function verticalAlignment(VerticalAlignment|string $verticalAlignment): static
     {
         if (is_string($verticalAlignment)) {
