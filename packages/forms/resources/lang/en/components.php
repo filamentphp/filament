@@ -413,6 +413,8 @@ return [
 
         'search_prompt' => 'Start typing to search...',
 
+        'select'=>'Select'
+
     ],
 
     'tags_input' => [
@@ -432,6 +434,8 @@ return [
             ],
 
         ],
+
+        'enter'=>'Enter'
 
     ],
 

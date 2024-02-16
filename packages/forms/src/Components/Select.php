@@ -188,7 +188,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 ->all();
         });
 
-        $this->placeholder(static fn (Select $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.select.placeholder'));
+        $this->placeholder(static fn (Select $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.select.select').' '.$component->getLabel());
 
         $this->suffixActions([
             static fn (Select $component): ?Action => $component->getCreateOptionAction(),

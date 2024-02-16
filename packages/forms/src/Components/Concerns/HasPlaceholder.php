@@ -17,6 +17,6 @@ trait HasPlaceholder
 
     public function getPlaceholder(): ?string
     {
-        return $this->evaluate($this->placeholder);
+        return $this->placeholder?$this->evaluate($this->placeholder):__('filament-forms::components.text_input.enter') .' '.$this->getLabel();
     }
 }
