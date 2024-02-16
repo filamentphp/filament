@@ -495,6 +495,28 @@ public static function getCsvDelimiter(): string
 
 You can only specify a single character, otherwise an exception will be thrown.
 
+## Styling headers
+
+If you want to style the headers of the XLSX file, you may override the `getHeadingStyle()` method on the exporter class, returning a `CellStyle` object:
+
+```php
+use Filament\Actions\Exports\CellStyle;
+use Filament\Support\Enums\VerticalAlignment;
+
+public function getHeadingStyle(): CellStyle
+{
+    return CellStyle::make()
+        ->bold()
+        ->italic()
+        ->size(14)
+        ->family('Consolas')
+        ->color('rgb(255, 255, 77)')
+        ->backgroundColor('#000000')
+        ->alignment('center')
+        ->verticalAlignment(VerticalAlignment::Center);
+    }
+```
+
 ## Customizing the export job
 
 The default job for processing exports is `Filament\Actions\Exports\Jobs\PrepareCsvExport`. If you want to extend this class and override any of its methods, you may replace the original class in the `register()` method of a service provider:

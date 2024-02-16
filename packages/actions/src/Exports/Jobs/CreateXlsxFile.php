@@ -2,10 +2,9 @@
 
 namespace Filament\Actions\Exports\Jobs;
 
-use Filament\Actions\Exports\Enums\CellFont;
+use Filament\Actions\Exports\CellStyle;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
-use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Bus\Queueable;
@@ -20,10 +19,9 @@ use League\Csv\Statement;
 use OpenSpout\Common\Entity\Row;
 use OpenSpout\Common\Entity\Style\CellAlignment;
 use OpenSpout\Common\Entity\Style\CellVerticalAlignment;
-use OpenSpout\Common\Entity\Style\Color as CellColor;
+use OpenSpout\Common\Entity\Style\Color;
 use OpenSpout\Common\Entity\Style\Style;
 use OpenSpout\Writer\XLSX\Writer;
-use Spatie\Color\Rgb;
 
 class CreateXlsxFile implements ShouldQueue
 {
@@ -58,10 +56,9 @@ class CreateXlsxFile implements ShouldQueue
         $writer = app(Writer::class);
         $writer->openToFile($temporaryFile = tempnam(sys_get_temp_dir(), $this->export->file_name));
 
-        $headersStyle = $this->setHeadersStyle(
-            $this->exporter->getHeadersAlignment(),
-            $this->exporter->getHeadersFontStyle()
-        );
+        $headersStyle = $this->exporter->getHeadingStyle()
+            ? $this->setStyle($this->exporter->getHeadingStyle())
+            : null;
 
         $csvDelimiter = $this->exporter::getCsvDelimiter();
 
@@ -104,37 +101,44 @@ class CreateXlsxFile implements ShouldQueue
     }
 
     /**
-     * ToDo: Font size, bg color, border, docs
-     *
-     * @param array $alignment
-     * @param array $fontStyle
-     * @param array $colors
+     * @param CellStyle $cellStyle
      * @return Style
      */
-    private function setHeadersStyle(array $alignment, array $fontStyle): Style
+    private function setStyle(CellStyle $cellStyle): Style
     {
         $headingStyle = new Style();
 
-        $styles = array_merge($alignment, $fontStyle);
+        $styles = collect(get_object_vars($cellStyle))
+            ->reject(fn (mixed $style): bool => $style === null || $style === false);
 
-        foreach ($styles as $style) {
+        foreach ($styles as $style => $value) {
             match ($style) {
-                CellFont::Bold            => $headingStyle->setFontBold(),
-                CellFont::Italic          => $headingStyle->setFontItalic(),
-                CellFont::Underline       => $headingStyle->setFontUnderline(),
-                CellFont::Strikethrough   => $headingStyle->setFontStrikethrough(),
-                VerticalAlignment::Start  => $headingStyle->setCellVerticalAlignment(CellVerticalAlignment::TOP),
-                VerticalAlignment::Center => $headingStyle->setCellVerticalAlignment(CellVerticalAlignment::CENTER),
-                VerticalAlignment::End    => $headingStyle->setCellVerticalAlignment(CellVerticalAlignment::BOTTOM),
-                Alignment::Start          => $headingStyle->setCellAlignment(CellAlignment::LEFT),
-                Alignment::Center         => $headingStyle->setCellAlignment(CellAlignment::CENTER),
-                Alignment::End            => $headingStyle->setCellAlignment(CellAlignment::RIGHT),
-                default                   => null,
+                'bold'            => $headingStyle->setFontBold(),
+                'italic'          => $headingStyle->setFontItalic(),
+                'underline'       => $headingStyle->setFontUnderline(),
+                'strikethrough'   => $headingStyle->setFontStrikethrough(),
+                'size'            => $headingStyle->setFontSize($value),
+                'family'          => $headingStyle->setFontName($value),
+                'color'           => $headingStyle->setFontColor(
+                    Color::rgb($value->red(), $value->green(), $value->blue())
+                ),
+                'backgroundColor' => $headingStyle->setBackgroundColor(
+                    Color::rgb($value->red(), $value->green(), $value->blue())
+                ),
+                'verticalAlignment' => match ($styles->get('verticalAlignment')) {
+                    VerticalAlignment::Start  => $headingStyle->setCellVerticalAlignment(CellVerticalAlignment::TOP),
+                    VerticalAlignment::Center => $headingStyle->setCellVerticalAlignment(CellVerticalAlignment::CENTER),
+                    VerticalAlignment::End    => $headingStyle->setCellVerticalAlignment(CellVerticalAlignment::BOTTOM),
+                    default                   => null,
+                },
+                'alignment' => match ($styles->get('alignment')) {
+                    Alignment::Start  => $headingStyle->setCellAlignment(CellAlignment::LEFT),
+                    Alignment::Center => $headingStyle->setCellAlignment(CellAlignment::CENTER),
+                    Alignment::End    => $headingStyle->setCellAlignment(CellAlignment::RIGHT),
+                    default           => null,
+                },
+                default => null,
             };
-
-            if ($style instanceof \Spatie\Color\Rgb) {
-                $headingStyle->setFontColor($style->red(), $style->green(), $style->blue());
-            }
         }
 
         return $headingStyle;

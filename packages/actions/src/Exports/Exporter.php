@@ -168,18 +168,10 @@ abstract class Exporter
     }
 
     /**
-     * @return array<string, mixed>
+     * @return CellStyle|null
      */
-    public function getHeadersAlignment(): array
+    public function getHeadingStyle(): ?CellStyle
     {
-        return [];
-    }
-
-    /**
-     * @return array<string|mixed>
-     */
-    public function getHeadersFontStyle(): array
-    {
-        return [];
+        return null;
     }
 }
