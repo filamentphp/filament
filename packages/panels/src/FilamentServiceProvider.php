@@ -73,8 +73,8 @@ class FilamentServiceProvider extends PackageServiceProvider
         ]);
 
         FilamentAsset::register([
-            Js::make('app', __DIR__ . '/../dist/index.js')->core(),
-            Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
+            Js::make('app', __DIR__ . '/../dist/index.min.js')->core(),
+            Js::make('echo', __DIR__ . '/../dist/echo.min.js')->core(),
             Theme::make('app', __DIR__ . '/../dist/theme.css'),
         ], 'filament/filament');
 

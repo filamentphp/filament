@@ -29,7 +29,7 @@ class NotificationsServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         FilamentAsset::register([
-            Js::make('notifications', __DIR__ . '/../dist/index.js'),
+            Js::make('notifications', __DIR__ . '/../dist/index.min.js'),
         ], 'filament/notifications');
 
         Livewire::component('database-notifications', DatabaseNotifications::class);

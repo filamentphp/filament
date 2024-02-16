@@ -29,7 +29,7 @@ class TablesServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         FilamentAsset::register([
-            AlpineComponent::make('table', __DIR__ . '/../dist/components/table.js'),
+            AlpineComponent::make('table', __DIR__ . '/../dist/components/table.min.js'),
         ], 'filament/tables');
 
         if ($this->app->runningInConsole()) {

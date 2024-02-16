@@ -281,7 +281,7 @@ const defaultOptions = {
 compile({
     ...defaultOptions,
     entryPoints: ['./resources/js/components/test-component.js'],
-    outfile: './resources/js/dist/components/test-component.js',
+    outfile: './resources/js/dist/components/test-component.min.js',
 })
 ```
 
@@ -328,7 +328,7 @@ use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Facades\FilamentAsset;
 
 FilamentAsset::register([
-    AlpineComponent::make('test-component', __DIR__ . '/../../resources/js/dist/components/test-component.js'),
+    AlpineComponent::make('test-component', __DIR__ . '/../../resources/js/dist/components/test-component.min.js'),
 ]);
 ```
 

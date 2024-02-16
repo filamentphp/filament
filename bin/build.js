@@ -80,7 +80,7 @@ corePackages.forEach((packageName) => {
         ...defaultOptions,
         platform: 'browser',
         entryPoints: [`./packages/${packageName}/resources/js/index.js`],
-        outfile: `./packages/${packageName}/dist/index.js`,
+        outfile: `./packages/${packageName}/dist/index.min.js`,
     })
 })
 
@@ -88,14 +88,14 @@ compile({
     ...defaultOptions,
     platform: 'browser',
     entryPoints: [`./node_modules/async-alpine/dist/async-alpine.script.js`],
-    outfile: `./packages/support/dist/async-alpine.js`,
+    outfile: `./packages/support/dist/async-alpine.min.js`,
 })
 
 compile({
     ...defaultOptions,
     platform: 'browser',
     entryPoints: [`./packages/panels/resources/js/echo.js`],
-    outfile: `./packages/panels/dist/echo.js`,
+    outfile: `./packages/panels/dist/echo.min.js`,
 })
 
 const formComponents = [
@@ -116,20 +116,20 @@ formComponents.forEach((componentName) => {
         entryPoints: [
             `./packages/forms/resources/js/components/${componentName}.js`,
         ],
-        outfile: `./packages/forms/dist/components/${componentName}.js`,
+        outfile: `./packages/forms/dist/components/${componentName}.min.js`,
     })
 })
 
 compile({
     ...defaultOptions,
     entryPoints: [`./packages/tables/resources/js/components/table.js`],
-    outfile: `./packages/tables/dist/components/table.js`,
+    outfile: `./packages/tables/dist/components/table.min.js`,
 })
 
 compile({
     ...defaultOptions,
     entryPoints: [`./packages/widgets/resources/js/components/chart.js`],
-    outfile: `./packages/widgets/dist/components/chart.js`,
+    outfile: `./packages/widgets/dist/components/chart.min.js`,
 })
 
 compile({
@@ -137,5 +137,5 @@ compile({
     entryPoints: [
         `./packages/widgets/resources/js/components/stats-overview/stat/chart.js`,
     ],
-    outfile: `./packages/widgets/dist/components/stats-overview/stat/chart.js`,
+    outfile: `./packages/widgets/dist/components/stats-overview/stat/chart.min.js`,
 })
