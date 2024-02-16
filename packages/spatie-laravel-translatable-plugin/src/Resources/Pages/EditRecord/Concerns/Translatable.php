@@ -97,6 +97,8 @@ trait Translatable
         ];
 
         unset($this->otherLocaleData[$this->activeLocale]);
+
+        $this->fillForm();
     }
 
     public function setActiveLocale(string $locale): void
