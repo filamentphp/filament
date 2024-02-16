@@ -103,7 +103,7 @@ trait CanGenerateForms
                 }
 
                 if (filled($column['default'])) {
-                    $componentData['default'] = [$column['default']];
+                    $componentData['default'] = [$this->parseDefaultExpression($column, $model)];
                 }
 
                 if (in_array($columnName, [
@@ -120,7 +120,7 @@ trait CanGenerateForms
                 $componentData['maxLength'] = [$type['length']];
 
                 if (filled($column['default'])) {
-                    $componentData['default'] = [$column['default']];
+                    $componentData['default'] = [$this->parseDefaultExpression($column, $model)];
                 }
             }
 

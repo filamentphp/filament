@@ -153,4 +153,66 @@ trait CanReadModelSchemas
 
         return array_merge(['name' => $type], array_filter($values));
     }
+
+    protected function parseDefaultExpression(array $column, string $model): mixed
+    {
+        $default = $column['default'];
+
+        if (blank($default)) {
+            return null;
+        }
+
+        $driver = app($model)->getConnection()->getDriverName();
+
+        if ($driver === 'mysql') {
+            if ($default === 'NULL'
+            || preg_match("/^\(.*\)$/", $default) === 1
+            || str_ends_with($default, '()')
+            || str_starts_with(strtolower($default), 'current_timestamp')) {
+                return null;
+            }
+
+            if (preg_match("/^'(.*)'$/", $default, $matches) === 1) {
+                return str_replace("''", "'", $matches[1]);
+            }
+        }
+
+        if ($driver === 'pgsql') {
+            if (str_starts_with($default, 'NULL::')) {
+                $default = null;
+            }
+
+            if (preg_match("/^['(](.*)[')]::/", $default, $matches) === 1) {
+                return str_replace("''", "'", $matches[1]);
+            }
+        }
+
+        if ($driver === 'sqlsrv') {
+            while (preg_match('/^\((.*)\)$/', $default, $matches)) {
+                $default = $matches[1];
+            }
+
+            if ($default === 'NULL'
+            || str_ends_with($default, '()')) {
+                return null;
+            }
+
+            if (preg_match('/^\'(.*)\'$/', $default, $matches) === 1) {
+                return str_replace("''", "'", $matches[1]);
+            }
+        }
+
+        if ($driver === 'sqlite') {
+            if ($default === 'NULL'
+            || str_starts_with(strtolower($default), 'current_timestamp')) {
+                return null;
+            }
+
+            if (preg_match('/^\'(.*)\'$/s', $default, $matches) === 1) {
+                return str_replace("''", "'", $matches[1]);
+            }
+        }
+
+        return $default;
+    }
 }
