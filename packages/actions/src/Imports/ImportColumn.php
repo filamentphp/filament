@@ -3,6 +3,7 @@
 namespace Filament\Actions\Imports;
 
 use Closure;
+use Filament\Forms\Components\Concerns\HasHelperText;
 use Filament\Forms\Components\Select;
 use Filament\Support\Components\Component;
 use Illuminate\Database\Eloquent\Model;
@@ -13,6 +14,8 @@ use Illuminate\Support\Str;
 
 class ImportColumn extends Component
 {
+    use HasHelperText;
+
     protected string $name;
 
     protected string | Closure | null $label = null;
@@ -88,7 +91,8 @@ class ImportColumn extends Component
         return Select::make($this->getName())
             ->label($this->getLabel())
             ->placeholder(__('filament-actions::import.modal.form.columns.placeholder'))
-            ->required($this->isMappingRequired());
+            ->required($this->isMappingRequired())
+            ->helperText($this->getHelperText());
     }
 
     public function name(string $name): static
