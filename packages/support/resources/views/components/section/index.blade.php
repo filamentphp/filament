@@ -1,5 +1,6 @@
 @php
     use Filament\Support\Enums\IconSize;
+    use Filament\Support\Enums\Alignment;
 @endphp
 
 @props([
@@ -9,6 +10,9 @@
     'compact' => false,
     'contentBefore' => false,
     'description' => null,
+    'footer' => null,
+    'footerActions' => [],
+    'footerActionsAlignment' => Alignment::Start,
     'headerActions' => [],
     'headerEnd' => null,
     'heading' => null,
@@ -28,6 +32,12 @@
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
     $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || $hasHeaderActions || filled((string) $headerEnd);
+    $hasFooterActions = filled($footerActions);
+    $hasFooter = filled((string) $footer) || $hasFooterActions;
+
+    if (! $footerActionsAlignment instanceof Alignment) {
+        $footerActionsAlignment = filled($footerActionsAlignment) ? (Alignment::tryFrom($footerActionsAlignment) ?? $footerActionsAlignment) : null;
+    }
 @endphp
 
 <section
@@ -66,7 +76,7 @@
                 } => ! $aside,
             ])
         >
-            <div class="flex items-center gap-3">
+            <div class="flex flex-grow items-center gap-3">
                 @if ($hasIcon)
                     <x-filament::icon
                         :icon="$icon"
@@ -110,7 +120,7 @@
                 @endif
 
                 @if ($hasHeaderActions)
-                    <div class="hidden sm:block">
+                    <div class="hidden ml-auto sm:block">
                         <x-filament::actions
                             :actions="$headerActions"
                             :alignment="\Filament\Support\Enums\Alignment::Start"
@@ -118,8 +128,12 @@
                         />
                     </div>
                 @endif
-
-                {{ $headerEnd }}
+                
+                @if ($headerEnd)
+                    <div class="ml-auto">
+                        {{ $headerEnd }}
+                    </div>
+                @endif
 
                 @if ($collapsible)
                     <x-filament::icon-button
@@ -170,6 +184,49 @@
             ])
         >
             {{ $slot }}
+            
+            @if ((! \Filament\Support\is_slot_empty($footer)) || (is_array($footerActions) && count($footerActions)) || (! is_array($footerActions) && (! \Filament\Support\is_slot_empty($footerActions))))
+                <div
+                    @if ($collapsible)
+                        x-bind:aria-expanded="(! isCollapsed).toString()"
+                    @if ($collapsed || $persistCollapsed)
+                        x-cloak
+                    @endif
+                    x-bind:class="{ 'invisible h-0 overflow-y-hidden border-none': isCollapsed }"
+                    @endif
+                    @class([
+                        'fi-modal-footer mt-6 border-t border-gray-200 dark:border-white/10',
+                        match ($compact) {
+                            true => '-mx-4 -mb-1.5 px-4 pt-2.5',
+                            false => '-mx-6 -mb-2 px-6 pt-4',
+                        },
+                    ])
+                >
+                    @if (! \Filament\Support\is_slot_empty($footer))
+                        {{ $footer }}
+                    @else
+                        <div
+                            @class([
+                                'fi-modal-footer-actions gap-3',
+                                match ($footerActionsAlignment) {
+                                    Alignment::Start, Alignment::Left => 'flex flex-wrap items-center',
+                                    Alignment::Center => 'flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]',
+                                    Alignment::End, Alignment::Right => 'flex flex-row-reverse flex-wrap items-center',
+                                    default => null,
+                                },
+                            ])
+                        >
+                            @if (is_array($footerActions))
+                                @foreach ($footerActions as $action)
+                                    {{ $action }}
+                                @endforeach
+                            @else
+                                {{ $footerActions }}
+                            @endif
+                        </div>
+                    @endif
+                </div>
+            @endif
         </div>
     </div>
 </section>
