@@ -15,6 +15,7 @@
     :icon-color="$getIconColor()"
     :icon-size="$getIconSize()"
     :persist-collapsed="$shouldPersistCollapsed()"
+    :minimal="$getMinimal()"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->merge([

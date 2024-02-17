@@ -9,6 +9,7 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasHeading;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
+use Filament\Support\Concerns\HasMinimal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
@@ -23,6 +24,7 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     use HasHeading;
     use HasIcon;
     use HasIconColor;
+    use HasMinimal;
 
     /**
      * @var view-string
