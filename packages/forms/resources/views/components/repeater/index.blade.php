@@ -90,7 +90,7 @@
                             x-on:repeater-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                             x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                             x-sortable-item="{{ $uuid }}"
-                            class="fi-fo-repeater-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
+                            class="fi-fo-repeater-item rounded-xl bg-gray-50 shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                             x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                         >
                             @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
