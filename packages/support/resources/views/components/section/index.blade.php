@@ -195,7 +195,7 @@
                     x-bind:class="{ 'invisible h-0 overflow-y-hidden border-none': isCollapsed }"
                     @endif
                     @class([
-                        'fi-modal-footer mt-6 border-t border-gray-200 dark:border-white/10',
+                        'fi-section-footer mt-6 border-t border-gray-200 dark:border-white/10',
                         match ($compact) {
                             true => '-mx-4 -mb-1.5 px-4 pt-2.5',
                             false => '-mx-6 -mb-2 px-6 pt-4',
@@ -207,7 +207,7 @@
                     @else
                         <div
                             @class([
-                                'fi-modal-footer-actions gap-3',
+                                'fi-section-footer-actions gap-3',
                                 match ($footerActionsAlignment) {
                                     Alignment::Start, Alignment::Left => 'flex flex-wrap items-center',
                                     Alignment::Center => 'flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]',
