@@ -169,7 +169,7 @@
         @class([
             'fi-section-content-ctn',
             'md:col-span-2' => $aside,
-            'border-t border-gray-200 dark:border-white/10' => $hasHeader && (! $aside),
+            'border-t border-gray-200 dark:border-white/10' => $hasFooter && (! $aside),
             'md:order-first' => $contentBefore,
         ])
     >
