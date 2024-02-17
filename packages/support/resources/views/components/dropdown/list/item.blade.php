@@ -44,7 +44,7 @@
             alias: 'dropdown.list.item',
         ) => $color !== 'gray',
     ]);
-    
+
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item-icon',
         match ($iconSize) {
