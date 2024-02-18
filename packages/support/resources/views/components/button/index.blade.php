@@ -177,6 +177,9 @@
     @if (($keyBindings || $hasTooltip) && (! $hasFormProcessingLoadingIndicator))
         x-data="{}"
     @endif
+    @if ($form)
+        form="{{ $form }}"
+    @endif
     @if ($keyBindings)
         x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
     @endif
