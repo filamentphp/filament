@@ -62,6 +62,7 @@
             'gray' => 'fi-color-gray',
             default => 'fi-color-custom',
         },
+        is_string($color) ? "fi-color-{$color}" : null,
     ]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -79,7 +80,6 @@
             default => 'text-custom-600 dark:text-custom-400',
         } => ! $labelSrOnly,
         'sr-only' => $labelSrOnly,
-        is_string($color) ? "fi-color-{$color}" : null,
     ]);
 
     $labelStyles = \Illuminate\Support\Arr::toCssStyles([

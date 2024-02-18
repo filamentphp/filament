@@ -57,7 +57,8 @@
                 'gray' => 'fi-color-gray',
                 default => 'fi-color-custom',
             },
-            // @deprecated `fi-btn-color-*` has been replaced with `fi-color-*`
+            // @deprecated `fi-btn-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
+            is_string($color) ? "fi-btn-color-{$color}" : null,
             is_string($color) ? "fi-color-{$color}" : null,
             "fi-size-{$size->value}" => $size instanceof ActionSize,
             // @deprecated `fi-btn-size-*` has been replaced by `fi-size-*`.
