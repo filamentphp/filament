@@ -126,11 +126,10 @@ ExportColumn::make('description')
 
 ### Disabling column selection
 
-By default, user will be asked which columns they would like to export. You can disable this functionality with the `columnMapping()` method:
+By default, user will be asked which columns they would like to export. You can disable this functionality using `columnMapping(false)`:
 
 ```php
 use App\Filament\Exports\ProductExporter;
-use Filament\Actions\ExportAction;
 
 ExportAction::make()
     ->exporter(ProductExporter::class)
