@@ -120,11 +120,15 @@
                 @endif
 
                 @if ($hasHeaderActions)
-                    <div class="hidden ml-auto sm:block">
+                    <div
+                        @if ($collapsible)
+                            x-on:click.stop=""
+                        @endif
+                        class="hidden ml-auto sm:block"
+                    >
                         <x-filament::actions
                             :actions="$headerActions"
                             :alignment="\Filament\Support\Enums\Alignment::Start"
-                            x-on:click.stop=""
                         />
                     </div>
                 @endif
@@ -147,11 +151,15 @@
             </div>
 
             @if ($hasHeaderActions)
-                <div class="sm:hidden">
+                <div
+                    @if ($collapsible)
+                        x-on:click.stop=""
+                    @endif
+                    class="sm:hidden"
+                >
                     <x-filament::actions
                         :actions="$headerActions"
                         :alignment="\Filament\Support\Enums\Alignment::Start"
-                        x-on:click.stop=""
                     />
                 </div>
             @endif
