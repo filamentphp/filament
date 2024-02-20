@@ -189,7 +189,7 @@ return [
 
                 'messages' => [
                     'confirmation' => 'Não é recomendado editar ficheiros SVG, pois pode resultar em perda de qualidade ao redimensionar.\n Tem a certeza de que deseja prosseguir?',
-                    'disabled' => 'A edição de ficheiros SVG está desativada, pois pode resultar em perda de qualidade ao redimensionar.',
+                    'disabled' => 'A edição de ficheiros SVG está desactivada, pois pode resultar em perda de qualidade ao redimensionar.',
                 ],
 
             ],
