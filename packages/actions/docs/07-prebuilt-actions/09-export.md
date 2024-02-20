@@ -497,24 +497,26 @@ You can only specify a single character, otherwise an exception will be thrown.
 
 ## Styling headers
 
-If you want to style the headers of the XLSX file, you may override the `getHeadingStyle()` method on the exporter class, returning a `CellStyle` object:
+If you want to style the headers of the XLSX file, you may override the `getHeadingStyle()` method on the exporter class, returning a `Style` object:
 
 ```php
-use Filament\Actions\Exports\CellStyle;
-use Filament\Support\Enums\VerticalAlignment;
+use OpenSpout\Common\Entity\Style\CellAlignment;
+use OpenSpout\Common\Entity\Style\CellVerticalAlignment;
+use OpenSpout\Common\Entity\Style\Color;
+use OpenSpout\Common\Entity\Style\Style;
 
-public function getHeadingStyle(): CellStyle
+public function getHeadingStyle(): Style
 {
-    return CellStyle::make()
-        ->bold()
-        ->italic()
-        ->size(14)
-        ->family('Consolas')
-        ->color('rgb(255, 255, 77)')
-        ->backgroundColor('#000000')
-        ->alignment('center')
-        ->verticalAlignment(VerticalAlignment::Center);
-    }
+    return (new Style())
+        ->setFontBold()
+        ->setFontItalic()
+        ->setFontSize(14)
+        ->setFontName('Consolas')
+        ->setFontColor(Color::rgb(255, 255, 77))
+        ->setBackgroundColor(Color::rgb(0, 0, 0))
+        ->setCellAlignment(CellAlignment::CENTER)
+        ->setCellVerticalAlignment(CellVerticalAlignment::CENTER);
+}
 ```
 
 ## Customizing the export job

@@ -8,6 +8,7 @@ use Filament\Actions\Exports\Models\Export;
 use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
+use OpenSpout\Common\Entity\Style\Style;
 
 abstract class Exporter
 {
@@ -168,9 +169,9 @@ abstract class Exporter
     }
 
     /**
-     * @return CellStyle|null
+     * @return Style|null
      */
-    public function getHeadingStyle(): ?CellStyle
+    public function getHeadingStyle(): ?Style
     {
         return null;
     }
