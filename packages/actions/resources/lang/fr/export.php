@@ -1,6 +1,5 @@
 <?php
 
-
 return [
 
     'label' => 'Exporter :label',

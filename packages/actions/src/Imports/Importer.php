@@ -80,7 +80,7 @@ abstract class Importer
 
         foreach ($this->getCachedColumns() as $column) {
             $columnName = $column->getName();
-            
+
             if (blank($this->columnMap[$columnName] ?? null)) {
                 continue;
             }
