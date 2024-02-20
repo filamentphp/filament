@@ -76,7 +76,11 @@
                 } => ! $aside,
             ])
         >
-            <div class="flex flex-grow items-center gap-3">
+            <div @class([
+                'flex items-center gap-3',
+                'flex-grow' => ! $hasHeading,
+                'justify-end' => ($hasHeading || $collapsible),
+            ])>
                 @if ($hasIcon)
                     <x-filament::icon
                         :icon="$icon"
@@ -124,7 +128,6 @@
                         @if ($collapsible)
                             x-on:click.stop=""
                         @endif
-                        class="hidden ml-auto sm:block"
                     >
                         <x-filament::actions
                             :actions="$headerActions"
@@ -149,20 +152,6 @@
                     />
                 @endif
             </div>
-
-            @if ($hasHeaderActions)
-                <div
-                    @if ($collapsible)
-                        x-on:click.stop=""
-                    @endif
-                    class="sm:hidden"
-                >
-                    <x-filament::actions
-                        :actions="$headerActions"
-                        :alignment="\Filament\Support\Enums\Alignment::Start"
-                    />
-                </div>
-            @endif
         </header>
     @endif
 
