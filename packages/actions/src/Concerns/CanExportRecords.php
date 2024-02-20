@@ -61,6 +61,8 @@ trait CanExportRecords
 
     protected ?Closure $modifyQueryUsing = null;
 
+    protected bool | Closure $hasColumnMapping = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -73,8 +75,8 @@ trait CanExportRecords
 
         $this->groupedIcon(FilamentIcon::resolve('actions::export-action.grouped') ?? 'heroicon-m-arrow-down-tray');
 
-        $this->form(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): array => array_merge([
-            Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
+        $this->form(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): array => [
+            ...($action->hasColumnMapping() ? [Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
                 ->columns(1)
                 ->inlineLabel()
                 ->schema(function () use ($action): array {
@@ -99,8 +101,9 @@ trait CanExportRecords
                         $action->getExporter()::getColumns(),
                     );
                 })
-                ->statePath('columnMap'),
-        ], $action->getExporter()::getOptionsFormComponents()));
+                ->statePath('columnMap')] : []),
+            ...$action->getExporter()::getOptionsFormComponents(),
+        ]);
 
         $this->action(function (ExportAction | ExportTableAction | ExportTableBulkAction $action, array $data, Component $livewire) {
             if ($livewire instanceof HasTable) {
@@ -139,14 +142,20 @@ trait CanExportRecords
                 Arr::except($data, ['columnMap']),
             );
 
-            $columnMap = collect($data['columnMap'])
-                ->dot()
-                ->reduce(fn (Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
-                    Str::beforeLast($key, '.') => [Str::afterLast($key, '.') => $value],
-                ]), collect())
-                ->filter(fn (array $column): bool => $column['isEnabled'] ?? false)
-                ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
-                ->all();
+            if ($action->hasColumnMapping()) {
+                $columnMap = collect($data['columnMap'])
+                    ->dot()
+                    ->reduce(fn (Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
+                        Str::beforeLast($key, '.') => [Str::afterLast($key, '.') => $value],
+                    ]), collect())
+                    ->filter(fn (array $column): bool => $column['isEnabled'] ?? false)
+                    ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
+                    ->all();
+            } else {
+                $columnMap = collect($action->getExporter()::getColumns())
+                    ->mapWithKeys(fn (ExportColumn $column): array => [$column->getName() => $column->getLabel()])
+                    ->all();
+            }
 
             $export = app(Export::class);
             $export->user()->associate($user);
@@ -386,5 +395,17 @@ trait CanExportRecords
         $this->modifyQueryUsing = $callback;
 
         return $this;
+    }
+
+    public function columnMapping(bool | Closure $condition = true): static
+    {
+        $this->hasColumnMapping = $condition;
+
+        return $this;
+    }
+
+    public function hasColumnMapping(): bool
+    {
+        return (bool) $this->evaluate($this->hasColumnMapping);
     }
 }
