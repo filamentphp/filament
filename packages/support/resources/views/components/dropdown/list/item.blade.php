@@ -45,6 +45,8 @@
         ) => $color !== 'gray',
     ]);
 
+    $iconColor ??= $color;
+
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item-icon',
         match ($iconSize) {
@@ -53,7 +55,7 @@
             IconSize::Large, 'lg' => 'h-6 w-6',
             default => $iconSize,
         },
-        match ($iconColor ?? $color) {
+        match ($iconColor) {
             'gray' => 'text-gray-400 dark:text-gray-500',
             default => 'text-custom-500 dark:text-custom-400',
         },
@@ -61,10 +63,10 @@
 
     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
         \Filament\Support\get_color_css_variables(
-            $iconColor ?? $color,
+            $iconColor,
             shades: [400, 500],
             alias: 'dropdown.list.item.icon',
-        ) => ($iconColor ?? $color) !== 'gray',
+        ) => ($iconColor) !== 'gray',
     ]);
 
     $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 rounded-full bg-cover bg-center';
