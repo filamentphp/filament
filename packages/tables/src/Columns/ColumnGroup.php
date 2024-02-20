@@ -78,7 +78,7 @@ class ColumnGroup extends Component
     }
 
     /**
-     * @return array<Column>
+     * @return array<string, Column>
      */
     public function getColumns(): array
     {
@@ -90,7 +90,7 @@ class ColumnGroup extends Component
     }
 
     /**
-     * @return array<Column>
+     * @return array<string, Column>
      */
     public function getVisibleColumns(): array
     {
