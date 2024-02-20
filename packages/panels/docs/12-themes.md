@@ -187,19 +187,6 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-You may also pass an `Htmlable` element. Note that when the brand name is used in the page's `<title>` tag, the HTML tags will be stripped.
-
-```php
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->brandName(new HtmlString('Filament <i>Demo</i>');
-}
-```
-
 To render an image instead, you can pass a URL to the `brandLogo()` method:
 
 ```php
