@@ -82,22 +82,23 @@ class EditRecord extends Page
 
     protected function fillForm(): void
     {
-        $this->callHook('beforeFill');
-        
-        $data = $this->getRecord()->attributesToArray();
-
         /** @internal Read the DocBlock above the following method. */
-        $this->fillFormWithDataAndCallHooks($data);
+        $this->fillFormWithDataAndCallHooks($this->getRecord());
     }
 
     /**
      * @internal Never override or call this method. If you completely override `fillForm()`, copy the contents of this method into your override.
      *
-     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>  $extraData
      */
-    protected function fillFormWithDataAndCallHooks(array $data): void
+    protected function fillFormWithDataAndCallHooks(Model $record, array $extraData = []): void
     {
-        $data = $this->mutateFormDataBeforeFill($data);
+        $this->callHook('beforeFill');
+
+        $data = $this->mutateFormDataBeforeFill([
+            ...$record->attributesToArray(),
+            ...$extraData,
+        ]);
 
         $this->form->fill($data);
 
