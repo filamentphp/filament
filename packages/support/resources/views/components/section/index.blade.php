@@ -129,6 +129,7 @@
                             x-on:click.stop=""
                         @endif
                         @class([
+                            'flex gap-3',
                             'flex-1' => ! $hasHeading,
                         ])
                     >
