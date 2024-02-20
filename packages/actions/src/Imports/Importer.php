@@ -191,7 +191,7 @@ abstract class Importer
                 continue;
             }
 
-            if (array_key_exists($columnName, $this->columnMap) && blank($this->columnMap[$columnName])) {
+            if (blank($this->columnMap[$columnName] ?? null)) {
                 continue;
             }
 
