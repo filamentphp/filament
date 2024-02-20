@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Commands\Aliases;
+namespace Filament\Support\Commands\Aliases;
 
-use Filament\Commands;
+use Filament\Support\Commands;
 
 class MakeIssueCommand extends Commands\MakeIssueCommand
 {
