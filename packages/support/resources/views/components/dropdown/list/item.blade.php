@@ -66,7 +66,7 @@
             $iconColor,
             shades: [400, 500],
             alias: 'dropdown.list.item.icon',
-        ) => ($iconColor) !== 'gray',
+        ) => $iconColor !== 'gray',
     ]);
 
     $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 rounded-full bg-cover bg-center';
