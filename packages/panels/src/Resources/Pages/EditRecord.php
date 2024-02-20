@@ -82,6 +82,8 @@ class EditRecord extends Page
 
     protected function fillForm(): void
     {
+        $this->callHook('beforeFill');
+        
         $data = $this->getRecord()->attributesToArray();
 
         /** @internal Read the DocBlock above the following method. */
@@ -95,8 +97,6 @@ class EditRecord extends Page
      */
     protected function fillFormWithDataAndCallHooks(array $data): void
     {
-        $this->callHook('beforeFill');
-
         $data = $this->mutateFormDataBeforeFill($data);
 
         $this->form->fill($data);
