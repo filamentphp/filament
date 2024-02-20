@@ -78,14 +78,14 @@
         >
             <div @class([
                 'flex items-center gap-3',
-                'flex-grow' => ! $hasHeading,
-                'justify-end' => ($hasHeading || $collapsible),
+                'flex-grow' => $hasHeading,
             ])>
                 @if ($hasIcon)
                     <x-filament::icon
                         :icon="$icon"
                         @class([
-                            'fi-section-header-icon self-start',
+                            'fi-section-header-icon',
+                            'self-start' => $hasDescription,
                             match ($iconColor) {
                                 'gray' => 'fi-color-gray text-gray-400 dark:text-gray-500',
                                 default => 'fi-color-custom text-custom-500 dark:text-custom-400',
@@ -128,6 +128,9 @@
                         @if ($collapsible)
                             x-on:click.stop=""
                         @endif
+                        @class([
+                            'flex-1' => ! $hasHeading,
+                        ])
                     >
                         <x-filament::actions
                             :actions="$headerActions"
