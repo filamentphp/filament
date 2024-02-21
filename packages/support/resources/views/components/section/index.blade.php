@@ -76,7 +76,7 @@
                 } => ! $aside,
             ])
         >
-            <div class="flex flex-grow items-center gap-3">
+            <div class="flex items-center gap-3">
                 @if ($hasIcon)
                     <x-filament::icon
                         :icon="$icon"
@@ -120,7 +120,7 @@
                 @endif
 
                 @if ($hasHeaderActions)
-                    <div class="hidden ml-auto sm:block">
+                    <div class="hidden sm:block">
                         <x-filament::actions
                             :actions="$headerActions"
                             :alignment="\Filament\Support\Enums\Alignment::Start"
@@ -129,11 +129,7 @@
                     </div>
                 @endif
 
-                @if ($headerEnd)
-                    <div class="ml-auto">
-                        {{ $headerEnd }}
-                    </div>
-                @endif
+                {{ $headerEnd }}
 
                 @if ($collapsible)
                     <x-filament::icon-button
