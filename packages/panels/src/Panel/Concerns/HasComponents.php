@@ -671,6 +671,6 @@ trait HasComponents
 
     public function getComponentCachePath(): string
     {
-        return (config('filament.cache_path') ?? base_path('bootstrap/cache/filament')) . DIRECTORY_SEPARATOR . "panels/{$this->getId()}.php";
+        return (config('filament.cache_path') ?? base_path('bootstrap/cache/filament')) . DIRECTORY_SEPARATOR . 'panels' . DIRECTORY_SEPARATOR . "{$this->getId()}.php";
     }
 }
