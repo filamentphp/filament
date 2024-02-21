@@ -111,49 +111,6 @@ You may render additional content at the end of the header, next to the heading 
 </x-filament::section>
 ```
 
-## Adding a footer to the section
-
-You can add a footer to the section by using the `footer` slot:
-
-```blade
-<x-filament::section>
-    {{-- Content --}}
-
-    <x-slot name="footer">
-        {{-- Footer content --}}
-    </x-slot>
-</x-filament::section>
-```
-
-Alternatively, you can add actions into the footer by using the `footerActions` slot:
-
-```blade
-<x-filament::section>
-    {{-- Content --}}
-
-    <x-slot name="footerActions">
-        {{-- Footer content actions --}}
-    </x-slot>
-</x-filament::section>
-```
-
-### Changing the footer actions alignment
-
-By default, footer action's will be aligned to the start. If you wish to change the alignment of the footer actions, you can use the `footerActionsAlignment` attribute and pass it `start`, `center` or `end`:
-
-```blade
-<x-filament::section
-    footerActionsAlignment="end"
->
-    {{-- Content --}}
-
-    <x-slot name="footerActions">
-        {{-- Footer content --}}
-    </x-slot>
-</x-filament::section>
-```
-
-
 ## Making a section collapsible
 
 You can make the content of a section collapsible by using the `collapsible` attribute:
