@@ -18,6 +18,8 @@ trait CanPaginateRecords
      */
     protected array | Closure | null $paginationPageOptions = null;
 
+    protected bool | Closure $hasExtremePaginationLinks = false;
+
     public function defaultPaginationPageOption(int | string | Closure | null $option): static
     {
         $this->defaultPaginationPageOption = $option;
@@ -57,6 +59,13 @@ trait CanPaginateRecords
         return $this;
     }
 
+    public function extremePaginationLinks(bool | Closure $condition = true): static
+    {
+        $this->hasExtremePaginationLinks = $condition;
+
+        return $this;
+    }
+
     public function getDefaultPaginationPageOption(): int | string | null
     {
         $option = $this->evaluate($this->defaultPaginationPageOption);
@@ -90,5 +99,10 @@ trait CanPaginateRecords
     public function isPaginatedWhileReordering(): bool
     {
         return (bool) $this->evaluate($this->isPaginatedWhileReordering);
+    }
+
+    public function hasExtremePaginationLinks(): bool
+    {
+        return (bool) $this->evaluate($this->hasExtremePaginationLinks);
     }
 }

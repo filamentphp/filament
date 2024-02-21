@@ -165,6 +165,27 @@ Wizard\Step::make('Order')
     ]),
 ```
 
+### Preventing the next step from being loaded
+
+Inside `afterValidation()` or `beforeValidation()`, you may throw `Filament\Support\Exceptions\Halt`, which will prevent the wizard from loading the next step:
+
+```php
+use Filament\Forms\Components\Wizard;
+use Filament\Support\Exceptions\Halt;
+
+Wizard\Step::make('Order')
+    ->afterValidation(function () {
+        // ...
+
+        if (true) {
+            throw new Halt();
+        }
+    })
+    ->schema([
+        // ...
+    ]),
+```
+
 ## Using grid columns within a step
 
 You may use the `columns()` method to customize the [grid](grid) within the step:

@@ -3,7 +3,6 @@
 namespace Filament\Navigation;
 
 use Closure;
-use Exception;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasExtraSidebarAttributes;
 use Filament\Support\Concerns\HasExtraTopbarAttributes;
@@ -82,13 +81,7 @@ class NavigationGroup extends Component
 
     public function getIcon(): ?string
     {
-        $icon = $this->evaluate($this->icon);
-
-        if ($this->hasItemIcons() && filled($icon)) {
-            throw new Exception("Navigation group [{$this->getLabel()}] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.");
-        }
-
-        return $icon;
+        return $this->evaluate($this->icon);
     }
 
     /**
@@ -125,31 +118,5 @@ class NavigationGroup extends Component
         }
 
         return false;
-    }
-
-    public function hasItemIcons(): bool
-    {
-        $hasIconCount = 0;
-        $hasNoIconCount = 0;
-
-        foreach ($this->getItems() as $item) {
-            if (! $item instanceof NavigationItem) {
-                continue;
-            }
-
-            if (blank($item->getIcon())) {
-                $hasNoIconCount++;
-
-                continue;
-            }
-
-            $hasIconCount++;
-        }
-
-        if (($hasIconCount > 0) && ($hasNoIconCount > 0) && filled($label = $this->getLabel())) {
-            throw new Exception("Navigation group [{$label}] has items with and without icons. All items must have icons or none of them can have icons. This is to ensure a proper user experience.");
-        }
-
-        return $hasIconCount > 0;
     }
 }

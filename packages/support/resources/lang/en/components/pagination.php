@@ -22,8 +22,16 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'First',
+        ],
+
         'go_to_page' => [
             'label' => 'Go to page :page',
+        ],
+
+        'last' => [
+            'label' => 'Last',
         ],
 
         'next' => [

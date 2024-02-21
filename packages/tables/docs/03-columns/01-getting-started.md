@@ -469,7 +469,7 @@ TextColumn::make('title')
     ->tooltip(fn (Model $record): string => "By {$record->author->name}")
 ```
 
-## Aligning column content
+## Horizontally aligning column content
 
 Table columns are aligned to the start (left in LTR interfaces or right in RTL interfaces) by default. You may change the alignment using the `alignment()` method, and passing it `Alignment::Start`, `Alignment::Center`, `Alignment::End` or `Alignment::Justify` options:
 
@@ -492,6 +492,30 @@ TextColumn::make('name')
     ->alignEnd()
 ```
 
+## Vertically aligning column content
+
+Table column content is vertically centered by default. You may change the vertical alignment using the `verticalAlignment()` method, and passing it `VerticalAlignment::Start`, `VerticalAlignment::Center` or `VerticalAlignment::End` options:
+
+```php
+use Filament\Support\Enums\VerticalAlignment;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->verticalAlignment(VerticalAlignment::Start)
+```
+
+<AutoScreenshot name="tables/columns/vertical-alignment" alt="Table with column vertically aligned to the start" version="3.x" />
+
+Alternatively, you may use shorthand methods like `verticallyAlignStart()`:
+
+```php
+use Filament\Support\Enums\VerticalAlignment;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->verticallyAlignStart()
+```
+
 ## Allowing column headers to wrap
 
 By default, column headers will not wrap onto multiple lines, if they need more space. You may allow them to wrap using the `wrapHeader()` method:
@@ -501,6 +525,28 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
     ->wrapHeader()
+```
+
+## Controlling the width of columns
+
+By default, columns will take up as much space as they need. You may allow some columns to consume more space than others by using the `grow()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->grow()
+```
+
+Alternatively, you can define a width for the column, which is passed to the header cell using the `style` attribute, so you can use any valid CSS value:
+
+```php
+use Filament\Tables\Columns\IconColumn;
+
+IconColumn::make('is_paid')
+    ->label('Paid')
+    ->boolean()
+    ->width('1%')
 ```
 
 ## Grouping columns
@@ -532,7 +578,7 @@ The first argument is the label of the group, and the second is an array of colu
 
 <AutoScreenshot name="tables/columns/grouping" alt="Table with grouped columns" version="3.x" />
 
-You can also control the group header [alignment](#aligning-column-content) and [wrapping](#allowing-column-headers-to-wrap) on the `ColumnGroup` object. To improve the multi-line fluency of the API, you can chain the `columns()` onto the object instead of passing it as the second argument:
+You can also control the group header [alignment](#horizontally-aligning-column-content) and [wrapping](#allowing-column-headers-to-wrap) on the `ColumnGroup` object. To improve the multi-line fluency of the API, you can chain the `columns()` onto the object instead of passing it as the second argument:
 
 ```php
 use Filament\Support\Enums\Alignment;

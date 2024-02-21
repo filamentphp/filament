@@ -1,7 +1,8 @@
 @props([
+    'currentPageOptionProperty' => 'tableRecordsPerPage',
+    'extremeLinks' => false,
     'paginator',
     'pageOptions' => [],
-    'currentPageOptionProperty' => 'tableRecordsPerPage',
 ])
 
 @php
@@ -122,6 +123,17 @@
             class="fi-pagination-items justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20"
         >
             @if (! $paginator->onFirstPage())
+                @if ($extremeLinks)
+                    <x-filament::pagination.item
+                        :aria-label="__('filament::components/pagination.actions.first.label')"
+                        :icon="$isRtl ? 'heroicon-m-chevron-double-right' : 'heroicon-m-chevron-double-left'"
+                        :icon-alias="$isRtl ? 'pagination.first-button.rtl' : 'pagination.first-button'"
+                        rel="first"
+                        :wire:click="'gotoPage(1, \'' . $paginator->getPageName() . '\')'"
+                        :wire:key="$this->getId() . '.pagination.first'"
+                    />
+                @endif
+
                 <x-filament::pagination.item
                     :aria-label="__('filament::components/pagination.actions.previous.label')"
                     :icon="$isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left'"
@@ -161,6 +173,17 @@
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                     :wire:key="$this->getId() . '.pagination.next'"
                 />
+
+                @if ($extremeLinks)
+                    <x-filament::pagination.item
+                        :aria-label="__('filament::components/pagination.actions.last.label')"
+                        :icon="$isRtl ? 'heroicon-m-chevron-double-left' : 'heroicon-m-chevron-double-right'"
+                        :icon-alias="$isRtl ? 'pagination.last-button.rtl' : 'pagination.last-button'"
+                        rel="last"
+                        :wire:click="'gotoPage(' . $paginator->lastPage() . ', \'' . $paginator->getPageName() . '\')'"
+                        :wire:key="$this->getId() . '.pagination.last'"
+                    />
+                @endif
             @endif
         </ol>
     @endif

@@ -13,13 +13,13 @@
             }
 
             $nextTick(() => {
-                error = $el.querySelector(\'[data-validation-error]\')
+                let error = $el.querySelector(\'[data-validation-error]\')
 
                 if (! error) {
                     return
                 }
 
-                elementToExpand = error
+                let elementToExpand = error
 
                 while (elementToExpand) {
                     elementToExpand.dispatchEvent(new CustomEvent(\'expand\'))

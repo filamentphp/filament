@@ -419,6 +419,31 @@ return [
         'placeholder' => 'كلمة مفتاحية جديدة',
     ],
 
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'إخفاء كلمة المرور',
+            ],
+
+            'show_password' => [
+                'label' => 'عرض كلمة المرور',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'نعم',
+            'false' => 'لا',
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [

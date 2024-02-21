@@ -367,7 +367,7 @@ class Group extends Component
             ) ?? $query;
         }
 
-        $this->scopeQueryByKey($query, $this->getKey($record));
+        $this->scopeQueryByKey($query, $this->getStringKey($record));
 
         return $query;
     }

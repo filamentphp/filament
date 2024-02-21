@@ -446,6 +446,15 @@ ImportColumn::make('sku')
     ->example('ABC123')
 ```
 
+By default, the name of the column is used in the header of the example CSV. You can customize the header per-column using `exampleHeader()`:
+
+```php
+use Filament\Actions\Imports\ImportColumn;
+
+ImportColumn::make('sku')
+    ->exampleHeader('SKU')
+```
+
 ## Using a custom user model
 
 By default, the `imports` table has a `user_id` column. That column is constrained to the `users` table:
@@ -603,6 +612,17 @@ public function getJobTags(): array
 
 If you'd like to customize the tags that are applied to jobs of a certain importer, you may override this method in your importer class.
 
+### Customizing the import job batch name
+
+By default, the import system doesn't define any name for the job batches. If you'd like to customize the name that is applied to job batches of a certain importer, you may override the `getJobBatchName()` method in your importer class:
+
+```php
+public function getJobBatchName(): ?string
+{
+    return 'product-import';
+}
+```
+
 ## Customizing import validation messages
 
 The import system will automatically validate the CSV file before it is imported. If there are any errors, the user will be shown a list of them, and the import will not be processed. If you'd like to override any default validation messages, you may do so by overriding the `getValidationMessages()` method on your importer class:
@@ -706,3 +726,30 @@ class ProductImporter extends Importer
 Inside these hooks, you can access the current row's data using `$this->data`. You can also access the original row of data from the CSV, before it was [cast](#casting-state) or mapped, using `$this->originalData`.
 
 The current record (if it exists yet) is accessible in `$this->record`, and the [import form options](#using-import-options) using `$this->options`.
+
+## Authorization
+
+By default, only the user who started the import may access the failure CSV file that gets generated if part of an import fails. If you'd like to customize the authorization logic, you may create an `ImportPolicy` class, and [register it in your `AuthServiceProvider`](https://laravel.com/docs/10.x/authorization#registering-policies):
+
+```php
+use App\Policies\ImportPolicy;
+use Filament\Actions\Imports\Models\Import;
+
+protected $policies = [
+    Import::class => ImportPolicy::class,
+];
+```
+
+The `view()` method of the policy will be used to authorize access to the failure CSV file.
+
+Please note that if you define a policy, the existing logic of ensuring only the user who started the import can access the failure CSV file will be removed. You will need to add that logic to your policy if you want to keep it:
+
+```php
+use App\Models\User;
+use Filament\Actions\Imports\Models\Import;
+
+public function view(User $user, Import $import): bool
+{
+    return $import->user()->is($user);
+}
+```

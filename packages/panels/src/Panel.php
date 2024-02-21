@@ -46,10 +46,7 @@ class Panel extends Component
 
     public static function make(): static
     {
-        $static = app(static::class);
-        $static->configure();
-
-        return $static;
+        return app(static::class);
     }
 
     public function default(bool $condition = true): static

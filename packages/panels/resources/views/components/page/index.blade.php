@@ -18,7 +18,7 @@
         ])
     }}
 >
-    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.start', scopes: $this->getRenderHookScopes()) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: $this->getRenderHookScopes()) }}
 
     <section
         @class([
@@ -32,8 +32,13 @@
             <x-filament-panels::header
                 :actions="$this->getCachedHeaderActions()"
                 :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
-                :heading="$heading"
-                :subheading="$this->getSubheading()"
+                {{-- These are passed through in the bag otherwise Laravel converts View objects to strings prematurely. --}}
+                :attributes="
+                    new \Illuminate\View\ComponentAttributeBag([
+                        'heading' => $heading,
+                        'subheading' => $this->getSubheading(),
+                    ])
+                "
             />
         @endif
 
@@ -71,7 +76,7 @@
                     'h-full' => $fullHeight,
                 ])
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.header-widgets.before', scopes: $this->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_WIDGETS_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
                 @if ($headerWidgets = $this->getVisibleHeaderWidgets())
                     <x-filament-widgets::widgets
@@ -82,11 +87,11 @@
                     />
                 @endif
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.header-widgets.after', scopes: $this->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_HEADER_WIDGETS_AFTER, scopes: $this->getRenderHookScopes()) }}
 
                 {{ $slot }}
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.footer-widgets.before', scopes: $this->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_FOOTER_WIDGETS_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
                 @if ($footerWidgets = $this->getVisibleFooterWidgets())
                     <x-filament-widgets::widgets
@@ -97,7 +102,7 @@
                     />
                 @endif
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.footer-widgets.after', scopes: $this->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER, scopes: $this->getRenderHookScopes()) }}
             </div>
 
             @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
@@ -116,7 +121,7 @@
         <x-filament-actions::modals />
     @elseif ($this->isTableLoaded() && filled($this->defaultTableAction))
         <div
-            wire:init="mountTableAction(@js($this->defaultTableAction), @if (filled($this->defaultTableActionRecord)) @js($this->defaultTableActionRecord) @else null @endif @if (filled($this->defaultTableActionArguments)) , @js($this->defaultTableActionArguments) @endif)"
+            wire:init="mountTableAction(@js($this->defaultTableAction), @if (filled($this->defaultTableActionRecord)) @js($this->defaultTableActionRecord) @else {{ 'null' }} @endif @if (filled($this->defaultTableActionArguments)) , @js($this->defaultTableActionArguments) @endif)"
         ></div>
     @endif
 
@@ -126,7 +131,7 @@
         ></div>
     @endif
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.end', scopes: $this->getRenderHookScopes()) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_END, scopes: $this->getRenderHookScopes()) }}
 
     <x-filament-panels::unsaved-action-changes-alert />
 </div>
