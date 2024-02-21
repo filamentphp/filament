@@ -74,7 +74,7 @@ class CreatePost extends Component implements HasForms
     
     public function create(): void
     {
-        dd($this->form->getState());
+        $this->form->getState();
     }
     
     public function render(): View
