@@ -59,6 +59,10 @@ trait CanExportRecords
      */
     protected array | Closure | null $formats = null;
 
+    protected ?Closure $modifyQueryUsing = null;
+
+    protected bool | Closure $hasColumnMapping = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -71,8 +75,8 @@ trait CanExportRecords
 
         $this->groupedIcon(FilamentIcon::resolve('actions::export-action.grouped') ?? 'heroicon-m-arrow-down-tray');
 
-        $this->form(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): array => array_merge([
-            Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
+        $this->form(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): array => [
+            ...($action->hasColumnMapping() ? [Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
                 ->columns(1)
                 ->inlineLabel()
                 ->schema(function () use ($action): array {
@@ -81,7 +85,7 @@ trait CanExportRecords
                             Forms\Components\Checkbox::make('isEnabled')
                                 ->label(__('filament-actions::export.modal.form.columns.form.is_enabled.label', ['column' => $column->getName()]))
                                 ->hiddenLabel()
-                                ->default(true)
+                                ->default($column->isEnabledByDefault())
                                 ->live()
                                 ->grow(false),
                             Forms\Components\TextInput::make('label')
@@ -97,14 +101,21 @@ trait CanExportRecords
                         $action->getExporter()::getColumns(),
                     );
                 })
-                ->statePath('columnMap'),
-        ], $action->getExporter()::getOptionsFormComponents()));
+                ->statePath('columnMap')] : []),
+            ...$action->getExporter()::getOptionsFormComponents(),
+        ]);
 
         $this->action(function (ExportAction | ExportTableAction | ExportTableBulkAction $action, array $data, Component $livewire) {
             if ($livewire instanceof HasTable) {
                 $query = $livewire->getFilteredSortedTableQuery();
             } else {
                 $query = $action->getExporter()::getModel()::query();
+            }
+
+            if ($this->modifyQueryUsing) {
+                $query = $this->evaluate($this->modifyQueryUsing, [
+                    'query' => $query,
+                ]) ?? $query;
             }
 
             $records = $action instanceof ExportTableBulkAction ? $action->getRecords() : null;
@@ -118,7 +129,7 @@ trait CanExportRecords
                     ->body(trans_choice('filament-actions::export.notifications.max_rows.body', $maxRows, [
                         'count' => format_number($maxRows),
                     ]))
-                    ->success()
+                    ->danger()
                     ->send();
 
                 return;
@@ -131,14 +142,20 @@ trait CanExportRecords
                 Arr::except($data, ['columnMap']),
             );
 
-            $columnMap = collect($data['columnMap'])
-                ->dot()
-                ->reduce(fn (Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
-                    Str::beforeLast($key, '.') => [Str::afterLast($key, '.') => $value],
-                ]), collect())
-                ->filter(fn (array $column): bool => $column['isEnabled'] ?? false)
-                ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
-                ->all();
+            if ($action->hasColumnMapping()) {
+                $columnMap = collect($data['columnMap'])
+                    ->dot()
+                    ->reduce(fn (Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
+                        Str::beforeLast($key, '.') => [Str::afterLast($key, '.') => $value],
+                    ]), collect())
+                    ->filter(fn (array $column): bool => $column['isEnabled'] ?? false)
+                    ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
+                    ->all();
+            } else {
+                $columnMap = collect($action->getExporter()::getColumns())
+                    ->mapWithKeys(fn (ExportColumn $column): array => [$column->getName() => $column->getLabel()])
+                    ->all();
+            }
 
             $export = app(Export::class);
             $export->user()->associate($user);
@@ -166,6 +183,11 @@ trait CanExportRecords
             $job = $action->getJob();
             $jobQueue = $exporter->getJobQueue();
             $jobConnection = $exporter->getJobConnection();
+            $jobBatchName = $exporter->getJobBatchName();
+
+            // We do not want to send the loaded user relationship to the queue in job payloads,
+            // in case it contains attributes that are not serializable, such as binary columns.
+            $export->unsetRelation('user');
 
             $makeCreateXlsxFileJob = fn (): CreateXlsxFile => app(CreateXlsxFile::class, [
                 'export' => $export,
@@ -189,6 +211,10 @@ trait CanExportRecords
                     ->when(
                         filled($jobConnection),
                         fn (PendingBatch $batch) => $batch->onConnection($jobConnection),
+                    )
+                    ->when(
+                        filled($jobBatchName),
+                        fn (PendingBatch $batch) => $batch->name($jobBatchName),
                     )
                     ->allowFailures(),
                 ...(($hasXlsx && (! $hasCsv)) ? [$makeCreateXlsxFileJob()] : []),
@@ -362,5 +388,24 @@ trait CanExportRecords
     public function getFormats(): ?array
     {
         return $this->evaluate($this->formats);
+    }
+
+    public function modifyQueryUsing(?Closure $callback): static
+    {
+        $this->modifyQueryUsing = $callback;
+
+        return $this;
+    }
+
+    public function columnMapping(bool | Closure $condition = true): static
+    {
+        $this->hasColumnMapping = $condition;
+
+        return $this;
+    }
+
+    public function hasColumnMapping(): bool
+    {
+        return (bool) $this->evaluate($this->hasColumnMapping);
     }
 }

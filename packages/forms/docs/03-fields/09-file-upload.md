@@ -346,6 +346,8 @@ FileUpload::make('attachment')
 
 When the form is submitted, a temporary file upload object will be returned instead of a permanently stored file path. This is perfect for temporary files like imported CSVs.
 
+Please be aware that images, video and audio files will not show the stored file name in the form's preview, unless you use [`previewable(false)`](#previewing-files). This is due to a limitation with the FilePond preview plugin.
+
 ## Orienting images from their EXIF data
 
 By default, FilePond will automatically orient images based on their EXIF data. If you wish to disable this behaviour, you can use the `orientImagesFromExif(false)` method:
@@ -377,6 +379,17 @@ use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachment')
     ->fetchFileInformation(false)
+```
+
+## Customizing the uploading message
+
+You may customize the uploading message that is displayed in the form's submit button using the `uploadingMessage()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->uploadingMessage('Uploading attachment...')
 ```
 
 ## File upload validation

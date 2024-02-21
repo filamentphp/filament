@@ -36,6 +36,8 @@ trait HasState
 
     protected bool | Closure $isDehydrated = true;
 
+    protected bool | Closure $isDehydratedWhenHidden = false;
+
     protected ?string $statePath = null;
 
     protected string $cachedAbsoluteStatePath;
@@ -131,6 +133,13 @@ trait HasState
     public function dehydrated(bool | Closure $condition = true): static
     {
         $this->isDehydrated = $condition;
+
+        return $this;
+    }
+
+    public function dehydratedWhenHidden(bool | Closure $condition = true): static
+    {
+        $this->isDehydratedWhenHidden = $condition;
 
         return $this;
     }
@@ -430,6 +439,20 @@ trait HasState
     public function isDehydrated(): bool
     {
         return (bool) $this->evaluate($this->isDehydrated);
+    }
+
+    public function isDehydratedWhenHidden(): bool
+    {
+        return (bool) $this->evaluate($this->isDehydratedWhenHidden);
+    }
+
+    public function isHiddenAndNotDehydrated(): bool
+    {
+        if (! $this->isHidden()) {
+            return false;
+        }
+
+        return ! $this->isDehydratedWhenHidden();
     }
 
     public function getGetCallback(): Get

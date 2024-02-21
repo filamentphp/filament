@@ -29,6 +29,8 @@ return [
 
             ],
 
+            'placeholder' => 'No hi ha entrades',
+
         ],
 
     ],

@@ -73,6 +73,8 @@ class ImportCsv implements ShouldQueue
         }
 
         foreach (($rows ?? $this->rows) as $row) {
+            $row = $this->utf8Encode($row);
+
             try {
                 DB::transaction(fn () => ($this->importer)($row));
                 $successfulRows++;
@@ -87,8 +89,19 @@ class ImportCsv implements ShouldQueue
             $processedRows++;
         }
 
-        $this->import->increment('processed_rows', $processedRows);
-        $this->import->increment('successful_rows', $successfulRows);
+        $this->import->refresh();
+
+        $importProcessedRows = $this->import->processed_rows + $processedRows;
+        $this->import->processed_rows = ($importProcessedRows < $this->import->total_rows) ?
+            $importProcessedRows :
+            $this->import->total_rows;
+
+        $importSuccessfulRows = $this->import->successful_rows + $successfulRows;
+        $this->import->successful_rows = ($importSuccessfulRows < $this->import->total_rows) ?
+            $importSuccessfulRows :
+            $this->import->total_rows;
+
+        $this->import->save();
 
         $this->handleExceptions($exceptions);
     }
@@ -116,6 +129,19 @@ class ImportCsv implements ShouldQueue
         $failedRow->data = $data;
         $failedRow->validation_error = $validationError;
         $failedRow->save();
+    }
+
+    protected function utf8Encode(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            return array_map($this->utf8Encode(...), $value);
+        }
+
+        if (is_string($value)) {
+            return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+        }
+
+        return $value;
     }
 
     /**

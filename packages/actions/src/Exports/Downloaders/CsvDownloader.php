@@ -11,13 +11,18 @@ class CsvDownloader implements Downloader
     public function __invoke(Export $export): StreamedResponse
     {
         $disk = $export->getFileDisk();
+        $directory = $export->getFileDirectory();
 
-        return response()->streamDownload(function () use ($disk, $export) {
-            echo $disk->get($export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv');
+        if (! $disk->exists($directory)) {
+            abort(419);
+        }
+
+        return response()->streamDownload(function () use ($disk, $directory) {
+            echo $disk->get($directory . DIRECTORY_SEPARATOR . 'headers.csv');
 
             flush();
 
-            foreach ($disk->files($export->getFileDirectory()) as $file) {
+            foreach ($disk->files($directory) as $file) {
                 if (str($file)->endsWith('headers.csv')) {
                     continue;
                 }

@@ -66,6 +66,8 @@ abstract class Resource
 
     protected static ?string $model = null;
 
+    protected static ?string $navigationBadgeTooltip = null;
+
     protected static ?string $navigationGroup = null;
 
     protected static ?string $navigationParentItem = null;
@@ -167,6 +169,7 @@ abstract class Resource
                 ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*'))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
+                ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
@@ -610,13 +613,8 @@ abstract class Resource
 
     public static function routes(Panel $panel): void
     {
-        $slug = static::getSlug();
-        $routeBaseName = (string) str($slug)
-            ->replace('/', '.')
-            ->append('.');
-
-        Route::name($routeBaseName)
-            ->prefix($slug)
+        Route::name(static::getRelativeRouteName() . '.')
+            ->prefix(static::getRoutePrefix())
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->group(function () use ($panel) {
@@ -624,6 +622,16 @@ abstract class Resource
                     $page->registerRoute($panel)?->name($name);
                 }
             });
+    }
+
+    public static function getRelativeRouteName(): string
+    {
+        return (string) str(static::getSlug())->replace('/', '.');
+    }
+
+    public static function getRoutePrefix(): string
+    {
+        return static::getSlug();
     }
 
     /**
@@ -819,6 +827,11 @@ abstract class Resource
     public static function getNavigationBadge(): ?string
     {
         return null;
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return static::$navigationBadgeTooltip;
     }
 
     /**

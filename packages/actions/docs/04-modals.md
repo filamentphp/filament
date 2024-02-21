@@ -293,7 +293,7 @@ Instead of opening in the center of the screen, the modal content will now slide
 
 ## Making the modal header sticky
 
-The header of a modal scrolls out of view with the modal content when it overflows the modal size. However, slide-overs have a sticky modal that's always visible. You may control this behavior using `stickyModalHeader()`:
+The header of a modal scrolls out of view with the modal content when it overflows the modal size. However, slide-overs have a sticky header that's always visible. You may control this behavior using `stickyModalHeader()`:
 
 ```php
 Action::make('updateAuthor')

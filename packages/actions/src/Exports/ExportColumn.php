@@ -22,6 +22,10 @@ class ExportColumn extends Component
 
     protected ?Exporter $exporter = null;
 
+    protected bool | Closure $isEnabledByDefault = true;
+
+    protected string $evaluationIdentifier = 'column';
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -56,6 +60,13 @@ class ExportColumn extends Component
         return $this;
     }
 
+    public function enabledByDefault(bool | Closure $condition): static
+    {
+        $this->isEnabledByDefault = $condition;
+
+        return $this;
+    }
+
     public function getName(): string
     {
         return $this->name;
@@ -66,9 +77,14 @@ class ExportColumn extends Component
         return $this->exporter;
     }
 
+    public function isEnabledByDefault(): bool
+    {
+        return (bool) $this->evaluate($this->isEnabledByDefault);
+    }
+
     public function getRecord(): ?Model
     {
-        return $this->getExporter()->getRecord();
+        return $this->getExporter()?->getRecord();
     }
 
     public function getLabel(): ?string
@@ -106,7 +122,7 @@ class ExportColumn extends Component
 
     public function applyEagerLoading(EloquentBuilder $query): EloquentBuilder
     {
-        if (! $this->queriesRelationships($query->getModel())) {
+        if (! $this->hasRelationship($query->getModel())) {
             return $query;
         }
 

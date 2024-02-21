@@ -34,11 +34,6 @@ use Illuminate\Support\Facades\Event;
 
 class FilamentManager
 {
-    /**
-     * @var array<string, Panel>
-     */
-    protected array $panels = [];
-
     protected ?Panel $currentPanel = null;
 
     protected bool $isServing = false;
@@ -46,6 +41,13 @@ class FilamentManager
     protected bool $isCurrentPanelBooted = false;
 
     protected ?Model $tenant = null;
+
+    public function __construct()
+    {
+        // Resolve the panel registry to set the current panel
+        // as the default, which uses a `resolving()` callback.
+        app()->resolved(PanelRegistry::class) || app(PanelRegistry::class);
+    }
 
     public function auth(): Guard
     {
@@ -103,7 +105,7 @@ class FilamentManager
 
     public function getCurrentPanel(): ?Panel
     {
-        return $this->currentPanel ?? null;
+        return $this->currentPanel;
     }
 
     public function getDarkModeBrandLogo(): string | Htmlable | null
@@ -126,11 +128,7 @@ class FilamentManager
      */
     public function getDefaultPanel(): Panel
     {
-        return Arr::first(
-            $this->panels,
-            fn (Panel $panel): bool => $panel->isDefault(),
-            fn () => throw NoDefaultPanelSetException::make(),
-        );
+        return app(PanelRegistry::class)->getDefault();
     }
 
     /**
@@ -169,6 +167,11 @@ class FilamentManager
     public function getFontUrl(): ?string
     {
         return $this->getCurrentPanel()->getFontUrl();
+    }
+
+    public function getGlobalSearchDebounce(): string
+    {
+        return $this->getCurrentPanel()->getGlobalSearchDebounce();
     }
 
     /**
@@ -271,7 +274,7 @@ class FilamentManager
 
     public function getPanel(?string $id = null): Panel
     {
-        return $this->panels[$id] ?? $this->getDefaultPanel();
+        return app(PanelRegistry::class)->get($id);
     }
 
     /**
@@ -279,7 +282,7 @@ class FilamentManager
      */
     public function getPanels(): array
     {
-        return $this->panels;
+        return app(PanelRegistry::class)->all();
     }
 
     public function getPlugin(string $id): Plugin
@@ -293,6 +296,11 @@ class FilamentManager
     public function getProfileUrl(array $parameters = []): ?string
     {
         return $this->getCurrentPanel()->getProfileUrl($parameters);
+    }
+
+    public function isProfilePageSimple(): bool
+    {
+        return $this->getCurrentPanel()->isProfilePageSimple();
     }
 
     /**
@@ -645,20 +653,9 @@ class FilamentManager
         return $this->getCurrentPanel()->isSidebarFullyCollapsibleOnDesktop();
     }
 
-    public function mountNavigation(): void
-    {
-        $this->getCurrentPanel()->mountNavigation();
-    }
-
     public function registerPanel(Panel $panel): void
     {
-        $this->panels[$panel->getId()] = $panel;
-
-        $panel->register();
-
-        if ($panel->isDefault()) {
-            $this->setCurrentPanel($panel);
-        }
+        app(PanelRegistry::class)->register($panel);
     }
 
     /**

@@ -13,6 +13,7 @@ use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
+use Filament\PanelRegistry;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -47,6 +48,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static Htmlable getFontHtml()
  * @method static string getFontProvider()
  * @method static string | null getFontUrl()
+ * @method static string getGlobalSearchDebounce()
  * @method static array<string> getGlobalSearchKeyBindings()
  * @method static GlobalSearchProvider | null getGlobalSearchProvider()
  * @method static string | null getHomeUrl()
@@ -109,10 +111,10 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasTenantRegistration()
  * @method static bool hasTopNavigation()
  * @method static bool hasUnsavedChangesAlerts()
+ * @method static bool isProfilePageSimple()
  * @method static bool isServing()
  * @method static bool isSidebarCollapsibleOnDesktop()
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
- * @method static void mountNavigation()
  * @method static void serving(Closure $callback)
  * @method static void setCurrentPanel(Panel | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)
@@ -130,8 +132,8 @@ class Filament extends Facade
     public static function registerPanel(Panel | Closure $panel): void
     {
         static::getFacadeApplication()->resolving(
-            static::getFacadeAccessor(),
-            fn (FilamentManager $filamentManager) => $filamentManager->registerPanel(value($panel)),
+            PanelRegistry::class,
+            fn (PanelRegistry $registry) => $registry->register(value($panel)),
         );
     }
 }

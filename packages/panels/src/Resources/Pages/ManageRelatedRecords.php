@@ -385,4 +385,12 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     {
         return [];
     }
+
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
+    {
+        return [];
+    }
 }

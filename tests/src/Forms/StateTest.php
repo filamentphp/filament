@@ -440,6 +440,123 @@ test('components can be excluded from state dehydration if their parent componen
         ->dehydrateState()->toBe([]);
 });
 
+test('hidden components are excluded from state dehydration', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath(Str::random())
+                ->default(Str::random())
+                ->hidden(),
+        ])
+        ->fill();
+
+    expect($container)
+        ->dehydrateState()->toBe([]);
+});
+
+test('hidden components are excluded from state dehydration if their parent component is', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->hidden()
+                ->schema([
+                    (new Component())
+                        ->statePath(Str::random())
+                        ->default(Str::random()),
+                ]),
+        ])
+        ->fill();
+
+    expect($container)
+        ->dehydrateState()->toBe([]);
+});
+
+test('hidden components are excluded from state dehydration except if they are marked as dehydrated', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath(Str::random())
+                ->default(Str::random())
+                ->hidden()
+                ->dehydratedWhenHidden(),
+        ])
+        ->fill();
+
+    expect($container)
+        ->dehydrateState()->not()->toBe([]);
+});
+
+test('disabled components are excluded from state dehydration', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath(Str::random())
+                ->default(Str::random())
+                ->disabled(),
+        ])
+        ->fill();
+
+    expect($container)
+        ->dehydrateState()->toBe([]);
+});
+
+test('disabled components are excluded from state dehydration if their parent component is', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->disabled()
+                ->schema([
+                    (new Component())
+                        ->statePath(Str::random())
+                        ->default(Str::random()),
+                ]),
+        ])
+        ->fill();
+
+    expect($container)
+        ->dehydrateState()->toBe([]);
+});
+
+test('disabled components are excluded from state dehydration except if they are marked as dehydrated', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath(Str::random())
+                ->default(Str::random())
+                ->disabled()
+                ->dehydrated(),
+        ])
+        ->fill();
+
+    expect($container)
+        ->dehydrateState()->not()->toBe([]);
+});
+
+test('disabled components are excluded from state dehydration if their parent component is disabled and not marked as dehydrated', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->disabled()
+                ->schema([
+                    (new Component())
+                        ->statePath(Str::random())
+                        ->default(Str::random())
+                        ->dehydrated(),
+                ]),
+        ])
+        ->fill();
+
+    expect($container)
+        ->dehydrateState()->toBe([]);
+});
+
 test('dehydrated state can be mutated', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->statePath('data')

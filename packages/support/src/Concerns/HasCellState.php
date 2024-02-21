@@ -103,7 +103,7 @@ trait HasCellState
             return $state;
         }
 
-        if (! $this->queriesRelationships($record)) {
+        if (! $this->hasRelationship($record)) {
             return null;
         }
 
@@ -118,6 +118,7 @@ trait HasCellState
         $state = collect($this->getRelationshipResults($record))
             ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->attributesToArray()))
             ->pluck($relationshipAttribute)
+            ->filter(fn ($state): bool => filled($state))
             ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
             ->values();
 
@@ -140,9 +141,17 @@ trait HasCellState
         return $this->evaluate($this->separator);
     }
 
-    public function queriesRelationships(Model $record): bool
+    public function hasRelationship(Model $record): bool
     {
         return $this->getRelationship($record) !== null;
+    }
+
+    /**
+     * @deprecated Use `hasRelationship()` instead.
+     */
+    public function queriesRelationships(Model $record): bool
+    {
+        return $this->hasRelationship($record);
     }
 
     public function getRelationship(Model $record, ?string $name = null): ?Relation
