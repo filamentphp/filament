@@ -76,16 +76,12 @@
                 } => ! $aside,
             ])
         >
-            <div @class([
-                'flex items-center gap-3',
-                'flex-grow' => $hasHeading,
-            ])>
+            <div class="flex flex-grow items-center gap-3">
                 @if ($hasIcon)
                     <x-filament::icon
                         :icon="$icon"
                         @class([
-                            'fi-section-header-icon',
-                            'self-start' => $hasDescription,
+                            'fi-section-header-icon self-start',
                             match ($iconColor) {
                                 'gray' => 'fi-color-gray text-gray-400 dark:text-gray-500',
                                 default => 'fi-color-custom text-custom-500 dark:text-custom-400',
@@ -124,22 +120,15 @@
                 @endif
 
                 @if ($hasHeaderActions)
-                    <div
-                        @if ($collapsible)
-                            x-on:click.stop=""
-                        @endif
-                        @class([
-                            'flex gap-3',
-                            'flex-1' => ! $hasHeading,
-                        ])
-                    >
+                    <div class="hidden ml-auto sm:block">
                         <x-filament::actions
                             :actions="$headerActions"
                             :alignment="\Filament\Support\Enums\Alignment::Start"
+                            x-on:click.stop=""
                         />
                     </div>
                 @endif
-                
+
                 @if ($headerEnd)
                     <div class="ml-auto">
                         {{ $headerEnd }}
@@ -156,6 +145,16 @@
                     />
                 @endif
             </div>
+
+            @if ($hasHeaderActions)
+                <div class="sm:hidden">
+                    <x-filament::actions
+                        :actions="$headerActions"
+                        :alignment="\Filament\Support\Enums\Alignment::Start"
+                        x-on:click.stop=""
+                    />
+                </div>
+            @endif
         </header>
     @endif
 
@@ -185,7 +184,7 @@
             ])
         >
             {{ $slot }}
-            
+
             @if ((! \Filament\Support\is_slot_empty($footer)) || (is_array($footerActions) && count($footerActions)) || (! is_array($footerActions) && (! \Filament\Support\is_slot_empty($footerActions))))
                 <div
                     @if ($collapsible)
