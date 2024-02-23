@@ -11,6 +11,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
+use Illuminate\View\ComponentSlot;
 use NumberFormatter;
 
 if (! function_exists('Filament\Support\format_money')) {
@@ -116,6 +117,10 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
     {
         if ($slot === null) {
             return true;
+        }
+
+        if (! $slot instanceof ComponentSlot) {
+            $slot = new ComponentSlot($slot->toHtml());
         }
 
         return $slot->hasActualContent();
