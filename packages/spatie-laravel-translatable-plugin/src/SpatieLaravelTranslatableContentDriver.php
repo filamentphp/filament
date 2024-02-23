@@ -6,7 +6,6 @@ use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 
 use function Filament\Support\generate_search_column_expression;
@@ -111,28 +110,20 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         return $attributes;
     }
 
-    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, bool $isCaseInsensitivityForced = false): Builder
+    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, ?bool $isCaseInsensitivityForced = null): Builder
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
 
-        $columnAlias = match ($databaseConnection->getDriverName()) {
+        $column = match ($databaseConnection->getDriverName()) {
             'pgsql' => "{$column}->>'{$this->activeLocale}'",
             default => "JSON_UNQUOTE(JSON_EXTRACT({$column}, '$.{$this->activeLocale}'))",
         };
 
-        $subquery = $query->selectRaw('1')
-            ->whereRaw("$columnAlias LIKE ?", ["%{$search}%"]);
-
-        $caseAwareSearchColumn = $isCaseInsensitivityForced ?
-            new Expression("LOWER({$column})") :
-            $column;
-
-        return $query->{$whereClause}(function ($query) use ($subquery, $caseAwareSearchColumn, $search) {
-            $query->whereExists($subquery)
-                ->orWhere(function ($query) use ($caseAwareSearchColumn, $search) {
-                    $query->where($caseAwareSearchColumn, 'LIKE', "%{$search}%");
-                });
-        });
+        return $query->{$whereClause}(
+            generate_search_column_expression($column, $isCaseInsensitivityForced, $databaseConnection),
+            'like',
+            "%{$search}%",
+        );
     }
 }
