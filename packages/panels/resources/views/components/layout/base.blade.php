@@ -59,6 +59,7 @@
                 --font-family: '{!! filament()->getFontFamily() !!}';
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
+                --default-theme-mode: {{ filament()->getDefaultThemeMode()->value }};
             }
         </style>
 
