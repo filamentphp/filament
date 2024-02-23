@@ -117,6 +117,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
 
         $column = match ($databaseConnection->getDriverName()) {
             'pgsql' => "{$column}->>'{$this->activeLocale}'",
+            // add JSON_UNQUOTE for searching in column Json values
             default => "JSON_UNQUOTE(JSON_EXTRACT({$column}, '$.{$this->activeLocale}'))",
         };
 
