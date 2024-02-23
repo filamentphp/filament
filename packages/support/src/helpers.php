@@ -167,14 +167,14 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     {
         $driverName = $databaseConnection->getDriverName();
 
-        $column = match ($driverName) {
-            'pgsql' => "\"{$column}\"::text",
-            default => $column,
-        };
-
         $isSearchForcedCaseInsensitive ??= match ($driverName) {
             'pgsql' => true,
             default => str($column)->contains('json_extract('),
+        };
+
+        $column = match ($driverName) {
+            'pgsql' => $isSearchForcedCaseInsensitive ? "\"{$column}\"::text" : "{$column}::text",
+            default => $column,
         };
 
         if ($isSearchForcedCaseInsensitive) {
