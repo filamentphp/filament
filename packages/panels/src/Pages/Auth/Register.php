@@ -22,6 +22,7 @@ use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
@@ -74,9 +75,11 @@ class Register extends SimplePage
             return null;
         }
 
-        $data = $this->form->getState();
+        $user = DB::transaction(function () {
+            $data = $this->form->getState();
 
-        $user = $this->getUserModel()::create($data);
+            return $this->getUserModel()::create($data);
+        });
 
         event(new Registered($user));
 

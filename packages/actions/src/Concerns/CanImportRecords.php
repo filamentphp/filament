@@ -26,6 +26,7 @@ use Illuminate\Filesystem\AwsS3V3Adapter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Number;
 use League\Csv\Info;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
@@ -33,8 +34,6 @@ use League\Csv\Writer;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-
-use function Filament\Support\format_number;
 
 trait CanImportRecords
 {
@@ -181,7 +180,7 @@ trait CanImportRecords
                 Notification::make()
                     ->title(__('filament-actions::import.notifications.max_rows.title'))
                     ->body(trans_choice('filament-actions::import.notifications.max_rows.body', $maxRows, [
-                        'count' => format_number($maxRows),
+                        'count' => Number::format($maxRows),
                     ]))
                     ->danger()
                     ->send();
@@ -271,7 +270,7 @@ trait CanImportRecords
                             fn (Notification $notification) => $notification->actions([
                                 NotificationAction::make('downloadFailedRowsCsv')
                                     ->label(trans_choice('filament-actions::import.notifications.completed.actions.download_failed_rows_csv.label', $failedRowsCount, [
-                                        'count' => format_number($failedRowsCount),
+                                        'count' => Number::format($failedRowsCount),
                                     ]))
                                     ->color('danger')
                                     ->url(route('filament.imports.failed-rows.download', ['import' => $import], absolute: false), shouldOpenInNewTab: true)
@@ -285,7 +284,7 @@ trait CanImportRecords
             Notification::make()
                 ->title($action->getSuccessNotificationTitle())
                 ->body(trans_choice('filament-actions::import.notifications.started.body', $import->total_rows, [
-                    'count' => format_number($import->total_rows),
+                    'count' => Number::format($import->total_rows),
                 ]))
                 ->success()
                 ->send();
