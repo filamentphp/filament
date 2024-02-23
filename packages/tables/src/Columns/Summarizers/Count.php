@@ -75,9 +75,10 @@ class Count extends Summarizer
         return $this->selectedState[$this->getSelectAlias()];
     }
 
-    public function selectAlias(string $alias): static
+    public function selectAlias(?string $alias): static
     {
-        $this->selectAlias  = $alias;
+        $this->selectAlias = $alias;
+
         return $this;
     }
 
