@@ -99,6 +99,10 @@ trait CanReadModelSchemas
         return collect($schema->getIndexes($table))->firstWhere('primary')['columns'][0] ?? 'id';
     }
 
+    /**
+     * @param array<string, mixed> $column
+     * @return array<string, mixed>
+     */
     protected function parseColumnType(array $column): array
     {
         $type = match ($column['type']) {
@@ -122,19 +126,6 @@ trait CanReadModelSchemas
             'timestamp', 'timestamptz' => 'timestamp',
             'text', 'tinytext', 'longtext', 'mediumtext', 'ntext' => 'text',
             'json', 'jsonb' => 'json',
-
-            // 'binary', 'varbinary', 'bytea', 'image', 'blob', 'tinyblob', 'mediumblob', 'longblob' => 'binary',
-            // 'uuid', 'uniqueidentifier' => 'uuid',
-            // 'enum' => 'enum',
-            // 'set' => 'set',
-            // 'inet', 'cidr', 'macaddr', 'macaddr8' => 'string',
-            // 'bit', 'varbit' => 'bit',
-            // 'xml' => 'xml',
-            // 'year' => 'year',
-            // 'interval' => 'interval',
-            // 'geometry', 'geometrycollection', 'linestring', 'multilinestring', 'multipoint', 'multipolygon', 'point', 'polygon', 'box', 'circle', 'line', 'lseg', 'path' => 'geometry',
-            // 'geography' => 'geography',
-            // 'tsvector', 'tsquery' => 'text',
             default => $column['type_name'],
         };
 
@@ -144,16 +135,15 @@ trait CanReadModelSchemas
 
         $values = is_null($values) ? [] : match ($type) {
             'string', 'char', 'binary', 'bit' => ['length' => (int) $values[0]],
-            // 'enum', 'set' => ['values' => $values],
-            // 'float', 'decimal', 'double' => ['precision' => (int) $values[0], 'scale' => isset($values[1]) ? (int) $values[1] : null],
-            // 'datetime', 'timestamp', 'time', 'interval' => ['precision' => (int) $values[0]],
-            // 'geometry', 'geography' => ['subtype' => $values[0] ?? $column['type_name'] ?? null, 'srid' => isset($values[1]) ? (int) $values[1] : null],
             default => [],
         };
 
         return array_merge(['name' => $type], array_filter($values));
     }
 
+    /**
+     * @param array<string, mixed> $column
+     */
     protected function parseDefaultExpression(array $column, string $model): mixed
     {
         $default = $column['default'];
