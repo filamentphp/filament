@@ -331,3 +331,9 @@ php artisan make:livewire-form Products/CreateProduct --generate
 ```
 
 > If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence, Filament is unable to generate the schema for your table if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
+
+## Troubleshooting
+
+### Form fields not rendering properly
+
+When adding forms to a custom Livewire component, don't forget to add `@livewireStyles` and `@livewireScripts` to your layout file as discussed in [the installation instructions](installation#configuring-your-layout).
