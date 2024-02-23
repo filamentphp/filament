@@ -4,7 +4,7 @@ return [
 
     'title' => 'Reset your password',
 
-    'heading' => 'Forgotten your password?',
+    'heading' => 'Forgot password?',
 
     'actions' => [
 

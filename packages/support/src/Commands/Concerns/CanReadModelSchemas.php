@@ -96,7 +96,8 @@ trait CanReadModelSchemas
             return 'title';
         }
 
-        return collect($schema->getIndexes($table))->firstWhere('primary')['columns'][0] ?? 'id';
+        return collect($schema->getIndexes($table))
+            ->firstWhere('primary')['columns'][0] ?? 'id';
     }
 
     /**

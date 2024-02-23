@@ -12,6 +12,7 @@ use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
+use Illuminate\View\ComponentSlot;
 
 if (! function_exists('Filament\Support\format_money')) {
     /**
@@ -120,18 +121,11 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
             return true;
         }
 
-        return trim(
-            str_replace(
-                [
-                    '<!-- __BLOCK__ -->',
-                    '<!-- __ENDBLOCK__ -->',
-                    '<!--[if BLOCK]><![endif]-->',
-                    '<!--[if ENDBLOCK]><![endif]-->',
-                ],
-                '',
-                $slot->toHtml()
-            ),
-        ) === '';
+        if (! $slot instanceof ComponentSlot) {
+            $slot = new ComponentSlot($slot->toHtml());
+        }
+
+        return ! $slot->hasActualContent();
     }
 }
 
@@ -168,6 +162,13 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     function generate_search_column_expression(string $column, ?bool $isSearchForcedCaseInsensitive, Connection $databaseConnection): string | Expression
     {
         $driverName = $databaseConnection->getDriverName();
+
+        if (Str::lower($column) !== $column) {
+            $column = match ($driverName) {
+                'pgsql' => (string) str($column)->wrap('"'),
+                default => $column,
+            };
+        }
 
         $column = match ($driverName) {
             'pgsql' => "{$column}::text",
