@@ -49,6 +49,8 @@ class EditAction extends Action
             return $data;
         });
 
+        $this->databaseTransaction();
+
         $this->action(function (): void {
             $this->process(function (array $data, Model $record, Table $table) {
                 $relationship = $table->getRelationship();
