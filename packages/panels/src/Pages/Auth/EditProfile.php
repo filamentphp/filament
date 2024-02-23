@@ -21,9 +21,11 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Password;
+use Throwable;
 
 use function Filament\Support\is_app_url;
 
@@ -143,6 +145,8 @@ class EditProfile extends Page
     public function save(): void
     {
         try {
+            DB::beginTransaction();
+
             $this->callHook('beforeValidate');
 
             $data = $this->form->getState();
@@ -156,8 +160,18 @@ class EditProfile extends Page
             $this->handleRecordUpdate($this->getUser(), $data);
 
             $this->callHook('afterSave');
+
+            DB::commit();
         } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                DB::rollBack() :
+                DB::commit();
+
             return;
+        } catch (Throwable $exception) {
+            DB::rollBack();
+
+            throw $exception;
         }
 
         if (request()->hasSession() && array_key_exists('password', $data)) {

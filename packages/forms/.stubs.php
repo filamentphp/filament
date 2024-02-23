@@ -1,10 +1,9 @@
 <?php
 
-use Closure;
-
 namespace Livewire\Features\SupportTesting {
 
     use Illuminate\Support\Collection;
+    use Closure;
 
     class Testable {
         public function fillForm(array $state = [], string $formName = 'form'): static {}

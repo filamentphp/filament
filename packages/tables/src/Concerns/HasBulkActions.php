@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 use function Livewire\store;
 
@@ -64,6 +65,8 @@ trait HasBulkActions
         $originallyMountedAction = $this->mountedTableBulkAction;
 
         try {
+            $action->beginDatabaseTransaction();
+
             if ($this->mountedTableBulkActionHasForm()) {
                 $action->callBeforeFormValidated();
 
@@ -79,16 +82,31 @@ trait HasBulkActions
             ]);
 
             $result = $action->callAfter() ?? $result;
+
+            $action->commitDatabaseTransaction();
         } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $action->rollBackDatabaseTransaction() :
+                $action->commitDatabaseTransaction();
+
             return null;
         } catch (Cancel $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $action->rollBackDatabaseTransaction() :
+                $action->commitDatabaseTransaction();
         } catch (ValidationException $exception) {
+            $action->rollBackDatabaseTransaction();
+
             if (! $this->mountedTableBulkActionShouldOpenModal()) {
                 $action->resetArguments();
                 $action->resetFormData();
 
                 $this->unmountTableBulkAction();
             }
+
+            throw $exception;
+        } catch (Throwable $exception) {
+            $action->rollBackDatabaseTransaction();
 
             throw $exception;
         }

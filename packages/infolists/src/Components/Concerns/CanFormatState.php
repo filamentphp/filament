@@ -6,12 +6,12 @@ use Closure;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use Filament\Support\Enums\ArgumentValue;
+use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
-
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 
 trait CanFormatState
 {
@@ -99,28 +99,11 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
     {
         $this->isMoney = true;
 
-        $this->formatStateUsing(static function (TextEntry $component, $state) use ($currency, $divideBy): ?string {
-            if (blank($state)) {
-                return null;
-            }
-
-            $currency = $component->evaluate($currency) ?? Infolist::$defaultCurrency;
-
-            return format_money($state, $currency, $divideBy);
-        });
-
-        return $this;
-    }
-
-    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
-    {
-        $this->isNumeric = true;
-
-        $this->formatStateUsing(static function (TextEntry $component, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($currency, $divideBy, $locale): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -129,16 +112,47 @@ trait CanFormatState
                 return $state;
             }
 
-            if ($decimalPlaces === null) {
-                return format_number($state);
+            $currency = $component->evaluate($currency) ?? Table::$defaultCurrency;
+
+            if ($divideBy) {
+                $state /= $divideBy;
             }
 
-            return number_format(
-                $state,
-                $component->evaluate($decimalPlaces),
-                $component->evaluate($decimalSeparator),
-                $component->evaluate($thousandsSeparator),
-            );
+            return Number::currency($state, $currency, $component->evaluate($locale));
+        });
+
+        return $this;
+    }
+
+    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null | ArgumentValue $decimalSeparator = ArgumentValue::Default, string | Closure | null | ArgumentValue $thousandsSeparator = ArgumentValue::Default, int | Closure | null $maxDecimalPlaces = null, string | Closure | null $locale = null): static
+    {
+        $this->isNumeric = true;
+
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($decimalPlaces, $decimalSeparator, $locale, $maxDecimalPlaces, $thousandsSeparator): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            if (! is_numeric($state)) {
+                return $state;
+            }
+
+            $decimalSeparator = $component->evaluate($decimalSeparator);
+            $thousandsSeparator = $component->evaluate($thousandsSeparator);
+
+            if (
+                ($decimalSeparator !== ArgumentValue::Default) ||
+                ($thousandsSeparator !== ArgumentValue::Default)
+            ) {
+                return number_format(
+                    $state,
+                    $component->evaluate($decimalPlaces),
+                    $decimalSeparator === ArgumentValue::Default ? '.' : $decimalSeparator,
+                    $thousandsSeparator === ArgumentValue::Default ? ',' : $thousandsSeparator,
+                );
+            }
+
+            return Number::format($state, $decimalPlaces, $maxDecimalPlaces, $component->evaluate($locale));
         });
 
         return $this;
