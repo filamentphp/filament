@@ -163,6 +163,13 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     {
         $driverName = $databaseConnection->getDriverName();
 
+        if (Str::lower($column) !== $column) {
+            $column = match ($driverName) {
+                'pgsql' => (string) str($column)->wrap('"'),
+                default => $column,
+            };
+        }
+
         $column = match ($driverName) {
             'pgsql' => "{$column}::text",
             default => $column,
