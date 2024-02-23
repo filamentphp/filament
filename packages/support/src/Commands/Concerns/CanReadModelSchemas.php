@@ -107,12 +107,6 @@ trait CanReadModelSchemas
             return 'title';
         }
 
-        $primaryKeyColumns = $schema->getPrimaryKey()?->getColumns();
-
-        if (empty($primaryKeyColumns)) {
-            return 'id';
-        }
-
-        return $primaryKeyColumns[0];
+        return $schema->getPrimaryKey()?->getColumns()[0] ?? 'id';
     }
 }
