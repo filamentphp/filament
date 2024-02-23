@@ -100,7 +100,7 @@ trait CanReadModelSchemas
     }
 
     /**
-     * @param array<string, mixed> $column
+     * @param  array<string, mixed>  $column
      * @return array<string, mixed>
      */
     protected function parseColumnType(array $column): array
@@ -142,7 +142,7 @@ trait CanReadModelSchemas
     }
 
     /**
-     * @param array<string, mixed> $column
+     * @param  array<string, mixed>  $column
      */
     protected function parseDefaultExpression(array $column, string $model): mixed
     {
