@@ -51,9 +51,9 @@
                     'filament::components/pagination.overview',
                     $paginator->total(),
                     [
-                        'first' => \Filament\Support\format_number($paginator->firstItem() ?? 0),
-                        'last' => \Filament\Support\format_number($paginator->lastItem() ?? 0),
-                        'total' => \Filament\Support\format_number($paginator->total()),
+                        'first' => \Illuminate\Support\Number::format($paginator->firstItem() ?? 0),
+                        'last' => \Illuminate\Support\Number::format($paginator->lastItem() ?? 0),
+                        'total' => \Illuminate\Support\Number::format($paginator->total()),
                     ],
                 )
             }}
