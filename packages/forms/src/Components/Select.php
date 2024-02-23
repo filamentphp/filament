@@ -46,7 +46,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     use Concerns\HasLoadingMessage;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
-    use Concerns\HasPivotAttributes;
+    use Concerns\HasPivotData;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
@@ -964,7 +964,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 return;
             }
 
-            $relationship->syncWithPivotValues($state ?? [], $component->getPivotAttributes());
+            $pivotData = $component->getPivotData();
+
+            if ($pivotData === []) {
+                $relationship->sync($state ?? []);
+
+                return;
+            }
+
+            $relationship->syncWithPivotValues($state ?? [], $pivotData);
         });
 
         $this->createOptionUsing(static function (Select $component, array $data, Form $form) {

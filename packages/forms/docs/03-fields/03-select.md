@@ -186,7 +186,7 @@ use Filament\Forms\Components\Select;
 
 Select::make('technologies')
     ->relationship(titleAttribute: 'name')
-    ->pivotAttributes([
+    ->pivotData([
         'is_primary' => true,
     ])
 ```

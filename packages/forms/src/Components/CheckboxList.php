@@ -24,7 +24,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     use Concerns\HasGridDirection;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
-    use Concerns\HasPivotAttributes;
+    use Concerns\HasPivotData;
 
     /**
      * @var view-string
@@ -186,7 +186,15 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         });
 
         $this->saveRelationshipsUsing(static function (CheckboxList $component, ?array $state) {
-            $component->getRelationship()->syncWithPivotValues($state ?? [], $component->getPivotAttributes());
+            $pivotData = $component->getPivotData();
+
+            if ($pivotData === []) {
+                $component->getRelationship()->sync($state ?? []);
+
+                return;
+            }
+
+            $component->getRelationship()->syncWithPivotValues($state ?? [], $pivotData);
         });
 
         $this->dehydrated(false);
