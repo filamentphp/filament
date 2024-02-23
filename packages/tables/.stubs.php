@@ -2,8 +2,8 @@
 
 namespace Livewire\Features\SupportTesting {
 
-    use Illuminate\Support\Collection;
     use Closure;
+    use Illuminate\Support\Collection;
 
     class Testable {
         public function mountTableAction(string | array $name, $record = null): static {}
