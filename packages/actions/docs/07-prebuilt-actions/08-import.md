@@ -320,6 +320,18 @@ ImportColumn::make('sku')
     })
 ```
 
+### Adding helper text below the import column
+
+Sometimes, you may wish to provide extra information for the user before validation. You can do this by adding `helperText()` to a column, which gets displayed below the mapping select:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+ImportColumn::make('skus')
+    ->array(',')
+    ->helperText('A comma-separated list of SKUs.')
+```
+
 ## Updating existing records when importing
 
 When generating an importer class, you will see this `resolveRecord()` method:
