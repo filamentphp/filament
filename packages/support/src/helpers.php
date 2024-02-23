@@ -125,7 +125,7 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
             $slot = new ComponentSlot($slot->toHtml());
         }
 
-        return $slot->hasActualContent();
+        return ! $slot->hasActualContent();
     }
 }
 
