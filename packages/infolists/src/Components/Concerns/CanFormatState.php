@@ -128,7 +128,7 @@ trait CanFormatState
     {
         $this->isNumeric = true;
 
-        $this->formatStateUsing(static function (TextEntry $component, $state) use ($decimalPlaces, $decimalSeparator, $maxDecimalPlaces, $thousandsSeparator): ?string {
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($decimalPlaces, $decimalSeparator, $locale, $maxDecimalPlaces, $thousandsSeparator): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -152,7 +152,7 @@ trait CanFormatState
                 );
             }
 
-            return Number::format($state, $decimalPlaces, $maxDecimalPlaces, locale: $component->evaluate($loale));
+            return Number::format($state, $decimalPlaces, $maxDecimalPlaces, $component->evaluate($locale));
         });
 
         return $this;
