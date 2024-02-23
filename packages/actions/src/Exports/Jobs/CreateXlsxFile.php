@@ -50,11 +50,9 @@ class CreateXlsxFile implements ShouldQueue
         $writer = app(Writer::class);
         $writer->openToFile($temporaryFile = tempnam(sys_get_temp_dir(), $this->export->file_name));
 
-        $headersStyle = $this->exporter->getHeadingStyle();
-
         $csvDelimiter = $this->exporter::getCsvDelimiter();
 
-        $writeRowsFromFile = function (string $file, Style $style = null) use ($csvDelimiter, $disk, $writer) {
+        $writeRowsFromFile = function (string $file, ?Style $style = null) use ($csvDelimiter, $disk, $writer) {
             $csvReader = CsvReader::createFromStream($disk->readStream($file));
             $csvReader->setDelimiter($csvDelimiter);
             $csvResults = Statement::create()->process($csvReader);
@@ -64,7 +62,12 @@ class CreateXlsxFile implements ShouldQueue
             }
         };
 
-        $writeRowsFromFile($this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv', $headersStyle);
+        $cellStyle = $this->exporter->getXlsxCellStyle();
+
+        $writeRowsFromFile(
+            $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv',
+            $this->exporter->getXlsxHeaderCellStyle() ?? $cellStyle,
+        );
 
         foreach ($disk->files($this->export->getFileDirectory()) as $file) {
             if (str($file)->endsWith('headers.csv')) {
@@ -75,7 +78,7 @@ class CreateXlsxFile implements ShouldQueue
                 continue;
             }
 
-            $writeRowsFromFile($file);
+            $writeRowsFromFile($file, $cellStyle);
         }
 
         $writer->close();

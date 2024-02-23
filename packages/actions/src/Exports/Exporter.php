@@ -168,10 +168,12 @@ abstract class Exporter
         return [ExportFormat::Csv, ExportFormat::Xlsx];
     }
 
-    /**
-     * @return Style|null
-     */
-    public function getHeadingStyle(): ?Style
+    public function getXlsxCellStyle(): ?Style
+    {
+        return null;
+    }
+
+    public function getXlsxHeaderCellStyle(): ?Style
     {
         return null;
     }
