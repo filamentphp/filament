@@ -104,19 +104,6 @@ ImportColumn::make('sku')
     ->label('SKU')
 ```
 
-## Adding helper text below the import column
-
-Sometimes, you may wish to provide extra information for the import column before validation.
-
-The `helperText()` method is used to add helper text:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-ImportColumn::make('skus')
-    ->helperText('A comma-separated list of SKUs.')
-```
-
 ### Requiring an importer column to be mapped to a CSV column
 
 You can call the `requiredMapping()` method to make a column required to be mapped to a column in the CSV. Columns that are required in the database should be required to be mapped:
@@ -331,6 +318,18 @@ ImportColumn::make('sku')
     ->fillRecordUsing(function (Product $record, string $state): void {
         $record->sku = strtoupper($state);
     })
+```
+
+### Adding helper text below the import column
+
+Sometimes, you may wish to provide extra information for the user before validation. You can do this by adding `helperText()` to a column, which gets displayed below the mapping select:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+ImportColumn::make('skus')
+    ->array(',')
+    ->helperText('A comma-separated list of SKUs.')
 ```
 
 ## Updating existing records when importing
