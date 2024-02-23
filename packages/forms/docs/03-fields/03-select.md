@@ -270,7 +270,6 @@ You may define a custom form that can be used to create a new record and attach 
 
 ```php
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Model;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
@@ -289,22 +288,20 @@ The form opens in a modal, where the user can fill it with data. Upon form submi
 
 <AutoScreenshot name="forms/fields/select/create-option-modal" alt="Select with create option modal" version="3.x" />
 
-### Customizing new option creation
+#### Customizing new option creation
 
-You can customize the creation process of the new option defined in the form using the createOptionUsing method, returning the ID of the newly created record.
+You can customize the creation process of the new option defined in the form using the `createOptionUsing()` method, which should return the primary key of the newly created record:
 
 ```php
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Model;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
     ->createOptionForm([
-       //...
+       // ...
     ])
-    ->createOptionUsing(function(array $data) {
-        $data['name'] = Str::upper($data['name']);
-        return User::create($data)->id;
+    ->createOptionUsing(function (array $data): int {
+        return auth()->user()->team->members()->create($data)->getKey();
     }),
 ```
 
@@ -314,7 +311,6 @@ You may define a custom form that can be used to edit the selected record and sa
 
 ```php
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Model;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
