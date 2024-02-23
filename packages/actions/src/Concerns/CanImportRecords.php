@@ -35,8 +35,6 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-use function Filament\Support\format_number;
-
 trait CanImportRecords
 {
     /**

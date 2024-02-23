@@ -12,7 +12,6 @@ use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
-use NumberFormatter;
 
 if (! function_exists('Filament\Support\format_money')) {
     /**

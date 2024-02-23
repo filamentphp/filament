@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\ArgumentValue;
 use Filament\Tables\Columns\TextColumn;
@@ -12,9 +11,6 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
-
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 
 trait CanFormatState
 {
@@ -150,7 +146,7 @@ trait CanFormatState
                 return number_format(
                     $state,
                     $column->evaluate($decimalPlaces),
-                    $decimalSeparator  === ArgumentValue::Default ? '.' : $decimalSeparator,
+                    $decimalSeparator === ArgumentValue::Default ? '.' : $decimalSeparator,
                     $thousandsSeparator === ArgumentValue::Default ? ',' : $thousandsSeparator,
                 );
             }

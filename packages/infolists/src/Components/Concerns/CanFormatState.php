@@ -13,9 +13,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
-
 trait CanFormatState
 {
     protected ?Closure $formatStateUsing = null;
@@ -131,7 +128,7 @@ trait CanFormatState
     {
         $this->isNumeric = true;
 
-        $this->formatStateUsing(static function (TextEntry $component, $state) use ($decimalPlaces, $decimalSeparator, $locale, $maxDecimalPlaces, $thousandsSeparator): ?string {
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($decimalPlaces, $decimalSeparator, $maxDecimalPlaces, $thousandsSeparator): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -150,7 +147,7 @@ trait CanFormatState
                 return number_format(
                     $state,
                     $component->evaluate($decimalPlaces),
-                    $decimalSeparator  === ArgumentValue::Default ? '.' : $decimalSeparator,
+                    $decimalSeparator === ArgumentValue::Default ? '.' : $decimalSeparator,
                     $thousandsSeparator === ArgumentValue::Default ? ',' : $thousandsSeparator,
                 );
             }

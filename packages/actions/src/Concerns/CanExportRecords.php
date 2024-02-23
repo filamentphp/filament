@@ -29,8 +29,6 @@ use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-use function Filament\Support\format_number;
-
 trait CanExportRecords
 {
     /**

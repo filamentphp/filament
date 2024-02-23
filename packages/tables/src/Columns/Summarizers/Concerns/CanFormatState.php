@@ -3,16 +3,11 @@
 namespace Filament\Tables\Columns\Summarizers\Concerns;
 
 use Closure;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Enums\ArgumentValue;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Table;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
-
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 
 trait CanFormatState
 {
@@ -86,7 +81,7 @@ trait CanFormatState
                 return number_format(
                     $state,
                     $summarizer->evaluate($decimalPlaces),
-                    $decimalSeparator  === ArgumentValue::Default ? '.' : $decimalSeparator,
+                    $decimalSeparator === ArgumentValue::Default ? '.' : $decimalSeparator,
                     $thousandsSeparator === ArgumentValue::Default ? ',' : $thousandsSeparator,
                 );
             }
