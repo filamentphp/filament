@@ -179,19 +179,6 @@ Select::make('technologies')
     ->relationship(titleAttribute: 'name')
 ```
 
-If you're using a `BelongsToMany` relationship and your pivot table has additional columns, you can use the `pivotAttributes()` method to specify the pivot attributes that should be saved:
-
-```php
-use Filament\Forms\Components\Select;
-
-Select::make('technologies')
-    ->relationship(titleAttribute: 'name')
-    ->pivotData([
-        'is_primary' => true,
-    ])
-```
-
-
 ### Searching relationship options across multiple columns
 
 By default, if the select is also searchable, Filament will return search results for the relationship based on the title column of the relationship. If you'd like to search across multiple columns, you can pass an array of columns to the `searchable()` method:
@@ -275,6 +262,21 @@ Select::make('author_id')
     )
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
     ->searchable(['first_name', 'last_name'])
+```
+
+### Saving pivot data to the relationship
+
+If you're using a `multiple()` relationship and your pivot table has additional columns, you can use the `pivotData()` method to specify the data that should be saved in them:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('primaryTechnologies')
+    ->relationship(name: 'technologies', titleAttribute: 'name')
+    ->multiple()
+    ->pivotData([
+        'is_primary' => true,
+    ])
 ```
 
 ### Creating a new option in a modal
