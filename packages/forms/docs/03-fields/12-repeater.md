@@ -234,7 +234,7 @@ Repeater::make('qualifications')
 
 ### Reordering items in a relationship
 
-By default, [reordering](#reordering-items) relationship repeater items is disabled. This is because your related model needs an `sort` column to store the order of related records. To enable reordering, you may use the `orderColumn()` method, passing in a name of the column on your related model to store the order in:
+By default, [reordering](#reordering-items) relationship repeater items is disabled. This is because your related model needs a `sort` column to store the order of related records. To enable reordering, you may use the `orderColumn()` method, passing in a name of the column on your related model to store the order in:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -287,7 +287,7 @@ class OrderProduct extends Pivot
     {
         return $this->belongsTo(Order::class);
     }
-    
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
@@ -634,7 +634,7 @@ Repeater::make('members')
             ->icon('heroicon-m-envelope')
             ->action(function (array $arguments, Repeater $component): void {
                 $itemData = $component->getItemState($arguments['item']);
-                
+
                 Mail::to($itemData['email'])
                     ->send(
                         // ...

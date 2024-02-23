@@ -8,30 +8,33 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
-use NumberFormatter;
+use Illuminate\View\ComponentSlot;
 
 if (! function_exists('Filament\Support\format_money')) {
+    /**
+     * @deprecated Use `Illuminate\Support\Number::currency()` instead.
+     */
     function format_money(float | int $money, string $currency, int $divideBy = 0): string
     {
-        $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::CURRENCY);
-
         if ($divideBy) {
             $money /= $divideBy;
         }
 
-        return $formatter->formatCurrency($money, $currency);
+        return Number::currency($money, $currency);
     }
 }
 
 if (! function_exists('Filament\Support\format_number')) {
+    /**
+     * @deprecated Use `Illuminate\Support\Number::format()` instead.
+     */
     function format_number(float | int $number): string
     {
-        $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::DECIMAL);
-
-        return $formatter->format($number);
+        return Number::format($number);
     }
 }
 
@@ -118,18 +121,11 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
             return true;
         }
 
-        return trim(
-            str_replace(
-                [
-                    '<!-- __BLOCK__ -->',
-                    '<!-- __ENDBLOCK__ -->',
-                    '<!--[if BLOCK]><![endif]-->',
-                    '<!--[if ENDBLOCK]><![endif]-->',
-                ],
-                '',
-                $slot->toHtml()
-            ),
-        ) === '';
+        if (! $slot instanceof ComponentSlot) {
+            $slot = new ComponentSlot($slot->toHtml());
+        }
+
+        return ! $slot->hasActualContent();
     }
 }
 

@@ -9,6 +9,8 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 use function Filament\Support\is_app_url;
 
@@ -58,6 +60,8 @@ class SettingsPage extends Page
     public function save(): void
     {
         try {
+            DB::beginTransaction();
+
             $this->callHook('beforeValidate');
 
             $data = $this->form->getState();
@@ -74,8 +78,18 @@ class SettingsPage extends Page
             $settings->save();
 
             $this->callHook('afterSave');
+
+            DB::commit();
         } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                DB::rollBack() :
+                DB::commit();
+
             return;
+        } catch (Throwable $exception) {
+            DB::rollBack();
+
+            throw $exception;
         }
 
         $this->getSavedNotification()?->send();
