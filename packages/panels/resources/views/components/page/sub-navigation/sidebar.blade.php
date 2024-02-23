@@ -8,6 +8,7 @@
 >
     @foreach ($navigation as $navigationGroup)
         <x-filament-panels::sidebar.group
+            :active="$navigationGroup->isActive()"
             :collapsible="$navigationGroup->isCollapsible()"
             :icon="$navigationGroup->getIcon()"
             :items="$navigationGroup->getItems()"

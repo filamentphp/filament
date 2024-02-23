@@ -124,6 +124,18 @@ ExportColumn::make('description')
     ->enabledByDefault(false)
 ```
 
+### Disabling column selection
+
+By default, user will be asked which columns they would like to export. You can disable this functionality using `columnMapping(false)`:
+
+```php
+use App\Filament\Exports\ProductExporter;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->columnMapping(false)
+```
+
 ### Calculated export column state
 
 Sometimes you need to calculate the state of a column, instead of directly reading it from a database column.

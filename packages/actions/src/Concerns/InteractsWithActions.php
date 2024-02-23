@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use Livewire\Attributes\Url;
+use Throwable;
 
 use function Livewire\store;
 
@@ -79,6 +80,8 @@ trait InteractsWithActions
         $originallyMountedActions = $this->mountedActions;
 
         try {
+            $action->beginDatabaseTransaction();
+
             if ($this->mountedActionHasForm()) {
                 $action->callBeforeFormValidated();
 
@@ -96,16 +99,31 @@ trait InteractsWithActions
             $result = $action->callAfter() ?? $result;
 
             $this->afterActionCalled();
+
+            $action->commitDatabaseTransaction();
         } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $action->rollBackDatabaseTransaction() :
+                $action->commitDatabaseTransaction();
+
             return null;
         } catch (Cancel $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $action->rollBackDatabaseTransaction() :
+                $action->commitDatabaseTransaction();
         } catch (ValidationException $exception) {
+            $action->rollBackDatabaseTransaction();
+
             if (! $this->mountedActionShouldOpenModal()) {
                 $action->resetArguments();
                 $action->resetFormData();
 
                 $this->unmountAction();
             }
+
+            throw $exception;
+        } catch (Throwable $exception) {
+            $action->rollBackDatabaseTransaction();
 
             throw $exception;
         }

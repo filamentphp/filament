@@ -58,17 +58,39 @@ TextEntry::make('created_at')
 
 ## Number formatting
 
-The `numeric()` method allows you to format an entry as a number, using PHP's `number_format()`:
+The `numeric()` method allows you to format an entry as a number:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('stock')
-    ->numeric(
-        decimalPlaces: 0,
-        decimalSeparator: '.',
-        thousandsSeparator: ',',
-    )
+    ->numeric()
+```
+
+If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('stock')
+    ->numeric(decimalPlaces: 0)
+```
+
+By default, your app's locale will be used to format the number suitably. If you would like to customize the locale used, you can pass it to the `locale` argument:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('stock')
+    ->numeric(locale: 'nl')
+```
+
+Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+
+```php
+use Illuminate\Support\Number;
+
+Number::useLocale('nl');
 ```
 
 ## Currency formatting
@@ -89,6 +111,23 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('price')
     ->money('EUR', divideBy: 100)
+```
+
+By default, your app's locale will be used to format the money suitably. If you would like to customize the locale used, you can pass it to the `locale` argument:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('price')
+    ->money(currency: 'EUR', locale: 'nl')
+```
+
+Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+
+```php
+use Illuminate\Support\Number;
+
+Number::useLocale('nl');
 ```
 
 ## Limiting text length
@@ -130,6 +169,17 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('description')
     ->words(10)
+```
+
+## Limiting text to a specific number of lines
+
+You may want to limit text to a specific number of lines instead of limiting it to a fixed length. Clamping text to a number of lines is useful in responsive interfaces where you want to ensure a consistent experience across all screen sizes. This can be achieved using the `lineClamp()` method:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('description')
+    ->lineClamp(2)
 ```
 
 ## Listing multiple values

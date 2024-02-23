@@ -17,7 +17,7 @@ return [
 
             'columns' => [
                 'label' => 'Spalten',
-                'placeholder' => 'Wähle Spalte',
+                'placeholder' => 'Spalte auswählen',
             ],
 
         ],
@@ -54,12 +54,12 @@ return [
 
         'max_rows' => [
             'title' => 'CSV Datei ist zu groß',
-            'body' => 'Nicht mehr als eine Zeile auf einmal importieren.|Nicht mehr als :count Zeilen importieren.',
+            'body' => 'Nicht mehr als 1 Zeile auf einmal importieren.|Nicht mehr als :count Zeilen auf einmal importieren.',
         ],
 
         'started' => [
             'title' => 'Import gestartet',
-            'body' => 'Der Import ist gestartet und eine Zeile wird im Hintergrund verarbeitet.|Der Import hat begonnen und :count Zeilen werden im Hintergrund verarbeitet.',
+            'body' => 'Der Import wurde gestartet und 1 Zeile wird im Hintergrund verarbeitet.|Der Import wurde gestartet und :count Zeilen werden im Hintergrund verarbeitet.',
         ],
 
     ],

@@ -229,6 +229,16 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Navigation groups in a collapsible sidebar on desktop
+
+> This section only applies to `sidebarCollapsibleOnDesktop()`, not `sidebarFullyCollapsibleOnDesktop()`, since the fully collapsible UI just hides the entire sidebar instead of changing its design.
+
+When using a collapsible sidebar on desktop, you will also often be using [navigation groups](#grouping-navigation-items). By default, the labels of each navigation group will be hidden when the sidebar is collapsed, since there is no space to display them. Even if the navigation group itself is [collapsible](#making-navigation-groups-not-collapsible), all items will still be visible in the collapsed sidebar, since there is no group label to click on to expand the group.
+
+These issues can be solved, to achieve a very minimal sidebar design, by [passing an `icon()`](#customizing-navigation-groups) to the navigation group objects. When an icon is defined, the icon will be displayed in the collapsed sidebar instead of the items at all times. When the icon is clicked, a dropdown will open to the side of the icon, revealing the items in the group.
+
+When passing an icon to a navigation group, even if the items also have icons, the expanded sidebar UI will not show the item icons. This is to keep the navigation hierarchy clear, and the design minimal. However, the icons for the items will be shown in the collapsed sidebar's dropdowns though, since the hierarchy is already clear from the fact that the dropdown is open.
+
 ## Registering custom navigation items
 
 To register new navigation items, you can use the [configuration](configuration):

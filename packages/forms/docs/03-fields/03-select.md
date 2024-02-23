@@ -264,6 +264,21 @@ Select::make('author_id')
     ->searchable(['first_name', 'last_name'])
 ```
 
+### Saving pivot data to the relationship
+
+If you're using a `multiple()` relationship and your pivot table has additional columns, you can use the `pivotData()` method to specify the data that should be saved in them:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('primaryTechnologies')
+    ->relationship(name: 'technologies', titleAttribute: 'name')
+    ->multiple()
+    ->pivotData([
+        'is_primary' => true,
+    ])
+```
+
 ### Creating a new option in a modal
 
 You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
@@ -367,7 +382,7 @@ MorphToSelect::make('commentable')
     ])
 ```
 
-> Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
+> Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 
 ## Allowing HTML in the option labels
 

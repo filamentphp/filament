@@ -22,8 +22,16 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'Pertama',
+        ],
+
         'go_to_page' => [
             'label' => 'Pergi ke halaman :page',
+        ],
+
+        'last' => [
+            'label' => 'Akhir',
         ],
 
         'next' => [

@@ -24,8 +24,6 @@ class PanelRegistry
 
         if (app()->resolved('filament')) {
             app('filament')->setCurrentPanel($panel);
-
-            return;
         }
 
         app()->resolving(

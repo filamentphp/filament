@@ -75,51 +75,7 @@ composer require filament/widgets
 
 ## Contributing
 
-If you want to contribute to the Filament packages, then you may want to test it in a real Laravel project:
-
-- Fork this repository to your GitHub account.
-- Create a Laravel app locally.
-- Clone your fork in your Laravel app's root directory.
-- In the `/filament` directory, create a branch for your fix, e.g. `fix/error-message`.
-
-Install the packages in your app's `composer.json`:
-
-```jsonc
-{
-    // ...
-    "require": {
-        "filament/filament": "*",
-    },
-    "minimum-stability": "dev",
-    "repositories": [
-        {
-            "type": "path",
-            "url": "filament/packages/*"
-        }
-    ],
-    // ...
-}
-```
-
-Now, run `composer update`.
-
-### Checking for missing translations
-
-Set up a Laravel app, and install the [admin panel](https://filamentphp.com/docs/admin/installation).
-
-Now, if you want to check for missing Spanish translations, run:
-
-```bash
-php artisan filament:check-translations es
-```
-
-This will let you know which translations are missing for this locale. You can make a PR with the changes to this repository.
-
-If you've published the translations into your app and you'd like to check those instead, try:
-
-```bash
-php artisan filament:check-translations es --source=app
-```
+Please see our [contributing guide](https://filamentphp.com/docs/support/contributing).
 
 ## Need Help?
 
