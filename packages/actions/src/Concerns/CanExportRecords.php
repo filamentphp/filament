@@ -25,6 +25,7 @@ use Illuminate\Foundation\Bus\PendingChain;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -127,7 +128,7 @@ trait CanExportRecords
                 Notification::make()
                     ->title(__('filament-actions::export.notifications.max_rows.title'))
                     ->body(trans_choice('filament-actions::export.notifications.max_rows.body', $maxRows, [
-                        'count' => format_number($maxRows),
+                        'count' => Number::format($maxRows),
                     ]))
                     ->danger()
                     ->send();
@@ -239,7 +240,7 @@ trait CanExportRecords
             Notification::make()
                 ->title($action->getSuccessNotificationTitle())
                 ->body(trans_choice('filament-actions::export.notifications.started.body', $export->total_rows, [
-                    'count' => format_number($export->total_rows),
+                    'count' => Number::format($export->total_rows),
                 ]))
                 ->success()
                 ->send();

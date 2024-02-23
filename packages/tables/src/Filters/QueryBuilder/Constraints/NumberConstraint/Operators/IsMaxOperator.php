@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
 
+use Illuminate\Support\Number;
 use function Filament\Support\format_number;
 
 class IsMaxOperator extends Operator
@@ -35,7 +36,7 @@ class IsMaxOperator extends Operator
                 'filament-tables::filters/query-builder.operators.number.is_max.summary.direct',
             [
                 'attribute' => $this->getAttributeLabel(),
-                'number' => format_number($this->getSettings()['number']),
+                'number' => Number::format($this->getSettings()['number']),
             ],
         );
     }
