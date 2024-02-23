@@ -6,7 +6,7 @@ use Exception;
 
 class Cancel extends Exception
 {
-    protected bool $shouldRollbackDatabaseTransaction = true;
+    protected bool $shouldRollbackDatabaseTransaction = false;
 
     public function rollBackDatabaseTransaction(bool $condition = true): static
     {
