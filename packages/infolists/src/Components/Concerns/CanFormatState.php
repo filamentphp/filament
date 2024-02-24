@@ -7,7 +7,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\ArgumentValue;
-use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Number;
@@ -112,7 +111,7 @@ trait CanFormatState
                 return $state;
             }
 
-            $currency = $component->evaluate($currency) ?? Table::$defaultCurrency;
+            $currency = $component->evaluate($currency) ?? Infolist::$defaultCurrency;
 
             if ($divideBy) {
                 $state /= $divideBy;
