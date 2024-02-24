@@ -679,7 +679,7 @@ Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1
 
 ## Using a domain to identify the tenant
 
-When using a tenant, you might want to use domain or subdomain routing like `admin.example.com/posts` instead of a route prefix like `/admin/posts` . You can do that with the `tenantDomain()` method, alongside the `tenant()` configuration method:
+When using a tenant, you might want to use domain or subdomain routing like `team1.example.com/posts` instead of a route prefix like `/team1/posts` . You can do that with the `tenantDomain()` method, alongside the `tenant()` configuration method. The `tenant` argument name is followed by a colon `:` and then the attribute you wish to resolve that part of the domain using, like the `slug` attribute:
 
 ```php
 use Filament\Panel;
@@ -689,11 +689,11 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenant(Team::class)
-        ->tenantDomain('{tenant}.example.com', , slugAttribute: 'slug');
+        ->tenantDomain('{tenant:slug}.example.com');
 }
 ```
 
-You can even use full domains for the routing:
+In the above examples, the tenants live on subdomains of the main app domain. You may also set the system up to resolve the entire domain from the tenant as well:
 
 ```php
 use Filament\Panel;
@@ -703,30 +703,11 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenant(Team::class)
-        ->tenantDomain('{tenant}', , slugAttribute: 'domain');
+        ->tenantDomain('{tenant:domain}');
 }
 ```
 
-Remember that the model itself should also be updated to use the correct `getRouteKeyName()` method or similar, and that the model field name should contain a valid domain host, like `example.com` or `subdomain.example.com`. if you are using a full domain routing instead of the previous subdomain routing example.
-
-```php
-<?php
-
-namespace App\Models;
-
-use Filament\Models\Contracts\HasCurrentTenantLabel;
-use Illuminate\Database\Eloquent\Model;
-
-class Team extends Model
-{
-    // ...
-    
-    public function getRouteKeyName(): string
-    {
-        return 'domain';
-    }
-}
-```
+In this example, the `domain` attribute should contain a valid domain host, like `example.com` or `subdomain.example.com`.
 
 ## Disabling tenancy for a resource
 
