@@ -81,10 +81,9 @@ trait HasTenancy
         return $this;
     }
 
-    public function tenantDomain(?string $domain, ?string $slugAttribute = null): static
+    public function tenantDomain(?string $domain): static
     {
         $this->tenantDomain = $domain;
-        $this->tenantSlugAttribute = $slugAttribute ?? $this->tenantSlugAttribute ?? 'domain';
 
         return $this;
     }
