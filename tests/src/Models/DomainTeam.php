@@ -16,9 +16,4 @@ class DomainTeam extends Model
     {
         return DomainTeamFactory::new();
     }
-
-    public function getRouteKeyName()
-    {
-        return 'domain';
-    }
 }
