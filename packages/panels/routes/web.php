@@ -53,7 +53,7 @@ Route::name('filament.')
                         });
 
                         Route::middleware($panel->getAuthMiddleware())
-                            ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantDomain, $tenantSlugAttribute): void {
+                            ->group(function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute): void {
                                 if ($routes = $panel->getAuthenticatedRoutes()) {
                                     $routes($panel);
                                 }
