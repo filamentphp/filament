@@ -475,12 +475,21 @@ Field::make('email')
     })
 ```
 
+
+### ULID
+
+The field under validation must be a valid [Universally Unique Lexicographically Sortable Identifier](https://github.com/ulid/spec) (ULID). [See the Laravel documentation.](https://laravel.com/docs/validation#rule-ulid)
+
+```php
+Field::make('identifier')->ulid()
+```
+
 ### UUID
 
 The field must be a valid RFC 4122 (version 1, 3, 4, or 5) universally unique identifier (UUID). [See the Laravel documentation.](https://laravel.com/docs/validation#rule-uuid)
 
 ```php
-Field::make('identifer')->uuid()
+Field::make('identifier')->uuid()
 ```
 
 ## Other rules
