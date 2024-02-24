@@ -32,7 +32,7 @@ class DomainTenancyPanelProvider extends PanelProvider
             ->id('domain-tenancy')
             ->path('/domain-tenancy')
             ->tenant(DomainTeam::class)
-            ->tenantDomain('{tenant}', 'domain')
+            ->tenantDomain('{tenant:domain}')
             ->login()
             ->registration()
             ->passwordReset()
