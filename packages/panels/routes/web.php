@@ -165,7 +165,6 @@ Route::name('filament.')
                                     }
                                 });
                         }
-
                     });
             }
         }
