@@ -40,7 +40,7 @@ return [
 
         'last' => [
             'label' => 'Dernière',
-        ]
+        ],
 
     ],
 
