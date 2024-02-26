@@ -15,6 +15,24 @@ return [
 
         ],
 
+        'key_value' => [
+
+            'columns' => [
+
+                'key' => [
+                    'label' => 'Clé',
+                ],
+
+                'value' => [
+                    'label' => 'Valeur',
+                ],
+
+            ],
+
+            'placeholder' => 'Aucune entrée',
+
+        ],
+
     ],
 
 ];
