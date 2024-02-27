@@ -1,0 +1,5 @@
+migrations:
+  - tests/database/migrations
+
+workbench:
+  install: true

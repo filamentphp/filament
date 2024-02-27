@@ -30,7 +30,7 @@ php artisan make:filament-panel app
 
 This command will create a new panel called "app". A configuration file will be created at `app/Providers/Filament/AppPanelProvider.php`. You can access this panel at `/app`, but you can [customize the path](#changing-the-path) if you don't want that.
 
-Since this configuration file is also a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `config/app.php`. Filament will attempt to do this for you, but if you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the `providers` array.
+Since this configuration file is also a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `bootstrap/providers.php` (Laravel 11 and above) or `config/app.php` (Laravel 10 and below). Filament will attempt to do this for you, but if you get an error while trying to access your panel then this process has probably failed.
 
 ## Changing the path
 

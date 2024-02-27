@@ -82,8 +82,6 @@ If you'd like to save time, Filament can automatically generate the [columns](#d
 php artisan make:filament-exporter Product --generate
 ```
 
-> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence, Filament is unable to generate the columns for your exporter if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
-
 ## Defining exporter columns
 
 To define the columns that can be exported, you need to override the `getColumns()` method on your exporter class, returning an array of `ExportColumn` objects:
