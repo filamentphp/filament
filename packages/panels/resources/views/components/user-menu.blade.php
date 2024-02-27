@@ -73,7 +73,6 @@
                 :href="$item->getUrl()"
                 :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
                 :icon="$item->getIcon()"
-                tag="a"
                 :tag="$item->getTag() ?? 'a'"
                 :method="$item->getMethod() ?? null"
             >
