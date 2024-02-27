@@ -4,7 +4,7 @@ namespace Filament\Support\Commands\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Builder;
 use Illuminate\Support\Str;
 use ReflectionClass;
 use ReflectionException;
@@ -20,7 +20,7 @@ trait CanReadModelSchemas
         return $model;
     }
 
-    protected function getModelSchema(string $model): Schema
+    protected function getModelSchema(string $model): Builder
     {
         return app($model)
             ->getConnection()
