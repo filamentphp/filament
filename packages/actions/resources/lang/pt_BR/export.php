@@ -21,7 +21,7 @@ return [
                     ],
 
                     'label' => [
-                        'label' => 'Rótulo da :column',
+                        'label' => 'Rótulo para :column',
                     ],
 
                 ],
