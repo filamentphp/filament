@@ -51,9 +51,10 @@
                 x-ignore
                 @class([
                     match ($color) {
-                        'gray' => 'fi-color-gray',
+                        'gray' => null,
                         default => 'fi-color-custom',
                     },
+                    is_string($color) ? "fi-color-{$color}" : null,
                 ])
             >
                 <canvas

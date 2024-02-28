@@ -58,11 +58,7 @@
             ActionSize::ExtraLarge => 'gap-1.5',
             default => $size,
         },
-        match ($color) {
-            'gray' => 'fi-color-gray',
-            default => 'fi-color-custom',
-        },
-        is_string($color) ? "fi-color-{$color}" : null,
+        is_string($color) ? "fi-color-{$color}" : 'fi-color-custom',
     ]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
