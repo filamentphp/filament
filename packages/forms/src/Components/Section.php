@@ -4,17 +4,18 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\Concerns\HasHeaderActions;
+use Filament\Support\Concerns\CanBeContained;
 use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasHeading;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
-use Filament\Support\Concerns\HasMinimal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
 class Section extends Component implements Contracts\CanConcealComponents, Contracts\CanEntangleWithSingularRelationships, Contracts\HasHeaderActions
 {
+    use CanBeContained;
     use Concerns\CanBeCollapsed;
     use Concerns\CanBeCompacted;
     use Concerns\EntanglesStateWithSingularRelationship;
@@ -24,7 +25,6 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     use HasHeading;
     use HasIcon;
     use HasIconColor;
-    use HasMinimal;
 
     /**
      * @var view-string

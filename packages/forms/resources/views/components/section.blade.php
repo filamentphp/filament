@@ -6,6 +6,7 @@
     :aside="$isAside"
     :collapsed="$isCollapsed()"
     :collapsible="$isCollapsible() && (! $isAside)"
+    :contained="$isContained()"
     :compact="$isCompact()"
     :content-before="$isFormBefore()"
     :description="$getDescription()"
@@ -15,7 +16,6 @@
     :icon-color="$getIconColor()"
     :icon-size="$getIconSize()"
     :persist-collapsed="$shouldPersistCollapsed()"
-    :minimal="$getMinimal()"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->merge([
