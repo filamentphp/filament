@@ -100,3 +100,20 @@ SelectFilter::make('author')
     ->relationship('author', 'name')
     ->searchable()
 ```
+
+## Disable placeholder selection
+
+You can prevent the placeholder (null option) from being selected using the `selectablePlaceholder()` method:
+
+```php
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->default('draft')
+    ->selectablePlaceholder(false)
+```
