@@ -21,11 +21,7 @@ class MenuItem extends Component
 
     protected string | Closure | Native | null $url = null;
 
-    protected string | Closure | null $action = null;
-
-    protected string | Closure | null $tag = null;
-
-    protected string | Closure | null $method = null;
+    protected string | Closure | null $postAction = null;
 
     protected bool | Closure $shouldOpenUrlInNewTab = false;
 
@@ -84,23 +80,9 @@ class MenuItem extends Component
         return $this;
     }
 
-    public function action(string | Closure | null $action): static
+    public function postAction(?string $action): static
     {
-        $this->action = $action;
-
-        return $this;
-    }
-
-    public function tag(string | Closure | null $tag): static
-    {
-        $this->tag = $tag;
-
-        return $this;
-    }
-
-    public function method(string | Closure | null $method): static
-    {
-        $this->method = $method;
+        $this->postAction = $action;
 
         return $this;
     }
@@ -170,17 +152,17 @@ class MenuItem extends Component
 
     public function getAction(): ?string
     {
-        return $this->evaluate($this->action);
+        return $this->evaluate($this->postAction);
     }
 
     public function getTag(): string
     {
-        return $this->evaluate($this->tag) ?? 'a';
+        return filled($this->getAction()) ? 'form' : 'a';
     }
 
     public function getMethod(): ?string
     {
-        return $this->evaluate($this->method);
+        return filled($this->getAction()) ? 'post' : null;
     }
 
     public function shouldOpenUrlInNewTab(): bool
