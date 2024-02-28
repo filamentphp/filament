@@ -155,16 +155,6 @@ class MenuItem extends Component
         return $this->evaluate($this->action);
     }
 
-    public function getTag(): string
-    {
-        return filled($this->getAction()) ? 'form' : 'a';
-    }
-
-    public function getMethod(): ?string
-    {
-        return filled($this->getAction()) ? 'post' : null;
-    }
-
     public function shouldOpenUrlInNewTab(): bool
     {
         return (bool) $this->evaluate($this->shouldOpenUrlInNewTab);
