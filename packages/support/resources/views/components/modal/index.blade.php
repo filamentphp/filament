@@ -248,9 +248,10 @@
                                             @class([
                                                 'rounded-full',
                                                 match ($iconColor) {
-                                                    'gray' => 'fi-color-gray bg-gray-100 dark:bg-gray-500/20',
+                                                    'gray' => 'bg-gray-100 dark:bg-gray-500/20',
                                                     default => 'fi-color-custom bg-custom-100 dark:bg-custom-500/20',
                                                 },
+                                                is_string($iconColor) ? "fi-color-{$iconColor}" : null,
                                                 match ($alignment) {
                                                     Alignment::Start, Alignment::Left => 'p-2',
                                                     Alignment::Center => 'p-3',

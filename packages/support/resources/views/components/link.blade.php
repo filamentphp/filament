@@ -59,9 +59,10 @@
             default => $size,
         },
         match ($color) {
-            'gray' => 'fi-color-gray',
+            'gray' => null,
             default => 'fi-color-custom',
         },
+        is_string($color) ? "fi-color-{$color}" : null,
     ]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -186,16 +187,14 @@
                 theme: $store.theme,
             }"
         @endif
-        {{
-            $attributes
+        {{ $attributes
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
                     'wire:loading.attr' => 'disabled',
                     'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 ], escape: false)
-                ->class([$linkClasses])
-        }}
+                ->class([$linkClasses]) }}
     >
         @if ($iconPosition === IconPosition::Before)
             @if ($icon)
