@@ -21,9 +21,9 @@ class MenuItem extends Component
 
     protected string | Closure | Native | null $url = null;
 
-    protected string | Closure | Native | null $action = null;
+    protected string | Closure | null $action = null;
 
-    protected string | Closure | null $tag = "a";
+    protected string | Closure | null $tag = 'a';
 
     protected string | Closure | null $method = null;
 
