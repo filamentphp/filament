@@ -80,7 +80,12 @@ abstract class Importer
 
         foreach ($this->getCachedColumns() as $column) {
             $columnName = $column->getName();
-            $rowColumnName = $this->columnMap[$columnName] ?? null;
+
+            if (blank($this->columnMap[$columnName] ?? null)) {
+                continue;
+            }
+
+            $rowColumnName = $this->columnMap[$columnName];
 
             if (! array_key_exists($rowColumnName, $this->data)) {
                 continue;
@@ -141,6 +146,10 @@ abstract class Importer
         foreach ($this->getCachedColumns() as $column) {
             $columnName = $column->getName();
 
+            if (blank($this->columnMap[$columnName] ?? null)) {
+                continue;
+            }
+
             $rules[$columnName] = $column->getDataValidationRules();
 
             if (
@@ -170,13 +179,19 @@ abstract class Importer
         $attributes = [];
 
         foreach ($this->getCachedColumns() as $column) {
+            $columnName = $column->getName();
+
+            if (blank($this->columnMap[$columnName] ?? null)) {
+                continue;
+            }
+
             $validationAttribute = $column->getValidationAttribute();
 
             if (blank($validationAttribute)) {
                 continue;
             }
 
-            $attributes[$column->getName()] = $validationAttribute;
+            $attributes[$columnName] = $validationAttribute;
         }
 
         return $attributes;
@@ -186,6 +201,10 @@ abstract class Importer
     {
         foreach ($this->getCachedColumns() as $column) {
             $columnName = $column->getName();
+
+            if (blank($this->columnMap[$columnName] ?? null)) {
+                continue;
+            }
 
             if (! array_key_exists($columnName, $this->data)) {
                 continue;

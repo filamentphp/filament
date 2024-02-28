@@ -82,8 +82,6 @@ If you'd like to save time, Filament can automatically generate the [columns](#d
 php artisan make:filament-exporter Product --generate
 ```
 
-> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence, Filament is unable to generate the columns for your exporter if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
-
 ## Defining exporter columns
 
 To define the columns that can be exported, you need to override the `getColumns()` method on your exporter class, returning an array of `ExportColumn` objects:
@@ -122,6 +120,18 @@ use Filament\Actions\Exports\ExportColumn;
 
 ExportColumn::make('description')
     ->enabledByDefault(false)
+```
+
+### Disabling column selection
+
+By default, user will be asked which columns they would like to export. You can disable this functionality using `columnMapping(false)`:
+
+```php
+use App\Filament\Exports\ProductExporter;
+
+ExportAction::make()
+    ->exporter(ProductExporter::class)
+    ->columnMapping(false)
 ```
 
 ### Calculated export column state
@@ -494,6 +504,43 @@ public static function getCsvDelimiter(): string
 ```
 
 You can only specify a single character, otherwise an exception will be thrown.
+
+## Styling XLSX cells
+
+If you want to style the cells of the XLSX file, you may override the `getXlsxCellStyle()` method on the exporter class, returning an [OpenSpout `Style` object](https://github.com/openspout/openspout/blob/4.x/docs/documentation.md#styling):
+
+```php
+use OpenSpout\Common\Entity\Style\Style;
+
+public function getXlsxCellStyle(): ?Style
+{
+    return (new Style())
+        ->setFontSize(12)
+        ->setFontName('Consolas');
+}
+```
+
+If you want to use a different style for the header cells of the XLSX file only, you may override the `getXlsxHeaderCellStyle()` method on the exporter class, returning an [OpenSpout `Style` object](https://github.com/openspout/openspout/blob/4.x/docs/documentation.md#styling):
+
+```php
+use OpenSpout\Common\Entity\Style\CellAlignment;
+use OpenSpout\Common\Entity\Style\CellVerticalAlignment;
+use OpenSpout\Common\Entity\Style\Color;
+use OpenSpout\Common\Entity\Style\Style;
+
+public function getXlsxHeaderCellStyle(): ?Style
+{
+    return (new Style())
+        ->setFontBold()
+        ->setFontItalic()
+        ->setFontSize(14)
+        ->setFontName('Consolas')
+        ->setFontColor(Color::rgb(255, 255, 77))
+        ->setBackgroundColor(Color::rgb(0, 0, 0))
+        ->setCellAlignment(CellAlignment::CENTER)
+        ->setCellVerticalAlignment(CellVerticalAlignment::CENTER);
+}
+```
 
 ## Customizing the export job
 

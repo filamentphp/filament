@@ -400,6 +400,13 @@ trait CanBeValidated
         return $this;
     }
 
+    public function ulid(bool | Closure $condition = true): static
+    {
+        $this->rule('ulid', $condition);
+
+        return $this;
+    }
+
     public function uuid(bool | Closure $condition = true): static
     {
         $this->rule('uuid', $condition);

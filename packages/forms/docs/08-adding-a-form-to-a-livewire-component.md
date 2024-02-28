@@ -329,5 +329,3 @@ Filament is also able to guess which form fields you want in the schema, based o
 ```bash
 php artisan make:livewire-form Products/CreateProduct --generate
 ```
-
-> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence, Filament is unable to generate the schema for your table if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
