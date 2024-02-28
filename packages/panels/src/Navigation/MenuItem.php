@@ -21,7 +21,7 @@ class MenuItem extends Component
 
     protected string | Closure | Native | null $url = null;
 
-    protected string | Closure | null $postAction = null;
+    protected string | Closure | null $action = null;
 
     protected bool | Closure $shouldOpenUrlInNewTab = false;
 
@@ -82,7 +82,7 @@ class MenuItem extends Component
 
     public function postAction(?string $action): static
     {
-        $this->postAction = $action;
+        $this->action = $action;
 
         return $this;
     }
@@ -152,7 +152,7 @@ class MenuItem extends Component
 
     public function getAction(): ?string
     {
-        return $this->evaluate($this->postAction);
+        return $this->evaluate($this->action);
     }
 
     public function getTag(): string
