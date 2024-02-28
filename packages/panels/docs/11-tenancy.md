@@ -435,6 +435,18 @@ MenuItem::make()
     ->hidden(fn (): bool => ! auth()->user()->can('manage-team'))
 ```
 
+### Sending a `POST` HTTP request from a tenant menu item
+
+You can send a `POST` HTTP request from a tenant menu item by passing a URL to the `postAction()` method:
+
+```php
+use Filament\Navigation\MenuItem;
+
+MenuItem::make()
+    ->label('Lock session')
+    ->postAction(fn (): string => route('lock-session'))
+```
+
 ### Hiding the tenant menu
 
 You can hide the tenant menu by using the `tenantMenu(false)`

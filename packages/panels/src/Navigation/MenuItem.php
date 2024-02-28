@@ -8,6 +8,8 @@ use Laravel\SerializableClosure\Serializers\Native;
 
 class MenuItem extends Component
 {
+    protected string | Closure | null $postAction = null;
+
     /**
      * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
      */
@@ -78,6 +80,13 @@ class MenuItem extends Component
         return $this;
     }
 
+    public function postAction(string | Closure | null $action): static
+    {
+        $this->postAction = $action;
+
+        return $this;
+    }
+
     public function openUrlInNewTab(bool | Closure $condition = true): static
     {
         $this->shouldOpenUrlInNewTab = $condition;
@@ -139,6 +148,11 @@ class MenuItem extends Component
     public function getUrl(): ?string
     {
         return $this->evaluate($this->url);
+    }
+
+    public function getPostAction(): ?string
+    {
+        return $this->evaluate($this->postAction);
     }
 
     public function shouldOpenUrlInNewTab(): bool
