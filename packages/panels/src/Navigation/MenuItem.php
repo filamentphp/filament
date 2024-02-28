@@ -23,7 +23,7 @@ class MenuItem extends Component
 
     protected string | Closure | null $action = null;
 
-    protected string | Closure | null $tag = 'a';
+    protected string | Closure | null $tag = null;
 
     protected string | Closure | null $method = null;
 
@@ -175,7 +175,7 @@ class MenuItem extends Component
 
     public function getTag(): string
     {
-        return $this->evaluate($this->tag);
+        return $this->evaluate($this->tag) ?? 'a';
     }
 
     public function getMethod(): ?string
