@@ -67,13 +67,17 @@
 
     <x-filament::dropdown.list>
         @foreach ($items as $key => $item)
+            @php
+                $itemAction = $item->getAction();
+            @endphp
+        
             <x-filament::dropdown.list.item
-                :action="$item->getAction()"
+                :action="$itemAction"
                 :color="$item->getColor()"
                 :href="$item->getUrl()"
                 :icon="$item->getIcon()"
-                :method="$item->getMethod()"
-                :tag="$item->getTag()"
+                :method="filled($itemAction) ? 'post' : null"
+                :tag="filled($itemAction) ? 'form' : 'a'"
                 :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
             >
                 {{ $item->getLabel() }}
