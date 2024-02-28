@@ -8,8 +8,6 @@ use Laravel\SerializableClosure\Serializers\Native;
 
 class MenuItem extends Component
 {
-    protected string | Closure | null $postAction = null;
-
     /**
      * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
      */
@@ -18,6 +16,8 @@ class MenuItem extends Component
     protected string | Closure | null $icon = null;
 
     protected string | Closure | null $label = null;
+
+    protected string | Closure | null $postAction = null;
 
     protected int | Closure | null $sort = null;
 
@@ -65,6 +65,13 @@ class MenuItem extends Component
         return $this;
     }
 
+    public function postAction(string | Closure | null $action): static
+    {
+        $this->postAction = $action;
+
+        return $this;
+    }
+
     public function sort(int | Closure | null $sort): static
     {
         $this->sort = $sort;
@@ -76,13 +83,6 @@ class MenuItem extends Component
     {
         $this->openUrlInNewTab($shouldOpenInNewTab);
         $this->url = $url;
-
-        return $this;
-    }
-
-    public function postAction(string | Closure | null $action): static
-    {
-        $this->postAction = $action;
 
         return $this;
     }
@@ -140,6 +140,11 @@ class MenuItem extends Component
         return $this->evaluate($this->label);
     }
 
+    public function getPostAction(): ?string
+    {
+        return $this->evaluate($this->postAction);
+    }
+
     public function getSort(): int
     {
         return $this->evaluate($this->sort) ?? -1;
@@ -148,11 +153,6 @@ class MenuItem extends Component
     public function getUrl(): ?string
     {
         return $this->evaluate($this->url);
-    }
-
-    public function getPostAction(): ?string
-    {
-        return $this->evaluate($this->postAction);
     }
 
     public function shouldOpenUrlInNewTab(): bool
