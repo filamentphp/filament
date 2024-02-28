@@ -68,13 +68,13 @@
     <x-filament::dropdown.list>
         @foreach ($items as $key => $item)
             <x-filament::dropdown.list.item
+                :action="$item->getAction()"
                 :color="$item->getColor()"
-                :action="$item->getAction() ?? '#'"
                 :href="$item->getUrl()"
-                :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
                 :icon="$item->getIcon()"
-                :tag="$item->getTag() ?? 'a'"
-                :method="$item->getMethod() ?? null"
+                :method="$item->getMethod()"
+                :tag="$item->getTag()"
+                :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
             >
                 {{ $item->getLabel() }}
             </x-filament::dropdown.list.item>
