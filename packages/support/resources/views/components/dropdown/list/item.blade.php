@@ -11,6 +11,7 @@
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
+    'iconColor' => null,
     'iconSize' => IconSize::Medium,
     'image' => null,
     'keyBindings' => null,
@@ -25,15 +26,12 @@
         'fi-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70',
         'pointer-events-none opacity-70' => $disabled,
         match ($color) {
-            'gray' => 'fi-color-gray',
-            default => 'fi-color-custom',
-        },
-        // @deprecated `fi-dropdown-list-item-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
-        is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
-        match ($color) {
             'gray' => 'hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
-            default => 'hover:bg-custom-50 focus-visible:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus-visible:bg-custom-400/10',
+            default => 'fi-color-custom hover:bg-custom-50 focus-visible:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus-visible:bg-custom-400/10',
         },
+        // @deprecated `fi-dropdown-list-item-color-*` has been replaced by `fi-color-*` and `fi-color-custom`.
+        is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
+        is_string($color) ? "fi-color-{$color}" : null,
     ]);
 
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
@@ -44,6 +42,8 @@
         ) => $color !== 'gray',
     ]);
 
+    $iconColor ??= $color;
+
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item-icon',
         match ($iconSize) {
@@ -52,7 +52,7 @@
             IconSize::Large, 'lg' => 'h-6 w-6',
             default => $iconSize,
         },
-        match ($color) {
+        match ($iconColor) {
             'gray' => 'text-gray-400 dark:text-gray-500',
             default => 'text-custom-500 dark:text-custom-400',
         },
@@ -60,10 +60,10 @@
 
     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
         \Filament\Support\get_color_css_variables(
-            $color,
+            $iconColor,
             shades: [400, 500],
             alias: 'dropdown.list.item.icon',
-        ) => $color !== 'gray',
+        ) => $iconColor !== 'gray',
     ]);
 
     $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 rounded-full bg-cover bg-center';

@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/filament/exports/{export}/download', DownloadExport::class)
     ->name('filament.exports.download')
-    ->middleware(['web', 'auth']);
+    ->middleware('filament.actions');
 
 Route::get('/filament/imports/{import}/failed-rows/download', DownloadImportFailureCsv::class)
     ->name('filament.imports.failed-rows.download')
-    ->middleware(['web', 'auth']);
+    ->middleware('filament.actions');

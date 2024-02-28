@@ -47,6 +47,8 @@ class CreateAction extends Action
 
         $this->record(null);
 
+        $this->databaseTransaction();
+
         $this->action(function (array $arguments, Form $form): void {
             $model = $this->getModel();
 

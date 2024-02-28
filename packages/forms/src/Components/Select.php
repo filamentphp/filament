@@ -18,8 +18,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -46,6 +46,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     use Concerns\HasLoadingMessage;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
+    use Concerns\HasPivotData;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
@@ -829,7 +830,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             }
 
             if (
-                ($relationship instanceof HasOneThrough) ||
+                ($relationship instanceof HasManyThrough) ||
                 ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough)
             ) {
                 $relatedModel = $relationship->getResults();
@@ -952,7 +953,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) {
             $relationship = $component->getRelationship();
 
-            if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+            if (
+                ($relationship instanceof HasOneOrMany) ||
+                ($relationship instanceof HasManyThrough) ||
+                ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough)
+            ) {
                 return;
             }
 
@@ -963,7 +968,15 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 return;
             }
 
-            $relationship->sync($state ?? []);
+            $pivotData = $component->getPivotData();
+
+            if ($pivotData === []) {
+                $relationship->sync($state ?? []);
+
+                return;
+            }
+
+            $relationship->syncWithPivotValues($state ?? [], $pivotData);
         });
 
         $this->createOptionUsing(static function (Select $component, array $data, Form $form) {
@@ -1063,7 +1076,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return parent::getLabel();
     }
 
-    public function getRelationship(): BelongsTo | BelongsToMany | HasOneOrMany | HasOneThrough | \Znck\Eloquent\Relations\BelongsToThrough | null
+    public function getRelationship(): BelongsTo | BelongsToMany | HasOneOrMany | HasManyThrough | \Znck\Eloquent\Relations\BelongsToThrough | null
     {
         if (blank($this->getRelationshipName())) {
             return null;
@@ -1188,7 +1201,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return $relationship->getQualifiedRelatedKeyName();
         }
 
-        if ($relationship instanceof HasOneThrough) {
+        if ($relationship instanceof HasManyThrough) {
             return $relationship->getQualifiedForeignKeyName();
         }
 

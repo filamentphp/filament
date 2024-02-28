@@ -11,11 +11,16 @@ jobs:
       fail-fast: false
       matrix:
         php: [8.3, 8.2, 8.1]
-        laravel: [10.*]
+        laravel: [11.*, 10.*]
         dependency-version: [prefer-stable]
         include:
+          - laravel: 11.*
+            testbench: 9.*
           - laravel: 10.*
             testbench: 8.*
+        exclude:
+          - laravel: 11.*
+            php: 8.1
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }}
     steps:
       - uses: actions/checkout@v3

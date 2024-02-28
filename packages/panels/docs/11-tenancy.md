@@ -435,6 +435,18 @@ MenuItem::make()
     ->hidden(fn (): bool => ! auth()->user()->can('manage-team'))
 ```
 
+### Sending a `POST` HTTP request from a tenant menu item
+
+You can send a `POST` HTTP request from a tenant menu item by passing a URL to the `postAction()` method:
+
+```php
+use Filament\Navigation\MenuItem;
+
+MenuItem::make()
+    ->label('Lock session')
+    ->postAction(fn (): string => route('lock-session'))
+```
+
 ### Hiding the tenant menu
 
 You can hide the tenant menu by using the `tenantMenu(false)`
@@ -676,6 +688,38 @@ public function panel(Panel $panel): Panel
 ```
 
 Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1`.
+
+## Using a domain to identify the tenant
+
+When using a tenant, you might want to use domain or subdomain routing like `team1.example.com/posts` instead of a route prefix like `/team1/posts` . You can do that with the `tenantDomain()` method, alongside the `tenant()` configuration method. The `tenant` argument name is followed by a colon `:` and then the attribute you wish to resolve that part of the domain using, like the `slug` attribute:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenant(Team::class)
+        ->tenantDomain('{tenant:slug}.example.com');
+}
+```
+
+In the above examples, the tenants live on subdomains of the main app domain. You may also set the system up to resolve the entire domain from the tenant as well:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenant(Team::class)
+        ->tenantDomain('{tenant:domain}');
+}
+```
+
+In this example, the `domain` attribute should contain a valid domain host, like `example.com` or `subdomain.example.com`.
 
 ## Disabling tenancy for a resource
 

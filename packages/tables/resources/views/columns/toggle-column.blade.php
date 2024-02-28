@@ -76,16 +76,22 @@
             x-bind:class="
                 (state
                     ? '{{
-                        match ($onColor) {
-                            'gray' => 'fi-color-gray bg-gray-200 dark:bg-gray-700',
-                            default => 'fi-color-custom bg-custom-600',
-                        }
+                        \Illuminate\Support\Arr::toCssClasses([
+                            match ($onColor) {
+                                'gray' => 'bg-gray-200 dark:bg-gray-700',
+                                default => 'fi-color-custom bg-custom-600',
+                            },
+                            is_string($onColor) ? "fi-color-{$onColor}" : null,
+                        ])
                     }}'
                     : '{{
-                        match ($offColor) {
-                            'gray' => 'fi-color-gray bg-gray-200 dark:bg-gray-700',
-                            default => 'fi-color-custom bg-custom-600',
-                        }
+                        \Illuminate\Support\Arr::toCssClasses([
+                            match ($offColor) {
+                                'gray' => 'bg-gray-200 dark:bg-gray-700',
+                                default => 'fi-color-custom bg-custom-600',
+                            },
+                            is_string($offColor) ? "fi-color-{$offColor}" : null,
+                        ])
                     }}') +
                     (isLoading ? ' opacity-70 pointer-events-none' : '')
             "

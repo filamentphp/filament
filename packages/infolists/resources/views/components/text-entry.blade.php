@@ -183,10 +183,10 @@
                                             'fi-in-text-item inline-flex items-center gap-1.5',
                                             'group/item' => $url,
                                             match ($color) {
-                                                null => null,
-                                                'gray' => 'fi-color-gray',
+                                                null, 'gray' => null,
                                                 default => 'fi-color-custom',
                                             },
+                                            is_string($color) ? "fi-color-{$color}" : null,
                                         ])
                                     >
                                         @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
