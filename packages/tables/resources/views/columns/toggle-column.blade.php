@@ -75,7 +75,7 @@
             @endif
             x-bind:class="
                 (state
-                    ? '{{{
+                    ? '{{
                         \Illuminate\Support\Arr::toCssClasses([
                             match ($onColor) {
                                 'gray' => 'bg-gray-200 dark:bg-gray-700',
