@@ -80,7 +80,7 @@ class MenuItem extends Component
         return $this;
     }
 
-    public function postAction(?string $action): static
+    public function postAction(string | Closure | null $action): static
     {
         $this->action = $action;
 
