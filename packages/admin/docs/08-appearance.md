@@ -258,8 +258,8 @@ In `config/filament.php`, set the `layout.notifications.alignment` to any value 
 ```php
 'layout' => [
     'notifications' => [
-        'vertical_alignment' => 'top'
-        'alignment' => 'center',
+        'vertical_alignment' => 'top',
+        'alignment' => 'center'
     ],
 ],
 ```
