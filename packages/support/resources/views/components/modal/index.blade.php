@@ -133,16 +133,7 @@
                 x-ref="modalContainer"
                 @if ($closeByClickingAway)
                     {{-- Ensure that the click element is not triggered from a user selecting text inside an input. --}}
-                    x-on:click.self="
-                        if (
-                            ! (
-                                document.activeElement.selectionStart ||
-                                document.activeElement.selectionEnd
-                            )
-                        ) {
-                            {{ $closeEventHandler }}
-                        }
-                    "
+                    x-on:click.self="(document.activeElement.selectionStart === undefined) && (document.activeElement.selectionEnd === undefined) && {{ $closeEventHandler }}"
                 @endif
                 {{
                     $attributes->class([
