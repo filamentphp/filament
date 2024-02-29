@@ -43,7 +43,7 @@
                     'gray' => 'ring-gray-950/5 dark:ring-white/10',
                     default => 'fi-color-custom ring-custom-600/20 dark:ring-custom-400/30',
                 },
-                is_string($color) ? "fi-color-{$color}" : null,
+                is_string($color) ? 'fi-color-' . $color : null,
             ],
         },
     ])
