@@ -1,5 +1,7 @@
 @props([
     'breadcrumbs' => [],
+    'dir' => 'ltr',
+    'current' => null,
 ])
 
 @php
@@ -7,7 +9,7 @@
 @endphp
 
 <nav {{ $attributes->class(['fi-breadcrumbs']) }}>
-    <ol class="fi-breadcrumbs-list flex flex-wrap items-center gap-x-2">
+    <ol class="fi-breadcrumbs-list flex flex-wrap items-center gap-x-2" dir="{{ $dir }}">
         @foreach ($breadcrumbs as $url => $label)
             <li class="fi-breadcrumbs-item flex gap-x-2">
                 @if (! $loop->first)
@@ -39,5 +41,28 @@
                 </a>
             </li>
         @endforeach
+        @if(isset($current))
+            <li class="fi-breadcrumbs-item-current flex items-center gap-x-2 cursor-default">
+                <x-filament::icon
+                    alias="breadcrumbs.separator"
+                    icon="heroicon-m-chevron-right"
+                    @class([
+                        $iconClasses,
+                        'rtl:hidden',
+                    ])
+                />
+
+                <x-filament::icon
+                    {{-- @deprecated Use `breadcrubs.separator.rtl` instead of `breadcrumbs.separator` for RTL. --}}
+                    :alias="['breadcrumbs.separator.rtl', 'breadcrumbs.separator']"
+                    icon="heroicon-m-chevron-left"
+                    @class([
+                        $iconClasses,
+                        'ltr:hidden',
+                    ])
+                />
+                <span class="font-medium text-sm text-gray-700 dark:text-gray-200 cursor-default!">{{ $current }}</span>
+            </li>
+        @endif
     </ol>
 </nav>
