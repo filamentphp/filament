@@ -158,6 +158,9 @@
                                 'id' => $getId(),
                                 'multiple' => $isMultiple(),
                             ], escape: false)
+                            ->class([
+                                "w-full rounded-lg border-none bg-transparent h-9",
+                            ])
                     }}
                 ></select>
             </div>
