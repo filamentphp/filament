@@ -47,8 +47,6 @@ class EditAction extends Action
             return $data;
         });
 
-        $this->databaseTransaction();
-
         $this->action(function (): void {
             $this->process(function (array $data, HasActions $livewire, Model $record) {
                 if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
