@@ -164,6 +164,65 @@ public function panel(Panel $panel): Panel
 
 > Please note: this feature is not compatible with [SPA mode](#spa-mode).
 
+## Enabling database transactions
+
+By default, Filament does not wrap operations in database transactions, and allows the user to enable this themselves when they have tested to ensure that their operations are safe to be wrapped in a transaction. However, you can enable database transactions at once for all operations by using the `databaseTransactions()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->databaseTransactions();
+}
+```
+
+For any actions you do not want to be wrapped in a transaction, you can use the `databaseTransactions(false)` method:
+
+```php
+CreateAction::make()
+    ->databaseTransactions(false)
+```
+
+And for any pages like [Create resource](resources/creating-records) and [Edit resource](resources/editing-records), you can define the `$hasDatabaseTransactions` property to `false` on the page class:
+
+```php
+use Filament\Resources\Pages\CreateRecord;
+
+class CreatePost extends CreateRecord
+{
+    protected ?bool $hasDatabaseTransactions = false;
+    
+    // ...
+}
+```
+
+### Opting in to database transactions for specific actions and pages
+
+Instead of enabling database transactions everywhere and opting out of them for specific actions and pages, you can opt in to database transactions for specific actions and pages.
+
+For actions, you can use the `databaseTransactions()` method:
+
+```php
+CreateAction::make()
+    ->databaseTransactions()
+```
+
+For pages like [Create resource](resources/creating-records) and [Edit resource](resources/editing-records), you can define the `$hasDatabaseTransactions` property to `true` on the page class:
+
+```php
+use Filament\Resources\Pages\CreateRecord;
+
+class CreatePost extends CreateRecord
+{
+    protected ?bool $hasDatabaseTransactions = true;
+    
+    // ...
+}
+```
+
 ## Registering assets for a panel
 
 You can register [assets](../support/assets) that will only be loaded on pages within a specific panel, and not in the rest of the app. To do that, pass an array of assets to the `assets()` method:

@@ -15,7 +15,6 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Throwable;
 
 use function Filament\authorize;
@@ -26,6 +25,7 @@ use function Filament\Support\is_app_url;
  */
 abstract class RegisterTenant extends SimplePage
 {
+    use Concerns\CanUseDatabaseTransactions;
     use Concerns\HasRoutes;
     use InteractsWithFormActions;
 
@@ -72,7 +72,7 @@ abstract class RegisterTenant extends SimplePage
     public function register(): void
     {
         try {
-            DB::beginTransaction();
+            $this->beginDatabaseTransaction();
 
             $this->callHook('beforeValidate');
 
@@ -90,15 +90,15 @@ abstract class RegisterTenant extends SimplePage
 
             $this->callHook('afterRegister');
 
-            DB::commit();
+            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
-                DB::rollBack() :
-                DB::commit();
+                $this->rollBackDatabaseTransaction() :
+                $this->commitDatabaseTransaction();
 
             return;
         } catch (Throwable $exception) {
-            DB::rollBack();
+            $this->rollBackDatabaseTransaction();
 
             throw $exception;
         }
