@@ -945,4 +945,15 @@ abstract class Resource
 
         return static::getNavigationUrl() . '?' . $queryParams;
     }
+
+    public static function getNavigationUrlWithFilters(array $filters): string
+    {
+        $queryParams = collect($filters)
+            ->map(function ($value, $filter) {
+                return 'tableFilters[' . urlencode($filter) . '][value]=' . urlencode($value);
+            })
+            ->implode('&');
+
+        return static::getNavigationUrl() . '?' . $queryParams;
+    }
 }
