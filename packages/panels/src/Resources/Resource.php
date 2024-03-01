@@ -938,4 +938,9 @@ abstract class Resource
     {
         return static::$cluster;
     }
+
+    public static function getNavigationUrlWithFilter(string $filter, string $value): string
+    {
+        return static::getUrl('index', ['tableFilters' => [$filter => ['value' => $value]]]);
+    }
 }
