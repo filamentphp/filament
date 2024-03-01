@@ -939,14 +939,10 @@ abstract class Resource
         return static::$cluster;
     }
 
-    /**
-     * @param string $filter
-     * @param string $value
-     * @return string
-     */
     public static function getNavigationUrlWithFilter(string $filter, string $value): string
     {
         $queryParams = 'tableFilters[' . urlencode($filter) . '][value]=' . urlencode($value);
+
         return static::getNavigationUrl() . '?' . $queryParams;
     }
 }
