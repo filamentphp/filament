@@ -159,6 +159,11 @@
                                 'multiple' => $isMultiple(),
                             ], escape: false)
                     }}
+                    {{
+                        $attributes->class([
+                            "w-full rounded-lg border-none bg-white/0 h-9",
+                        ])
+                    }}
                 ></select>
             </div>
         @endif
