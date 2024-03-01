@@ -312,8 +312,8 @@
                             @class([
                                 'fi-modal-content flex flex-col gap-y-4 py-6',
                                 'flex-1' => ($width === MaxWidth::Screen) || $slideOver,
-                                'pe-6 ps-[5.25rem]' => $hasIcon && ($alignment === Alignment::Start),
-                                'px-6' => ! ($hasIcon && ($alignment === Alignment::Start)),
+                                'pe-6 ps-[5.25rem]' => $hasIcon && ($alignment === Alignment::Start) && (! $stickyHeader),
+                                'px-6' => ! ($hasIcon && ($alignment === Alignment::Start) && (! $stickyHeader)),
                             ])
                         >
                             {{ $slot }}
