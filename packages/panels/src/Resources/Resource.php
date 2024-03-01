@@ -946,6 +946,9 @@ abstract class Resource
         return static::getNavigationUrl() . '?' . $queryParams;
     }
 
+    /**
+     * @param  array<string, mixed>  $filters
+     */
     public static function getNavigationUrlWithFilters(array $filters): string
     {
         $queryParams = collect($filters)
