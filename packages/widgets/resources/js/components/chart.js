@@ -16,6 +16,10 @@ export default function chart({ cachedData, options, type }) {
                 Alpine.store('theme')
 
                 this.$nextTick(() => {
+                    if (!this.getChart()) {
+                        return
+                    }
+
                     this.getChart().destroy()
                     this.initChart()
                 })
