@@ -136,6 +136,7 @@ trait CanFormatState
                 return $state;
             }
 
+            $decimalPlaces = $column->evaluate($decimalPlaces);
             $decimalSeparator = $column->evaluate($decimalSeparator);
             $thousandsSeparator = $column->evaluate($thousandsSeparator);
 
