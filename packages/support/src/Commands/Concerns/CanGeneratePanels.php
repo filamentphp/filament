@@ -50,7 +50,7 @@ trait CanGeneratePanels
             ]);
         }
 
-        $isLaravel11OrHigherWithBootstrapProvidersFile = version_compare(App::version(), '11.0', '>=') &&
+        $isLaravel11OrHigherWithBootstrapProvidersFile = version_compare(App::version(), '11.x-dev', '>=') &&
             /** @phpstan-ignore-next-line */
             file_exists($bootstrapProvidersPath = App::getBootstrapProvidersPath());
 
