@@ -23,6 +23,8 @@ class SelectFilter extends BaseFilter
 
     protected bool | Closure $isSearchable = false;
 
+    protected bool | Closure $canSelectPlaceholder = true;
+
     protected int | Closure $optionsLimit = 50;
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
@@ -211,6 +213,13 @@ class SelectFilter extends BaseFilter
         return $this;
     }
 
+    public function selectablePlaceholder(bool | Closure $condition = true): static
+    {
+        $this->canSelectPlaceholder = $condition;
+
+        return $this;
+    }
+
     public function getAttribute(): string
     {
         return $this->evaluate($this->attribute) ?? $this->getName();
@@ -243,6 +252,7 @@ class SelectFilter extends BaseFilter
             ->multiple($this->isMultiple())
             ->placeholder($this->getPlaceholder())
             ->searchable($this->isSearchable())
+            ->selectablePlaceholder($this->canSelectPlaceholder())
             ->preload($this->isPreloaded())
             ->native($this->isNative())
             ->optionsLimit($this->getOptionsLimit());
@@ -290,6 +300,11 @@ class SelectFilter extends BaseFilter
     public function isSearchable(): bool
     {
         return (bool) $this->evaluate($this->isSearchable);
+    }
+
+    public function canSelectPlaceholder(): bool
+    {
+        return (bool) $this->evaluate($this->canSelectPlaceholder);
     }
 
     public function optionsLimit(int | Closure $limit): static

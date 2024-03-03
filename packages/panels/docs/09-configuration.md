@@ -30,7 +30,7 @@ php artisan make:filament-panel app
 
 This command will create a new panel called "app". A configuration file will be created at `app/Providers/Filament/AppPanelProvider.php`. You can access this panel at `/app`, but you can [customize the path](#changing-the-path) if you don't want that.
 
-Since this configuration file is also a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `config/app.php`. Filament will attempt to do this for you, but if you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the `providers` array.
+Since this configuration file is also a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `bootstrap/providers.php` (Laravel 11 and above) or `config/app.php` (Laravel 10 and below). Filament will attempt to do this for you, but if you get an error while trying to access your panel then this process has probably failed.
 
 ## Changing the path
 
@@ -163,6 +163,65 @@ public function panel(Panel $panel): Panel
 ```
 
 > Please note: this feature is not compatible with [SPA mode](#spa-mode).
+
+## Enabling database transactions
+
+By default, Filament does not wrap operations in database transactions, and allows the user to enable this themselves when they have tested to ensure that their operations are safe to be wrapped in a transaction. However, you can enable database transactions at once for all operations by using the `databaseTransactions()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->databaseTransactions();
+}
+```
+
+For any actions you do not want to be wrapped in a transaction, you can use the `databaseTransactions(false)` method:
+
+```php
+CreateAction::make()
+    ->databaseTransactions(false)
+```
+
+And for any pages like [Create resource](resources/creating-records) and [Edit resource](resources/editing-records), you can define the `$hasDatabaseTransactions` property to `false` on the page class:
+
+```php
+use Filament\Resources\Pages\CreateRecord;
+
+class CreatePost extends CreateRecord
+{
+    protected ?bool $hasDatabaseTransactions = false;
+    
+    // ...
+}
+```
+
+### Opting in to database transactions for specific actions and pages
+
+Instead of enabling database transactions everywhere and opting out of them for specific actions and pages, you can opt in to database transactions for specific actions and pages.
+
+For actions, you can use the `databaseTransactions()` method:
+
+```php
+CreateAction::make()
+    ->databaseTransactions()
+```
+
+For pages like [Create resource](resources/creating-records) and [Edit resource](resources/editing-records), you can define the `$hasDatabaseTransactions` property to `true` on the page class:
+
+```php
+use Filament\Resources\Pages\CreateRecord;
+
+class CreatePost extends CreateRecord
+{
+    protected ?bool $hasDatabaseTransactions = true;
+    
+    // ...
+}
+```
 
 ## Registering assets for a panel
 

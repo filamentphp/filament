@@ -266,7 +266,7 @@ class MakePageCommand extends Command
             $this->copyStubToApp('ResourceManageRelatedRecordsPage', $path, [
                 'baseResourcePage' => "Filament\\Resources\\Pages\\{$resourcePage}",
                 'baseResourcePageClass' => $resourcePage,
-                'modifyQueryUsing' => filled($modifyQueryUsing ?? null) ? PHP_EOL . $this->indentString($modifyQueryUsing ?? '', 3) : $modifyQueryUsing ?? '',
+                'modifyQueryUsing' => filled($modifyQueryUsing ?? null) ? PHP_EOL . $this->indentString($modifyQueryUsing, 3) : $modifyQueryUsing ?? '',
                 'namespace' => "{$resourceNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'recordTitleAttribute' => $recordTitleAttribute ?? null,
                 'relationship' => $relationship ?? null,

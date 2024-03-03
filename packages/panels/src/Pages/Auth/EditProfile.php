@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Password;
+use Throwable;
 
 use function Filament\Support\is_app_url;
 
@@ -32,6 +33,7 @@ use function Filament\Support\is_app_url;
  */
 class EditProfile extends Page
 {
+    use Concerns\CanUseDatabaseTransactions;
     use Concerns\InteractsWithFormActions;
 
     /**
@@ -143,6 +145,8 @@ class EditProfile extends Page
     public function save(): void
     {
         try {
+            $this->beginDatabaseTransaction();
+
             $this->callHook('beforeValidate');
 
             $data = $this->form->getState();
@@ -156,8 +160,18 @@ class EditProfile extends Page
             $this->handleRecordUpdate($this->getUser(), $data);
 
             $this->callHook('afterSave');
+
+            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $this->rollBackDatabaseTransaction() :
+                $this->commitDatabaseTransaction();
+
             return;
+        } catch (Throwable $exception) {
+            $this->rollBackDatabaseTransaction();
+
+            throw $exception;
         }
 
         if (request()->hasSession() && array_key_exists('password', $data)) {

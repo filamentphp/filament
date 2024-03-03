@@ -11,6 +11,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Url;
+use Throwable;
 
 use function Livewire\store;
 
@@ -93,6 +94,8 @@ trait HasActions
         $originallyMountedActions = $this->mountedTableActions;
 
         try {
+            $action->beginDatabaseTransaction();
+
             if ($this->mountedTableActionHasForm()) {
                 $action->callBeforeFormValidated();
 
@@ -108,16 +111,31 @@ trait HasActions
             ]);
 
             $result = $action->callAfter() ?? $result;
+
+            $action->commitDatabaseTransaction();
         } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $action->rollBackDatabaseTransaction() :
+                $action->commitDatabaseTransaction();
+
             return null;
         } catch (Cancel $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $action->rollBackDatabaseTransaction() :
+                $action->commitDatabaseTransaction();
         } catch (ValidationException $exception) {
+            $action->rollBackDatabaseTransaction();
+
             if (! $this->mountedTableActionShouldOpenModal()) {
                 $action->resetArguments();
                 $action->resetFormData();
 
                 $this->unmountTableAction();
             }
+
+            throw $exception;
+        } catch (Throwable $exception) {
+            $action->rollBackDatabaseTransaction();
 
             throw $exception;
         }

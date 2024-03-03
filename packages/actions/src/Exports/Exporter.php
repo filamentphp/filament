@@ -8,6 +8,7 @@ use Filament\Actions\Exports\Models\Export;
 use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
+use OpenSpout\Common\Entity\Style\Style;
 
 abstract class Exporter
 {
@@ -165,5 +166,15 @@ abstract class Exporter
     public function getFormats(): array
     {
         return [ExportFormat::Csv, ExportFormat::Xlsx];
+    }
+
+    public function getXlsxCellStyle(): ?Style
+    {
+        return null;
+    }
+
+    public function getXlsxHeaderCellStyle(): ?Style
+    {
+        return null;
     }
 }

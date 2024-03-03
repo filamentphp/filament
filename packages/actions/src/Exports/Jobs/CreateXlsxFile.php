@@ -14,6 +14,7 @@ use Illuminate\Queue\SerializesModels;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
 use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Entity\Style\Style;
 use OpenSpout\Writer\XLSX\Writer;
 
 class CreateXlsxFile implements ShouldQueue
@@ -51,17 +52,22 @@ class CreateXlsxFile implements ShouldQueue
 
         $csvDelimiter = $this->exporter::getCsvDelimiter();
 
-        $writeRowsFromFile = function (string $file) use ($csvDelimiter, $disk, $writer) {
+        $writeRowsFromFile = function (string $file, ?Style $style = null) use ($csvDelimiter, $disk, $writer) {
             $csvReader = CsvReader::createFromStream($disk->readStream($file));
             $csvReader->setDelimiter($csvDelimiter);
             $csvResults = Statement::create()->process($csvReader);
 
             foreach ($csvResults->getRecords() as $row) {
-                $writer->addRow(Row::fromValues($row));
+                $writer->addRow(Row::fromValues($row, $style));
             }
         };
 
-        $writeRowsFromFile($this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv');
+        $cellStyle = $this->exporter->getXlsxCellStyle();
+
+        $writeRowsFromFile(
+            $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv',
+            $this->exporter->getXlsxHeaderCellStyle() ?? $cellStyle,
+        );
 
         foreach ($disk->files($this->export->getFileDirectory()) as $file) {
             if (str($file)->endsWith('headers.csv')) {
@@ -72,7 +78,7 @@ class CreateXlsxFile implements ShouldQueue
                 continue;
             }
 
-            $writeRowsFromFile($file);
+            $writeRowsFromFile($file, $cellStyle);
         }
 
         $writer->close();

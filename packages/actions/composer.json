@@ -14,9 +14,9 @@
         "filament/infolists": "self.version",
         "filament/notifications": "self.version",
         "filament/support": "self.version",
-        "illuminate/contracts": "^10.0",
-        "illuminate/database": "^10.0",
-        "illuminate/support": "^10.0",
+        "illuminate/contracts": "^10.45|^11.0",
+        "illuminate/database": "^10.45|^11.0",
+        "illuminate/support": "^10.45|^11.0",
         "league/csv": "^9.14",
         "openspout/openspout": "^4.23",
         "spatie/laravel-package-tools": "^1.9"

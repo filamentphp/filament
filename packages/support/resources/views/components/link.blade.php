@@ -59,9 +59,10 @@
             default => $size,
         },
         match ($color) {
-            'gray' => 'fi-color-gray',
+            'gray' => null,
             default => 'fi-color-custom',
         },
+        is_string($color) ? "fi-color-{$color}" : null,
     ]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([

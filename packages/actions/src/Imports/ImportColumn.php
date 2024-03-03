@@ -5,6 +5,7 @@ namespace Filament\Actions\Imports;
 use Closure;
 use Filament\Forms\Components\Select;
 use Filament\Support\Components\Component;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -70,6 +71,8 @@ class ImportColumn extends Component
 
     protected string $evaluationIdentifier = 'column';
 
+    protected string | Htmlable | Closure | null $helperText = null;
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -88,7 +91,8 @@ class ImportColumn extends Component
         return Select::make($this->getName())
             ->label($this->getLabel())
             ->placeholder(__('filament-actions::import.modal.form.columns.placeholder'))
-            ->required($this->isMappingRequired());
+            ->required($this->isMappingRequired())
+            ->helperText($this->helperText);
     }
 
     public function name(string $name): static
@@ -130,6 +134,13 @@ class ImportColumn extends Component
     {
         $this->isNumeric = $condition;
         $this->decimalPlaces = $decimalPlaces;
+
+        return $this;
+    }
+
+    public function helperText(string | Htmlable | Closure | null $text): static
+    {
+        $this->helperText = $text;
 
         return $this;
     }

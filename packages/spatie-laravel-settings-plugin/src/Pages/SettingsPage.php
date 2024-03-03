@@ -7,8 +7,10 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
+use Throwable;
 
 use function Filament\Support\is_app_url;
 
@@ -17,6 +19,7 @@ use function Filament\Support\is_app_url;
  */
 class SettingsPage extends Page
 {
+    use CanUseDatabaseTransactions;
     use Concerns\InteractsWithFormActions;
 
     protected static string $settings;
@@ -58,6 +61,8 @@ class SettingsPage extends Page
     public function save(): void
     {
         try {
+            $this->beginDatabaseTransaction();
+
             $this->callHook('beforeValidate');
 
             $data = $this->form->getState();
@@ -74,8 +79,18 @@ class SettingsPage extends Page
             $settings->save();
 
             $this->callHook('afterSave');
+
+            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $this->rollBackDatabaseTransaction() :
+                $this->commitDatabaseTransaction();
+
             return;
+        } catch (Throwable $exception) {
+            $this->rollBackDatabaseTransaction();
+
+            throw $exception;
         }
 
         $this->getSavedNotification()?->send();

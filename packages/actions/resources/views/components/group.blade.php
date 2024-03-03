@@ -106,6 +106,7 @@
                 :icon="$group->getIcon()"
                 :icon-size="$group->getIconSize()"
                 :label-sr-only="$group->isLabelHidden()"
+                :size="$group->getSize()"
                 :tooltip="$group->getTooltip()"
                 :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($group->getExtraAttributes(), escape: false)"
             >
