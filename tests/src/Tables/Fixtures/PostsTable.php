@@ -24,6 +24,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
         return $table
             ->query(Post::query())
             ->columns([
+                CustomCreatedAtColumn::make(),
                 Tables\Columns\TextColumn::make('title')
                     ->sortable()
                     ->searchable()
