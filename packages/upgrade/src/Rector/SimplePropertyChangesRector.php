@@ -66,8 +66,7 @@ class SimplePropertyChangesRector extends AbstractRector
     }
 
     /**
-     * @param Class_ $node
-     * @return Node|null
+     * @param  Class_  $node
      */
     public function refactor(Node $node): ?Node
     {

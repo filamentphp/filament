@@ -12,8 +12,8 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use Rector\Rector\AbstractRector;
 use Rector\Naming\VariableRenamer;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -287,8 +287,7 @@ class SimpleMethodChangesRector extends AbstractRector
     }
 
     /**
-     * @param Class_ $node
-     * @return Node|null
+     * @param  Class_  $node
      */
     public function refactor(Node $node): ?Node
     {
