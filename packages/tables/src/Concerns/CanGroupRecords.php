@@ -43,19 +43,17 @@ trait CanGroupRecords
 
     protected function applyGroupingToTableQuery(Builder $query): Builder
     {
-        if ($this->isTableReordering()) {
-            return $query;
-        }
-
         $group = $this->getTableGrouping();
 
-        if (! $group) {
+        if (!$group) {
             return $query;
         }
 
         $group->applyEagerLoading($query);
 
-        $group->orderQuery($query, $this->getTableGroupingDirection() ?? 'asc');
+        if (!$this->isTableReordering()) {
+            $group->orderQuery($query, $this->getTableGroupingDirection() ?? 'asc');
+        }
 
         return $query;
     }
