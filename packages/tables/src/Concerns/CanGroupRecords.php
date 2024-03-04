@@ -45,13 +45,13 @@ trait CanGroupRecords
     {
         $group = $this->getTableGrouping();
 
-        if (!$group) {
+        if (! $group) {
             return $query;
         }
 
         $group->applyEagerLoading($query);
 
-        if (!$this->isTableReordering()) {
+        if (! $this->isTableReordering()) {
             $group->orderQuery($query, $this->getTableGroupingDirection() ?? 'asc');
         }
 
