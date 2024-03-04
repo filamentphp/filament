@@ -23,6 +23,13 @@ it('can render text column with relationship', function () {
         ->assertCanRenderTableColumn('author.name');
 });
 
+it('can render column with default name', function () {
+    Post::factory()->count(10)->create();
+
+    livewire(PostsTable::class)
+        ->assertCanRenderTableColumn('created_at');
+});
+
 it('can sort records', function () {
     $posts = Post::factory()->count(10)->create();
 
