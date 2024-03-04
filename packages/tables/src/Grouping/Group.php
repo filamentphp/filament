@@ -443,11 +443,7 @@ class Group extends Component
     {
         $name ??= $this->getColumn();
 
-        if (! str($name)->contains('.')) {
-            return null;
-        }
-
-        return (string) str($name)->beforeLast('.');
+        return str_contains($name, '.') ? str($name)->beforeLast('.') : null;
     }
 
     public function isDate(): bool
