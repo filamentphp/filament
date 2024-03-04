@@ -4,13 +4,11 @@ namespace Filament\Upgrade\Rector;
 
 use Closure;
 use PhpParser\Node;
-use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\VarLikeIdentifier;
-use Rector\Core\Rector\AbstractRector;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -42,7 +40,7 @@ class SimplePropertyChangesRector extends AbstractRector
                 'classIdentifier' => 'extends',
                 'changes' => [
                     'middlewares' => function (Property $node) {
-                        $node->props[0]->name = new VarLikeIdentifier('$routeMiddleware');
+                        $node->props[0]->name = new VarLikeIdentifier('routeMiddleware');
                     },
                 ],
             ],
@@ -54,7 +52,7 @@ class SimplePropertyChangesRector extends AbstractRector
                 'classIdentifier' => 'extends',
                 'changes' => [
                     'shouldIgnorePolicies' => function (Property $node) {
-                        $node->props[0] = new Identifier('shouldSkipAuthorization');
+                        $node->props[0]->name = new VarLikeIdentifier('shouldSkipAuthorization');
                     },
                 ],
             ],
@@ -63,31 +61,35 @@ class SimplePropertyChangesRector extends AbstractRector
 
     public function getNodeTypes(): array
     {
-        return [Property::class];
+        return [Class_::class];
     }
 
+    /**
+     * @param  Class_  $node
+     */
     public function refactor(Node $node): ?Node
     {
-        /** @var Property $node */
-        $class = $node->getAttribute(AttributeKey::PARENT_NODE);
+        $touched = false;
 
         foreach ($this->getChanges() as $change) {
-            if (! $this->isClassMatchingChange($class, $change)) {
+            if (! $this->isClassMatchingChange($node, $change)) {
                 continue;
             }
 
             foreach ($change['changes'] as $propertyName => $modifier) {
-                if (! $this->isName($node, $propertyName)) {
-                    continue;
+                foreach ($node->getProperties() as $property) {
+                    if (! $this->isName($property, $propertyName)) {
+                        continue;
+                    }
+
+                    $modifier($property);
+
+                    $touched = true;
                 }
-
-                $modifier($node);
-
-                return $node;
             }
         }
 
-        return null;
+        return $touched ? $node : null;
     }
 
     public function getRuleDefinition(): RuleDefinition
