@@ -12,12 +12,6 @@ export default {
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
             },
-            fontWeight: {
-                normal: 300,
-                medium: 400,
-                semibold: 500,
-                bold: 600,
-            },
         },
     },
 }
