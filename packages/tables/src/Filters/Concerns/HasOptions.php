@@ -21,7 +21,7 @@ trait HasOptions
     protected ?Closure $getSearchResultsUsing = null;
 
     /**
-     * @param  array<string | array<string>> | Arrayable | class-string | Closure | null  $options
+     * @param  array<string|int | array<string|int>> | Arrayable | class-string | Closure | null  $options
      */
     public function options(array | Arrayable | string | Closure | null $options): static
     {
