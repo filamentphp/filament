@@ -62,7 +62,6 @@ class SimplePropertyChangesRector extends AbstractRector
     public function getNodeTypes(): array
     {
         return [Class_::class];
-        //return [Property::class];
     }
 
     /**
