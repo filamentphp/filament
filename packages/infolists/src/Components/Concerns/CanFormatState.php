@@ -136,6 +136,7 @@ trait CanFormatState
                 return $state;
             }
 
+            $decimalPlaces = $component->evaluate($decimalPlaces);
             $decimalSeparator = $component->evaluate($decimalSeparator);
             $thousandsSeparator = $component->evaluate($thousandsSeparator);
 
@@ -145,13 +146,13 @@ trait CanFormatState
             ) {
                 return number_format(
                     $state,
-                    $component->evaluate($decimalPlaces),
+                    $decimalPlaces,
                     $decimalSeparator === ArgumentValue::Default ? '.' : $decimalSeparator,
                     $thousandsSeparator === ArgumentValue::Default ? ',' : $thousandsSeparator,
                 );
             }
 
-            return Number::format($state, $decimalPlaces, $maxDecimalPlaces, $component->evaluate($locale));
+            return Number::format($state, $decimalPlaces, $component->evaluate($maxDecimalPlaces), $component->evaluate($locale));
         });
 
         return $this;

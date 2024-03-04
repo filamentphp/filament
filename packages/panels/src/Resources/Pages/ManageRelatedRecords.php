@@ -13,6 +13,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Url;
 
@@ -63,7 +64,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     #[Url]
     public ?string $activeTab = null;
 
-    public static function getNavigationIcon(): ?string
+    public static function getNavigationIcon(): string | Htmlable | null
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.manage-related-records.navigation-item')
