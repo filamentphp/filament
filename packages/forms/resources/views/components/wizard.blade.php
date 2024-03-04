@@ -123,6 +123,7 @@
             'border-b border-gray-200 dark:border-white/10' => $isContained,
             'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => ! $isContained,
         ])
+        @style(['overflow: scroll'])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
             <li
@@ -190,7 +191,7 @@
                     <div class="grid justify-items-start">
                         @if (! $step->isLabelHidden())
                             <span
-                                class="fi-fo-wizard-header-step-label text-sm font-medium"
+                                class="fi-fo-wizard-header-step-label text-sm font-medium text-left"
                                 x-bind:class="{
                                     'text-gray-500 dark:text-gray-400':
                                         getStepIndex(step) < {{ $loop->index }},
