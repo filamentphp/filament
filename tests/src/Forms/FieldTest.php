@@ -33,8 +33,8 @@ it('sets its fallback label from its name', function () {
 
 it('can be instantiated with a default name', function () {
 
-    $entry = IdField::make();
+    $field = IdField::make();
 
-    expect($entry->getName())
+    expect($field->getName())
         ->toBe('ID');
 });
