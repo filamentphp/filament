@@ -146,7 +146,7 @@ trait CanFormatState
             ) {
                 return number_format(
                     $state,
-                    $column->evaluate($decimalPlaces),
+                    $decimalPlaces,
                     $decimalSeparator === ArgumentValue::Default ? '.' : $decimalSeparator,
                     $thousandsSeparator === ArgumentValue::Default ? ',' : $thousandsSeparator,
                 );
