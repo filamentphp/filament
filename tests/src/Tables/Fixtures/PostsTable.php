@@ -25,7 +25,6 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
         return $table
             ->query(Post::query())
             ->columns([
-                CreatedAtColumn::make(),
                 Tables\Columns\TextColumn::make('title')
                     ->sortable()
                     ->searchable()
@@ -89,6 +88,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->sortable()
                     ->searchable()
                     ->prefix(fn (Post $record): string => $record->is_published ? 'published' : 'unpublished'),
+                CreatedAtColumn::make(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('is_published')
