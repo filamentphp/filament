@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components;
 
+use Exception;
+
 class Field extends Component implements Contracts\HasHintActions, Contracts\HasValidationRules
 {
     use Concerns\CanBeAutofocused;
@@ -19,12 +21,25 @@ class Field extends Component implements Contracts\HasHintActions, Contracts\Has
         $this->statePath($name);
     }
 
-    public static function make(string $name): static
+    public static function make(?string $name = null): static
     {
+        $fieldClass = static::class;
+
+        $name ??= static::getDefaultName();
+
+        if (blank($name)) {
+            throw new Exception("Column of class [$fieldClass] must have a unique name, passed to the [make()] method.");
+        }
+
         $static = app(static::class, ['name' => $name]);
         $static->configure();
 
         return $static;
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return null;
     }
 
     public function getId(): string
