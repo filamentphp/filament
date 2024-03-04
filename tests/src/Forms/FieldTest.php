@@ -38,3 +38,11 @@ it('can be instantiated with a default name', function () {
     expect($field->getName())
         ->toBe('ID');
 });
+
+test('default name can be overridden', function () {
+
+    $field = IdField::make('Identifier');
+
+    expect($field->getName())
+        ->toBe('Identifier');
+});

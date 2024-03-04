@@ -12,3 +12,11 @@ it('can be instantiated with a default name', function () {
     expect($entry->getName())
         ->toBe('ID');
 });
+
+test('default name can be overridden', function () {
+
+    $entry = IdEntry::make('Identifier');
+
+    expect($entry->getName())
+        ->toBe('Identifier');
+});
