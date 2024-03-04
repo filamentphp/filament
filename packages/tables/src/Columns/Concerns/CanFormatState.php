@@ -152,7 +152,7 @@ trait CanFormatState
                 );
             }
 
-            return Number::format($state, $decimalPlaces, $maxDecimalPlaces, locale: $column->evaluate($locale));
+            return Number::format($state, $decimalPlaces, $column->evaluate($maxDecimalPlaces), locale: $column->evaluate($locale));
         });
 
         return $this;
