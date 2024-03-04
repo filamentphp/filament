@@ -172,25 +172,42 @@
         @foreach ($items as $item)
             @php
                 $itemIcon = $item->getIcon();
+                $itemActiveIcon = $item->getActiveIcon();
+
+                if ($icon && (! $hasDropdown) && (filled($itemIcon) || filled($itemActiveIcon))) {
+                    throw new \Exception('Navigation group [' . $label . '] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.');
+                }
             @endphp
 
             <x-filament-panels::sidebar.item
                 :active="$item->isActive()"
                 :active-child-items="$item->isChildItemsActive()"
-                :active-icon="$item->getActiveIcon()"
+                :active-icon="$itemActiveIcon"
                 :badge="$item->getBadge()"
                 :badge-color="$item->getBadgeColor()"
                 :badge-tooltip="$item->getBadgeTooltip()"
                 :child-items="$item->getChildItems()"
                 :first="$loop->first"
                 :grouped="filled($label)"
-                :icon="$icon ? (($hasDropdown || blank($itemIcon)) ? null : throw new \Exception('Navigation group [' . $label . '] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.')) : $itemIcon"
+                :icon="$itemIcon"
                 :last="$loop->last"
                 :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
                 :sidebar-collapsible="$sidebarCollapsible"
                 :url="$item->getUrl()"
             >
                 {{ $item->getLabel() }}
+
+                @if ($itemIcon instanceof \Illuminate\Contracts\Support\Htmlable)
+                    <x-slot name="icon">
+                        {{ $itemIcon }}
+                    </x-slot>
+                @endif
+
+                @if ($itemActiveIcon instanceof \Illuminate\Contracts\Support\Htmlable)
+                    <x-slot name="activeIcon">
+                        {{ $itemActiveIcon }}
+                    </x-slot>
+                @endif
             </x-filament-panels::sidebar.item>
         @endforeach
     </ul>

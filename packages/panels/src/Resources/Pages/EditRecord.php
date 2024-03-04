@@ -50,7 +50,7 @@ class EditRecord extends Page
 
     public ?string $previousUrl = null;
 
-    public static function getNavigationIcon(): ?string
+    public static function getNavigationIcon(): string | Htmlable | null
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.edit-record.navigation-item')
