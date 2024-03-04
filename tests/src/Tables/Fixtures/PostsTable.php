@@ -7,6 +7,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
 use Illuminate\Contracts\View\View;
@@ -24,7 +25,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
         return $table
             ->query(Post::query())
             ->columns([
-                CustomCreatedAtColumn::make(),
+                CreatedAtColumn::make(),
                 Tables\Columns\TextColumn::make('title')
                     ->sortable()
                     ->searchable()
@@ -197,5 +198,13 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
     public function render(): View
     {
         return view('tables.fixtures.table');
+    }
+}
+
+class CreatedAtColumn extends TextColumn
+{
+    public static function getDefaultName(): ?string
+    {
+        return 'created_at';
     }
 }

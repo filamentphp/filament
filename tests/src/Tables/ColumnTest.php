@@ -23,7 +23,7 @@ it('can render text column with relationship', function () {
         ->assertCanRenderTableColumn('author.name');
 });
 
-it('can render custom column with getDefaultName', function () {
+it('can render column with default name', function () {
     Post::factory()->count(10)->create();
 
     livewire(PostsTable::class)
