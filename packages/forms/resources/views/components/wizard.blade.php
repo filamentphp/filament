@@ -138,7 +138,7 @@
                     x-on:click="step = @js($step->getId())"
                     x-bind:disabled="! isStepAccessible(@js($step->getId()))"
                     role="step"
-                    class="fi-fo-wizard-header-step-button flex h-full w-full items-center gap-x-4 px-6 py-4"
+                    class="fi-fo-wizard-header-step-button flex h-full w-full items-center gap-x-4 px-6 py-4 min-w-44"
                 >
                     <div
                         class="fi-fo-wizard-header-step-icon-ctn flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
