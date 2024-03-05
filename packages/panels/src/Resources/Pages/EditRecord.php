@@ -128,7 +128,7 @@ class EditRecord extends Page
         return $data;
     }
 
-    public function save(bool $shouldRedirect = true): void
+    public function save(bool $shouldRedirect = true, ?array $customData = null): void
     {
         $this->authorizeAccess();
 
@@ -137,7 +137,7 @@ class EditRecord extends Page
 
             $this->callHook('beforeValidate');
 
-            $data = $this->form->getState();
+            $data = is_array($customData) && filled($customData) ? $customData : $this->form->getState();
 
             $this->callHook('afterValidate');
 
