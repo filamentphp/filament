@@ -16,7 +16,10 @@
 <li
     x-data="{ label: @js($subNavigation ? "sub_navigation_{$label}" : $label) }"
     data-group-label="{{ $label }}"
-    {{ $attributes->class(['fi-sidebar-group flex flex-col gap-y-1']) }}
+    {{ $attributes->class([
+        'fi-sidebar-group flex flex-col gap-y-1',
+        'fi-active' => $active,
+    ]) }}
 >
     @if ($label)
         <div
