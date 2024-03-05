@@ -5,6 +5,7 @@
 @endphp
 
 @props([
+    'allowBrowserNavigation' => true,
     'badge' => null,
     'badgeColor' => 'primary',
     'color' => 'primary',
@@ -173,7 +174,7 @@
 
 <{{ $tag }}
     @if ($tag === 'a')
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank', $allowBrowserNavigation) }}
     @endif
     @if (($keyBindings || $hasTooltip) && (! $hasFormProcessingLoadingIndicator))
         x-data="{}"
