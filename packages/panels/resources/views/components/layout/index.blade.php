@@ -112,7 +112,9 @@
                             return
                         }
 
-                        const sidebarWrapper = document.querySelector('.fi-main-sidebar .fi-sidebar-nav')
+                        const sidebarWrapper = document.querySelector(
+                            '.fi-main-sidebar .fi-sidebar-nav',
+                        )
 
                         if (!sidebarWrapper) {
                             return
@@ -120,7 +122,8 @@
 
                         sidebarWrapper.scrollTo(
                             0,
-                            activeSidebarItem.offsetTop - window.innerHeight / 2,
+                            activeSidebarItem.offsetTop -
+                                window.innerHeight / 2,
                         )
                     }, 0)
                 })
