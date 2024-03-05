@@ -11,7 +11,6 @@
     'dynamicComponent' => null,
     'group' => null,
     'icon' => null,
-    'iconPosition' => null,
     'iconSize' => null,
     'iconButton' => false,
     'label' => null,
@@ -31,7 +30,6 @@
             ->dropdownPlacement($dropdownPlacement)
             ->dropdownWidth($dropdownWidth)
             ->icon($icon)
-            ->iconPosition($iconPosition)
             ->iconSize($iconSize)
             ->label($label)
             ->size($size)
@@ -43,7 +41,10 @@
             : $group->badge($badge);
 
         if ($button) {
-            $group->button();
+            $group
+                ->button()
+                ->iconPosition($attributes->get('iconPosition') ?? $attributes->get('icon-position'))
+                ->outlined($attributes->get('outlined') ?? false);
         }
 
         if ($iconButton) {
@@ -104,7 +105,6 @@
                 :color="$group->getColor()"
                 :component="$dynamicComponent"
                 :icon="$group->getIcon()"
-                :icon-position="$group->isIconButton() ? null : $group->getIconPosition()"
                 :icon-size="$group->getIconSize()"
                 :label-sr-only="$group->isLabelHidden()"
                 :size="$group->getSize()"
