@@ -58,25 +58,12 @@ class Column extends ViewComponent
         $this->name($name);
     }
 
-    public static function make(?string $name = null): static
+    public static function make(string $name): static
     {
-        $columnClass = static::class;
-
-        $name ??= static::getDefaultName();
-
-        if (blank($name)) {
-            throw new Exception("Column of class [$columnClass] must have a unique name, passed to the [make()] method.");
-        }
-
-        $static = app($columnClass, ['name' => $name]);
+        $static = app(static::class, ['name' => $name]);
         $static->configure();
 
         return $static;
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return null;
     }
 
     public function getTable(): Table
