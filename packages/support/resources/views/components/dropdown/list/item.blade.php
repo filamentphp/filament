@@ -16,6 +16,7 @@
     'image' => null,
     'keyBindings' => null,
     'loadingIndicator' => true,
+    'spaMode' => null,
     'tag' => 'button',
     'target' => null,
     'tooltip' => null,
@@ -176,7 +177,7 @@
     </button>
 @elseif ($tag === 'a')
     <a
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
         @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
