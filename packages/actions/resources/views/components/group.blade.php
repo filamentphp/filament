@@ -104,6 +104,7 @@
                 :color="$group->getColor()"
                 :component="$dynamicComponent"
                 :icon="$group->getIcon()"
+                :icon-position="$group->isIconButton() ? null : $group->getIconPosition()"
                 :icon-size="$group->getIconSize()"
                 :label-sr-only="$group->isLabelHidden()"
                 :size="$group->getSize()"
