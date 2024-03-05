@@ -15,7 +15,7 @@ trait HasMaxHeight
         return $this;
     }
 
-    public function getMaxHeight(): string | null
+    public function getMaxHeight(): ?string
     {
         return $this->evaluate($this->maxHeight);
     }

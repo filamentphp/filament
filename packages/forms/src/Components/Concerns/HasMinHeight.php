@@ -15,7 +15,7 @@ trait HasMinHeight
         return $this;
     }
 
-    public function getMinHeight(): string | null
+    public function getMinHeight(): ?string
     {
         return $this->evaluate($this->minHeight);
     }
