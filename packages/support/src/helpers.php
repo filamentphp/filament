@@ -147,7 +147,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
 
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
-        } elseif ($shouldOpenInSpaMode ?? (FilamentView::hasSpaMode() && is_app_url($url))) {
+        } elseif ($shouldOpenInSpaMode ?? (FilamentView::hasSpaMode($url))) {
             $html .= ' wire:navigate';
         }
 
