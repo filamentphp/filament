@@ -90,7 +90,44 @@
                 class="fi-sidebar-close-overlay fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-gray-950/75 lg:hidden"
             ></div>
 
-            <x-filament-panels::sidebar :navigation="$navigation" />
+            <x-filament-panels::sidebar
+                :navigation="$navigation"
+                class="fi-main-sidebar"
+            />
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    setTimeout(() => {
+                        let activeSidebarItem = document.querySelector(
+                            '.fi-main-sidebar .fi-sidebar-item.fi-active',
+                        )
+
+                        if (activeSidebarItem?.offsetParent === null) {
+                            activeSidebarItem = document.querySelector(
+                                '.fi-main-sidebar .fi-sidebar-group.fi-active',
+                            )
+                        }
+
+                        if (activeSidebarItem?.offsetParent === null) {
+                            return
+                        }
+
+                        const sidebarWrapper = document.querySelector(
+                            '.fi-main-sidebar .fi-sidebar-nav',
+                        )
+
+                        if (!sidebarWrapper) {
+                            return
+                        }
+
+                        sidebarWrapper.scrollTo(
+                            0,
+                            activeSidebarItem.offsetTop -
+                                window.innerHeight / 2,
+                        )
+                    }, 0)
+                })
+            </script>
         @endif
     </div>
 </x-filament-panels::layout.base>

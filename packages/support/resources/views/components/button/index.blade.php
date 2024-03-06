@@ -22,6 +22,7 @@
     'loadingIndicator' => true,
     'outlined' => false,
     'size' => ActionSize::Medium,
+    'spaMode' => null,
     'tag' => 'button',
     'target' => null,
     'tooltip' => null,
@@ -54,11 +55,12 @@
             'flex-1 [&:nth-child(1_of_.fi-btn)]:rounded-s-lg [&:nth-last-child(1_of_.fi-btn)]:rounded-e-lg [&:not(:nth-child(1_of_.fi-btn))]:shadow-[-1px_0_0_0_theme(colors.gray.200)] [&:not(:nth-last-child(1_of_.fi-btn))]:me-px dark:[&:not(:nth-child(1_of_.fi-btn))]:shadow-[-1px_0_0_0_theme(colors.white/20%)]' => $grouped,
             'cursor-pointer' => $tag === 'label',
             match ($color) {
-                'gray' => 'fi-color-gray',
+                'gray' => null,
                 default => 'fi-color-custom',
             },
-            // @deprecated `fi-btn-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
+            // @deprecated `fi-btn-color-*` has been replaced by `fi-color-*` and `fi-color-custom`.
             is_string($color) ? "fi-btn-color-{$color}" : null,
+            is_string($color) ? "fi-color-{$color}" : null,
             "fi-size-{$size->value}" => $size instanceof ActionSize,
             // @deprecated `fi-btn-size-*` has been replaced by `fi-size-*`.
             "fi-btn-size-{$size->value}" => $size instanceof ActionSize,
@@ -172,7 +174,7 @@
 
 <{{ $tag }}
     @if ($tag === 'a')
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
     @endif
     @if (($keyBindings || $hasTooltip) && (! $hasFormProcessingLoadingIndicator))
         x-data="{}"

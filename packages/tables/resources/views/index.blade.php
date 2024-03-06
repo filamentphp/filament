@@ -37,11 +37,11 @@
         fn (\Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $groups = $getGroups();
-    $areGroupingSettingsVisible = count($groups) && (! $areGroupingSettingsHidden());
     $description = $getDescription();
     $isGroupsOnly = $isGroupsOnly() && $group;
     $isReorderable = $isReorderable();
     $isReordering = $isReordering();
+    $areGroupingSettingsVisible = (! $isReordering) && count($groups) && (! $areGroupingSettingsHidden());
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
     $isSearchOnBlur = $isSearchOnBlur();
@@ -273,7 +273,7 @@
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
-                'fi-ta-content divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10',
+                'fi-ta-content relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10',
                 '!border-t-0' => ! $hasHeader,
             ])
         >

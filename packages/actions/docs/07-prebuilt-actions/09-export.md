@@ -82,8 +82,6 @@ If you'd like to save time, Filament can automatically generate the [columns](#d
 php artisan make:filament-exporter Product --generate
 ```
 
-> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence, Filament is unable to generate the columns for your exporter if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
-
 ## Defining exporter columns
 
 To define the columns that can be exported, you need to override the `getColumns()` method on your exporter class, returning an array of `ExportColumn` objects:
@@ -337,6 +335,24 @@ use Illuminate\Database\Eloquent\Builder;
 ExportAction::make()
     ->exporter(ProductExporter::class)
     ->modifyQueryUsing(fn (Builder $query) => $query->where('is_active', true))
+```
+
+Alternatively, you can override the `modifyQuery()` method on the exporter class, which will modify the query for all actions that use that exporter:
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+
+public static function modifyQuery(Builder $query): Builder
+{
+    return $query->with([
+        'purchasable' => fn (MorphTo $morphTo) => $morphTo->morphWith([
+            ProductPurchase::class => ['product'],
+            ServicePurchase::class => ['service'],
+            Subscription::class => ['plan'],
+        ]),
+    ]);
+}
 ```
 
 ## Configuring the export filesystem

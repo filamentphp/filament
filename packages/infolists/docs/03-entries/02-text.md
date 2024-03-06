@@ -119,7 +119,7 @@ By default, your app's locale will be used to format the money suitably. If you 
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('price')
-    ->money(currency: 'EUR', locale: 'nl')
+    ->money('EUR', locale: 'nl')
 ```
 
 Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:

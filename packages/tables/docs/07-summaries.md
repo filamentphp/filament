@@ -292,7 +292,7 @@ use Filament\Tables\Columns\Summarizers\Average;
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('price')
-    ->summarize(Sum::make()->money(currency: 'EUR', locale: 'nl'))
+    ->summarize(Sum::make()->money('EUR', locale: 'nl'))
 ```
 
 Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:

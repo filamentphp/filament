@@ -486,6 +486,18 @@ MenuItem::make()
     ->hidden(fn (): bool => ! auth()->user()->can('viewAny', Payment::class))
 ```
 
+### Sending a `POST` HTTP request from a user menu item
+
+You can send a `POST` HTTP request from a user menu item by passing a URL to the `postAction()` method:
+
+```php
+use Filament\Navigation\MenuItem;
+
+MenuItem::make()
+    ->label('Lock session')
+    ->postAction(fn (): string => route('lock-session'))
+```
+
 ## Disabling breadcrumbs
 
 The default layout will show breadcrumbs to indicate the location of the current page within the hierarchy of the app.
