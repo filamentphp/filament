@@ -243,18 +243,9 @@ trait InteractsWithInfolists
 
     public function mountedInfolistActionShouldOpenModal(): bool
     {
-        $action = $this->getMountedInfolistAction();
-
-        if ($action->isModalHidden()) {
-            return false;
-        }
-
-        return $action->hasCustomModalHeading() ||
-            $action->hasModalDescription() ||
-            $action->hasModalContent() ||
-            $action->hasModalContentFooter() ||
-            $action->getInfolist() ||
-            $this->mountedInfolistActionHasForm();
+        return $this->getMountedInfolistAction()->shouldOpenModal(
+            checkForFormUsing: $this->mountedInfolistActionHasForm(...),
+        );
     }
 
     public function mountedInfolistActionHasForm(): bool

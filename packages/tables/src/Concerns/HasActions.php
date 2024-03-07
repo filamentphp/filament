@@ -242,18 +242,9 @@ trait HasActions
 
     public function mountedTableActionShouldOpenModal(): bool
     {
-        $action = $this->getMountedTableAction();
-
-        if ($action->isModalHidden()) {
-            return false;
-        }
-
-        return $action->hasCustomModalHeading() ||
-            $action->hasModalDescription() ||
-            $action->hasModalContent() ||
-            $action->hasModalContentFooter() ||
-            $action->getInfolist() ||
-            $this->mountedTableActionHasForm();
+        return $this->getMountedTableAction()->shouldOpenModal(
+            checkForFormUsing: $this->mountedTableActionHasForm(...),
+        );
     }
 
     public function mountedTableActionHasForm(): bool
