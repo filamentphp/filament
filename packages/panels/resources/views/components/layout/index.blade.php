@@ -102,13 +102,17 @@
                             '.fi-main-sidebar .fi-sidebar-item.fi-active',
                         )
 
-                        if (typeof activeSidebarItem?.offsetParent === 'undefined') {
+                        if (typeof activeSidebarItem?.offsetParent === 'undefined' ||
+                            activeSidebarItem?.offsetParent === null
+                        ) {
                             activeSidebarItem = document.querySelector(
                                 '.fi-main-sidebar .fi-sidebar-group.fi-active',
                             )
                         }
 
-                        if (typeof activeSidebarItem?.offsetParent === 'undefined') {
+                        if (typeof activeSidebarItem?.offsetParent === 'undefined' ||
+                            activeSidebarItem?.offsetParent === null
+                        ) {
                             return
                         }
 
