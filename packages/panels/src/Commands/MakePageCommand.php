@@ -67,9 +67,17 @@ class MakePageCommand extends Command
             )] : Arr::first($panels);
         }
 
-        $resourceInput = $this->option('resource') ?? text(
-            label: 'What is the resource you would like to create this in?',
-            placeholder: '[Optional] UserResource',
+        $resourceInput = $this->option('resource') ?? select(
+            label: 'Which resource would you like to create this in?',
+            options: collect($panel->getResources())
+                ->mapWithKeys(
+                    function ($resource) {
+                        $className = (string) str($resource)->afterLast('\\');
+                        $title = (string) str($className)->beforeLast('Resource');
+
+                        return [$className => $title];
+                    }
+                )->all(),
         );
 
         if (filled($resourceInput)) {
