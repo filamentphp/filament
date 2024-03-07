@@ -71,7 +71,7 @@ class MakePageCommand extends Command
         $resourceInput = $this->option('resource') ?? suggest(
             label: 'Which resource would you like to create this in?',
             options: collect($panel->getResources())
-                ->filter(fn (string $path): bool => str($path)->contains('\\Resources\\'))
+                ->filter(fn (string $namespace): bool => str($namespace)->contains('\\Resources\\'))
                 ->map(
                     fn (string $namespace): string => str($namespace)
                         ->afterLast('\\Resources\\')
