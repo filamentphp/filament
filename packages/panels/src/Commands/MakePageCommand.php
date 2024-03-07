@@ -76,6 +76,7 @@ class MakePageCommand extends Command
                         ->afterLast('\\')
                         ->beforeLast('Resource')
                 )->all(),
+            placeholder: '[Optional] UserResource',
         );
 
         if (filled($resourceInput)) {
