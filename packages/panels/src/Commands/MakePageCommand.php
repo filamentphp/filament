@@ -71,13 +71,10 @@ class MakePageCommand extends Command
         $resourceInput = $this->option('resource') ?? suggest(
             label: 'Which resource would you like to create this in?',
             options: collect($panel->getResources())
-                ->mapWithKeys(
-                    function ($resource) {
-                        $className = (string) str($resource)->afterLast('\\');
-                        $title = (string) str($className)->beforeLast('Resource');
-
-                        return [$className => $title];
-                    }
+                ->map(
+                    fn ($resource): string => str($resource)
+                        ->afterLast('\\')
+                        ->beforeLast('Resource')
                 )->all(),
         );
 
