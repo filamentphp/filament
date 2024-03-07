@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
+use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
 class MakePageCommand extends Command
@@ -67,7 +68,7 @@ class MakePageCommand extends Command
             )] : Arr::first($panels);
         }
 
-        $resourceInput = $this->option('resource') ?? select(
+        $resourceInput = $this->option('resource') ?? suggest(
             label: 'Which resource would you like to create this in?',
             options: collect($panel->getResources())
                 ->mapWithKeys(
