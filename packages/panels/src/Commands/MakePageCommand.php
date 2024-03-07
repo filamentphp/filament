@@ -47,6 +47,26 @@ class MakePageCommand extends Command
         $resourceClass = null;
         $resourcePage = null;
 
+        $panel = $this->option('panel');
+
+        if ($panel) {
+            $panel = Filament::getPanel($panel);
+        }
+
+        if (! $panel) {
+            $panels = Filament::getPanels();
+
+            /** @var Panel $panel */
+            $panel = (count($panels) > 1) ? $panels[select(
+                label: 'Which panel would you like to create this in?',
+                options: array_map(
+                    fn (Panel $panel): string => $panel->getId(),
+                    $panels,
+                ),
+                default: Filament::getDefaultPanel()->getId()
+            )] : Arr::first($panels);
+        }
+
         $resourceInput = $this->option('resource') ?? text(
             label: 'What is the resource you would like to create this in?',
             placeholder: '[Optional] UserResource',
@@ -158,26 +178,6 @@ class MakePageCommand extends Command
 
                 $tableBulkActions = implode(PHP_EOL, $tableBulkActions);
             }
-        }
-
-        $panel = $this->option('panel');
-
-        if ($panel) {
-            $panel = Filament::getPanel($panel);
-        }
-
-        if (! $panel) {
-            $panels = Filament::getPanels();
-
-            /** @var Panel $panel */
-            $panel = (count($panels) > 1) ? $panels[select(
-                label: 'Which panel would you like to create this in?',
-                options: array_map(
-                    fn (Panel $panel): string => $panel->getId(),
-                    $panels,
-                ),
-                default: Filament::getDefaultPanel()->getId()
-            )] : Arr::first($panels);
         }
 
         if (empty($resource)) {
