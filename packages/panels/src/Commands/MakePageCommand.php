@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
+use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
 class MakePageCommand extends Command
@@ -47,8 +48,36 @@ class MakePageCommand extends Command
         $resourceClass = null;
         $resourcePage = null;
 
-        $resourceInput = $this->option('resource') ?? text(
-            label: 'What is the resource you would like to create this in?',
+        $panel = $this->option('panel');
+
+        if ($panel) {
+            $panel = Filament::getPanel($panel);
+        }
+
+        if (! $panel) {
+            $panels = Filament::getPanels();
+
+            /** @var Panel $panel */
+            $panel = (count($panels) > 1) ? $panels[select(
+                label: 'Which panel would you like to create this in?',
+                options: array_map(
+                    fn (Panel $panel): string => $panel->getId(),
+                    $panels,
+                ),
+                default: Filament::getDefaultPanel()->getId()
+            )] : Arr::first($panels);
+        }
+
+        $resourceInput = $this->option('resource') ?? suggest(
+            label: 'Which resource would you like to create this in?',
+            options: collect($panel->getResources())
+                ->filter(fn (string $namespace): bool => str($namespace)->contains('\\Resources\\'))
+                ->map(
+                    fn (string $namespace): string => (string) str($namespace)
+                        ->afterLast('\\Resources\\')
+                        ->beforeLast('Resource')
+                )
+                ->all(),
             placeholder: '[Optional] UserResource',
         );
 
@@ -158,26 +187,6 @@ class MakePageCommand extends Command
 
                 $tableBulkActions = implode(PHP_EOL, $tableBulkActions);
             }
-        }
-
-        $panel = $this->option('panel');
-
-        if ($panel) {
-            $panel = Filament::getPanel($panel);
-        }
-
-        if (! $panel) {
-            $panels = Filament::getPanels();
-
-            /** @var Panel $panel */
-            $panel = (count($panels) > 1) ? $panels[select(
-                label: 'Which panel would you like to create this in?',
-                options: array_map(
-                    fn (Panel $panel): string => $panel->getId(),
-                    $panels,
-                ),
-                default: Filament::getDefaultPanel()->getId()
-            )] : Arr::first($panels);
         }
 
         if (empty($resource)) {
