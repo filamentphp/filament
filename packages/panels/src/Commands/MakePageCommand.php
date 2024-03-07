@@ -73,7 +73,7 @@ class MakePageCommand extends Command
             options: collect($panel->getResources())
                 ->map(
                     fn ($resource): string => str($resource)
-                        ->afterLast('\\')
+                        ->afterLast('\\Resources\\')
                         ->beforeLast('Resource')
                 )->all(),
             placeholder: '[Optional] UserResource',
