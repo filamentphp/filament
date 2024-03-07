@@ -76,7 +76,8 @@ class MakePageCommand extends Command
                     fn (string $namespace): string => str($namespace)
                         ->afterLast('\\Resources\\')
                         ->beforeLast('Resource')
-                )->all(),
+                )
+                ->all(),
             placeholder: '[Optional] UserResource',
         );
 
