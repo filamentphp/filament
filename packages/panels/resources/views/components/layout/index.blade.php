@@ -102,16 +102,18 @@
                             '.fi-main-sidebar .fi-sidebar-item.fi-active',
                         )
 
-                        if (typeof activeSidebarItem?.offsetParent === 'undefined' ||
-                            activeSidebarItem?.offsetParent === null
+                        if (
+                            (! activeSidebarItem) ||
+                            (activeSidebarItem.offsetParent === null)
                         ) {
                             activeSidebarItem = document.querySelector(
                                 '.fi-main-sidebar .fi-sidebar-group.fi-active',
                             )
                         }
 
-                        if (typeof activeSidebarItem?.offsetParent === 'undefined' ||
-                            activeSidebarItem?.offsetParent === null
+                        if (
+                            (! activeSidebarItem) ||
+                            (activeSidebarItem.offsetParent === null)
                         ) {
                             return
                         }
