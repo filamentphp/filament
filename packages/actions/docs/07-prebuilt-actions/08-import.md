@@ -49,6 +49,13 @@ public function table(Table $table): Table
 
 The ["importer" class needs to be created](#creating-an-importer) to tell Filament how to import each row of the CSV.
 
+> [!IMPORTANT]  
+> If you have 2 Import Button on one page or a resource page, set the make() function, for example:
+```
+ImportAction::make('product')->importer(ProductImporter::class),
+ImportAction::make('brand')->importer(BrandImporter::class),
+```
+
 ## Creating an importer
 
 To create an importer class for a model, you may use the `make:filament-importer` command, passing the name of a model:
