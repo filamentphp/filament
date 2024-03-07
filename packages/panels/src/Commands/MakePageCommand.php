@@ -73,7 +73,7 @@ class MakePageCommand extends Command
             options: collect($panel->getResources())
                 ->filter(fn (string $namespace): bool => str($namespace)->contains('\\Resources\\'))
                 ->map(
-                    fn (string $namespace): string => str($namespace)
+                    fn (string $namespace): string => (string) str($namespace)
                         ->afterLast('\\Resources\\')
                         ->beforeLast('Resource')
                 )
