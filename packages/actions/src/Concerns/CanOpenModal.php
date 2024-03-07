@@ -572,7 +572,7 @@ trait CanOpenModal
         return (bool) $this->evaluate($this->isModalSlideOver);
     }
 
-    public function shouldOpenModal(?Closure $checkForFormUsing = null): ?bool
+    public function shouldOpenModal(?Closure $checkForFormUsing = null): bool
     {
         if (is_bool($hasModal = $this->evaluate($this->hasModal))) {
             return $hasModal;
