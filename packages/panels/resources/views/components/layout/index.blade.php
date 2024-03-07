@@ -102,13 +102,13 @@
                             '.fi-main-sidebar .fi-sidebar-item.fi-active',
                         )
 
-                        if (activeSidebarItem?.offsetParent === null) {
+                        if (typeof activeSidebarItem?.offsetParent === 'undefined') {
                             activeSidebarItem = document.querySelector(
                                 '.fi-main-sidebar .fi-sidebar-group.fi-active',
                             )
                         }
 
-                        if (activeSidebarItem?.offsetParent === null) {
+                        if (typeof activeSidebarItem?.offsetParent === 'undefined') {
                             return
                         }
 
