@@ -3,6 +3,8 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
+use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
 use Illuminate\Contracts\Support\Arrayable;
@@ -648,6 +650,37 @@ trait CanBeValidated
         return array_filter($messages);
     }
 
+    protected function getLengthValidationRules(): array
+    {
+        if (! ($this instanceof CanBeLengthConstrained)) {
+            return [];
+        }
+
+        $isNumeric = $this instanceof CanHaveNumericState && $this->isNumeric();
+
+        if (filled($length = $this->getLength())) {
+            return $isNumeric ?
+                ["digits:{$length}"] :
+                ["size:{$length}"];
+        }
+
+        $rules = [];
+
+        if (filled($maxLength = $this->getMaxLength())) {
+            $rules[] = $isNumeric ?
+                "max_digits:{$maxLength}" :
+                "max:{$maxLength}";
+        }
+
+        if (filled($minLength = $this->getMinLength())) {
+            $rules[] = $isNumeric ?
+                "min_digits:{$minLength}" :
+                "min:{$minLength}";
+        }
+
+        return $rules;
+    }
+
     /**
      * @return array<mixed>
      */
@@ -655,6 +688,7 @@ trait CanBeValidated
     {
         $rules = [
             $this->getRequiredValidationRule(),
+            ...$this->getLengthValidationRules(),
         ];
 
         if (filled($regexPattern = $this->getRegexPattern())) {
