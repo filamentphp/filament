@@ -524,16 +524,6 @@ ImportAction::make()
     ->maxRows(100000)
 ```
 
-## Changing the column header offset
-
-If your column headers are not on the first row of the CSV, you can call the `headerOffset()` method on the action, passing the number of rows to skip:
-
-```php
-ImportAction::make()
-    ->importer(ProductImporter::class)
-    ->headerOffset(5)
-```
-
 ## Changing the import chunk size
 
 Filament will chunk the CSV, and process each chunk in a different queued job. By default, chunks are 100 rows at a time. You can change this by calling the `chunkSize()` method on the action:
@@ -557,6 +547,16 @@ ImportAction::make()
 ```
 
 You can only specify a single character, otherwise an exception will be thrown.
+
+## Changing the column header offset
+
+If your column headers are not on the first row of the CSV, you can call the `headerOffset()` method on the action, passing the number of rows to skip:
+
+```php
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->headerOffset(5)
+```
 
 ## Customizing the import job
 
