@@ -106,8 +106,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             ];
         }
 
-        /** @phpstan-ignore-next-line */
-        if (blank($state) && $record->getFallbackMediaUrl($this->getCollection())) {
+        if (blank($state)) {
             return [Str::orderedUuid()];
         }
 
