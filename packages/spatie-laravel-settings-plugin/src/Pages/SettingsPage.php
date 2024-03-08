@@ -8,6 +8,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
+use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Throwable;
@@ -21,6 +22,7 @@ class SettingsPage extends Page
 {
     use CanUseDatabaseTransactions;
     use Concerns\InteractsWithFormActions;
+    use HasUnsavedDataChangesAlert;
 
     protected static string $settings;
 
@@ -92,6 +94,8 @@ class SettingsPage extends Page
 
             throw $exception;
         }
+
+        $this->rememberData();
 
         $this->getSavedNotification()?->send();
 
