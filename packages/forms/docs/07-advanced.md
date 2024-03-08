@@ -61,17 +61,17 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 
 DatePicker::make('date_of_birth')
-    ->displayFormat(function () {
+    ->displayFormat(function (): string {
         if (auth()->user()->country_id === 'us') {
-            return 'm/d/Y'
-        } else {
-            return 'd/m/Y'
+            return 'm/d/Y';
         }
+
+        return 'd/m/Y';
     })
 
 Select::make('user_id')
-    ->options(function () {
-        return User::all()->pluck('name', 'id');
+    ->options(function (): array {
+        return User::all()->pluck('name', 'id')->all();
     })
 
 TextInput::make('middle_name')
