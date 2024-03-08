@@ -15,6 +15,7 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Js;
 use Throwable;
 
 use function Filament\Support\is_app_url;
@@ -237,7 +238,7 @@ class CreateRecord extends Page
     {
         return Action::make('cancel')
             ->label(__('filament-panels::resources/pages/create-record.form.actions.cancel.label'))
-            ->url($this->previousUrl ?? static::getResource()::getUrl())
+            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? static::getResource()::getUrl()) . ')')
             ->color('gray');
     }
 
