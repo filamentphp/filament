@@ -23,12 +23,8 @@ trait CanBeLengthConstrained
         $this->rule(static function (Contracts\CanBeLengthConstrained $component): string {
             $length = $component->getLength();
 
-            if ($component instanceof CanHaveNumericState && $component->isInteger()) {
-                return "digits:{$length}";
-            }
-
             if ($component instanceof CanHaveNumericState && $component->isNumeric()) {
-                return "";
+                return "digits:{$length}";
             }
 
             return "size:{$length}";
@@ -44,12 +40,8 @@ trait CanBeLengthConstrained
         $this->rule(static function (Contracts\CanBeLengthConstrained $component): string {
             $length = $component->getMaxLength();
 
-            if ($component instanceof Contracts\CanHaveNumericState && $component->isInteger()) {
+            if ($component instanceof Contracts\CanHaveNumericState && $component->isNumeric()) {
                 return "max_digits:{$length}";
-            }
-
-            if ($component instanceof CanHaveNumericState && $component->isNumeric()) {
-                return "";
             }
 
             return "max:{$length}";
@@ -65,12 +57,8 @@ trait CanBeLengthConstrained
         $this->rule(static function (Contracts\CanBeLengthConstrained $component): string {
             $length = $component->getMinLength();
 
-            if ($component instanceof Contracts\CanHaveNumericState && $component->isInteger()) {
+            if ($component instanceof Contracts\CanHaveNumericState && $component->isNumeric()) {
                 return "min_digits:{$length}";
-            }
-
-            if ($component instanceof CanHaveNumericState && $component->isNumeric()) {
-                return "";
             }
 
             return "min:{$length}";
