@@ -57,7 +57,7 @@ class SelectFilter extends BaseFilter
                         )
                         ->when(
                             $this->getRelationshipKey(),
-                            fn (Builder $query) => $query->whereIn($this->getRelationshipKey(), $state['values']),
+                            fn (Builder $query, string $relationshipKey) => $query->whereIn($relationshipKey, $state['values']),
                             fn (Builder $query) => $query->whereKey($state['values'])
                         )
                         ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
@@ -89,7 +89,7 @@ class SelectFilter extends BaseFilter
                 $label = $filter->getRelationshipQuery()
                     ->when(
                         $this->getRelationshipKey(),
-                        fn (Builder $query) => $query->where($this->getRelationshipKey(), $state['value']),
+                        fn (Builder $query, string $relationshipKey) => $query->where($relationshipKey, $state['value']),
                         fn (Builder $query) => $query->whereKey($state['value'])
                     )
                     ->first()
@@ -163,7 +163,7 @@ class SelectFilter extends BaseFilter
                     ]) ?? $query;
                 }
 
-                if ($relationshipKey = $this->getRelationshipKey()) {
+                if ($relationshipKey = $this->getRelationshipKey($query)) {
                     return $query->{$isMultiple ? 'whereIn' : 'where'}(
                         $relationshipKey,
                         $values,
