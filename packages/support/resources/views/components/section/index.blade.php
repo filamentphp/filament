@@ -6,8 +6,8 @@
     'aside' => false,
     'collapsed' => false,
     'collapsible' => false,
-    'contained' => true,
     'compact' => false,
+    'contained' => true,
     'contentBefore' => false,
     'description' => null,
     'headerActions' => [],
@@ -46,10 +46,8 @@
     {{
         $attributes->class([
             'fi-section',
-            match ($aside) {
-                true => 'fi-aside grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3',
-                false => $contained ? 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' : '',
-            },
+            'fi-aside grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3' => $aside,
+            'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $contained,
         ])
     }}
 >
@@ -61,10 +59,9 @@
             @class([
                 'fi-section-header flex flex-col gap-3',
                 'cursor-pointer' => $collapsible,
-                match ($compact) {
-                    true => 'px-4 py-2.5',
-                    false => ! $contained ? 'py-4' : 'px-6 py-4',
-                } => ! $aside,
+                'px-6 py-4' => $contained,
+                'px-4 py-2.5' => $compact && ! $aside,
+                'py-4' => ! $compact && ! $aside,
             ])
         >
             <div class="flex items-center gap-3">
@@ -164,11 +161,10 @@
         <div
             @class([
                 'fi-section-content',
-                'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $aside && (! $minimal),
-                match ($compact) {
-                    true => 'p-4',
-                    false => ! $contained ? 'pt-4' : 'p-6',
-                },
+                'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $aside && ! $contained,
+                'pt-6' => ! $contained,
+                'p-4' => $compact && $contained,
+                'p-6' => ! $compact && $contained,
             ])
         >
             {{ $slot }}
