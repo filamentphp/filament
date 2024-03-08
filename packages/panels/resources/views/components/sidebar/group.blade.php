@@ -178,6 +178,14 @@
             @php
                 $itemIcon = $item->getIcon();
                 $itemActiveIcon = $item->getActiveIcon();
+
+                if ($icon) {
+                    if ($hasDropdown || blank($itemIcon)) {
+                        $itemIcon = null;
+                    } else {
+                        throw new \Exception('Navigation group [' . $label . '] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.');
+                    }
+                }
             @endphp
 
             <x-filament-panels::sidebar.item
@@ -190,7 +198,7 @@
                 :child-items="$item->getChildItems()"
                 :first="$loop->first"
                 :grouped="filled($label)"
-                :icon="$icon ? (($hasDropdown || blank($itemIcon)) ? null : throw new \Exception('Navigation group [' . $label . '] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.')) : $itemIcon"
+                :icon="$itemIcon"
                 :last="$loop->last"
                 :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
                 :sidebar-collapsible="$sidebarCollapsible"
