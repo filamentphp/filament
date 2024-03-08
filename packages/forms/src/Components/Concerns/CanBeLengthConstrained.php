@@ -28,7 +28,7 @@ trait CanBeLengthConstrained
             }
 
             if ($component instanceof CanHaveNumericState && $component->isNumeric()) {
-                return '';
+                return "";
             }
 
             return "size:{$length}";
@@ -49,7 +49,7 @@ trait CanBeLengthConstrained
             }
 
             if ($component instanceof CanHaveNumericState && $component->isNumeric()) {
-                return '';
+                return "";
             }
 
             return "max:{$length}";
@@ -70,7 +70,7 @@ trait CanBeLengthConstrained
             }
 
             if ($component instanceof CanHaveNumericState && $component->isNumeric()) {
-                return '';
+                return "";
             }
 
             return "min:{$length}";
