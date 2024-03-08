@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
 use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
 use Illuminate\Contracts\Support\Arrayable;
@@ -655,6 +656,7 @@ trait CanBeValidated
     {
         $rules = [
             $this->getRequiredValidationRule(),
+            ...($this instanceof CanBeLengthConstrained ? $this->getLengthValidationRules() : []),
         ];
 
         if (filled($regexPattern = $this->getRegexPattern())) {
