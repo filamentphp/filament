@@ -103,8 +103,8 @@
                         )
 
                         if (
-                            (! activeSidebarItem) ||
-                            (activeSidebarItem.offsetParent === null)
+                            !activeSidebarItem ||
+                            activeSidebarItem.offsetParent === null
                         ) {
                             activeSidebarItem = document.querySelector(
                                 '.fi-main-sidebar .fi-sidebar-group.fi-active',
@@ -112,8 +112,8 @@
                         }
 
                         if (
-                            (! activeSidebarItem) ||
-                            (activeSidebarItem.offsetParent === null)
+                            !activeSidebarItem ||
+                            activeSidebarItem.offsetParent === null
                         ) {
                             return
                         }
