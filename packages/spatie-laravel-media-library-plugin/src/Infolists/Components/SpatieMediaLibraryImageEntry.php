@@ -14,6 +14,31 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
 
     protected string | Closure | null $conversion = null;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->defaultImageUrl(function (SpatieMediaLibraryImageEntry $component, Model $record): ?string {
+            if ($component->hasRelationship($record)) {
+                $record = $component->getRelationshipResults($record);
+            }
+
+            $records = Arr::wrap($record);
+
+            foreach ($records as $record) {
+                $url = $record->getFallbackMediaUrl($component->getCollection() ?? '', $component->getConversion() ?? '');
+
+                if (blank($url)) {
+                    continue;
+                }
+
+                return $url;
+            }
+
+            return null;
+        });
+    }
+
     public function collection(string | Closure | null $collection): static
     {
         $this->collection = $collection;
