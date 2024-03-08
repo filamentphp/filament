@@ -57,7 +57,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             /** @var ?Media $media */
             $media = $record->getRelationValue('media')->first(fn (Media $media): bool => $media->uuid === $state);
 
-            if (! $media) {
+            if (!$media) {
                 return $record->getFirstMediaUrl($this->getCollection()); // @phpstan-ignore-line
             }
 
