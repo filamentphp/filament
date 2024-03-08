@@ -93,7 +93,7 @@ trait CanImportRecords
                         $csvReader->setDelimiter($csvDelimiter);
                     }
 
-                    $csvReader->setHeaderOffset(0);
+                    $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
 
                     $csvColumns = $csvReader->getHeader();
 
@@ -142,8 +142,7 @@ trait CanImportRecords
                         $csvReader->setDelimiter($csvDelimiter);
                     }
 
-                    $headerOffset = $this->getHeaderOffset();
-                    $csvReader->setHeaderOffset($headerOffset);
+                    $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
 
                     $csvColumns = $csvReader->getHeader();
                     $csvColumnOptions = array_combine($csvColumns, $csvColumns);
@@ -173,7 +172,7 @@ trait CanImportRecords
                 $csvReader->setDelimiter($csvDelimiter);
             }
 
-            $csvReader->setHeaderOffset(0);
+            $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
             $csvResults = Statement::create()->process($csvReader);
 
             $totalRows = $csvResults->count();
