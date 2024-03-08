@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
@@ -57,8 +56,8 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             /** @var ?Media $media */
             $media = $record->getRelationValue('media')->first(fn (Media $media): bool => $media->uuid === $state);
 
-            if (!$media) {
-                return $record->getFallbackMediaUrl($this->getCollection());
+            if (! $media) {
+                continue;
             }
 
             $conversion = $this->getConversion();
@@ -104,10 +103,6 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
                     ->pluck('uuid')
                     ->all(),
             ];
-        }
-
-        if (blank($state)) {
-            return [Str::orderedUuid()];
         }
 
         return array_unique($state);
