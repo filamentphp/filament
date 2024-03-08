@@ -252,8 +252,6 @@ TextInput::make('code')
     ->length(8)
 ```
 
-The length validation doesn't apply to `numeric()` fields, as Laravel has no rules to validate the overall length of a decimal number. You can use the `decimal` rule to validate the number of decimal places.
-
 ### Size validation
 
 You may validate the minimum and maximum value of a numeric input by setting the `minValue()` and `maxValue()` methods:
