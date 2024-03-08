@@ -33,6 +33,8 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     protected bool | Closure $isNumeric = false;
 
+    protected bool | Closure $isInteger = false;
+
     protected bool | Closure $isPassword = false;
 
     protected bool | Closure $isRevealable = false;
@@ -73,7 +75,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
 
     public function integer(bool | Closure $condition = true): static
     {
-        $this->numeric($condition);
+        $this->isInteger = $condition;
         $this->inputMode(static fn (): ?string => $condition ? 'numeric' : null);
         $this->step(static fn (): ?int => $condition ? 1 : null);
         $this->rule('integer', $condition);
@@ -243,6 +245,11 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
     public function isNumeric(): bool
     {
         return (bool) $this->evaluate($this->isNumeric);
+    }
+
+    public function isInteger(): bool
+    {
+        return (bool) $this->evaluate($this->isInteger);
     }
 
     public function isPassword(): bool
