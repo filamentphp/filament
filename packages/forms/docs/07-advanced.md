@@ -63,9 +63,9 @@ use Filament\Forms\Components\TextInput;
 DatePicker::make('date_of_birth')
     ->displayFormat(function () {
         if (auth()->user()->country_id === 'us') {
-            return 'm/d/Y'
+            return 'm/d/Y';
         } else {
-            return 'd/m/Y'
+            return 'd/m/Y';
         }
     })
 
