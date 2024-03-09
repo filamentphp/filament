@@ -48,6 +48,8 @@ trait CanImportRecords
 
     protected int | Closure | null $maxRows = null;
 
+    protected int | Closure | null $headerOffset = null;
+
     protected string | Closure | null $csvDelimiter = null;
 
     /**
@@ -91,7 +93,7 @@ trait CanImportRecords
                         $csvReader->setDelimiter($csvDelimiter);
                     }
 
-                    $csvReader->setHeaderOffset(0);
+                    $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
 
                     $csvColumns = $csvReader->getHeader();
 
@@ -140,7 +142,7 @@ trait CanImportRecords
                         $csvReader->setDelimiter($csvDelimiter);
                     }
 
-                    $csvReader->setHeaderOffset(0);
+                    $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
 
                     $csvColumns = $csvReader->getHeader();
                     $csvColumnOptions = array_combine($csvColumns, $csvColumns);
@@ -170,7 +172,7 @@ trait CanImportRecords
                 $csvReader->setDelimiter($csvDelimiter);
             }
 
-            $csvReader->setHeaderOffset(0);
+            $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
             $csvResults = Statement::create()->process($csvReader);
 
             $totalRows = $csvResults->count();
@@ -403,6 +405,13 @@ trait CanImportRecords
         return $this;
     }
 
+    public function headerOffset(int | Closure | null $offset): static
+    {
+        $this->headerOffset = $offset;
+
+        return $this;
+    }
+
     public function csvDelimiter(string | Closure | null $delimiter): static
     {
         $this->csvDelimiter = $delimiter;
@@ -434,6 +443,11 @@ trait CanImportRecords
     public function getMaxRows(): ?int
     {
         return $this->evaluate($this->maxRows);
+    }
+
+    public function getHeaderOffset(): ?int
+    {
+        return $this->evaluate($this->headerOffset);
     }
 
     public function getCsvDelimiter(?CsvReader $reader = null): ?string

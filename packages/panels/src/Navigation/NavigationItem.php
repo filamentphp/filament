@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Filament\Support\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 
 class NavigationItem extends Component
 {
@@ -15,9 +16,9 @@ class NavigationItem extends Component
 
     protected bool | Closure | null $isActive = null;
 
-    protected string | Closure | null $icon = null;
+    protected string | Htmlable | Closure | null $icon = null;
 
-    protected string | Closure | null $activeIcon = null;
+    protected string | Htmlable | Closure | null $activeIcon = null;
 
     protected string | Closure $label;
 
@@ -85,7 +86,7 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function icon(string | Closure | null $icon): static
+    public function icon(string | Htmlable | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -113,7 +114,7 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function activeIcon(string | Closure | null $activeIcon): static
+    public function activeIcon(string | Htmlable | Closure | null $activeIcon): static
     {
         $this->activeIcon = $activeIcon;
 
@@ -184,7 +185,7 @@ class NavigationItem extends Component
         return $this->evaluate($this->parentItem);
     }
 
-    public function getIcon(): ?string
+    public function getIcon(): string | Htmlable | null
     {
         $icon = $this->evaluate($this->icon);
 
@@ -209,7 +210,7 @@ class NavigationItem extends Component
         return ! $this->evaluate($this->isVisible);
     }
 
-    public function getActiveIcon(): ?string
+    public function getActiveIcon(): string | Htmlable | null
     {
         return $this->evaluate($this->activeIcon);
     }

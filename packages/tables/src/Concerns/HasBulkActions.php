@@ -212,18 +212,9 @@ trait HasBulkActions
 
     public function mountedTableBulkActionShouldOpenModal(): bool
     {
-        $action = $this->getMountedTableBulkAction();
-
-        if ($action->isModalHidden()) {
-            return false;
-        }
-
-        return $action->hasCustomModalHeading() ||
-            $action->hasModalDescription() ||
-            $action->hasModalContent() ||
-            $action->hasModalContentFooter() ||
-            $action->getInfolist() ||
-            $this->mountedTableBulkActionHasForm();
+        return $this->getMountedTableBulkAction()->shouldOpenModal(
+            checkForFormUsing: $this->mountedTableBulkActionHasForm(...),
+        );
     }
 
     public function unmountTableBulkAction(bool $shouldCloseModal = true): void

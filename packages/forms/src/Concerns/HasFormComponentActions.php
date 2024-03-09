@@ -187,18 +187,9 @@ trait HasFormComponentActions
 
     public function mountedFormComponentActionShouldOpenModal(): bool
     {
-        $action = $this->getMountedFormComponentAction();
-
-        if ($action->isModalHidden()) {
-            return false;
-        }
-
-        return $action->hasCustomModalHeading() ||
-            $action->hasModalDescription() ||
-            $action->hasModalContent() ||
-            $action->hasModalContentFooter() ||
-            $action->getInfolist() ||
-            $this->mountedFormComponentActionHasForm();
+        return $this->getMountedFormComponentAction()->shouldOpenModal(
+            checkForFormUsing: $this->mountedFormComponentActionHasForm(...),
+        );
     }
 
     public function mountedFormComponentActionHasForm(): bool

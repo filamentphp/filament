@@ -221,18 +221,9 @@ trait InteractsWithActions
 
     public function mountedActionShouldOpenModal(): bool
     {
-        $action = $this->getMountedAction();
-
-        if ($action->isModalHidden()) {
-            return false;
-        }
-
-        return $action->hasCustomModalHeading() ||
-            $action->hasModalDescription() ||
-            $action->hasModalContent() ||
-            $action->hasModalContentFooter() ||
-            $action->getInfolist() ||
-            $this->mountedActionHasForm();
+        return $this->getMountedAction()->shouldOpenModal(
+            checkForFormUsing: $this->mountedActionHasForm(...),
+        );
     }
 
     public function mountedActionHasForm(): bool

@@ -16,6 +16,31 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 
     protected string | Closure | null $conversion = null;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->defaultImageUrl(function (SpatieMediaLibraryImageColumn $column, Model $record): ?string {
+            if ($column->hasRelationship($record)) {
+                $record = $column->getRelationshipResults($record);
+            }
+
+            $records = Arr::wrap($record);
+
+            foreach ($records as $record) {
+                $url = $record->getFallbackMediaUrl($column->getCollection() ?? '', $column->getConversion() ?? '');
+
+                if (blank($url)) {
+                    continue;
+                }
+
+                return $url;
+            }
+
+            return null;
+        });
+    }
+
     public function collection(string | Closure | null $collection): static
     {
         $this->collection = $collection;

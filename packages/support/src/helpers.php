@@ -137,7 +137,7 @@ if (! function_exists('Filament\Support\is_app_url')) {
 }
 
 if (! function_exists('Filament\Support\generate_href_html')) {
-    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false): Htmlable
+    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false, ?bool $shouldOpenInSpaMode = null): Htmlable
     {
         if (blank($url)) {
             return new HtmlString('');
@@ -147,7 +147,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
 
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
-        } elseif (FilamentView::hasSpaMode() && is_app_url($url)) {
+        } elseif ($shouldOpenInSpaMode ?? (FilamentView::hasSpaMode($url))) {
             $html .= ' wire:navigate';
         }
 

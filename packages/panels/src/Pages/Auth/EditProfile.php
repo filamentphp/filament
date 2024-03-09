@@ -21,7 +21,6 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Password;
@@ -34,6 +33,7 @@ use function Filament\Support\is_app_url;
  */
 class EditProfile extends Page
 {
+    use Concerns\CanUseDatabaseTransactions;
     use Concerns\InteractsWithFormActions;
 
     /**
@@ -145,7 +145,7 @@ class EditProfile extends Page
     public function save(): void
     {
         try {
-            DB::beginTransaction();
+            $this->beginDatabaseTransaction();
 
             $this->callHook('beforeValidate');
 
@@ -161,15 +161,15 @@ class EditProfile extends Page
 
             $this->callHook('afterSave');
 
-            DB::commit();
+            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
             $exception->shouldRollbackDatabaseTransaction() ?
-                DB::rollBack() :
-                DB::commit();
+                $this->rollBackDatabaseTransaction() :
+                $this->commitDatabaseTransaction();
 
             return;
         } catch (Throwable $exception) {
-            DB::rollBack();
+            $this->rollBackDatabaseTransaction();
 
             throw $exception;
         }

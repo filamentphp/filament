@@ -9,6 +9,7 @@ use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\ArgumentValue;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
@@ -136,6 +137,7 @@ trait CanFormatState
                 return $state;
             }
 
+            $decimalPlaces = $component->evaluate($decimalPlaces);
             $decimalSeparator = $component->evaluate($decimalSeparator);
             $thousandsSeparator = $component->evaluate($thousandsSeparator);
 
@@ -145,13 +147,13 @@ trait CanFormatState
             ) {
                 return number_format(
                     $state,
-                    $component->evaluate($decimalPlaces),
+                    $decimalPlaces,
                     $decimalSeparator === ArgumentValue::Default ? '.' : $decimalSeparator,
                     $thousandsSeparator === ArgumentValue::Default ? ',' : $thousandsSeparator,
                 );
             }
 
-            return Number::format($state, $decimalPlaces, $maxDecimalPlaces, $component->evaluate($locale));
+            return Number::format($state, $decimalPlaces, $component->evaluate($maxDecimalPlaces), $component->evaluate($locale));
         });
 
         return $this;
@@ -227,6 +229,10 @@ trait CanFormatState
             'state' => $state,
         ]);
 
+        if ($isHtml) {
+            $state = Str::sanitizeHtml($state);
+        }
+
         if ($state instanceof Htmlable) {
             $isHtml = true;
             $state = $state->toHtml();
@@ -262,6 +268,8 @@ trait CanFormatState
         if (filled($prefix)) {
             if ($prefix instanceof Htmlable) {
                 $prefix = $prefix->toHtml();
+            } elseif ($isHtml) {
+                $prefix = e($prefix);
             }
 
             $state = $prefix . $state;
@@ -270,16 +278,14 @@ trait CanFormatState
         if (filled($suffix)) {
             if ($suffix instanceof Htmlable) {
                 $suffix = $suffix->toHtml();
+            } elseif ($isHtml) {
+                $suffix = e($suffix);
             }
 
             $state = $state . $suffix;
         }
 
-        if ($isHtml) {
-            return str($state)->sanitizeHtml()->toHtmlString();
-        }
-
-        return $state;
+        return $isHtml ? new HtmlString($state) : $state;
     }
 
     public function getCharacterLimit(): ?int

@@ -10,6 +10,8 @@
     :contained="$isContained()"
     :content-before="$isFormBefore()"
     :description="$getDescription()"
+    :footer-actions="$getFooterActions()"
+    :footer-actions-alignment="$getFooterActionsAlignment()"
     :header-actions="$getHeaderActions()"
     :heading="$getHeading()"
     :icon="$getIcon()"
