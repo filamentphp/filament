@@ -194,9 +194,11 @@
         @if ($hasFooterActions)
             <footer
                 @class([
-                    'fi-section-footer border-t border-gray-200 dark:border-white/10',
-                    'px-6 py-4' => ! $compact,
-                    'px-4 py-2.5' => $compact,
+                    'fi-section-footer',
+                    'border-t border-gray-200 dark:border-white/10' => $contained,
+                    'mt-6' => ! $contained,
+                    'px-6 py-4' => ! $compact && $contained,
+                    'px-4 py-2.5' => $compact && $contained,
                 ])
             >
                 <x-filament::actions
