@@ -14,6 +14,9 @@ class WidgetConfiguration
     ) {
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getProperties(): array
     {
         return $this->properties;
