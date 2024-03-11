@@ -386,6 +386,28 @@ public function resolveRecord(): ?Product
 }
 ```
 
+If you'd like to fail the import row if no record is found, you can throw a `RowImportFailedException` with a message:
+
+```php
+use App\Models\Product;
+use Filament\Actions\Imports\Exceptions\RowImportFailedException;
+
+public function resolveRecord(): ?Product
+{
+    $product = Product::query()
+        ->where('sku', $this->data['sku'])
+        ->first();
+
+    if (! $product) {
+        throw new RowImportFailedException("No product found with SKU [{$this->data['sku']}].");
+    }
+
+    return $product;
+}
+```
+
+When the import is completed, the user will be able to download a CSV of failed rows, which will contain the error messages.
+
 ### Ignoring blank state for an import column
 
 By default, if a column in the CSV is blank, and mapped by the user, and it's not required by validation, the column will be imported as `null` in the database. If you'd like to ignore blank state, and use the existing value in the database instead, you can call the `ignoreBlankState()` method:
