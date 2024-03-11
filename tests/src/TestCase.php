@@ -17,12 +17,14 @@ use Filament\Tests\Models\User;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Livewire\LivewireServiceProvider;
+use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 
 abstract class TestCase extends BaseTestCase
 {
     use LazilyRefreshDatabase;
+    use WithWorkbench;
 
     protected function getPackageProviders($app): array
     {
@@ -44,17 +46,13 @@ abstract class TestCase extends BaseTestCase
             AdminPanelProvider::class,
             CustomPanelProvider::class,
             SlugsPanelProvider::class,
+            TenancyPanelProvider::class,
+            DomainTenancyPanelProvider::class,
         ];
     }
 
-    protected function defineDatabaseMigrations(): void
+    protected function defineEnvironment($app): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
-    }
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        $app['config']->set('auth.passwords.users.table', 'password_reset_tokens');
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('view.paths', [
             ...$app['config']->get('view.paths'),

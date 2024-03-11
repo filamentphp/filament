@@ -27,7 +27,7 @@ php artisan filament:install --panels
 
 This will create and register a new [Laravel service provider](https://laravel.com/docs/providers) called `app/Providers/Filament/AdminPanelProvider.php`.
 
-> If you get an error when accessing your panel, check that the service provider was registered in your `config/app.php`. If not, you should manually add it to the `providers` array.
+> If you get an error when accessing your panel, check that the service provider was registered in `bootstrap/providers.php` (Laravel 11 and above) or `config/app.php` (Laravel 10 and below). If not, you should manually add it.
 
 ## Create a user
 You can create a new user account with the following command:

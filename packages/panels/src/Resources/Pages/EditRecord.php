@@ -12,6 +12,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
@@ -20,6 +21,8 @@ use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Js;
+use Throwable;
 
 use function Filament\Support\is_app_url;
 
@@ -28,6 +31,7 @@ use function Filament\Support\is_app_url;
  */
 class EditRecord extends Page
 {
+    use CanUseDatabaseTransactions;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord {
         configureAction as configureActionRecord;
@@ -47,7 +51,7 @@ class EditRecord extends Page
 
     public ?string $previousUrl = null;
 
-    public static function getNavigationIcon(): ?string
+    public static function getNavigationIcon(): string | Htmlable | null
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.edit-record.navigation-item')
@@ -82,22 +86,23 @@ class EditRecord extends Page
 
     protected function fillForm(): void
     {
-        $data = $this->getRecord()->attributesToArray();
-
         /** @internal Read the DocBlock above the following method. */
-        $this->fillFormWithDataAndCallHooks($data);
+        $this->fillFormWithDataAndCallHooks($this->getRecord());
     }
 
     /**
      * @internal Never override or call this method. If you completely override `fillForm()`, copy the contents of this method into your override.
      *
-     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>  $extraData
      */
-    protected function fillFormWithDataAndCallHooks(array $data): void
+    protected function fillFormWithDataAndCallHooks(Model $record, array $extraData = []): void
     {
         $this->callHook('beforeFill');
 
-        $data = $this->mutateFormDataBeforeFill($data);
+        $data = $this->mutateFormDataBeforeFill([
+            ...$record->attributesToArray(),
+            ...$extraData,
+        ]);
 
         $this->form->fill($data);
 
@@ -129,6 +134,8 @@ class EditRecord extends Page
         $this->authorizeAccess();
 
         try {
+            $this->beginDatabaseTransaction();
+
             $this->callHook('beforeValidate');
 
             $data = $this->form->getState();
@@ -142,8 +149,18 @@ class EditRecord extends Page
             $this->handleRecordUpdate($this->getRecord(), $data);
 
             $this->callHook('afterSave');
+
+            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $this->rollBackDatabaseTransaction() :
+                $this->commitDatabaseTransaction();
+
             return;
+        } catch (Throwable $exception) {
+            $this->rollBackDatabaseTransaction();
+
+            throw $exception;
         }
 
         $this->rememberData();
@@ -297,7 +314,7 @@ class EditRecord extends Page
     {
         return Action::make('cancel')
             ->label(__('filament-panels::resources/pages/edit-record.form.actions.cancel.label'))
-            ->url($this->previousUrl ?? static::getResource()::getUrl())
+            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? static::getResource()::getUrl()) . ')')
             ->color('gray');
     }
 

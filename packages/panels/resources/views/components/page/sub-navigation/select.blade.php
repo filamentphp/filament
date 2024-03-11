@@ -11,7 +11,7 @@
 >
     <x-filament::input.select
         x-data="{}"
-        x-on:change="window.location = $event.target.value"
+        x-on:change="window.location.href = $event.target.value"
     >
         @foreach ($navigation as $navigationGroup)
             @capture($options)

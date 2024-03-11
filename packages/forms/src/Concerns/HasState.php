@@ -252,18 +252,18 @@ trait HasState
      * @param  array<string>  $keys
      * @return array<string, mixed>
      */
-    public function getStateOnly(array $keys): array
+    public function getStateOnly(array $keys, bool $shouldCallHooksBefore = true): array
     {
-        return Arr::only($this->getState(), $keys);
+        return Arr::only($this->getState($shouldCallHooksBefore), $keys);
     }
 
     /**
      * @param  array<string>  $keys
      * @return array<string, mixed>
      */
-    public function getStateExcept(array $keys): array
+    public function getStateExcept(array $keys, bool $shouldCallHooksBefore = true): array
     {
-        return Arr::except($this->getState(), $keys);
+        return Arr::except($this->getState($shouldCallHooksBefore), $keys);
     }
 
     public function getStatePath(bool $isAbsolute = true): string

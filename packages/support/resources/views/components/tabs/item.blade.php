@@ -12,6 +12,7 @@
     'icon' => null,
     'iconColor' => 'gray',
     'iconPosition' => IconPosition::Before,
+    'spaMode' => null,
     'tag' => 'button',
     'target' => null,
     'type' => 'button',
@@ -44,7 +45,7 @@
     @if ($tag === 'button')
         type="{{ $type }}"
     @elseif ($tag === 'a')
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
     @endif
     @if ($hasAlpineActiveClasses)
         x-bind:class="{

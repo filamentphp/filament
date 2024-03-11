@@ -3,6 +3,7 @@
 namespace Filament\Upgrade\Rector;
 
 use Closure;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\Variable;
@@ -11,9 +12,8 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use Rector\Core\Rector\AbstractRector;
 use Rector\Naming\VariableRenamer;
-use Rector\NodeTypeResolver\Node\AttributeKey;
+use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
@@ -63,24 +63,24 @@ class SimpleMethodChangesRector extends AbstractRector
                 'classIdentifier' => 'extends',
                 'changes' => [
                     'getBreadcrumbs' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getFooterWidgetsColumns' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getHeader' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getHeaderWidgetsColumns' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getHeading' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getRouteName' => function (ClassMethod $node) {
                         $param = new Param(new Variable('panel'));
@@ -90,20 +90,20 @@ class SimpleMethodChangesRector extends AbstractRector
                         $node->params = [$param];
                     },
                     'getSubheading' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getTitle' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getVisibleFooterWidgets' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getVisibleHeaderWidgets' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                 ],
             ],
@@ -123,42 +123,42 @@ class SimpleMethodChangesRector extends AbstractRector
                 'classIdentifier' => 'extends',
                 'changes' => [
                     'getActiveNavigationIcon' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getNavigationBadge' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getNavigationBadgeColor' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getNavigationGroup' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getNavigationIcon' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
 
                         $node->returnType = new Identifier('?string');
                     },
                     'getNavigationLabel' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getNavigationSort' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getNavigationUrl' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'shouldRegisterNavigation' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                 ],
             ],
@@ -167,12 +167,12 @@ class SimpleMethodChangesRector extends AbstractRector
                 'classIdentifier' => 'extends',
                 'changes' => [
                     'getColumns' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getWidgets' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                 ],
             ],
@@ -196,8 +196,8 @@ class SimpleMethodChangesRector extends AbstractRector
                 'classIdentifier' => 'extends',
                 'changes' => [
                     'canCreateAnother' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                 ],
             ],
@@ -206,8 +206,8 @@ class SimpleMethodChangesRector extends AbstractRector
                 'classIdentifier' => 'extends',
                 'changes' => [
                     'table' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                 ],
             ],
@@ -229,8 +229,8 @@ class SimpleMethodChangesRector extends AbstractRector
                         );
                     },
                     'getGlobalSearchEloquentQuery' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_PROTECTED;
-                        $node->flags |= Class_::MODIFIER_PUBLIC;
+                        $node->flags &= ~Modifiers::PROTECTED;
+                        $node->flags |= Modifiers::PUBLIC;
                     },
                     'getGlobalSearchResults' => function (ClassMethod $node) {
                         $node->params[0]->var->name = 'search';
@@ -265,7 +265,7 @@ class SimpleMethodChangesRector extends AbstractRector
                 'classIdentifier' => 'extends',
                 'changes' => [
                     'form' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_STATIC;
+                        $node->flags &= ~Modifiers::STATIC;
                     },
                     'getInverseRelationshipName' => function (ClassMethod $node) {
                         $node->returnType = new Identifier('?string');
@@ -274,7 +274,7 @@ class SimpleMethodChangesRector extends AbstractRector
                         $node->returnType = new Identifier('?string');
                     },
                     'table' => function (ClassMethod $node) {
-                        $node->flags &= ~Class_::MODIFIER_STATIC;
+                        $node->flags &= ~Modifiers::STATIC;
                     },
                 ],
             ],
@@ -283,31 +283,34 @@ class SimpleMethodChangesRector extends AbstractRector
 
     public function getNodeTypes(): array
     {
-        return [ClassMethod::class];
+        return [Class_::class];
     }
 
+    /**
+     * @param  Class_  $node
+     */
     public function refactor(Node $node): ?Node
     {
-        /** @var ClassMethod $node */
-        $class = $node->getAttribute(AttributeKey::PARENT_NODE);
-
+        $touched = false;
         foreach ($this->getChanges() as $change) {
-            if (! $this->isClassMatchingChange($class, $change)) {
+            if (! $this->isClassMatchingChange($node, $change)) {
                 continue;
             }
 
             foreach ($change['changes'] as $methodName => $modifier) {
-                if (! $this->isName($node, $methodName)) {
-                    continue;
+                foreach ($node->getMethods() as $method) {
+                    if (! $this->isName($method, $methodName)) {
+                        continue;
+                    }
+
+                    $modifier($method);
+
+                    $touched = true;
                 }
-
-                $modifier($node);
-
-                return $node;
             }
         }
 
-        return null;
+        return $touched ? $node : null;
     }
 
     public function getRuleDefinition(): RuleDefinition

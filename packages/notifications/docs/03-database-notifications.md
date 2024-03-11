@@ -23,7 +23,7 @@ To add database notifications to your app, you must add a new Livewire component
 
 <AutoScreenshot name="notifications/database" alt="Database notifications" version="3.x" />
 
-Database notifications will be rendered within a modal. To open this modal, you must have a "trigger" button in your view. Create a new trigger button component in your app, for instance at `/resources/views/notifications/database-notifications-trigger.blade.php`:
+Database notifications will be rendered within a modal. To open this modal, you must have a "trigger" button in your view. Create a new trigger button component in your app, for instance at `/resources/views/filament/notifications/database-notifications-trigger.blade.php`:
 
 ```blade
 <button type="button">
@@ -38,7 +38,7 @@ In the service provider, point to this new trigger view:
 ```php
 use Filament\Notifications\Livewire\DatabaseNotifications;
 
-DatabaseNotifications::trigger('filament-notifications.database-notifications-trigger');
+DatabaseNotifications::trigger('filament.notifications.database-notifications-trigger');
 ```
 
 Now, click on the trigger button that is rendered in your view. A modal should appear containing your database notifications when clicked!

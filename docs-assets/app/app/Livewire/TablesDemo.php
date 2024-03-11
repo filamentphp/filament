@@ -1355,6 +1355,8 @@ class TablesDemo extends Component implements HasForms, HasTable
     public function reordering(Table $table): Table
     {
         return $this->postsTable($table)
+            ->query(Post::query()->limit(5)->orderBy('title'))
+            ->paginated(false)
             ->columns([
                 TextColumn::make('title')
                     ->searchable()

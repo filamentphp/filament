@@ -3,13 +3,11 @@
 namespace Filament\Tables\Columns\Summarizers\Concerns;
 
 use Closure;
+use Filament\Support\Enums\ArgumentValue;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Table;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
-
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 
 trait CanFormatState
 {
@@ -26,83 +24,68 @@ trait CanFormatState
 
     public function limit(int $length = 100, ?string $end = '...'): static
     {
-        $this->formatStateUsing(static function ($state) use ($end, $length) {
-            $isArrayState = is_array($state);
-
-            $state = array_map(function ($state) use ($end, $length) {
-                if (blank($state)) {
-                    return null;
-                }
-
-                return Str::limit(strval($state), $length, $end ?? '');
-            }, Arr::wrap($state));
-
-            if (! $isArrayState) {
-                return Arr::first($state);
+        $this->formatStateUsing(static function ($state) use ($end, $length): ?string {
+            if (blank($state)) {
+                return null;
             }
 
-            return $state;
+            return Str::limit(strval($state), $length, $end ?? '');
         });
 
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
     {
-        $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $divideBy) {
-            $isArrayState = is_array($state);
-
-            $state = array_map(function ($state) use ($currency, $divideBy, $summarizer) {
-                if (blank($state)) {
-                    return null;
-                }
-
-                $currency = $summarizer->evaluate($currency) ?? Table::$defaultCurrency;
-
-                return format_money($state, $currency, $divideBy);
-            }, Arr::wrap($state));
-
-            if (! $isArrayState) {
-                return Arr::first($state);
+        $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $divideBy, $locale): ?string {
+            if (blank($state)) {
+                return null;
             }
 
-            return $state;
+            if (! is_numeric($state)) {
+                return $state;
+            }
+
+            $currency = $summarizer->evaluate($currency) ?? Table::$defaultCurrency;
+
+            if ($divideBy) {
+                $state /= $divideBy;
+            }
+
+            return Number::currency($state, $currency, $summarizer->evaluate($locale));
         });
 
         return $this;
     }
 
-    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
+    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null | ArgumentValue $decimalSeparator = ArgumentValue::Default, string | Closure | null | ArgumentValue $thousandsSeparator = ArgumentValue::Default, int | Closure | null $maxDecimalPlaces = null, string | Closure | null $locale = null): static
     {
-        $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator) {
-            $isArrayState = is_array($state);
+        $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($decimalPlaces, $decimalSeparator, $locale, $maxDecimalPlaces, $thousandsSeparator): ?string {
+            if (blank($state)) {
+                return null;
+            }
 
-            $state = array_map(function ($state) use ($decimalPlaces, $decimalSeparator, $summarizer, $thousandsSeparator) {
-                if (blank($state)) {
-                    return null;
-                }
+            if (! is_numeric($state)) {
+                return $state;
+            }
 
-                if (! is_numeric($state)) {
-                    return $state;
-                }
+            $decimalPlaces = $summarizer->evaluate($decimalPlaces);
+            $decimalSeparator = $summarizer->evaluate($decimalSeparator);
+            $thousandsSeparator = $summarizer->evaluate($thousandsSeparator);
 
-                if ($decimalPlaces === null) {
-                    return format_number($state);
-                }
-
+            if (
+                ($decimalSeparator !== ArgumentValue::Default) ||
+                ($thousandsSeparator !== ArgumentValue::Default)
+            ) {
                 return number_format(
                     $state,
-                    $summarizer->evaluate($decimalPlaces),
-                    $summarizer->evaluate($decimalSeparator),
-                    $summarizer->evaluate($thousandsSeparator),
+                    $decimalPlaces,
+                    $decimalSeparator === ArgumentValue::Default ? '.' : $decimalSeparator,
+                    $thousandsSeparator === ArgumentValue::Default ? ',' : $thousandsSeparator,
                 );
-            }, Arr::wrap($state));
-
-            if (! $isArrayState) {
-                return Arr::first($state);
             }
 
-            return $state;
+            return Number::format($state, $decimalPlaces, $summarizer->evaluate($maxDecimalPlaces), locale: $summarizer->evaluate($locale));
         });
 
         return $this;

@@ -25,10 +25,9 @@ use Illuminate\Foundation\Bus\PendingChain;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Livewire\Component;
-
-use function Filament\Support\format_number;
 
 trait CanExportRecords
 {
@@ -61,6 +60,8 @@ trait CanExportRecords
 
     protected ?Closure $modifyQueryUsing = null;
 
+    protected bool | Closure $hasColumnMapping = true;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -73,8 +74,8 @@ trait CanExportRecords
 
         $this->groupedIcon(FilamentIcon::resolve('actions::export-action.grouped') ?? 'heroicon-m-arrow-down-tray');
 
-        $this->form(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): array => array_merge([
-            Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
+        $this->form(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): array => [
+            ...($action->hasColumnMapping() ? [Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
                 ->columns(1)
                 ->inlineLabel()
                 ->schema(function () use ($action): array {
@@ -99,15 +100,20 @@ trait CanExportRecords
                         $action->getExporter()::getColumns(),
                     );
                 })
-                ->statePath('columnMap'),
-        ], $action->getExporter()::getOptionsFormComponents()));
+                ->statePath('columnMap')] : []),
+            ...$action->getExporter()::getOptionsFormComponents(),
+        ]);
 
         $this->action(function (ExportAction | ExportTableAction | ExportTableBulkAction $action, array $data, Component $livewire) {
+            $exporter = $action->getExporter();
+
             if ($livewire instanceof HasTable) {
-                $query = $livewire->getFilteredSortedTableQuery();
+                $query = $livewire->getTableQueryForExport();
             } else {
-                $query = $action->getExporter()::getModel()::query();
+                $query = $exporter::getModel()::query();
             }
+
+            $query = $exporter::modifyQuery($query);
 
             if ($this->modifyQueryUsing) {
                 $query = $this->evaluate($this->modifyQueryUsing, [
@@ -124,7 +130,7 @@ trait CanExportRecords
                 Notification::make()
                     ->title(__('filament-actions::export.notifications.max_rows.title'))
                     ->body(trans_choice('filament-actions::export.notifications.max_rows.body', $maxRows, [
-                        'count' => format_number($maxRows),
+                        'count' => Number::format($maxRows),
                     ]))
                     ->danger()
                     ->send();
@@ -139,18 +145,24 @@ trait CanExportRecords
                 Arr::except($data, ['columnMap']),
             );
 
-            $columnMap = collect($data['columnMap'])
-                ->dot()
-                ->reduce(fn (Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
-                    Str::beforeLast($key, '.') => [Str::afterLast($key, '.') => $value],
-                ]), collect())
-                ->filter(fn (array $column): bool => $column['isEnabled'] ?? false)
-                ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
-                ->all();
+            if ($action->hasColumnMapping()) {
+                $columnMap = collect($data['columnMap'])
+                    ->dot()
+                    ->reduce(fn (Collection $carry, mixed $value, string $key): Collection => $carry->mergeRecursive([
+                        Str::beforeLast($key, '.') => [Str::afterLast($key, '.') => $value],
+                    ]), collect())
+                    ->filter(fn (array $column): bool => $column['isEnabled'] ?? false)
+                    ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
+                    ->all();
+            } else {
+                $columnMap = collect($exporter::getColumns())
+                    ->mapWithKeys(fn (ExportColumn $column): array => [$column->getName() => $column->getLabel()])
+                    ->all();
+            }
 
             $export = app(Export::class);
             $export->user()->associate($user);
-            $export->exporter = $action->getExporter();
+            $export->exporter = $exporter;
             $export->total_rows = $totalRows;
 
             $exporter = $export->getExporter(
@@ -168,7 +180,6 @@ trait CanExportRecords
             $hasCsv = in_array(ExportFormat::Csv, $formats);
             $hasXlsx = in_array(ExportFormat::Xlsx, $formats);
 
-            $query->withoutEagerLoads();
             $serializedQuery = EloquentSerializeFacade::serialize($query);
 
             $job = $action->getJob();
@@ -230,7 +241,7 @@ trait CanExportRecords
             Notification::make()
                 ->title($action->getSuccessNotificationTitle())
                 ->body(trans_choice('filament-actions::export.notifications.started.body', $export->total_rows, [
-                    'count' => format_number($export->total_rows),
+                    'count' => Number::format($export->total_rows),
                 ]))
                 ->success()
                 ->send();
@@ -386,5 +397,17 @@ trait CanExportRecords
         $this->modifyQueryUsing = $callback;
 
         return $this;
+    }
+
+    public function columnMapping(bool | Closure $condition = true): static
+    {
+        $this->hasColumnMapping = $condition;
+
+        return $this;
+    }
+
+    public function hasColumnMapping(): bool
+    {
+        return (bool) $this->evaluate($this->hasColumnMapping);
     }
 }
