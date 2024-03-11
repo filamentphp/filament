@@ -12,7 +12,7 @@ Start by creating a widget with the command:
 php artisan make:filament-widget StatsOverview --stats-overview
 ```
 
-Then return `Stat` instances from the `getStats()` method:
+This command will create a new `StatsOverview.php` file. Open it, and return `Stat` instances from the `getStats()` method:
 
 ```php
 <?php
