@@ -962,6 +962,16 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             }
 
             if (! $relationship instanceof BelongsToMany) {
+                // If the model is new and the foreign key is already filled, we don't need to fill it again.
+                // This could be a security issue if the foreign key was mutated in some way before it
+                // was saved, and we don't want to overwrite that value.
+                if (
+                    $record->wasRecentlyCreated &&
+                    filled($record->getAttributeValue($relationship->getForeignKeyName()))
+                ) {
+                    return;
+                }
+
                 $relationship->associate($state);
                 $record->wasRecentlyCreated && $record->save();
 
