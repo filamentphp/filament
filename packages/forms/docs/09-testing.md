@@ -57,7 +57,7 @@ it('can validate input', function () {
         ->fillForm([
             'title' => null,
         ])
-        ->call('save')
+        ->call('create')
         ->assertHasFormErrors(['title' => 'required']);
 });
 ```
@@ -72,7 +72,7 @@ livewire(CreatePost::class)
         'title' => fake()->sentence(),
         // ...
     ])
-    ->call('save')
+    ->call('create')
     ->assertHasNoFormErrors();
 ```
 
