@@ -587,7 +587,7 @@ trait CanOpenModal
             $this->hasModalContent() ||
             $this->hasModalContentFooter() ||
             $this->getInfolist() ||
-            (value($checkForFormUsing) ?? false);
+            (value($checkForFormUsing, $this) ?? false);
     }
 
     public function hasModalCloseButton(): bool
