@@ -6,12 +6,14 @@ use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasIcon;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder;
 
 class Tab extends Component
 {
     use HasBadge;
     use HasIcon;
+    use HasExtraAttributes;
 
     protected string | Closure | null $label = null;
 
