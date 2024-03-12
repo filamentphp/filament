@@ -24,7 +24,7 @@ class ShowPasswordAction extends Action
 
         $this->extraAttributes([
             'x-show' => '! isPasswordRevealed',
-        ]);
+        ], true);
 
         $this->alpineClickHandler('isPasswordRevealed = true');
     }
