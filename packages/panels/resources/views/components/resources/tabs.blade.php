@@ -20,6 +20,7 @@
                 :icon="$tab->getIcon()"
                 :icon-position="$tab->getIconPosition()"
                 :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                :attributes="$attributes->merge($tab->getExtraAttributes(), escape: false)
             >
                 {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
             </x-filament::tabs.item>
