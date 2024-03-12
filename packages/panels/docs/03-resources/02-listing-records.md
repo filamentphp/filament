@@ -63,6 +63,18 @@ Tab::make()
     ->iconPosition(IconPosition::After)
 ```
 
+### Adding extra attributes to filter tabs
+
+You may also pass extra HTML attributes to stats using `extraAttributes()`:
+
+```php
+use Filament\Resources\Components\Tab;
+
+Tab::make()
+    ->extraAttributes(['data-cy' => 'statement-confirmed'])
+```
+
+
 ### Adding badges to filter tabs
 
 You can add badges to the tabs by passing a string into the `badge()` method of the tab:
