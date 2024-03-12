@@ -217,11 +217,11 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-For any actions you do not want to be wrapped in a transaction, you can use the `databaseTransactions(false)` method:
+For any actions you do not want to be wrapped in a transaction, you can use the `databaseTransaction(false)` method:
 
 ```php
 CreateAction::make()
-    ->databaseTransactions(false)
+    ->databaseTransaction(false)
 ```
 
 And for any pages like [Create resource](resources/creating-records) and [Edit resource](resources/editing-records), you can define the `$hasDatabaseTransactions` property to `false` on the page class:
@@ -241,11 +241,11 @@ class CreatePost extends CreateRecord
 
 Instead of enabling database transactions everywhere and opting out of them for specific actions and pages, you can opt in to database transactions for specific actions and pages.
 
-For actions, you can use the `databaseTransactions()` method:
+For actions, you can use the `databaseTransaction()` method:
 
 ```php
 CreateAction::make()
-    ->databaseTransactions()
+    ->databaseTransaction()
 ```
 
 For pages like [Create resource](resources/creating-records) and [Edit resource](resources/editing-records), you can define the `$hasDatabaseTransactions` property to `true` on the page class:
