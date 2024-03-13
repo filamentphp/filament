@@ -53,7 +53,7 @@
                         },
                     )
                 "
-                x-on:trix-change="$nextTick(() => state = $event.target.value)"
+                x-on:trix-change="$nextTick(() => (state = $event.target.value))"
                 @if ($isLiveDebounced())
                     x-on:trix-change.debounce.{{ $getLiveDebounce() }}="$nextTick(() => $wire.call('$refresh'))"
                 @endif
