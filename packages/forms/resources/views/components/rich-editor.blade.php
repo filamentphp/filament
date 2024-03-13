@@ -53,9 +53,9 @@
                         },
                     )
                 "
-                x-on:trix-change="state = $event.target.value"
+                x-on:trix-change="$nextTick(() => state = $event.target.value)"
                 @if ($isLiveDebounced())
-                    x-on:trix-change.debounce.{{ $getLiveDebounce() }}="$wire.call('$refresh')"
+                    x-on:trix-change.debounce.{{ $getLiveDebounce() }}="$nextTick(() => $wire.call('$refresh'))"
                 @endif
                 @if (! $hasToolbarButton('attachFiles'))
                     x-on:trix-file-accept="$event.preventDefault()"
