@@ -7,4 +7,8 @@ namespace Filament\SpatieLaravelTagsPlugin\Types;
  */
 class AllTagTypes
 {
+    public static function make(): static
+    {
+        return app(static::class);
+    }
 }

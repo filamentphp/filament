@@ -18,7 +18,7 @@ class SpatieTagsColumn extends TextColumn
     {
         parent::setUp();
 
-        $this->type(new AllTagTypes());
+        $this->type(AllTagTypes::make());
 
         $this->badge();
     }
