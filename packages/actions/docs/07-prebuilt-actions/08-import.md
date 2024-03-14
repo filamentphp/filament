@@ -9,8 +9,14 @@ Filament v3.1 introduced a prebuilt action that is able to import rows from a CS
 This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications#overview), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about imports:
 
 ```bash
+# Laravel 11 and higher
+php artisan make:queue-batches-table
+php artisan make:notifications-table
+
+# Laravel 10
 php artisan queue:batches-table
 php artisan notifications:table
+
 php artisan vendor:publish --tag=filament-actions-migrations
 
 php artisan migrate

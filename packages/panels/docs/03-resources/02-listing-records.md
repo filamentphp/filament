@@ -86,6 +86,17 @@ Tab::make()
     ->badgeColor('success')
 ```
 
+### Adding extra attributes to filter tabs
+
+You may also pass extra HTML attributes to filter tabs using `extraAttributes()`:
+
+```php
+use Filament\Resources\Components\Tab;
+
+Tab::make()
+    ->extraAttributes(['data-cy' => 'statement-confirmed-tab'])
+```
+
 ### Customizing the default tab
 
 To customize the default tab that is selected when the page is loaded, you can return the array key of the tab from the `getDefaultActiveTab()` method:
