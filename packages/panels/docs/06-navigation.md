@@ -486,6 +486,17 @@ MenuItem::make()
     ->hidden(fn (): bool => ! auth()->user()->can('viewAny', Payment::class))
 ```
 
+### Adding extra attributes to filter menu items
+
+You may also pass extra HTML attributes to filter menu items using `extraAttributes()`:
+
+```php
+use Filament\Navigation\MenuItem;
+
+MenuItem::make()
+    ->extraAttributes(['data-cy' => 'statement-confirmed-tab'])
+```
+
 ### Sending a `POST` HTTP request from a user menu item
 
 You can send a `POST` HTTP request from a user menu item by passing a URL to the `postAction()` method:
