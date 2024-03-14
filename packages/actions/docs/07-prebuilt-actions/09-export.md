@@ -7,11 +7,11 @@ title: Export action
 Filament v3.2 introduced a prebuilt action that is able to export rows to a CSV or XLSX file. When the trigger button is clicked, a modal asks for the columns that they want to export, and what they should be labeled. This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications#overview), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about exports:
 
 ```bash
-# Laravel v11.0+
+# Laravel 11 and higher
 php artisan make:queue-batches-table
-php artisan make:notifications-table # Migration included in fresh installation of Laravel v11.0
+php artisan make:notifications-table
 
-# Laravel v10.0 and prior
+# Laravel 10
 php artisan queue:batches-table
 php artisan notifications:table
 
