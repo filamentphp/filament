@@ -55,7 +55,7 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
 
     public function getCollection(): ?string
     {
-        return $this->evaluate($this->collection) ?? 'default';
+        return $this->evaluate($this->collection);
     }
 
     public function getConversion(): ?string
@@ -111,8 +111,6 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
      */
     public function getState(): array
     {
-        $collection = $this->getCollection();
-
         $record = $this->getRecord();
 
         if ($this->hasRelationship($record)) {
@@ -123,12 +121,14 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
 
         $state = [];
 
+        $collection = $this->getCollection() ?? 'default';
+
         foreach ($records as $record) {
             /** @var Model $record */
             $state = [
                 ...$state,
                 ...$record->getRelationValue('media')
-                    ->filter(fn (Media $media): bool => blank($collection) || ($media->getAttributeValue('collection_name') === $collection))
+                    ->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection)
                     ->sortBy('order_column')
                     ->pluck('uuid')
                     ->all(),

@@ -28,7 +28,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             $records = Arr::wrap($record);
 
             foreach ($records as $record) {
-                $url = $record->getFallbackMediaUrl($column->getCollection() ?? '', $column->getConversion() ?? '');
+                $url = $record->getFallbackMediaUrl($column->getCollection() ?? 'default', $column->getConversion() ?? '');
 
                 if (blank($url)) {
                     continue;
@@ -57,7 +57,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 
     public function getCollection(): ?string
     {
-        return $this->evaluate($this->collection) ?? 'default';
+        return $this->evaluate($this->collection);
     }
 
     public function getConversion(): ?string
@@ -119,11 +119,14 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 
         $state = [];
 
+        $collection = $this->getCollection() ?? 'default';
+
         foreach ($records as $record) {
             /** @var Model $record */
             $state = [
                 ...$state,
                 ...$record->getRelationValue('media')
+                    ->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection)
                     ->sortBy('order_column')
                     ->pluck('uuid')
                     ->all(),
@@ -140,15 +143,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         }
 
         /** @phpstan-ignore-next-line */
-        $modifyMediaQuery = fn (Builder | Relation $query) => $query
-            ->ordered()
-            ->when(
-                $this->getCollection(),
-                fn (Builder | Relation $query, string $collection) => $query->where(
-                    'collection_name',
-                    $collection,
-                ),
-            );
+        $modifyMediaQuery = fn (Builder | Relation $query) => $query->ordered();
 
         if ($this->hasRelationship($query->getModel())) {
             return $query->with([
