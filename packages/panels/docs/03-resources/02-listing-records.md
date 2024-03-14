@@ -63,18 +63,6 @@ Tab::make()
     ->iconPosition(IconPosition::After)
 ```
 
-### Adding extra attributes to filter tabs
-
-You may also pass extra HTML attributes to stats using `extraAttributes()`:
-
-```php
-use Filament\Resources\Components\Tab;
-
-Tab::make()
-    ->extraAttributes(['data-cy' => 'statement-confirmed'])
-```
-
-
 ### Adding badges to filter tabs
 
 You can add badges to the tabs by passing a string into the `badge()` method of the tab:
@@ -96,6 +84,17 @@ use Filament\Resources\Components\Tab;
 Tab::make()
     ->badge(Customer::query()->where('active', true)->count())
     ->badgeColor('success')
+```
+
+### Adding extra attributes to filter tabs
+
+You may also pass extra HTML attributes to filter tabs using `extraAttributes()`:
+
+```php
+use Filament\Resources\Components\Tab;
+
+Tab::make()
+    ->extraAttributes(['data-cy' => 'statement-confirmed-tab'])
 ```
 
 ### Customizing the default tab
