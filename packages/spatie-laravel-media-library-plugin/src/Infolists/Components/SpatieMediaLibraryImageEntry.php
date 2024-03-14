@@ -3,14 +3,16 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
+use Filament\SpatieLaravelMediaLibraryPlugin\Collections\AllMediaCollections;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Spatie\MediaLibrary\MediaCollections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
 class SpatieMediaLibraryImageEntry extends ImageEntry
 {
-    protected string | Closure | null $collection = null;
+    protected string | AllMediaCollections | Closure | null $collection = null;
 
     protected string | Closure | null $conversion = null;
 
@@ -25,8 +27,14 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
 
             $records = Arr::wrap($record);
 
+            $collection = $component->getCollection();
+
+            if (! is_string($collection)) {
+                $collection = 'default';
+            }
+
             foreach ($records as $record) {
-                $url = $record->getFallbackMediaUrl($component->getCollection() ?? '', $component->getConversion() ?? '');
+                $url = $record->getFallbackMediaUrl($collection, $component->getConversion() ?? '');
 
                 if (blank($url)) {
                     continue;
@@ -39,9 +47,16 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
         });
     }
 
-    public function collection(string | Closure | null $collection): static
+    public function collection(string | AllMediaCollections | Closure | null $collection): static
     {
         $this->collection = $collection;
+
+        return $this;
+    }
+
+    public function allCollections(): static
+    {
+        $this->collection(AllMediaCollections::make());
 
         return $this;
     }
@@ -53,7 +68,7 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
         return $this;
     }
 
-    public function getCollection(): ?string
+    public function getCollection(): string | AllMediaCollections | null
     {
         return $this->evaluate($this->collection);
     }
@@ -128,7 +143,10 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             $state = [
                 ...$state,
                 ...$record->getRelationValue('media')
-                    ->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection)
+                    ->when(
+                        ! $collection instanceof AllMediaCollections,
+                        fn (MediaCollection $collection) => $collection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
+                    )
                     ->sortBy('order_column')
                     ->pluck('uuid')
                     ->all(),
