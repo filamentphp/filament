@@ -69,14 +69,14 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Section;
 
 Section::make('Rate limiting')
+    ->schema([
+        // ...
+    ])
     ->footerActions([
         Action::make('test')
             ->action(function () {
                 // ...
             }),
-    ])
-    ->schema([
-        // ...
     ])
 ```
 
@@ -94,6 +94,9 @@ use Filament\Forms\Components\Section;
 use Filament\Support\Enums\Alignment;
 
 Section::make('Rate limiting')
+    ->schema([
+        // ...
+    ])
     ->footerActions([
         Action::make('test')
             ->action(function () {
@@ -101,9 +104,6 @@ Section::make('Rate limiting')
             }),
     ])
     ->footerActionsAlignment(Alignment::End)
-    ->schema([
-        // ...
-    ])
 ```
 
 ### Adding actions to a section without heading
