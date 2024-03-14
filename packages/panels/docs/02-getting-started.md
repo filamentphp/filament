@@ -87,21 +87,43 @@ public function boot(): void
 
 Let's set up relationships between the models. For our system, pet owners can own multiple pets (patients), and patients can have many treatments:
 
+in `/app/Models` edit the three files `Owner.php`, `Patient.php` and `Treatment.php`:
+
+`/app/Models/Owner.php`
 ```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Owner extends Model
 {
+    use HasFactory;
     public function patients(): HasMany
     {
         return $this->hasMany(Patient::class);
     }
 }
+```
+
+`/app/Models/Patient.php`
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Patient extends Model
 {
+    use HasFactory;
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Owner::class);
@@ -112,15 +134,29 @@ class Patient extends Model
         return $this->hasMany(Treatment::class);
     }
 }
+```
+
+`/app/Models/Treatment.php`
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Treatment extends Model
 {
+    use HasFactory;
     public function patient(): BelongsTo
     {
         return $this->belongsTo(Patient::class);
     }
+
 }
 ```
+
 
 ## Introducing resources
 
