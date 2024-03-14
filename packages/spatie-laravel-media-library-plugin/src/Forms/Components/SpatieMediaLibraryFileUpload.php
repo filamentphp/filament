@@ -55,12 +55,12 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var Model&HasMedia $record */
             $media = $record->load('media')->getMedia($component->getCollection())
                 ->when(
-                    ! $component->isMultiple(),
-                    fn (Collection $media): Collection => $media->take(1),
-                )
-                ->when(
                     $component->hasMediaFilter(),
                     fn (Collection $media) => $component->filterMedia($media)
+                )
+                ->when(
+                    ! $component->isMultiple(),
+                    fn (Collection $media): Collection => $media->take(1),
                 )
                 ->mapWithKeys(function (Media $media): array {
                     $uuid = $media->getAttributeValue('uuid');
