@@ -26,12 +26,4 @@ abstract class SimplePage extends BasePage
     {
         return true;
     }
-
-    /**
-     * @return array<string, array<mixed>>
-     */
-    protected function queryStringInteractsWithActions(): array
-    {
-        return [];
-    }
 }

@@ -40,13 +40,13 @@ trait InteractsWithActions
     /**
      * @var mixed
      */
-    // #[Url(as: 'action')]
+    #[Url(as: 'action')]
     public $defaultAction = null;
 
     /**
      * @var mixed
      */
-    // #[Url(as: 'actionArguments')]
+    #[Url(as: 'actionArguments')]
     public $defaultActionArguments = null;
 
     /**
@@ -55,17 +55,6 @@ trait InteractsWithActions
     protected array $cachedActions = [];
 
     protected bool $hasActionsModalRendered = false;
-
-    /**
-     * @return array<string, array<mixed>>
-     */
-    protected function queryStringInteractsWithActions(): array
-    {
-        return [
-            'defaultAction' => ['as' => 'action'],
-            'defaultActionArguments' => ['as' => 'actionArguments'],
-        ];
-    }
 
     /**
      * @param  array<string, mixed>  $arguments
