@@ -156,7 +156,7 @@ trait CanReadModelSchemas
 
         $driver = app($model)->getConnection()->getDriverName();
 
-        if ($driver === 'mysql') {
+        if (in_array($driver, ['mysql', 'mariadb'])) {
             if ($default === 'NULL'
             || preg_match("/^\(.*\)$/", $default) === 1
             || str_ends_with($default, '()')
