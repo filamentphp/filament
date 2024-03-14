@@ -6,7 +6,7 @@ use Closure;
 use Filament\SpatieLaravelMediaLibraryPlugin\Collections\AllMediaCollections;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Spatie\MediaLibrary\MediaCollections\MediaCollection;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
