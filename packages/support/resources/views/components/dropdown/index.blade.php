@@ -3,6 +3,7 @@
     'offset' => 8,
     'placement' => null,
     'shift' => false,
+    'size' => null,
     'teleport' => false,
     'trigger' => null,
     'width' => null,
@@ -37,7 +38,7 @@
 
     <div
         x-cloak
-        x-float{{ $placement ? ".placement.{$placement}" : '' }}.flip{{ $shift ? '.shift' : '' }}{{ $teleport ? '.teleport' : '' }}{{ $offset ? '.offset' : '' }}="{ offset: {{ $offset }} }"
+        x-float{{ $placement ? ".placement.{$placement}" : '' }}.flip{{ $shift ? '.shift' : '' }}{{ $teleport ? '.teleport' : '' }}{{ $offset ? '.offset' : '' }}{{ $size ? '.size' : '' }}="{ offset: {{ $offset }}, {{ $size ? 'size: ' . $size : '' }} }"
         x-ref="panel"
         x-transition:enter-start="opacity-0"
         x-transition:leave-end="opacity-0"
@@ -62,7 +63,7 @@
                 null => 'max-w-[14rem]',
                 default => $width,
             },
-            'overflow-y-auto' => $maxHeight,
+            'overflow-y-auto' => $maxHeight || $size,
         ])
         @style([
             "max-height: {$maxHeight}" => $maxHeight,
