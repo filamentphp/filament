@@ -433,10 +433,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             })
             ->fillForm($this->getEditOptionActionFormData())
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
-                $statePath = $component->getStatePath();
-
                 if (! $component->getUpdateOptionUsing()) {
-                    throw new Exception("Select field [{$statePath}] must have a [updateOptionUsing()] closure set.");
+                    throw new Exception("Select field [{$component->getStatePath()}] must have a [updateOptionUsing()] closure set.");
                 }
 
                 $component->evaluate($component->getUpdateOptionUsing(), [
@@ -444,9 +442,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     'form' => $form,
                 ]);
 
-                /** @var LivewireComponent $livewire */
-                $livewire = $component->getLivewire();
-                $livewire->dispatch('filament-forms::select.refreshSelectedOptionLabel', livewireId: $livewire->getId(), statePath: $statePath);
+                $component->refreshSelectedOptionLabel();
             })
             ->color('gray')
             ->icon(FilamentIcon::resolve('forms::components.select.actions.edit-option') ?? 'heroicon-m-pencil-square')
@@ -1225,5 +1221,17 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         /** @var BelongsTo $relationship */
 
         return $relationship->getQualifiedOwnerKeyName();
+    }
+
+    public function refreshSelectedOptionLabel(): void
+    {
+        /** @var LivewireComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        $livewire->dispatch(
+            'filament-forms::select.refreshSelectedOptionLabel',
+            livewireId: $livewire->getId(),
+            statePath: $this->getStatePath(),
+        );
     }
 }
