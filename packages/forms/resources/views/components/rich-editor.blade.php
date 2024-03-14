@@ -55,7 +55,9 @@
                 "
                 x-on:trix-change="
                     $nextTick(() => {
-                        if (! $refs.trix) return
+                        if (! $refs.trix) {
+                            return
+                        }
                 
                         state = $event.target.value
                     })
@@ -63,7 +65,9 @@
                 @if ($isLiveDebounced())
                     x-on:trix-change.debounce.{{ $getLiveDebounce() }}="
                         $nextTick(() => {
-                            if (! $refs.trix) return
+                            if (! $refs.trix) {
+                                return
+                            }
                 
                             $wire.call('$refresh')
                         })
