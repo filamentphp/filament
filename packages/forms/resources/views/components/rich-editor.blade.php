@@ -58,7 +58,7 @@
                         if (! $refs.trix) {
                             return
                         }
-                
+
                         state = $event.target.value
                     })
                 "
@@ -68,7 +68,7 @@
                             if (! $refs.trix) {
                                 return
                             }
-                
+
                             $wire.call('$refresh')
                         })
                     "
