@@ -178,6 +178,37 @@ class EditUser extends EditRecord
 
 Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/edit#lifecycle-hooks).
 
+## Saving a part of the form independently
+
+You may want to allow the user to save a part of the form independently of the rest of the form. One way to do this is with a [section action in the header or footer](../../forms/layout/section#adding-actions-to-the-sections-header-or-footer). From the `action()` method, you can call `saveFormComponentOnly()`, passing in the `Section` component that you want to save:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Section;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\EditRecord;
+
+Section::make('Rate limiting')
+    ->schema([
+        // ...
+    ])
+    ->footerActions([
+        fn (string $operation): Action => Action::make('save')
+            ->action(function (Section $component, EditRecord $livewire) {
+                $livewire->saveFormComponentOnly($component);
+                
+                Notification::make()
+                    ->title('Rate limiting saved')
+                    ->body('The rate limiting settings have been saved successfully.')
+                    ->success()
+                    ->send();
+            })
+            ->visible($operation === 'edit'),
+    ])
+```
+
+The `$operation` helper is available, to ensure that the action is only visible when the form is being edited.
+
 ## Halting the saving process
 
 At any time, you may call `$this->halt()` from inside a lifecycle hook or mutation method, which will halt the entire saving process:
