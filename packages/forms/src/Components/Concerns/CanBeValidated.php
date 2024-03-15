@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
 use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
 use Illuminate\Contracts\Support\Arrayable;
@@ -400,6 +401,13 @@ trait CanBeValidated
         return $this;
     }
 
+    public function ulid(bool | Closure $condition = true): static
+    {
+        $this->rule('ulid', $condition);
+
+        return $this;
+    }
+
     public function uuid(bool | Closure $condition = true): static
     {
         $this->rule('uuid', $condition);
@@ -648,6 +656,7 @@ trait CanBeValidated
     {
         $rules = [
             $this->getRequiredValidationRule(),
+            ...($this instanceof CanBeLengthConstrained ? $this->getLengthValidationRules() : []),
         ];
 
         if (filled($regexPattern = $this->getRegexPattern())) {

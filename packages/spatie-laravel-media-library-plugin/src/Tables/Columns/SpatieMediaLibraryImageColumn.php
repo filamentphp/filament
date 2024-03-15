@@ -3,21 +3,62 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\SpatieLaravelMediaLibraryPlugin\Collections\AllMediaCollections;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn
 {
-    protected string | Closure | null $collection = null;
+    protected string | AllMediaCollections | Closure | null $collection = null;
 
     protected string | Closure | null $conversion = null;
 
-    public function collection(string | Closure | null $collection): static
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->defaultImageUrl(function (SpatieMediaLibraryImageColumn $column, Model $record): ?string {
+            if ($column->hasRelationship($record)) {
+                $record = $column->getRelationshipResults($record);
+            }
+
+            $records = Arr::wrap($record);
+
+            $collection = $column->getCollection();
+
+            if (! is_string($collection)) {
+                $collection = 'default';
+            }
+
+            foreach ($records as $record) {
+                $url = $record->getFallbackMediaUrl($collection, $column->getConversion() ?? '');
+
+                if (blank($url)) {
+                    continue;
+                }
+
+                return $url;
+            }
+
+            return null;
+        });
+    }
+
+    public function collection(string | AllMediaCollections | Closure | null $collection): static
     {
         $this->collection = $collection;
+
+        return $this;
+    }
+
+    public function allCollections(): static
+    {
+        $this->collection(AllMediaCollections::make());
 
         return $this;
     }
@@ -29,9 +70,9 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $this;
     }
 
-    public function getCollection(): ?string
+    public function getCollection(): string | AllMediaCollections | null
     {
-        return $this->evaluate($this->collection) ?? 'default';
+        return $this->evaluate($this->collection);
     }
 
     public function getConversion(): ?string
@@ -44,34 +85,38 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         $record = $this->getRecord();
 
         if ($this->hasRelationship($record)) {
-            $record = $record->getRelationValue($this->getRelationshipName());
+            $record = $this->getRelationshipResults($record);
         }
 
-        if (! $record) {
-            return null;
-        }
+        $records = Arr::wrap($record);
 
-        /** @var ?Media $media */
-        $media = $record->media->first(fn (Media $media): bool => $media->uuid === $state);
+        foreach ($records as $record) {
+            /** @var Model $record */
 
-        if (! $media) {
-            return null;
-        }
+            /** @var ?Media $media */
+            $media = $record->getRelationValue('media')->first(fn (Media $media): bool => $media->uuid === $state);
 
-        $conversion = $this->getConversion();
-
-        if ($this->getVisibility() === 'private') {
-            try {
-                return $media->getTemporaryUrl(
-                    now()->addMinutes(5),
-                    $conversion ?? '',
-                );
-            } catch (Throwable $exception) {
-                // This driver does not support creating temporary URLs.
+            if (! $media) {
+                continue;
             }
+
+            $conversion = $this->getConversion();
+
+            if ($this->getVisibility() === 'private') {
+                try {
+                    return $media->getTemporaryUrl(
+                        now()->addMinutes(5),
+                        $conversion ?? '',
+                    );
+                } catch (Throwable $exception) {
+                    // This driver does not support creating temporary URLs.
+                }
+            }
+
+            return $media->getAvailableUrl(Arr::wrap($conversion));
         }
 
-        return $media->getAvailableUrl(Arr::wrap($conversion));
+        return null;
     }
 
     /**
@@ -79,19 +124,34 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
      */
     public function getState(): array
     {
-        $collection = $this->getCollection();
-
         $record = $this->getRecord();
 
         if ($this->hasRelationship($record)) {
-            $record = $record->getRelationValue($this->getRelationshipName());
+            $record = $this->getRelationshipResults($record);
         }
 
-        return $record?->getRelationValue('media')
-            ->filter(fn (Media $media): bool => blank($collection) || ($media->getAttributeValue('collection_name') === $collection))
-            ->sortBy('order_column')
-            ->map(fn (Media $media): string => $media->uuid)
-            ->all() ?? [];
+        $records = Arr::wrap($record);
+
+        $state = [];
+
+        $collection = $this->getCollection() ?? 'default';
+
+        foreach ($records as $record) {
+            /** @var Model $record */
+            $state = [
+                ...$state,
+                ...$record->getRelationValue('media')
+                    ->when(
+                        ! $collection instanceof AllMediaCollections,
+                        fn (MediaCollection $collection) => $collection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
+                    )
+                    ->sortBy('order_column')
+                    ->pluck('uuid')
+                    ->all(),
+            ];
+        }
+
+        return array_unique($state);
     }
 
     public function applyEagerLoading(Builder | Relation $query): Builder | Relation
@@ -100,18 +160,15 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             return $query;
         }
 
+        /** @phpstan-ignore-next-line */
+        $modifyMediaQuery = fn (Builder | Relation $query) => $query->ordered();
+
         if ($this->hasRelationship($query->getModel())) {
             return $query->with([
-                "{$this->getRelationshipName()}.media" => fn (Builder | Relation $query) => $query->when(
-                    $this->getCollection(),
-                    fn (Builder | Relation $query, string $collection) => $query->where(
-                        'collection_name',
-                        $collection,
-                    ),
-                ),
+                "{$this->getRelationshipName()}.media" => $modifyMediaQuery,
             ]);
         }
 
-        return $query->with(['media']);
+        return $query->with(['media' => $modifyMediaQuery]);
     }
 }

@@ -25,6 +25,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('text')
     ->email() // or
     ->numeric() // or
+    ->integer() // or
     ->password() // or
     ->tel() // or
     ->url()

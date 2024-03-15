@@ -29,6 +29,8 @@ return [
 
             ],
 
+            'placeholder' => 'Ei tietueita',
+
         ],
 
     ],

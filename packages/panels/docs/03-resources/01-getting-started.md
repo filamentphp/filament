@@ -60,8 +60,6 @@ If you'd like to save time, Filament can automatically generate the [form](#reso
 php artisan make:filament-resource Customer --generate
 ```
 
-> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence, Filament is unable to generate the schema for your resource if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
-
 ### Handling soft deletes
 
 By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
@@ -303,7 +301,9 @@ protected static ?string $navigationIcon = 'heroicon-o-user-group';
 Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()` method:
 
 ```php
-public static function getNavigationIcon(): ?string
+use Illuminate\Contracts\Support\Htmlable;
+
+public static function getNavigationIcon(): string | Htmlable | null
 {
     return 'heroicon-o-user-group';
 }

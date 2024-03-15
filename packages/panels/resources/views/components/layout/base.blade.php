@@ -24,7 +24,7 @@
 
         <title>
             {{ filled($title = strip_tags(($livewire ?? null)?->getTitle() ?? '')) ? "{$title} - " : null }}
-            {{ filament()->getBrandName() }}
+            {{ strip_tags(filament()->getBrandName()) }}
         </title>
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::STYLES_BEFORE, scopes: $livewire->getRenderHookScopes()) }}
@@ -59,38 +59,13 @@
                 --font-family: '{!! filament()->getFontFamily() !!}';
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
+                --default-theme-mode: {{ filament()->getDefaultThemeMode()->value }};
             }
         </style>
 
         @stack('styles')
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::STYLES_AFTER, scopes: $livewire->getRenderHookScopes()) }}
-
-        <script>
-            document.addEventListener('DOMContentLoaded', () => {
-                setTimeout(() => {
-                    const activeSidebarItem = document.querySelector(
-                        '.fi-sidebar-item-active',
-                    )
-
-                    if (!activeSidebarItem) {
-                        return
-                    }
-
-                    const sidebarWrapper =
-                        document.querySelector('.fi-sidebar-nav')
-
-                    if (!sidebarWrapper) {
-                        return
-                    }
-
-                    sidebarWrapper.scrollTo(
-                        0,
-                        activeSidebarItem.offsetTop - window.innerHeight / 2,
-                    )
-                }, 0)
-            })
-        </script>
 
         @if (! filament()->hasDarkMode())
             <script>

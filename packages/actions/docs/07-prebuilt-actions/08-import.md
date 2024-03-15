@@ -9,8 +9,14 @@ Filament v3.1 introduced a prebuilt action that is able to import rows from a CS
 This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications#overview), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about imports:
 
 ```bash
+# Laravel 11 and higher
+php artisan make:queue-batches-table
+php artisan make:notifications-table
+
+# Laravel 10
 php artisan queue:batches-table
 php artisan notifications:table
+
 php artisan vendor:publish --tag=filament-actions-migrations
 
 php artisan migrate
@@ -49,6 +55,16 @@ public function table(Table $table): Table
 
 The ["importer" class needs to be created](#creating-an-importer) to tell Filament how to import each row of the CSV.
 
+If you have more than one `ImportAction` in the same place, you should give each a unique name in the `make()` method:
+
+```php
+ImportAction::make('importProducts')
+    ->importer(ProductImporter::class)
+
+ImportAction::make('importBrands')
+    ->importer(BrandImporter::class)
+```
+
 ## Creating an importer
 
 To create an importer class for a model, you may use the `make:filament-importer` command, passing the name of a model:
@@ -66,8 +82,6 @@ If you'd like to save time, Filament can automatically generate the [columns](#d
 ```bash
 php artisan make:filament-importer Product --generate
 ```
-
-> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence, Filament is unable to generate the columns for your importer if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
 
 ## Defining importer columns
 
@@ -320,6 +334,18 @@ ImportColumn::make('sku')
     })
 ```
 
+### Adding helper text below the import column
+
+Sometimes, you may wish to provide extra information for the user before validation. You can do this by adding `helperText()` to a column, which gets displayed below the mapping select:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+ImportColumn::make('skus')
+    ->array(',')
+    ->helperText('A comma-separated list of SKUs.')
+```
+
 ## Updating existing records when importing
 
 When generating an importer class, you will see this `resolveRecord()` method:
@@ -365,6 +391,28 @@ public function resolveRecord(): ?Product
         ->first();
 }
 ```
+
+If you'd like to fail the import row if no record is found, you can throw a `RowImportFailedException` with a message:
+
+```php
+use App\Models\Product;
+use Filament\Actions\Imports\Exceptions\RowImportFailedException;
+
+public function resolveRecord(): ?Product
+{
+    $product = Product::query()
+        ->where('sku', $this->data['sku'])
+        ->first();
+
+    if (! $product) {
+        throw new RowImportFailedException("No product found with SKU [{$this->data['sku']}].");
+    }
+
+    return $product;
+}
+```
+
+When the import is completed, the user will be able to download a CSV of failed rows, which will contain the error messages.
 
 ### Ignoring blank state for an import column
 
@@ -527,6 +575,16 @@ ImportAction::make()
 ```
 
 You can only specify a single character, otherwise an exception will be thrown.
+
+## Changing the column header offset
+
+If your column headers are not on the first row of the CSV, you can call the `headerOffset()` method on the action, passing the number of rows to skip:
+
+```php
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->headerOffset(5)
+```
 
 ## Customizing the import job
 

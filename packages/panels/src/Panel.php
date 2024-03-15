@@ -3,6 +3,7 @@
 namespace Filament;
 
 use Closure;
+use Filament\Actions\MountableAction;
 use Filament\Support\Components\Component;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
@@ -19,6 +20,7 @@ class Panel extends Component
     use Panel\Concerns\HasColors;
     use Panel\Concerns\HasComponents;
     use Panel\Concerns\HasDarkMode;
+    use Panel\Concerns\HasDatabaseTransactions;
     use Panel\Concerns\HasFavicon;
     use Panel\Concerns\HasFont;
     use Panel\Concerns\HasGlobalSearch;
@@ -75,8 +77,15 @@ class Panel extends Component
         FilamentIcon::register($this->getIcons());
 
         FilamentView::spa($this->hasSpaMode());
+        FilamentView::spaUrlExceptions($this->getSpaUrlExceptions());
 
         $this->registerRenderHooks();
+
+        if ($this->hasDatabaseTransactions()) {
+            MountableAction::configureUsing(
+                fn (MountableAction $action) => $action->databaseTransaction(),
+            );
+        }
 
         foreach ($this->plugins as $plugin) {
             $plugin->boot($this);

@@ -14,17 +14,12 @@ trait CanGenerateExporterColumns
             return '//';
         }
 
+        $schema = $this->getModelSchema($model);
         $table = $this->getModelTable($model);
-
-        if (blank($table)) {
-            return '//';
-        }
 
         $columns = [];
 
-        foreach ($table->getColumns() as $column) {
-            $columnName = $column->getName();
-
+        foreach ($schema->getColumnListing($table) as $columnName) {
             if (str($columnName)->endsWith([
                 '_token',
             ])) {
@@ -38,10 +33,10 @@ trait CanGenerateExporterColumns
             }
 
             if (str($columnName)->endsWith('_id')) {
-                $guessedRelationshipName = $this->guessBelongsToRelationshipName($column, $model);
+                $guessedRelationshipName = $this->guessBelongsToRelationshipName($columnName, $model);
 
                 if (filled($guessedRelationshipName)) {
-                    $guessedRelationshipTitleColumnName = $this->guessBelongsToRelationshipTitleColumnName($column, app($model)->{$guessedRelationshipName}()->getModel()::class);
+                    $guessedRelationshipTitleColumnName = $this->guessBelongsToRelationshipTitleColumnName($columnName, app($model)->{$guessedRelationshipName}()->getModel()::class);
 
                     $columnName = "{$guessedRelationshipName}.{$guessedRelationshipTitleColumnName}";
                 }

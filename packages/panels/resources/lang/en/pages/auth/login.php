@@ -14,7 +14,7 @@ return [
         ],
 
         'request_password_reset' => [
-            'label' => 'Forgotten your password?',
+            'label' => 'Forgot password?',
         ],
 
     ],

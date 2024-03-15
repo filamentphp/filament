@@ -32,7 +32,7 @@
 
         @livewire(
             $widgetClass,
-            [...(($widget instanceof \Filament\Widgets\WidgetConfiguration) ? [...$widget->widget::getDefaultProperties(), ...$widget->properties] : $widget::getDefaultProperties()), ...$data],
+            [...(($widget instanceof \Filament\Widgets\WidgetConfiguration) ? [...$widget->widget::getDefaultProperties(), ...$widget->getProperties()] : $widget::getDefaultProperties()), ...$data],
             key("{$widgetClass}-{$widgetKey}"),
         )
     @endforeach

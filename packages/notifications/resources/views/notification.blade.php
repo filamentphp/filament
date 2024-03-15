@@ -40,9 +40,10 @@
             false => [
                 'max-w-sm rounded-xl bg-white shadow-lg ring-1 dark:bg-gray-900',
                 match ($color) {
-                    'gray' => 'fi-color-gray ring-gray-950/5 dark:ring-white/10',
+                    'gray' => 'ring-gray-950/5 dark:ring-white/10',
                     default => 'fi-color-custom ring-custom-600/20 dark:ring-custom-400/30',
                 },
+                is_string($color) ? 'fi-color-' . $color : null,
             ],
         },
     ])

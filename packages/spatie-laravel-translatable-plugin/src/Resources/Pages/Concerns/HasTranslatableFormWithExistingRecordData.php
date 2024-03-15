@@ -30,10 +30,7 @@ trait HasTranslatableFormWithExistingRecordData
             }
 
             /** @internal Read the DocBlock above the following method. */
-            $this->fillFormWithDataAndCallHooks([
-                ...$record->attributesToArray(),
-                ...$translatedData,
-            ]);
+            $this->fillFormWithDataAndCallHooks($record, $translatedData);
         }
     }
 

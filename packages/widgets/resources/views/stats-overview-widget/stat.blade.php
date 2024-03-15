@@ -47,13 +47,15 @@
                 />
             @endif
 
-            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+            <span
+                class="fi-wi-stats-overview-stat-label text-sm font-medium text-gray-500 dark:text-gray-400"
+            >
                 {{ $getLabel() }}
             </span>
         </div>
 
         <div
-            class="text-3xl font-semibold tracking-tight text-gray-950 dark:text-white"
+            class="fi-wi-stats-overview-stat-value text-3xl font-semibold tracking-tight text-gray-950 dark:text-white"
         >
             {{ $getValue() }}
         </div>
@@ -72,9 +74,10 @@
                     @class([
                         'fi-wi-stats-overview-stat-description text-sm',
                         match ($descriptionColor) {
-                            'gray' => 'fi-color-gray text-gray-500 dark:text-gray-400',
+                            'gray' => 'text-gray-500 dark:text-gray-400',
                             default => 'fi-color-custom text-custom-600 dark:text-custom-400',
                         },
+                        is_string($descriptionColor) ? "fi-color-{$descriptionColor}" : null,
                     ])
                     @style([
                         \Filament\Support\get_color_css_variables(
@@ -116,9 +119,10 @@
                 @class([
                     'fi-wi-stats-overview-stat-chart absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl',
                     match ($chartColor) {
-                        'gray' => 'fi-color-gray',
+                        'gray' => null,
                         default => 'fi-color-custom',
                     },
+                    is_string($chartColor) ? "fi-color-{$chartColor}" : null,
                 ])
                 @style([
                     \Filament\Support\get_color_css_variables(

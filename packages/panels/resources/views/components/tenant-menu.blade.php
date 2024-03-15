@@ -116,12 +116,18 @@
     @if (count($items))
         <x-filament::dropdown.list>
             @foreach ($items as $item)
+                @php
+                    $itemPostAction = $item->getPostAction();
+                @endphp
+
                 <x-filament::dropdown.list.item
+                    :action="$itemPostAction"
                     :color="$item->getColor()"
                     :href="$item->getUrl()"
-                    :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
                     :icon="$item->getIcon()"
-                    tag="a"
+                    :method="filled($itemPostAction) ? 'post' : null"
+                    :tag="filled($itemPostAction) ? 'form' : 'a'"
+                    :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
                 >
                     {{ $item->getLabel() }}
                 </x-filament::dropdown.list.item>

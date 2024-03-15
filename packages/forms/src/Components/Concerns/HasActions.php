@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Contracts\HasAffixActions;
 use Filament\Forms\Components\Contracts\HasExtraItemActions;
+use Filament\Forms\Components\Contracts\HasFooterActions;
 use Filament\Forms\Components\Contracts\HasHeaderActions;
 use Filament\Forms\Components\Contracts\HasHintActions;
 use Illuminate\Database\Eloquent\Model;
@@ -70,6 +71,13 @@ trait HasActions
             $this->cachedActions = [
                 ...$this->cachedActions,
                 ...$this->getExtraItemActions(),
+            ];
+        }
+
+        if ($this instanceof HasFooterActions) {
+            $this->cachedActions = [
+                ...$this->cachedActions,
+                ...$this->getFooterActions(),
             ];
         }
 

@@ -58,17 +58,39 @@ TextEntry::make('created_at')
 
 ## Number formatting
 
-The `numeric()` method allows you to format an entry as a number, using PHP's `number_format()`:
+The `numeric()` method allows you to format an entry as a number:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('stock')
-    ->numeric(
-        decimalPlaces: 0,
-        decimalSeparator: '.',
-        thousandsSeparator: ',',
-    )
+    ->numeric()
+```
+
+If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('stock')
+    ->numeric(decimalPlaces: 0)
+```
+
+By default, your app's locale will be used to format the number suitably. If you would like to customize the locale used, you can pass it to the `locale` argument:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('stock')
+    ->numeric(locale: 'nl')
+```
+
+Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+
+```php
+use Illuminate\Support\Number;
+
+Number::useLocale('nl');
 ```
 
 ## Currency formatting
@@ -89,6 +111,23 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('price')
     ->money('EUR', divideBy: 100)
+```
+
+By default, your app's locale will be used to format the money suitably. If you would like to customize the locale used, you can pass it to the `locale` argument:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('price')
+    ->money('EUR', locale: 'nl')
+```
+
+Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+
+```php
+use Illuminate\Support\Number;
+
+Number::useLocale('nl');
 ```
 
 ## Limiting text length
@@ -218,6 +257,29 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('description')
     ->html()
+```
+
+If you use this method, then the HTML will be sanitized to remove any potentially unsafe content before it is rendered. If you'd like to opt out of this behavior, you can wrap the HTML in an `HtmlString` object by formatting it:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\HtmlString;
+
+TextEntry::make('description')
+    ->formatStateUsing(fn (string $state): HtmlString => new HtmlString($state))
+```
+
+Or, you can return a `view()` object from the `formatStateUsing()` method, which will also not be sanitized:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Contracts\View\View;
+
+TextEntry::make('description')
+    ->formatStateUsing(fn (string $state): View => view(
+        'filament.infolists.components.description-entry-content',
+        ['state' => $state],
+    ))
 ```
 
 ### Rendering Markdown as HTML

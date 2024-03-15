@@ -88,7 +88,7 @@
 
                     @livewire(
                         $normalizedGroupedManagerClass,
-                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? [...$groupedManager->relationManager::getDefaultProperties(), ...$groupedManager->properties] : $groupedManager::getDefaultProperties())],
+                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? [...$groupedManager->relationManager::getDefaultProperties(), ...$groupedManager->getProperties()] : $groupedManager::getDefaultProperties())],
                         key("{$normalizedGroupedManagerClass}-{$groupedManagerKey}"),
                     )
                 @endforeach
@@ -100,7 +100,7 @@
 
                 @livewire(
                     $normalizedManagerClass,
-                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? [...$manager->relationManager::getDefaultProperties(), ...$manager->properties] : $manager::getDefaultProperties())],
+                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? [...$manager->relationManager::getDefaultProperties(), ...$manager->getProperties()] : $manager::getDefaultProperties())],
                     key($normalizedManagerClass),
                 )
             @endif
