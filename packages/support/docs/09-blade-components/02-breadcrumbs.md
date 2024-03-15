@@ -40,5 +40,5 @@ Home > Dashboard > Users
 If you specify `rtl` as the direction, the breadcrumbs will look similar to the following:
 
 ```
-Home < Dashboard < Users
+Users < Dashboard < Home
 ```
