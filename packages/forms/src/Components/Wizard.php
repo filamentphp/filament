@@ -214,7 +214,9 @@ class Wizard extends Component
         if ($this->isStepPersistedInQueryString()) {
             $queryStringStep = request()->query($this->getStepQueryStringKey());
 
-            foreach ($this->getChildComponents() as $index => $step) {
+            $components = collect($this->getChildComponents())->filter(fn ($component) => ! $component->isHidden())->values();
+
+            foreach ($components as $index => $step) {
                 if ($step->getId() !== $queryStringStep) {
                     continue;
                 }
