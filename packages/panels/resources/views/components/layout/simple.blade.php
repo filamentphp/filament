@@ -1,5 +1,7 @@
 @php
     use Filament\Support\Enums\MaxWidth;
+
+    $hideTopbar = $hideTopbar ?? false;
 @endphp
 
 <x-filament-panels::layout.base :livewire="$livewire">
