@@ -61,7 +61,7 @@
                         'ltr:hidden',
                     ])
                 />
-                <span class="font-medium text-sm text-gray-700 dark:text-gray-200 cursor-default!">{{ $current }}</span>
+                <span class="font-medium text-sm text-gray-400 dark:text-gray-500 cursor-default!">{{ $current }}</span>
             </li>
         @endif
     </ol>
