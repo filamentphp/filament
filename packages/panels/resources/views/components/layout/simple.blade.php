@@ -1,7 +1,5 @@
 @php
     use Filament\Support\Enums\MaxWidth;
-
-    $hideTopbar = $hideTopbar ?? false;
 @endphp
 
 <x-filament-panels::layout.base :livewire="$livewire">
@@ -12,7 +10,7 @@
     ])
 
     <div class="fi-simple-layout flex min-h-screen flex-col items-center">
-        @if (! $hideTopbar && filament()->auth()->check())
+        @if (($hasTopbar ?? true) && filament()->auth()->check())
             <div
                 class="absolute end-0 top-0 flex h-16 items-center gap-x-4 pe-4 md:pe-6 lg:pe-8"
             >
