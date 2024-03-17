@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\Contracts\HasRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -67,7 +68,19 @@ trait InteractsWithRecord
 
     public function getRecord(): ?Model
     {
-        return $this->evaluate($this->record);
+        $record = $this->evaluate($this->record);
+
+        if ($record) {
+            return $record;
+        }
+
+        $group = $this->getGroup();
+
+        if (! ($group instanceof HasRecord)) {
+            return null;
+        }
+
+        return $group->getRecord();
     }
 
     public function getRecordTitle(?Model $record = null): ?string
