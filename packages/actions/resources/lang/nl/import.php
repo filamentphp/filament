@@ -51,7 +51,10 @@ return [
             ],
 
         ],
-
+        'duplicate_header_columns' => [
+            'title' => 'Fout in het geüploade CSV-bestand',
+            'body' => 'Je mag geen dubbele kolomnamen gebruiken',
+        ],
         'max_rows' => [
             'title' => 'Geüploade CSV-bestand is te groot',
             'body' => 'Je mag niet meer dan 1 rij tegelijk importeren.|Je mag niet meer dan :count rijen tegelijk importeren.',

@@ -153,7 +153,17 @@ trait CanImportRecords
 
             $csvReader = CsvReader::createFromStream($csvStream);
             $csvReader->setHeaderOffset(0);
-            $csvResults = Statement::create()->process($csvReader);
+            try {
+                $csvResults = Statement::create()->process($csvReader);
+            } catch (\League\Csv\SyntaxError $e) {
+                Notification::make()
+                    ->title(__('filament-actions::import.notifications.duplicate_header_columns.title'))
+                    ->body(__('filament-actions::import.notifications.duplicate_header_columns.body'))
+                    ->danger()
+                    ->send();
+
+                return;
+            }
 
             $totalRows = $csvResults->count();
             $maxRows = $action->getMaxRows() ?? $totalRows;

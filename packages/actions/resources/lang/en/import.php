@@ -51,7 +51,10 @@ return [
             ],
 
         ],
-
+        'duplicate_header_columns' => [
+            'title' => 'Error in uploaded file',
+            'body' => 'You may not use duplicate column names',
+        ],
         'max_rows' => [
             'title' => 'Uploaded CSV file is too large',
             'body' => 'You may not import more than 1 row at once.|You may not import more than :count rows at once.',
