@@ -21,13 +21,13 @@ class TenantRegisterCommand extends Command
     use CanIndentStrings;
     use CanManipulateFiles;
 
-    protected $description = 'Register a new tenant';
+    protected $description = 'Create a new Filament tenant registration page';
 
     protected $signature = 'filament:register-tenant {--panel=} {--F|force}';
 
     public function handle(): int
     {
-        $this->components->info('Registering a new tenant');
+        $this->components->info('Creating a new tenant registration page');
 
         $panel = $this->option('panel');
 
@@ -52,19 +52,19 @@ class TenantRegisterCommand extends Command
         if (! $panel->hasTenancy()) {
             $this->components->error('No tenant model has been defined for this panel.');
 
-            return 1;
+            return static::FAILURE;
         }
 
         if (!$this->option('force') && filled($panel->getTenantRegistrationPage())) {
             $this->components->info('Tenant registration page already exists.');
 
-            return 0;
+            return static::INVALID;
         }
 
         $tenantModel = $panel->getTenantModel();
-        $baseClass = class_basename($tenantModel);
-        $page = "Register{$baseClass}";
-        $tenantModelLabel = Str::snake(Str::singular($baseClass));
+        $tenantBaseClass = class_basename($tenantModel);
+        $page = "Register{$tenantBaseClass}";
+        $tenantModelLabel = Str::snake(Str::singular($tenantBaseClass));
 
         $tenancyDirectories = $panel->getTenancyDirectories();
         $tenancyNamespaces = $panel->getTenancyNamespaces();
@@ -93,10 +93,13 @@ class TenantRegisterCommand extends Command
         $this->copyStubToApp('RegisterTenant', $filePath, [
             'class' => $page,
             'namespace' => $namespace,
-            'tenantModel' => $tenantModel,
+            'tenantModelFullPath' => $tenantModel,
+            'tenantModel' => $tenantBaseClass,
             'tenantModelLabel' => $tenantModelLabel,
         ]);
 
-        dd("TenantRegisterCommand.php: All done!");
+        $this->components->info("Tenant registration page created: {$filePath}");
+
+        return static::SUCCESS;
     }
 }

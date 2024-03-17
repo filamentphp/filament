@@ -4,6 +4,7 @@ namespace {{ namespace }};
 
 use Filament\Pages\Tenancy\RegisterTenant;
 use Filament\Forms\Form;
+use {{ tenantModelFullPath }};
 
 class {{ class }} extends RegisterTenant
 {
