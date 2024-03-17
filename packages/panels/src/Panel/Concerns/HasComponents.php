@@ -234,6 +234,28 @@ trait HasComponents
         ];
     }
 
+    /**
+     * @return array<string>
+     */
+    public function getTenancyDirectories(): array
+    {
+        return array_map(
+            fn (string $directory): string => "{$directory}/Tenancy",
+            $this->getPageDirectories(),
+        );
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getTenancyNamespaces(): array
+    {
+        return array_map(
+            fn (string $namespace): string => "{$namespace}\Tenancy",
+            $this->getPageNamespaces(),
+        );
+    }
+
     public function discoverClusters(string $in, string $for): static
     {
         if ($this->hasCachedComponents()) {
