@@ -55,16 +55,16 @@ class TenantRegisterCommand extends Command
             return 1;
         }
 
-        if ($this->option('force') && filled($panel->getTenantRegistrationPage())) {
+        if (!$this->option('force') && filled($panel->getTenantRegistrationPage())) {
             $this->components->info('Tenant registration page already exists.');
 
             return 0;
         }
 
-        $page = $panel->getTenantRegistrationPage();
-
         $tenantModel = $panel->getTenantModel();
-        $tenantModelLabel = Str::snake(Str::singular(class_basename($tenantModel)));
+        $baseClass = class_basename($tenantModel);
+        $page = "Register{$baseClass}";
+        $tenantModelLabel = Str::snake(Str::singular($baseClass));
 
         $tenancyDirectories = $panel->getTenancyDirectories();
         $tenancyNamespaces = $panel->getTenancyNamespaces();
@@ -79,6 +79,24 @@ class TenantRegisterCommand extends Command
             $tenancyDirectories[array_search($namespace, $tenancyNamespaces)] :
             Arr::first($tenancyDirectories) ?? app_path('Filament/Pages/Tenancy');
 
-        dd($namespace, $path);
+        $filePath = (string) str($page)
+            ->prepend('/')
+            ->prepend($path)
+            ->append('.php');
+
+        $files = [$filePath];
+
+        if (! $this->option('force') && $this->checkForCollision($files)) {
+            return static::INVALID;
+        }
+
+        $this->copyStubToApp('RegisterTenant', $filePath, [
+            'class' => $page,
+            'namespace' => $namespace,
+            'tenantModel' => $tenantModel,
+            'tenantModelLabel' => $tenantModelLabel,
+        ]);
+
+        dd("TenantRegisterCommand.php: All done!");
     }
 }
