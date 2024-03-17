@@ -155,7 +155,7 @@ trait InteractsWithTableQuery
 
         if (! $relationship) {
             // Treat the missing "relationship" as a JSON column if dot notation is used in the column name.
-            return (string) str($relationshipName)
+            return (string) str($relationshipName ?? $this->getRelationshipName())
                 ->append('.')
                 ->append($sortColumn)
                 ->replace('.', '->');
