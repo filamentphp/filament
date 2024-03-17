@@ -1,0 +1,33 @@
+<?php
+
+namespace {{ namespace }};
+
+{{ clusterImport }}use Filament\Pages\Tenancy\RegisterTenant;
+use Filament\Forms\Form;
+use Filament\Pages\Tenancy\RegisterTenant;
+
+class {{ class }} extends RegisterTenant
+{
+    public static function getLabel(): string
+    {
+        return 'Register {{ label }}';
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                // Add form fields here
+            ]);
+    }
+
+    protected function handleRegistration(array $data): {{ clusterClass }}
+    {
+        // Create a new tenant
+        $tenant = {{ clusterClass }}::create($data);
+
+        // Add any additional logic here
+
+        return $tenant;
+    }
+}
