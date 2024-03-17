@@ -34,10 +34,7 @@ class MakeTenantRegisterCommand extends Command
         if (! $panel) {
             $panels = Filament::getPanels();
 
-            /**
-             * @template Panel
-             * @var Panel $panel
-             */
+            /** @var Panel $panel */
             $panel = (count($panels) > 1) ? $panels[select(
                 label: 'Which panel would you like to create this in?',
                 options: array_map(
@@ -68,21 +65,12 @@ class MakeTenantRegisterCommand extends Command
         $tenancyDirectories = $panel->getTenancyDirectories();
         $tenancyNamespaces = $panel->getTenancyNamespaces();
 
-        /**
-         * @template string
-         * @var string $namespace
-         */
         $namespace = (count($tenancyNamespaces) > 1) ?
             select(
                 label: 'Which namespace would you like to create this in?',
                 options: $tenancyNamespaces,
             ) :
             (Arr::first($tenancyNamespaces) ?: 'App\\Filament\\Pages\\Tenancy');
-
-        /**
-         * @template string
-         * @var string $path
-         */
         $path = (count($tenancyDirectories) > 1) ?
             $tenancyDirectories[array_search($namespace, $tenancyNamespaces)] :
             Arr::first($tenancyDirectories) ?? app_path('Filament/Pages/Tenancy');
