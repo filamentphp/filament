@@ -55,6 +55,12 @@ class TenantRegisterCommand extends Command
             return 1;
         }
 
+        if ($this->option('force') && filled($panel->getTenantRegistrationPage())) {
+            $this->components->info('Tenant registration page already exists.');
+
+            return 0;
+        }
+
         $page = $panel->getTenantRegistrationPage();
 
         $tenantModel = $panel->getTenantModel();
