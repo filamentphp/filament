@@ -12,14 +12,14 @@ use Illuminate\Support\Str;
 
 use function Laravel\Prompts\select;
 
-class TenantRegisterCommand extends Command
+class MakeTenantRegisterCommand extends Command
 {
     use CanIndentStrings;
     use CanManipulateFiles;
 
     protected $description = 'Create a new Filament tenant registration page';
 
-    protected $signature = 'filament:register-tenant {--panel=} {--F|force}';
+    protected $signature = 'make:filament-tenant-register-page {--panel=} {--F|force}';
 
     public function handle(): int
     {

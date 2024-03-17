@@ -2,7 +2,7 @@
 
 namespace Filament;
 
-use Filament\Commands\TenantRegisterCommand;
+use Filament\Commands\MakeTenantRegisterCommand;
 use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -115,7 +115,7 @@ class FilamentServiceProvider extends PackageServiceProvider
             Commands\MakeResourceCommand::class,
             Commands\MakeThemeCommand::class,
             Commands\MakeUserCommand::class,
-            TenantRegisterCommand::class,
+            MakeTenantRegisterCommand::class,
         ];
 
         $aliases = [];
