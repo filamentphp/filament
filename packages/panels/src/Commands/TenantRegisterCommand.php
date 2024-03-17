@@ -27,7 +27,7 @@ class TenantRegisterCommand extends Command
 
     public function handle(): int
     {
-        $this->info('Registering a new tenant');
+        $this->components->info('Registering a new tenant');
 
         $panel = $this->option('panel');
 
@@ -49,6 +49,10 @@ class TenantRegisterCommand extends Command
             )] : Arr::first($panels);
         }
 
-        dd($panel);
+        if (! $panel->hasTenancy()) {
+            $this->components->error('No tenant model has been defined for this panel.');
+
+            return 1;
+        }
     }
 }
