@@ -15,8 +15,8 @@ abstract class SimplePage extends BasePage
     protected function getLayoutData(): array
     {
         return [
-            'maxWidth' => $this->getMaxWidth(),
             'hasTopbar' => $this->hasTopbar(),
+            'maxWidth' => $this->getMaxWidth(),
         ];
     }
 
