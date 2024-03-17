@@ -2,7 +2,6 @@
 
 namespace Filament\Commands;
 
-use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Commands\Concerns\CanIndentStrings;
@@ -11,10 +10,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
-use function Laravel\Prompts\suggest;
-use function Laravel\Prompts\text;
 
 class TenantRegisterCommand extends Command
 {
@@ -55,7 +51,7 @@ class TenantRegisterCommand extends Command
             return static::FAILURE;
         }
 
-        if (!$this->option('force') && filled($panel->getTenantRegistrationPage())) {
+        if (! $this->option('force') && filled($panel->getTenantRegistrationPage())) {
             $this->components->info('Tenant registration page already exists.');
 
             return static::INVALID;
