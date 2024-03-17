@@ -54,5 +54,25 @@ class TenantRegisterCommand extends Command
 
             return 1;
         }
+
+        $page = $panel->getTenantRegistrationPage();
+
+        $tenantModel = $panel->getTenantModel();
+        $tenantModelLabel = Str::snake(Str::singular(class_basename($tenantModel)));
+
+        $tenancyDirectories = $panel->getTenancyDirectories();
+        $tenancyNamespaces = $panel->getTenancyNamespaces();
+
+        $namespace = (count($tenancyNamespaces) > 1) ?
+            select(
+                label: 'Which namespace would you like to create this in?',
+                options: $tenancyNamespaces,
+            ) :
+            (Arr::first($tenancyNamespaces) ?: 'App\\Filament\\Pages\\Tenancy');
+        $path = (count($tenancyDirectories) > 1) ?
+            $tenancyDirectories[array_search($namespace, $tenancyNamespaces)] :
+            Arr::first($tenancyDirectories) ?? app_path('Filament/Pages/Tenancy');
+
+        dd($namespace, $path);
     }
 }
