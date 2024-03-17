@@ -153,6 +153,7 @@ trait CanImportRecords
 
             $csvReader = CsvReader::createFromStream($csvStream);
             $csvReader->setHeaderOffset(0);
+
             try {
                 $csvResults = Statement::create()->process($csvReader);
             } catch (\League\Csv\SyntaxError $e) {
