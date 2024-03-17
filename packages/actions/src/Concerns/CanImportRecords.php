@@ -157,9 +157,34 @@ trait CanImportRecords
             try {
                 $csvResults = Statement::create()->process($csvReader);
             } catch (\League\Csv\SyntaxError $e) {
+                switch ($e->getMessage()) {
+                    case 'The header record contains duplicate column names.':
+                        $body = __(
+                            'filament-actions::import.notifications.headers.duplicate',
+                            [
+                                'duplicate_headers' => implode($e->duplicateColumnNames()),
+
+                            ]
+                        );
+
+                        break;
+                    case strpos($e->getMessage(), 'The header record does not exist or is empty at offset:') === 0:
+                        $body = __('filament-actions::import.notifications.headers.no_header');
+
+                        break;
+                    case 'The header record contains non string colum names.':
+                        $body = __('filament-actions::import.notifications.headers.non_string');
+
+                        break;
+                    default:
+                        $body = null;
+
+                        break;
+                }
+
                 Notification::make()
-                    ->title(__('filament-actions::import.notifications.duplicate_header_columns.title'))
-                    ->body(__('filament-actions::import.notifications.duplicate_header_columns.body'))
+                    ->title(__('filament-actions::import.notifications.headers.title'))
+                    ->body($body)
                     ->danger()
                     ->send();
 

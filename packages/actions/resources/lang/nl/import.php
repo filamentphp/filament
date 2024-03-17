@@ -51,9 +51,11 @@ return [
             ],
 
         ],
-        'duplicate_header_columns' => [
+        'headers' => [
             'title' => 'Fout in het geüploade CSV-bestand',
-            'body' => 'Je mag geen dubbele kolomnamen gebruiken',
+            'duplicate' => 'De kolom :duplicate_headers komt meerdere keren voor',
+            'no_header' => 'De koprecord bestaat niet of is leeg',
+            'non_string' => 'De kopregel bevat kolomnamen die geen tekst zijn.',
         ],
         'max_rows' => [
             'title' => 'Geüploade CSV-bestand is te groot',

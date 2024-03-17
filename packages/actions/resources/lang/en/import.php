@@ -51,9 +51,11 @@ return [
             ],
 
         ],
-        'duplicate_header_columns' => [
+        'headers' => [
             'title' => 'Error in uploaded file',
-            'body' => 'You may not use duplicate column names',
+            'duplicate' => 'You may not use duplicate column names',
+            'no_header' => 'The header record does not exist or is empty',
+            'non_string' => 'The header record contains non string colum names.',
         ],
         'max_rows' => [
             'title' => 'Uploaded CSV file is too large',
