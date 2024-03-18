@@ -72,9 +72,11 @@ trait HasLifecycleHooks
 
     public function callAfter(): mixed
     {
-        Event::dispatch(ActionCalled::class, $this);
-
-        return $this->evaluate($this->after);
+        try {
+            return $this->evaluate($this->after);
+        } finally {
+            Event::dispatch(ActionCalled::class, $this);
+        }
     }
 
     public function callBeforeFormFilled(): mixed
