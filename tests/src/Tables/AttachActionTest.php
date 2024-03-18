@@ -1,6 +1,5 @@
 <?php
 
-use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
 
