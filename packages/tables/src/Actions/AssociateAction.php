@@ -38,6 +38,8 @@ class AssociateAction extends Action
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
+    protected bool | Closure $isMultiple = false;
+
     public static function getDefaultName(): ?string
     {
         return 'associate';
@@ -172,6 +174,18 @@ class AssociateAction extends Action
         return $this->evaluate($this->recordSelectSearchColumns);
     }
 
+    public function multiple(bool | Closure $condition = true): static
+    {
+        $this->isMultiple = $condition;
+
+        return $this;
+    }
+
+    public function isMultiple(): bool
+    {
+        return (bool) $this->evaluate($this->isMultiple);
+    }
+
     public function getRecordSelect(): Select
     {
         $table = $this->getTable();
@@ -274,6 +288,7 @@ class AssociateAction extends Action
         $select = Select::make('recordId')
             ->label(__('filament-actions::associate.single.modal.fields.record_id.label'))
             ->required()
+            ->multiple($this->isMultiple())
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(optionsLimit: $component->getOptionsLimit(), search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(function ($value) use ($table): string {
