@@ -39,7 +39,7 @@ class DatabaseNotification extends BaseNotification implements ShouldQueue, Arra
     }
 
     /**
-     * Array representation of this notification.
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
