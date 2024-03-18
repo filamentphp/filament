@@ -4,10 +4,11 @@ namespace Filament\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notification as BaseNotification;
 
-class DatabaseNotification extends BaseNotification implements ShouldQueue
+class DatabaseNotification extends BaseNotification implements ShouldQueue, Arrayable
 {
     use Queueable;
 
@@ -42,6 +43,6 @@ class DatabaseNotification extends BaseNotification implements ShouldQueue
      */
     public function toArray(): array
     {
-        return [];
+        return $this->data;
     }
 }
