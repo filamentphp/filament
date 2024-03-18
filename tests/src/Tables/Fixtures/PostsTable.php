@@ -147,6 +147,10 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Actions\AttachAction::make('isMultiple')
                     ->multiple(),
                 Tables\Actions\AttachAction::make('isNotMultiple'),
+                Tables\Actions\AssociateAction::make('exists'),
+                Tables\Actions\AssociateAction::make('isMultiple')
+                    ->multiple(),
+                Tables\Actions\AssociateAction::make('isNotMultiple'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
