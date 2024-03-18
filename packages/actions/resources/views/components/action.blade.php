@@ -7,6 +7,11 @@
 @php
     $isDisabled = $action->isDisabled();
     $url = $action->getUrl();
+
+    if(! $isDisabled && $url) {
+        $hasSpaMode = \Filament\Facades\Filament::getCurrentPanel()->hasSpaMode();
+        $shouldNavigate = $hasSpaMode && \Filament\Support\is_app_url($url);
+    }
 @endphp
 
 <x-dynamic-component
@@ -30,6 +35,7 @@
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->merge($action->getExtraAttributes(), escape: false)
             ->class(['fi-ac-action'])
+            ->merge(isset($shouldNavigate) && $shouldNavigate ? ['wire:navigate' => ''] : [], escape: false)
     "
 >
     {{ $slot }}
