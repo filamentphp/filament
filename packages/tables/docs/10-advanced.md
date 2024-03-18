@@ -402,6 +402,35 @@ public function table(Table $table): Table
 
 These classes are not automatically compiled by Tailwind CSS. If you want to apply Tailwind CSS classes that are not already used in Blade files, you should update your `content` configuration in `tailwind.config.js` to also scan for classes inside your directory: `'./app/Filament/**/*.php'`
 
+## Adding the table caption
+
+You can add a caption to a table using the `$table->caption()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->caption('This is a table caption');
+}
+```
+
+You can pass `string` or `Closure` to the `$table->caption()` method:
+
+You can also pass `translateCaption()` with the `$table->caption()` method to translate the caption:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->caption('tables.caption')
+        ->translateCaption();
+}
+```
+
 ## Resetting the table
 
 If you make changes to the table definition during a Livewire request, for example, when consuming a public property in the `table()` method, you may need to reset the table to ensure that the changes are applied. To do this, you can call the `resetTable()` method on the Livewire component:
