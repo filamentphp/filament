@@ -13,4 +13,9 @@ class ActionCalling
         protected MountableAction $action,
     ) {
     }
+
+    public function getAction(): MountableAction
+    {
+        return $this->action;
+    }
 }
