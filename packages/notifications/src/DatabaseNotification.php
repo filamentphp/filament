@@ -36,4 +36,12 @@ class DatabaseNotification extends BaseNotification implements ShouldQueue
     {
         return $this->data;
     }
+
+    /**
+     * Array representation of this notification.
+     */
+    public function toArray(): array
+    {
+        return [];
+    }
 }
