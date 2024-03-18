@@ -8,7 +8,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notification as BaseNotification;
 
-class DatabaseNotification extends BaseNotification implements ShouldQueue, Arrayable
+class DatabaseNotification extends BaseNotification implements Arrayable, ShouldQueue
 {
     use Queueable;
 
