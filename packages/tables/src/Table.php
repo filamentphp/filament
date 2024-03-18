@@ -20,6 +20,7 @@ class Table extends ViewComponent
     use Table\Concerns\CanToggleColumns;
     use Table\Concerns\HasActions;
     use Table\Concerns\HasBulkActions;
+    use Table\Concerns\HasCaption;
     use Table\Concerns\HasColumns;
     use Table\Concerns\HasContent;
     use Table\Concerns\HasEmptyState;
