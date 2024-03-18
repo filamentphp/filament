@@ -5,7 +5,7 @@ namespace Filament\Actions\Events;
 use Filament\Actions\Action;
 use Illuminate\Foundation\Events\Dispatchable;
 
-class CallBefore
+class ActionCalled
 {
     use Dispatchable;
 

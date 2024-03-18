@@ -3,8 +3,8 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Actions\Events\CallAfter;
-use Filament\Actions\Events\CallBefore;
+use Filament\Actions\Events\ActionCalled;
+use Filament\Actions\Events\ActionCalling;
 use Illuminate\Support\Facades\Event;
 
 trait HasLifecycleHooks
@@ -65,14 +65,14 @@ trait HasLifecycleHooks
 
     public function callBefore(): mixed
     {
-        Event::dispatch(CallBefore::class, $this);
+        Event::dispatch(ActionCalling::class, $this);
 
         return $this->evaluate($this->before);
     }
 
     public function callAfter(): mixed
     {
-        Event::dispatch(CallAfter::class, $this);
+        Event::dispatch(ActionCalled::class, $this);
 
         return $this->evaluate($this->after);
     }
