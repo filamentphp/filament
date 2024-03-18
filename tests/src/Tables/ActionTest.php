@@ -31,6 +31,15 @@ it('can call an action with data', function () {
         ]);
 });
 
+it('can call action inside group', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callTableAction('groupedDelete', $post);
+
+    assertSoftDeleted($post);
+});
+
 it('can validate an action\'s data', function () {
     livewire(PostsTable::class)
         ->callTableAction('data', data: [

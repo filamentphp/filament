@@ -94,7 +94,7 @@ trait CanBeHidden
 
     public function isHidden(): bool
     {
-        if ($this->getGroup()?->isHidden()) {
+        if ($this->getGroup()?->baseIsHidden()) {
             return true;
         }
 
