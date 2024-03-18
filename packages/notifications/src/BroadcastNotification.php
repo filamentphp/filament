@@ -4,11 +4,12 @@ namespace Filament\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Notification as BaseNotification;
 
-class BroadcastNotification extends BaseNotification implements ShouldQueue
+class BroadcastNotification extends BaseNotification implements ShouldQueue, Arrayable
 {
     use Queueable;
 
@@ -35,5 +36,13 @@ class BroadcastNotification extends BaseNotification implements ShouldQueue
     public function toBroadcast($notifiable): BroadcastMessage
     {
         return new BroadcastMessage($this->data);
+    }
+
+     /**
+     * Array representation of this notification.
+     */
+    public function toArray(): array
+    {
+        return $this->data;
     }
 }
