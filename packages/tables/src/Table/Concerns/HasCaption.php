@@ -11,7 +11,7 @@ trait HasCaption
 
     protected bool $shouldTranslateCaption = false;
 
-    public function caption(string | Htmlable | Closure | null $caption): static
+    public function caption(string | Closure | null $caption): static
     {
         $this->caption = $caption;
 
@@ -25,7 +25,7 @@ trait HasCaption
         return $this;
     }
 
-    public function getCaption(): string | Htmlable | null
+    public function getCaption(): string | null
     {
         if ($this->caption === null) {
             return null;
