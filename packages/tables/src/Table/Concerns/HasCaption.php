@@ -25,7 +25,7 @@ trait HasCaption
         return $this;
     }
 
-    public function getCaption(): string | null
+    public function getCaption(): ?string
     {
         if ($this->caption === null) {
             return null;
