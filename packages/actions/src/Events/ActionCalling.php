@@ -2,7 +2,7 @@
 
 namespace Filament\Actions\Events;
 
-use Filament\Actions\Action;
+use Filament\Actions\MountableAction;
 use Illuminate\Foundation\Events\Dispatchable;
 
 class ActionCalling
@@ -10,7 +10,7 @@ class ActionCalling
     use Dispatchable;
 
     public function __construct(
-        protected Action $action,
+        protected MountableAction $action,
     ) {
     }
 }
