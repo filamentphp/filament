@@ -337,7 +337,7 @@ AttachAction::make()
     ->recordSelectSearchColumns(['title', 'description'])
 ```
 
-### Multi-select
+### Attaching multiple records
 
 The `multiple()` method on the `AttachAction` component allows you to select multiple values:
 
@@ -451,7 +451,7 @@ AssociateAction::make()
     ->recordSelectSearchColumns(['title', 'description'])
 ```
 
-### Multi-select
+### Associating multiple records
 
 The `multiple()` method on the `AssociateAction` component allows you to select multiple values:
 
