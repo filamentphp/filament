@@ -14,6 +14,7 @@
     $actionsPosition = $getActionsPosition();
     $actionsColumnLabel = $getActionsColumnLabel();
     $activeFiltersCount = $getActiveFiltersCount();
+    $caption = $getCaption();
     $columns = $getVisibleColumns();
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
     $columnsLayout = $getColumnsLayout();
@@ -1221,6 +1222,12 @@
                 </tr>
             @endif
         </div>
+
+        @if($caption)
+            <div class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
+                {{ $caption }}
+            </div>
+        @endif
 
         @if ((($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) &&
              ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
