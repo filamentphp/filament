@@ -30,7 +30,7 @@ class TestsAttachActions
             Assert::assertInstanceOf(
                 AttachAction::class,
                 $action,
-                message: "Failed asserting that a table action with name [{$prettyName}] exists on the [{$livewireClass}] component.",
+                message: "Failed asserting that a table attach action with name [{$prettyName}] exists on the [{$livewireClass}] component.",
             );
 
             return $this;

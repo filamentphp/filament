@@ -9,12 +9,12 @@ uses(TestCase::class);
 
 it('can state whether a table action exists', function () {
     livewire(PostsTable::class)
-        ->assertTableAttachActionExists('exists')
-        ->assertTableAttachActionDoesNotExist('doesNotExist');
+        ->assertTableAttachActionExists('attachActionExists')
+        ->assertTableAttachActionDoesNotExist('attachActionDoesNotExist');
 });
 
 it('can have a multiple select', function () {
     livewire(PostsTable::class)
-        ->assertTableAttachActionIsMultipleSelect('isMultiple', true)
-        ->assertTableAttachActionIsNotMultipleSelect('isNotMultiple', false);
+        ->assertTableAttachActionIsMultipleSelect('attachActionIsMultiple', true)
+        ->assertTableAttachActionIsNotMultipleSelect('attachActionIsNotMultiple', false);
 });
