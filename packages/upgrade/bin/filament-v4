@@ -89,50 +89,6 @@ foreach ([
     file_put_contents($file, $fileContents);
 }
 
-$getEnvValue = function (string $env, string $variable): ?string {
-    preg_match("/^{$variable}=(.*)$/m", $env, $matches);
-
-    $value = $matches[1] ?? null;
-
-    if ($value === null) {
-        return null;
-    }
-
-    $value = trim($value);
-
-    if ($value === '') {
-        return null;
-    }
-
-    return $value;
-};
-
-$hasEnvVariable = function (string $env, string $variable): bool {
-    return preg_match("/^{$variable}=(.*)$/m", $env) === 1;
-};
-
-$removeEnvVariable = function (string &$env, string $variable): string {
-    return $env = preg_replace("/^{$variable}=(.*)$/m", '', $env);
-};
-
-foreach (['.env', '.env.ci', '.env.example', '.env.testing'] as $envFile) {
-    if (file_exists($envFile)) {
-        $env = file_get_contents($envFile);
-
-        $env = (function (string $env) use ($hasEnvVariable, $removeEnvVariable) {
-            if ($hasEnvVariable($env, 'FILAMENT_FILESYSTEM_DISK')) {
-                $removeEnvVariable($env, 'FILAMENT_FILESYSTEM_DISK');
-
-                return $env;
-            }
-
-            return $env;
-        })($env);
-
-        file_put_contents($envFile, $env);
-    }
-}
-
 $appDirectory = $argv[1] ?? 'app';
 
 render(<<<HTML

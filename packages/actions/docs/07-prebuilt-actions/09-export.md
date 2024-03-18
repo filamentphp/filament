@@ -365,7 +365,7 @@ public static function modifyQuery(Builder $query): Builder
 
 ### Customizing the storage disk
 
-By default, exported files will be uploaded to the storage disk defined in the [configuration file](../installation#publishing-configuration). You can also set the `FILAMENT_FILESYSTEM_DISK` environment variable to change this.
+By default, exported files will be uploaded to the storage disk defined in the [configuration file](../installation#publishing-configuration). You can also set the `FILESYSTEM_DISK` environment variable to change this.
 
 If you want to use a different disk for a specific export, you can pass the disk name to the `disk()` method on the action:
 
