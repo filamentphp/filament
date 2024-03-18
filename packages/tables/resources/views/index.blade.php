@@ -1223,7 +1223,7 @@
             @endif
         </div>
 
-        @if($caption)
+        @if ($caption)
             <x-filament-tables::caption>
                 {{ $caption }}
             </x-filament-tables::caption>
