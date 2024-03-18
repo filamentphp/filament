@@ -10,7 +10,7 @@ class CallAfter
     use Dispatchable;
 
     public function __construct(
-       protected Action $action,
+        protected Action $action,
     ) {
     }
 }
