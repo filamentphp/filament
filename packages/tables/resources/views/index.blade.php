@@ -1224,9 +1224,9 @@
         </div>
 
         @if($caption)
-            <div class="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
+            <x-filament-tables::caption>
                 {{ $caption }}
-            </div>
+            </x-filament-tables::caption>
         @endif
 
         @if ((($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) &&
