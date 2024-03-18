@@ -25,8 +25,12 @@ trait HasCaption
         return $this;
     }
 
-    public function getCaption(): string | Htmlable
+    public function getCaption(): string | Htmlable | null
     {
+        if ($this->caption === null) {
+            return null;
+        }
+
         $caption = $this->evaluate($this->caption);
 
         return $this->shouldTranslateCaption ? __($caption) : $caption;
