@@ -3,11 +3,10 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Illuminate\Contracts\Support\Htmlable;
 
 trait HasCaption
 {
-    protected string | Htmlable | Closure | null $caption = null;
+    protected string | Closure | null $caption = null;
 
     protected bool $shouldTranslateCaption = false;
 
