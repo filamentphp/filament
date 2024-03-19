@@ -27,7 +27,7 @@ class Field extends Component implements Contracts\HasHintActions, Contracts\Has
 
         $name ??= static::getDefaultName();
 
-        if (blank($name)) {
+        if ($name === null) {
             throw new Exception("Column of class [$fieldClass] must have a unique name, passed to the [make()] method.");
         }
 
