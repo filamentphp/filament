@@ -97,7 +97,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     public function canAccessTenant(Model $tenant): bool
     {
-        return $this->teams()->whereKey($tenant->getKey())->exists();
+        return $this->teams()->whereKey($tenant)->exists();
     }
 }
 ```
