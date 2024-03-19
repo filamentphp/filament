@@ -139,7 +139,7 @@ class TestsActions
 
     public function assertTableActionExists(): Closure
     {
-        return function (string | array $name): static {
+        return function (string | array $name, ?Closure $checkActionUsing = null): static {
             $name = $this->parseNestedActionName($name);
 
             $action = $this->instance()->getTable()->getAction($name);
@@ -152,6 +152,13 @@ class TestsActions
                 $action,
                 message: "Failed asserting that a table action with name [{$prettyName}] exists on the [{$livewireClass}] component.",
             );
+
+            if ($checkActionUsing) {
+                Assert::assertTrue(
+                    $checkActionUsing($action),
+                    message: "Failed asserting that a table action with name [{$prettyName}] and provided configuration exists on the [{$livewireClass}] component"
+                );
+            }
 
             return $this;
         };

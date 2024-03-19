@@ -20,7 +20,7 @@ namespace Livewire\Features\SupportTesting {
 
         public function callMountedTableAction(array $arguments = []): static {}
 
-        public function assertTableActionExists(string | array $name): static {}
+        public function assertTableActionExists(string | array $name, ?Closure $checkActionUsing = null): static {}
 
         public function assertTableActionDoesNotExist(string | array $name): static {}
 
