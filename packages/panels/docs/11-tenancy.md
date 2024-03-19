@@ -693,7 +693,7 @@ Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1
 
 ## Using a domain to identify the tenant
 
-When using a tenant, you might want to use domain or subdomain routing like `team1.example.com/posts` instead of a route prefix like `/team1/posts` . You can do that with the `tenantDomain()` method, alongside the `tenant()` configuration method. The `tenant` argument name is followed by a colon `:` and then the attribute you wish to resolve that part of the domain using, like the `slug` attribute:
+When using a tenant, you might want to use domain or subdomain routing like `team1.example.com/posts` instead of a route prefix like `/team1/posts` . You can do that with the `tenantDomain()` method, alongside the `tenant()` configuration method. The `tenant` argument corresponds to the slug attribute of the tenant model:
 
 ```php
 use App\Models\Team;
@@ -703,8 +703,8 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->tenant(Team::class)
-        ->tenantDomain('{tenant:slug}.example.com');
+        ->tenant(Team::class, slugAttribute: 'slug')
+        ->tenantDomain('{tenant}.example.com');
 }
 ```
 
@@ -718,12 +718,14 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->tenant(Team::class)
-        ->tenantDomain('{tenant:domain}');
+        ->tenant(Team::class, slugAttribute: 'domain')
+        ->tenantDomain('{tenant}');
 }
 ```
 
 In this example, the `domain` attribute should contain a valid domain host, like `example.com` or `subdomain.example.com`.
+
+> Note: when using a parameter for the entire domain (`tenantDomain('{tenant}')`), Filament will register a [global route parameter pattern](https://laravel.com/docs/routing#parameters-global-constraints) for all `tenant` parameters in the application to be `[a-z0-9.\-]+`. This is because Laravel does not allow the `.` character in route parameters by default. This might conflict with other panels using tenancy, or other parts of your application that use a `tenant` route parameter.
 
 ## Disabling tenancy for a resource
 
