@@ -10,7 +10,7 @@ Multi-tenancy is a very sensitive topic. It's important to understand the securi
 
 ## Simple one-to-many tenancy
 
-The term "multi-tenancy" is broad and may mean different things in different contexts. Filament's tenancy system implies that the user belongs to **many** tenants (*organizations, teams, companies, etc.*) and may switch between them. 
+The term "multi-tenancy" is broad and may mean different things in different contexts. Filament's tenancy system implies that the user belongs to **many** tenants (*organizations, teams, companies, etc.*) and may switch between them.
 
 If your case is simpler and you don't need a many-to-many relationship, then you don't need to set up the tenancy in Filament. You could use [observers](https://laravel.com/docs/eloquent#observers) and [global scopes](https://laravel.com/docs/eloquent#global-scopes) instead.
 
@@ -89,7 +89,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     {
         return $this->teams;
     }
-    
+
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);
@@ -122,7 +122,6 @@ namespace App\Filament\Pages\Tenancy;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
-use Illuminate\Database\Eloquent\Model;
 
 class RegisterTeam extends RegisterTenant
 {
@@ -130,7 +129,7 @@ class RegisterTeam extends RegisterTenant
     {
         return 'Register team';
     }
-    
+
     public function form(Form $form): Form
     {
         return $form
@@ -139,13 +138,13 @@ class RegisterTeam extends RegisterTenant
                 // ...
             ]);
     }
-    
+
     protected function handleRegistration(array $data): Team
     {
         $team = Team::create($data);
-        
+
         $team->members()->attach(auth()->user());
-        
+
         return $team;
     }
 }
@@ -183,7 +182,6 @@ namespace App\Filament\Pages\Tenancy;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
-use Illuminate\Database\Eloquent\Model;
 
 class EditTeamProfile extends EditTenantProfile
 {
@@ -191,7 +189,7 @@ class EditTeamProfile extends EditTenantProfile
     {
         return 'Team profile';
     }
-    
+
     public function form(Form $form): Form
     {
         return $form
@@ -316,7 +314,7 @@ class ExampleBillingProvider implements Provider
             return redirect('https://billing.example.com');
         };
     }
-    
+
     public function getSubscribedMiddleware(): string
     {
         return RedirectIfUserNotSubscribed::class;
@@ -594,7 +592,7 @@ use Illuminate\Database\Eloquent\Model;
 class Team extends Model implements HasCurrentTenantLabel
 {
     // ...
-    
+
     public function getCurrentTenantLabel(): string
     {
         return 'Active team';
@@ -625,12 +623,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
 {
     // ...
-    
+
     public function getDefaultTenant(Panel $panel): ?Model
     {
         return $this->latestTeam;
     }
-    
+
     public function latestTeam(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'latest_team_id');
@@ -798,7 +796,7 @@ class ApplyTenantScopes
         Author::addGlobalScope(
             fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
         );
-        
+
         return $next($request);
     }
 }
