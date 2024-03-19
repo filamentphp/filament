@@ -60,6 +60,22 @@ if (! $isReady) {
     return;
 }
 
+$configFilePath = __DIR__ . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'filament.php';
+
+if (
+    (! file_exists($configFilePath)) ||
+    (! str_contains(file_get_contents($configFilePath), 'FILAMENT_FILESYSTEM_DISK'))
+) {
+    ask(<<<HTML
+        <span class="bg-amber-600 text-amber-50 mr-1">
+            The <strong>FILAMENT_FILESYSTEM_DISK</strong> has been removed, and the default configuration file now
+            references the <strong>FILESYSTEM_DISK</strong> environment variable. Please read the
+            <a href="https://filamentphp.com/docs/v4/panels/upgrade-guide#the-filament_filesystem_disk-environment-variable" class="underline font-bold">documentation</a>
+            for more information. and press any key to continue.
+        </span>
+    HTML);
+}
+
 render(<<<HTML
     <p class="bg-green-600 text-green-50">
         Starting upgrade...
