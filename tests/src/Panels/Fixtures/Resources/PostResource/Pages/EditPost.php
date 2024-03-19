@@ -14,11 +14,13 @@ class EditPost extends EditRecord
     {
         return [
             Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            Actions\ActionGroup::make([
+                Actions\DeleteAction::make(),
+            ]),
         ];
     }
 
-    public function refreshTitle()
+    public function refreshTitle(): void
     {
         $this->refreshFormData([
             'title',
