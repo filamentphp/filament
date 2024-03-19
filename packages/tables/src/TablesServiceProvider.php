@@ -5,8 +5,6 @@ namespace Filament\Tables;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Testing\TestsActions;
-use Filament\Tables\Testing\TestsAssociateActions;
-use Filament\Tables\Testing\TestsAttachActions;
 use Filament\Tables\Testing\TestsBulkActions;
 use Filament\Tables\Testing\TestsColumns;
 use Filament\Tables\Testing\TestsFilters;
@@ -43,8 +41,6 @@ class TablesServiceProvider extends PackageServiceProvider
         }
 
         Testable::mixin(new TestsActions());
-        Testable::mixin(new TestsAttachActions());
-        Testable::mixin(new TestsAssociateActions());
         Testable::mixin(new TestsBulkActions());
         Testable::mixin(new TestsColumns());
         Testable::mixin(new TestsFilters());
