@@ -145,7 +145,7 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
                 ...$record->getRelationValue('media')
                     ->when(
                         ! $collection instanceof AllMediaCollections,
-                        fn (MediaCollection $collection) => $collection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
+                        fn (MediaCollection $mediaCollection) => $mediaCollection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
                     )
                     ->sortBy('order_column')
                     ->pluck('uuid')
