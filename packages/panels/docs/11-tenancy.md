@@ -119,6 +119,7 @@ To set up a registration page, you'll need to create a new page class that exten
 ```php
 namespace App\Filament\Pages\Tenancy;
 
+use App\Models\Team;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
@@ -499,6 +500,7 @@ When creating and listing records associated with a Tenant, Filament needs acces
 You can customize the name of the ownership relationship used across all resources at once, using the `ownershipRelationship` argument on the `tenant()` configuration method. In this example, resource model classes have an `owner` relationship defined:
 
 ```php
+use App\Models\Team;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -542,6 +544,7 @@ class PostResource extends Resource
 When using a tenant like a team, you might want to add a slug field to the URL rather than the team's ID. You can do that with the `slugAttribute` argument on the `tenant()` configuration method:
 
 ```php
+use App\Models\Team;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -673,6 +676,7 @@ public function panel(Panel $panel): Panel
 By default the URL structure will put the tenant ID or slug immediately after the panel path. If you wish to prefix it with another URL segment, use the `tenantRoutePrefix()` method:
 
 ```php
+use App\Models\Team;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -692,6 +696,7 @@ Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1
 When using a tenant, you might want to use domain or subdomain routing like `team1.example.com/posts` instead of a route prefix like `/team1/posts` . You can do that with the `tenantDomain()` method, alongside the `tenant()` configuration method. The `tenant` argument name is followed by a colon `:` and then the attribute you wish to resolve that part of the domain using, like the `slug` attribute:
 
 ```php
+use App\Models\Team;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -706,6 +711,7 @@ public function panel(Panel $panel): Panel
 In the above examples, the tenants live on subdomains of the main app domain. You may also set the system up to resolve the entire domain from the tenant as well:
 
 ```php
+use App\Models\Team;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
