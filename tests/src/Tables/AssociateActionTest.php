@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Tables\Actions\AssociateAction;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
 
@@ -9,12 +10,12 @@ uses(TestCase::class);
 
 it('can state whether a table action exists', function () {
     livewire(PostsTable::class)
-        ->assertTableAssociateActionExists('associateActionExists')
-        ->assertTableAssociateActionDoesNotExist('associateActionDoesNotExist');
+        ->assertTableActionExists('associateActionExists', fn (AssociateAction $action) => true)
+        ->assertTableActionDoesNotExist('associateActionDoesNotExist');
 });
 
 it('can have a multiple select', function () {
     livewire(PostsTable::class)
-        ->assertTableAssociateActionIsMultipleSelect('associateActionIsMultiple', true)
-        ->assertTableAssociateActionIsNotMultipleSelect('associateActionIsNotMultiple', false);
+        ->assertTableActionExists('associateActionIsMultiple', fn (AssociateAction $action) => $action->isMultiple())
+        ->assertTableActionExists('associateActionIsNotMultiple', fn (AssociateAction $action) => ! $action->isMultiple());
 });
