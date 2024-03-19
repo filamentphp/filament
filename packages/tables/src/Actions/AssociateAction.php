@@ -225,31 +225,18 @@ class AssociateAction extends Action
 
             $relationCountHash = $relationship->getRelationCountHash(incrementJoinCount: false);
 
-            $relationshipQuery
-                ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use (
-                    $relationCountHash,
-                    $relationship
-                ): Builder {
-                    if ($relationship instanceof MorphMany) {
-                        return $query
-                            ->where(
-                                $relationship->getMorphType(),
-                                $relationship->getMorphClass(),
-                            )
-                            ->where(
-                                $relationship->getQualifiedForeignKeyName(),
-                                $relationship->getParent()->getKey(),
-                            );
-                    }
-
-                    return $query->where(
+            if ($relationship instanceof MorphMany) {
+                $relationshipQuery->whereNotMorphedTo($table->getInverseRelationship(), $relationship->getParent());
+            } else {
+                $relationshipQuery
+                    ->whereDoesntHave($table->getInverseRelationship(), fn (Builder $query): Builder => $query->where(
                         // https://github.com/filamentphp/filament/issues/8067
                         $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?
                             "{$relationCountHash}.{$relationship->getParent()->getKeyName()}" :
                             $relationship->getParent()->getQualifiedKeyName(),
                         $relationship->getParent()->getKey(),
-                    );
-                });
+                    ));
+            }
 
             if (
                 filled($titleAttribute) &&
