@@ -118,6 +118,7 @@ trait CanImportRecords
                 })
                 ->storeFiles(false)
                 ->visibility('private')
+                ->disk('local')                                                                        
                 ->required()
                 ->hiddenLabel(),
             Fieldset::make(__('filament-actions::import.modal.form.columns.label'))
