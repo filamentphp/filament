@@ -58,6 +58,34 @@ Route::name('filament.')
                                     $routes($panel);
                                 }
 
+                                Route::name('auth.')
+                                    ->group(function () use ($panel): void {
+                                        Route::post('/logout', LogoutController::class)->name('logout');
+
+                                        if ($panel->hasProfile()) {
+                                            $panel->getProfilePage()::registerRoutes($panel);
+                                        }
+                                    });
+
+                                if ($panel->hasEmailVerification()) {
+                                    Route::name('auth.email-verification.')
+                                        ->prefix($panel->getEmailVerificationRoutePrefix())
+                                        ->group(function () use ($panel) {
+                                            Route::get($panel->getEmailVerificationPromptRouteSlug(), $panel->getEmailVerificationPromptRouteAction())
+                                                ->name('prompt');
+                                            Route::get($panel->getEmailVerificationRouteSlug('/{id}/{hash}'), EmailVerificationController::class)
+                                                ->middleware(['signed', 'throttle:6,1'])
+                                                ->name('verify');
+                                        });
+                                }
+
+                                Route::name('tenant.')
+                                    ->group(function () use ($panel): void {
+                                        if ($panel->hasTenantRegistration()) {
+                                            $panel->getTenantRegistrationPage()::registerRoutes($panel);
+                                        }
+                                    });
+
                                 $routeGroup = Route::middleware($hasTenancy ? $panel->getTenantMiddleware() : []);
 
                                 if (filled($tenantDomain)) {
@@ -109,34 +137,6 @@ Route::name('filament.')
                                 if ($hasTenancy) {
                                     Route::get('/', RedirectToTenantController::class)->name('tenant');
                                 }
-
-                                Route::name('auth.')
-                                    ->group(function () use ($panel): void {
-                                        Route::post('/logout', LogoutController::class)->name('logout');
-
-                                        if ($panel->hasProfile()) {
-                                            $panel->getProfilePage()::registerRoutes($panel);
-                                        }
-                                    });
-
-                                if ($panel->hasEmailVerification()) {
-                                    Route::name('auth.email-verification.')
-                                        ->prefix($panel->getEmailVerificationRoutePrefix())
-                                        ->group(function () use ($panel) {
-                                            Route::get($panel->getEmailVerificationPromptRouteSlug(), $panel->getEmailVerificationPromptRouteAction())
-                                                ->name('prompt');
-                                            Route::get($panel->getEmailVerificationRouteSlug('/{id}/{hash}'), EmailVerificationController::class)
-                                                ->middleware(['signed', 'throttle:6,1'])
-                                                ->name('verify');
-                                        });
-                                }
-
-                                Route::name('tenant.')
-                                    ->group(function () use ($panel): void {
-                                        if ($panel->hasTenantRegistration()) {
-                                            $panel->getTenantRegistrationPage()::registerRoutes($panel);
-                                        }
-                                    });
                             });
 
                         if ($hasTenancy) {
