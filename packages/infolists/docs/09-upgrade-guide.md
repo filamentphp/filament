@@ -2,7 +2,7 @@
 title: Upgrading from v4.x
 ---
 
-> If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/packages/tables/docs/13-upgrade-guide.md) to our repository! Any help is appreciated!
+> If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/4.x/packages/infolists/docs/10-upgrade-guide.md) to our repository! Any help is appreciated!
 
 ## New requirements
 
@@ -39,9 +39,9 @@ Please see the [Panel Builder](../panels/upgrade-guide#the-filament_filesystem_d
 
 ### Low-impact changes
 
-#### Overriding the `Column::make()` or `Constraint::make()` methods
+#### Overriding the `Entry::make()` method
 
-The signature for the `Column::make()` and `Constraint::make()` methods has changed. Any classes that extend the `Column` or `Constraint` class and override the `make()` method must update the method signature to match the new signature. The new signature is as follows:
+The signature for the `Entry::make()` method has changed. Any classes that extend the `Entry` class and override the `make()` method must update the method signature to match the new signature. The new signature is as follows:
 
 ```php
 public static function make(?string $name = null): static

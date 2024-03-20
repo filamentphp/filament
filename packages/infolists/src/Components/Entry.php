@@ -2,6 +2,7 @@
 
 namespace Filament\Infolists\Components;
 
+use Exception;
 use Filament\Infolists\Components\Contracts\HasHintActions;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasPlaceholder;
@@ -25,12 +26,25 @@ class Entry extends Component implements HasHintActions
         $this->statePath($name);
     }
 
-    public static function make(string $name): static
+    public static function make(?string $name = null): static
     {
-        $static = app(static::class, ['name' => $name]);
+        $entryClass = static::class;
+
+        $name ??= static::getDefaultName();
+
+        if (blank($name)) {
+            throw new Exception("Entry of class [$entryClass] must have a unique name, passed to the [make()] method.");
+        }
+
+        $static = app($entryClass, ['name' => $name]);
         $static->configure();
 
         return $static;
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return null;
     }
 
     public function getId(): string

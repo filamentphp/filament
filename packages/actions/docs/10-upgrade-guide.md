@@ -38,3 +38,34 @@ Please see the [Panel Builder](../panels/upgrade-guide#the-filament_filesystem_d
 ### Medium-impact changes
 
 ### Low-impact changes
+
+#### Overriding the `ExportColumn::make()` or `ImportColumn::make()` methods
+
+The signature for the `ExportColumn::make()` and `ImportColumn::make()` methods has changed. Any classes that extend the `ExportColumn` or `ImportColumn` class and override the `make()` method must update the method signature to match the new signature. The new signature is as follows:
+
+```php
+public static function make(?string $name = null): static
+```
+
+This is due to the introduction of the `getDefaultName()` method, that can be overridden to provide a default `$name` value if one is not specified (`null`). If you were previously overriding the `make()` method in order to provide a default `$name` value, it is advised that you now override the `getDefaultName()` method instead, to avoid further maintenance burden in the future:
+
+```php
+public static function getDefaultName(): ?string
+{
+    return 'default';
+}
+```
+
+If you are overriding the `make()` method to pass default configuration to the object once it is instantiated, please note that it is recommended to instead override the `setUp()` method, which is called immediately after the object is instantiated:
+
+```php
+protected function setUp(): void
+{
+    parent::setUp();
+
+    $this->label('Default label');
+}
+```
+
+Ideally, you should avoid overriding the `make()` method altogether as there are alternatives like `setUp()`, and doing so causes your code to be brittle if Filament decides to introduce new constructor parameters in the future.
+

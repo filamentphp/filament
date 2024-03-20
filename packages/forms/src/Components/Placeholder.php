@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components;
 
+use Exception;
+
 class Placeholder extends Component implements Contracts\HasHintActions
 {
     use Concerns\HasHelperText;
@@ -21,12 +23,25 @@ class Placeholder extends Component implements Contracts\HasHintActions
         $this->statePath($name);
     }
 
-    public static function make(string $name): static
+    public static function make(?string $name = null): static
     {
-        $static = app(static::class, ['name' => $name]);
+        $placeholderClass = static::class;
+
+        $name ??= static::getDefaultName();
+
+        if (blank($name)) {
+            throw new Exception("Placeholder of class [$placeholderClass] must have a unique name, passed to the [make()] method.");
+        }
+
+        $static = app($placeholderClass, ['name' => $name]);
         $static->configure();
 
         return $static;
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return null;
     }
 
     protected function setUp(): void
