@@ -33,10 +33,10 @@ class Entry extends Component implements HasHintActions
         $name ??= static::getDefaultName();
 
         if (blank($name)) {
-            throw new Exception("Column of class [$entryClass] must have a unique name, passed to the [make()] method.");
+            throw new Exception("Entry of class [$entryClass] must have a unique name, passed to the [make()] method.");
         }
 
-        $static = app(static::class, ['name' => $name]);
+        $static = app($entryClass, ['name' => $name]);
         $static->configure();
 
         return $static;

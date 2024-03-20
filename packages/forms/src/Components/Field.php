@@ -28,10 +28,10 @@ class Field extends Component implements Contracts\HasHintActions, Contracts\Has
         $name ??= static::getDefaultName();
 
         if ($name === null) {
-            throw new Exception("Column of class [$fieldClass] must have a unique name, passed to the [make()] method.");
+            throw new Exception("Field of class [$fieldClass] must have a unique name, passed to the [make()] method.");
         }
 
-        $static = app(static::class, ['name' => $name]);
+        $static = app($fieldClass, ['name' => $name]);
         $static->configure();
 
         return $static;
