@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
@@ -127,4 +128,10 @@ it('can state whether table actions exist in order', function () {
         ->assertTableActionsExistInOrder(['edit', 'delete'])
         ->assertTableHeaderActionsExistInOrder(['exists', 'existsInOrder'])
         ->assertTableEmptyStateActionsExistInOrder(['emptyExists', 'emptyExistsInOrder']);
+});
+
+it('can state whether a table action exists with a given configuration', function () {
+    livewire(PostsTable::class)
+        ->assertTableActionExists('attachMultiple', fn (AttachAction $action) => $action->isMultiple())
+        ->assertTableActionDoesNotExist(AttachAction::class, fn (AttachAction $action) => $action->isMultiple());
 });

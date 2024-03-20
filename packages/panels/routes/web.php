@@ -58,10 +58,6 @@ Route::name('filament.')
                                     $routes($panel);
                                 }
 
-                                if ($hasTenancy) {
-                                    Route::get('/', RedirectToTenantController::class)->name('tenant');
-                                }
-
                                 Route::name('auth.')
                                     ->group(function () use ($panel): void {
                                         Route::post('/logout', LogoutController::class)->name('logout');
@@ -137,6 +133,10 @@ Route::name('filament.')
                                             $resource::registerRoutes($panel);
                                         }
                                     });
+
+                                if ($hasTenancy) {
+                                    Route::get('/', RedirectToTenantController::class)->name('tenant');
+                                }
                             });
 
                         if ($hasTenancy) {
