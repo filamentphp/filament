@@ -26,11 +26,11 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Markera/avmarkera alla rader för massåtgärder.',
+            'label' => 'Markera/avmarkera alla objekt för massåtgärder.',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Markera/avmarkera rad :key för massåtgärder.',
+            'label' => 'Markera/avmarkera objekt :key för massåtgärder.',
         ],
 
         'bulk_select_group' => [
@@ -76,11 +76,11 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Sluta ändra ordning på rader',
+            'label' => 'Sluta ändra ordning på objekt',
         ],
 
         'enable_reordering' => [
-            'label' => 'Ändra ordning på rader',
+            'label' => 'Ändra ordning på objekt',
         ],
 
         'filter' => [
@@ -146,13 +146,13 @@ return [
 
         'trashed' => [
 
-            'label' => 'Raderade rader',
+            'label' => 'Raderade objekt',
 
-            'only_trashed' => 'Endast raderade rader',
+            'only_trashed' => 'Endast raderade objekt',
 
-            'with_trashed' => 'Med raderade rader',
+            'with_trashed' => 'Med raderade objekt',
 
-            'without_trashed' => 'Utan raderade rader',
+            'without_trashed' => 'Utan raderade objekt',
 
         ],
 
@@ -182,11 +182,11 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Dra och släpp raderna i önskad ordning.',
+    'reorder_indicator' => 'Dra och släpp objekten i önskad ordning.',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 rad vald|:count rader valda',
+        'selected_count' => '1 objekt valt|:count objekt valda',
 
         'actions' => [
 
