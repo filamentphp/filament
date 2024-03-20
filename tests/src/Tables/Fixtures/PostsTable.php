@@ -152,6 +152,11 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\DeleteAction::make('groupedDelete'),
+                    Tables\Actions\ForceDeleteAction::make('groupedForceDelete'),
+                    Tables\Actions\RestoreAction::make('groupedRestore'),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

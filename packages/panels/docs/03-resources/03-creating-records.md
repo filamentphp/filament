@@ -162,7 +162,7 @@ use Filament\Notifications\Notification;
 
 protected function beforeCreate(): void
 {
-    if (! $this->getRecord()->team->subscribed()) {
+    if (! auth()->user()->team->subscribed()) {
         Notification::make()
             ->warning()
             ->title('You don\'t have an active subscription!')

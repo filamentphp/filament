@@ -8,6 +8,7 @@ use Filament\Support\Components\Component;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
+use Illuminate\Support\Facades\Route;
 
 class Panel extends Component
 {
@@ -62,6 +63,11 @@ class Panel extends Component
     {
         $this->registerLivewireComponents();
         $this->registerLivewirePersistentMiddleware();
+
+        if ($this->getTenantDomain() === '{tenant}') {
+            // Laravel does not match periods in route parameters by default.
+            Route::pattern('tenant', '[a-z0-9.\-]+');
+        }
 
         if (app()->runningInConsole()) {
             $this->registerAssets();

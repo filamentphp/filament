@@ -10,9 +10,12 @@ abstract class SimplePage extends BasePage
 
     protected ?string $maxWidth = null;
 
+    protected bool $hasTopbar = true;
+
     protected function getLayoutData(): array
     {
         return [
+            'hasTopbar' => $this->hasTopbar(),
             'maxWidth' => $this->getMaxWidth(),
         ];
     }
@@ -25,5 +28,10 @@ abstract class SimplePage extends BasePage
     public function hasLogo(): bool
     {
         return true;
+    }
+
+    public function hasTopbar(): bool
+    {
+        return $this->hasTopbar;
     }
 }
