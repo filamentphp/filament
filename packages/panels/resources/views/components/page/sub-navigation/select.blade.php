@@ -6,7 +6,7 @@
     wire:ignore
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
-            ->class(['fi-sub-navigation-select md:hidden'])
+            ->class(['fi-page-sub-navigation-select md:hidden'])
     "
 >
     <x-filament::input.select
