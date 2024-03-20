@@ -2,7 +2,7 @@
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Field;
-use Filament\Tests\Forms\Fixtures\IdField;
+use Filament\Forms\Components\TextInput;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
@@ -32,17 +32,23 @@ it('sets its fallback label from its name', function () {
 });
 
 it('can be instantiated with a default name', function () {
-
     $field = IdField::make();
 
     expect($field->getName())
-        ->toBe('ID');
+        ->toBe('id');
 });
 
-test('default name can be overridden', function () {
-
-    $field = IdField::make('Identifier');
+it('can ignore the default name if another is specified', function () {
+    $field = IdField::make('identifier');
 
     expect($field->getName())
-        ->toBe('Identifier');
+        ->toBe('identifier');
 });
+
+class IdField extends TextInput
+{
+    public static function getDefaultName(): ?string
+    {
+        return 'id';
+    }
+}
