@@ -3,6 +3,7 @@
 namespace Livewire\Features\SupportTesting {
 
     use Closure;
+    use Illuminate\Database\Eloquent\Model;
     use Illuminate\Support\Collection;
 
     class Testable {
@@ -20,9 +21,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function callMountedTableAction(array $arguments = []): static {}
 
-        public function assertTableActionExists(string | array $name, ?Closure $checkActionUsing = null): static {}
+        public function assertTableActionExists(string | array $name, ?Closure $checkActionUsing = null, $record = null): static {}
 
-        public function assertTableActionDoesNotExist(string | array $name): static {}
+        public function assertTableActionDoesNotExist(string | array $name, ?Closure $checkActionUsing = null, $record = null): static {}
 
         public function assertTableActionsExistInOrder(array $names): static {}
 
@@ -120,6 +121,8 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertTableColumnExists(string $name, ?Closure $checkColumnUsing = null, $record = null): static {}
 
+        public function assertTableColumnDoesNotExist(string $name, ?Closure $checkColumnUsing = null, $record = null): static {}
+
         public function assertTableColumnVisible(string $name): static {}
 
         public function assertTableColumnHidden(string $name): static {}
@@ -171,22 +174,6 @@ namespace Livewire\Features\SupportTesting {
         public function assertCountTableRecords(int $count): static {}
 
         public function loadTable(): static {}
-
-        public function assertTableAttachActionExists(string | array $name): static {}
-
-        public function assertTableAttachActionDoesNotExist(string | array $name): static {}
-
-        public function assertTableAttachActionIsMultipleSelect(string | array $name, bool $multiple): static {}
-
-        public function assertTableAttachActionIsNotMultipleSelect(string | array $name, bool $multiple): static {}
-
-        public function assertTableAssociateActionExists(string | array $name): static {}
-
-        public function assertTableAssociateActionDoesNotExist(string | array $name): static {}
-
-        public function assertTableAssociateActionIsMultipleSelect(string | array $name, bool $multiple): static {}
-
-        public function assertTableAssociateActionIsNotMultipleSelect(string | array $name, bool $multiple): static {}
     }
 
 }
