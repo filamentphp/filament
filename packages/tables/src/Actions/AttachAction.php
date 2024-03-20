@@ -31,6 +31,8 @@ class AttachAction extends Action
 
     protected bool | Closure $isRecordSelectPreloaded = false;
 
+    protected bool | Closure $isMultiple = false;
+
     /**
      * @var array<string> | Closure | null
      */
@@ -158,6 +160,18 @@ class AttachAction extends Action
         return (bool) $this->evaluate($this->isRecordSelectPreloaded);
     }
 
+    public function multiple(bool | Closure $condition = true): static
+    {
+        $this->isMultiple = $condition;
+
+        return $this;
+    }
+
+    public function isMultiple(): bool
+    {
+        return (bool) $this->evaluate($this->isMultiple);
+    }
+
     /**
      * @param  array<string> | Closure | null  $columns
      */
@@ -269,6 +283,7 @@ class AttachAction extends Action
         $select = Select::make('recordId')
             ->label(__('filament-actions::attach.single.modal.fields.record_id.label'))
             ->required()
+            ->multiple($this->isMultiple())
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(optionsLimit: $component->getOptionsLimit(), search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(function ($value) use ($table): string {
