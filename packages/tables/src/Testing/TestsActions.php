@@ -183,10 +183,7 @@ class TestsActions
             $prettyName = implode(' > ', $name);
 
             if (! $action) {
-                Assert::assertNull(
-                    Action::class,
-                    $action,
-                );
+                Assert::assertNull($action);
 
                 return $this;
             }

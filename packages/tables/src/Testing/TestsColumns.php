@@ -100,10 +100,7 @@ class TestsColumns
             $livewireClass = $this->instance()::class;
 
             if (! $column) {
-                Assert::assertNull(
-                    Column::class,
-                    $column,
-                );
+                Assert::assertNull($column);
 
                 return $this;
             }
