@@ -11,7 +11,14 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Visa :count färre',
+                'expand_list' => 'Visa :count till',
+            ],
+
             'more_list_items' => 'och :count till',
+
         ],
 
     ],
@@ -105,6 +112,10 @@ return [
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'Använd filter',
+            ],
 
             'remove' => [
                 'label' => 'Ta bort filter',
