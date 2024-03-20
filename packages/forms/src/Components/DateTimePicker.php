@@ -12,6 +12,7 @@ use Illuminate\View\ComponentAttributeBag;
 
 class DateTimePicker extends Field implements Contracts\HasAffixActions
 {
+    use Concerns\CanBeNative;
     use Concerns\CanBeReadOnly;
     use Concerns\HasAffixes;
     use Concerns\HasDatalistOptions;
@@ -35,8 +36,6 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
     protected ?int $firstDayOfWeek = null;
 
     protected string | Closure | null $format = null;
-
-    protected bool | Closure $isNative = true;
 
     protected bool | Closure $hasDate = true;
 
@@ -84,10 +83,10 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
 
             if (! $state instanceof CarbonInterface) {
                 try {
-                    $state = Carbon::createFromFormat($component->getFormat(), $state, $component->getTimezone());
+                    $state = Carbon::createFromFormat($component->getFormat(), (string) $state, config('app.timezone'));
                 } catch (InvalidFormatException $exception) {
                     try {
-                        $state = Carbon::parse($state, $component->getTimezone());
+                        $state = Carbon::parse($state, config('app.timezone'));
                     } catch (InvalidFormatException $exception) {
                         $component->state(null);
 
@@ -96,7 +95,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
                 }
             }
 
-            $state->setTimezone($component->getTimezone());
+            $state = $state->setTimezone($component->getTimezone());
 
             if (! $component->isNative()) {
                 $component->state((string) $state);
@@ -270,13 +269,6 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
     public function weekStartsOnSunday(): static
     {
         $this->firstDayOfWeek(7);
-
-        return $this;
-    }
-
-    public function native(bool | Closure $condition = true): static
-    {
-        $this->isNative = $condition;
 
         return $this;
     }
@@ -465,11 +457,6 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
     public function shouldCloseOnDateSelection(): bool
     {
         return (bool) $this->evaluate($this->shouldCloseOnDateSelection);
-    }
-
-    public function isNative(): bool
-    {
-        return (bool) $this->evaluate($this->isNative);
     }
 
     public function getStep(): int | float | string | null

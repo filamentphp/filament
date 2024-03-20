@@ -17,10 +17,30 @@ it('can render page', function () {
     $userToResetPassword = User::factory()->make();
     $token = Password::createToken($userToResetPassword);
 
-    $this->get(Filament::getResetPasswordUrl(
+    $url = Filament::getResetPasswordUrl(
         $token,
         $userToResetPassword,
-    ))->assertSuccessful();
+    );
+
+    expect($url)->toContain('/password-reset/reset');
+
+    $this->get($url)->assertSuccessful();
+});
+
+it('can render page with a custom slug', function () {
+    Filament::setCurrentPanel(Filament::getPanel('slugs'));
+
+    $userToResetPassword = User::factory()->make();
+    $token = Password::createToken($userToResetPassword);
+
+    $url = Filament::getResetPasswordUrl(
+        $token,
+        $userToResetPassword,
+    );
+
+    expect($url)->toContain('/password-reset-test/reset-test');
+
+    $this->get($url)->assertSuccessful();
 });
 
 it('can reset password', function () {

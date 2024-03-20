@@ -1,8 +1,16 @@
 ---
 title: Getting started
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Introduction to Filament"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you how to get started with the resources."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/2"
+    series="rapid-laravel-development"
+/>
 
 Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app - using tables and forms.
 
@@ -52,8 +60,6 @@ If you'd like to save time, Filament can automatically generate the [form](#reso
 php artisan make:filament-resource Customer --generate
 ```
 
-> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence, Filament is unable to generate the schema for your resource if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
-
 ### Handling soft deletes
 
 By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
@@ -99,6 +105,13 @@ This is required for features like [global search](global-search) to work.
 > You may specify the name of an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) if just one column is inadequate at identifying a record.
 
 ## Resource forms
+
+<LaracastsBanner
+    title="Basic Form Inputs"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding a form to your resource."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/3"
+    series="rapid-laravel-development"
+/>
 
 Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages:
 
@@ -148,6 +161,13 @@ Forms\Components\TextInput::make('password')
 ```
 
 ## Resource tables
+
+<LaracastsBanner
+    title="Table Columns"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding a table to your resource."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/9"
+    series="rapid-laravel-development"
+/>
 
 Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records):
 
@@ -241,6 +261,16 @@ public static function getPluralModelLabel(): string
 }
 ```
 
+### Automatic model label capitalization
+
+By default, Filament will automatically capitalize each word in the model label, for some parts of the UI. For example, in page titles, the navigation menu, and the breadcrumbs.
+
+If you want to disable this behaviour for a resource, you can set `$hasTitleCaseModelLabel` in the resource:
+
+```php
+protected static bool $hasTitleCaseModelLabel = false;
+```
+
 ## Resource navigation items
 
 Filament will automatically generate a navigation menu item for your resource using the [plural label](#plural-label).
@@ -271,7 +301,9 @@ protected static ?string $navigationIcon = 'heroicon-o-user-group';
 Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()` method:
 
 ```php
-public static function getNavigationIcon(): ?string
+use Illuminate\Contracts\Support\Htmlable;
+
+public static function getNavigationIcon(): string | Htmlable | null
 {
     return 'heroicon-o-user-group';
 }
@@ -331,6 +363,8 @@ public static function getNavigationParentItem(): ?string
     return __('filament/navigation.groups.shop.items.products');
 }
 ```
+
+> If you're reaching for a third level of navigation like this, you should consider using [clusters](clusters) instead, which are a logical grouping of resources and [custom pages](../pages), which can share their own separate navigation.
 
 ## Generating URLs to resource pages
 
@@ -473,6 +507,8 @@ public static function getRecordSubNavigation(Page $page): array
 ```
 
 Each item in the sub-navigation can be customized using the [same navigation methods as normal pages](../navigation).
+
+> If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../pages), you might be looking for [clusters](../clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
 
 ### Sub-navigation position
 

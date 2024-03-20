@@ -2,8 +2,16 @@
 title: Actions
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Table Actions"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding actions to Filament resource tables."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/11"
+    series="rapid-laravel-development"
+/>
 
 Filament's tables can use [Actions](../actions). They are buttons that can be added to the [end of any table row](#row-actions), or even in the [header](#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](#bulk-actions) can be used to execute code when records in the table are selected. Additionally, actions can be added to any [table column](#column-actions), such that each cell in that column is a trigger for your action.
 
@@ -83,6 +91,36 @@ public function table(Table $table): Table
 ```
 
 <AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="3.x" />
+
+### Accessing the selected table rows
+
+You may want an action to be able to access all the selected rows in the table. Usually, this is done with a [bulk action](#bulk-actions) in the header of the table. However, you may want to do this with a row action, where the selected rows provide context for the action.
+
+For example, you may want to have a row action that copies the row data to all the selected records. To force the table to be selectable, even if there aren't bulk actions defined, you need to use the `selectable()` method. To allow the action to access the selected records, you need to use the `accessSelectedRecords()` method. Then, you can use the `$selectedRecords` parameter in your action to access the selected records:
+
+```php
+use Filament\Tables\Table;
+use Filament\Tables\Actions\Action;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->selectable()
+        ->actions([
+            Action::make('copyToSelected')
+                ->accessSelectedRecords()
+                ->action(function (Model $record, Collection $selectedRecords) {
+                    $selectedRecords->each(
+                        fn (Model $selectedRecord) => $selectedRecord->update([
+                            'is_active' => $record->is_active,
+                        ]),
+                    );
+                }),
+        ]);
+}
+```
 
 ## Bulk actions
 
@@ -195,6 +233,23 @@ public function table(Table $table): Table
 }
 ```
 
+### Preventing bulk-selection of all pages
+
+The `selectCurrentPageOnly()` method can be used to prevent the user from easily bulk-selecting all records in the table at once, and instead only allows them to select one page at a time:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->bulkActions([
+            // ...
+        ])
+        ->selectCurrentPageOnly();
+}
+```
+
 ## Header actions
 
 Both [row actions](#row-actions) and [bulk actions](#bulk-actions) can be rendered in the header of the table. You can put them in the `$table->headerActions()` method:
@@ -231,6 +286,7 @@ Filament includes several prebuilt actions and bulk actions that you can add to 
 - [Force-delete](../actions/prebuilt-actions/force-delete)
 - [Restore](../actions/prebuilt-actions/restore)
 - [Import](../actions/prebuilt-actions/import)
+- [Export](../actions/prebuilt-actions/export)
 
 ## Grouping actions
 

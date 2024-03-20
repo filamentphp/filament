@@ -22,8 +22,16 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'Ensimmäinen',
+        ],
+
         'go_to_page' => [
             'label' => 'Mene sivulle :page',
+        ],
+
+        'last' => [
+            'label' => 'Viimeinen',
         ],
 
         'next' => [

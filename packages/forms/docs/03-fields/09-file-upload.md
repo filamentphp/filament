@@ -2,8 +2,16 @@
 title: File upload
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="File Uploads"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding file upload fields to Filament forms."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/8"
+    series="rapid-laravel-development"
+/>
 
 The file upload field is based on [Filepond](https://pqina.nl/filepond).
 
@@ -103,7 +111,7 @@ FileUpload::make('attachments')
     ->storeFileNamesIn('attachment_file_names')
 ```
 
-`attachment_file_names` will now store the original file name/s of your uploaded files, so you can save them to the database when the form is submitted. If you're uploading `multiple()` files, make sure that you add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to this Eloquent model property too.
+`attachment_file_names` will now store the original file names of your uploaded files, so you can save them to the database when the form is submitted. If you're uploading `multiple()` files, make sure that you add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to this Eloquent model property too.
 
 ## Avatar mode
 
@@ -338,6 +346,8 @@ FileUpload::make('attachment')
 
 When the form is submitted, a temporary file upload object will be returned instead of a permanently stored file path. This is perfect for temporary files like imported CSVs.
 
+Please be aware that images, video and audio files will not show the stored file name in the form's preview, unless you use [`previewable(false)`](#previewing-files). This is due to a limitation with the FilePond preview plugin.
+
 ## Orienting images from their EXIF data
 
 By default, FilePond will automatically orient images based on their EXIF data. If you wish to disable this behaviour, you can use the `orientImagesFromExif(false)` method:
@@ -369,6 +379,17 @@ use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachment')
     ->fetchFileInformation(false)
+```
+
+## Customizing the uploading message
+
+You may customize the uploading message that is displayed in the form's submit button using the `uploadingMessage()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->uploadingMessage('Uploading attachment...')
 ```
 
 ## File upload validation

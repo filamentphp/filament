@@ -7,9 +7,10 @@ import LaracastsBanner from "@components/LaracastsBanner.astro"
 ## Custom filter forms
 
 <LaracastsBanner
-title="Build a Custom Table Filter"
-description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to build components, and you'll get to know all the internal tools to help you."
-url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/11"
+    title="Build a Custom Table Filter"
+    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to build components, and you'll get to know all the internal tools to help you."
+    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/11"
+    series="building-advanced-components"
 />
 
 You may use components from the [Form Builder](../../forms/fields/getting-started) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
@@ -73,6 +74,8 @@ Filter::make('is_admin')
 
 If you are using a [custom filter form](#custom-filter-forms), you should use [`indicateUsing()`](#custom-active-indicators) to display an active indicator.
 
+Please note: if you do not have an indicator for your filter, then the badge-count of how many filters are active in the table will not include that filter.
+
 ### Custom active indicators
 
 Not all indicators are simple, so you may need to use `indicateUsing()` to customize which indicators should be shown at any time.
@@ -80,6 +83,7 @@ Not all indicators are simple, so you may need to use `indicateUsing()` to custo
 For example, if you have a custom date filter, you may create a custom indicator that formats the selected date:
 
 ```php
+use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 
@@ -100,6 +104,7 @@ Filter::make('created_at')
 You may even render multiple indicators at once, by returning an array of `Indicator` objects. If you have different fields associated with different indicators, you should set the field using the `removeField()` method on the `Indicator` object to ensure that the correct field is reset when the filter is removed:
 
 ```php
+use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Indicator;
@@ -125,4 +130,16 @@ Filter::make('created_at')
 
         return $indicators;
     })
+```
+
+### Preventing indicators from being removed
+
+You can prevent users from removing an indicator using `removable(false)` on an `Indicator` object:
+
+```php
+use Carbon\Carbon;
+use Filament\Tables\Filters\Indicator;
+
+Indicator::make('Created from ' . Carbon::parse($data['from'])->toFormattedDateString())
+    ->removable(false)
 ```

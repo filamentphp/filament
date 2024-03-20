@@ -3,11 +3,12 @@
 @tailwind utilities;
 
 @layer base {
-    html {
-        -webkit-tap-highlight-color: transparent;
-    }
-
     :root.dark {
         color-scheme: dark;
+    }
+
+    /* When scrolling to validation error, do not hide element behind the top bar */
+    [data-field-wrapper] {
+        scroll-margin-top: 8rem;
     }
 }

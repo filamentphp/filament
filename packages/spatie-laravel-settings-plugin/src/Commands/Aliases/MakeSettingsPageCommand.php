@@ -8,5 +8,5 @@ class MakeSettingsPageCommand extends Commands\MakeSettingsPageCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'filament:settings-page {name?} {settingsClass?}';
+    protected $signature = 'filament:settings-page {name?} {settingsClass?} {--panel=} {--F|force}';
 }

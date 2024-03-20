@@ -367,7 +367,7 @@ class Group extends Component
             ) ?? $query;
         }
 
-        $this->scopeQueryByKey($query, $this->getKey($record));
+        $this->scopeQueryByKey($query, $this->getStringKey($record));
 
         return $query;
     }
@@ -453,5 +453,20 @@ class Group extends Component
     public function isDate(): bool
     {
         return $this->isDate;
+    }
+
+    public function applyEagerLoading(EloquentBuilder $query): EloquentBuilder
+    {
+        if (! $this->getRelationship($query->getModel())) {
+            return $query;
+        }
+
+        $relationshipName = $this->getRelationshipName();
+
+        if (array_key_exists($relationshipName, $query->getEagerLoads())) {
+            return $query;
+        }
+
+        return $query->with([$relationshipName]);
     }
 }

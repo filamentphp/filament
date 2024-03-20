@@ -11,7 +11,14 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Afficher :count de moins',
+                'expand_list' => 'Afficher :count de plus',
+            ],
+
             'more_list_items' => ':count de plus',
+
         ],
 
     ],
@@ -24,6 +31,10 @@ return [
 
         'bulk_select_record' => [
             'label' => "Sélectionner/désélectionner l'élément :key pour les actions groupées.",
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Sélectionner/désélectionner le groupe :title pour les actions groupées.',
         ],
 
         'search' => [
@@ -101,6 +112,10 @@ return [
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'Appliquer les filtres',
+            ],
 
             'remove' => [
                 'label' => 'Supprimer le filtre',

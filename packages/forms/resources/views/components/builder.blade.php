@@ -88,53 +88,38 @@
                         }"
                         x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
-                        x-on:expand-concealing-component.window="
-                            $nextTick(() => {
-                                error = $el.querySelector('[data-validation-error]')
-
-                                if (! error) {
-                                    return
-                                }
-
-                                isCollapsed = false
-
-                                if (document.body.querySelector('[data-validation-error]') !== error) {
-                                    return
-                                }
-
-                                setTimeout(
-                                    () =>
-                                        $el.scrollIntoView({
-                                            behavior: 'smooth',
-                                            block: 'start',
-                                            inline: 'start',
-                                        }),
-                                    200,
-                                )
-                            })
-                        "
+                        x-on:expand="isCollapsed = false"
                         x-sortable-item="{{ $uuid }}"
                         class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                         x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                     >
                         @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $hasBlockLabels || $isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
                             <div
-                                class="fi-fo-builder-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3"
+                                @if ($isCollapsible)
+                                    x-on:click.stop="isCollapsed = !isCollapsed"
+                                @endif
+                                @class([
+                                    'fi-fo-builder-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3',
+                                    'cursor-pointer select-none' => $isCollapsible,
+                                ])
                             >
                                 @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
                                     <ul class="flex items-center gap-x-3">
                                         @if ($isReorderableWithDragAndDrop)
-                                            <li x-sortable-handle>
+                                            <li
+                                                x-sortable-handle
+                                                x-on:click.stop
+                                            >
                                                 {{ $reorderAction }}
                                             </li>
                                         @endif
 
                                         @if ($isReorderableWithButtons)
-                                            <li>
+                                            <li x-on:click.stop>
                                                 {{ $moveUpAction(['item' => $uuid])->disabled($loop->first) }}
                                             </li>
 
-                                            <li>
+                                            <li x-on:click.stop>
                                                 {{ $moveDownAction(['item' => $uuid])->disabled($loop->last) }}
                                             </li>
                                         @endif
@@ -143,13 +128,9 @@
 
                                 @if ($hasBlockLabels)
                                     <h4
-                                        @if ($isCollapsible)
-                                            x-on:click.stop="isCollapsed = !isCollapsed"
-                                        @endif
                                         @class([
                                             'text-sm font-medium text-gray-950 dark:text-white',
                                             'truncate' => $isBlockLabelTruncated(),
-                                            'cursor-pointer select-none' => $isCollapsible,
                                         ])
                                     >
                                         {{ $item->getParentComponent()->getLabel($item->getRawState(), $uuid) }}
@@ -165,19 +146,19 @@
                                         class="ms-auto flex items-center gap-x-3"
                                     >
                                         @foreach ($visibleExtraItemActions as $extraItemAction)
-                                            <li>
+                                            <li x-on:click.stop>
                                                 {{ $extraItemAction(['item' => $uuid]) }}
                                             </li>
                                         @endforeach
 
                                         @if ($isCloneable)
-                                            <li>
+                                            <li x-on:click.stop>
                                                 {{ $cloneAction(['item' => $uuid]) }}
                                             </li>
                                         @endif
 
                                         @if ($isDeletable)
-                                            <li>
+                                            <li x-on:click.stop>
                                                 {{ $deleteAction(['item' => $uuid]) }}
                                             </li>
                                         @endif

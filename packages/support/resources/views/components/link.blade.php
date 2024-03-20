@@ -16,8 +16,10 @@
     'iconPosition' => IconPosition::Before,
     'iconSize' => null,
     'keyBindings' => null,
+    'labelSrOnly' => false,
     'loadingIndicator' => true,
     'size' => ActionSize::Medium,
+    'spaMode' => null,
     'tag' => 'a',
     'target' => null,
     'tooltip' => null,
@@ -58,13 +60,14 @@
             default => $size,
         },
         match ($color) {
-            'gray' => 'fi-color-gray',
+            'gray' => null,
             default => 'fi-color-custom',
         },
+        is_string($color) ? "fi-color-{$color}" : null,
     ]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
-        'font-semibold group-hover/link:underline group-focus-visible/link:underline',
+        'font-semibold group-hover/link:underline group-focus-visible/link:underline' => ! $labelSrOnly,
         match ($size) {
             ActionSize::ExtraSmall => 'text-xs',
             ActionSize::Small => 'text-sm',
@@ -72,11 +75,12 @@
             ActionSize::Large => 'text-sm',
             ActionSize::ExtraLarge => 'text-sm',
             default => null,
-        },
+        } => ! $labelSrOnly,
         match ($color) {
             'gray' => 'text-gray-700 dark:text-gray-200',
             default => 'text-custom-600 dark:text-custom-400',
-        },
+        } => ! $labelSrOnly,
+        'sr-only' => $labelSrOnly,
     ]);
 
     $labelStyles = \Illuminate\Support\Arr::toCssStyles([
@@ -109,7 +113,7 @@
         ) => $color !== 'gray',
     ]);
 
-    $badgeContainerClasses = 'fi-link-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
+    $badgeContainerClasses = 'fi-link-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2';
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
@@ -124,7 +128,7 @@
 
 @if ($tag === 'a')
     <a
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
         @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
@@ -221,7 +225,9 @@
                                 'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                                 'wire:target' => $loadingIndicatorTarget,
                             ])
-                        )->class([$iconClasses])
+                        )
+                            ->class([$iconClasses])
+                            ->style([$iconStyles])
                     "
                 />
             @endif

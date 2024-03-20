@@ -10,10 +10,10 @@ use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use Livewire\Attributes\Url;
+use Throwable;
 
 use function Livewire\store;
 
@@ -71,19 +71,18 @@ trait InteractsWithActions
             return null;
         }
 
-        $action->arguments([
-            ...Arr::last($this->mountedActionsArguments),
-            ...$arguments,
-        ]);
+        $action->mergeArguments($arguments);
 
-        $form = $this->getMountedActionForm();
+        $form = $this->getMountedActionForm(mountedAction: $action);
 
         $result = null;
 
         $originallyMountedActions = $this->mountedActions;
 
         try {
-            if ($this->mountedActionHasForm()) {
+            $action->beginDatabaseTransaction();
+
+            if ($this->mountedActionHasForm(mountedAction: $action)) {
                 $action->callBeforeFormValidated();
 
                 $action->formData($form->getState());
@@ -100,16 +99,31 @@ trait InteractsWithActions
             $result = $action->callAfter() ?? $result;
 
             $this->afterActionCalled();
+
+            $action->commitDatabaseTransaction();
         } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $action->rollBackDatabaseTransaction() :
+                $action->commitDatabaseTransaction();
+
             return null;
         } catch (Cancel $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $action->rollBackDatabaseTransaction() :
+                $action->commitDatabaseTransaction();
         } catch (ValidationException $exception) {
-            if (! $this->mountedActionShouldOpenModal()) {
+            $action->rollBackDatabaseTransaction();
+
+            if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
                 $action->resetArguments();
                 $action->resetFormData();
 
                 $this->unmountAction();
             }
+
+            throw $exception;
+        } catch (Throwable $exception) {
+            $action->rollBackDatabaseTransaction();
 
             throw $exception;
         }
@@ -161,17 +175,17 @@ trait InteractsWithActions
             return null;
         }
 
-        $this->cacheMountedActionForm();
+        $this->cacheMountedActionForm(mountedAction: $action);
 
         try {
-            $hasForm = $this->mountedActionHasForm();
+            $hasForm = $this->mountedActionHasForm(mountedAction: $action);
 
             if ($hasForm) {
                 $action->callBeforeFormFilled();
             }
 
             $action->mount([
-                'form' => $this->getMountedActionForm(),
+                'form' => $this->getMountedActionForm(mountedAction: $action),
             ]);
 
             if ($hasForm) {
@@ -185,7 +199,7 @@ trait InteractsWithActions
             return null;
         }
 
-        if (! $this->mountedActionShouldOpenModal()) {
+        if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
             return $this->callMountedAction();
         }
 
@@ -205,24 +219,16 @@ trait InteractsWithActions
         $this->mountAction($name, $arguments);
     }
 
-    public function mountedActionShouldOpenModal(): bool
+    public function mountedActionShouldOpenModal(?Action $mountedAction = null): bool
     {
-        $action = $this->getMountedAction();
-
-        if ($action->isModalHidden()) {
-            return false;
-        }
-
-        return $action->getModalDescription() ||
-            $action->getModalContent() ||
-            $action->getModalContentFooter() ||
-            $action->getInfolist() ||
-            $this->mountedActionHasForm();
+        return ($mountedAction ?? $this->getMountedAction())->shouldOpenModal(
+            checkForFormUsing: $this->mountedActionHasForm(...),
+        );
     }
 
-    public function mountedActionHasForm(): bool
+    public function mountedActionHasForm(?Action $mountedAction = null): bool
     {
-        return (bool) count($this->getMountedActionForm()?->getComponents() ?? []);
+        return (bool) count($this->getMountedActionForm(mountedAction: $mountedAction)?->getComponents() ?? []);
     }
 
     public function cacheAction(Action $action): Action
@@ -266,11 +272,11 @@ trait InteractsWithActions
         ];
     }
 
-    public function getMountedActionForm(): ?Forms\Form
+    public function getMountedActionForm(?Action $mountedAction = null): ?Forms\Form
     {
-        $action = $this->getMountedAction();
+        $mountedAction ??= $this->getMountedAction();
 
-        if (! $action) {
+        if (! $mountedAction) {
             return null;
         }
 
@@ -278,10 +284,10 @@ trait InteractsWithActions
             return $this->getForm('mountedActionForm');
         }
 
-        return $action->getForm(
+        return $mountedAction->getForm(
             $this->makeForm()
                 ->statePath('mountedActionsData.' . array_key_last($this->mountedActionsData))
-                ->model($action->getRecord() ?? $action->getModel() ?? $this->getMountedActionFormModel())
+                ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $this->getMountedActionFormModel())
                 ->operation(implode('.', $this->mountedActions)),
         );
     }
@@ -311,7 +317,6 @@ trait InteractsWithActions
             return $this->getMountableModalActionFromAction(
                 $action,
                 modalActionNames: $modalActionNames ?? [],
-                parentActionName: $name,
             );
         }
 
@@ -338,18 +343,20 @@ trait InteractsWithActions
         return $this->getMountableModalActionFromAction(
             $this->cacheAction($action),
             modalActionNames: $modalActionNames ?? [],
-            parentActionName: $name,
         );
     }
 
     /**
      * @param  array<string>  $modalActionNames
      */
-    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName): ?Action
+    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames): ?Action
     {
         $arguments = $this->mountedActionsArguments;
 
-        if (($actionArguments = array_shift($arguments)) !== null) {
+        if (
+            (($actionArguments = array_shift($arguments)) !== null) &&
+            (! $action->hasArguments())
+        ) {
             $action->arguments($actionArguments);
         }
 
@@ -360,11 +367,12 @@ trait InteractsWithActions
                 return null;
             }
 
-            if (($actionArguments = array_shift($arguments)) !== null) {
+            if (
+                (($actionArguments = array_shift($arguments)) !== null) &&
+                (! $action->hasArguments())
+            ) {
                 $action->arguments($actionArguments);
             }
-
-            $parentActionName = $modalActionName;
         }
 
         if (! $action instanceof Action) {
@@ -434,11 +442,11 @@ trait InteractsWithActions
         $this->openActionModal();
     }
 
-    protected function cacheMountedActionForm(): void
+    protected function cacheMountedActionForm(?Action $mountedAction = null): void
     {
         $this->cacheForm(
             'mountedActionForm',
-            fn () => $this->getMountedActionForm(),
+            fn () => $this->getMountedActionForm($mountedAction),
         );
     }
 

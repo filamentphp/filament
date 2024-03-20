@@ -273,3 +273,11 @@ You may also customize the title of the dashboard by overriding the `$title` pro
 ```php
 protected static ?string $title = 'Finance dashboard';
 ```
+
+The primary dashboard shown to a user is the first one they have access to (controlled by [`canAccess()` method](pages#authorization)), according to the defined navigation sort order.
+
+The default sort order for dashboards is `-2`. You can control the sort order of custom dashboards with `$navigationSort`:
+
+```php
+protected static ?int $navigationSort = 15;
+```

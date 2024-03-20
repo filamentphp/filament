@@ -45,7 +45,7 @@ class ManagePost extends Component implements HasForms, HasActions
 
 ## Adding the action
 
-Add a method that returns your action:
+Add a method that returns your action. The method must share the exact same name as the action, or the name followed by `Action`:
 
 ```php
 use App\Models\Post;
@@ -69,6 +69,12 @@ class ManagePost extends Component implements HasForms, HasActions
             ->requiresConfirmation()
             ->action(fn () => $this->post->delete());
     }
+    
+    // This method name also works, since the action name is `delete`:
+    // public function delete(): Action
+    
+    // This method name does not work, since the action name is `delete`, not `deletePost`:
+    // public function deletePost(): Action
 
     // ...
 }
@@ -118,6 +124,38 @@ public function deleteAction(): Action
             $post?->delete();
         });
 }
+```
+
+## Hiding actions in a Livewire view
+
+If you use `hidden()` or `visible()` to control if an action is rendered, you should wrap the action in an `@if` check for `isVisible()`:
+
+```blade
+<div>
+    @if ($this->deleteAction->isVisible())
+        {{ $this->deleteAction }}
+    @endif
+    
+    {{-- Or --}}
+    
+    @if (($this->deleteAction)(['post' => $post->id])->isVisible())
+        {{ ($this->deleteAction)(['post' => $post->id]) }}
+    @endif
+</div>
+```
+
+The `hidden()` and `visible()` methods also control if the action is `disabled()`, so they are still useful to protect the action from being run if the user does not have permission. Encapsulating this logic in the `hidden()` or `visible()` of the action itself is good practice otherwise you need to define the condition in the view and in `disabled()`.
+
+You can also take advantage of this to hide any wrapping elements that may not need to be rendered if the action is hidden:
+
+```blade
+<div>
+    @if ($this->deleteAction->isVisible())
+        <div>
+            {{ $this->deleteAction }}
+        </div>
+    @endif
+</div>
 ```
 
 ## Grouping actions in a Livewire view

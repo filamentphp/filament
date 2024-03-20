@@ -2,6 +2,7 @@
 
 namespace Filament\Commands;
 
+use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Commands\Concerns\CanIndentStrings;
@@ -12,6 +13,7 @@ use Illuminate\Support\Str;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
+use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
 class MakePageCommand extends Command
@@ -46,8 +48,36 @@ class MakePageCommand extends Command
         $resourceClass = null;
         $resourcePage = null;
 
-        $resourceInput = $this->option('resource') ?? text(
-            label: 'What is the resource you would like to create this in?',
+        $panel = $this->option('panel');
+
+        if ($panel) {
+            $panel = Filament::getPanel($panel);
+        }
+
+        if (! $panel) {
+            $panels = Filament::getPanels();
+
+            /** @var Panel $panel */
+            $panel = (count($panels) > 1) ? $panels[select(
+                label: 'Which panel would you like to create this in?',
+                options: array_map(
+                    fn (Panel $panel): string => $panel->getId(),
+                    $panels,
+                ),
+                default: Filament::getDefaultPanel()->getId()
+            )] : Arr::first($panels);
+        }
+
+        $resourceInput = $this->option('resource') ?? suggest(
+            label: 'Which resource would you like to create this in?',
+            options: collect($panel->getResources())
+                ->filter(fn (string $namespace): bool => str($namespace)->contains('\\Resources\\'))
+                ->map(
+                    fn (string $namespace): string => (string) str($namespace)
+                        ->afterLast('\\Resources\\')
+                        ->beforeLast('Resource')
+                )
+                ->all(),
             placeholder: '[Optional] UserResource',
         );
 
@@ -159,26 +189,6 @@ class MakePageCommand extends Command
             }
         }
 
-        $panel = $this->option('panel');
-
-        if ($panel) {
-            $panel = Filament::getPanel($panel);
-        }
-
-        if (! $panel) {
-            $panels = Filament::getPanels();
-
-            /** @var Panel $panel */
-            $panel = (count($panels) > 1) ? $panels[select(
-                label: 'Which panel would you like to create this in?',
-                options: array_map(
-                    fn (Panel $panel): string => $panel->getId(),
-                    $panels,
-                ),
-                default: Filament::getDefaultPanel()->getId()
-            )] : Arr::first($panels);
-        }
-
         if (empty($resource)) {
             $pageDirectories = $panel->getPageDirectories();
             $pageNamespaces = $panel->getPageNamespaces();
@@ -219,7 +229,7 @@ class MakePageCommand extends Command
 
         $path = (string) str($page)
             ->prepend('/')
-            ->prepend(empty($resource) ? ($path ?? '') : ($resourcePath ?? '') . "\\{$resource}\\Pages\\")
+            ->prepend(empty($resource) ? $path : $resourcePath . "\\{$resource}\\Pages\\")
             ->replace('\\', '/')
             ->replace('//', '/')
             ->append('.php');
@@ -240,21 +250,36 @@ class MakePageCommand extends Command
             return static::INVALID;
         }
 
+        $potentialCluster = empty($resource) ? ((string) str($namespace)->beforeLast('\Pages')) : null;
+        $clusterAssignment = null;
+        $clusterImport = null;
+
+        if (
+            filled($potentialCluster) &&
+            class_exists($potentialCluster) &&
+            is_subclass_of($potentialCluster, Cluster::class)
+        ) {
+            $clusterAssignment = $this->indentString(PHP_EOL . PHP_EOL . 'protected static ?string $cluster = ' . class_basename($potentialCluster) . '::class;');
+            $clusterImport = "use {$potentialCluster};" . PHP_EOL;
+        }
+
         if (empty($resource)) {
             $this->copyStubToApp('Page', $path, [
                 'class' => $pageClass,
-                'namespace' => str($namespace ?? '') . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'clusterAssignment' => $clusterAssignment,
+                'clusterImport' => $clusterImport,
+                'namespace' => $namespace . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'view' => $view,
             ]);
         } elseif ($resourcePage === 'ManageRelatedRecords') {
             $this->copyStubToApp('ResourceManageRelatedRecordsPage', $path, [
                 'baseResourcePage' => "Filament\\Resources\\Pages\\{$resourcePage}",
                 'baseResourcePageClass' => $resourcePage,
-                'modifyQueryUsing' => filled($modifyQueryUsing ?? null) ? PHP_EOL . $this->indentString($modifyQueryUsing ?? '', 3) : $modifyQueryUsing ?? '',
-                'namespace' => ($resourceNamespace ?? '') . "\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'modifyQueryUsing' => filled($modifyQueryUsing ?? null) ? PHP_EOL . $this->indentString($modifyQueryUsing, 3) : $modifyQueryUsing ?? '',
+                'namespace' => "{$resourceNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'recordTitleAttribute' => $recordTitleAttribute ?? null,
                 'relationship' => $relationship ?? null,
-                'resource' => ($resourceNamespace ?? '') . "\\{$resource}",
+                'resource' => "{$resourceNamespace}\\{$resource}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
                 'tableActions' => $this->indentString($tableActions ?? '', 4),
@@ -271,8 +296,8 @@ class MakePageCommand extends Command
             $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . ($resourcePage === 'custom' ? 'Page' : $resourcePage),
                 'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' : $resourcePage,
-                'namespace' => ($resourceNamespace ?? '') . "\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
-                'resource' => ($resourceNamespace ?? '') . "\\{$resource}",
+                'namespace' => "{$resourceNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'resource' => "{$resourceNamespace}\\{$resource}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
                 'view' => $view,

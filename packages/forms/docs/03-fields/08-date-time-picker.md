@@ -213,6 +213,25 @@ TimePicker::make('at')
     ->prefixIconColor('success')
 ```
 
+## Making the field read-only
+
+Not to be confused with [disabling the field](getting-started#disabling-a-field), you may make the field "read-only" using the `readonly()` method:
+
+```php
+use Filament\Forms\Components\DatePicker;
+
+DatePicker::make('date_of_birth')
+    ->readonly()
+```
+
+Please note that this setting is only enforced on native date pickers. If you're using the [JavaScript date picker](#enabling-the-javascript-date-picker), you'll need to use [`disabled()`](getting-started#disabling-a-field).
+
+There are a few differences, compared to [`disabled()`](getting-started#disabling-a-field):
+
+- When using `readOnly()`, the field will still be sent to the server when the form is submitted. It can be mutated with the browser console, or via JavaScript. You can use [`dehydrated(false)`](advanced#preventing-a-field-from-being-dehydrated) to prevent this.
+- There are no styling changes, such as less opacity, when using `readOnly()`.
+- The field is still focusable when using `readOnly()`.
+
 ## Date-time picker validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to date-time pickers.

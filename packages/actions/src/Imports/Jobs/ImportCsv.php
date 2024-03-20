@@ -4,6 +4,7 @@ namespace Filament\Actions\Imports\Jobs;
 
 use Carbon\CarbonInterface;
 use Exception;
+use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\FailedImportRow;
 use Filament\Actions\Imports\Models\Import;
@@ -29,18 +30,18 @@ class ImportCsv implements ShouldQueue
 
     public bool $deleteWhenMissingModels = true;
 
-    protected readonly Importer $importer;
+    protected Importer $importer;
 
     /**
-     * @param  array<array<string, string>>  $rows
+     * @param  array<array<string, string>> | string  $rows
      * @param  array<string, string>  $columnMap
      * @param  array<string, mixed>  $options
      */
     public function __construct(
-        readonly public Import $import,
-        readonly public array $rows,
-        readonly public array $columnMap,
-        readonly public array $options = [],
+        protected Import $import,
+        protected array | string $rows,
+        protected array $columnMap,
+        protected array $options = [],
     ) {
         $this->importer = $this->import->getImporter(
             $this->columnMap,
@@ -65,9 +66,21 @@ class ImportCsv implements ShouldQueue
 
         $exceptions = [];
 
-        foreach ($this->rows as $row) {
+        $processedRows = 0;
+        $successfulRows = 0;
+
+        if (! is_array($this->rows)) {
+            $rows = unserialize(base64_decode($this->rows));
+        }
+
+        foreach (($rows ?? $this->rows) as $row) {
+            $row = $this->utf8Encode($row);
+
             try {
                 DB::transaction(fn () => ($this->importer)($row));
+                $successfulRows++;
+            } catch (RowImportFailedException $exception) {
+                $this->logFailedRow($row, $exception->getMessage());
             } catch (ValidationException $exception) {
                 $this->logFailedRow($row, collect($exception->errors())->flatten()->implode(' '));
             } catch (Throwable $exception) {
@@ -76,13 +89,27 @@ class ImportCsv implements ShouldQueue
                 $this->logFailedRow($row);
             }
 
-            $this->import->increment('processed_rows');
+            $processedRows++;
         }
+
+        $this->import->refresh();
+
+        $importProcessedRows = $this->import->processed_rows + $processedRows;
+        $this->import->processed_rows = ($importProcessedRows < $this->import->total_rows) ?
+            $importProcessedRows :
+            $this->import->total_rows;
+
+        $importSuccessfulRows = $this->import->successful_rows + $successfulRows;
+        $this->import->successful_rows = ($importSuccessfulRows < $this->import->total_rows) ?
+            $importSuccessfulRows :
+            $this->import->total_rows;
+
+        $this->import->save();
 
         $this->handleExceptions($exceptions);
     }
 
-    public function retryUntil(): CarbonInterface
+    public function retryUntil(): ?CarbonInterface
     {
         return $this->importer->getJobRetryUntil();
     }
@@ -105,6 +132,19 @@ class ImportCsv implements ShouldQueue
         $failedRow->data = $data;
         $failedRow->validation_error = $validationError;
         $failedRow->save();
+    }
+
+    protected function utf8Encode(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            return array_map($this->utf8Encode(...), $value);
+        }
+
+        if (is_string($value)) {
+            return mb_convert_encoding($value, 'UTF-8', 'UTF-8');
+        }
+
+        return $value;
     }
 
     /**

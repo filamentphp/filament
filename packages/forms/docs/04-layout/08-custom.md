@@ -7,6 +7,7 @@ import LaracastsBanner from "@components/LaracastsBanner.astro"
     title="Build a Custom Form Layout"
     description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to build components, and you'll get to know all the internal tools to help you."
     url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/7"
+    series="building-advanced-components"
 />
 
 ## View components
@@ -25,7 +26,7 @@ This assumes that you have a `resources/views/filament/forms/components/wizard.b
 
 You may create your own custom component classes and views, which you can reuse across your project, and even release as a plugin to the community.
 
-> If you're just creating a simple custom component to use once, you could instead use a [view component](#view) to render any custom Blade file.
+> If you're just creating a simple custom component to use once, you could instead use a [view component](#view-components) to render any custom Blade file.
 
 To create a custom column class and view, you may use the following command:
 

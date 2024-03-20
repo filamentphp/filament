@@ -93,7 +93,7 @@ return [
                 ],
 
                 'flip_vertical' => [
-                    'label' => 'Balik gambar vertical',
+                    'label' => 'Balik gambar secara vertikal',
                 ],
 
                 'move_down' => [
@@ -246,6 +246,15 @@ return [
             'strike' => 'Coret',
             'table' => 'Table',
             'undo' => 'Batalkan',
+        ],
+
+    ],
+
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Ya',
+            'false' => 'Tidak',
         ],
 
     ],
@@ -408,6 +417,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Tag baru',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Sembunyikan kata sandi',
+            ],
+
+            'show_password' => [
+                'label' => 'Tampilkan kata sandi',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Ya',
+            'false' => 'Tidak',
+        ],
+
     ],
 
     'wizard' => [

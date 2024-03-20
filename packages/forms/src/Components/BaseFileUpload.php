@@ -16,8 +16,11 @@ use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
 
-class BaseFileUpload extends Field
+class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
+    use Concerns\HasNestedRecursiveValidationRules;
+    use Concerns\HasUploadingMessage;
+
     /**
      * @var array<string> | Arrayable | Closure | null
      */
@@ -188,11 +191,11 @@ class BaseFileUpload extends Field
 
             if (
                 $component->shouldMoveFiles() &&
-                ($component->getDiskName() == invade($file)->disk) /** @phpstan-ignore-line */
+                ($component->getDiskName() == (fn (): string => $this->disk)->call($file))
             ) {
                 $newPath = trim($component->getDirectory() . '/' . $component->getUploadedFileNameForStorage($file), '/');
 
-                $component->getDisk()->move($file->path(), $newPath);
+                $component->getDisk()->move((fn (): string => $this->path)->call($file), $newPath);
 
                 return $newPath;
             }
@@ -209,11 +212,15 @@ class BaseFileUpload extends Field
 
     protected function callAfterStateUpdatedHook(Closure $hook): void
     {
-        $state = $this->getState();
+        /** @var array<string | TemporaryUploadedFile> $state */
+        $state = $this->getState() ?? [];
+
+        /** @var array<string | TemporaryUploadedFile> $oldState */
+        $oldState = $this->getOldState() ?? [];
 
         $this->evaluate($hook, [
-            'state' => $this->isMultiple() ? $state : Arr::first($state ?? []),
-            'old' => $this->isMultiple() ? $this->getOldState() : Arr::first($this->getOldState() ?? []),
+            'state' => $this->isMultiple() ? $state : Arr::first($state),
+            'old' => $this->isMultiple() ? $oldState : Arr::first($oldState),
         ]);
     }
 

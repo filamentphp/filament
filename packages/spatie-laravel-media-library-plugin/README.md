@@ -5,13 +5,13 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-media-library-plugin:"^3.0-stable" -W
+composer require filament/spatie-laravel-media-library-plugin:"^3.2" -W
 ```
 
 If you haven't already done so, you need to publish the migration to create the media table:
 
 ```bash
-php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="migrations"
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="medialibrary-migrations"
 ```
 
 Run the migrations:
@@ -36,7 +36,7 @@ SpatieMediaLibraryFileUpload::make('avatar')
 
 The media library file upload supports all the customization options of the [original file upload component](https://filamentphp.com/docs/forms/fields/file-upload).
 
-> The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](https://filamentphp.com/docs/forms/getting-started#field-relationships) section**. If you're using a [panel](../panels), you can skip this step.
+> The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [setting a form model](https://filamentphp.com/docs/forms/adding-a-form-to-a-livewire-component#setting-a-form-model) section**. If you're using a [panel](../panels), you can skip this step.
 
 ### Passing a collection
 
@@ -68,14 +68,14 @@ The base file upload component also has configuration options for setting the `d
 
 In addition to the behaviour of the normal file upload, Spatie's Media Library also allows users to reorder files.
 
-To enable this behaviour, use the `enableReordering()` method:
+To enable this behaviour, use the `reorderable()` method:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
-    ->enableReordering()
+    ->reorderable()
 ```
 
 You may now drag and drop files into order.
@@ -152,6 +152,29 @@ SpatieMediaLibraryFileUpload::make('attachments')
     ])
 ```
 
+### Filtering media
+
+It's possible to target a file upload component to only handle a certain subset of media in a collection. To do that, you can filter the media collection using the `filterMediaUsing()` method. This method accepts a function that receives the `$media` collection and manipulates it. You can use any [collection method](https://laravel.com/docs/collections#available-methods) to filter it.
+
+For example, you could scope the field to only handle media that has certain custom properties:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Get;
+use Illuminate\Support\Collection;
+
+SpatieMediaLibraryFileUpload::make('images')
+    ->customProperties(fn (Get $get): array => [
+        'gallery_id' => $get('gallery_id'),
+    ])
+    ->filterMediaUsing(
+        fn (Collection $media, Get $get): Collection => $media->where(
+            'custom_properties.gallery_id',
+            $get('gallery_id')
+        ),
+    )
+```
+
 ## Table column
 
 To use the media library image column:
@@ -175,7 +198,16 @@ SpatieMediaLibraryImageColumn::make('avatar')
     ->collection('avatars')
 ```
 
-The [collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) you to group files into categories.
+The [collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) allows you to group files into categories.
+
+By default, only media without a collection (using the `default` collection) will be shown. If you want to show media from all collections, you can use the `allCollections()` method:
+
+```php
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+
+SpatieMediaLibraryImageColumn::make('avatar')
+    ->allCollections()
+```
 
 ### Using conversions
 
@@ -211,7 +243,16 @@ SpatieMediaLibraryImageEntry::make('avatar')
     ->collection('avatars')
 ```
 
-The [collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) you to group files into categories.
+The [collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) allows you to group files into categories.
+
+By default, only media without a collection (using the `default` collection) will be shown. If you want to show media from all collections, you can use the `allCollections()` method:
+
+```php
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+
+SpatieMediaLibraryImageEntry::make('avatar')
+    ->allCollections()
+```
 
 ### Using conversions
 

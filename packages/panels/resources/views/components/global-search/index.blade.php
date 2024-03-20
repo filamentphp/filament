@@ -1,5 +1,9 @@
-<div class="fi-global-search flex items-center">
-    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.start') }}
+<div
+    x-data="{}"
+    x-on:focus-first-global-search-result.stop="$el.querySelector('.fi-global-search-result-link')?.focus()"
+    class="fi-global-search flex items-center"
+>
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_START) }}
 
     <div class="sm:relative">
         <x-filament-panels::global-search.field />
@@ -11,5 +15,5 @@
         @endif
     </div>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.end') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::GLOBAL_SEARCH_END) }}
 </div>

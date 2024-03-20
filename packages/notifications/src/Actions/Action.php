@@ -113,6 +113,10 @@ class Action extends StaticAction implements Arrayable, Groupable
 
     public function getAlpineClickHandler(): ?string
     {
+        if (filled($handler = parent::getAlpineClickHandler())) {
+            return $handler;
+        }
+
         if ($this->shouldMarkAsRead()) {
             return 'markAsRead()';
         }
@@ -121,7 +125,7 @@ class Action extends StaticAction implements Arrayable, Groupable
             return 'markAsUnread()';
         }
 
-        return parent::getAlpineClickHandler();
+        return null;
     }
 
     /**

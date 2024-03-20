@@ -2,8 +2,16 @@
 title: Select
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Select Input"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding select fields to Filament forms."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/4"
+    series="rapid-laravel-development"
+/>
 
 The select component allows you to select from a list of predefined options:
 
@@ -196,6 +204,19 @@ Select::make('author_id')
     ->preload()
 ```
 
+### Excluding the current record
+
+When working with recursive relationships, you will likely want to remove the current record from the set of results.
+
+This can be easily be done using the `ignoreRecord` argument:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('parent_id')
+    ->relationship(name: 'parent', titleAttribute: 'name', ignoreRecord: true)
+```
+
 ### Customizing the relationship query
 
 You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
@@ -243,13 +264,27 @@ Select::make('author_id')
     ->searchable(['first_name', 'last_name'])
 ```
 
+### Saving pivot data to the relationship
+
+If you're using a `multiple()` relationship and your pivot table has additional columns, you can use the `pivotData()` method to specify the data that should be saved in them:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('primaryTechnologies')
+    ->relationship(name: 'technologies', titleAttribute: 'name')
+    ->multiple()
+    ->pivotData([
+        'is_primary' => true,
+    ])
+```
+
 ### Creating a new option in a modal
 
 You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
 
 ```php
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Model;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
@@ -268,13 +303,29 @@ The form opens in a modal, where the user can fill it with data. Upon form submi
 
 <AutoScreenshot name="forms/fields/select/create-option-modal" alt="Select with create option modal" version="3.x" />
 
+#### Customizing new option creation
+
+You can customize the creation process of the new option defined in the form using the `createOptionUsing()` method, which should return the primary key of the newly created record:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->createOptionForm([
+       // ...
+    ])
+    ->createOptionUsing(function (array $data): int {
+        return auth()->user()->team->members()->create($data)->getKey();
+    }),
+```
+
 ### Editing the selected option in a modal
 
 You may define a custom form that can be used to edit the selected record and save it back to the `BelongsTo` relationship:
 
 ```php
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Model;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
@@ -346,7 +397,7 @@ MorphToSelect::make('commentable')
     ])
 ```
 
-> Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
+> Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `native()`, `allowHtml()`, and `optionsLimit()`.
 
 ## Allowing HTML in the option labels
 

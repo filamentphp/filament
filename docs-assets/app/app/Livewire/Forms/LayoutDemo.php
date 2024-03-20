@@ -12,9 +12,11 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Split;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -328,6 +330,33 @@ class LayoutDemo extends Component implements HasForms
                             ->columns(3),
                     ]),
                 Group::make()
+                    ->id('sectionFooterActions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Section::make('Rate limiting')
+                            ->description('Prevent abuse by limiting the number of requests per period')
+                            ->footerActions([
+                                Action::make('test'),
+                            ])
+                            ->statePath('section')
+                            ->schema([
+                                TextInput::make('hits')
+                                    ->default(30),
+                                Select::make('period')
+                                    ->default('hour')
+                                    ->options([
+                                        'hour' => 'Hour',
+                                    ]),
+                                TextInput::make('maximum')
+                                    ->default(100),
+                                Textarea::make('notes')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(3),
+                    ]),
+                Group::make()
                     ->id('sectionIcons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
@@ -448,6 +477,27 @@ class LayoutDemo extends Component implements HasForms
                         ])
                             ->statePath('sectionWithoutHeader')
                             ->columns(3),
+                    ]),
+                Group::make()
+                    ->id('split')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Split::make([
+                            Section::make([
+                                TextInput::make('title')
+                                    ->default('Lorem ipsum dolor sit amet'),
+                                Textarea::make('content')
+                                    ->default('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec euismod, nisl eget tempor aliquam, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl. Donec euismod, nisl eget tempor aliquam, nunc nisl aliquet nunc, quis aliquam nisl nunc quis nisl.')
+                                    ->rows(5),
+                            ]),
+                            Section::make([
+                                Toggle::make('is_published')
+                                    ->default(true),
+                                Toggle::make('is_featured'),
+                            ])->grow(false),
+                        ])->statePath('split'),
                     ]),
                 Group::make()
                     ->id('anonymousActions')

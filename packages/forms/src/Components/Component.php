@@ -5,11 +5,13 @@ namespace Filament\Forms\Components;
 use Filament\Forms\Concerns\HasColumns;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Model;
 
 class Component extends ViewComponent
 {
+    use CanGrow;
     use Concerns\BelongsToContainer;
     use Concerns\BelongsToModel;
     use Concerns\CanBeConcealed;

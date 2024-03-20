@@ -11,6 +11,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Url;
+use Throwable;
 
 use function Livewire\store;
 
@@ -30,6 +31,11 @@ trait HasActions
     public ?array $mountedTableActionsData = [];
 
     /**
+     * @var array<string, array<string, mixed>> | null
+     */
+    public ?array $mountedTableActionsArguments = [];
+
+    /**
      * @var int | string | null
      */
     public $mountedTableActionRecord = null;
@@ -43,6 +49,12 @@ trait HasActions
      */
     #[Url(as: 'tableAction')]
     public $defaultTableAction = null;
+
+    /**
+     * @var mixed
+     */
+    #[Url(as: 'tableActionArguments')]
+    public $defaultTableActionArguments = null;
 
     /**
      * @var mixed
@@ -73,14 +85,18 @@ trait HasActions
             return null;
         }
 
-        $action->arguments($arguments);
+        $action->mergeArguments($arguments);
 
-        $form = $this->getMountedTableActionForm();
+        $form = $this->getMountedTableActionForm(mountedAction: $action);
 
         $result = null;
 
+        $originallyMountedActions = $this->mountedTableActions;
+
         try {
-            if ($this->mountedTableActionHasForm()) {
+            $action->beginDatabaseTransaction();
+
+            if ($this->mountedTableActionHasForm(mountedAction: $action)) {
                 $action->callBeforeFormValidated();
 
                 $action->formData($form->getState());
@@ -95,16 +111,31 @@ trait HasActions
             ]);
 
             $result = $action->callAfter() ?? $result;
+
+            $action->commitDatabaseTransaction();
         } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $action->rollBackDatabaseTransaction() :
+                $action->commitDatabaseTransaction();
+
             return null;
         } catch (Cancel $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $action->rollBackDatabaseTransaction() :
+                $action->commitDatabaseTransaction();
         } catch (ValidationException $exception) {
-            if (! $this->mountedTableActionShouldOpenModal()) {
+            $action->rollBackDatabaseTransaction();
+
+            if (! $this->mountedTableActionShouldOpenModal(mountedAction: $action)) {
                 $action->resetArguments();
                 $action->resetFormData();
 
                 $this->unmountTableAction();
             }
+
+            throw $exception;
+        } catch (Throwable $exception) {
+            $action->rollBackDatabaseTransaction();
 
             throw $exception;
         }
@@ -116,6 +147,12 @@ trait HasActions
         $action->resetArguments();
         $action->resetFormData();
 
+        // If the action was replaced while it was being called,
+        // we don't want to unmount it.
+        if ($originallyMountedActions !== $this->mountedTableActions) {
+            return null;
+        }
+
         $this->unmountTableAction();
 
         return $result;
@@ -126,9 +163,13 @@ trait HasActions
         $this->mountedTableActionRecord = $record;
     }
 
-    public function mountTableAction(string $name, ?string $record = null): mixed
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function mountTableAction(string $name, ?string $record = null, array $arguments = []): mixed
     {
         $this->mountedTableActions[] = $name;
+        $this->mountedTableActionsArguments[] = $arguments;
         $this->mountedTableActionsData[] = [];
 
         if (count($this->mountedTableActions) === 1) {
@@ -155,17 +196,17 @@ trait HasActions
             return null;
         }
 
-        $this->cacheMountedTableActionForm();
+        $this->cacheMountedTableActionForm(mountedAction: $action);
 
         try {
-            $hasForm = $this->mountedTableActionHasForm();
+            $hasForm = $this->mountedTableActionHasForm(mountedAction: $action);
 
             if ($hasForm) {
                 $action->callBeforeFormFilled();
             }
 
             $action->mount([
-                'form' => $this->getMountedTableActionForm(),
+                'form' => $this->getMountedTableActionForm(mountedAction: $action),
             ]);
 
             if ($hasForm) {
@@ -179,7 +220,7 @@ trait HasActions
             return null;
         }
 
-        if (! $this->mountedTableActionShouldOpenModal()) {
+        if (! $this->mountedTableActionShouldOpenModal(mountedAction: $action)) {
             return $this->callMountedTableAction();
         }
 
@@ -190,24 +231,25 @@ trait HasActions
         return null;
     }
 
-    public function mountedTableActionShouldOpenModal(): bool
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function replaceMountedTableAction(string $name, ?string $record = null, array $arguments = []): void
     {
-        $action = $this->getMountedTableAction();
-
-        if ($action->isModalHidden()) {
-            return false;
-        }
-
-        return $action->getModalDescription() ||
-            $action->getModalContent() ||
-            $action->getModalContentFooter() ||
-            $action->getInfolist() ||
-            $this->mountedTableActionHasForm();
+        $this->resetMountedTableActionProperties();
+        $this->mountTableAction($name, $record ?? $this->mountedTableActionRecord, $arguments);
     }
 
-    public function mountedTableActionHasForm(): bool
+    public function mountedTableActionShouldOpenModal(?Action $mountedAction = null): bool
     {
-        return (bool) count($this->getMountedTableActionForm()?->getComponents() ?? []);
+        return ($mountedAction ?? $this->getMountedTableAction())->shouldOpenModal(
+            checkForFormUsing: $this->mountedTableActionHasForm(...),
+        );
+    }
+
+    public function mountedTableActionHasForm(?Action $mountedAction = null): bool
+    {
+        return (bool) count($this->getMountedTableActionForm(mountedAction: $mountedAction)?->getComponents() ?? []);
     }
 
     public function getMountedTableAction(): ?Action
@@ -219,11 +261,11 @@ trait HasActions
         return $this->getTable()->getAction($this->mountedTableActions);
     }
 
-    public function getMountedTableActionForm(): ?Form
+    public function getMountedTableActionForm(?Action $mountedAction = null): ?Form
     {
-        $action = $this->getMountedTableAction();
+        $mountedAction ??= $this->getMountedTableAction();
 
-        if (! $action) {
+        if (! $mountedAction) {
             return null;
         }
 
@@ -231,7 +273,7 @@ trait HasActions
             return $this->getForm('mountedTableActionForm');
         }
 
-        return $action->getForm(
+        return $mountedAction->getForm(
             $this->makeForm()
                 ->model($this->getMountedTableActionRecord() ?? $this->getTable()->getModel())
                 ->statePath('mountedTableActionsData.' . array_key_last($this->mountedTableActionsData))
@@ -269,6 +311,7 @@ trait HasActions
     protected function resetMountedTableActionProperties(): void
     {
         $this->mountedTableActions = [];
+        $this->mountedTableActionsArguments = [];
         $this->mountedTableActionsData = [];
     }
 
@@ -304,7 +347,10 @@ trait HasActions
             // Setting these to `null` creates a bug where the properties are
             // actually set to `'null'` strings and remain in the URL.
             $this->defaultTableAction = [];
+            $this->defaultTableActionArguments = [];
             $this->defaultTableActionRecord = [];
+
+            $this->selectedTableRecords = [];
 
             return;
         }
@@ -316,11 +362,11 @@ trait HasActions
         $this->openTableActionModal();
     }
 
-    protected function cacheMountedTableActionForm(): void
+    protected function cacheMountedTableActionForm(?Action $mountedAction = null): void
     {
         $this->cacheForm(
             'mountedTableActionForm',
-            fn () => $this->getMountedTableActionForm(),
+            fn () => $this->getMountedTableActionForm($mountedAction),
         );
     }
 

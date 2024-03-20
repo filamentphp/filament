@@ -6,6 +6,19 @@ return [
 
     'heading' => 'Log ind på din konto',
 
+    'actions' => [
+
+        'register' => [
+            'before' => 'eller',
+            'label' => 'Opret en konto',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Glemt din adgangskode?',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [

@@ -13,6 +13,8 @@ use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 /**
  * @property Form $form
@@ -35,7 +37,7 @@ class ViewRecord extends Page
      */
     public ?array $data = [];
 
-    public static function getNavigationIcon(): ?string
+    public static function getNavigationIcon(): string | Htmlable | null
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.view-record.navigation-item')
@@ -65,8 +67,6 @@ class ViewRecord extends Page
 
     protected function authorizeAccess(): void
     {
-        static::authorizeResourceAccess();
-
         abort_unless(static::getResource()::canView($this->getRecord()), 403);
     }
 
@@ -77,22 +77,23 @@ class ViewRecord extends Page
 
     protected function fillForm(): void
     {
-        $data = $this->getRecord()->attributesToArray();
-
         /** @internal Read the DocBlock above the following method. */
-        $this->fillFormWithDataAndCallHooks($data);
+        $this->fillFormWithDataAndCallHooks($this->getRecord());
     }
 
     /**
      * @internal Never override or call this method. If you completely override `fillForm()`, copy the contents of this method into your override.
      *
-     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>  $extraData
      */
-    protected function fillFormWithDataAndCallHooks(array $data): void
+    protected function fillFormWithDataAndCallHooks(Model $record, array $extraData = []): void
     {
         $this->callHook('beforeFill');
 
-        $data = $this->mutateFormDataBeforeFill($data);
+        $data = $this->mutateFormDataBeforeFill([
+            ...$record->attributesToArray(),
+            ...$extraData,
+        ]);
 
         $this->form->fill($data);
 
@@ -106,7 +107,7 @@ class ViewRecord extends Page
     {
         $this->data = [
             ...$this->data,
-            ...$this->getRecord()->only($attributes),
+            ...Arr::only($this->getRecord()->attributesToArray(), $attributes),
         ];
     }
 

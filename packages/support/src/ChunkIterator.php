@@ -15,6 +15,8 @@ class ChunkIterator
 
     public function get(): Generator
     {
+        $this->iterator->rewind();
+
         $chunk = [];
 
         for ($i = 0; $this->iterator->valid(); $i++) {

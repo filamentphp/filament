@@ -6,13 +6,17 @@ use Filament\Actions\Action;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 
 trait InteractsWithRecord
 {
     #[Locked]
     public Model | int | string | null $record;
+
+    public function mountCanAuthorizeAccess(): void
+    {
+        abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
+    }
 
     protected function resolveRecord(int | string $key): Model
     {
@@ -35,7 +39,7 @@ trait InteractsWithRecord
         $resource = static::getResource();
 
         if (! $resource::hasRecordTitle()) {
-            return Str::headline($resource::getModelLabel());
+            return $resource::getTitleCaseModelLabel();
         }
 
         return $resource::getRecordTitle($this->getRecord());
@@ -69,6 +73,10 @@ trait InteractsWithRecord
         }
 
         $breadcrumbs[] = $this->getBreadcrumb();
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
 
         return $breadcrumbs;
     }
@@ -109,7 +117,7 @@ trait InteractsWithRecord
         ];
     }
 
-    protected function getMountedActionFormModel(): Model
+    protected function getMountedActionFormModel(): Model | string | null
     {
         return $this->getRecord();
     }

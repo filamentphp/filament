@@ -4,15 +4,14 @@ namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use Filament\Support\Enums\ArgumentValue;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
-use Illuminate\Support\Stringable;
-
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 
 trait CanFormatState
 {
@@ -26,9 +25,9 @@ trait CanFormatState
 
     protected string | Closure | null $wordLimitEnd = null;
 
-    protected string | Closure | null $prefix = null;
+    protected string | Htmlable | Closure | null $prefix = null;
 
-    protected string | Closure | null $suffix = null;
+    protected string | Htmlable | Closure | null $suffix = null;
 
     protected string | Closure | null $timezone = null;
 
@@ -100,28 +99,11 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
     {
         $this->isMoney = true;
 
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $divideBy): ?string {
-            if (blank($state)) {
-                return null;
-            }
-
-            $currency = $column->evaluate($currency) ?? Table::$defaultCurrency;
-
-            return format_money($state, $currency, $divideBy);
-        });
-
-        return $this;
-    }
-
-    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
-    {
-        $this->isNumeric = true;
-
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $divideBy, $locale): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -130,16 +112,48 @@ trait CanFormatState
                 return $state;
             }
 
-            if ($decimalPlaces === null) {
-                return format_number($state);
+            $currency = $column->evaluate($currency) ?? Table::$defaultCurrency;
+
+            if ($divideBy) {
+                $state /= $divideBy;
             }
 
-            return number_format(
-                $state,
-                $column->evaluate($decimalPlaces),
-                $column->evaluate($decimalSeparator),
-                $column->evaluate($thousandsSeparator),
-            );
+            return Number::currency($state, $currency, $column->evaluate($locale));
+        });
+
+        return $this;
+    }
+
+    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null | ArgumentValue $decimalSeparator = ArgumentValue::Default, string | Closure | null | ArgumentValue $thousandsSeparator = ArgumentValue::Default, int | Closure | null $maxDecimalPlaces = null, string | Closure | null $locale = null): static
+    {
+        $this->isNumeric = true;
+
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($decimalPlaces, $decimalSeparator, $locale, $maxDecimalPlaces, $thousandsSeparator): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            if (! is_numeric($state)) {
+                return $state;
+            }
+
+            $decimalPlaces = $column->evaluate($decimalPlaces);
+            $decimalSeparator = $column->evaluate($decimalSeparator);
+            $thousandsSeparator = $column->evaluate($thousandsSeparator);
+
+            if (
+                ($decimalSeparator !== ArgumentValue::Default) ||
+                ($thousandsSeparator !== ArgumentValue::Default)
+            ) {
+                return number_format(
+                    $state,
+                    $decimalPlaces,
+                    $decimalSeparator === ArgumentValue::Default ? '.' : $decimalSeparator,
+                    $thousandsSeparator === ArgumentValue::Default ? ',' : $thousandsSeparator,
+                );
+            }
+
+            return Number::format($state, $decimalPlaces, $column->evaluate($maxDecimalPlaces), locale: $column->evaluate($locale));
         });
 
         return $this;
@@ -171,7 +185,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function words(int $words = 100, string $end = '...'): static
+    public function words(int | Closure | null $words = 100, string | Closure | null $end = '...'): static
     {
         $this->wordLimit = $words;
         $this->wordLimitEnd = $end;
@@ -179,14 +193,14 @@ trait CanFormatState
         return $this;
     }
 
-    public function prefix(string | Closure | null $prefix): static
+    public function prefix(string | Htmlable | Closure | null $prefix): static
     {
         $this->prefix = $prefix;
 
         return $this;
     }
 
-    public function suffix(string | Closure | null $suffix): static
+    public function suffix(string | Htmlable | Closure | null $suffix): static
     {
         $this->suffix = $suffix;
 
@@ -209,9 +223,20 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
+        $isHtml = $this->isHtml();
+
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
         ]);
+
+        if ($isHtml) {
+            $state = Str::sanitizeHtml($state);
+        }
+
+        if ($state instanceof Htmlable) {
+            $isHtml = true;
+            $state = $state->toHtml();
+        }
 
         if ($state instanceof LabelInterface) {
             $state = $state->getLabel();
@@ -225,26 +250,42 @@ trait CanFormatState
             $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
         }
 
-        if (filled($prefix = $this->getPrefix())) {
+        if ($isHtml && $this->isMarkdown()) {
+            $state = Str::markdown($state);
+        }
+
+        $prefix = $this->getPrefix();
+        $suffix = $this->getSuffix();
+
+        if (
+            (($prefix instanceof Htmlable) || ($suffix instanceof Htmlable)) &&
+            (! $isHtml)
+        ) {
+            $isHtml = true;
+            $state = e($state);
+        }
+
+        if (filled($prefix)) {
+            if ($prefix instanceof Htmlable) {
+                $prefix = $prefix->toHtml();
+            } elseif ($isHtml) {
+                $prefix = e($prefix);
+            }
+
             $state = $prefix . $state;
         }
 
-        if (filled($suffix = $this->getSuffix())) {
+        if (filled($suffix)) {
+            if ($suffix instanceof Htmlable) {
+                $suffix = $suffix->toHtml();
+            } elseif ($isHtml) {
+                $suffix = e($suffix);
+            }
+
             $state = $state . $suffix;
         }
 
-        if ($state instanceof HtmlString) {
-            return $state;
-        }
-
-        if ($this->isHtml()) {
-            return str($state)
-                ->when($this->isMarkdown(), fn (Stringable $stringable) => $stringable->markdown())
-                ->sanitizeHtml()
-                ->toHtmlString();
-        }
-
-        return $state;
+        return $isHtml ? new HtmlString($state) : $state;
     }
 
     public function getCharacterLimit(): ?int
@@ -277,12 +318,12 @@ trait CanFormatState
         return $this->evaluate($this->isHtml) || $this->isMarkdown();
     }
 
-    public function getPrefix(): ?string
+    public function getPrefix(): string | Htmlable | null
     {
         return $this->evaluate($this->prefix);
     }
 
-    public function getSuffix(): ?string
+    public function getSuffix(): string | Htmlable | null
     {
         return $this->evaluate($this->suffix);
     }

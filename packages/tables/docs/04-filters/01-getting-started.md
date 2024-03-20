@@ -2,8 +2,16 @@
 title: Getting started
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Table Filters"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of adding filters to Filament resource tables."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/10"
+    series="rapid-laravel-development"
+/>
 
 Filters allow you to define certain constraints on your data, and allow users to scope it to find the information they need. You put them in the `$table->filters()` method:
 
@@ -92,6 +100,18 @@ Filter::make('is_featured')
     ->default()
 ```
 
+### Customizing the built-in filter form field
+
+Whether you are using a checkbox, a [toggle](#using-a-toggle-button-instead-of-a-checkbox) or a [select](select), you can customize the built-in form field used for the filter, using the `modifyFormFieldUsing()` method. The method accepts a function with a `$field` parameter that gives you access to the form field object to customize:
+
+```php
+use Filament\Forms\Components\Checkbox;
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')
+    ->modifyFormFieldUsing(fn (Checkbox $field) => $field->inline(false))
+```
+
 ## Persist filters in session
 
 To persist the table filters in the user's session, use the `persistFiltersInSession()` method:
@@ -106,6 +126,45 @@ public function table(Table $table): Table
             // ...
         ])
         ->persistFiltersInSession();
+}
+```
+
+## Deferring filters
+
+You can defer filter changes from affecting the table, until the user clicks an "Apply" button. To do this, use the `deferFilters()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->deferFilters();
+}
+```
+
+### Customizing the apply filters action
+
+When deferring filters, you can customize the "Apply" button, using the `filtersApplyAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/trigger-button) can be used:
+
+```php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->filtersApplyAction(
+            fn (Action $action) => $action
+                ->link()
+                ->label('Save filters to table'),
+        );
 }
 ```
 

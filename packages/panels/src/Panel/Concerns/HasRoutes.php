@@ -4,6 +4,7 @@ namespace Filament\Panel\Concerns;
 
 use Closure;
 use Filament\Facades\Filament;
+use Filament\Navigation\NavigationManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Laravel\SerializableClosure\Serializers\Native;
@@ -86,6 +87,16 @@ trait HasRoutes
         return $this;
     }
 
+    public function route(string $name, mixed $parameters = [], bool $absolute = true): string
+    {
+        return route($this->generateRouteName($name), $parameters, $absolute);
+    }
+
+    public function generateRouteName(string $name): string
+    {
+        return "filament.{$this->getId()}.{$name}";
+    }
+
     public function getRoutes(): ?Closure
     {
         return $this->routes;
@@ -144,39 +155,33 @@ trait HasRoutes
 
         if ($tenant) {
             $originalTenant = Filament::getTenant();
-            Filament::setTenant($tenant);
-
-            $isNavigationMountedOriginally = $this->isNavigationMounted;
-            $originalNavigationItems = $this->navigationItems;
-            $originalNavigationGroups = $this->navigationGroups;
-
-            $this->isNavigationMounted = false;
-            $this->navigationItems = [];
-            $this->navigationGroups = [];
-
-            $navigation = $this->getNavigation();
-
-            Filament::setTenant($originalTenant);
-
-            $this->isNavigationMounted = $isNavigationMountedOriginally;
-            $this->navigationItems = $originalNavigationItems;
-            $this->navigationGroups = $originalNavigationGroups;
-        } else {
-            $navigation = $this->getNavigation();
+            Filament::setTenant($tenant, isQuiet: true);
         }
 
-        $firstGroup = Arr::first($navigation);
+        $this->navigationManager = new NavigationManager();
 
-        if (! $firstGroup) {
-            return null;
+        $navigation = $this->navigationManager->get();
+
+        try {
+            $firstGroup = Arr::first($navigation);
+
+            if (! $firstGroup) {
+                return url($this->getPath());
+            }
+
+            $firstItem = Arr::first($firstGroup->getItems());
+
+            if (! $firstItem) {
+                return url($this->getPath());
+            }
+
+            return $firstItem->getUrl();
+        } finally {
+            if ($tenant) {
+                Filament::setTenant($originalTenant, isQuiet: true);
+            }
+
+            $this->navigationManager = null;
         }
-
-        $firstItem = Arr::first($firstGroup->getItems());
-
-        if (! $firstItem) {
-            return null;
-        }
-
-        return $firstItem->getUrl();
     }
 }

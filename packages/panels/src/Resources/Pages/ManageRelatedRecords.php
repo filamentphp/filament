@@ -13,6 +13,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Url;
 
@@ -63,7 +64,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     #[Url]
     public ?string $activeTab = null;
 
-    public static function getNavigationIcon(): ?string
+    public static function getNavigationIcon(): string | Htmlable | null
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.manage-related-records.navigation-item')
@@ -83,13 +84,16 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
     protected function authorizeAccess(): void
     {
-        static::authorizeResourceAccess();
-
-        abort_unless(static::canAccess($this->getRecord()), 403);
+        abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
     }
 
-    public static function canAccess(?Model $record = null): bool
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public static function canAccess(array $parameters = []): bool
     {
+        $record = $parameters['record'] ?? null;
+
         if (! $record) {
             return false;
         }
@@ -383,8 +387,11 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return [];
     }
 
-    public static function shouldRegisterNavigation(array $parameters = []): bool
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
     {
-        return parent::shouldRegisterNavigation($parameters) && static::canAccess($parameters['record']);
+        return [];
     }
 }

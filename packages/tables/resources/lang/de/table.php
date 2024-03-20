@@ -11,6 +11,12 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => ':count weniger anzeigen',
+                'expand_list' => ':count weitere anzeigen',
+            ],
+
             'more_list_items' => 'und :count weitere',
         ],
 
@@ -19,11 +25,15 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Alle Einträge für Massenaktion auswählen/abwählen.',
+            'label' => 'Alle Einträge für Stapelverarbeitung auswählen/abwählen.',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Eintrag :key für Massenaktion auswählen/abwählen.',
+            'label' => 'Eintrag :key für Stapelverarbeitung auswählen/abwählen.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Gruppe auswählen/abwählen :title für Stapelverarbeitung.',
         ],
 
         'search' => [
@@ -101,6 +111,10 @@ return [
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => ' Filter anwenden',
+            ],
 
             'remove' => [
                 'label' => 'Filter löschen',

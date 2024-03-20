@@ -1,6 +1,7 @@
 @props([
     'footer' => null,
     'header' => null,
+    'headerGroups' => null,
     'reorderable' => false,
     'reorderAnimationDuration' => 300,
 ])
@@ -9,8 +10,14 @@
     {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
 >
     @if ($header)
-        <thead class="bg-gray-50 dark:bg-white/5">
-            <tr>
+        <thead class="divide-y divide-gray-200 dark:divide-white/5">
+            @if ($headerGroups)
+                <tr class="bg-gray-100 dark:bg-transparent">
+                    {{ $headerGroups }}
+                </tr>
+            @endif
+
+            <tr class="bg-gray-50 dark:bg-white/5">
                 {{ $header }}
             </tr>
         </thead>

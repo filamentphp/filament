@@ -113,6 +113,10 @@ return [
 
         'actions' => [
 
+            'apply' => [
+                'label' => 'Käytä suodattimet',
+            ],
+
             'remove' => [
                 'label' => 'Poista suodatin',
             ],

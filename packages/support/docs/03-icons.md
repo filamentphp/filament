@@ -26,14 +26,14 @@ Now that the default set exists in the config file, you can simply put any icons
 
 Filament includes an icon management system that allows you to replace any icons are used by default in the UI with your own. This happens in the `boot()` method of any service provider, like `AppServiceProvider`, or even a dedicated service provider for icons. If you wanted to build a plugin to replace Heroicons with a different set, you could absolutely do that by creating a Laravel package with a similar service provider.
 
-To replace an icon, you can use the `FilamentIcon` facade. It has a `register()` method, which accepts an array of icons to replace. The key of the array is the unique [icon alias](#available-icon-aliases) that identifies the icon in the Filament UI, and the value is name of a Blade icon to replace it instead:
+To replace an icon, you can use the `FilamentIcon` facade. It has a `register()` method, which accepts an array of icons to replace. The key of the array is the unique [icon alias](#available-icon-aliases) that identifies the icon in the Filament UI, and the value is name of a Blade icon to replace it instead. Alternatively, you may use HTML instead of an icon name to render an icon from a Blade view for example:
 
 ```php
 use Filament\Support\Facades\FilamentIcon;
 
 FilamentIcon::register([
     'panels::topbar.global-search.field' => 'fas-magnifying-glass',
-    'panels::sidebar.group.collapse-button' => 'fas-chevron-up',
+    'panels::sidebar.group.collapse-button' => view('icons.chevron-up'),
 ]);
 ```
 
@@ -132,6 +132,10 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `forms::components.repeater.actions.reorder` - Trigger button of a reorder action in a repeater item
 - `forms::components.select.actions.create-option` - Trigger button of a create option action in a select field
 - `forms::components.select.actions.edit-option` - Trigger button of an edit option action in a select field
+- `forms::components.text-input.actions.hide-password` - Trigger button of a hide password action in a text input field
+- `forms::components.text-input.actions.show-password` - Trigger button of a show password action in a text input field
+- `forms::components.toggle-buttons.boolean.false` - "False" option of a `boolean()` toggle buttons field
+- `forms::components.toggle-buttons.boolean.true` - "True" option of a `boolean()` toggle buttons field
 - `forms::components.wizard.completed-step` - Completed step in a wizard
 
 ### Table Builder icon aliases
@@ -181,6 +185,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `actions::dissociate-action.modal` - Modal of a dissociate action
 - `actions::edit-action` - Trigger button of an edit action
 - `actions::edit-action.grouped` - Trigger button of a grouped edit action
+- `actions::export-action.grouped` - Trigger button of a grouped export action
 - `actions::force-delete-action` - Trigger button of a force delete action
 - `actions::force-delete-action.grouped` - Trigger button of a grouped force delete action
 - `actions::force-delete-action.modal` - Modal of a force delete action
@@ -205,8 +210,12 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `breadcrumbs.separator` - Separator between breadcrumbs
 - `breadcrumbs.separator.rtl` - Separator between breadcrumbs (right-to-left direction)
 - `modal.close-button` - Button to close a modal
-- `pagination.previous-button` - Button to go to the previous page
-- `pagination.previous-button.rtl` - Button to go to the previous page (right-to-left direction)
+- `pagination.first-button` - Button to go to the first page
+- `pagination.first-button.rtl` - Button to go to the first page (right-to-left direction)
+- `pagination.last-button` - Button to go to the last page
+- `pagination.last-button.rtl` - Button to go to the last page (right-to-left direction)
 - `pagination.next-button` - Button to go to the next page
 - `pagination.next-button.rtl` - Button to go to the next page (right-to-left direction)
+- `pagination.previous-button` - Button to go to the previous page
+- `pagination.previous-button.rtl` - Button to go to the previous page (right-to-left direction)
 - `section.collapse-button` - Button to collapse a section

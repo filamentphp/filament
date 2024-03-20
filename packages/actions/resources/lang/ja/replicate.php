@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label複製',
+            'heading' => ':label 複製',
 
             'actions' => [
 

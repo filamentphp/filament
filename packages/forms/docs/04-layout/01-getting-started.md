@@ -1,8 +1,16 @@
 ---
 title: Getting started
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
+
+<LaracastsBanner
+    title="Layouts"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you the basics of customizing the layout of a Filament form."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/6"
+    series="rapid-laravel-development"
+/>
 
 Filament forms are not limited to just displaying fields. You can also use "layout components" to organize them into an infinitely nestable structure.
 
@@ -28,6 +36,7 @@ Filament ships with some layout components, suitable for arranging your form fie
 - [Tabs](tabs)
 - [Wizard](wizard)
 - [Section](section)
+- [Split](split)
 - [Placeholder](placeholder)
 
 You may also [create your own custom layout components](custom) to organize fields however you wish.

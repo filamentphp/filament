@@ -8,7 +8,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static bool hasSpaMode()
+ * @method static bool hasSpaMode(?string $url = null)
  * @method static Htmlable renderHook(string $name, string | array | null $scopes = null)
  *
  * @see ViewManager
@@ -34,6 +34,16 @@ class FilamentView extends Facade
     {
         static::resolved(function (ViewManager $viewManager) use ($condition) {
             $viewManager->spa($condition);
+        });
+    }
+
+    /**
+     * @param  array<string>  $exceptions
+     */
+    public static function spaUrlExceptions(array $exceptions): void
+    {
+        static::resolved(function (ViewManager $viewManager) use ($exceptions) {
+            $viewManager->spaUrlExceptions($exceptions);
         });
     }
 }

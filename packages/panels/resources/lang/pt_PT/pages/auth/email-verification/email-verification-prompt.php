@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Verifique o seu e-mail',
+    'title' => 'Verifique o seu endereço de e-mail',
 
-    'heading' => 'Verifique o seu e-mail',
+    'heading' => 'Verifique o seu endereço de e-mail',
 
     'actions' => [
 
@@ -15,8 +15,8 @@ return [
     ],
 
     'messages' => [
-        'notification_not_received' => 'Não recebeu o e-mail que enviamos?',
-        'notification_sent' => 'Enviamos um e-mail para :email com instruções sobre como verificar o seu e-mail.',
+        'notification_not_received' => 'Não recebeu o e-mail que enviámos?',
+        'notification_sent' => 'Enviámos um e-mail para :email com as instruções sobre como verificar o seu endereço de e-mail.',
     ],
 
     'notifications' => [

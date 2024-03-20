@@ -3,12 +3,18 @@
 
     $isDisabled = $isDisabled();
     $state = $getState();
-    $type = $getType();
+    $mask = $getMask();
 
     $alignment = $getAlignment() ?? Alignment::Start;
 
     if (! $alignment instanceof Alignment) {
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+    }
+
+    if (filled($mask)) {
+        $type = 'text';
+    } else {
+        $type = $getType();
     }
 @endphp
 
@@ -81,6 +87,7 @@
                     theme: $store.theme,
                 }
         "
+        x-on:click.stop=""
     >
         {{-- format-ignore-start --}}
         <x-filament::input
@@ -114,6 +121,7 @@
 
                                 isLoading = false
                             ',
+                            'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
                         ])
                         ->class([
                             match ($alignment) {
@@ -122,6 +130,7 @@
                                 Alignment::End => 'text-end',
                                 Alignment::Left => 'text-left',
                                 Alignment::Right => 'text-right',
+                                Alignment::Justify, Alignment::Between => 'text-justify',
                                 default => $alignment,
                             },
                         ])

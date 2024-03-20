@@ -2,32 +2,17 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-use Exception;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Stringable;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
 trait InteractsWithTableQuery
 {
-    protected ?string $inverseRelationshipName = null;
-
-    public function inverseRelationship(?string $name): static
-    {
-        $this->inverseRelationshipName = $name;
-
-        return $this;
-    }
-
     public function applyRelationshipAggregates(EloquentBuilder | Relation $query): EloquentBuilder | Relation
     {
         return $query->when(
@@ -53,7 +38,7 @@ trait InteractsWithTableQuery
 
     public function applyEagerLoading(EloquentBuilder | Relation $query): EloquentBuilder | Relation
     {
-        if (! $this->queriesRelationships($query->getModel())) {
+        if (! $this->hasRelationship($query->getModel())) {
             return $query;
         }
 
@@ -91,7 +76,7 @@ trait InteractsWithTableQuery
 
         $isSearchForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
-        $search = generate_search_term_expression($search, $isSearchForcedCaseInsensitive, $databaseConnection);
+        $nonTranslatableSearch = generate_search_term_expression($search, $isSearchForcedCaseInsensitive, $databaseConnection);
 
         $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
@@ -102,18 +87,28 @@ trait InteractsWithTableQuery
                 $translatableContentDriver?->isAttributeTranslatable($model::class, attribute: $searchColumn),
                 fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause, $isSearchForcedCaseInsensitive),
                 fn (EloquentBuilder $query) => $query->when(
-                    $this->queriesRelationships($query->getModel()),
+                    $this->hasRelationship($query->getModel()),
                     fn (EloquentBuilder $query): EloquentBuilder => $query->{"{$whereClause}Relation"}(
                         $this->getRelationshipName(),
                         generate_search_column_expression($searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection),
                         'like',
-                        "%{$search}%",
+                        "%{$nonTranslatableSearch}%",
                     ),
-                    fn (EloquentBuilder $query): EloquentBuilder => $query->{$whereClause}(
-                        generate_search_column_expression($searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection),
-                        'like',
-                        "%{$search}%",
-                    ),
+                    function (EloquentBuilder $query) use ($databaseConnection, $isSearchForcedCaseInsensitive, $nonTranslatableSearch, $searchColumn, $whereClause): EloquentBuilder {
+                        // Treat the missing "relationship" as a JSON column if dot notation is used in the column name.
+                        if (filled($relationshipName = $this->getRelationshipName())) {
+                            $searchColumn = (string) str($relationshipName)
+                                ->append('.')
+                                ->append($searchColumn)
+                                ->replace('.', '->');
+                        }
+
+                        return $query->{$whereClause}(
+                            generate_search_column_expression($searchColumn, $isSearchForcedCaseInsensitive, $databaseConnection),
+                            'like',
+                            "%{$nonTranslatableSearch}%",
+                        );
+                    },
                 ),
             );
 
@@ -158,6 +153,14 @@ trait InteractsWithTableQuery
 
         $relationship = $this->getRelationship($query->getModel(), $currentRelationshipName);
 
+        if (! $relationship) {
+            // Treat the missing "relationship" as a JSON column if dot notation is used in the column name.
+            return (string) str($relationshipName ?? $this->getRelationshipName())
+                ->append('.')
+                ->append($sortColumn)
+                ->replace('.', '->');
+        }
+
         $relatedQuery = $relationship->getRelated()::query();
 
         return $relationship
@@ -172,148 +175,5 @@ trait InteractsWithTableQuery
             )
             ->applyScopes()
             ->getQuery();
-    }
-
-    public function queriesRelationships(Model $record): bool
-    {
-        return $this->getRelationship($record) !== null;
-    }
-
-    public function getRelationship(Model $record, ?string $name = null): ?Relation
-    {
-        if (blank($name) && (! str($this->getName())->contains('.'))) {
-            return null;
-        }
-
-        $relationship = null;
-
-        foreach (explode('.', $name ?? $this->getRelationshipName()) as $nestedRelationshipName) {
-            if (! $record->isRelation($nestedRelationshipName)) {
-                $relationship = null;
-
-                break;
-            }
-
-            $relationship = $record->{$nestedRelationshipName}();
-            $record = $relationship->getRelated();
-        }
-
-        return $relationship;
-    }
-
-    /**
-     * @param  array<string> | null  $relationships
-     * @return array<Model>
-     */
-    public function getRelationshipResults(Model $record, ?array $relationships = null): array
-    {
-        $results = [];
-
-        $relationships ??= explode('.', $this->getRelationshipName());
-
-        while (count($relationships)) {
-            $currentRelationshipName = array_shift($relationships);
-
-            $currentRelationshipValue = $record->getRelationValue($currentRelationshipName);
-
-            if ($currentRelationshipValue instanceof Collection) {
-                if (! count($relationships)) {
-                    $results = [
-                        ...$results,
-                        ...$currentRelationshipValue->all(),
-                    ];
-
-                    continue;
-                }
-
-                foreach ($currentRelationshipValue as $valueRecord) {
-                    $results = [
-                        ...$results,
-                        ...$this->getRelationshipResults(
-                            $valueRecord,
-                            $relationships,
-                        ),
-                    ];
-                }
-
-                break;
-            }
-
-            if (! $currentRelationshipValue instanceof Model) {
-                break;
-            }
-
-            if (! count($relationships)) {
-                $results[] = $currentRelationshipValue;
-
-                break;
-            }
-
-            $record = $currentRelationshipValue;
-        }
-
-        return $results;
-    }
-
-    public function getRelationshipAttribute(?string $name = null): string
-    {
-        $name ??= $this->getName();
-
-        if (! str($name)->contains('.')) {
-            return $name;
-        }
-
-        return (string) str($name)->afterLast('.');
-    }
-
-    public function getInverseRelationshipName(Model $record): string
-    {
-        if (filled($this->inverseRelationshipName)) {
-            return $this->inverseRelationshipName;
-        }
-
-        $inverseRelationships = [];
-
-        foreach (explode('.', $this->getRelationshipName()) as $nestedRelationshipName) {
-            $relationship = $record->{$nestedRelationshipName}();
-            $record = $relationship->getRelated();
-
-            $inverseNestedRelationshipName = (string) str(class_basename($relationship->getParent()::class))
-                ->when(
-                    ($relationship instanceof BelongsTo ||
-                    $relationship instanceof BelongsToMany ||
-                    $relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough),
-                    fn (Stringable $name) => $name->plural(),
-                )
-                ->camel();
-
-            if (! $record->isRelation($inverseNestedRelationshipName)) {
-                // The conventional relationship doesn't exist, but we can
-                // attempt to use the original relationship name instead.
-
-                if (! $record->isRelation($nestedRelationshipName)) {
-                    $recordClass = $record::class;
-
-                    throw new Exception("When trying to guess the inverse relationship for table column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
-                }
-
-                $inverseNestedRelationshipName = $nestedRelationshipName;
-            }
-
-            array_unshift($inverseRelationships, $inverseNestedRelationshipName);
-        }
-
-        return implode('.', $inverseRelationships);
-    }
-
-    public function getRelationshipName(?string $name = null): ?string
-    {
-        $name ??= $this->getName();
-
-        if (! str($name)->contains('.')) {
-            return null;
-        }
-
-        return (string) str($name)->beforeLast('.');
     }
 }

@@ -82,7 +82,7 @@ class Summarizer extends ViewComponent
         $attribute = $column->getName();
         $query = $this->getQuery()->clone();
 
-        if ($column->queriesRelationships($query->getModel())) {
+        if ($column->hasRelationship($query->getModel())) {
             $relationship = $column->getRelationship($query->getModel());
             $attribute = $column->getRelationshipAttribute();
 
@@ -105,7 +105,8 @@ class Summarizer extends ViewComponent
                 );
         }
 
-        $query = DB::table($query->toBase(), $query->getModel()->getTable());
+        $query = DB::connection($query->getModel()->getConnectionName())
+            ->table($query->toBase(), $query->getModel()->getTable());
 
         if ($this->hasQueryModification()) {
             $query = $this->evaluate($this->modifyQueryUsing, [

@@ -4,7 +4,7 @@ title: Advanced forms
 
 ## Overview
 
-Filament Form Builder are designed to be flexible and customizable. Many existing form builders allow users to define a form schema, but don't provide a great interface for defining inter-field interactions, or custom logic. Since all Filament forms are built on top of [Livewire](https://livewire.laravel.com), the form can adapt dynamically to user input, even after it has been initially rendered. Developers can use [parameter injection](#form-component-utility-injection) to access many utilities in real time and build dynamic forms based on user input. The [lifecycle](#field-lifecycle) of fields is open to extension using hook functions to define custom functionality for each field. This allows developers to build complex forms with ease.
+Filament Form Builder is designed to be flexible and customizable. Many existing form builders allow users to define a form schema, but don't provide a great interface for defining inter-field interactions, or custom logic. Since all Filament forms are built on top of [Livewire](https://livewire.laravel.com), the form can adapt dynamically to user input, even after it has been initially rendered. Developers can use [parameter injection](#form-component-utility-injection) to access many utilities in real time and build dynamic forms based on user input. The [lifecycle](#field-lifecycle) of fields is open to extension using hook functions to define custom functionality for each field. This allows developers to build complex forms with ease.
 
 ## The basics of reactivity
 
@@ -61,17 +61,17 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 
 DatePicker::make('date_of_birth')
-    ->displayFormat(function () {
+    ->displayFormat(function (): string {
         if (auth()->user()->country_id === 'us') {
-            return 'm/d/Y'
-        } else {
-            return 'd/m/Y'
+            return 'm/d/Y';
         }
+
+        return 'd/m/Y';
     })
 
 Select::make('user_id')
-    ->options(function () {
-        return User::all()->pluck('name', 'id');
+    ->options(function (): array {
+        return User::all()->pluck('name', 'id')->all();
     })
 
 TextInput::make('middle_name')
@@ -556,15 +556,62 @@ Group::make()
     ])
 ```
 
+### Saving data to a `BelongsTo` relationship
+
+Please note that if you are saving the data to a `BelongsTo` relationship, then the foreign key column in your database must be `nullable()`. This is because Filament saves the form first, before saving the relationship. Since the form is saved first, the foreign ID does not exist yet, so it must be nullable. Immediately after the form is saved, Filament saves the relationship, which will then fill in the foreign ID and save it again.
+
+It is worth noting that if you have an observer on your form model, then you may need to adapt it to ensure that it does not depend on the relationship existing when it it created. For example, if you have an observer that sends an email to a related record when a form is created, you may need to switch to using a different hook that runs after the relationship is attached, like `updated()`.
+
+### Conditionally saving data to a relationship
+
+Sometimes, saving the related record may be optional. If the user fills out the customer fields, then the customer will be created / updated. Otherwise, the customer will not be created, or will be deleted if it already exists. To do this, you can pass a `condition` function as an argument to `relationship()`, which can use the `$state` of the related form to determine whether the relationship should be saved or not:
+
+```php
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\TextInput;
+
+Group::make()
+    ->relationship(
+        'customer',
+        condition: fn (?array $state): bool => filled($state['name']),
+    )
+    ->schema([
+        TextInput::make('name')
+            ->label('Customer'),
+        TextInput::make('email')
+            ->label('Email address')
+            ->email()
+            ->requiredWith('name'),
+    ])
+```
+
+In this example, the customer's name is not `required()`, and the email address is only required when the `name` is filled. The `condition` function is used to check whether the `name` field is filled, and if it is, then the customer will be created / updated. Otherwise, the customer will not be created, or will be deleted if it already exists.
+
 ## Inserting Livewire components into a form
 
-You may use insert a Livewire component directly into a form:
+You may insert a Livewire component directly into a form:
 
 ```php
 use Filament\Forms\Components\Livewire;
 use App\Livewire\Foo;
 
 Livewire::make(Foo::class)
+```
+
+If you are rendering multiple of the same Livewire component, please make sure to pass a unique `key()` to each:
+
+```php
+use Filament\Forms\Components\Livewire;
+use App\Livewire\Foo;
+
+Livewire::make(Foo::class)
+    ->key('foo-first')
+
+Livewire::make(Foo::class)
+    ->key('foo-second')
+
+Livewire::make(Foo::class)
+    ->key('foo-third')
 ```
 
 ### Passing parameters to a Livewire component

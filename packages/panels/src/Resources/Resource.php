@@ -3,6 +3,7 @@
 namespace Filament\Resources;
 
 use Exception;
+use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\GlobalSearch\Actions\Action;
@@ -49,6 +50,9 @@ abstract class Resource
 
     protected static ?string $breadcrumb = null;
 
+    /** @var class-string<Cluster> | null */
+    protected static ?string $cluster = null;
+
     protected static bool $isDiscovered = true;
 
     protected static bool $isGloballySearchable = true;
@@ -61,6 +65,8 @@ abstract class Resource
     protected static ?string $modelLabel = null;
 
     protected static ?string $model = null;
+
+    protected static ?string $navigationBadgeTooltip = null;
 
     protected static ?string $navigationGroup = null;
 
@@ -115,6 +121,8 @@ abstract class Resource
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
 
+    protected static bool $hasTitleCaseModelLabel = true;
+
     public static function form(Form $form): Form
     {
         return $form;
@@ -125,13 +133,22 @@ abstract class Resource
         return $infolist;
     }
 
+    public static function canAccess(): bool
+    {
+        return static::canViewAny();
+    }
+
     public static function registerNavigationItems(): void
     {
+        if (filled(static::getCluster())) {
+            return;
+        }
+
         if (! static::shouldRegisterNavigation()) {
             return;
         }
 
-        if (! static::canViewAny()) {
+        if (! static::canAccess()) {
             return;
         }
 
@@ -152,6 +169,7 @@ abstract class Resource
                 ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*'))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
+                ->badgeTooltip(static::getNavigationBadgeTooltip())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
@@ -309,12 +327,12 @@ abstract class Resource
 
     public static function canGloballySearch(): bool
     {
-        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canViewAny();
+        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canAccess();
     }
 
     public static function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? Str::headline(static::getPluralModelLabel());
+        return static::$breadcrumb ?? static::getTitleCasePluralModelLabel();
     }
 
     public static function getEloquentQuery(): Builder
@@ -470,6 +488,15 @@ abstract class Resource
         return static::$modelLabel ?? static::getLabel() ?? get_model_label(static::getModel());
     }
 
+    public static function getTitleCaseModelLabel(): string
+    {
+        if (! static::hasTitleCaseModelLabel()) {
+            return static::getModelLabel();
+        }
+
+        return Str::ucwords(static::getModelLabel());
+    }
+
     public static function getModel(): string
     {
         return static::$model ?? (string) str(class_basename(static::class))
@@ -506,6 +533,25 @@ abstract class Resource
         return static::getModelLabel();
     }
 
+    public static function getTitleCasePluralModelLabel(): string
+    {
+        if (! static::hasTitleCaseModelLabel()) {
+            return static::getPluralModelLabel();
+        }
+
+        return Str::ucwords(static::getPluralModelLabel());
+    }
+
+    public static function titleCaseModelLabel(bool $condition = true): void
+    {
+        static::$hasTitleCaseModelLabel = $condition;
+    }
+
+    public static function hasTitleCaseModelLabel(): bool
+    {
+        return static::$hasTitleCaseModelLabel;
+    }
+
     public static function getRecordTitleAttribute(): ?string
     {
         return static::$recordTitleAttribute;
@@ -534,11 +580,17 @@ abstract class Resource
 
     public static function getRouteBaseName(?string $panel = null): string
     {
-        $panel ??= Filament::getCurrentPanel()->getId();
+        $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 
-        return (string) str(static::getSlug())
+        $routeBaseName = (string) str(static::getSlug())
             ->replace('/', '.')
-            ->prepend("filament.{$panel}.resources.");
+            ->prepend('resources.');
+
+        if (filled($cluster = static::getCluster())) {
+            $routeBaseName = $cluster::prependClusterRouteBaseName($routeBaseName);
+        }
+
+        return $panel->generateRouteName($routeBaseName);
     }
 
     public static function getRecordRouteKeyName(): ?string
@@ -546,16 +598,23 @@ abstract class Resource
         return static::$recordRouteKeyName;
     }
 
+    public static function registerRoutes(Panel $panel): void
+    {
+        if (filled($cluster = static::getCluster())) {
+            Route::name($cluster::prependClusterRouteBaseName('resources.'))
+                ->prefix($cluster::prependClusterSlug(''))
+                ->group(fn () => static::routes($panel));
+
+            return;
+        }
+
+        Route::name('resources.')->group(fn () => static::routes($panel));
+    }
+
     public static function routes(Panel $panel): void
     {
-        $slug = static::getSlug();
-
-        Route::name(
-            (string) str($slug)
-                ->replace('/', '.')
-                ->append('.'),
-        )
-            ->prefix($slug)
+        Route::name(static::getRelativeRouteName() . '.')
+            ->prefix(static::getRoutePrefix())
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->group(function () use ($panel) {
@@ -563,6 +622,16 @@ abstract class Resource
                     $page->registerRoute($panel)?->name($name);
                 }
             });
+    }
+
+    public static function getRelativeRouteName(): string
+    {
+        return (string) str(static::getSlug())->replace('/', '.');
+    }
+
+    public static function getRoutePrefix(): string
+    {
+        return static::getSlug();
     }
 
     /**
@@ -625,7 +694,9 @@ abstract class Resource
      */
     public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
     {
-        $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
+        if (blank($panel) || Filament::getPanel($panel)->hasTenancy()) {
+            $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
+        }
 
         $routeBaseName = static::getRouteBaseName(panel: $panel);
 
@@ -728,12 +799,12 @@ abstract class Resource
         static::$navigationGroup = $group;
     }
 
-    public static function navigationParentItem(?string $group): void
+    public static function navigationParentItem(?string $item): void
     {
-        static::$navigationParentItem = $group;
+        static::$navigationParentItem = $item;
     }
 
-    public static function getNavigationIcon(): ?string
+    public static function getNavigationIcon(): string | Htmlable | null
     {
         return static::$navigationIcon;
     }
@@ -743,19 +814,24 @@ abstract class Resource
         static::$navigationIcon = $icon;
     }
 
-    public static function getActiveNavigationIcon(): ?string
+    public static function getActiveNavigationIcon(): string | Htmlable | null
     {
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
     public static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ?? Str::headline(static::getPluralModelLabel());
+        return static::$navigationLabel ?? static::getTitleCasePluralModelLabel();
     }
 
     public static function getNavigationBadge(): ?string
     {
         return null;
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return static::$navigationBadgeTooltip;
     }
 
     /**
@@ -769,6 +845,11 @@ abstract class Resource
     public static function getNavigationSort(): ?int
     {
         return static::$navigationSort;
+    }
+
+    public static function navigationLabel(?string $label): void
+    {
+        static::$navigationLabel = $label;
     }
 
     public static function navigationSort(?int $sort): void
@@ -848,5 +929,13 @@ abstract class Resource
     public static function getRecordSubNavigation(Page $page): array
     {
         return [];
+    }
+
+    /**
+     * @return class-string<Cluster> | null
+     */
+    public static function getCluster(): ?string
+    {
+        return static::$cluster;
     }
 }

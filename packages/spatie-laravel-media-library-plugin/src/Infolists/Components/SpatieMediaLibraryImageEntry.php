@@ -3,19 +3,60 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
+use Filament\SpatieLaravelMediaLibraryPlugin\Collections\AllMediaCollections;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
 class SpatieMediaLibraryImageEntry extends ImageEntry
 {
-    protected string | Closure | null $collection = null;
+    protected string | AllMediaCollections | Closure | null $collection = null;
 
     protected string | Closure | null $conversion = null;
 
-    public function collection(string | Closure | null $collection): static
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->defaultImageUrl(function (SpatieMediaLibraryImageEntry $component, Model $record): ?string {
+            if ($component->hasRelationship($record)) {
+                $record = $component->getRelationshipResults($record);
+            }
+
+            $records = Arr::wrap($record);
+
+            $collection = $component->getCollection();
+
+            if (! is_string($collection)) {
+                $collection = 'default';
+            }
+
+            foreach ($records as $record) {
+                $url = $record->getFallbackMediaUrl($collection, $component->getConversion() ?? '');
+
+                if (blank($url)) {
+                    continue;
+                }
+
+                return $url;
+            }
+
+            return null;
+        });
+    }
+
+    public function collection(string | AllMediaCollections | Closure | null $collection): static
     {
         $this->collection = $collection;
+
+        return $this;
+    }
+
+    public function allCollections(): static
+    {
+        $this->collection(AllMediaCollections::make());
 
         return $this;
     }
@@ -27,9 +68,9 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
         return $this;
     }
 
-    public function getCollection(): ?string
+    public function getCollection(): string | AllMediaCollections | null
     {
-        return $this->evaluate($this->collection) ?? 'default';
+        return $this->evaluate($this->collection);
     }
 
     public function getConversion(): ?string
@@ -45,33 +86,39 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             return null;
         }
 
-        $relationshipName = $this->getRelationshipName();
-
-        if (filled($relationshipName)) {
-            $record = $record->getRelationValue($relationshipName);
+        if ($this->hasRelationship($record)) {
+            $record = $this->getRelationshipResults($record);
         }
 
-        /** @var ?Media $media */
-        $media = $record->media->first(fn (Media $media): bool => $media->uuid === $state);
+        $records = Arr::wrap($record);
 
-        if (! $media) {
-            return null;
-        }
+        foreach ($records as $record) {
+            /** @var Model $record */
 
-        $conversion = $this->getConversion();
+            /** @var ?Media $media */
+            $media = $record->getRelationValue('media')->first(fn (Media $media): bool => $media->uuid === $state);
 
-        if ($this->getVisibility() === 'private') {
-            try {
-                return $media->getTemporaryUrl(
-                    now()->addMinutes(5),
-                    $conversion ?? '',
-                );
-            } catch (Throwable $exception) {
-                // This driver does not support creating temporary URLs.
+            if (! $media) {
+                continue;
             }
+
+            $conversion = $this->getConversion();
+
+            if ($this->getVisibility() === 'private') {
+                try {
+                    return $media->getTemporaryUrl(
+                        now()->addMinutes(5),
+                        $conversion ?? '',
+                    );
+                } catch (Throwable $exception) {
+                    // This driver does not support creating temporary URLs.
+                }
+            }
+
+            return $media->getAvailableUrl(Arr::wrap($conversion));
         }
 
-        return $media->getAvailableUrl(Arr::wrap($conversion));
+        return null;
     }
 
     /**
@@ -79,12 +126,33 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
      */
     public function getState(): array
     {
-        $collection = $this->getCollection();
+        $record = $this->getRecord();
 
-        return $this->getRecord()->getRelationValue('media')
-            ->filter(fn (Media $media): bool => blank($collection) || ($media->getAttributeValue('collection_name') === $collection))
-            ->sortBy('order_column')
-            ->map(fn (Media $media): string => $media->uuid)
-            ->all();
+        if ($this->hasRelationship($record)) {
+            $record = $this->getRelationshipResults($record);
+        }
+
+        $records = Arr::wrap($record);
+
+        $state = [];
+
+        $collection = $this->getCollection() ?? 'default';
+
+        foreach ($records as $record) {
+            /** @var Model $record */
+            $state = [
+                ...$state,
+                ...$record->getRelationValue('media')
+                    ->when(
+                        ! $collection instanceof AllMediaCollections,
+                        fn (MediaCollection $mediaCollection) => $mediaCollection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
+                    )
+                    ->sortBy('order_column')
+                    ->pluck('uuid')
+                    ->all(),
+            ];
+        }
+
+        return array_unique($state);
     }
 }

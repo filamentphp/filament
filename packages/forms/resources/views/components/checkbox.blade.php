@@ -9,7 +9,7 @@
 >
     @capture($content)
         <x-filament::input.checkbox
-            :error="$errors->has($statePath)"
+            :valid="! $errors->has($statePath)"
             :attributes="
                 $attributes
                     ->merge([

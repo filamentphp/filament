@@ -113,6 +113,8 @@ Filament includes several prebuilt actions that you can add to your app. Their a
 - [Replicate](prebuilt-actions/replicate)
 - [Force-delete](prebuilt-actions/force-delete)
 - [Restore](prebuilt-actions/restore)
+- [Import](prebuilt-actions/import)
+- [Export](prebuilt-actions/export)
 
 ## Grouping actions
 

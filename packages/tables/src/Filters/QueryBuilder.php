@@ -34,7 +34,8 @@ class QueryBuilder extends BaseFilter
                 ->label($filter->getLabel())
                 ->constraints($filter->getConstraints())
                 ->blockPickerColumns($filter->getConstraintPickerColumns())
-                ->blockPickerWidth($filter->getConstraintPickerWidth()),
+                ->blockPickerWidth($filter->getConstraintPickerWidth())
+                ->live(onBlur: true),
         ]);
 
         $this->query(function (Builder $query, array $data) {
@@ -51,6 +52,44 @@ class QueryBuilder extends BaseFilter
     public static function getDefaultName(): ?string
     {
         return 'queryBuilder';
+    }
+
+    public function getActiveCount(): int
+    {
+        return $this->countRules($this->getState()['rules'], $this->getRuleBuilder());
+    }
+
+    /**
+     * @param  array<string, mixed>  $rules
+     */
+    protected function countRules(array $rules, RuleBuilder $ruleBuilder): int
+    {
+        $count = 0;
+
+        foreach ($rules as $ruleIndex => $rule) {
+            $ruleBuilderBlockContainer = $ruleBuilder->getChildComponentContainer($ruleIndex);
+
+            if ($rule['type'] === RuleBuilder::OR_BLOCK_NAME) {
+                foreach ($rule['data'][RuleBuilder::OR_BLOCK_GROUPS_REPEATER_NAME] as $orGroupIndex => $orGroup) {
+                    $count += $this->countRules(
+                        $orGroup['rules'],
+                        $this->getNestedRuleBuilder($ruleBuilderBlockContainer, $orGroupIndex),
+                    );
+                }
+
+                continue;
+            }
+
+            try {
+                $ruleBuilderBlockContainer->validate();
+            } catch (ValidationException) {
+                continue;
+            }
+
+            $count++;
+        }
+
+        return $count;
     }
 
     /**

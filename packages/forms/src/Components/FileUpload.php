@@ -36,6 +36,8 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $isAvatar = false;
 
+    protected int | float | Closure | null $itemPanelAspectRatio = null;
+
     protected string | Closure $loadingIndicatorPosition = 'right';
 
     protected string | Closure | null $panelAspectRatio = null;
@@ -160,6 +162,13 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function itemPanelAspectRatio(int | float | Closure | null $ratio): static
+    {
+        $this->itemPanelAspectRatio = $ratio;
+
+        return $this;
+    }
+
     public function loadingIndicatorPosition(string | Closure | null $position): static
     {
         $this->loadingIndicatorPosition = $position;
@@ -247,6 +256,20 @@ class FileUpload extends BaseFileUpload
     public function getImageResizeUpscale(): bool
     {
         return (bool) $this->evaluate($this->imageResizeUpscale);
+    }
+
+    public function getItemPanelAspectRatio(): int | float | null
+    {
+        $itemPanelAspectRatio = $this->evaluate($this->itemPanelAspectRatio);
+
+        if (
+            ($this->getPanelLayout() === 'grid') &&
+            (! $itemPanelAspectRatio)
+        ) {
+            return 1;
+        }
+
+        return $itemPanelAspectRatio;
     }
 
     public function getLoadingIndicatorPosition(): string
@@ -499,51 +522,51 @@ class FileUpload extends BaseFileUpload
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.zoom_in.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.zoom-in') ?? 'heroicon-o-magnifying-glass-plus', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.zoom-in') ?? 'heroicon-m-magnifying-glass-plus', $iconSizeClasses)->toHtml(),
                     'alpineClickHandler' => 'editor.zoom(0.1)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.zoom_out.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.zoom-out') ?? 'heroicon-o-magnifying-glass-minus', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.zoom-out') ?? 'heroicon-m-magnifying-glass-minus', $iconSizeClasses)->toHtml(),
                     'alpineClickHandler' => 'editor.zoom(-0.1)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.zoom_100.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.zoom-100') ?? 'heroicon-o-arrows-pointing-out', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.zoom-100') ?? 'heroicon-m-arrows-pointing-out', $iconSizeClasses)->toHtml(),
                     'alpineClickHandler' => 'editor.zoomTo(1)',
                 ],
             ],
             'move' => [
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_left.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-left') ?? 'heroicon-o-arrow-left-circle', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-left') ?? 'heroicon-m-arrow-left-circle', $iconSizeClasses)->toHtml(),
                     'alpineClickHandler' => 'editor.move(-10, 0)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_right.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-right') ?? 'heroicon-o-arrow-right-circle', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-right') ?? 'heroicon-m-arrow-right-circle', $iconSizeClasses)->toHtml(),
                     'alpineClickHandler' => 'editor.move(10, 0)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_up.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-up') ?? 'heroicon-o-arrow-up-circle', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-up') ?? 'heroicon-m-arrow-up-circle', $iconSizeClasses)->toHtml(),
                     'alpineClickHandler' => 'editor.move(0, -10)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.move_down.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-down') ?? 'heroicon-o-arrow-down-circle', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.move-down') ?? 'heroicon-m-arrow-down-circle', $iconSizeClasses)->toHtml(),
                     'alpineClickHandler' => 'editor.move(0, 10)',
                 ],
             ],
             'transform' => [
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.rotate_left.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.rotate-left') ?? 'heroicon-o-arrow-uturn-left', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.rotate-left') ?? 'heroicon-m-arrow-uturn-left', $iconSizeClasses)->toHtml(),
                     'alpineClickHandler' => 'editor.rotate(-90)',
                 ],
                 [
                     'label' => __('filament-forms::components.file_upload.editor.actions.rotate_right.label'),
-                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.rotate-right') ?? 'heroicon-o-arrow-uturn-right', $iconSizeClasses)->toHtml(),
+                    'iconHtml' => svg(FilamentIcon::resolve('forms::components.file-upload.editor.actions.rotate-right') ?? 'heroicon-m-arrow-uturn-right', $iconSizeClasses)->toHtml(),
                     'alpineClickHandler' => 'editor.rotate(90)',
                 ],
                 [

@@ -39,6 +39,7 @@ Filament ships with many types of field, suitable for editing different types of
 - [Textarea](textarea)
 - [Key-value](key-value)
 - [Color picker](color-picker)
+- [Toggle buttons](toggle-buttons)
 - [Hidden](hidden)
 
 You may also [create your own custom fields](custom) to edit data however you wish.
@@ -294,6 +295,15 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
     ->required() // Adds validation to ensure the field is required
     ->markAsRequired(false) // Removes the asterisk
+```
+
+If your field is not `required()`, but you still wish to show an asterisk `*` you can use `markAsRequired()` too:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->markAsRequired()
 ```
 
 ## Global settings

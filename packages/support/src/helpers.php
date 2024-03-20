@@ -8,30 +8,33 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
-use NumberFormatter;
+use Illuminate\View\ComponentSlot;
 
 if (! function_exists('Filament\Support\format_money')) {
+    /**
+     * @deprecated Use `Illuminate\Support\Number::currency()` instead.
+     */
     function format_money(float | int $money, string $currency, int $divideBy = 0): string
     {
-        $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::CURRENCY);
-
         if ($divideBy) {
             $money /= $divideBy;
         }
 
-        return $formatter->formatCurrency($money, $currency);
+        return Number::currency($money, $currency);
     }
 }
 
 if (! function_exists('Filament\Support\format_number')) {
+    /**
+     * @deprecated Use `Illuminate\Support\Number::format()` instead.
+     */
     function format_number(float | int $number): string
     {
-        $formatter = new NumberFormatter(app()->getLocale(), NumberFormatter::DECIMAL);
-
-        return $formatter->format($number);
+        return Number::format($number);
     }
 }
 
@@ -101,7 +104,7 @@ if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
 
         $attributes->setAttributes(
             collect($originalAttributes)
-                ->filter(fn ($value, string $name): bool => ! str($name)->startsWith('x-'))
+                ->filter(fn ($value, string $name): bool => ! str($name)->startsWith(['x-', 'data-']))
                 ->mapWithKeys(fn ($value, string $name): array => [Str::camel($name) => $value])
                 ->merge($originalAttributes)
                 ->all(),
@@ -118,18 +121,11 @@ if (! function_exists('Filament\Support\is_slot_empty')) {
             return true;
         }
 
-        return trim(
-            str_replace(
-                [
-                    '<!-- __BLOCK__ -->',
-                    '<!-- __ENDBLOCK__ -->',
-                    '<!--[if BLOCK]><![endif]-->',
-                    '<!--[if ENDBLOCK]><![endif]-->',
-                ],
-                '',
-                $slot->toHtml()
-            ),
-        ) === '';
+        if (! $slot instanceof ComponentSlot) {
+            $slot = new ComponentSlot($slot->toHtml());
+        }
+
+        return ! $slot->hasActualContent();
     }
 }
 
@@ -141,7 +137,7 @@ if (! function_exists('Filament\Support\is_app_url')) {
 }
 
 if (! function_exists('Filament\Support\generate_href_html')) {
-    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false): Htmlable
+    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false, ?bool $shouldOpenInSpaMode = null): Htmlable
     {
         if (blank($url)) {
             return new HtmlString('');
@@ -151,7 +147,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
 
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
-        } elseif (FilamentView::hasSpaMode() && is_app_url($url)) {
+        } elseif ($shouldOpenInSpaMode ?? (FilamentView::hasSpaMode($url))) {
             $html .= ' wire:navigate';
         }
 
@@ -167,6 +163,13 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
     {
         $driverName = $databaseConnection->getDriverName();
 
+        if (Str::lower($column) !== $column) {
+            $column = match ($driverName) {
+                'pgsql' => (string) str($column)->wrap('"'),
+                default => $column,
+            };
+        }
+
         $column = match ($driverName) {
             'pgsql' => "{$column}::text",
             default => $column,
@@ -174,7 +177,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
 
         $isSearchForcedCaseInsensitive ??= match ($driverName) {
             'pgsql' => true,
-            default => false,
+            default => str($column)->contains('json_extract('),
         };
 
         if ($isSearchForcedCaseInsensitive) {
@@ -188,8 +191,7 @@ if (! function_exists('Filament\Support\generate_search_column_expression')) {
         }
 
         if (
-            str($column)->contains('(') || // This checks if the column name probably contains a raw expression like `json_extract()`.
-            $isSearchForcedCaseInsensitive ||
+            str($column)->contains('(') || // This checks if the column name probably contains a raw expression like `lower()` or `json_extract()`.
             filled($collation)
         ) {
             return new Expression($column);

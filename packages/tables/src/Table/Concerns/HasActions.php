@@ -3,6 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Actions\Contracts\HasRecord;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -129,10 +130,13 @@ trait HasActions
             return null;
         }
 
+        if (($actionGroup = $action->getGroup()) instanceof HasRecord) {
+            $actionGroup->record($mountedRecord);
+        }
+
         return $this->getMountableModalActionFromAction(
             $action->record($mountedRecord),
             modalActionNames: $modalActionNames ?? [],
-            parentActionName: $name,
             mountedRecord: $mountedRecord,
         );
     }
@@ -180,8 +184,17 @@ trait HasActions
     /**
      * @param  array<string>  $modalActionNames
      */
-    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName, ?Model $mountedRecord = null): ?Action
+    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, ?Model $mountedRecord = null): ?Action
     {
+        $arguments = $this->getLivewire()->mountedTableActionsArguments ?? [];
+
+        if (
+            (($actionArguments = array_shift($arguments)) !== null) &&
+            (! $action->hasArguments())
+        ) {
+            $action->arguments($actionArguments);
+        }
+
         foreach ($modalActionNames as $modalActionName) {
             $action = $action->getMountableModalAction($modalActionName);
 
@@ -193,7 +206,12 @@ trait HasActions
                 $action->record($mountedRecord);
             }
 
-            $parentActionName = $modalActionName;
+            if (
+                (($actionArguments = array_shift($arguments)) !== null) &&
+                (! $action->hasArguments())
+            ) {
+                $action->arguments($actionArguments);
+            }
         }
 
         if (! $action instanceof Action) {

@@ -8,11 +8,9 @@ use Illuminate\Support\Arr;
 
 trait CanBeHidden
 {
-    protected string | Closure | null $hiddenFrom = null;
+    use CanBeHiddenResponsively;
 
     protected bool | Closure $isHidden = false;
-
-    protected string | Closure | null $visibleFrom = null;
 
     protected bool | Closure $isVisible = true;
 
@@ -64,30 +62,6 @@ trait CanBeHidden
         });
 
         return $this;
-    }
-
-    public function hiddenFrom(string | Closure | null $breakpoint): static
-    {
-        $this->hiddenFrom = $breakpoint;
-
-        return $this;
-    }
-
-    public function visibleFrom(string | Closure | null $breakpoint): static
-    {
-        $this->visibleFrom = $breakpoint;
-
-        return $this;
-    }
-
-    public function getHiddenFrom(): ?string
-    {
-        return $this->evaluate($this->hiddenFrom);
-    }
-
-    public function getVisibleFrom(): ?string
-    {
-        return $this->evaluate($this->visibleFrom);
     }
 
     public function isHidden(): bool

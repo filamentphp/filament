@@ -7,17 +7,23 @@ use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\ColorManager;
+use Filament\Support\Commands\Aliases\MakeIssueCommand as MakeIssueCommandAlias;
 use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
+use Filament\Support\Commands\MakeIssueCommand;
 use Filament\Support\Commands\UpgradeCommand;
+use Filament\Support\Components\ComponentManager;
+use Filament\Support\Components\Contracts\ScopedComponentManager;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
 use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use Laravel\Octane\Events\RequestReceived;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
@@ -35,6 +41,9 @@ class SupportServiceProvider extends PackageServiceProvider
                 CheckTranslationsCommand::class,
                 InstallCommand::class,
                 UpgradeCommand::class,
+
+                MakeIssueCommand::class,
+                MakeIssueCommandAlias::class,
             ])
             ->hasConfigFile()
             ->hasTranslations()
@@ -47,6 +56,13 @@ class SupportServiceProvider extends PackageServiceProvider
             AssetManager::class,
             fn () => new AssetManager(),
         );
+
+        $this->app->scoped(
+            ScopedComponentManager::class,
+            fn () => $this->app->make(ComponentManager::class)->clone(),
+        );
+        $this->app->booted(fn () => ComponentManager::resolveScoped());
+        class_exists(RequestReceived::class) && Event::listen(RequestReceived::class, fn () => ComponentManager::resolveScoped());
 
         $this->app->scoped(
             ColorManager::class,
@@ -108,6 +124,18 @@ class SupportServiceProvider extends PackageServiceProvider
         Stringable::macro('sanitizeHtml', function (): Stringable {
             /** @phpstan-ignore-next-line */
             return new Stringable(Str::sanitizeHtml($this->value));
+        });
+
+        Str::macro('ucwords', function (string $value): string {
+            return implode(' ', array_map(
+                [Str::class, 'ucfirst'],
+                explode(' ', $value),
+            ));
+        });
+
+        Stringable::macro('ucwords', function (): Stringable {
+            /** @phpstan-ignore-next-line */
+            return new Stringable(Str::ucwords($this->value));
         });
 
         if (class_exists(InstalledVersions::class)) {

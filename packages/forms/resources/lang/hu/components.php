@@ -250,12 +250,25 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Igen',
+            'false' => 'Nem',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
 
             'add' => [
                 'label' => 'Új :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Beillesztés blokkok közé',
             ],
 
             'delete' => [
@@ -404,6 +417,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Címke hozzáadása',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Jelszó elrejtése',
+            ],
+
+            'show_password' => [
+                'label' => 'Jelszó megjelenítése',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Igen',
+            'false' => 'Nem',
+        ],
+
     ],
 
     'wizard' => [

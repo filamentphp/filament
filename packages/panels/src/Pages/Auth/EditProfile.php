@@ -12,60 +12,68 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns;
-use Filament\Pages\SimplePage;
+use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Js;
 use Illuminate\Validation\Rules\Password;
+use Throwable;
+
+use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form
  */
-class EditProfile extends SimplePage
+class EditProfile extends Page
 {
-    use Concerns\HasRoutes;
+    use Concerns\CanUseDatabaseTransactions;
     use Concerns\InteractsWithFormActions;
-
-    /**
-     * @var view-string
-     */
-    protected static string $view = 'filament-panels::pages.auth.edit-profile';
 
     /**
      * @var array<string, mixed> | null
      */
     public ?array $data = [];
 
+    protected ?string $maxWidth = null;
+
+    protected static bool $isDiscovered = false;
+
+    public function getLayout(): string
+    {
+        return static::$layout ?? (static::isSimple() ? 'filament-panels::components.layout.simple' : 'filament-panels::components.layout.index');
+    }
+
+    public static function isSimple(): bool
+    {
+        return Filament::isProfilePageSimple();
+    }
+
+    public function getView(): string
+    {
+        return static::$view ?? 'filament-panels::pages.auth.edit-profile';
+    }
+
     public static function getLabel(): string
     {
         return __('filament-panels::pages/auth/edit-profile.label');
     }
 
-    public static function routes(Panel $panel): void
+    public static function getRelativeRouteName(): string
     {
-        $slug = static::getSlug();
-
-        Route::get("/{$slug}", static::class)
-            ->middleware(static::getRouteMiddleware($panel))
-            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->name('profile');
+        return 'profile';
     }
 
-    /**
-     * @return string | array<string>
-     */
-    public static function getRouteMiddleware(Panel $panel): string | array
+    public static function isTenantSubscriptionRequired(Panel $panel): bool
     {
-        return [
-            ...(static::isEmailVerificationRequired($panel) ? [static::getEmailVerifiedMiddleware($panel)] : []),
-            ...Arr::wrap(static::$routeMiddleware),
-        ];
+        return false;
     }
 
     public function mount(): void
@@ -97,6 +105,26 @@ class EditProfile extends SimplePage
         $this->callHook('afterFill');
     }
 
+    public static function registerRoutes(Panel $panel): void
+    {
+        if (filled(static::getCluster())) {
+            Route::name(static::prependClusterRouteBaseName(''))
+                ->prefix(static::prependClusterSlug(''))
+                ->group(fn () => static::routes($panel));
+
+            return;
+        }
+
+        static::routes($panel);
+    }
+
+    public static function getRouteName(?string $panel = null): string
+    {
+        $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
+
+        return $panel->generateRouteName('auth.' . static::getRelativeRouteName());
+    }
+
     /**
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
@@ -118,6 +146,8 @@ class EditProfile extends SimplePage
     public function save(): void
     {
         try {
+            $this->beginDatabaseTransaction();
+
             $this->callHook('beforeValidate');
 
             $data = $this->form->getState();
@@ -131,8 +161,18 @@ class EditProfile extends SimplePage
             $this->handleRecordUpdate($this->getUser(), $data);
 
             $this->callHook('afterSave');
+
+            $this->commitDatabaseTransaction();
         } catch (Halt $exception) {
+            $exception->shouldRollbackDatabaseTransaction() ?
+                $this->rollBackDatabaseTransaction() :
+                $this->commitDatabaseTransaction();
+
             return;
+        } catch (Throwable $exception) {
+            $this->rollBackDatabaseTransaction();
+
+            throw $exception;
         }
 
         if (request()->hasSession() && array_key_exists('password', $data)) {
@@ -147,7 +187,7 @@ class EditProfile extends SimplePage
         $this->getSavedNotification()?->send();
 
         if ($redirectUrl = $this->getRedirectUrl()) {
-            $this->redirect($redirectUrl);
+            $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
         }
     }
 
@@ -208,6 +248,7 @@ class EditProfile extends SimplePage
         return TextInput::make('password')
             ->label(__('filament-panels::pages/auth/edit-profile.form.password.label'))
             ->password()
+            ->revealable(filament()->arePasswordsRevealable())
             ->rule(Password::default())
             ->autocomplete('new-password')
             ->dehydrated(fn ($state): bool => filled($state))
@@ -221,6 +262,7 @@ class EditProfile extends SimplePage
         return TextInput::make('passwordConfirmation')
             ->label(__('filament-panels::pages/auth/edit-profile.form.password_confirmation.label'))
             ->password()
+            ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->visible(fn (Get $get): bool => filled($get('password')))
             ->dehydrated(false);
@@ -247,7 +289,8 @@ class EditProfile extends SimplePage
                     ])
                     ->operation('edit')
                     ->model($this->getUser())
-                    ->statePath('data'),
+                    ->statePath('data')
+                    ->inlineLabel(! static::isSimple()),
             ),
         ];
     }
@@ -308,7 +351,19 @@ class EditProfile extends SimplePage
     {
         return Action::make('back')
             ->label(__('filament-panels::pages/auth/edit-profile.actions.cancel.label'))
-            ->url(filament()->getUrl())
+            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from(filament()->getUrl()) . ')')
             ->color('gray');
+    }
+
+    protected function getLayoutData(): array
+    {
+        return [
+            'maxWidth' => $this->getMaxWidth(),
+        ];
+    }
+
+    public function getMaxWidth(): MaxWidth | string | null
+    {
+        return $this->maxWidth;
     }
 }

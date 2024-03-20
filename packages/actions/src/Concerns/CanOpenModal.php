@@ -72,7 +72,9 @@ trait CanOpenModal
 
     protected MaxWidth | string | Closure | null $modalWidth = null;
 
-    protected bool | Closure | null $isModalHidden = false;
+    protected bool | Closure | null $hasModal = null;
+
+    protected bool | Closure | null $isModalHidden = null;
 
     protected bool | Closure | null $hasModalCloseButton = null;
 
@@ -302,7 +304,14 @@ trait CanOpenModal
         return null;
     }
 
-    public function modalHidden(bool | Closure | null $condition = false): static
+    public function modal(bool | Closure | null $condition = true): static
+    {
+        $this->hasModal = $condition;
+
+        return $this;
+    }
+
+    public function modalHidden(bool | Closure | null $condition = true): static
     {
         $this->isModalHidden = $condition;
 
@@ -508,6 +517,16 @@ trait CanOpenModal
         return $this->evaluate($this->modalContentFooter);
     }
 
+    public function hasModalContent(): bool
+    {
+        return $this->modalContent !== null;
+    }
+
+    public function hasModalContentFooter(): bool
+    {
+        return $this->modalContentFooter !== null;
+    }
+
     public function getCustomModalHeading(): string | Htmlable | null
     {
         return $this->evaluate($this->modalHeading);
@@ -518,9 +537,19 @@ trait CanOpenModal
         return $this->getCustomModalHeading() ?? $this->getLabel();
     }
 
+    public function hasCustomModalHeading(): bool
+    {
+        return filled($this->getCustomModalHeading());
+    }
+
     public function getModalDescription(): string | Htmlable | null
     {
         return $this->evaluate($this->modalDescription);
+    }
+
+    public function hasModalDescription(): bool
+    {
+        return filled($this->getModalDescription());
     }
 
     public function getModalWidth(): MaxWidth | string
@@ -543,9 +572,22 @@ trait CanOpenModal
         return (bool) $this->evaluate($this->isModalSlideOver);
     }
 
-    public function isModalHidden(): bool
+    public function shouldOpenModal(?Closure $checkForFormUsing = null): bool
     {
-        return (bool) $this->evaluate($this->isModalHidden);
+        if (is_bool($hasModal = $this->evaluate($this->hasModal))) {
+            return $hasModal;
+        }
+
+        if ($this->evaluate($this->isModalHidden)) {
+            return false;
+        }
+
+        return $this->hasCustomModalHeading() ||
+            $this->hasModalDescription() ||
+            $this->hasModalContent() ||
+            $this->hasModalContentFooter() ||
+            $this->getInfolist() ||
+            (value($checkForFormUsing, $this) ?? false);
     }
 
     public function hasModalCloseButton(): bool

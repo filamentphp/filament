@@ -1,9 +1,18 @@
 ---
 title: Getting started
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
+
 ## Overview
 
 Panels are the top-level container in Filament, allowing you to build feature-rich admin panels that include pages, resources, forms, tables, notifications, actions, infolists, and widgets. All Panels include a default dashboard that can include widgets with statistics, charts, tables, and more.
+
+<LaracastsBanner
+    title="Introduction to Filament"
+    description="Watch the Rapid Laravel Development with Filament series on Laracasts - it will teach you how to get started with the panel builder. Alternatively, continue reading this text-based guide."
+    url="https://laracasts.com/series/rapid-laravel-development-with-filament/episodes/2"
+    series="rapid-laravel-development"
+/>
 
 ## Prerequisites
 
@@ -137,7 +146,7 @@ This will create several files in the `app/Filament/Resources` directory:
 |   |   +-- ListPatients.php
 ```
 
-Visit `/admin/patients` in your browser and observe a new link called "Patients" in the sidebar. Clicking the link will display an empty table. Let's add a form to create new patients.
+Visit `/admin/patients` in your browser and observe a new link called "Patients" in the navigation. Clicking the link will display an empty table. Let's add a form to create new patients.
 
 ### Setting up the resource form
 

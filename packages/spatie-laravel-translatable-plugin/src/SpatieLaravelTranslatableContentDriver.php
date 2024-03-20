@@ -104,7 +104,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         }
 
         foreach ($record->getTranslatableAttributes() as $attribute) {
-            $attributes[$attribute] = $record->getTranslation($attribute, $this->activeLocale);
+            $attributes[$attribute] = $record->getTranslation($attribute, $this->activeLocale, useFallbackLocale: false);
         }
 
         return $attributes;
@@ -123,7 +123,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         return $query->{$whereClause}(
             generate_search_column_expression($column, $isCaseInsensitivityForced, $databaseConnection),
             'like',
-            "%{$search}%",
+            (string) str($search)->wrap('%'),
         );
     }
 }

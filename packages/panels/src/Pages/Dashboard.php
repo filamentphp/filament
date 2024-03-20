@@ -3,12 +3,10 @@
 namespace Filament\Pages;
 
 use Filament\Facades\Filament;
-use Filament\Panel;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\Route;
 
 class Dashboard extends Page
 {
@@ -28,19 +26,11 @@ class Dashboard extends Page
             __('filament-panels::pages/dashboard.title');
     }
 
-    public static function getNavigationIcon(): ?string
+    public static function getNavigationIcon(): string | Htmlable | null
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::pages.dashboard.navigation-item')
             ?? (Filament::hasTopNavigation() ? 'heroicon-m-home' : 'heroicon-o-home');
-    }
-
-    public static function routes(Panel $panel): void
-    {
-        Route::get(static::getRoutePath(), static::class)
-            ->middleware(static::getRouteMiddleware($panel))
-            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->name(static::getSlug());
     }
 
     public static function getRoutePath(): string

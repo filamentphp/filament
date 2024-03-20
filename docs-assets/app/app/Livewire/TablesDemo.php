@@ -24,6 +24,7 @@ use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Columns\ColumnGroup;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\Layout\Panel;
@@ -288,6 +289,54 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ->label('Verified')
                     ->boolean()
                     ->getStateUsing(fn ($record) => filled($record->email_verified_at)),
+            ]);
+    }
+
+    public function columnVerticalAlignment(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name')
+                    ->verticallyAlignStart(),
+                TextColumn::make('email')
+                    ->label('Email addresses')
+                    ->getStateUsing(fn ($record): array => [
+                        $record->email,
+                        str($record->email)->replace('filamentphp.com', 'filament.dev'),
+                    ])
+                    ->listWithLineBreaks(),
+                IconColumn::make('email_verified_at')
+                    ->label('Verified')
+                    ->boolean()
+                    ->getStateUsing(fn ($record) => filled($record->email_verified_at)),
+            ]);
+    }
+
+    public function columnGrouping(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('slug'),
+                ColumnGroup::make('Visibility', [
+                    TextColumn::make('status')
+                        ->badge()
+                        ->icon(fn (string $state): string => match ($state) {
+                            'draft' => 'heroicon-o-pencil',
+                            'reviewing' => 'heroicon-o-clock',
+                            'published' => 'heroicon-o-check-circle',
+                        })
+                        ->color(fn (string $state): string => match ($state) {
+                            'draft' => 'gray',
+                            'reviewing' => 'warning',
+                            'published' => 'success',
+                        }),
+                    IconColumn::make('is_featured')
+                        ->boolean(),
+                ]),
+                TextColumn::make('author.name'),
             ]);
     }
 
@@ -1306,6 +1355,8 @@ class TablesDemo extends Component implements HasForms, HasTable
     public function reordering(Table $table): Table
     {
         return $this->postsTable($table)
+            ->query(Post::query()->limit(5)->orderBy('title'))
+            ->paginated(false)
             ->columns([
                 TextColumn::make('title')
                     ->searchable()

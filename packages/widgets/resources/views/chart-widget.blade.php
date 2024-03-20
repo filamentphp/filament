@@ -14,7 +14,7 @@
                 <x-filament::input.wrapper
                     inline-prefix
                     wire:target="filter"
-                    class="-my-2"
+                    class="w-max sm:-my-2"
                 >
                     <x-filament::input.select
                         inline-prefix
@@ -51,9 +51,10 @@
                 x-ignore
                 @class([
                     match ($color) {
-                        'gray' => 'fi-color-gray',
+                        'gray' => null,
                         default => 'fi-color-custom',
                     },
+                    is_string($color) ? "fi-color-{$color}" : null,
                 ])
             >
                 <canvas
