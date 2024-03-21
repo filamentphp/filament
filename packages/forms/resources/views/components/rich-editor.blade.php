@@ -54,12 +54,13 @@
                     )
                 "
                 x-on:trix-change="
+                    let value = $event.target.value
                     $nextTick(() => {
                         if (! $refs.trix) {
                             return
                         }
 
-                        state = $event.target.value
+                        state = value
                     })
                 "
                 @if ($isLiveDebounced())
