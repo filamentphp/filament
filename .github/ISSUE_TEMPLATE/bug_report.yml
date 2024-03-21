@@ -1,7 +1,7 @@
 name: Bug report
 description: Report a problem you're experiencing
 labels: bug,unconfirmed,low priority
-projects: ["filamentphp/2"]
+projects: ['filamentphp/2']
 body:
   - type: markdown
     attributes:
