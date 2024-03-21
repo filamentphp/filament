@@ -1,11 +1,14 @@
-<!--
-PLEASE FOLLOW THESE STEPS, OR THE PULL REQUEST WILL BE CLOSED:
-- Describe the issue that's fixed or the need for the new or updated functionality.
-- Show any visual changes using screenshots/recordings of before and after.
-- Check all checkboxes if functional changes are introduced.
--->
+<!-- FILL OUT ALL RELEVANT SECTIONS, OR THE PULL REQUEST WILL BE CLOSED. -->
 
-*Replace this with your description.*
+## Description
+
+<!-- Describe the addressed issue or the need for the new or updated functionality. -->
+
+## Visual changes
+
+<!-- Add screenshots/recordings of before and after. -->
+
+## Functional changes
 
 - [ ] Code style has been fixed by running the `composer cs` command.
 - [ ] Changes have been tested to not break existing functionality.
