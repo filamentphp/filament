@@ -146,7 +146,7 @@ trait InteractsWithTableQuery
             [];
 
         if (! count($relationships)) {
-            return $sortColumn;
+            return $query->getModel()->qualifyColumn($sortColumn);
         }
 
         $currentRelationshipName = array_shift($relationships);

@@ -326,7 +326,9 @@ class Group extends Component
             [];
 
         if (! count($relationships)) {
-            return $lastRelationship ? $lastRelationship->getQuery()->getModel()->qualifyColumn($sortColumn) : $sortColumn;
+            return $lastRelationship
+                ? $lastRelationship->getQuery()->getModel()->qualifyColumn($sortColumn)
+                : $query->getModel()->qualifyColumn($sortColumn);
         }
 
         $currentRelationshipName = array_shift($relationships);
