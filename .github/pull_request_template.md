@@ -1,5 +1,5 @@
 <!--
-PLEASE FOLLOW THESE STEPS, OR THE PULL REQUEST MAY BE CLOSED:
+PLEASE FOLLOW THESE STEPS, OR THE PULL REQUEST WILL BE CLOSED:
 - Describe the issue that's fixed or the need for the new or updated functionality.
 - Show any visual changes using screenshots/recordings of before and after.
 - Check all checkboxes if functional changes are introduced.
