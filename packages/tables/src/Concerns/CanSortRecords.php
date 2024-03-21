@@ -110,7 +110,7 @@ trait CanSortRecords
         }
 
         if ($sortColumnName) {
-            return $query->orderBy($sortColumnName, $sortDirection);
+            return $query->orderBy($query->getModel()->qualifyColumn($sortColumnName), $sortDirection);
         }
 
         if ($sortQueryUsing = $this->getTable()->getDefaultSortQuery()) {
