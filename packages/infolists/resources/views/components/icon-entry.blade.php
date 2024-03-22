@@ -12,7 +12,7 @@
                 ])
         }}
     >
-        @if (count($arrayState = \Illuminate\Support\Arr::wrap($getState())))
+        @if (count($arrayState = \Illuminate\Support\Collection::wrap($getState())))
             @foreach ($arrayState as $state)
                 @if ($icon = $getIcon($state))
                     @php
