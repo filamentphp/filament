@@ -156,6 +156,7 @@
         :label="$slot"
         :size="$size"
         :tag="$tag"
+        :target="$target"
         :tooltip="$tooltip"
         :type="$type"
         :class="
