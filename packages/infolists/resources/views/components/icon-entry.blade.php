@@ -1,16 +1,16 @@
-@php
-    use Filament\Infolists\Components\IconEntry\IconEntrySize;
-
-    $arrayState = $getState();
-
-    if ($arrayState instanceof \Illuminate\Support\Collection) {
-        $arrayState = $arrayState->all();
-    }
-
-    $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
-@endphp
-
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
+    @php
+        use Filament\Infolists\Components\IconEntry\IconEntrySize;
+    
+        $arrayState = $getState();
+    
+        if ($arrayState instanceof \Illuminate\Support\Collection) {
+            $arrayState = $arrayState->all();
+        }
+    
+        $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
+    @endphp
+
     <div
         {{
             $attributes
