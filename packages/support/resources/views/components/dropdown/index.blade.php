@@ -4,9 +4,9 @@
     'placement' => null,
     'shift' => false,
     'size' => false,
-    'sizePadding' => 16,
-    'availableWidth' => null,
     'availableHeight' => null,
+    'availableWidth' => null,
+    'sizePadding' => 16,
     'teleport' => false,
     'trigger' => null,
     'width' => null,
@@ -15,10 +15,10 @@
 @php
     use Filament\Support\Enums\MaxWidth;
 
-    $sizeSettings = collect([
-        'padding' => $sizePadding,
-        'availableWidth' => $availableWidth,
+    $sizeConfig = collect([
         'availableHeight' => $availableHeight,
+        'availableWidth' => $availableWidth,
+        'padding' => $sizePadding,
     ])->filter()->toJson();
 @endphp
 
@@ -47,7 +47,7 @@
 
     <div
         x-cloak
-        x-float{{ $placement ? ".placement.{$placement}" : '' }}{{ $size ? '.size' : '' }}.flip{{ $shift ? '.shift' : '' }}{{ $teleport ? '.teleport' : '' }}{{ $offset ? '.offset' : '' }}="{ offset: {{ $offset }}, {{ $size ? ('size: ' . $sizeSettings) : '' }} }"
+        x-float{{ $placement ? ".placement.{$placement}" : '' }}{{ $size ? '.size' : '' }}.flip{{ $shift ? '.shift' : '' }}{{ $teleport ? '.teleport' : '' }}{{ $offset ? '.offset' : '' }}="{ offset: {{ $offset }}, {{ $size ? ('size: ' . $sizeConfig) : '' }} }"
         x-ref="panel"
         x-transition:enter-start="opacity-0"
         x-transition:leave-end="opacity-0"
@@ -58,7 +58,7 @@
         @class([
             'fi-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10',
             match ($width) {
-                // widths need to be set to !important to prevent floating ui overriding it
+                // These max width classes need to be `!important` otherwise they will be usurped by the Floating UI "size" middleware.
                 MaxWidth::ExtraSmall, 'xs' => '!max-w-xs',
                 MaxWidth::Small, 'sm' => '!max-w-sm',
                 MaxWidth::Medium, 'md' => '!max-w-md',
