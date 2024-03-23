@@ -17,6 +17,14 @@ export default (Alpine) => {
             dataIdAttr: 'x-sortable-item',
             animation: animation,
             ghostClass: 'fi-sortable-ghost',
+            onEnd: function (evt) {
+                const order = this.toArray();
+                const draggedId = evt.item.getAttribute('x-sortable-item');
+                el.dispatchEvent(new CustomEvent('fi-sortable-end', {
+                    detail: { order, draggedId },
+                    bubbles: true,
+                }));
+            }
         })
     })
 }

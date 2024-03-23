@@ -25,7 +25,7 @@
 
     <tbody
         @if ($reorderable)
-            x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
+            x-on:fi-sortable-end.stop="$wire.reorderTableWithDragged($event.detail)"
             x-sortable
             data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
         @endif
