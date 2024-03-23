@@ -3,6 +3,7 @@
 
     $datalistOptions = $getDatalistOptions();
     $extraAlpineAttributes = $getExtraAlpineAttributes();
+    $hasTime = $hasTime();
     $id = $getId();
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
@@ -48,8 +49,8 @@
                             'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
                             'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                             'list' => $datalistOptions ? $id . '-list' : null,
-                            'max' => $hasTime() ? $getMaxDate() : \Carbon\Carbon::parse($getMaxDate())->toDateString(),
-                            'min' => $hasTime() ? $getMinDate() : \Carbon\Carbon::parse($getMinDate())->toDateString(),
+                            'max' => $hasTime ? $getMaxDate() : \Carbon\Carbon::parse($getMaxDate())->toDateString(),
+                            'min' => $hasTime ? $getMinDate() : \Carbon\Carbon::parse($getMinDate())->toDateString(),
                             'placeholder' => $getPlaceholder(),
                             'readonly' => $isReadOnly(),
                             'required' => $isRequired() && (! $isConcealed()),
@@ -231,7 +232,7 @@
                             </div>
                         @endif
 
-                        @if ($hasTime())
+                        @if ($hasTime)
                             <div
                                 class="flex items-center justify-center rtl:flex-row-reverse"
                             >
