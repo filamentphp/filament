@@ -3,6 +3,9 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\Events\ActionCalled;
+use Filament\Actions\Events\ActionCalling;
+use Illuminate\Support\Facades\Event;
 
 trait HasLifecycleHooks
 {
@@ -62,12 +65,18 @@ trait HasLifecycleHooks
 
     public function callBefore(): mixed
     {
+        Event::dispatch(ActionCalling::class, $this);
+
         return $this->evaluate($this->before);
     }
 
     public function callAfter(): mixed
     {
-        return $this->evaluate($this->after);
+        try {
+            return $this->evaluate($this->after);
+        } finally {
+            Event::dispatch(ActionCalled::class, $this);
+        }
     }
 
     public function callBeforeFormFilled(): mixed

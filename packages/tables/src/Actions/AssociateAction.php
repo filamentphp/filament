@@ -38,6 +38,8 @@ class AssociateAction extends Action
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
+    protected bool | Closure $isMultiple = false;
+
     public static function getDefaultName(): ?string
     {
         return 'associate';
@@ -172,6 +174,18 @@ class AssociateAction extends Action
         return $this->evaluate($this->recordSelectSearchColumns);
     }
 
+    public function multiple(bool | Closure $condition = true): static
+    {
+        $this->isMultiple = $condition;
+
+        return $this;
+    }
+
+    public function isMultiple(): bool
+    {
+        return (bool) $this->evaluate($this->isMultiple);
+    }
+
     public function getRecordSelect(): Select
     {
         $table = $this->getTable();
@@ -225,31 +239,18 @@ class AssociateAction extends Action
 
             $relationCountHash = $relationship->getRelationCountHash(incrementJoinCount: false);
 
-            $relationshipQuery
-                ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use (
-                    $relationCountHash,
-                    $relationship
-                ): Builder {
-                    if ($relationship instanceof MorphMany) {
-                        return $query
-                            ->where(
-                                $relationship->getMorphType(),
-                                $relationship->getMorphClass(),
-                            )
-                            ->where(
-                                $relationship->getQualifiedForeignKeyName(),
-                                $relationship->getParent()->getKey(),
-                            );
-                    }
-
-                    return $query->where(
+            if ($relationship instanceof MorphMany) {
+                $relationshipQuery->whereNotMorphedTo($table->getInverseRelationship(), $relationship->getParent());
+            } else {
+                $relationshipQuery
+                    ->whereDoesntHave($table->getInverseRelationship(), fn (Builder $query): Builder => $query->where(
                         // https://github.com/filamentphp/filament/issues/8067
                         $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?
                             "{$relationCountHash}.{$relationship->getParent()->getKeyName()}" :
                             $relationship->getParent()->getQualifiedKeyName(),
                         $relationship->getParent()->getKey(),
-                    );
-                });
+                    ));
+            }
 
             if (
                 filled($titleAttribute) &&
@@ -274,6 +275,7 @@ class AssociateAction extends Action
         $select = Select::make('recordId')
             ->label(__('filament-actions::associate.single.modal.fields.record_id.label'))
             ->required()
+            ->multiple($this->isMultiple())
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(optionsLimit: $component->getOptionsLimit(), search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(function ($value) use ($table): string {

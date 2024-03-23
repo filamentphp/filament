@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
@@ -29,6 +30,15 @@ it('can call an action with data', function () {
         ->assertDispatched('data-called', data: [
             'payload' => $payload,
         ]);
+});
+
+it('can call action inside group', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callTableAction('groupedDelete', $post);
+
+    assertSoftDeleted($post);
 });
 
 it('can validate an action\'s data', function () {
@@ -118,4 +128,10 @@ it('can state whether table actions exist in order', function () {
         ->assertTableActionsExistInOrder(['edit', 'delete'])
         ->assertTableHeaderActionsExistInOrder(['exists', 'existsInOrder'])
         ->assertTableEmptyStateActionsExistInOrder(['emptyExists', 'emptyExistsInOrder']);
+});
+
+it('can state whether a table action exists with a given configuration', function () {
+    livewire(PostsTable::class)
+        ->assertTableActionExists('attachMultiple', fn (AttachAction $action) => $action->isMultiple())
+        ->assertTableActionDoesNotExist(AttachAction::class, fn (AttachAction $action) => $action->isMultiple());
 });

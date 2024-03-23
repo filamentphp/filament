@@ -13,6 +13,7 @@ use Illuminate\Support\Traits\Conditionable;
 
 class StaticAction extends ViewComponent
 {
+    use Concerns\BelongsToGroup;
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanBeLabeledFrom;

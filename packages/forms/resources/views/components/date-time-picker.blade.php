@@ -3,10 +3,13 @@
 
     $datalistOptions = $getDatalistOptions();
     $extraAlpineAttributes = $getExtraAlpineAttributes();
+    $hasTime = $hasTime();
     $id = $getId();
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
+    $maxDate = $getMaxDate();
+    $minDate = $getMinDate();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
@@ -48,8 +51,8 @@
                             'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
                             'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                             'list' => $datalistOptions ? $id . '-list' : null,
-                            'max' => $getMaxDate(),
-                            'min' => $getMinDate(),
+                            'max' => $hasTime ? $maxDate : ($maxDate ? \Carbon\Carbon::parse($maxDate)->toDateString() : null),
+                            'min' => $hasTime ? $minDate : ($minDate ? \Carbon\Carbon::parse($minDate)->toDateString() : null),
                             'placeholder' => $getPlaceholder(),
                             'readonly' => $isReadOnly(),
                             'required' => $isRequired() && (! $isConcealed()),
@@ -89,13 +92,13 @@
                 <input
                     x-ref="maxDate"
                     type="hidden"
-                    value="{{ $getMaxDate() }}"
+                    value="{{ $maxDate }}"
                 />
 
                 <input
                     x-ref="minDate"
                     type="hidden"
-                    value="{{ $getMinDate() }}"
+                    value="{{ $minDate }}"
                 />
 
                 <input
@@ -231,7 +234,7 @@
                             </div>
                         @endif
 
-                        @if ($hasTime())
+                        @if ($hasTime)
                             <div
                                 class="flex items-center justify-center rtl:flex-row-reverse"
                             >

@@ -81,10 +81,42 @@ class TestsColumns
                 $column->record($record);
             }
 
-            if ($checkColumnUsing && $column->getRecord()) {
+            if ($checkColumnUsing) {
                 Assert::assertTrue(
                     $checkColumnUsing($column),
                     "Failed asserting that a column with the name [{$name}] and provided configuration exists on the [{$livewireClass}] component."
+                );
+            }
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnDoesNotExist(): Closure
+    {
+        return function (string $name, ?Closure $checkColumnUsing = null, $record = null): static {
+            $column = $this->instance()->getTable()->getColumn($name);
+
+            $livewireClass = $this->instance()::class;
+
+            if (! $column) {
+                Assert::assertNull($column);
+
+                return $this;
+            }
+
+            if ($record) {
+                if (! ($record instanceof Model)) {
+                    $record = $this->instance()->getTableRecord($record);
+                }
+
+                $column->record($record);
+            }
+
+            if ($checkColumnUsing) {
+                Assert::assertFalse(
+                    $checkColumnUsing($column),
+                    "Failed asserting that a column with the name [{$name}] and provided configuration does not exist on the [{$livewireClass}] component."
                 );
             }
 

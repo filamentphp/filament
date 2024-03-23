@@ -91,7 +91,7 @@
             </ul>
         @endif
 
-        @if ($isAddable)
+        @if ($isAddable && $addAction->isVisible())
             <div class="flex justify-center">
                 {{ $addAction }}
             </div>

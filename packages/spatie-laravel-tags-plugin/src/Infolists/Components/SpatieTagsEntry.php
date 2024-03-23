@@ -10,13 +10,13 @@ use Illuminate\Support\Arr;
 
 class SpatieTagsEntry extends TextEntry
 {
-    protected string | Closure | AllTagTypes | null $type;
+    protected string | AllTagTypes | Closure | null $type;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->type(new AllTagTypes());
+        $this->type(AllTagTypes::make());
 
         $this->badge();
     }
@@ -69,7 +69,7 @@ class SpatieTagsEntry extends TextEntry
         return array_unique($state);
     }
 
-    public function type(string | Closure | AllTagTypes | null $type): static
+    public function type(string | AllTagTypes | Closure | null $type): static
     {
         $this->type = $type;
 

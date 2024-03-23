@@ -337,6 +337,17 @@ AttachAction::make()
     ->recordSelectSearchColumns(['title', 'description'])
 ```
 
+### Attaching multiple records
+
+The `multiple()` method on the `AttachAction` component allows you to select multiple values:
+
+```php
+use Filament\Tables\Actions\AttachAction;
+
+AttachAction::make()
+    ->multiple()
+```
+
 ### Customizing the select field in the attached modal
 
 You may customize the select field object that is used during attachment by passing a function to the `recordSelect()` method:
@@ -438,6 +449,17 @@ use Filament\Tables\Actions\AssociateAction;
 
 AssociateAction::make()
     ->recordSelectSearchColumns(['title', 'description'])
+```
+
+### Associating multiple records
+
+The `multiple()` method on the `AssociateAction` component allows you to select multiple values:
+
+```php
+use Filament\Tables\Actions\AssociateAction;
+
+AssociateAction::make()
+    ->multiple()
 ```
 
 ### Customizing the select field in the associate modal

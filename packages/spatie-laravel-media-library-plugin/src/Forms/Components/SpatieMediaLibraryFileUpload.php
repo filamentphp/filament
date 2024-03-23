@@ -53,7 +53,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
         $this->loadStateFromRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component, HasMedia $record): void {
             /** @var Model&HasMedia $record */
-            $media = $record->load('media')->getMedia($component->getCollection())
+            $media = $record->load('media')->getMedia($component->getCollection() ?? 'default')
                 ->when(
                     $component->hasMediaFilter(),
                     fn (Collection $media) => $component->filterMedia($media)
@@ -153,7 +153,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 ->withManipulations($component->getManipulations())
                 ->withResponsiveImagesIf($component->hasResponsiveImages())
                 ->withProperties($component->getProperties())
-                ->toMediaCollection($component->getCollection(), $component->getDiskName());
+                ->toMediaCollection($component->getCollection() ?? 'default', $component->getDiskName());
 
             return $media->getAttributeValue('uuid');
         });
@@ -255,7 +255,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $record = $this->getRecord();
 
         $record
-            ->getMedia($this->getCollection())
+            ->getMedia($this->getCollection() ?? 'default')
             ->whereNotIn('uuid', array_keys($this->getState() ?? []))
             ->when($this->hasMediaFilter(), fn (Collection $media): Collection => $this->filterMedia($media))
             ->each(fn (Media $media) => $media->delete());
@@ -270,19 +270,21 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         /** @var Model&HasMedia $model */
         $model = $this->getModelInstance();
 
+        $collection = $this->getCollection() ?? 'default';
+
         /** @phpstan-ignore-next-line */
         $diskNameFromRegisteredConversions = $model
             ->getRegisteredMediaCollections()
-            ->filter(fn (MediaCollection $collection): bool => $collection->name === $this->getCollection())
+            ->filter(fn (MediaCollection $mediaCollection): bool => $mediaCollection->name === $collection)
             ->first()
             ?->diskName;
 
         return $diskNameFromRegisteredConversions ?? config('filament.default_filesystem_disk');
     }
 
-    public function getCollection(): string
+    public function getCollection(): ?string
     {
-        return $this->evaluate($this->collection) ?? 'default';
+        return $this->evaluate($this->collection);
     }
 
     public function getConversion(): ?string
