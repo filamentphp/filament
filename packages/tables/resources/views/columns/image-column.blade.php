@@ -6,7 +6,7 @@
     }
 
     $state = \Illuminate\Support\Arr::wrap($state);
-    
+
     $limit = $getLimit();
     $limitedState = array_slice($state, 0, $limit);
     $isCircular = $isCircular();
