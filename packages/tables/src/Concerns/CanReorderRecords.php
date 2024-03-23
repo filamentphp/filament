@@ -11,12 +11,12 @@ trait CanReorderRecords
 
     /**
      * Handles the reordering of table rows, including the ID of the dragged item.
-     * 
+     *
      * This method is designed to be overridden in specific implementations where
      * the ID of the dragged item is required for additional logic during the reordering process.
-     * 
-     * @param array $orderAndDraggedId An associative array containing the new order of item IDs ('order')
-     *                                 and the ID of the dragged item ('draggedId').
+     *
+     * @param  array  $orderAndDraggedId  An associative array containing the new order of item IDs ('order')
+     *                                    and the ID of the dragged item ('draggedId').
      */
     public function reorderTableWithDragged($orderAndDraggedId): void
     {
@@ -24,7 +24,7 @@ trait CanReorderRecords
         // The $draggedId is intended for use in overridden methods where specific logic
         // regarding the dragged item is needed.
         $draggedId = $orderAndDraggedId['draggedId'];
-        
+
         // Proceed with the reordering logic using the provided $order.
         $this->reorderTable($order);
     }
