@@ -8,6 +8,8 @@
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
+    $maxDate = $getMaxDate();
+    $minDate = $getMinDate();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
@@ -49,8 +51,8 @@
                             'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
                             'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                             'list' => $datalistOptions ? $id . '-list' : null,
-                            'max' => $hasTime ? $getMaxDate() : \Carbon\Carbon::parse($getMaxDate())->toDateString(),
-                            'min' => $hasTime ? $getMinDate() : \Carbon\Carbon::parse($getMinDate())->toDateString(),
+                            'max' => $hasTime ? $maxDate : ($maxDate ? \Carbon\Carbon::parse($maxDate)->toDateString() : null),
+                            'min' => $hasTime ? $minDate : ($minDate ? \Carbon\Carbon::parse($minDate)->toDateString() : null),
                             'placeholder' => $getPlaceholder(),
                             'readonly' => $isReadOnly(),
                             'required' => $isRequired() && (! $isConcealed()),
@@ -90,13 +92,13 @@
                 <input
                     x-ref="maxDate"
                     type="hidden"
-                    value="{{ $getMaxDate() }}"
+                    value="{{ $maxDate }}"
                 />
 
                 <input
                     x-ref="minDate"
                     type="hidden"
-                    value="{{ $getMinDate() }}"
+                    value="{{ $minDate }}"
                 />
 
                 <input
