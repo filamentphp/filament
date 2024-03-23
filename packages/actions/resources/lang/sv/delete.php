@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Raderad',
+                'title' => 'Raderades',
             ],
 
         ],

@@ -31,6 +31,7 @@
 <x-filament::dropdown
     placement="bottom-start"
     teleport
+    size
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->class(['fi-tenant-menu'])
