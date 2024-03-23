@@ -5,6 +5,7 @@ title: Modal Blade component
 ## Overview
 
 The modal component is able to open a dialog window or slide-over with any content:
+![modal](https://github.com/filamentphp/filament/assets/4501062/3f22d362-6610-4291-bc89-dbbb20e385ab)
 
 ```blade
 <x-filament::modal>
@@ -13,7 +14,7 @@ The modal component is able to open a dialog window or slide-over with any conte
             Open modal
         </x-filament::button>
     </x-slot>
-
+    Hi, there!
     {{-- Modal content --}}
 </x-filament::modal>
 ```
