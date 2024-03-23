@@ -704,7 +704,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenant(Team::class, slugAttribute: 'slug')
-        ->tenantDomain('{tenant}.example.com');
+        ->tenantDomain('{tenant:slug}.example.com');
 }
 ```
 
@@ -719,13 +719,13 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenant(Team::class, slugAttribute: 'domain')
-        ->tenantDomain('{tenant}');
+        ->tenantDomain('{tenant:domain}');
 }
 ```
 
 In this example, the `domain` attribute should contain a valid domain host, like `example.com` or `subdomain.example.com`.
 
-> Note: when using a parameter for the entire domain (`tenantDomain('{tenant}')`), Filament will register a [global route parameter pattern](https://laravel.com/docs/routing#parameters-global-constraints) for all `tenant` parameters in the application to be `[a-z0-9.\-]+`. This is because Laravel does not allow the `.` character in route parameters by default. This might conflict with other panels using tenancy, or other parts of your application that use a `tenant` route parameter.
+> Note: When using a parameter for the entire domain (`tenantDomain('{tenant:domain}')`), Filament will register a [global route parameter pattern](https://laravel.com/docs/routing#parameters-global-constraints) for all `tenant` parameters in the application to be `[a-z0-9.\-]+`. This is because Laravel does not allow the `.` character in route parameters by default. This might conflict with other panels using tenancy, or other parts of your application that use a `tenant` route parameter.
 
 ## Disabling tenancy for a resource
 
