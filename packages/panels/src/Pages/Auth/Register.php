@@ -80,7 +80,7 @@ class Register extends SimplePage
         $user = $this->wrapInDatabaseTransaction(function () {
             $data = $this->form->getState();
 
-            return $this->createUser($data);
+            return $this->handleRegistration($data);
         });
 
         event(new Registered($user));
@@ -95,9 +95,9 @@ class Register extends SimplePage
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
-    protected function createUser(array $data): Authenticatable
+    protected function handleRegistration(array $data): Authenticatable
     {
         return $this->getUserModel()::create($data);
     }
