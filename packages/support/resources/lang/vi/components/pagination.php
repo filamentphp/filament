@@ -30,7 +30,6 @@ return [
             'label' => 'Đi tới trang :page',
         ],
 
-
         'last' => [
             'label' => 'Cuối cùng',
         ],
