@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
 class SelectFilter extends BaseFilter
 {
@@ -52,7 +53,7 @@ class SelectFilter extends BaseFilter
 
                     $labels = $relationshipQuery
                         ->when(
-                            $filter->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough,
+                            $filter->getRelationship() instanceof BelongsToThrough,
                             fn (Builder $query) => $query->distinct(),
                         )
                         ->when(
