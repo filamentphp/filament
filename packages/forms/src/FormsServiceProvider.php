@@ -2,7 +2,6 @@
 
 namespace Filament\Forms;
 
-use Filament\Forms\Testing\TestsComponentActions;
 use Filament\Forms\Testing\TestsForms;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Css;
@@ -47,7 +46,6 @@ class FormsServiceProvider extends PackageServiceProvider
         }
 
         Testable::mixin(new TestsForms());
-        Testable::mixin(new TestsComponentActions());
     }
 
     /**
@@ -58,7 +56,6 @@ class FormsServiceProvider extends PackageServiceProvider
         $commands = [
             Commands\MakeFieldCommand::class,
             Commands\MakeFormCommand::class,
-            Commands\MakeLayoutComponentCommand::class,
         ];
 
         $aliases = [];

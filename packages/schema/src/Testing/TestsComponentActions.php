@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Testing;
+namespace Filament\Testing;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
