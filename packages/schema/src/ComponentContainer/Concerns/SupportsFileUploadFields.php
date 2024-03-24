@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Concerns;
+namespace Filament\ComponentContainer\Concerns;
 
 use Filament\Forms\Components\BaseFileUpload;
 

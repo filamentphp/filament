@@ -16,6 +16,7 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->ruleWithConfiguration(
         RenameClassRector::class,
+        // @todo Alphabetical
         [
             'Filament\\Forms\\Commands\\Aliases\\MakeLayoutComponentCommand' => 'Filament\\Commands\\Aliases\\MakeLayoutComponentCommand',
             'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Commands\\MakeLayoutComponentCommand',
@@ -52,6 +53,24 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Tables\\Actions\\LinkAction' => 'Filament\\Actions\\Action',
             'Filament\\Tables\\Columns\\Concerns\\HasExtraAttributes' => 'Filament\\Support\\Concerns\\HasExtraAttributes',
             'Filament\\Widgets\\StatsOverviewWidget\\Card' => 'Filament\\Widgets\\StatsOverviewWidget\\Stat',
+            'Filament\\Forms\\Concerns\\BelongsToLivewire' => 'Filament\\ComponentContainer\\Concerns\\BelongsToLivewire',
+            'Filament\\Forms\\Concerns\\BelongsToModel' => 'Filament\\ComponentContainer\\Concerns\\BelongsToModel',
+            'Filament\\Forms\\Concerns\\BelongsToParentComponent' => 'Filament\\ComponentContainer\\Concerns\\BelongsToParentComponent',
+            'Filament\\Forms\\Concerns\\CanBeDisabled' => 'Filament\\ComponentContainer\\Concerns\\CanBeDisabled',
+            'Filament\\Forms\\Concerns\\CanBeHidden' => 'Filament\\ComponentContainer\\Concerns\\CanBeHidden',
+            'Filament\\Forms\\Concerns\\CanBeValidated' => 'Filament\\ComponentContainer\\Concerns\\CanBeValidated',
+            'Filament\\Forms\\Concerns\\Cloneable' => 'Filament\\ComponentContainer\\Concerns\\Cloneable',
+            'Filament\\Forms\\Concerns\\HasComponents' => 'Filament\\ComponentContainer\\Concerns\\HasComponents',
+            'Filament\\Forms\\Concerns\\HasFieldWrapper' => 'Filament\\ComponentContainer\\Concerns\\HasFieldWrapper',
+            'Filament\\Forms\\Concerns\\HasInlineLabels' => 'Filament\\ComponentContainer\\Concerns\\HasInlineLabels',
+            'Filament\\Forms\\Concerns\\HasOperation' => 'Filament\\ComponentContainer\\Concerns\\HasOperation',
+            'Filament\\Forms\\Concerns\\HasState' => 'Filament\\ComponentContainer\\Concerns\\HasState',
+            'Filament\\Forms\\Concerns\\ListensToEvents' => 'Filament\\ComponentContainer\\Concerns\\ListensToEvents',
+            'Filament\\Forms\\Concerns\\SupportsComponentFileAttachments' => 'Filament\\ComponentContainer\\Concerns\\SupportsComponentFileAttachments',
+            'Filament\\Forms\\Concerns\\SupportsFileUploadFields' => 'Filament\\ComponentContainer\\Concerns\\SupportsFileUploadFields',
+            'Filament\\Forms\\Concerns\\SupportsSelectFields' => 'Filament\\ComponentContainer\\Concerns\\SupportsSelectFields',
+            'Filament\\Forms\\Concerns\\HasColumns' => 'Filament\\Components\\Concerns\\HasColumns',
+            'Filament\\Forms\\Concerns\\HasStateBindingModifiers' => 'Filament\\Components\\Concerns\\HasStateBindingModifiers',
         ],
     );
 

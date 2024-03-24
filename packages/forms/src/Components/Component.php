@@ -2,8 +2,8 @@
 
 namespace Filament\Forms\Components;
 
-use Filament\Forms\Concerns\HasColumns;
-use Filament\Forms\Concerns\HasStateBindingModifiers;
+use Filament\Components\Concerns\HasColumns;
+use Filament\Components\Concerns\HasStateBindingModifiers;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasExtraAttributes;

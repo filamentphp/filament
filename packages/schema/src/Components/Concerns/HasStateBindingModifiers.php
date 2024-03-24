@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Concerns;
+namespace Filament\Components\Concerns;
 
 use Filament\Forms\Components\Component;
 

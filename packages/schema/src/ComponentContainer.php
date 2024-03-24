@@ -2,7 +2,6 @@
 
 namespace Filament;
 
-use Filament\Forms\Concerns;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
@@ -10,24 +9,24 @@ use Illuminate\Database\Eloquent\Model;
 
 class ComponentContainer extends ViewComponent
 {
-    use Concerns\BelongsToLivewire;
-    use Concerns\BelongsToModel;
-    use Concerns\BelongsToParentComponent;
-    use Concerns\CanBeDisabled;
-    use Concerns\CanBeHidden;
-    use Concerns\CanBeValidated;
-    use Concerns\Cloneable;
-    use Concerns\HasColumns;
-    use Concerns\HasComponents;
-    use Concerns\HasFieldWrapper;
-    use Concerns\HasInlineLabels;
-    use Concerns\HasOperation;
-    use Concerns\HasState;
-    use Concerns\HasStateBindingModifiers;
-    use Concerns\ListensToEvents;
-    use Concerns\SupportsComponentFileAttachments;
-    use Concerns\SupportsFileUploadFields;
-    use Concerns\SupportsSelectFields;
+    use ComponentContainer\Concerns\BelongsToLivewire;
+    use ComponentContainer\Concerns\BelongsToModel;
+    use ComponentContainer\Concerns\BelongsToParentComponent;
+    use ComponentContainer\Concerns\CanBeDisabled;
+    use ComponentContainer\Concerns\CanBeHidden;
+    use ComponentContainer\Concerns\CanBeValidated;
+    use ComponentContainer\Concerns\Cloneable;
+    use ComponentContainer\Concerns\HasComponents;
+    use ComponentContainer\Concerns\HasFieldWrapper;
+    use ComponentContainer\Concerns\HasInlineLabels;
+    use ComponentContainer\Concerns\HasOperation;
+    use ComponentContainer\Concerns\HasState;
+    use ComponentContainer\Concerns\ListensToEvents;
+    use ComponentContainer\Concerns\SupportsComponentFileAttachments;
+    use ComponentContainer\Concerns\SupportsFileUploadFields;
+    use ComponentContainer\Concerns\SupportsSelectFields;
+    use Components\Concerns\HasColumns;
+    use Components\Concerns\HasStateBindingModifiers;
     use HasExtraAttributes;
 
     protected string $view = 'filament::component-container';

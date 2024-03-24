@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Concerns;
+namespace Filament\ComponentContainer\Concerns;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
