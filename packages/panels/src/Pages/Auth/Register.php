@@ -94,6 +94,9 @@ class Register extends SimplePage
         return app(RegistrationResponse::class);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     protected function createUser(array $data): Authenticatable
     {
         return $this->getUserModel()::create($data);
