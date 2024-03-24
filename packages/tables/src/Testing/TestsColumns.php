@@ -4,6 +4,8 @@ namespace Filament\Tables\Testing;
 
 use Closure;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Testing\Assert;
@@ -218,7 +220,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            /** @var \Filament\Tables\Columns\TextColumn $column */
+            /** @var TextColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
@@ -244,7 +246,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            /** @var \Filament\Tables\Columns\TextColumn $column */
+            /** @var TextColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
@@ -324,7 +326,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            /** @var \Filament\Tables\Columns\TextColumn $column */
+            /** @var TextColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
@@ -352,7 +354,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            /** @var \Filament\Tables\Columns\TextColumn $column */
+            /** @var TextColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
@@ -380,7 +382,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            /** @var \Filament\Tables\Columns\SelectColumn $column */
+            /** @var SelectColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
@@ -408,7 +410,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            /** @var \Filament\Tables\Columns\SelectColumn $column */
+            /** @var SelectColumn $column */
             $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {

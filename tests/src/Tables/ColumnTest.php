@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
@@ -172,7 +173,7 @@ it('can assert that a column exists with the given configuration', function () {
     ]);
 
     livewire(PostsTable::class)
-        ->assertTableColumnExists('title2', function (Filament\Tables\Columns\TextColumn $column) {
+        ->assertTableColumnExists('title2', function (TextColumn $column) {
             return $column->isSortable() &&
                 $column->isSearchable() &&
                 $column->getPrefix() == 'published';
@@ -183,7 +184,7 @@ it('can assert that a column exists with the given configuration', function () {
     ]);
 
     livewire(PostsTable::class)
-        ->assertTableColumnExists('title2', function (Filament\Tables\Columns\TextColumn $column) {
+        ->assertTableColumnExists('title2', function (TextColumn $column) {
             return $column->getPrefix() == 'unpublished';
         }, $unpublishedPost);
 
@@ -191,7 +192,7 @@ it('can assert that a column exists with the given configuration', function () {
     $this->expectExceptionMessage('Failed asserting that a column with the name [title] and provided configuration exists on the [' . PostsTable::class . '] component');
 
     livewire(PostsTable::class)
-        ->assertTableColumnExists('title', function (Filament\Tables\Columns\TextColumn $column) {
+        ->assertTableColumnExists('title', function (TextColumn $column) {
             return $column->isTime();
         }, $publishedPost);
 });

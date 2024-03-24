@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
 trait HasRelationship
 {
@@ -110,7 +111,7 @@ trait HasRelationship
                 $relationship->getQualifiedForeignKeyName();
         }
 
-        if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+        if ($relationship instanceof BelongsToThrough) {
             return $relationship->getRelated()->getQualifiedKeyName();
         }
 

@@ -3,6 +3,7 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
+use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Navigation\NavigationManager;
@@ -35,7 +36,7 @@ trait HasNavigation
      */
     public function buildNavigation(): array
     {
-        /** @var \Filament\Navigation\NavigationBuilder $builder */
+        /** @var NavigationBuilder $builder */
         $builder = app()->call($this->navigationBuilder);
 
         return $builder->getNavigation();
