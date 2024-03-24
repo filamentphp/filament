@@ -2,7 +2,9 @@
 
 namespace Filament\Tests\Notifications\Fixtures;
 
-class CustomNotification extends \Filament\Notifications\Notification
+use Filament\Notifications\Notification;
+
+class CustomNotification extends Notification
 {
     protected string $size = 'md';
 

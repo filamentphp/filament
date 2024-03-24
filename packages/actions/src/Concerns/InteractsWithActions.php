@@ -4,7 +4,6 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
@@ -18,7 +17,7 @@ use Throwable;
 use function Livewire\store;
 
 /**
- * @property Forms\Form $mountedActionForm
+ * @property Form $mountedActionForm
  */
 trait InteractsWithActions
 {
@@ -272,7 +271,7 @@ trait InteractsWithActions
         ];
     }
 
-    public function getMountedActionForm(?Action $mountedAction = null): ?Forms\Form
+    public function getMountedActionForm(?Action $mountedAction = null): ?Form
     {
         $mountedAction ??= $this->getMountedAction();
 
