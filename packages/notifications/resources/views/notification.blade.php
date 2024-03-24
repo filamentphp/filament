@@ -4,6 +4,12 @@
 
     $color = $getColor() ?? 'gray';
     $isInline = $isInline();
+    $title = $getTitle();
+    $hasTitle = filled($title);
+    $date = $getDate();
+    $hasDate = filled($date);
+    $body = $getBody();
+    $hasBody = filled($body);
 @endphp
 
 <x-filament-notifications::notification
@@ -73,20 +79,22 @@
         @endif
 
         <div class="mt-0.5 grid flex-1">
-            @if (filled($title = $getTitle()))
+            @if ($hasTitle)
                 <x-filament-notifications::title>
                     {{ str($title)->sanitizeHtml()->toHtmlString() }}
                 </x-filament-notifications::title>
             @endif
 
-            @if (filled($date = $getDate()))
-                <x-filament-notifications::date class="mt-1">
+            @if ($hasDate)
+                <x-filament-notifications::date @class(['mt-1' => $hasTitle])>
                     {{ $date }}
                 </x-filament-notifications::date>
             @endif
 
-            @if (filled($body = $getBody()))
-                <x-filament-notifications::body class="mt-1">
+            @if ($hasBody)
+                <x-filament-notifications::body
+                    @class(['mt-1' => $hasTitle || $hasDate])
+                >
                     {{ str($body)->sanitizeHtml()->toHtmlString() }}
                 </x-filament-notifications::body>
             @endif
@@ -94,7 +102,7 @@
             @if ($actions = $getActions())
                 <x-filament-notifications::actions
                     :actions="$actions"
-                    class="mt-3"
+                    @class(['mt-3' => $hasTitle || $hasDate || $hasBody])
                 />
             @endif
         </div>
