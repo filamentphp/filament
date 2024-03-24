@@ -26,6 +26,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Livewire\Component as LivewireComponent;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
@@ -827,7 +828,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             if (
                 ($relationship instanceof HasManyThrough) ||
-                ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough)
+                ($relationship instanceof BelongsToThrough)
             ) {
                 $relatedModel = $relationship->getResults();
 
@@ -937,7 +938,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
                 if (! (
                     $relationship instanceof BelongsTo ||
-                    $relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough
+                    $relationship instanceof BelongsToThrough
                 )) {
                     return false;
                 }
@@ -952,7 +953,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if (
                 ($relationship instanceof HasOneOrMany) ||
                 ($relationship instanceof HasManyThrough) ||
-                ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough)
+                ($relationship instanceof BelongsToThrough)
             ) {
                 return;
             }
@@ -1082,7 +1083,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return parent::getLabel();
     }
 
-    public function getRelationship(): BelongsTo | BelongsToMany | HasOneOrMany | HasManyThrough | \Znck\Eloquent\Relations\BelongsToThrough | null
+    public function getRelationship(): BelongsTo | BelongsToMany | HasOneOrMany | HasManyThrough | BelongsToThrough | null
     {
         if (blank($this->getRelationshipName())) {
             return null;
@@ -1213,7 +1214,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         if (
             ($relationship instanceof HasOneOrMany) ||
-            ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough)
+            ($relationship instanceof BelongsToThrough)
         ) {
             return $relationship->getRelated()->getQualifiedKeyName();
         }

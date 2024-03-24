@@ -4,6 +4,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
+use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ListPosts;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
 
@@ -25,28 +26,28 @@ it('can render users page', function () {
 it('can list posts', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    livewire(ListPosts::class)
         ->assertCanSeeTableRecords($posts);
 });
 
 it('can render post titles', function () {
     Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    livewire(ListPosts::class)
         ->assertCanRenderTableColumn('title');
 });
 
 it('can render post authors', function () {
     Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    livewire(ListPosts::class)
         ->assertCanRenderTableColumn('author.name');
 });
 
 it('can sort posts by title', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    livewire(ListPosts::class)
         ->sortTable('title')
         ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true)
         ->sortTable('title', 'desc')
@@ -56,7 +57,7 @@ it('can sort posts by title', function () {
 it('can sort posts by author', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    livewire(ListPosts::class)
         ->sortTable('author.name')
         ->assertCanSeeTableRecords($posts->sortBy('author.name'), inOrder: true)
         ->sortTable('author.name', 'desc')
@@ -68,7 +69,7 @@ it('can search posts by title', function () {
 
     $title = $posts->first()->title;
 
-    livewire(PostResource\Pages\ListPosts::class)
+    livewire(ListPosts::class)
         ->searchTable($title)
         ->assertCanSeeTableRecords($posts->where('title', $title))
         ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
@@ -79,7 +80,7 @@ it('can search posts by author', function () {
 
     $author = $posts->first()->author->name;
 
-    livewire(PostResource\Pages\ListPosts::class)
+    livewire(ListPosts::class)
         ->searchTable($author)
         ->assertCanSeeTableRecords($posts->where('author.name', $author))
         ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $author));
@@ -88,7 +89,7 @@ it('can search posts by author', function () {
 it('can filter posts by `is_published`', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    livewire(ListPosts::class)
         ->assertCanSeeTableRecords($posts)
         ->filterTable('is_published')
         ->assertCanSeeTableRecords($posts->where('is_published', true))
@@ -98,7 +99,7 @@ it('can filter posts by `is_published`', function () {
 it('can delete posts', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    livewire(ListPosts::class)
         ->callTableAction(DeleteAction::class, $post);
 
     assertSoftDeleted($post);
@@ -107,7 +108,7 @@ it('can delete posts', function () {
 it('can bulk delete posts', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    livewire(ListPosts::class)
         ->callTableBulkAction(DeleteBulkAction::class, $posts);
 
     foreach ($posts as $post) {
