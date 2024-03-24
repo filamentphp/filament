@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Components\Concerns;
+namespace Filament\Components\Concerns;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
