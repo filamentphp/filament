@@ -20,7 +20,7 @@ Remember, bug reports are created in the hope that others with the same problem 
 
 ## Development of new features
 
-If you would like to propose a new feature or improvement to Filament, you may use our [discussion form](https://github.com/filamentphp/filament/discussions) hosted on Github. If you are intending on implementing the feature yourself in a pull request, we advise you to `@danharrin` in your feature discussion beforehand and ask if it is suitable for the framework to prevent wasting your time.
+If you would like to propose a new feature or improvement to Filament, you may use our [discussion form](https://github.com/filamentphp/filament/discussions) hosted on GitHub. If you are intending on implementing the feature yourself in a pull request, we advise you to `@danharrin` in your feature discussion beforehand and ask if it is suitable for the framework to prevent wasting your time.
 
 ## Development of plugins
 
