@@ -3,7 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
+use Filament\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Forms\Contracts\HasForms;

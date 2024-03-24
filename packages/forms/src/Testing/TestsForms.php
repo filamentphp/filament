@@ -3,7 +3,7 @@
 namespace Filament\Forms\Testing;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
+use Filament\ComponentContainer;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;

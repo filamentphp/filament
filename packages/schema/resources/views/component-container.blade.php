@@ -49,7 +49,7 @@
             ->class(['fi-fo-component-ctn gap-6'])
     "
 >
-    @foreach ($getComponents(withHidden: true) as $formComponent)
+    @foreach ($getComponents(withHidden: true) as $schemaComponent)
         @php
             /**
              * Instead of only rendering the hidden components, we should
@@ -61,26 +61,26 @@
              * components need to have `class="hidden"`, so that they
              * don't consume grid space.
              */
-            $isHidden = $formComponent->isHidden();
+            $isHidden = $schemaComponent->isHidden();
         @endphp
 
         <x-filament::grid.column
-            :wire:key="$formComponent instanceof \Filament\Forms\Components\Field ? $this->getId() . '.' . $formComponent->getStatePath() . '.' . $formComponent::class : null"
+            :wire:key="$schemaComponent instanceof \Filament\Forms\Components\Field ? $this->getId() . '.' . $schemaComponent->getStatePath() . '.' . $schemaComponent::class : null"
             :hidden="$isHidden"
-            :default="$formComponent->getColumnSpan('default')"
-            :sm="$formComponent->getColumnSpan('sm')"
-            :md="$formComponent->getColumnSpan('md')"
-            :lg="$formComponent->getColumnSpan('lg')"
-            :xl="$formComponent->getColumnSpan('xl')"
-            :twoXl="$formComponent->getColumnSpan('2xl')"
-            :defaultStart="$formComponent->getColumnStart('default')"
-            :smStart="$formComponent->getColumnStart('sm')"
-            :mdStart="$formComponent->getColumnStart('md')"
-            :lgStart="$formComponent->getColumnStart('lg')"
-            :xlStart="$formComponent->getColumnStart('xl')"
-            :twoXlStart="$formComponent->getColumnStart('2xl')"
+            :default="$schemaComponent->getColumnSpan('default')"
+            :sm="$schemaComponent->getColumnSpan('sm')"
+            :md="$schemaComponent->getColumnSpan('md')"
+            :lg="$schemaComponent->getColumnSpan('lg')"
+            :xl="$schemaComponent->getColumnSpan('xl')"
+            :twoXl="$schemaComponent->getColumnSpan('2xl')"
+            :defaultStart="$schemaComponent->getColumnStart('default')"
+            :smStart="$schemaComponent->getColumnStart('sm')"
+            :mdStart="$schemaComponent->getColumnStart('md')"
+            :lgStart="$schemaComponent->getColumnStart('lg')"
+            :xlStart="$schemaComponent->getColumnStart('xl')"
+            :twoXlStart="$schemaComponent->getColumnStart('2xl')"
             @class([
-                match ($maxWidth = $formComponent->getMaxWidth()) {
+                match ($maxWidth = $schemaComponent->getMaxWidth()) {
                     MaxWidth::ExtraSmall, 'xs' => 'max-w-xs',
                     MaxWidth::Small, 'sm' => 'max-w-sm',
                     MaxWidth::Medium, 'md' => 'max-w-md',
@@ -97,7 +97,7 @@
             ])
         >
             @if (! $isHidden)
-                {{ $formComponent }}
+                {{ $schemaComponent }}
             @endif
         </x-filament::grid.column>
     @endforeach

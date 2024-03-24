@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Forms\ComponentContainer;
+use Filament\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Get;

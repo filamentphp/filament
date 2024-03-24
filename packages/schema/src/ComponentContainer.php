@@ -1,7 +1,8 @@
 <?php
 
-namespace Filament\Forms;
+namespace Filament;
 
+use Filament\Forms\Concerns;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
@@ -29,7 +30,7 @@ class ComponentContainer extends ViewComponent
     use Concerns\SupportsSelectFields;
     use HasExtraAttributes;
 
-    protected string $view = 'filament-forms::component-container';
+    protected string $view = 'filament::component-container';
 
     protected string $evaluationIdentifier = 'container';
 

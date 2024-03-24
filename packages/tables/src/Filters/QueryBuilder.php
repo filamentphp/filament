@@ -4,7 +4,7 @@ namespace Filament\Tables\Filters;
 
 use Closure;
 use Exception;
-use Filament\Forms\ComponentContainer;
+use Filament\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;

@@ -3,7 +3,7 @@
 namespace Filament\Tables\Filters\QueryBuilder\Forms\Components;
 
 use Exception;
-use Filament\Forms\ComponentContainer;
+use Filament\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Component;

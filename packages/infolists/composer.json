@@ -10,6 +10,7 @@
     "require": {
         "php": "^8.1",
         "filament/actions": "self.version",
+        "filament/schema": "*",
         "filament/support": "self.version",
         "illuminate/console": "^10.45|^11.0",
         "illuminate/contracts": "^10.45|^11.0",

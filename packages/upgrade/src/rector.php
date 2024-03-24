@@ -3,6 +3,7 @@
 // use Filament\Upgrade\Rector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
+use Rector\Renaming\Rector\String_\RenameStringRector;
 
 return static function (RectorConfig $rectorConfig): void {
     // $rectorConfig->rules([
@@ -19,6 +20,13 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Commands\\Aliases\\MakeLayoutComponentCommand' => 'Filament\\Commands\\Aliases\\MakeLayoutComponentCommand',
             'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Commands\\MakeLayoutComponentCommand',
             'Filament\\Forms\\Testing\\TestsComponentActions' => 'Filament\\Testing\\TestsComponentActions',
+        ],
+    );
+
+    $rectorConfig->ruleWithConfiguration(
+        RenameStringRector::class,
+        [
+            'filament-forms::component-container' => 'filament::component-container',
         ],
     );
 };

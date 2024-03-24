@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components\Concerns;
 
-use Filament\Forms\ComponentContainer;
+use Filament\ComponentContainer;
 use Filament\Forms\Contracts\HasForms;
 
 trait BelongsToContainer

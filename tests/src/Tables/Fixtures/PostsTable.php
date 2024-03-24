@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Tables\Fixtures;
 
-use Filament\Forms\ComponentContainer;
+use Filament\ComponentContainer;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;

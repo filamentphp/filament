@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Concerns;
 
-use Filament\Forms\ComponentContainer;
+use Filament\ComponentContainer;
 
 trait HasColumns
 {

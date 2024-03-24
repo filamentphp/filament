@@ -3,7 +3,7 @@
 namespace Filament\Tests\Actions\Fixtures\Pages;
 
 use Filament\Actions\Action;
-use Filament\Forms\ComponentContainer;
+use Filament\ComponentContainer;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
