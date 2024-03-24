@@ -6,7 +6,7 @@ title: Contributing
 
 ## Reporting bugs
 
-If you find a bug in Filament, please report it by opening an issue on our [GitHub repository](https://github.com/filamentphp/filament/issues/new/choose). Before opening an issue, please search the [existing issues](https://github.com/filamentphp/filament/issues?q=is%3Aissue) to see if the bug has already been reported. 
+If you find a bug in Filament, please report it by opening an issue on our [GitHub repository](https://github.com/filamentphp/filament/issues/new/choose). Before opening an issue, please search the [existing issues](https://github.com/filamentphp/filament/issues?q=is%3Aissue) to see if the bug has already been reported.
 
 Please make sure to include as much information as possible, including the version of packages in your app. You can use this Artisan command in your app to open a new issue with all the correct versions pre-filled:
 
@@ -20,7 +20,7 @@ Remember, bug reports are created in the hope that others with the same problem 
 
 ## Development of new features
 
-If you would like to propose a new feature or improvement to Filament, you may use our [discussion form](https://github.com/filamentphp/filament/discussions) hosted on Github. If you are intending on implementing the feature yourself in a pull request, we advise you to `@danharrin` in your feature discussion beforehand and ask if it is suitable for the framework to prevent wasting your time.
+If you would like to propose a new feature or improvement to Filament, you may use our [discussion form](https://github.com/filamentphp/filament/discussions) hosted on GitHub. If you are intending on implementing the feature yourself in a pull request, we advise you to `@danharrin` in your feature discussion beforehand and ask if it is suitable for the framework to prevent wasting your time.
 
 ## Development of plugins
 
