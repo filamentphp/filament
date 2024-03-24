@@ -89,17 +89,9 @@
                         ->class(['fi-fo-date-time-picker'])
                 }}
             >
-                <input
-                    x-ref="maxDate"
-                    type="hidden"
-                    value="{{ $maxDate }}"
-                />
+                <input x-ref="maxDate" type="hidden" value="{{ $maxDate }}" />
 
-                <input
-                    x-ref="minDate"
-                    type="hidden"
-                    value="{{ $minDate }}"
-                />
+                <input x-ref="minDate" type="hidden" value="{{ $minDate }}" />
 
                 <input
                     x-ref="disabledDates"
