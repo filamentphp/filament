@@ -12,6 +12,7 @@ use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Exports\Models\Export;
+use Filament\Components\Utilities\Get;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Split;
@@ -92,8 +93,8 @@ trait CanExportRecords
                                 ->hiddenLabel()
                                 ->default($column->getLabel())
                                 ->placeholder($column->getLabel())
-                                ->disabled(fn (\Filament\Components\Utilities\Get $get): bool => ! $get('isEnabled'))
-                                ->required(fn (\Filament\Components\Utilities\Get $get): bool => (bool) $get('isEnabled')),
+                                ->disabled(fn (Get $get): bool => ! $get('isEnabled'))
+                                ->required(fn (Get $get): bool => (bool) $get('isEnabled')),
                         ])
                             ->verticallyAlignCenter()
                             ->statePath($column->getName()),

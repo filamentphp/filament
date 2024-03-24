@@ -9,6 +9,8 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Components\Utilities\Get;
+use Filament\Components\Utilities\Set;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -75,7 +77,7 @@ trait CanImportRecords
                 ->label(__('filament-actions::import.modal.form.file.label'))
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
                 ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain'])
-                ->afterStateUpdated(function (\Filament\Components\Utilities\Set $set, ?TemporaryUploadedFile $state) use ($action) {
+                ->afterStateUpdated(function (Set $set, ?TemporaryUploadedFile $state) use ($action) {
                     if (! $state instanceof TemporaryUploadedFile) {
                         return;
                     }
@@ -122,7 +124,7 @@ trait CanImportRecords
             Fieldset::make(__('filament-actions::import.modal.form.columns.label'))
                 ->columns(1)
                 ->inlineLabel()
-                ->schema(function (\Filament\Components\Utilities\Get $get) use ($action): array {
+                ->schema(function (Get $get) use ($action): array {
                     $csvFile = Arr::first((array) ($get('file') ?? []));
 
                     if (! $csvFile instanceof TemporaryUploadedFile) {
@@ -152,7 +154,7 @@ trait CanImportRecords
                     );
                 })
                 ->statePath('columnMap')
-                ->visible(fn (\Filament\Components\Utilities\Get $get): bool => Arr::first((array) ($get('file') ?? [])) instanceof TemporaryUploadedFile),
+                ->visible(fn (Get $get): bool => Arr::first((array) ($get('file') ?? [])) instanceof TemporaryUploadedFile),
         ], $action->getImporter()::getOptionsFormComponents()));
 
         $this->action(function (ImportAction | ImportTableAction $action, array $data) {
