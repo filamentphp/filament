@@ -22,8 +22,17 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'Đầu tiên',
+        ],
+
         'go_to_page' => [
             'label' => 'Đi tới trang :page',
+        ],
+
+
+        'last' => [
+            'label' => 'Cuối cùng',
         ],
 
         'next' => [
