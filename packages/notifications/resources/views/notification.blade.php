@@ -80,13 +80,13 @@
             @endif
 
             @if (filled($date = $getDate()))
-                <x-filament-notifications::date class="mt-1">
+                <x-filament-notifications::date @class(['mt-1' => filled($title)])>
                     {{ $date }}
                 </x-filament-notifications::date>
             @endif
 
             @if (filled($body = $getBody()))
-                <x-filament-notifications::body class="mt-1">
+                <x-filament-notifications::body @class(['mt-1' => filled($title) || filled($date)])>
                     {{ str($body)->sanitizeHtml()->toHtmlString() }}
                 </x-filament-notifications::body>
             @endif
@@ -94,7 +94,7 @@
             @if ($actions = $getActions())
                 <x-filament-notifications::actions
                     :actions="$actions"
-                    class="mt-3"
+                    @class(['mt-3' => filled($title) || filled($date) || filled($body)])
                 />
             @endif
         </div>
