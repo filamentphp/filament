@@ -2,7 +2,7 @@
 
 namespace Filament\ComponentContainer\Concerns;
 
-use Filament\Forms\Components\Component;
+use Filament\Components\Component;
 
 trait BelongsToParentComponent
 {

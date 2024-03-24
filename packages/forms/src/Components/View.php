@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components;
 
+use Filament\Components\Component;
+
 class View extends Component
 {
     /**

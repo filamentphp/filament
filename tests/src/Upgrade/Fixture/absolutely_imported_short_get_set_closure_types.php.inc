@@ -6,6 +6,6 @@ fn (\Closure $get, \Closure $set) => null;
 -----
 <?php
 
-fn (\Filament\Forms\Get $get, \Filament\Forms\Set $set) => null;
+fn (\Filament\Components\Utilities\Get $get, \Filament\Components\Utilities\Set $set) => null;
 
 ?>

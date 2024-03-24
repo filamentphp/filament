@@ -3,7 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Component;
+use Filament\Components\Component;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 

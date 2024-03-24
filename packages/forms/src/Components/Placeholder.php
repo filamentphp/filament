@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Exception;
+use Filament\Components\Component;
 
 class Placeholder extends Component implements Contracts\HasHintActions
 {

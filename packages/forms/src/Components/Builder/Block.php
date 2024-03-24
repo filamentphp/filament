@@ -4,7 +4,7 @@ namespace Filament\Forms\Components\Builder;
 
 use Closure;
 use Exception;
-use Filament\Forms\Components\Component;
+use Filament\Components\Component;
 use Filament\Forms\Components\Concerns;
 use Illuminate\Contracts\Support\Htmlable;
 

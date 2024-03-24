@@ -2,8 +2,8 @@
 
 namespace Filament\ComponentContainer\Concerns;
 
+use Filament\Components\Component;
 use Filament\Forms\Components;
-use Filament\Forms\Components\Component;
 
 trait CanBeValidated
 {

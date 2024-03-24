@@ -4,9 +4,10 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Exception;
+use Filament\Components\Component;
+use Filament\Components\Utilities\Get;
+use Filament\Components\Utilities\Set;
 use Filament\Forms\Components\MorphToSelect\Type;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class MorphToSelect extends Component

@@ -36,9 +36,7 @@ Certain fields support "affix actions", which are buttons that can be placed bef
 To define an affix action, you can pass it to either `prefixAction()` or `suffixAction()`:
 
 ```php
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Set;
+use Filament\Components\Utilities\Set;use Filament\Forms\Components\Actions\Action;use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')
     ->prefix('€')
@@ -82,9 +80,7 @@ TextInput::make('cost')
 All fields support "hint actions", which are rendered aside the field's [hint](fields/getting-started#adding-a-hint-next-to-the-label). To add a hint action to a field, you may pass it to `hintAction()`:
 
 ```php
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Set;
+use Filament\Components\Utilities\Set;use Filament\Forms\Components\Actions\Action;use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')
     ->prefix('€')
@@ -124,9 +120,7 @@ TextInput::make('cost')
 If you wish to render an action within a custom form component, `ViewField` object, or `View` component object, you may do so using the `registerActions()` method:
 
 ```php
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\ViewField;
-use Filament\Forms\Set;
+use Filament\Components\Utilities\Set;use Filament\Forms\Components\Actions\Action;use Filament\Forms\Components\ViewField;
 
 ViewField::make('rating')
     ->view('filament.forms.components.range-slider')
@@ -229,8 +223,7 @@ Actions::make([
 If an action is attached to a form component, the `action()` function is able to [inject utilities](advanced#form-component-utility-injection) directly from that form component. For instance, you can inject [`$set`](advanced#injecting-a-function-to-set-the-state-of-another-field) and [`$state`](advanced#injecting-the-current-state-of-a-field):
 
 ```php
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Set;
+use Filament\Components\Utilities\Set;use Filament\Forms\Components\Actions\Action;
 
 Action::make('copyCostToPrice')
     ->icon('heroicon-m-clipboard')

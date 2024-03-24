@@ -2,7 +2,7 @@
 
 namespace Filament\Components\Concerns;
 
-use Filament\Forms\Components\Component;
+use Filament\Components\Component;
 
 trait HasStateBindingModifiers
 {

@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Filament\Components\Component;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 
 class Grid extends Component implements CanEntangleWithSingularRelationships

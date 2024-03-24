@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Exception;
+use Filament\Components\Component;
 
 class Field extends Component implements Contracts\HasHintActions, Contracts\HasValidationRules
 {

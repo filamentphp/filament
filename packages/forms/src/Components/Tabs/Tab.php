@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components\Tabs;
 
-use Filament\Forms\Components\Component;
+use Filament\Components\Component;
 use Filament\Forms\Components\Contracts\CanConcealComponents;
 use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasIcon;

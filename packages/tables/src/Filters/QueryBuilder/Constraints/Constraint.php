@@ -4,10 +4,10 @@ namespace Filament\Tables\Filters\QueryBuilder\Constraints;
 
 use Closure;
 use Exception;
+use Filament\Components\Utilities\Get;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Get;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Tables\Filters\QueryBuilder;

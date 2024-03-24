@@ -2,8 +2,8 @@
 
 namespace Filament\Forms\Components\Concerns;
 
-use Filament\Forms\Components\Component;
-use Filament\Forms\Set;
+use Filament\Components\Component;
+use Filament\Components\Utilities\Set;
 use Illuminate\Support\Arr;
 
 trait CanFixIndistinctState

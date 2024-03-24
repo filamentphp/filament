@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components\Actions;
 
-use Filament\Forms\Components\Component;
+use Filament\Components\Component;
 
 class ActionContainer extends Component
 {

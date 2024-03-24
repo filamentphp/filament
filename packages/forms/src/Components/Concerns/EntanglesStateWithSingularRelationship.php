@@ -4,7 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\ComponentContainer;
-use Filament\Forms\Components\Component;
+use Filament\Components\Component;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Model;

@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Components\Component;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 
 class Group extends Component implements CanEntangleWithSingularRelationships

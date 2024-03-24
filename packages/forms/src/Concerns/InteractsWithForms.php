@@ -4,7 +4,7 @@ namespace Filament\Forms\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Forms\Components\Component;
+use Filament\Components\Component;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;

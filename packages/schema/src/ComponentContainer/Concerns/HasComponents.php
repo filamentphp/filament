@@ -3,7 +3,7 @@
 namespace Filament\ComponentContainer\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Component;
+use Filament\Components\Component;
 use Filament\Forms\Components\Field;
 
 trait HasComponents

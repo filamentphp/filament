@@ -1,9 +1,10 @@
 <?php
 
-namespace Filament\Forms\Components;
+namespace Filament\Components;
 
 use Filament\Components\Concerns\HasColumns;
 use Filament\Components\Concerns\HasStateBindingModifiers;
+use Filament\Forms\Components\Concerns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasExtraAttributes;

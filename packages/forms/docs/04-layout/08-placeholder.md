@@ -36,8 +36,7 @@ Placeholder::make('documentation')
 By passing a closure to the `content()` method, you may dynamically generate placeholder content. You have access to any closure parameter explained in the [advanced closure customization](../advanced#closure-customization) documentation:
 
 ```php
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Get;
+use Filament\Components\Utilities\Get;use Filament\Forms\Components\Placeholder;
 
 Placeholder::make('total')
     ->content(function (Get $get): string {

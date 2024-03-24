@@ -71,6 +71,9 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Concerns\\SupportsSelectFields' => 'Filament\\ComponentContainer\\Concerns\\SupportsSelectFields',
             'Filament\\Forms\\Concerns\\HasColumns' => 'Filament\\Components\\Concerns\\HasColumns',
             'Filament\\Forms\\Concerns\\HasStateBindingModifiers' => 'Filament\\Components\\Concerns\\HasStateBindingModifiers',
+            'Filament\\Forms\\Get' => 'Filament\\Components\\Utilities\\Get',
+            'Filament\\Forms\\Set' => 'Filament\\Components\\Utilities\\Set',
+            'Filament\\Forms\\Components\\Component' => 'Filament\\Components\\Component',
         ],
     );
 

@@ -3,9 +3,9 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Component;
+use Filament\Components\Component;
+use Filament\Components\Utilities\Get;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Get;
 use Illuminate\Support\Arr;
 
 trait CanBeHidden
