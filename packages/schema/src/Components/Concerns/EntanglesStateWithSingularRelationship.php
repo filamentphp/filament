@@ -1,12 +1,12 @@
 <?php
 
-namespace Filament\Forms\Components\Concerns;
+namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;

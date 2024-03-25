@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Components\Contracts;
+namespace Filament\Schema\Components\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

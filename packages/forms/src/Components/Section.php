@@ -4,7 +4,6 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Schema\Components\Component;
-use Filament\Schema\Components\Contracts\CanConcealComponents;
 use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasHeading;
@@ -13,13 +12,13 @@ use Filament\Support\Concerns\HasIconColor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
-class Section extends Component implements CanConcealComponents, Contracts\CanEntangleWithSingularRelationships, Contracts\HasFooterActions, Contracts\HasHeaderActions
+class Section extends Component implements \Filament\Schema\Components\Contracts\CanConcealComponents, \Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships, Contracts\HasFooterActions, Contracts\HasHeaderActions
 {
     use Concerns\CanBeCollapsed;
     use Concerns\CanBeCompacted;
-    use Concerns\EntanglesStateWithSingularRelationship;
     use Concerns\HasFooterActions;
     use Concerns\HasHeaderActions;
+    use \Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship;
     use HasDescription;
     use HasExtraAlpineAttributes;
     use HasHeading;

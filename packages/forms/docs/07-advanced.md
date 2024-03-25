@@ -501,10 +501,7 @@ TextInput::make('password')
 As well as being able to give structure to fields, [layout components](layout/getting-started) are also able to "teleport" their nested fields into a relationship. Filament will handle loading data from a `HasOne`, `BelongsTo` or `MorphOne` Eloquent relationship, and then it will save the data back to the same relationship. To set this behaviour up, you can use the `relationship()` method on any layout component:
 
 ```php
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;use Filament\Forms\Components\Textarea;use Filament\Forms\Components\TextInput;use Filament\Schema\Components\Fieldset;
 
 Fieldset::make('Metadata')
     ->relationship('metadata')

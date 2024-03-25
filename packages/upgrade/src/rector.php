@@ -102,6 +102,9 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Contracts\\CanConcealComponents' => 'Filament\\Schema\\Components\\Contracts\\CanConcealComponents',
             'Filament\\Forms\\Components\\Wizard' => 'Filament\\Schema\\Components\\Wizard',
             'Filament\\Forms\\Components\\Wizard\\Step' => 'Filament\\Schema\\Components\\Wizard\\Step',
+            'Filament\\Forms\\Components\\Fieldset' => 'Filament\\Schema\\Components\\Fieldset',
+            'Filament\\Forms\\Components\\Concerns\\EntanglesStateWithSingularRelationship' => 'Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship',
+            'Filament\\Forms\\Components\\Contracts\\CanEntangleWithSingularRelationships' => 'Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships',
         ],
     );
 
@@ -115,6 +118,7 @@ return static function (RectorConfig $rectorConfig): void {
             'filament-forms::components.tabs.tab' => 'filament-schema::components.tabs.tab',
             'filament-forms::components.wizard' => 'filament-schema::components.wizard',
             'filament-forms::components.wizard.step' => 'filament-schema::components.wizard.step',
+            'filament-forms::components.fieldset' => 'filament-schema::components.fieldset',
         ],
     );
 };

@@ -36,10 +36,7 @@ From a UX perspective, this solution is only suitable if your related model only
 All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), etc.) have a [`relationship()` method](../../forms/advanced#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;use Filament\Forms\Components\Textarea;use Filament\Forms\Components\TextInput;use Filament\Schema\Components\Fieldset;
 
 Fieldset::make('Metadata')
     ->relationship('metadata')

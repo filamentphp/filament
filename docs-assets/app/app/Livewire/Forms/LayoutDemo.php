@@ -4,7 +4,6 @@ namespace App\Livewire\Forms;
 
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
@@ -19,6 +18,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Schema\Components\Actions;
+use Filament\Schema\Components\Fieldset;
 use Filament\Schema\Components\Tabs;
 use Filament\Schema\Components\Tabs\Tab;
 use Filament\Schema\Components\Wizard;

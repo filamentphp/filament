@@ -9,7 +9,7 @@ use Filament\Support\Concerns\HasVerticalAlignment;
 
 class Split extends Component
 {
-    use Concerns\EntanglesStateWithSingularRelationship;
+    use \Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship;
     use HasFromBreakpoint;
     use HasVerticalAlignment;
 
