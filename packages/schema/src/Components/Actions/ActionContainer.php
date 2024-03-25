@@ -1,12 +1,13 @@
 <?php
 
-namespace Filament\Forms\Components\Actions;
+namespace Filament\Components\Actions;
 
+use Filament\Actions\Action;
 use Filament\Components\Component;
 
 class ActionContainer extends Component
 {
-    protected string $view = 'filament-forms::components.actions.action-container';
+    protected string $view = 'filament-schema::components.actions.action-container';
 
     protected Action $action;
 

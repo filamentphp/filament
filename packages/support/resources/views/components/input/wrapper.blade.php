@@ -20,12 +20,12 @@
 @php
     $prefixActions = array_filter(
         $prefixActions,
-        fn (\Filament\Forms\Components\Actions\Action $prefixAction): bool => $prefixAction->isVisible(),
+        fn (\Filament\Actions\Action $prefixAction): bool => $prefixAction->isVisible(),
     );
 
     $suffixActions = array_filter(
         $suffixActions,
-        fn (\Filament\Forms\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
+        fn (\Filament\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
     );
 
     $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);

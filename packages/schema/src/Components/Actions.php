@@ -1,10 +1,9 @@
 <?php
 
-namespace Filament\Forms\Components;
+namespace Filament\Components;
 
 use Closure;
-use Filament\Components\Component;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasVerticalAlignment;
 
@@ -13,7 +12,7 @@ class Actions extends Component
     use HasAlignment;
     use HasVerticalAlignment;
 
-    protected string $view = 'filament-forms::components.actions';
+    protected string $view = 'filament-schema::components.actions';
 
     protected bool | Closure $isFullWidth = false;
 

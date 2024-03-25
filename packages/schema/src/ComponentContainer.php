@@ -29,7 +29,7 @@ class ComponentContainer extends ViewComponent
     use Components\Concerns\HasStateBindingModifiers;
     use HasExtraAttributes;
 
-    protected string $view = 'filament::component-container';
+    protected string $view = 'filament-schema::component-container';
 
     protected string $evaluationIdentifier = 'container';
 

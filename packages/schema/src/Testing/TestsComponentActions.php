@@ -3,8 +3,8 @@
 namespace Filament\Testing;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;

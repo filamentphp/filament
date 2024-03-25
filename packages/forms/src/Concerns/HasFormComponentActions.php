@@ -2,9 +2,9 @@
 
 namespace Filament\Forms\Concerns;
 
+use Filament\Actions\Action;
 use Filament\ComponentContainer;
 use Filament\Components\Component;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;

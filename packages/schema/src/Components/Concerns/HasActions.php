@@ -3,7 +3,7 @@
 namespace Filament\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Contracts\HasAffixActions;
 use Filament\Forms\Components\Contracts\HasExtraItemActions;
 use Filament\Forms\Components\Contracts\HasFooterActions;

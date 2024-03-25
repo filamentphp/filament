@@ -2,18 +2,28 @@
 
 namespace Filament\Actions;
 
+use Exception;
+use Filament\Components\Actions\ActionContainer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 
 class Action extends MountableAction implements Contracts\Groupable, Contracts\HasRecord
 {
+    use Concerns\BelongsToComponent;
     use Concerns\CanSubmitForm;
     use Concerns\HasMountableArguments;
     use Concerns\InteractsWithRecord;
 
     public function getLivewireCallMountedActionName(): string
     {
-        return 'callMountedAction';
+        return $this->getComponent() ?
+            'callMountedFormComponentAction' :
+            'callMountedAction';
+    }
+
+    public function getLivewire(): object
+    {
+        return $this->getComponent()?->getLivewire() ?? parent::getLivewire();
     }
 
     public function getLivewireClickHandler(): ?string
@@ -37,7 +47,21 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
             $argumentsParameter .= Js::from($arguments);
         }
 
-        return "mountAction('{$this->getName()}'{$argumentsParameter})";
+        $component = $this->getComponent();
+
+        if (! $component) {
+            return "mountAction('{$this->getName()}'{$argumentsParameter})";
+        }
+
+        $componentKey = $component->getKey();
+
+        if (blank($componentKey)) {
+            $componentClass = $this->getComponent()::class;
+
+            throw new Exception("The component [{$componentClass}] must have a [key()] set in order to use actions. This [key()] must be a unique identifier for the component.");
+        }
+
+        return "mountFormComponentAction('{$componentKey}', '{$this->getName()}'{$argumentsParameter})";
     }
 
     /**
@@ -46,8 +70,13 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
-            'model' => [$this->getModel()],
-            'record' => [$this->getRecord()],
+            'component' => [$this->getComponent()],
+            'context', 'operation' => [$this->getComponent()->getContainer()->getOperation()],
+            'get' => [$this->getComponent()->makeGetUtility()],
+            'model' => [$this->getModel() ?? $this->getComponent()?->getModel()],
+            'record' => [$this->getRecord() ?? $this->getComponent()?->getRecord()],
+            'set' => [$this->getComponent()->makeSetUtility()],
+            'state' => [$this->getComponent()->getState()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
@@ -57,7 +86,7 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord();
+        $record = $this->getRecord() ?? $this->getComponent()?->getRecord();
 
         if (! $record) {
             return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
@@ -85,6 +114,17 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
 
     public function getInfolistName(): string
     {
-        return 'mountedActionInfolist';
+        return $this->getComponent() ?
+            'mountedFormComponentActionInfolist' :
+            'mountedActionInfolist';
+    }
+
+    public function toFormComponent(): ActionContainer
+    {
+        $component = ActionContainer::make($this);
+
+        $this->component($component);
+
+        return $component;
     }
 }

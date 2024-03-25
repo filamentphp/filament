@@ -13,7 +13,7 @@ class SchemaServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('filament')
+            ->name('filament-schema')
             ->hasCommands($this->getCommands())
             ->hasTranslations()
             ->hasViews();

@@ -455,14 +455,30 @@ trait HasState
         return ! $this->isDehydratedWhenHidden();
     }
 
-    public function getGetCallback(): Get
+    public function makeGetUtility(): Get
     {
         return new Get($this);
     }
 
-    public function getSetCallback(): Set
+    public function makeSetUtility(): Set
     {
         return new Set($this);
+    }
+
+    /**
+     * @deprecated Use `makeGetUtility()` instead.
+     */
+    public function getGetCallback(): Get
+    {
+        return $this->makeGetUtility();
+    }
+
+    /**
+     * @deprecated Use `makeSetUtility()` instead.
+     */
+    public function getSetCallback(): Set
+    {
+        return $this->makeSetUtility();
     }
 
     public function generateRelativeStatePath(string | Component $path, bool $isAbsolute = false): string

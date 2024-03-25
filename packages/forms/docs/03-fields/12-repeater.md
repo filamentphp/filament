@@ -581,8 +581,7 @@ This field uses action objects for easy customization of buttons within it. You 
 Here is an example of how you might customize an action:
 
 ```php
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Repeater;
+use Filament\Actions\Action;use Filament\Forms\Components\Repeater;
 
 Repeater::make('members')
     ->schema([
@@ -598,8 +597,7 @@ Repeater::make('members')
 You can confirm actions with a modal by using the `requiresConfirmation()` method on the action object. You may use any [modal customization method](../../actions/modals) to change its content and behaviour:
 
 ```php
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Repeater;
+use Filament\Actions\Action;use Filament\Forms\Components\Repeater;
 
 Repeater::make('members')
     ->schema([
@@ -617,10 +615,7 @@ Repeater::make('members')
 You may add new [action buttons](../actions) to the header of each repeater item by passing `Action` objects into `extraItemActions()`:
 
 ```php
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
-use Illuminate\Support\Facades\Mail;
+use Filament\Actions\Action;use Filament\Forms\Components\Repeater;use Filament\Forms\Components\TextInput;use Illuminate\Support\Facades\Mail;
 
 Repeater::make('members')
     ->schema([

@@ -43,7 +43,7 @@
 
     $hintActions = array_filter(
         $hintActions ?? [],
-        fn (\Filament\Forms\Components\Actions\Action $hintAction): bool => $hintAction->isVisible(),
+        fn (\Filament\Actions\Action $hintAction): bool => $hintAction->isVisible(),
     );
 
     $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));

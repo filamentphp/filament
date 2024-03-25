@@ -213,8 +213,7 @@ This component uses action objects for easy customization of buttons within it. 
 Here is an example of how you might customize an action:
 
 ```php
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Wizard;
+use Filament\Actions\Action;use Filament\Forms\Components\Wizard;
 
 Wizard::make([
     // ...

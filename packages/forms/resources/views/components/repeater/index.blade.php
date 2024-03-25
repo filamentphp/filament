@@ -1,5 +1,5 @@
 @php
-    use Filament\Forms\Components\Actions\Action;
+    use Filament\Actions\Action;
 
     $containers = $getChildComponentContainers();
 

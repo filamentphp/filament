@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components\Contracts;
 
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 
 interface HasHeaderActions
 {

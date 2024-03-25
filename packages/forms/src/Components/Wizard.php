@@ -3,8 +3,8 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Components\Component;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns;
 use Filament\Support\Enums\IconPosition;

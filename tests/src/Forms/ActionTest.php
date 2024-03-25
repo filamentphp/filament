@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Tests\Forms\Fixtures\Actions;
 use Filament\Tests\TestCase;

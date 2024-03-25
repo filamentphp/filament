@@ -93,13 +93,20 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Concerns\\HasMeta' => 'Filament\\Components\\Concerns\\HasMeta',
             'Filament\\Forms\\Components\\Concerns\\HasState' => 'Filament\\Components\\Concerns\\HasState',
             'Filament\\Forms\\Components\\Concerns\\ListensToEvents' => 'Filament\\Components\\Concerns\\ListensToEvents',
+            'Filament\\Forms\\Components\\Actions\\Concerns\\BelongsToComponent' => 'Filament\\Actions\\Concerns\\BelongsToComponent',
+            'Filament\\Forms\\Components\\Actions' => 'Filament\\Components\\Actions',
+            'Filament\\Forms\\Components\\Actions\\Action' => 'Filament\\Actions\\Action',
+            'Filament\\Forms\\Components\\Actions\\ActionContainer' => 'Filament\\Components\\Actions\\ActionContainer',
+            'Filament\\Forms\\Components\\Actions\\ActionContainer' => 'Filament\\Components\\Actions\\ActionContainer',
         ],
     );
 
     $rectorConfig->ruleWithConfiguration(
         RenameStringRector::class,
         [
-            'filament-forms::component-container' => 'filament::component-container',
+            'filament-forms::component-container' => 'filament-schema::component-container',
+            'filament-forms::components.actions' => 'filament-schema::components.actions',
+            'filament-forms::components.actions.action-container' => 'filament-schema::components.actions.action-container',
         ],
     );
 };

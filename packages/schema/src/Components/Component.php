@@ -63,11 +63,11 @@ class Component extends ViewComponent
     {
         return match ($parameterName) {
             'context', 'operation' => [$this->getContainer()->getOperation()],
-            'get' => [$this->getGetCallback()],
+            'get' => [$this->makeGetUtility()],
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel()],
             'record' => [$this->getRecord()],
-            'set' => [$this->getSetCallback()],
+            'set' => [$this->makeSetUtility()],
             'state' => [$this->getState()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };

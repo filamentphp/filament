@@ -3,8 +3,8 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;

@@ -3,9 +3,9 @@
 namespace Filament\Tables\Filters\QueryBuilder\Forms\Components;
 
 use Exception;
+use Filament\Actions\Action;
 use Filament\ComponentContainer;
 use Filament\Components\Component;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
