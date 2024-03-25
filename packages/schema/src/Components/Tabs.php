@@ -1,10 +1,9 @@
 <?php
 
-namespace Filament\Forms\Components;
+namespace Filament\Schema\Components;
 
 use Closure;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Tabs\Tab;
 use Filament\Support\Concerns;
 
 class Tabs extends Component
@@ -16,7 +15,7 @@ class Tabs extends Component
     /**
      * @var view-string
      */
-    protected string $view = 'filament-forms::components.tabs';
+    protected string $view = 'filament-schema::components.tabs';
 
     protected int | Closure $activeTab = 1;
 

@@ -12,7 +12,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Split;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -21,6 +20,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Schema\Components\Actions;
+use Filament\Schema\Components\Tabs;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\VerticalAlignment;
@@ -72,7 +72,7 @@ class LayoutDemo extends Component implements HasForms
                         Tabs::make('Tabs')
                             ->statePath('tabs')
                             ->schema([
-                                Tabs\Tab::make('Rate Limiting')
+                                \Filament\Schema\Components\Tabs\Tab::make('Rate Limiting')
                                     ->schema([
                                         TextInput::make('hits')
                                             ->default(30),
@@ -87,8 +87,8 @@ class LayoutDemo extends Component implements HasForms
                                             ->columnSpanFull(),
                                     ])
                                     ->columns(3),
-                                Tabs\Tab::make('Proxy'),
-                                Tabs\Tab::make('Meta'),
+                                \Filament\Schema\Components\Tabs\Tab::make('Proxy'),
+                                \Filament\Schema\Components\Tabs\Tab::make('Meta'),
                             ]),
                     ]),
                 Group::make()
@@ -100,7 +100,7 @@ class LayoutDemo extends Component implements HasForms
                         Tabs::make('Tabs')
                             ->statePath('tabsIcons')
                             ->schema([
-                                Tabs\Tab::make('Notifications')
+                                \Filament\Schema\Components\Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
                                     ->schema([
                                         Checkbox::make('enabled')
@@ -111,9 +111,9 @@ class LayoutDemo extends Component implements HasForms
                                                 'hourly' => 'Hourly',
                                             ]),
                                     ]),
-                                Tabs\Tab::make('Security')
+                                \Filament\Schema\Components\Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed'),
-                                Tabs\Tab::make('Meta')
+                                \Filament\Schema\Components\Tabs\Tab::make('Meta')
                                     ->icon('heroicon-m-bars-3-center-left'),
                             ]),
                     ]),
@@ -126,7 +126,7 @@ class LayoutDemo extends Component implements HasForms
                         Tabs::make('Tabs')
                             ->statePath('tabsIconsAfter')
                             ->schema([
-                                Tabs\Tab::make('Notifications')
+                                \Filament\Schema\Components\Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
                                     ->iconPosition(IconPosition::After)
                                     ->schema([
@@ -138,10 +138,10 @@ class LayoutDemo extends Component implements HasForms
                                                 'hourly' => 'Hourly',
                                             ]),
                                     ]),
-                                Tabs\Tab::make('Security')
+                                \Filament\Schema\Components\Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed')
                                     ->iconPosition(IconPosition::After),
-                                Tabs\Tab::make('Meta')
+                                \Filament\Schema\Components\Tabs\Tab::make('Meta')
                                     ->icon('heroicon-m-bars-3-center-left')
                                     ->iconPosition(IconPosition::After),
                             ]),
@@ -155,7 +155,7 @@ class LayoutDemo extends Component implements HasForms
                         Tabs::make('Tabs')
                             ->statePath('tabsBadges')
                             ->schema([
-                                Tabs\Tab::make('Notifications')
+                                \Filament\Schema\Components\Tabs\Tab::make('Notifications')
                                     ->badge(5)
                                     ->schema([
                                         Checkbox::make('enabled')
@@ -166,8 +166,8 @@ class LayoutDemo extends Component implements HasForms
                                                 'hourly' => 'Hourly',
                                             ]),
                                     ]),
-                                Tabs\Tab::make('Security'),
-                                Tabs\Tab::make('Meta'),
+                                \Filament\Schema\Components\Tabs\Tab::make('Security'),
+                                \Filament\Schema\Components\Tabs\Tab::make('Meta'),
                             ]),
                     ]),
                 Group::make()

@@ -2,8 +2,8 @@
 
 namespace Filament\Schema\Components\Concerns;
 
-use Filament\Forms\Components\Contracts\CanConcealComponents;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Contracts\CanConcealComponents;
 
 trait CanBeConcealed
 {

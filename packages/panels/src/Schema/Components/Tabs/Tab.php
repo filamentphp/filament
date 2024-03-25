@@ -1,9 +1,10 @@
 <?php
 
-namespace Filament\Forms\Components\Tabs;
+namespace Filament\Schema\Components\Tabs;
 
-use Filament\Forms\Components\Contracts\CanConcealComponents;
+use Filament\Forms\Components\Tabs\view;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Contracts\CanConcealComponents;
 use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasIcon;
 use Illuminate\Support\Str;
@@ -16,7 +17,7 @@ class Tab extends Component implements CanConcealComponents
     /**
      * @var view-string
      */
-    protected string $view = 'filament-forms::components.tabs.tab';
+    protected string $view = 'filament-schema::components.tabs.tab';
 
     final public function __construct(string $label)
     {

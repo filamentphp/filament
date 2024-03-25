@@ -1,5 +1,5 @@
 @php
-    use Filament\Forms\Components\Tabs\Tab;
+    use Filament\Schema\Components\Tabs\Tab;
 
     $isContained = $isContained();
 @endphp
@@ -58,7 +58,7 @@
         $attributes
             ->merge([
                 'id' => $getId(),
-                'wire:key' => "{$this->getId()}.{$getStatePath()}." . \Filament\Forms\Components\Tabs::class . '.container',
+                'wire:key' => "{$this->getId()}.{$getStatePath()}." . \Filament\Schema\Components\Tabs::class . '.container',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)

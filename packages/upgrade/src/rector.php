@@ -97,6 +97,9 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Actions' => 'Filament\\Schema\\Components\\Actions',
             'Filament\\Forms\\Components\\Actions\\Action' => 'Filament\\Actions\\Action',
             'Filament\\Forms\\Components\\Actions\\ActionContainer' => 'Filament\\Schema\\Components\\Actions\\ActionContainer',
+            'Filament\\Forms\\Components\\Tabs' => 'Filament\\Schema\\Components\\Tabs',
+            'Filament\\Forms\\Components\\Tabs\\Tab' => 'Filament\\Schema\\Components\\Tabs\\Tab',
+            'Filament\\Forms\\Components\\Contracts\\CanConcealComponents' => 'Filament\\Schema\\Components\\Contracts\\CanConcealComponents',
         ],
     );
 
@@ -106,6 +109,8 @@ return static function (RectorConfig $rectorConfig): void {
             'filament-forms::component-container' => 'filament-schema::component-container',
             'filament-forms::components.actions' => 'filament-schema::components.actions',
             'filament-forms::components.actions.action-container' => 'filament-schema::components.actions.action-container',
+            'filament-forms::components.tabs' => 'filament-schema::components.tabs',
+            'filament-forms::components.tabs.tab' => 'filament-schema::components.tabs.tab',
         ],
     );
 };

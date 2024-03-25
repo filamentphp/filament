@@ -12,7 +12,7 @@ use Filament\Support\Concerns\HasIconColor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
-class Section extends Component implements Contracts\CanConcealComponents, Contracts\CanEntangleWithSingularRelationships, Contracts\HasFooterActions, Contracts\HasHeaderActions
+class Section extends Component implements \Filament\Schema\Components\Contracts\CanConcealComponents, Contracts\CanEntangleWithSingularRelationships, Contracts\HasFooterActions, Contracts\HasHeaderActions
 {
     use Concerns\CanBeCollapsed;
     use Concerns\CanBeCompacted;
