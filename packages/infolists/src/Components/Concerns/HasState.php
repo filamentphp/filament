@@ -65,7 +65,7 @@ trait HasState
         if ($this->getStateUsing !== null) {
             $state = $this->evaluate($this->getStateUsing);
         } else {
-            $containerState = $this->getContainer()->getState();
+            $containerState = $this->getContainer()->getConstantState();
 
             $state = $containerState instanceof Model ?
                 $this->getStateFromRecord($containerState) :

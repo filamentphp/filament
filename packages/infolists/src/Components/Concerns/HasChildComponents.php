@@ -3,8 +3,8 @@
 namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
-use Filament\Infolists\ComponentContainer;
 use Filament\Infolists\Components\Component;
+use Filament\Schema\ComponentContainer;
 
 trait HasChildComponents
 {

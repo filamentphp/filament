@@ -17,6 +17,7 @@ class ComponentContainer extends ViewComponent
     use ComponentContainer\Concerns\CanBeValidated;
     use ComponentContainer\Concerns\Cloneable;
     use ComponentContainer\Concerns\HasComponents;
+    use ComponentContainer\Concerns\HasEntryWrapper;
     use ComponentContainer\Concerns\HasFieldWrapper;
     use ComponentContainer\Concerns\HasInlineLabels;
     use ComponentContainer\Concerns\HasOperation;

@@ -2,7 +2,9 @@
 
 namespace Filament\Schema\ComponentContainer\Concerns;
 
+use Exception;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 trait HasState
@@ -10,6 +12,31 @@ trait HasState
     protected ?string $statePath = null;
 
     protected string $cachedAbsoluteStatePath;
+
+    /**
+     * @var array<string, mixed> | null
+     */
+    protected ?array $constantState = null;
+
+    /**
+     * @param  array<string, mixed> | null  $state
+     */
+    public function state(?array $state): static
+    {
+        $this->constantState($state);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, mixed> | null  $state
+     */
+    public function constantState(?array $state): static
+    {
+        $this->constantState = $state;
+
+        return $this;
+    }
 
     public function callAfterStateHydrated(): void
     {
@@ -215,6 +242,26 @@ trait HasState
         $this->statePath = $path;
 
         return $this;
+    }
+
+    /**
+     * @return Model | array<string, mixed>
+     */
+    public function getConstantState(): Model | array
+    {
+        $state = $this->constantState ?? $this->getParentComponent()?->getContainer()->getConstantState();
+
+        if ($state !== null) {
+            return $state;
+        }
+
+        $record = $this->getRecord();
+
+        if (! $record) {
+            throw new Exception('Infolist has no [record()] or [state()] set.');
+        }
+
+        return $record;
     }
 
     /**

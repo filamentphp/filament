@@ -2,7 +2,7 @@
 
 namespace Filament\Infolists\Components;
 
-use Filament\Infolists\ComponentContainer;
+use Filament\Schema\ComponentContainer;
 use Filament\Support\Concerns\CanBeContained;
 use Illuminate\Database\Eloquent\Model;
 

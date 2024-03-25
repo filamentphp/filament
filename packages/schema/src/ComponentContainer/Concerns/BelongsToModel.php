@@ -15,6 +15,13 @@ trait BelongsToModel
         return $this;
     }
 
+    public function record(?Model $record): static
+    {
+        $this->model($record);
+
+        return $this;
+    }
+
     public function saveRelationships(): void
     {
         foreach ($this->getComponents(withHidden: true) as $component) {

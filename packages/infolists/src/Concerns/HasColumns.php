@@ -2,7 +2,7 @@
 
 namespace Filament\Infolists\Concerns;
 
-use Filament\Infolists\ComponentContainer;
+use Filament\Schema\ComponentContainer;
 
 trait HasColumns
 {

@@ -2,8 +2,8 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
-use Filament\Infolists\ComponentContainer;
 use Filament\Infolists\Infolist;
+use Filament\Schema\ComponentContainer;
 use Livewire\Component;
 
 trait BelongsToContainer
