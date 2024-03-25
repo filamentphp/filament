@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Concerns\CanBeCollapsed;
 use Filament\Schema\Components\Contracts\CanConcealComponents;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
@@ -19,11 +20,11 @@ use function Filament\Forms\array_move_before;
 
 class Builder extends Field implements CanConcealComponents, Contracts\HasExtraItemActions
 {
+    use CanBeCollapsed;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasExtraItemActions;
-    use \Filament\Schema\Components\Concerns\CanBeCollapsed;
     use HasReorderAnimationDuration;
 
     /**

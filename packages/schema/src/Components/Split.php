@@ -3,12 +3,13 @@
 namespace Filament\Schema\Components;
 
 use Closure;
+use Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Support\Concerns\HasFromBreakpoint;
 use Filament\Support\Concerns\HasVerticalAlignment;
 
 class Split extends Component
 {
-    use \Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship;
+    use EntanglesStateWithSingularRelationship;
     use HasFromBreakpoint;
     use HasVerticalAlignment;
 

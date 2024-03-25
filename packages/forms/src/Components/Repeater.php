@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Concerns\CanBeCollapsed;
 use Filament\Schema\Components\Contracts\CanConcealComponents;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
@@ -22,12 +23,12 @@ use function Filament\Forms\array_move_before;
 
 class Repeater extends Field implements CanConcealComponents, Contracts\HasExtraItemActions
 {
+    use CanBeCollapsed;
     use Concerns\CanBeCloned;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
     use Concerns\HasExtraItemActions;
-    use \Filament\Schema\Components\Concerns\CanBeCollapsed;
     use HasReorderAnimationDuration;
 
     protected string | Closure | null $addActionLabel = null;
