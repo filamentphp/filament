@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Contracts\CanConcealComponents;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\MaxWidth;
@@ -16,7 +17,7 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Builder extends Field implements \Filament\Schema\Components\Contracts\CanConcealComponents, Contracts\HasExtraItemActions
+class Builder extends Field implements CanConcealComponents, Contracts\HasExtraItemActions
 {
     use Concerns\CanBeCloned;
     use Concerns\CanBeCollapsed;
