@@ -5,6 +5,9 @@ namespace Filament\Forms\Components;
 use Exception;
 use Filament\Schema\Components\Component;
 
+/**
+ * @deprecated Use `TextEntry` with the `state()` method instead.
+ */
 class Placeholder extends Component implements Contracts\HasHintActions
 {
     use Concerns\HasHelperText;
