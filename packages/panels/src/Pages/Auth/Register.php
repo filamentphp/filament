@@ -97,7 +97,7 @@ class Register extends SimplePage
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function handleRegistration(array $data): Authenticatable
+    protected function handleRegistration(array $data): Model
     {
         return $this->getUserModel()::create($data);
     }
