@@ -98,7 +98,7 @@ class Wizard extends Component
     public function getNextAction(): Action
     {
         $action = Action::make($this->getNextActionName())
-            ->label(__('filament-schema::components.wizard.actions.next_step.label'))
+            ->label(__('filament-forms::components.wizard.actions.next_step.label'))
             ->iconPosition(IconPosition::After)
             ->livewireClickHandlerEnabled(false)
             ->livewireTarget('dispatchFormEvent')
@@ -128,7 +128,7 @@ class Wizard extends Component
     public function getPreviousAction(): Action
     {
         $action = Action::make($this->getPreviousActionName())
-            ->label(__('filament-schema::components.wizard.actions.previous_step.label'))
+            ->label(__('filament-forms::components.wizard.actions.previous_step.label'))
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->button();
