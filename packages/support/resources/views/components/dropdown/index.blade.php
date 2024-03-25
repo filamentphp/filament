@@ -1,11 +1,11 @@
 @props([
+    'availableHeight' => null,
+    'availableWidth' => null,
     'maxHeight' => null,
     'offset' => 8,
     'placement' => null,
     'shift' => false,
     'size' => false,
-    'availableHeight' => null,
-    'availableWidth' => null,
     'sizePadding' => 16,
     'teleport' => false,
     'trigger' => null,

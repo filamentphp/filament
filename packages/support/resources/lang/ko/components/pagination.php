@@ -22,8 +22,16 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => '첫 페이지',
+        ],
+
         'go_to_page' => [
             'label' => ':page 페이지로 이동',
+        ],
+
+        'last' => [
+            'label' => '마지막 페이지',
         ],
 
         'next' => [
