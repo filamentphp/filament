@@ -3,10 +3,10 @@
 namespace Filament\Forms\Testing;
 
 use Closure;
-use Filament\ComponentContainer;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\ComponentContainer;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Features\SupportTesting\Testable;

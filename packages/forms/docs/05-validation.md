@@ -527,7 +527,7 @@ TextInput::make('slug')->rules([
 You may [inject utilities](advanced#form-component-utility-injection) like [`$get`](advanced#injecting-the-state-of-another-field) into your custom rules, for example if you need to reference other field values in your form:
 
 ```php
-use Filament\Components\Utilities\Get;
+use Filament\Schema\Components\Utilities\Get;
 
 TextInput::make('slug')->rules([
     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {

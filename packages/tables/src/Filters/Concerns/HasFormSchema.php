@@ -3,9 +3,9 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
-use Filament\ComponentContainer;
-use Filament\Components\Component;
 use Filament\Forms\Components\Field;
+use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Component;
 
 trait HasFormSchema
 {

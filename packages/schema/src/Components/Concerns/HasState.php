@@ -1,11 +1,11 @@
 <?php
 
-namespace Filament\Components\Concerns;
+namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\Components\Component;
-use Filament\Components\Utilities\Get;
-use Filament\Components\Utilities\Set;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Utilities\Get;
+use Filament\Schema\Components\Utilities\Set;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;

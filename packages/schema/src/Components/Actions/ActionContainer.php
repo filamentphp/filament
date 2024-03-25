@@ -1,9 +1,9 @@
 <?php
 
-namespace Filament\Components\Actions;
+namespace Filament\Schema\Components\Actions;
 
 use Filament\Actions\Action;
-use Filament\Components\Component;
+use Filament\Schema\Components\Component;
 
 class ActionContainer extends Component
 {

@@ -4,9 +4,9 @@ namespace Filament\Tables\Filters;
 
 use Closure;
 use Exception;
-use Filament\ComponentContainer;
-use Filament\Components\Component;
 use Filament\Forms\Components\Repeater;
+use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Component;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
 use Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use Illuminate\Database\Eloquent\Builder;

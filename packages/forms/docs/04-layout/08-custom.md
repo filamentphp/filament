@@ -37,7 +37,7 @@ php artisan make:form-layout Wizard
 This will create the following layout component class:
 
 ```php
-use Filament\Components\Component;
+use Filament\Schema\Components\Component;
 
 class Wizard extends Component
 {

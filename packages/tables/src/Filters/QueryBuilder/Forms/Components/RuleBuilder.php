@@ -4,10 +4,10 @@ namespace Filament\Tables\Filters\QueryBuilder\Forms\Components;
 
 use Exception;
 use Filament\Actions\Action;
-use Filament\ComponentContainer;
-use Filament\Components\Component;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Repeater;
+use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Component;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use Illuminate\Support\Str;

@@ -1,7 +1,7 @@
 <?php
 
-use Filament\ComponentContainer;
-use Filament\Components\Component;
+use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Component;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Models\User;

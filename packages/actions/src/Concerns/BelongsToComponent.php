@@ -2,8 +2,7 @@
 
 namespace Filament\Actions\Concerns;
 
-use Filament\Components\Component;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\Components\Component;
 
 trait BelongsToComponent
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament;
+namespace Filament\Schema;
 
-use Filament\Testing\TestsComponentActions;
+use Filament\Schema\Testing\TestsComponentActions;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Package;

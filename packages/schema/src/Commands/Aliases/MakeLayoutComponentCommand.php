@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Commands\Aliases;
+namespace Filament\Schema\Commands\Aliases;
 
-use Filament\Commands;
+use Filament\Schema\Commands;
 
 class MakeLayoutComponentCommand extends Commands\MakeLayoutComponentCommand
 {

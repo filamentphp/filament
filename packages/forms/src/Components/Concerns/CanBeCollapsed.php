@@ -3,7 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\ComponentContainer;
+use Filament\Schema\ComponentContainer;
 
 trait CanBeCollapsed
 {

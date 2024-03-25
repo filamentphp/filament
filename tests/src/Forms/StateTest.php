@@ -1,9 +1,9 @@
 <?php
 
-use Filament\ComponentContainer;
-use Filament\Components\Component;
-use Filament\Components\Utilities\Get;
 use Filament\Forms\Components\Placeholder;
+use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Utilities\Get;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;

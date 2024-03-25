@@ -1,11 +1,11 @@
 <?php
 
-namespace Filament\Testing;
+namespace Filament\Schema\Testing;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\ComponentContainer;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\ComponentContainer;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Features\SupportTesting\Testable;

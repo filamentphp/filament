@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Commands;
+namespace Filament\Schema\Commands;
 
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;

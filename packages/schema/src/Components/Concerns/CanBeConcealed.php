@@ -1,9 +1,9 @@
 <?php
 
-namespace Filament\Components\Concerns;
+namespace Filament\Schema\Components\Concerns;
 
-use Filament\Components\Component;
 use Filament\Forms\Components\Contracts\CanConcealComponents;
+use Filament\Schema\Components\Component;
 
 trait CanBeConcealed
 {

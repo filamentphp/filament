@@ -3,7 +3,7 @@
 namespace Filament\Actions;
 
 use Exception;
-use Filament\Components\Actions\ActionContainer;
+use Filament\Schema\Components\Actions\ActionContainer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 

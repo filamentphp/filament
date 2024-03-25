@@ -2,10 +2,10 @@
 
 namespace Filament\Tests\Tables\Fixtures;
 
-use Filament\ComponentContainer;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\ComponentContainer;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Models\Post;

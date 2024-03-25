@@ -4,9 +4,9 @@ namespace Filament\Forms\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Components\Component;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
+use Filament\Schema\Components\Component;
 use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;

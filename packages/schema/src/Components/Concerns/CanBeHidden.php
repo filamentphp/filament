@@ -1,11 +1,11 @@
 <?php
 
-namespace Filament\Components\Concerns;
+namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\Components\Component;
-use Filament\Components\Utilities\Get;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Utilities\Get;
 use Illuminate\Support\Arr;
 
 trait CanBeHidden

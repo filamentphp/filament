@@ -3,8 +3,8 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\ComponentContainer;
 use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 
 trait CanBeMounted
 {

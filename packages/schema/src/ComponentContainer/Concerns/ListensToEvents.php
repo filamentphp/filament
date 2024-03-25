@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\ComponentContainer\Concerns;
+namespace Filament\Schema\ComponentContainer\Concerns;
 
 trait ListensToEvents
 {

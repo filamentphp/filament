@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Components\Concerns;
+namespace Filament\Schema\Components\Concerns;
 
 use Illuminate\Support\Arr;
 

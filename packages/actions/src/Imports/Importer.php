@@ -4,7 +4,7 @@ namespace Filament\Actions\Imports;
 
 use Carbon\CarbonInterface;
 use Filament\Actions\Imports\Models\Import;
-use Filament\Components\Component;
+use Filament\Schema\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Support\Facades\Validator;

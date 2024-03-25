@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\ComponentContainer\Concerns;
+namespace Filament\Schema\ComponentContainer\Concerns;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;

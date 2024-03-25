@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components;
 
-use Filament\Components\Component;
+use Filament\Schema\Components\Component;
 
 class View extends Component
 {

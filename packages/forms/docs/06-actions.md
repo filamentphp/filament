@@ -35,7 +35,7 @@ Certain fields support "affix actions", which are buttons that can be placed bef
 To define an affix action, you can pass it to either `prefixAction()` or `suffixAction()`:
 
 ```php
-use Filament\Actions\Action;use Filament\Components\Utilities\Set;use Filament\Forms\Components\TextInput;
+use Filament\Actions\Action;use Filament\Schema\Components\Utilities\Set;use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')
     ->prefix('€')
@@ -78,7 +78,7 @@ TextInput::make('cost')
 All fields support "hint actions", which are rendered aside the field's [hint](fields/getting-started#adding-a-hint-next-to-the-label). To add a hint action to a field, you may pass it to `hintAction()`:
 
 ```php
-use Filament\Actions\Action;use Filament\Components\Utilities\Set;use Filament\Forms\Components\TextInput;
+use Filament\Actions\Action;use Filament\Schema\Components\Utilities\Set;use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')
     ->prefix('€')
@@ -117,7 +117,7 @@ TextInput::make('cost')
 If you wish to render an action within a custom form component, `ViewField` object, or `View` component object, you may do so using the `registerActions()` method:
 
 ```php
-use Filament\Actions\Action;use Filament\Components\Utilities\Set;use Filament\Forms\Components\ViewField;
+use Filament\Actions\Action;use Filament\Schema\Components\Utilities\Set;use Filament\Forms\Components\ViewField;
 
 ViewField::make('rating')
     ->view('filament.forms.components.range-slider')
@@ -147,7 +147,7 @@ Now, to render the action in the view of the custom component, you need to call 
 You may use an `Actions` component to render a set of actions anywhere in the form, avoiding the need to register them to any particular component:
 
 ```php
-use App\Actions\ResetStars;use App\Actions\Star;use Filament\Actions\Action;use Filament\Components\Actions;
+use App\Actions\ResetStars;use App\Actions\Star;use Filament\Actions\Action;use Filament\Schema\Components\Actions;
 
 Actions::make([
     Action::make('star')
@@ -173,7 +173,7 @@ Actions::make([
 You can stretch the independent form actions to consume the full width of the form using `fullWidth()`:
 
 ```php
-use Filament\Components\Actions;
+use Filament\Schema\Components\Actions;
 
 Actions::make([
     // ...
@@ -187,7 +187,7 @@ Actions::make([
 Independent form actions are aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `alignment()`:
 
 ```php
-use Filament\Components\Actions;use Filament\Support\Enums\Alignment;
+use Filament\Schema\Components\Actions;use Filament\Support\Enums\Alignment;
 
 Actions::make([
     // ...
@@ -201,7 +201,7 @@ Actions::make([
 Independent form actions are vertically aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `verticalAlignment()`:
 
 ```php
-use Filament\Components\Actions;use Filament\Support\Enums\VerticalAlignment;
+use Filament\Schema\Components\Actions;use Filament\Support\Enums\VerticalAlignment;
 
 Actions::make([
     // ...
@@ -215,7 +215,7 @@ Actions::make([
 If an action is attached to a form component, the `action()` function is able to [inject utilities](advanced#form-component-utility-injection) directly from that form component. For instance, you can inject [`$set`](advanced#injecting-a-function-to-set-the-state-of-another-field) and [`$state`](advanced#injecting-the-current-state-of-a-field):
 
 ```php
-use Filament\Actions\Action;use Filament\Components\Utilities\Set;
+use Filament\Actions\Action;use Filament\Schema\Components\Utilities\Set;
 
 Action::make('copyCostToPrice')
     ->icon('heroicon-m-clipboard')

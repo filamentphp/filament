@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\ComponentContainer\Concerns;
+namespace Filament\Schema\ComponentContainer\Concerns;
 
-use Filament\Components\Component;
+use Filament\Schema\Components\Component;
 
 trait Cloneable
 {

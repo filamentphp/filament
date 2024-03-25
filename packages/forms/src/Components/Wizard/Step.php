@@ -3,8 +3,8 @@
 namespace Filament\Forms\Components\Wizard;
 
 use Closure;
-use Filament\Components\Component;
 use Filament\Forms\Components\Contracts\CanConcealComponents;
+use Filament\Schema\Components\Component;
 use Illuminate\Support\Str;
 
 class Step extends Component implements CanConcealComponents

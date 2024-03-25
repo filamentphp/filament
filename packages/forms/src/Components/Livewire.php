@@ -3,7 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Components\Component;
+use Filament\Schema\Components\Component;
 
 class Livewire extends Component
 {

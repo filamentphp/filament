@@ -1,9 +1,9 @@
 <?php
 
-namespace Filament\Components\Concerns;
+namespace Filament\Schema\Components\Concerns;
 
-use Filament\ComponentContainer;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\ComponentContainer;
 
 trait BelongsToContainer
 {

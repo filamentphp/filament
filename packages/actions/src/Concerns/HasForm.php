@@ -3,9 +3,9 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Components\Component;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
+use Filament\Schema\Components\Component;
 
 trait HasForm
 {

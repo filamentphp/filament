@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Components\Concerns;
+namespace Filament\Schema\Components\Concerns;
 
-use Filament\ComponentContainer;
+use Filament\Schema\ComponentContainer;
 
 trait HasColumns
 {

@@ -4,8 +4,8 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Components\Component;
 use Filament\Forms\Components\Wizard\Step;
+use Filament\Schema\Components\Component;
 use Filament\Support\Concerns;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Exceptions\Halt;

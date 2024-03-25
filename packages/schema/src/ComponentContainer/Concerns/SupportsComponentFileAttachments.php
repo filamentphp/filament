@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\ComponentContainer\Concerns;
+namespace Filament\Schema\ComponentContainer\Concerns;
 
 use Filament\Forms\Components\Contracts\HasFileAttachments;
 use Filament\Forms\Components\Field;

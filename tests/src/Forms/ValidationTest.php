@@ -1,7 +1,7 @@
 <?php
 
-use Filament\ComponentContainer;
 use Filament\Forms\Components\Field;
+use Filament\Schema\ComponentContainer;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Arrayable;

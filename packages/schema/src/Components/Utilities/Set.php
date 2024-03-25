@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Components\Utilities;
+namespace Filament\Schema\Components\Utilities;
 
-use Filament\Components\Component;
+use Filament\Schema\Components\Component;
 
 class Set
 {

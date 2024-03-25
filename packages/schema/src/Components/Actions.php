@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Components;
+namespace Filament\Schema\Components;
 
 use Closure;
 use Filament\Actions\Action;

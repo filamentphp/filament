@@ -3,9 +3,9 @@
 namespace Filament\Forms\Concerns;
 
 use Filament\Actions\Action;
-use Filament\ComponentContainer;
-use Filament\Components\Component;
 use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Component;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Validation\ValidationException;

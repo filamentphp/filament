@@ -1,10 +1,10 @@
 <?php
 
-namespace Filament\Components\Concerns;
+namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\Components\Component;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\Components\Component;
 use Illuminate\Support\Arr;
 
 trait CanBeDisabled

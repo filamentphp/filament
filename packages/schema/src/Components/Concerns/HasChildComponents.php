@@ -1,10 +1,10 @@
 <?php
 
-namespace Filament\Components\Concerns;
+namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\ComponentContainer;
-use Filament\Components\Component;
+use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Component;
 
 trait HasChildComponents
 {

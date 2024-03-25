@@ -3,8 +3,8 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Components\Utilities\Get;
-use Filament\Components\Utilities\Set;
+use Filament\Schema\Components\Utilities\Get;
+use Filament\Schema\Components\Utilities\Set;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;

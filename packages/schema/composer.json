@@ -23,13 +23,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Filament\\": "src"
+            "Filament\\Schema\\": "src"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Filament\\SchemaServiceProvider"
+                "Filament\\Schema\\SchemaServiceProvider"
             ]
         }
     },

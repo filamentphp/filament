@@ -99,7 +99,7 @@ function ($state) {
 If you wish to access the current component instance, define a `$component` parameter:
 
 ```php
-use Filament\Components\Component;
+use Filament\Schema\Components\Component;
 
 function (Component $component) {
     // ...
@@ -135,7 +135,7 @@ function (?Model $record) {
 You may also retrieve the state (value) of another field from within a callback, using a `$get` parameter:
 
 ```php
-use Filament\Components\Utilities\Get;
+use Filament\Schema\Components\Utilities\Get;
 
 function (Get $get) {
     $email = $get('email'); // Store the value of the `email` field in the `$email` variable.
@@ -148,7 +148,7 @@ function (Get $get) {
 In a similar way to `$get`, you may also set the value of another field from within a callback, using a `$set` parameter:
 
 ```php
-use Filament\Components\Utilities\Set;
+use Filament\Schema\Components\Utilities\Set;
 
 function (Set $set) {
     $set('title', 'Blog Post'); // Set the `title` field to `Blog Post`.
@@ -175,7 +175,7 @@ function (string $operation) {
 The parameters are injected dynamically using reflection, so you are able to combine multiple parameters in any order:
 
 ```php
-use Filament\Components\Utilities\Get;use Filament\Components\Utilities\Set;use Livewire\Component as Livewire;
+use Filament\Schema\Components\Utilities\Get;use Filament\Schema\Components\Utilities\Set;use Livewire\Component as Livewire;
 
 function (Livewire $livewire, Get $get, Set $set) {
     // ...
@@ -187,7 +187,7 @@ function (Livewire $livewire, Get $get, Set $set) {
 You may inject anything from Laravel's container like normal, alongside utilities:
 
 ```php
-use Filament\Components\Utilities\Set;use Illuminate\Http\Request;
+use Filament\Schema\Components\Utilities\Set;use Illuminate\Http\Request;
 
 function (Request $request, Set $set) {
     // ...
@@ -279,7 +279,7 @@ This section contains a collection of recipes for common tasks you may need to p
 To conditionally hide or show a field, you can pass a function to the `hidden()` method, and return `true` or `false` depending on whether you want the field to be hidden or not. The function can [inject utilities](#form-component-utility-injection) as parameters, so you can do things like check the value of another field:
 
 ```php
-use Filament\Components\Utilities\Get;use Filament\Forms\Components\Checkbox;use Filament\Forms\Components\TextInput;
+use Filament\Schema\Components\Utilities\Get;use Filament\Forms\Components\Checkbox;use Filament\Forms\Components\TextInput;
 
 Checkbox::make('is_company')
     ->live()
@@ -293,7 +293,7 @@ In this example, the `is_company` checkbox is [`live()`](#the-basics-of-reactivi
 Alternatively, you can use the `visible()` method to show a field conditionally. It does the exact inverse of `hidden()`, and could be used if you prefer the clarity of the code when written this way:
 
 ```php
-use Filament\Components\Utilities\Get;use Filament\Forms\Components\Checkbox;use Filament\Forms\Components\TextInput;
+use Filament\Schema\Components\Utilities\Get;use Filament\Forms\Components\Checkbox;use Filament\Forms\Components\TextInput;
 
 Checkbox::make('is_company')
     ->live()
@@ -307,7 +307,7 @@ TextInput::make('company_name')
 To conditionally make a field required, you can pass a function to the `required()` method, and return `true` or `false` depending on whether you want the field to be required or not. The function can [inject utilities](#form-component-utility-injection) as parameters, so you can do things like check the value of another field:
 
 ```php
-use Filament\Components\Utilities\Get;use Filament\Forms\Components\TextInput;
+use Filament\Schema\Components\Utilities\Get;use Filament\Forms\Components\TextInput;
 
 TextInput::make('company_name')
     ->live(onBlur: true)
@@ -325,7 +325,7 @@ Using a function is able to make any other [validation rule](validation) dynamic
 To generate a slug from a title while the user is typing, you can use the [`afterStateUpdated()` method](#field-updates) on the title field to [`$set()`](#injecting-a-function-to-set-the-state-of-another-field) the value of the slug field:
 
 ```php
-use Filament\Components\Utilities\Set;use Filament\Forms\Components\TextInput;use Illuminate\Support\Str;
+use Filament\Schema\Components\Utilities\Set;use Filament\Forms\Components\TextInput;use Illuminate\Support\Str;
 
 TextInput::make('title')
     ->live()
@@ -339,7 +339,7 @@ In this example, the `title` field is [`live()`](#the-basics-of-reactivity). Thi
 One thing to note is that the user may customize the slug manually, and we don't want to overwrite their changes if the title changes. To prevent this, we can use the old version of the title to work out if the user has modified it themselves. To access the old version of the title, you can inject `$old`, and to get the current value of the slug before it gets changed, we can use the [`$get()` utility](#injecting-the-state-of-another-field):
 
 ```php
-use Filament\Components\Utilities\Get;use Filament\Components\Utilities\Set;use Filament\Forms\Components\TextInput;use Illuminate\Support\Str;
+use Filament\Schema\Components\Utilities\Get;use Filament\Schema\Components\Utilities\Set;use Filament\Forms\Components\TextInput;use Illuminate\Support\Str;
 
 TextInput::make('title')
     ->live()
@@ -359,7 +359,7 @@ TextInput::make('slug')
 To dynamically update the options of a [select field](fields/select) based on the value of another field, you can pass a function to the `options()` method of the select field. The function can [inject utilities](#form-component-utility-injection) as parameters, so you can do things like check the value of another field using the [`$get()` utility](#injecting-the-current-state-of-a-field):
 
 ```php
-use Filament\Components\Utilities\Get;use Filament\Forms\Components\Select;
+use Filament\Schema\Components\Utilities\Get;use Filament\Forms\Components\Select;
 
 Select::make('category')
     ->options([
@@ -392,7 +392,7 @@ In this example, the `category` field is [`live()`](#the-basics-of-reactivity). 
 You could adapt this example to use options loaded from an Eloquent model or other data source, by querying within the function:
 
 ```php
-use Filament\Components\Utilities\Get;use Filament\Forms\Components\Select;use Illuminate\Support\Collection;
+use Filament\Schema\Components\Utilities\Get;use Filament\Forms\Components\Select;use Illuminate\Support\Collection;
 
 Select::make('category')
     ->options(Category::query()->pluck('name', 'id'))
@@ -409,7 +409,7 @@ Select::make('sub_category')
 You may wish to render a different set of fields based on the value of a field, like a select. To do this, you can pass a function to the `schema()` method of any [layout component](layout/getting-started), which checks the value of the field and returns a different schema based on that value. Also, you will need a way to initialise the new fields in the dynamic schema when they are first loaded.
 
 ```php
-use Filament\Components\Utilities\Get;use Filament\Forms\Components\FileUpload;use Filament\Forms\Components\Grid;use Filament\Forms\Components\Select;use Filament\Forms\Components\TextInput;
+use Filament\Schema\Components\Utilities\Get;use Filament\Forms\Components\FileUpload;use Filament\Forms\Components\Grid;use Filament\Forms\Components\Select;use Filament\Forms\Components\TextInput;
 
 Select::make('type')
     ->options([

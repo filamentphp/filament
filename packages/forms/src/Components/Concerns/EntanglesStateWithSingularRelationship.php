@@ -3,10 +3,10 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\ComponentContainer;
-use Filament\Components\Component;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament;
+namespace Filament\Schema;
 
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Components\ViewComponent;
