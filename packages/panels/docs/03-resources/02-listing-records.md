@@ -135,7 +135,7 @@ Although you can [customize the Eloquent query for the entire resource](getting-
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 
-public function table(Table $table): Table
+public static function table(Table $table): Table
 {
     return $table
         ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes());
