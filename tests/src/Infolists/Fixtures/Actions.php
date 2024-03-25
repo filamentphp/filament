@@ -21,7 +21,7 @@ class Actions extends Component implements HasForms, HasInfolists
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
-            ->state([])
+            ->constantState([])
             ->schema([
                 TextEntry::make('textEntry')
                     ->registerActions([

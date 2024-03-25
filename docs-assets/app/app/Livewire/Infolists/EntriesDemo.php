@@ -541,7 +541,7 @@ class EntriesDemo extends Component implements HasInfolists
                             ),
                     ]),
             ])
-            ->state([
+            ->constantState([
                 'comments' => [
                     [
                         'author' => ['name' => 'Jane Doe'],

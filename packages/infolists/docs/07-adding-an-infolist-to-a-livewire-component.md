@@ -97,7 +97,7 @@ use Filament\Infolists\Infolist;
 public function productInfolist(Infolist $infolist): Infolist
 {
     return $infolist
-        ->state([
+        ->constantState([
             'name' => 'MacBook Pro',
             'category' => [
                 'name' => 'Laptops',

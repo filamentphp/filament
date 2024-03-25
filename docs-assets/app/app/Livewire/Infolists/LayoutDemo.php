@@ -412,7 +412,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             ]),
                     ]),
             ])
-            ->state([
+            ->constantState([
                 'items' => [
                     ['product' => 'Filament t-shirt', 'quantity' => 3],
                     ['product' => 'Filament hoodie', 'quantity' => 1],
