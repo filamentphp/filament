@@ -15,7 +15,7 @@ import LaracastsBanner from "@components/LaracastsBanner.astro"
 Aside from [building custom layout components](#custom-layout-classes), you may create "view" components which allow you to create custom layouts without extra PHP classes.
 
 ```php
-use Filament\Forms\Components\View;
+use Filament\Schema\Components\View;
 
 View::make('filament.forms.components.wizard')
 ```

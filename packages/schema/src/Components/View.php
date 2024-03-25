@@ -1,8 +1,6 @@
 <?php
 
-namespace Filament\Forms\Components;
-
-use Filament\Schema\Components\Component;
+namespace Filament\Schema\Components;
 
 class View extends Component
 {

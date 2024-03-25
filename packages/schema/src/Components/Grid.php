@@ -1,8 +1,7 @@
 <?php
 
-namespace Filament\Forms\Components;
+namespace Filament\Schema\Components;
 
-use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
 
 class Grid extends Component implements CanEntangleWithSingularRelationships
@@ -12,7 +11,7 @@ class Grid extends Component implements CanEntangleWithSingularRelationships
     /**
      * @var view-string
      */
-    protected string $view = 'filament-forms::components.grid';
+    protected string $view = 'filament-schema::components.grid';
 
     /**
      * @param  array<string, int | string | null> | int | string | null  $columns

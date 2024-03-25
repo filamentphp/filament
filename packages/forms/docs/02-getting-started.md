@@ -74,9 +74,7 @@ You can learn more about columns and spans in the [layout documentation](layout/
 Let's add a new [`Section`](layout/section) to our form. `Section` is a layout component, and it allows you to add a heading and description to a set of fields. It can also allow fields inside it to collapse, which saves space in long forms.
 
 ```php
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\RichEditor;use Filament\Forms\Components\TextInput;use Filament\Schema\Components\Section;
 
 [
     TextInput::make('title'),
@@ -94,9 +92,7 @@ use Filament\Forms\Components\TextInput;
 In this example, you can see how the `Section` component has its own `schema()` method. You can use this to nest other fields and layout components inside:
 
 ```php
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DateTimePicker;use Filament\Forms\Components\Select;use Filament\Schema\Components\Section;
 
 Section::make('Publishing')
     ->description('Settings for publishing this post.')
@@ -122,11 +118,7 @@ In Laravel, validation rules are usually defined in arrays like `['required', 'm
 In Filament, you can add validation rules to your fields by using methods like `required()` and `maxLength()`. This is also advantageous over Laravel's validation syntax, since your IDE can autocomplete these methods:
 
 ```php
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DateTimePicker;use Filament\Forms\Components\RichEditor;use Filament\Forms\Components\Select;use Filament\Forms\Components\TextInput;use Filament\Schema\Components\Section;
 
 [
     TextInput::make('title')

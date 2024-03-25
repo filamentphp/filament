@@ -3,14 +3,14 @@
 namespace App\Livewire\Forms;
 
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Schema\Components\Group;
+use Filament\Schema\Components\Section;
 use Livewire\Component;
 
 class GettingStartedDemo extends Component implements HasForms

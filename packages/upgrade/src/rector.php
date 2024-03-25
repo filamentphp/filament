@@ -105,6 +105,18 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Fieldset' => 'Filament\\Schema\\Components\\Fieldset',
             'Filament\\Forms\\Components\\Concerns\\EntanglesStateWithSingularRelationship' => 'Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship',
             'Filament\\Forms\\Components\\Contracts\\CanEntangleWithSingularRelationships' => 'Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships',
+            'Filament\\Forms\\Components\\Grid' => 'Filament\\Schema\\Components\\Grid',
+            'Filament\\Forms\\Components\\Group' => 'Filament\\Schema\\Components\\Group',
+            'Filament\\Forms\\Components\\Livewire' => 'Filament\\Schema\\Components\\Livewire',
+            'Filament\\Forms\\Components\\Section' => 'Filament\\Schema\\Components\\Section',
+            'Filament\\Forms\\Components\\Split' => 'Filament\\Schema\\Components\\Split',
+            'Filament\\Forms\\Components\\View' => 'Filament\\Schema\\Components\\View',
+            'Filament\\Forms\\Components\\Concerns\\CanBeCollapsed' => 'Filament\Schema\Components\Concerns\CanBeCollapsed',
+            'Filament\\Forms\\Components\\Concerns\\CanBeCompacted' => 'Filament\Schema\Components\Concerns\CanBeCompacted',
+            'Filament\\Forms\\Components\\Concerns\\HasFooterActions' => 'Filament\Schema\Components\Concerns\HasFooterActions',
+            'Filament\\Forms\\Components\\Concerns\\HasHeaderActions' => 'Filament\Schema\Components\Concerns\HasHeaderActions',
+            'Filament\\Forms\\Components\\Contracts\\HasFooterActions' => 'Filament\Schema\Components\Contracts\HasFooterActions',
+            'Filament\\Forms\\Components\\Contracts\\HasHeaderActions' => 'Filament\Schema\Components\Contracts\HasHeaderActions',
         ],
     );
 
@@ -119,6 +131,11 @@ return static function (RectorConfig $rectorConfig): void {
             'filament-forms::components.wizard' => 'filament-schema::components.wizard',
             'filament-forms::components.wizard.step' => 'filament-schema::components.wizard.step',
             'filament-forms::components.fieldset' => 'filament-schema::components.fieldset',
+            'filament-forms::components.grid' => 'filament-schema::components.grid',
+            'filament-forms::components.group' => 'filament-schema::components.group',
+            'filament-forms::components.livewire' => 'filament-schema::components.livewire',
+            'filament-forms::components.section' => 'filament-schema::components.section',
+            'filament-forms::components.split' => 'filament-schema::components.split',
         ],
     );
 };

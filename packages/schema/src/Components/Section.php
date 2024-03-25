@@ -1,9 +1,15 @@
 <?php
 
-namespace Filament\Forms\Components;
+namespace Filament\Schema\Components;
 
 use Closure;
-use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Concerns\CanBeCollapsed;
+use Filament\Schema\Components\Concerns\CanBeCompacted;
+use Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship;
+use Filament\Schema\Components\Concerns\HasFooterActions;
+use Filament\Schema\Components\Concerns\HasHeaderActions;
+use Filament\Schema\Components\Contracts\CanConcealComponents;
+use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasHeading;
@@ -12,15 +18,15 @@ use Filament\Support\Concerns\HasIconColor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
-class Section extends Component implements \Filament\Schema\Components\Contracts\CanConcealComponents, \Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships, Contracts\HasFooterActions, Contracts\HasHeaderActions
+class Section extends Component implements CanConcealComponents, CanEntangleWithSingularRelationships, Contracts\HasFooterActions, Contracts\HasHeaderActions
 {
-    use Concerns\CanBeCollapsed;
-    use Concerns\CanBeCompacted;
-    use Concerns\HasFooterActions;
-    use Concerns\HasHeaderActions;
-    use \Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship;
+    use CanBeCollapsed;
+    use CanBeCompacted;
+    use EntanglesStateWithSingularRelationship;
     use HasDescription;
     use HasExtraAlpineAttributes;
+    use HasFooterActions;
+    use HasHeaderActions;
     use HasHeading;
     use HasIcon;
     use HasIconColor;
@@ -28,7 +34,7 @@ class Section extends Component implements \Filament\Schema\Components\Contracts
     /**
      * @var view-string
      */
-    protected string $view = 'filament-forms::components.section';
+    protected string $view = 'filament-schema::components.section';
 
     protected bool | Closure | null $isAside = null;
 

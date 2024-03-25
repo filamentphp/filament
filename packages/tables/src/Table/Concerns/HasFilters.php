@@ -3,8 +3,8 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Form;
+use Filament\Schema\Components\Group;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentIcon;

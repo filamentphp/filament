@@ -183,7 +183,7 @@ Alternatively, if you're editing records in a modal action, check out the [Actio
 You may want to allow the user to save a part of the form independently of the rest of the form. One way to do this is with a [section action in the header or footer](../../forms/layout/section#adding-actions-to-the-sections-header-or-footer). From the `action()` method, you can call `saveFormComponentOnly()`, passing in the `Section` component that you want to save:
 
 ```php
-use Filament\Actions\Action;use Filament\Forms\Components\Section;use Filament\Notifications\Notification;use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\Action;use Filament\Notifications\Notification;use Filament\Resources\Pages\EditRecord;use Filament\Schema\Components\Section;
 
 Section::make('Rate limiting')
     ->schema([

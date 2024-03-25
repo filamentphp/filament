@@ -1,16 +1,15 @@
 <?php
 
-namespace Filament\Forms\Components;
+namespace Filament\Schema\Components;
 
 use Closure;
-use Filament\Schema\Components\Component;
 
 class Livewire extends Component
 {
     /**
      * @var view-string
      */
-    protected string $view = 'filament-forms::components.livewire';
+    protected string $view = 'filament-schema::components.livewire';
 
     protected bool | Closure $isLazy = false;
 

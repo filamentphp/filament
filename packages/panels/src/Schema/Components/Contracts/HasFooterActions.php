@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Components\Contracts;
+namespace Filament\Schema\Components\Contracts;
 
 use Filament\Actions\Action;
 

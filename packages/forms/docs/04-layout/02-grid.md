@@ -32,8 +32,7 @@ We pass an array to `columns()` as we want to specify different numbers of colum
 Inside the section, we have a [text input](../fields/text-input). Since text inputs are form components and all form components have a `columnSpan()` method, we can use it to specify how many columns the text input should fill. On devices smaller than the `sm` breakpoint, we want the text input to fill 1 column, which is default. On devices larger than the `sm` breakpoint, we want the text input to fill 2 columns. On devices larger than the `xl` breakpoint, we want the text input to fill 3 columns. On devices larger than the `2xl` breakpoint, we want the text input to fill 4 columns.
 
 ```php
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TextInput;use Filament\Schema\Components\Section;
 
 Section::make()
     ->columns([
@@ -57,7 +56,7 @@ Section::make()
 All layout components support the `columns()` method, but you also have access to an additional `Grid` component. If you feel that your form schema would benefit from an explicit grid syntax with no extra styling, it may be useful to you. Instead of using the `columns()` method, you can pass your column configuration directly to `Grid::make()`:
 
 ```php
-use Filament\Forms\Components\Grid;
+use Filament\Schema\Components\Grid;
 
 Grid::make([
     'default' => 1,
@@ -80,7 +79,7 @@ If you want to start a component in a grid at a specific column, you can use the
 - `columnStart(['md' => 2, 'xl' => 4])` will make the component start at column 2 on medium devices, and at column 4 on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
 
 ```php
-use Filament\Forms\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make()
     ->columns([

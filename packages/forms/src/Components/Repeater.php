@@ -23,11 +23,11 @@ use function Filament\Forms\array_move_before;
 class Repeater extends Field implements CanConcealComponents, Contracts\HasExtraItemActions
 {
     use Concerns\CanBeCloned;
-    use Concerns\CanBeCollapsed;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
     use Concerns\HasExtraItemActions;
+    use \Filament\Schema\Components\Concerns\CanBeCollapsed;
     use HasReorderAnimationDuration;
 
     protected string | Closure | null $addActionLabel = null;

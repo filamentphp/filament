@@ -409,7 +409,7 @@ Select::make('sub_category')
 You may wish to render a different set of fields based on the value of a field, like a select. To do this, you can pass a function to the `schema()` method of any [layout component](layout/getting-started), which checks the value of the field and returns a different schema based on that value. Also, you will need a way to initialise the new fields in the dynamic schema when they are first loaded.
 
 ```php
-use Filament\Schema\Components\Utilities\Get;use Filament\Forms\Components\FileUpload;use Filament\Forms\Components\Grid;use Filament\Forms\Components\Select;use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\FileUpload;use Filament\Forms\Components\Select;use Filament\Forms\Components\TextInput;use Filament\Schema\Components\Grid;use Filament\Schema\Components\Utilities\Get;
 
 Select::make('type')
     ->options([
@@ -517,8 +517,7 @@ In this example, the `title`, `description` and `image` are automatically loaded
 This functionality is not just limited to fieldsets - you can use it with any layout component. For example, you could use a `Group` component which has no styling associated with it:
 
 ```php
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TextInput;use Filament\Schema\Components\Group;
 
 Group::make()
     ->relationship('customer')
@@ -544,8 +543,7 @@ It is worth noting that if you have an observer on your form model, then you may
 Sometimes, saving the related record may be optional. If the user fills out the customer fields, then the customer will be created / updated. Otherwise, the customer will not be created, or will be deleted if it already exists. To do this, you can pass a `condition` function as an argument to `relationship()`, which can use the `$state` of the related form to determine whether the relationship should be saved or not:
 
 ```php
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TextInput;use Filament\Schema\Components\Group;
 
 Group::make()
     ->relationship(
@@ -569,8 +567,7 @@ In this example, the customer's name is not `required()`, and the email address 
 You may insert a Livewire component directly into a form:
 
 ```php
-use Filament\Forms\Components\Livewire;
-use App\Livewire\Foo;
+use App\Livewire\Foo;use Filament\Schema\Components\Livewire;
 
 Livewire::make(Foo::class)
 ```
@@ -578,8 +575,7 @@ Livewire::make(Foo::class)
 If you are rendering multiple of the same Livewire component, please make sure to pass a unique `key()` to each:
 
 ```php
-use Filament\Forms\Components\Livewire;
-use App\Livewire\Foo;
+use App\Livewire\Foo;use Filament\Schema\Components\Livewire;
 
 Livewire::make(Foo::class)
     ->key('foo-first')
@@ -596,8 +592,7 @@ Livewire::make(Foo::class)
 You can pass an array of parameters to a Livewire component:
 
 ```php
-use Filament\Forms\Components\Livewire;
-use App\Livewire\Foo;
+use App\Livewire\Foo;use Filament\Schema\Components\Livewire;
 
 Livewire::make(Foo::class, ['bar' => 'baz'])
 ```
@@ -646,8 +641,7 @@ class Foo extends Component
 Please be aware that when the record has not yet been created, it will be `null`. If you'd like to hide the Livewire component when the record is `null`, you can use the `hidden()` method:
 
 ```php
-use Filament\Forms\Components\Livewire;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Schema\Components\Livewire;use Illuminate\Database\Eloquent\Model;
 
 Livewire::make(Foo::class)
     ->hidden(fn (?Model $record): bool => $record === null)
@@ -658,8 +652,7 @@ Livewire::make(Foo::class)
 You may allow the component to [lazily load](https://livewire.laravel.com/docs/lazy#rendering-placeholder-html) using the `lazy()` method:
 
 ```php
-use Filament\Forms\Components\Livewire;
-use App\Livewire\Foo;
+use App\Livewire\Foo;use Filament\Schema\Components\Livewire;
 
 Livewire::make(Foo::class)->lazy()       
 ```
