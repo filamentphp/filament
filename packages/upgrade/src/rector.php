@@ -97,7 +97,6 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Actions' => 'Filament\\Components\\Actions',
             'Filament\\Forms\\Components\\Actions\\Action' => 'Filament\\Actions\\Action',
             'Filament\\Forms\\Components\\Actions\\ActionContainer' => 'Filament\\Components\\Actions\\ActionContainer',
-            'Filament\\Forms\\Components\\Actions\\ActionContainer' => 'Filament\\Components\\Actions\\ActionContainer',
         ],
     );
 
