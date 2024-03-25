@@ -1,6 +1,8 @@
 @php
+    use Filament\Notifications\Livewire\Notifications;
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\VerticalAlignment;
+    use Illuminate\Support\Arr;
 
     $color = $getColor() ?? 'gray';
     $isInline = $isInline();
@@ -15,9 +17,9 @@
 <x-filament-notifications::notification
     :notification="$notification"
     :x-transition:enter-start="
-        \Illuminate\Support\Arr::toCssClasses([
+        Arr::toCssClasses([
             'opacity-0',
-            ($this instanceof \Filament\Notifications\Livewire\Notifications)
+            ($this instanceof Notifications)
             ? match (static::$alignment) {
                 Alignment::Start, Alignment::Left => '-translate-x-12',
                 Alignment::End, Alignment::Right => 'translate-x-12',
@@ -32,7 +34,7 @@
         ])
     "
     :x-transition:leave-end="
-        \Illuminate\Support\Arr::toCssClasses([
+        Arr::toCssClasses([
             'opacity-0',
             'scale-95' => ! $isInline,
         ])
