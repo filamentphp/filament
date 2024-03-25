@@ -8,7 +8,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 Similar to [tabs](tabs), you may want to use a multistep form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
 
 ```php
-use Filament\Forms\Components\Wizard;
+use Filament\Schema\Components\Wizard;
 
 Wizard::make([
     Wizard\Step::make('Order')
@@ -35,8 +35,7 @@ Wizard::make([
 You may use the `submitAction()` method to render submit button HTML or a view at the end of the wizard, on the last step. This provides a clearer UX than displaying a submit button below the wizard at all times:
 
 ```php
-use Filament\Forms\Components\Wizard;
-use Illuminate\Support\HtmlString;
+use Filament\Schema\Components\Wizard;use Illuminate\Support\HtmlString;
 
 Wizard::make([
     // ...
@@ -50,9 +49,7 @@ Wizard::make([
 Alternatively, you can use the built-in Filament button Blade component:
 
 ```php
-use Filament\Forms\Components\Wizard;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\HtmlString;
+use Filament\Schema\Components\Wizard;use Illuminate\Support\Facades\Blade;use Illuminate\Support\HtmlString;
 
 Wizard::make([
     // ...
@@ -73,7 +70,7 @@ You could use this component in a separate Blade view if you want.
 Steps may also have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), set using the `icon()` method:
 
 ```php
-use Filament\Forms\Components\Wizard;
+use Filament\Schema\Components\Wizard;
 
 Wizard\Step::make('Order')
     ->icon('heroicon-m-shopping-bag')
@@ -89,7 +86,7 @@ Wizard\Step::make('Order')
 You may add a short description after the title of each step using the `description()` method:
 
 ```php
-use Filament\Forms\Components\Wizard;
+use Filament\Schema\Components\Wizard;
 
 Wizard\Step::make('Order')
     ->description('Review your basket')
@@ -105,7 +102,7 @@ Wizard\Step::make('Order')
 You may use the `startOnStep()` method to load a specific step in the wizard:
 
 ```php
-use Filament\Forms\Components\Wizard;
+use Filament\Schema\Components\Wizard;
 
 Wizard::make([
     // ...
@@ -117,7 +114,7 @@ Wizard::make([
 If you'd like to allow free navigation, so all steps are skippable, use the `skippable()` method:
 
 ```php
-use Filament\Forms\Components\Wizard;
+use Filament\Schema\Components\Wizard;
 
 Wizard::make([
     // ...
@@ -129,7 +126,7 @@ Wizard::make([
 By default, the current step is not persisted in the URL's query string. You can change this behavior using the `persistStepInQueryString()` method:
 
 ```php
-use Filament\Forms\Components\Wizard;
+use Filament\Schema\Components\Wizard;
 
 Wizard::make([
     // ...
@@ -139,7 +136,7 @@ Wizard::make([
 By default, the current step is persisted in the URL's query string using the `step` key. You can change this key by passing it to the `persistStepInQueryString()` method:
 
 ```php
-use Filament\Forms\Components\Wizard;
+use Filament\Schema\Components\Wizard;
 
 Wizard::make([
     // ...
@@ -151,7 +148,7 @@ Wizard::make([
 You may use the `afterValidation()` and `beforeValidation()` methods to run code before and after validation occurs on the step:
 
 ```php
-use Filament\Forms\Components\Wizard;
+use Filament\Schema\Components\Wizard;
 
 Wizard\Step::make('Order')
     ->afterValidation(function () {
@@ -170,8 +167,7 @@ Wizard\Step::make('Order')
 Inside `afterValidation()` or `beforeValidation()`, you may throw `Filament\Support\Exceptions\Halt`, which will prevent the wizard from loading the next step:
 
 ```php
-use Filament\Forms\Components\Wizard;
-use Filament\Support\Exceptions\Halt;
+use Filament\Schema\Components\Wizard;use Filament\Support\Exceptions\Halt;
 
 Wizard\Step::make('Order')
     ->afterValidation(function () {
@@ -191,7 +187,7 @@ Wizard\Step::make('Order')
 You may use the `columns()` method to customize the [grid](grid) within the step:
 
 ```php
-use Filament\Forms\Components\Wizard;
+use Filament\Schema\Components\Wizard;
 
 Wizard::make([
     Wizard\Step::make('Order')
@@ -213,7 +209,7 @@ This component uses action objects for easy customization of buttons within it. 
 Here is an example of how you might customize an action:
 
 ```php
-use Filament\Actions\Action;use Filament\Forms\Components\Wizard;
+use Filament\Actions\Action;use Filament\Schema\Components\Wizard;
 
 Wizard::make([
     // ...

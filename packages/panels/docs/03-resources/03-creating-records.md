@@ -216,10 +216,7 @@ class CreateCategory extends CreateRecord
 Inside the `getSteps()` array, return your [wizard steps](../../forms/layout/wizard):
 
 ```php
-use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Components\MarkdownEditor;use Filament\Forms\Components\TextInput;use Filament\Forms\Components\Toggle;use Filament\Schema\Components\Wizard\Step;
 
 protected function getSteps(): array
 {

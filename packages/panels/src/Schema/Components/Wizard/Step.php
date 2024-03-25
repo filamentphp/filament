@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Components\Wizard;
+namespace Filament\Schema\Components\Wizard;
 
 use Closure;
 use Filament\Schema\Components\Component;
@@ -20,7 +20,7 @@ class Step extends Component implements CanConcealComponents
     /**
      * @var view-string
      */
-    protected string $view = 'filament-forms::components.wizard.step';
+    protected string $view = 'filament-schema::components.wizard.step';
 
     final public function __construct(string $label)
     {

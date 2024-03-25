@@ -1,11 +1,10 @@
 <?php
 
-namespace Filament\Forms\Components;
+namespace Filament\Schema\Components;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Wizard\Step;
 use Filament\Support\Concerns;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Exceptions\Halt;
@@ -34,7 +33,7 @@ class Wizard extends Component
     /**
      * @var view-string
      */
-    protected string $view = 'filament-forms::components.wizard';
+    protected string $view = 'filament-schema::components.wizard';
 
     /**
      * @param  array<Step> | Closure  $steps
@@ -99,7 +98,7 @@ class Wizard extends Component
     public function getNextAction(): Action
     {
         $action = Action::make($this->getNextActionName())
-            ->label(__('filament-forms::components.wizard.actions.next_step.label'))
+            ->label(__('filament-schema::components.wizard.actions.next_step.label'))
             ->iconPosition(IconPosition::After)
             ->livewireClickHandlerEnabled(false)
             ->livewireTarget('dispatchFormEvent')
@@ -129,7 +128,7 @@ class Wizard extends Component
     public function getPreviousAction(): Action
     {
         $action = Action::make($this->getPreviousActionName())
-            ->label(__('filament-forms::components.wizard.actions.previous_step.label'))
+            ->label(__('filament-schema::components.wizard.actions.previous_step.label'))
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->button();
