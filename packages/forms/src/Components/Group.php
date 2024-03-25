@@ -4,11 +4,12 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
 
 class Group extends Component implements CanEntangleWithSingularRelationships
 {
-    use \Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship;
+    use EntanglesStateWithSingularRelationship;
 
     /**
      * @var view-string

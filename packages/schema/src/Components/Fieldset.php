@@ -3,12 +3,13 @@
 namespace Filament\Schema\Components;
 
 use Closure;
+use Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
 use Illuminate\Contracts\Support\Htmlable;
 
 class Fieldset extends Component implements CanEntangleWithSingularRelationships
 {
-    use \Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship;
+    use EntanglesStateWithSingularRelationship;
 
     /**
      * @var view-string
