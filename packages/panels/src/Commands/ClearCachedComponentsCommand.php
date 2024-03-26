@@ -4,7 +4,9 @@ namespace Filament\Commands;
 
 use Filament\Facades\Filament;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'filament:clear-cached-components')]
 class ClearCachedComponentsCommand extends Command
 {
     protected $description = 'Cache all components';

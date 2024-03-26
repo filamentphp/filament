@@ -11,11 +11,14 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+use Symfony\Component\Console\Attribute\AsCommand;
+
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
+#[AsCommand(name: 'filament:make:filament-page')]
 class MakePageCommand extends Command
 {
     use CanIndentStrings;

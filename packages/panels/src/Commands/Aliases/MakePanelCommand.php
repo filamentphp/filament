@@ -3,7 +3,9 @@
 namespace Filament\Commands\Aliases;
 
 use Filament\Commands;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'filament:panel')]
 class MakePanelCommand extends Commands\MakePanelCommand
 {
     protected $hidden = true;

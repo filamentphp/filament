@@ -9,8 +9,11 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+use Symfony\Component\Console\Attribute\AsCommand;
+
 use function Laravel\Prompts\select;
 
+#[AsCommand(name: 'filament:make:filament-theme')]
 class MakeThemeCommand extends Command
 {
     use CanManipulateFiles;

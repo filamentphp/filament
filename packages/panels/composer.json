@@ -27,7 +27,8 @@
         "illuminate/session": "^10.45|^11.0",
         "illuminate/support": "^10.45|^11.0",
         "illuminate/view": "^10.45|^11.0",
-        "spatie/laravel-package-tools": "^1.9"
+        "spatie/laravel-package-tools": "^1.9",
+        "symfony/console": "^6.0|^7.0"
     },
     "autoload": {
         "files": [
