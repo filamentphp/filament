@@ -7,24 +7,19 @@ use Exception;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Concerns\InteractsWithSchemas;
 use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
-use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Renderless;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 trait InteractsWithForms
 {
     use HasFormComponentActions;
+    use InteractsWithSchemas;
     use ResolvesDynamicLivewireProperties;
     use WithFileUploads;
-
-    /**
-     * @var array <string, TemporaryUploadedFile | null>
-     */
-    public array $componentFileAttachments = [];
 
     /**
      * @var array<string, Form>
@@ -37,21 +32,11 @@ trait InteractsWithForms
 
     protected bool $hasFormsModalRendered = false;
 
-    /**
-     * @var array<string, mixed>
-     */
-    protected array $oldFormState = [];
-
     public function dispatchFormEvent(mixed ...$args): void
     {
         foreach ($this->getCachedForms() as $form) {
             $form->dispatchEvent(...$args);
         }
-    }
-
-    public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
-    {
-        return data_get($this->componentFileAttachments, $statePath);
     }
 
     #[Renderless]
@@ -216,40 +201,11 @@ trait InteractsWithForms
         return $attributes;
     }
 
-    /**
-     * @return class-string<TranslatableContentDriver> | null
-     */
-    public function getFilamentTranslatableContentDriver(): ?string
-    {
-        return null;
-    }
-
-    public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver
-    {
-        $driver = $this->getFilamentTranslatableContentDriver();
-
-        if (! $driver) {
-            return null;
-        }
-
-        return app($driver, ['activeLocale' => $this->getActiveFormsLocale() ?? app()->getLocale()]);
-    }
-
-    public function getActiveFormsLocale(): ?string
-    {
-        return null;
-    }
-
     public function updatingInteractsWithForms(string $statePath): void
     {
         $statePath = (string) str($statePath)->before('.');
 
         $this->oldFormState[$statePath] = data_get($this, $statePath);
-    }
-
-    public function getOldFormState(string $statePath): mixed
-    {
-        return data_get($this->oldFormState, $statePath);
     }
 
     public function updatedInteractsWithForms(string $statePath): void
