@@ -3,13 +3,13 @@
 namespace Filament\Infolists\Concerns;
 
 use Exception;
+use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Component;
 use Filament\Infolists\Infolist;
+use Filament\Schema\Components\Component;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Contracts\HasTable;

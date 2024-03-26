@@ -2,7 +2,7 @@
 
 namespace Filament\Infolists\Components\Tabs;
 
-use Filament\Infolists\Components\Component;
+use Filament\Schema\Components\Component;
 use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasIcon;
 use Illuminate\Support\Str;

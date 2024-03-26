@@ -2,6 +2,8 @@
 
 namespace Filament\Infolists\Components;
 
+use Filament\Schema\Components\Component;
+
 class Grid extends Component
 {
     use Concerns\EntanglesStateWithSingularRelationship;

@@ -3,6 +3,7 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
+use Filament\Schema\Components\Component;
 
 class Livewire extends Component
 {

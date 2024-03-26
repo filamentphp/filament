@@ -2,6 +2,8 @@
 
 namespace Filament\Infolists\Components;
 
+use Filament\Schema\Components\Component;
+
 class Fieldset extends Component
 {
     use Concerns\EntanglesStateWithSingularRelationship;

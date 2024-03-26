@@ -3,6 +3,7 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
+use Filament\Schema\Components\Component;
 
 class Group extends Component
 {

@@ -3,7 +3,7 @@
 namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
-use Filament\Infolists\Components\Component;
+use Filament\Schema\Components\Component;
 use Filament\Support\Contracts\HasColor as ColorInterface;
 
 trait HasColor

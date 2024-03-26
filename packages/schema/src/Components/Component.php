@@ -13,6 +13,7 @@ use Filament\Schema\Components\Concerns\Cloneable;
 use Filament\Schema\Components\Concerns\HasActions;
 use Filament\Schema\Components\Concerns\HasChildComponents;
 use Filament\Schema\Components\Concerns\HasColumns;
+use Filament\Schema\Components\Concerns\HasEntryWrapper;
 use Filament\Schema\Components\Concerns\HasFieldWrapper;
 use Filament\Schema\Components\Concerns\HasId;
 use Filament\Schema\Components\Concerns\HasInlineLabel;
@@ -42,6 +43,7 @@ class Component extends ViewComponent
     use HasActions;
     use HasChildComponents;
     use HasColumns;
+    use HasEntryWrapper;
     use HasExtraAttributes;
     use HasFieldWrapper;
     use HasId;

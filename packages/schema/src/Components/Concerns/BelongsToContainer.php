@@ -3,6 +3,7 @@
 namespace Filament\Schema\Components\Concerns;
 
 use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Infolist;
 use Filament\Schema\ComponentContainer;
 
 trait BelongsToContainer
@@ -19,6 +20,11 @@ trait BelongsToContainer
     public function getContainer(): ComponentContainer
     {
         return $this->container;
+    }
+
+    public function getInfolist(): Infolist
+    {
+        return $this->getContainer()->getInfolist();
     }
 
     public function getLivewire(): HasForms

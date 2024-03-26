@@ -5,7 +5,7 @@ namespace Filament\Forms\Components;
 use Exception;
 use Filament\Schema\Components\Component;
 
-class Field extends Component implements Contracts\HasHintActions, Contracts\HasValidationRules
+class Field extends Component implements \Filament\Schema\Components\Contracts\HasHintActions, Contracts\HasValidationRules
 {
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeMarkedAsRequired;

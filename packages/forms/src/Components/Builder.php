@@ -18,7 +18,7 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Builder extends Field implements CanConcealComponents, Contracts\HasExtraItemActions
+class Builder extends Field implements \Filament\Schema\Components\Contracts\HasExtraItemActions, CanConcealComponents
 {
     use CanBeCollapsed;
     use Concerns\CanBeCloned;

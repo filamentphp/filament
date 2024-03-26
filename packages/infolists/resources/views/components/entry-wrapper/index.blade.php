@@ -48,7 +48,7 @@
 
     $hintActions = array_filter(
         $hintActions ?? [],
-        fn (\Filament\Infolists\Components\Actions\Action $hintAction): bool => $hintAction->isVisible(),
+        fn (\Filament\Actions\Action $hintAction): bool => $hintAction->isVisible(),
     );
 @endphp
 

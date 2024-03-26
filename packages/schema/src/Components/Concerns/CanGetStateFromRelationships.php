@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Infolists\Components\Concerns;
+namespace Filament\Schema\Components\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -8,12 +8,12 @@ use Illuminate\Support\Collection;
 
 trait CanGetStateFromRelationships
 {
-    public function hasRelationship(Model $record): bool
+    public function hasStateRelationship(Model $record): bool
     {
-        return $this->getRelationship($record) !== null;
+        return $this->getStateRelationship($record) !== null;
     }
 
-    public function getRelationship(Model $record, ?string $statePath = null): ?Relation
+    public function getStateRelationship(Model $record, ?string $statePath = null): ?Relation
     {
         if (blank($statePath) && (! str($this->getStatePath())->contains('.'))) {
             return null;
@@ -21,7 +21,7 @@ trait CanGetStateFromRelationships
 
         $relationship = null;
 
-        foreach (explode('.', $statePath ?? $this->getRelationshipName()) as $nestedRelationshipName) {
+        foreach (explode('.', $statePath ?? $this->getStateRelationshipName()) as $nestedRelationshipName) {
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -39,11 +39,11 @@ trait CanGetStateFromRelationships
      * @param  array<string> | null  $relationships
      * @return array<Model>
      */
-    public function getRelationshipResults(Model $record, ?array $relationships = null): array
+    public function getStateRelationshipResults(Model $record, ?array $relationships = null): array
     {
         $results = [];
 
-        $relationships ??= explode('.', $this->getRelationshipName());
+        $relationships ??= explode('.', $this->getStateRelationshipName());
 
         while (count($relationships)) {
             $currentRelationshipName = array_shift($relationships);
@@ -63,7 +63,7 @@ trait CanGetStateFromRelationships
                 foreach ($currentRelationshipValue as $valueRecord) {
                     $results = [
                         ...$results,
-                        ...$this->getRelationshipResults(
+                        ...$this->getStateRelationshipResults(
                             $valueRecord,
                             $relationships,
                         ),
@@ -89,7 +89,7 @@ trait CanGetStateFromRelationships
         return $results;
     }
 
-    public function getRelationshipAttribute(?string $statePath = null): string
+    public function getStateRelationshipAttribute(?string $statePath = null): string
     {
         $statePath ??= $this->getStatePath();
 
@@ -100,7 +100,7 @@ trait CanGetStateFromRelationships
         return (string) str($statePath)->afterLast('.');
     }
 
-    public function getRelationshipName(?string $statePath = null): ?string
+    public function getStateRelationshipName(?string $statePath = null): ?string
     {
         $statePath ??= $this->getStatePath();
 

@@ -37,7 +37,7 @@ php artisan make:infolist-layout Box
 This will create the following layout component class:
 
 ```php
-use Filament\Infolists\Components\Component;
+use Filament\Schema\Components\Component;
 
 class Box extends Component
 {

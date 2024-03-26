@@ -7,7 +7,9 @@ use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Utilities\Get;
 use Filament\Schema\Components\Utilities\Set;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 
@@ -15,6 +17,8 @@ use function Livewire\store;
 
 trait HasState
 {
+    use CanGetStateFromRelationships;
+
     protected ?Closure $afterStateHydrated = null;
 
     /**
@@ -51,6 +55,14 @@ trait HasState
      * @var array<string>
      */
     protected array $cachedStripCharacters;
+
+    protected mixed $getConstantStateUsing = null;
+
+    protected bool $hasConstantState = false;
+
+    protected string | Closure | null $separator = null;
+
+    protected bool | Closure $isDistinctList = false;
 
     public function afterStateHydrated(?Closure $callback): static
     {
@@ -373,21 +385,6 @@ trait HasState
         return $this->evaluate($this->defaultState);
     }
 
-    public function getState(): mixed
-    {
-        $state = data_get($this->getLivewire(), $this->getStatePath());
-
-        if (is_array($state)) {
-            return $state;
-        }
-
-        if (blank($state)) {
-            return null;
-        }
-
-        return $state;
-    }
-
     public function getOldState(): mixed
     {
         if (! Livewire::isLivewireRequest()) {
@@ -529,5 +526,119 @@ trait HasState
     public function getStripCharacters(): array
     {
         return $this->cachedStripCharacters ??= Arr::wrap($this->evaluate($this->stripCharacters));
+    }
+
+    public function getConstantStateUsing(mixed $callback): static
+    {
+        $this->getConstantStateUsing = $callback;
+        $this->hasConstantState = true;
+
+        return $this;
+    }
+
+    public function constantState(mixed $state): static
+    {
+        $this->getConstantStateUsing($state);
+
+        return $this;
+    }
+
+    public function distinctList(bool | Closure $condition = true): static
+    {
+        $this->isDistinctList = $condition;
+
+        return $this;
+    }
+
+    public function isDistinctList(): bool
+    {
+        return (bool) $this->evaluate($this->isDistinctList);
+    }
+
+    public function getState(): mixed
+    {
+        $state = data_get($this->getLivewire(), $this->getStatePath());
+
+        if (is_array($state)) {
+            return $state;
+        }
+
+        if (blank($state)) {
+            return null;
+        }
+
+        return $state;
+    }
+
+    public function getConstantState(): mixed
+    {
+        if ($this->hasConstantState) {
+            $state = $this->evaluate($this->getConstantStateUsing);
+        } else {
+            $containerState = $this->getContainer()->getConstantState();
+
+            $state = $containerState instanceof Model ?
+                $this->getConstantStateFromRecord($containerState) :
+                data_get($containerState, $this->getStatePath());
+        }
+
+        if (is_string($state) && ($separator = $this->getSeparator())) {
+            $state = explode($separator, $state);
+            $state = (count($state) === 1 && blank($state[0])) ?
+                [] :
+                $state;
+        }
+
+        if (blank($state)) {
+            $state = $this->getDefaultState();
+        }
+
+        return $state;
+    }
+
+    public function separator(string | Closure | null $separator = ','): static
+    {
+        $this->separator = $separator;
+
+        return $this;
+    }
+
+    public function getSeparator(): ?string
+    {
+        return $this->evaluate($this->separator);
+    }
+
+    public function getConstantStateFromRecord(Model $record): mixed
+    {
+        $state = data_get($record, $this->getStatePath());
+
+        if ($state !== null) {
+            return $state;
+        }
+
+        if (! $this->hasStateRelationship($record)) {
+            return null;
+        }
+
+        $relationship = $this->getStateRelationship($record);
+
+        if (! $relationship) {
+            return null;
+        }
+
+        $relationshipAttribute = $this->getStateRelationshipAttribute();
+
+        $state = collect($this->getStateRelationshipResults($record))
+            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->attributesToArray()))
+            ->pluck($relationshipAttribute)
+            ->filter(fn ($state): bool => filled($state))
+            ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
+            ->values();
+
+        if (! $state->count()) {
+            return null;
+        }
+
+        return $state->all();
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Infolists\Components\Contracts;
+namespace Filament\Schema\Components\Contracts;
 
-use Filament\Infolists\Components\Actions\Action;
+use Filament\Actions\Action;
 
 interface HasHintActions
 {

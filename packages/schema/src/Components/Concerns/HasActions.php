@@ -4,11 +4,11 @@ namespace Filament\Schema\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Contracts\HasAffixActions;
-use Filament\Forms\Components\Contracts\HasExtraItemActions;
-use Filament\Forms\Components\Contracts\HasHintActions;
+use Filament\Schema\Components\Contracts\HasAffixActions;
+use Filament\Schema\Components\Contracts\HasExtraItemActions;
 use Filament\Schema\Components\Contracts\HasFooterActions;
 use Filament\Schema\Components\Contracts\HasHeaderActions;
+use Filament\Schema\Components\Contracts\HasHintActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
@@ -26,6 +26,8 @@ trait HasActions
 
     protected Model | string | null $actionFormModel = null;
 
+    protected ?Action $action = null;
+
     /**
      * @param  array<Action | Closure>  $actions
      */
@@ -39,9 +41,60 @@ trait HasActions
         return $this;
     }
 
-    public function getAction(string $name): ?Action
+    public function action(?Action $action): static
     {
-        return $this->getActions()[$name] ?? null;
+        $this->action = $action;
+
+        if ($action) {
+            $this->registerActions([$action]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  string | array<string> | null  $name
+     */
+    public function getAction(string | array | null $name = null): ?Action
+    {
+        $actions = $this->cacheActions();
+
+        if (blank($name)) {
+            return $this->action;
+        }
+
+        if (is_string($name) && str($name)->contains('.')) {
+            $name = explode('.', $name);
+        }
+
+        if (is_array($name)) {
+            $firstName = array_shift($name);
+            $modalActionNames = $name;
+
+            $name = $firstName;
+        }
+
+        $action = $actions[$name] ?? null;
+
+        if (! $action) {
+            return null;
+        }
+
+        foreach ($modalActionNames ?? [] as $modalActionName) {
+            $action = $action->getMountableModalAction($modalActionName);
+
+            if (! $action) {
+                return null;
+            }
+
+            $name = $modalActionName;
+        }
+
+        if (! $action instanceof Action) {
+            return null;
+        }
+
+        return $action;
     }
 
     /**

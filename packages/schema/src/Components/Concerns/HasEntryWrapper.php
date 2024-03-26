@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Infolists\Components\Concerns;
+namespace Filament\Schema\Components\Concerns;
 
 use Closure;
 

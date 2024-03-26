@@ -32,7 +32,7 @@ use Znck\Eloquent\Relations\BelongsToThrough;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
-class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
+class Select extends Field implements \Filament\Schema\Components\Contracts\HasAffixActions, Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBeNative;

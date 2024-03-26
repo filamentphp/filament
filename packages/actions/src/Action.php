@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Exception;
+use Filament\Infolists\Components\Actions\ActionContainer as InfolistActionContainer;
 use Filament\Schema\Components\Actions\ActionContainer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
@@ -122,6 +123,15 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
     public function toFormComponent(): ActionContainer
     {
         $component = ActionContainer::make($this);
+
+        $this->component($component);
+
+        return $component;
+    }
+
+    public function toInfolistComponent(): InfolistActionContainer
+    {
+        $component = InfolistActionContainer::make($this);
 
         $this->component($component);
 

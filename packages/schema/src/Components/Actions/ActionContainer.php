@@ -9,12 +9,9 @@ class ActionContainer extends Component
 {
     protected string $view = 'filament-schema::components.actions.action-container';
 
-    protected Action $action;
-
     final public function __construct(Action $action)
     {
-        $this->action = $action;
-        $this->registerActions([$action]);
+        $this->action($action);
     }
 
     public static function make(Action $action): static
@@ -27,7 +24,7 @@ class ActionContainer extends Component
 
     public function getKey(): string
     {
-        return parent::getKey() ?? "{$this->getStatePath()}.{$this->action->getName()}Action";
+        return parent::getKey() ?? "{$this->getStatePath()}.{$this->getAction()->getName()}Action";
     }
 
     public function isHidden(): bool

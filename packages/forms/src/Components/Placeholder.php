@@ -8,7 +8,7 @@ use Filament\Schema\Components\Component;
 /**
  * @deprecated Use `TextEntry` with the `state()` method instead.
  */
-class Placeholder extends Component implements Contracts\HasHintActions
+class Placeholder extends Component implements \Filament\Schema\Components\Contracts\HasHintActions
 {
     use Concerns\HasHelperText;
     use Concerns\HasHint;

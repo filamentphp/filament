@@ -3,7 +3,7 @@
 namespace Filament\Infolists\Testing;
 
 use Closure;
-use Filament\Infolists\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Infolists\Contracts\HasInfolists;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;

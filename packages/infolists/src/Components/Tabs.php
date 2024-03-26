@@ -4,6 +4,7 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Infolists\Components\Tabs\Tab;
+use Filament\Schema\Components\Component;
 use Filament\Support\Concerns;
 
 class Tabs extends Component

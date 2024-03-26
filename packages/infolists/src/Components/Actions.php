@@ -3,7 +3,8 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Filament\Infolists\Components\Actions\Action;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Component;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasVerticalAlignment;
 

@@ -10,7 +10,7 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Carbon;
 use Illuminate\View\ComponentAttributeBag;
 
-class DateTimePicker extends Field implements Contracts\HasAffixActions
+class DateTimePicker extends Field implements \Filament\Schema\Components\Contracts\HasAffixActions
 {
     use Concerns\CanBeNative;
     use Concerns\CanBeReadOnly;

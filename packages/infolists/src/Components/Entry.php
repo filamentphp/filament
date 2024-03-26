@@ -3,7 +3,8 @@
 namespace Filament\Infolists\Components;
 
 use Exception;
-use Filament\Infolists\Components\Contracts\HasHintActions;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Contracts\HasHintActions;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasPlaceholder;
 use Illuminate\Contracts\Support\Htmlable;
@@ -47,6 +48,11 @@ class Entry extends Component implements HasHintActions
         return null;
     }
 
+    public function getState(): mixed
+    {
+        return $this->getConstantState();
+    }
+
     public function getId(): string
     {
         return parent::getId() ?? $this->getStatePath();
@@ -68,5 +74,12 @@ class Entry extends Component implements HasHintActions
     public function getKey(): string
     {
         return parent::getKey() ?? $this->getStatePath();
+    }
+
+    public function state(mixed $state): static
+    {
+        $this->constantState($state);
+
+        return $this;
     }
 }

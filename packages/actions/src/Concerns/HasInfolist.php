@@ -4,8 +4,8 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Actions\Contracts\HasRecord;
-use Filament\Infolists\Components\Component;
 use Filament\Infolists\Infolist;
+use Filament\Schema\Components\Component;
 
 trait HasInfolist
 {

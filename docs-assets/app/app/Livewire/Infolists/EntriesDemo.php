@@ -2,8 +2,8 @@
 
 namespace App\Livewire\Infolists;
 
+use Filament\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\IconEntry;
