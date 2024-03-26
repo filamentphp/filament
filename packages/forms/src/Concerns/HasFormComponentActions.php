@@ -6,6 +6,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Contracts\ExposesStateToActionData;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Validation\ValidationException;
@@ -62,13 +63,29 @@ trait HasFormComponentActions
         try {
             $action->beginDatabaseTransaction();
 
+            $formData = [];
+
+            if (($actionComponent = $action->getComponent()) instanceof ExposesStateToActionData) {
+                foreach ($actionComponent->getChildComponentContainers() as $actionComponentChildComponentContainer) {
+                    $formData = [
+                        ...$formData,
+                        ...$actionComponentChildComponentContainer->getState(),
+                    ];
+                }
+            }
+
             if ($this->mountedFormComponentActionHasForm(mountedAction: $action)) {
                 $action->callBeforeFormValidated();
 
-                $action->formData($form->getState());
+                $formData = [
+                    ...$formData,
+                    ...$form->getState(),
+                ];
 
                 $action->callAfterFormValidated();
             }
+
+            $action->formData($formData);
 
             $action->callBefore();
 
@@ -140,6 +157,12 @@ trait HasFormComponentActions
             $this->unmountFormComponentAction();
 
             return null;
+        }
+
+        if (($actionComponent = $action->getComponent()) instanceof ExposesStateToActionData) {
+            foreach ($actionComponent->getChildComponentContainers() as $actionComponentChildComponentContainer) {
+                $actionComponentChildComponentContainer->validate();
+            }
         }
 
         $this->cacheMountedFormComponentActionForm(mountedAction: $action);
