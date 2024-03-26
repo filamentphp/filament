@@ -30,7 +30,6 @@ class InfolistsServiceProvider extends PackageServiceProvider
     {
         $commands = [
             Commands\MakeEntryCommand::class,
-            Commands\MakeLayoutComponentCommand::class,
         ];
 
         $aliases = [];
