@@ -3,14 +3,15 @@
 namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
+use Filament\Schema\Contracts\HasSchemas;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Livewire\Component as LivewireComponent;
 
 trait EntanglesStateWithSingularRelationship
 {
@@ -35,7 +36,7 @@ trait EntanglesStateWithSingularRelationship
             $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire) use ($condition): void {
+        $this->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component, LivewireComponent & HasSchemas $livewire) use ($condition): void {
             $record = $component->getCachedExistingRecord();
 
             if (! $component->evaluate($condition)) {
@@ -73,7 +74,7 @@ trait EntanglesStateWithSingularRelationship
             $component->cachedExistingRecord($record);
         });
 
-        $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire) use ($condition): void {
+        $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, LivewireComponent & HasSchemas $livewire) use ($condition): void {
             if (! $component->evaluate($condition)) {
                 return;
             }

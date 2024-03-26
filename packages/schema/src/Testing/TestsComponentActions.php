@@ -4,16 +4,17 @@ namespace Filament\Schema\Testing;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Schema\ComponentContainer;
+use Filament\Schema\Contracts\HasSchemas;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
+use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 
 use function Livewire\store;
 
 /**
- * @method HasForms instance()
+ * @method Component&HasSchemas instance()
  *
  * @mixin Testable
  */

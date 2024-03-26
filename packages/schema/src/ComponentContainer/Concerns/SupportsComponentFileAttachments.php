@@ -9,9 +9,11 @@ trait SupportsComponentFileAttachments
 {
     public function getComponentFileAttachmentUrl(string $statePath): ?string
     {
+        $livewire = $this->getLivewire();
+
         foreach ($this->getComponents() as $component) {
             if ($component instanceof HasFileAttachments && $component instanceof Field && $component->getStatePath() === $statePath) {
-                $attachment = $this->getLivewire()->getFormComponentFileAttachment($statePath);
+                $attachment = $livewire->getFormComponentFileAttachment($statePath);
 
                 if (! $attachment) {
                     return null;

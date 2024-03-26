@@ -3,9 +3,10 @@
 namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Contracts\HasSchemas;
 use Illuminate\Support\Arr;
+use Livewire\Component as LivewireComponent;
 
 trait CanBeDisabled
 {
@@ -24,7 +25,7 @@ trait CanBeDisabled
      */
     public function disabledOn(string | array $operations): static
     {
-        $this->disabled(static function (HasForms $livewire, string $operation) use ($operations): bool {
+        $this->disabled(static function (LivewireComponent & HasSchemas $livewire, string $operation) use ($operations): bool {
             foreach (Arr::wrap($operations) as $disabledOperation) {
                 if ($disabledOperation === $operation || $livewire instanceof $disabledOperation) {
                     return true;

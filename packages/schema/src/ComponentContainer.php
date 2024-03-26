@@ -2,10 +2,11 @@
 
 namespace Filament\Schema;
 
-use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\Contracts\HasSchemas;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Component;
 
 class ComponentContainer extends ViewComponent
 {
@@ -36,12 +37,12 @@ class ComponentContainer extends ViewComponent
 
     protected string $viewIdentifier = 'container';
 
-    final public function __construct(HasForms $livewire)
+    final public function __construct(Component & HasSchemas $livewire)
     {
         $this->livewire($livewire);
     }
 
-    public static function make(HasForms $livewire): static
+    public static function make(Component & HasSchemas $livewire): static
     {
         $static = app(static::class, ['livewire' => $livewire]);
         $static->configure();

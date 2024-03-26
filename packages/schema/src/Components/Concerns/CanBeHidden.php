@@ -3,10 +3,11 @@
 namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Utilities\Get;
+use Filament\Schema\Contracts\HasSchemas;
 use Illuminate\Support\Arr;
+use Livewire\Component as LivewireComponent;
 
 trait CanBeHidden
 {
@@ -26,7 +27,7 @@ trait CanBeHidden
      */
     public function hiddenOn(string | array $operations): static
     {
-        $this->hidden(static function (HasForms $livewire, string $operation) use ($operations): bool {
+        $this->hidden(static function (LivewireComponent & HasSchemas $livewire, string $operation) use ($operations): bool {
             foreach (Arr::wrap($operations) as $hiddenOperation) {
                 if ($hiddenOperation === $operation || $livewire instanceof $hiddenOperation) {
                     return true;
@@ -106,7 +107,7 @@ trait CanBeHidden
      */
     public function visibleOn(string | array $operations): static
     {
-        $this->visible(static function (string $operation, HasForms $livewire) use ($operations): bool {
+        $this->visible(static function (LivewireComponent & HasSchemas $livewire, string $operation) use ($operations): bool {
             foreach (Arr::wrap($operations) as $visibleOperation) {
                 if ($visibleOperation === $operation || $livewire instanceof $visibleOperation) {
                     return true;

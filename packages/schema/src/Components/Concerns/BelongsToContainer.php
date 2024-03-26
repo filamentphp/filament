@@ -2,8 +2,9 @@
 
 namespace Filament\Schema\Components\Concerns;
 
-use Filament\Forms\Contracts\HasForms;
 use Filament\Schema\ComponentContainer;
+use Filament\Schema\Contracts\HasSchemas;
+use Livewire\Component;
 
 trait BelongsToContainer
 {
@@ -21,7 +22,7 @@ trait BelongsToContainer
         return $this->container;
     }
 
-    public function getLivewire(): HasForms
+    public function getLivewire(): Component & HasSchemas
     {
         return $this->getContainer()->getLivewire();
     }
