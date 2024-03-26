@@ -281,19 +281,19 @@ class Action {
     }
 
     button() {
-        this.view('filament-notifications::actions.button-action')
+        this.view('filament-actions::button-action')
 
         return this
     }
 
     grouped() {
-        this.view('filament-notifications::actions.grouped-action')
+        this.view('filament-actions::grouped-action')
 
         return this
     }
 
     link() {
-        this.view('filament-notifications::actions.link-action')
+        this.view('filament-actions::link-action')
 
         return this
     }
