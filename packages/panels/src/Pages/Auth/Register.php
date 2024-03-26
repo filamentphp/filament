@@ -20,6 +20,7 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Auth\SessionGuard;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -79,7 +80,7 @@ class Register extends SimplePage
         $user = $this->wrapInDatabaseTransaction(function () {
             $data = $this->form->getState();
 
-            return $this->getUserModel()::create($data);
+            return $this->handleRegistration($data);
         });
 
         event(new Registered($user));
@@ -91,6 +92,14 @@ class Register extends SimplePage
         session()->regenerate();
 
         return app(RegistrationResponse::class);
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function handleRegistration(array $data): Model
+    {
+        return $this->getUserModel()::create($data);
     }
 
     protected function sendEmailVerificationNotification(Model $user): void
