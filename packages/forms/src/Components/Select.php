@@ -8,6 +8,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Contracts\HasAffixActions;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Services\RelationshipJoiner;
@@ -32,7 +33,7 @@ use Znck\Eloquent\Relations\BelongsToThrough;
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
-class Select extends Field implements \Filament\Schema\Components\Contracts\HasAffixActions, Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules
+class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasNestedRecursiveValidationRules, HasAffixActions
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBeNative;

@@ -8,6 +8,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Concerns\CanBeCollapsed;
 use Filament\Schema\Components\Contracts\CanConcealComponents;
+use Filament\Schema\Components\Contracts\HasExtraItemActions;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Facades\FilamentIcon;
@@ -21,7 +22,7 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Repeater extends Field implements \Filament\Schema\Components\Contracts\HasExtraItemActions, CanConcealComponents
+class Repeater extends Field implements CanConcealComponents, HasExtraItemActions
 {
     use CanBeCollapsed;
     use Concerns\CanBeCloned;
