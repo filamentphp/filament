@@ -149,11 +149,11 @@ class TestsColumns
             $state = $column->getState();
 
             if (is_array($state)) {
-                $state = serialize($state);
+                $state = json_encode($state);
             }
 
             if (is_array($value)) {
-                $value = serialize($value);
+                $value = json_encode($value);
             }
 
             Assert::assertTrue(
@@ -184,11 +184,11 @@ class TestsColumns
             $state = $column->getState();
 
             if (is_array($state)) {
-                $state = serialize($state);
+                $state = json_encode($state);
             }
 
             if (is_array($value)) {
-                $value = serialize($value);
+                $value = json_encode($value);
             }
 
             Assert::assertFalse(
