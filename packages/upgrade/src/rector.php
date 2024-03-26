@@ -70,6 +70,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Concerns\\SupportsFileUploadFields' => 'Filament\\Schema\\ComponentContainer\\Concerns\\SupportsFileUploadFields',
             'Filament\\Forms\\Concerns\\SupportsSelectFields' => 'Filament\\Schema\\ComponentContainer\\Concerns\\SupportsSelectFields',
             'Filament\\Forms\\Concerns\\HasColumns' => 'Filament\\Schema\\Components\\Concerns\\HasColumns',
+            'Filament\\Infolists\\Concerns\\HasColumns' => 'Filament\\Schema\\Components\\Concerns\\HasColumns',
             'Filament\\Forms\\Concerns\\HasStateBindingModifiers' => 'Filament\\Schema\\Components\\Concerns\\HasStateBindingModifiers',
             'Filament\\Forms\\Get' => 'Filament\\Schema\\Components\\Utilities\\Get',
             'Filament\\Forms\\Set' => 'Filament\\Schema\\Components\\Utilities\\Set',
