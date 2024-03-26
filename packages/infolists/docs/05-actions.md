@@ -144,7 +144,7 @@ Now, to render the action in the view of the custom component, you need to call 
 You may use an `Actions` component to render a set of actions anywhere in the form, avoiding the need to register them to any particular component:
 
 ```php
-use App\Actions\ResetStars;use App\Actions\Star;use Filament\Actions\Action;use Filament\Infolists\Components\Actions;
+use App\Actions\ResetStars;use App\Actions\Star;use Filament\Actions\Action;use Filament\Schema\Components\Actions;
 
 Actions::make([
     Action::make('star')
@@ -170,7 +170,7 @@ Actions::make([
 You can stretch the independent infolist actions to consume the full width of the infolist using `fullWidth()`:
 
 ```php
-use Filament\Infolists\Components\Actions;
+use Filament\Schema\Components\Actions;
 
 Actions::make([
     // ...
@@ -184,8 +184,7 @@ Actions::make([
 Independent infolist actions are aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `alignment()`:
 
 ```php
-use Filament\Infolists\Components\Actions;
-use Filament\Support\Enums\Alignment;
+use Filament\Schema\Components\Actions;use Filament\Support\Enums\Alignment;
 
 Actions::make([
     // ...
@@ -199,8 +198,7 @@ Actions::make([
 Independent infolist actions are vertically aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `verticalAlignment()`:
 
 ```php
-use Filament\Infolists\Components\Actions;
-use Filament\Support\Enums\VerticalAlignment;
+use Filament\Schema\Components\Actions;use Filament\Support\Enums\VerticalAlignment;
 
 Actions::make([
     // ...

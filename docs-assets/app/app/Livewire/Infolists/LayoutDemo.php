@@ -5,19 +5,19 @@ namespace App\Livewire\Infolists;
 use Filament\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\Actions;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\Grid;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Split;
-use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
+use Filament\Schema\Components\Actions;
+use Filament\Schema\Components\Fieldset;
+use Filament\Schema\Components\Grid;
+use Filament\Schema\Components\Group;
+use Filament\Schema\Components\Section;
+use Filament\Schema\Components\Split;
+use Filament\Schema\Components\Tabs;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
@@ -58,7 +58,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                     ->schema([
                         Tabs::make('Tabs')
                             ->schema([
-                                Tabs\Tab::make('Rate Limiting')
+                                \Filament\Schema\Components\Tabs\Tab::make('Rate Limiting')
                                     ->schema([
                                         TextEntry::make('hits')
                                             ->state(30),
@@ -71,8 +71,8 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                             ->columnSpanFull(),
                                     ])
                                     ->columns(3),
-                                Tabs\Tab::make('Proxy'),
-                                Tabs\Tab::make('Meta'),
+                                \Filament\Schema\Components\Tabs\Tab::make('Proxy'),
+                                \Filament\Schema\Components\Tabs\Tab::make('Meta'),
                             ]),
                     ]),
                 Group::make()
@@ -83,7 +83,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                     ->schema([
                         Tabs::make('Tabs')
                             ->schema([
-                                Tabs\Tab::make('Notifications')
+                                \Filament\Schema\Components\Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
                                     ->schema([
                                         IconEntry::make('enabled')
@@ -96,9 +96,9 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                             ->columnSpanFull(),
                                     ])
                                     ->columns(2),
-                                Tabs\Tab::make('Security')
+                                \Filament\Schema\Components\Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed'),
-                                Tabs\Tab::make('Meta')
+                                \Filament\Schema\Components\Tabs\Tab::make('Meta')
                                     ->icon('heroicon-m-bars-3-center-left'),
                             ]),
                     ]),
@@ -110,7 +110,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                     ->schema([
                         Tabs::make('Tabs')
                             ->schema([
-                                Tabs\Tab::make('Notifications')
+                                \Filament\Schema\Components\Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
                                     ->iconPosition(IconPosition::After)
                                     ->schema([
@@ -124,10 +124,10 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                             ->columnSpanFull(),
                                     ])
                                     ->columns(2),
-                                Tabs\Tab::make('Security')
+                                \Filament\Schema\Components\Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed')
                                     ->iconPosition(IconPosition::After),
-                                Tabs\Tab::make('Meta')
+                                \Filament\Schema\Components\Tabs\Tab::make('Meta')
                                     ->icon('heroicon-m-bars-3-center-left')
                                     ->iconPosition(IconPosition::After),
                             ]),
@@ -140,7 +140,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                     ->schema([
                         Tabs::make('Tabs')
                             ->schema([
-                                Tabs\Tab::make('Notifications')
+                                \Filament\Schema\Components\Tabs\Tab::make('Notifications')
                                     ->badge(5)
                                     ->schema([
                                         IconEntry::make('enabled')
@@ -153,8 +153,8 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                             ->columnSpanFull(),
                                     ])
                                     ->columns(2),
-                                Tabs\Tab::make('Security'),
-                                Tabs\Tab::make('Meta'),
+                                \Filament\Schema\Components\Tabs\Tab::make('Security'),
+                                \Filament\Schema\Components\Tabs\Tab::make('Meta'),
                             ]),
                     ]),
                 Group::make()

@@ -3,8 +3,8 @@
 namespace Filament\Actions;
 
 use Exception;
-use Filament\Infolists\Components\Actions\ActionContainer as InfolistActionContainer;
 use Filament\Schema\Components\Actions\ActionContainer;
+use Filament\Schema\Components\Actions\ActionContainer as InfolistActionContainer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 
