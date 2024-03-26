@@ -181,6 +181,10 @@ trait HasState
      */
     public function dehydrateState(array &$state, bool $isDehydrated = true): void
     {
+        if ($this instanceof Entry) {
+            return;
+        }
+
         if (! ($isDehydrated && $this->isDehydrated())) {
             if ($this->hasStatePath()) {
                 Arr::forget($state, $this->getStatePath());
