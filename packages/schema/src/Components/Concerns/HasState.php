@@ -3,6 +3,7 @@
 namespace Filament\Schema\Components\Concerns;
 
 use Closure;
+use Filament\Infolists\Components\Entry;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Utilities\Get;
 use Filament\Schema\Components\Utilities\Set;
@@ -283,7 +284,10 @@ trait HasState
 
     public function fillStateWithNull(): void
     {
-        if (! Arr::has((array) $this->getLivewire(), $this->getStatePath())) {
+        if (
+            (! Arr::has((array) $this->getLivewire(), $this->getStatePath())) &&
+            (! $this instanceof Entry)
+        ) {
             $this->state(null);
         }
 
