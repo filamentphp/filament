@@ -51,7 +51,7 @@
             let index = this.getSteps().findIndex((indexedStep) => indexedStep === step)
             
             if (index === -1) {
-                index = this.getSteps()[0]
+                return 0
             }
             
             return index
