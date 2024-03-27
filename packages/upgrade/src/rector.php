@@ -18,7 +18,6 @@ return static function (RectorConfig $rectorConfig): void {
         RenameClassRector::class,
         // @todo Alphabetical
         [
-            'Filament\\Forms\\Commands\\Aliases\\MakeLayoutComponentCommand' => 'Filament\\Schema\\Commands\\Aliases\\MakeLayoutComponentCommand',
             'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schema\\Commands\\MakeLayoutComponentCommand',
             'Filament\\Forms\\Testing\\TestsComponentActions' => 'Filament\\Schema\\Testing\\TestsComponentActions',
             'Filament\\Pages\\Actions\\Action' => 'Filament\\Actions\\Action',
@@ -152,7 +151,6 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Forms\\Components\\Contracts\\HasAffixActions' => 'Filament\\Schema\\Components\\Contracts\\HasAffixActions',
             'Filament\\Forms\\Components\\Contracts\\HasHintActions' => 'Filament\\Schema\\Components\\Contracts\\HasHintActions',
             'Filament\\Forms\\Components\\Contracts\\HasExtraItemActions' => 'Filament\\Schema\\Components\\Contracts\\HasExtraItemActions',
-            'Filament\\Infolists\\Commands\\Aliases\\MakeLayoutComponentCommand' => 'Filament\\Schema\\Commands\\Aliases\\MakeLayoutComponentCommand',
             'Filament\\Infolists\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schema\\Commands\\MakeLayoutComponentCommand',
             'Filament\\Infolists\\Components\\Actions' => 'Filament\\Schema\\Components\\Actions',
             'Filament\\Infolists\\Components\\Actions\\ActionContainer' => 'Filament\\Schema\\Components\\Actions\\ActionContainer',
