@@ -49,6 +49,7 @@
 
         getStepIndex: function (step) {
             let index = this.getSteps().findIndex((indexedStep) => indexedStep === step)
+            
             if (index === -1) {
                 index = this.getSteps()[0]
             }
