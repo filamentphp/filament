@@ -13,23 +13,23 @@ Since the Table Builder works on Livewire components, you can use the [Livewire 
 To ensure a table component renders, use the `assertSuccessful()` Livewire helper:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can render page', function () {
-    livewire(ListPosts::class)->assertSuccessful();
+    Livewire::test(ListPosts::class)->assertSuccessful();
 });
 ```
 
 To test which records are shown, you can use `assertCanSeeTableRecords()`, `assertCanNotSeeTableRecords()` and `assertCountTableRecords()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('cannot display trashed posts by default', function () {
     $posts = Post::factory()->count(4)->create();
     $trashedPosts = Post::factory()->trashed()->count(6)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts)
         ->assertCanNotSeeTableRecords($trashedPosts)
         ->assertCountTableRecords(4);
@@ -45,12 +45,12 @@ it('cannot display trashed posts by default', function () {
 To ensure that a certain column is rendered, pass the column name to `assertCanRenderTableColumn()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can render post titles', function () {
     Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertCanRenderTableColumn('title');
 });
 ```
@@ -60,12 +60,12 @@ This helper will get the HTML for this column, and check that it is present in t
 For testing that a column is not rendered, you can use `assertCanNotRenderTableColumn()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can not render post comments', function () {
     Post::factory()->count(10)->create()
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertCanNotRenderTableColumn('comments');
 });
 ```
@@ -79,12 +79,12 @@ To sort table records, you can call `sortTable()`, passing the name of the colum
 Once the table is sorted, you can ensure that the table records are rendered in order using `assertCanSeeTableRecords()` with the `inOrder` parameter:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can sort posts by title', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->sortTable('title')
         ->assertCanSeeTableRecords($posts->sortBy('title'), inOrder: true)
         ->sortTable('title', 'desc')
@@ -99,14 +99,14 @@ To search the table, call the `searchTable()` method with your search query.
 You can then use `assertCanSeeTableRecords()` to check your filtered table records, and use `assertCanNotSeeTableRecords()` to assert that some records are no longer in the table:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can search posts by title', function () {
     $posts = Post::factory()->count(10)->create();
 
     $title = $posts->first()->title;
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->searchTable($title)
         ->assertCanSeeTableRecords($posts->where('title', $title))
         ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
@@ -116,14 +116,14 @@ it('can search posts by title', function () {
 To search individual columns, you can pass an array of searches to `searchTableColumns()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can search posts by title column', function () {
     $posts = Post::factory()->count(10)->create();
 
     $title = $posts->first()->title;
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->searchTableColumns(['title' => $title])
         ->assertCanSeeTableRecords($posts->where('title', $title))
         ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
@@ -135,14 +135,14 @@ it('can search posts by title column', function () {
 To assert that a certain column has a state or does not have a state for a record you can use `assertTableColumnStateSet()` and `assertTableColumnStateNotSet()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can get post author names', function () {
     $posts = Post::factory()->count(10)->create();
 
     $post = $posts->first();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableColumnStateSet('author.name', $post->author->name, record: $post)
         ->assertTableColumnStateNotSet('author.name', 'Anonymous', record: $post);
 });
@@ -151,12 +151,12 @@ it('can get post author names', function () {
 To assert that a certain column has a formatted state or does not have a formatted state for a record you can use `assertTableColumnFormattedStateSet()` and `assertTableColumnFormattedStateNotSet()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can get post author names', function () {
     $post = Post::factory(['name' => 'John Smith'])->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableColumnFormattedStateSet('author.name', 'Smith, John', record: $post)
         ->assertTableColumnFormattedStateNotSet('author.name', $post->author->name, record: $post);
 });
@@ -167,10 +167,10 @@ it('can get post author names', function () {
 To ensure that a column exists, you can use the `assertTableColumnExists()` method:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('has an author column', function () {
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableColumnExists(`author`);
 });
 ```
@@ -178,13 +178,13 @@ it('has an author column', function () {
 You may pass a function as an additional argument in order to assert that a column passes a given "truth test". This is useful for asserting that a column has a specific configuration. You can also pass in a record as the third parameter, which is useful if your check is dependant on which table row is being rendered:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 use Filament\Tables\Columns\TextColumn;
 
 it('has an author column', function () {
     $post = Post::factory()->create();
     
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableColumnExists('author', function (TextColumn $column): bool {
             return $column->getDescriptionBelow() === $post->subtitle;
         }, $post);
@@ -196,10 +196,10 @@ it('has an author column', function () {
 To ensure that a particular user cannot see a column, you can use the `assertTableColumnVisible()` and `assertTableColumnHidden()` methods:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('shows the correct columns', function () {
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableColumnVisible(`created_at`)
         ->assertTableColumnHidden(`author`);
 });
@@ -210,12 +210,12 @@ it('shows the correct columns', function () {
 To ensure a column has the correct description above or below you can use the `assertTableColumnHasDescription()` and `assertTableColumnDoesNotHaveDescription()` methods:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('has the correct descriptions above and below author', function () {
     $post = Post::factory()->create();
 
-    livewire(PostsTable::class)
+    Livewire::test(PostsTable::class)
         ->assertTableColumnHasDescription('author', 'Author! ↓↓↓', $post, 'above')
         ->assertTableColumnHasDescription('author', 'Author! ↑↑↑', $post)
         ->assertTableColumnDoesNotHaveDescription('author', 'Author! ↑↑↑', $post, 'above')
@@ -228,12 +228,12 @@ it('has the correct descriptions above and below author', function () {
 To ensure that a column has the correct extra attributes, you can use the `assertTableColumnHasExtraAttributes()` and `assertTableColumnDoesNotHaveExtraAttributes()` methods:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('displays author in red', function () {
     $post = Post::factory()->create();
 
-    livewire(PostsTable::class)
+    Livewire::test(PostsTable::class)
         ->assertTableColumnHasExtraAttributes('author', ['class' => 'text-danger-500'], $post)
         ->assertTableColumnDoesNotHaveExtraAttributes('author', ['class' => 'text-primary-500'], $post);
 });
@@ -244,12 +244,12 @@ it('displays author in red', function () {
 If you have a select column, you can ensure it has the correct options with `assertSelectColumnHasOptions()` and `assertSelectColumnDoesNotHaveOptions()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('has the correct statuses', function () {
     $post = Post::factory()->create();
 
-    livewire(PostsTable::class)
+    Livewire::test(PostsTable::class)
         ->assertSelectColumnHasOptions('status', ['unpublished' => 'Unpublished', 'published' => 'Published'], $post)
         ->assertSelectColumnDoesNotHaveOptions('status', ['archived' => 'Archived'], $post);
 });
@@ -260,12 +260,12 @@ it('has the correct statuses', function () {
 To filter the table records, you can use the `filterTable()` method, along with `assertCanSeeTableRecords()` and `assertCanNotSeeTableRecords()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can filter posts by `is_published`', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts)
         ->filterTable('is_published')
         ->assertCanSeeTableRecords($posts->where('is_published', true))
@@ -278,14 +278,14 @@ For a simple filter, this will just enable the filter.
 If you'd like to set the value of a `SelectFilter` or `TernaryFilter`, pass the value as a second argument:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can filter posts by `author_id`', function () {
     $posts = Post::factory()->count(10)->create();
 
     $authorId = $posts->first()->author_id;
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts)
         ->filterTable('author_id', $authorId)
         ->assertCanSeeTableRecords($posts->where('author_id', $authorId))
@@ -298,12 +298,12 @@ it('can filter posts by `author_id`', function () {
 To reset all filters to their original state, call `resetTableFilters()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can reset table filters`', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->resetTableFilters();
 });
 ```
@@ -313,14 +313,14 @@ it('can reset table filters`', function () {
 To remove a single filter you can use `removeTableFilter()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('filters list by published', function () {
     $posts = Post::factory()->count(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false)->get();
 
-    livewire(PostsTable::class)
+    Livewire::test(PostsTable::class)
         ->filterTable('is_published')
         ->assertCanNotSeeTableRecords($unpublishedPosts)
         ->removeTableFilter('is_published')
@@ -331,7 +331,7 @@ it('filters list by published', function () {
 To remove all filters you can use `removeTableFilters()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can remove all table filters', function () {
     $posts = Post::factory()->count(10)->forAuthor()->create();
@@ -340,7 +340,7 @@ it('can remove all table filters', function () {
         ->where('is_published', false)
         ->where('author_id', $posts->first()->author->getKey());
 
-    livewire(PostsTable::class)
+    Livewire::test(PostsTable::class)
         ->filterTable('is_published')
         ->filterTable('author', $author)
         ->assertCanNotSeeTableRecords($unpublishedPosts)
@@ -356,12 +356,12 @@ it('can remove all table filters', function () {
 You can call an action by passing its name or class to `callTableAction()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can delete posts', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->callTableAction(DeleteAction::class, $post);
 
     $this->assertModelMissing($post);
@@ -373,12 +373,12 @@ This example assumes that you have a `DeleteAction` on your table. If you have a
 For column actions, you may do the same, using `callTableColumnAction()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can copy posts', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->callTableColumnAction('copy', $post);
 
     $this->assertDatabaseCount((new Post)->getTable(), 2);
@@ -388,12 +388,12 @@ it('can copy posts', function () {
 For bulk actions, you may do the same, passing in multiple records to execute the bulk action against with `callTableBulkAction()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can bulk delete posts', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->callTableBulkAction(DeleteBulkAction::class, $posts);
 
     foreach ($posts as $post) {
@@ -405,12 +405,12 @@ it('can bulk delete posts', function () {
 To pass an array of data into an action, use the `data` parameter:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can edit posts', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->callTableAction(EditAction::class, $post, data: [
             'title' => $title = fake()->words(asText: true),
         ])
@@ -426,12 +426,12 @@ it('can edit posts', function () {
 To check if an action or bulk action has been halted, you can use `assertTableActionHalted()` / `assertTableBulkActionHalted()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('will halt delete if post is flagged', function () {
     $posts= Post::factory()->count(2)->flagged()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->callTableAction('delete', $posts->first())
         ->callTableBulkAction('delete', $posts)
         ->assertTableActionHalted('delete')
@@ -448,12 +448,12 @@ it('will halt delete if post is flagged', function () {
 To check if a validation error has occurred with the data, use `assertHasTableActionErrors()`, similar to `assertHasErrors()` in Livewire:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can validate edited post data', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->callTableAction(EditAction::class, $post, data: [
             'title' => null,
         ])
@@ -468,12 +468,12 @@ For bulk actions these methods are called `assertHasTableBulkActionErrors()` and
 To check if an action or bulk action is pre-filled with data, you can use the `assertTableActionDataSet()` or `assertTableBulkActionDataSet()` method:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can load existing post data for editing', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->mountTableAction(EditAction::class, $post)
         ->assertTableActionDataSet([
             'title' => $post->title,
@@ -494,10 +494,10 @@ it('can load existing post data for editing', function () {
 To ensure that an action or bulk action exists or doesn't in a table, you can use the `assertTableActionExists()` / `assertTableActionDoesNotExist()` or  `assertTableBulkActionExists()` / `assertTableBulkActionDoesNotExist()` method:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can publish but not unpublish posts', function () {
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableActionExists('publish')
         ->assertTableActionDoesNotExist('unpublish')
         ->assertTableBulkActionExists('publish')
@@ -508,10 +508,10 @@ it('can publish but not unpublish posts', function () {
 To ensure different sets of actions exist in the correct order, you can use the various "InOrder" assertions
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('has all actions in expected order', function () {
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableActionsExistInOrder(['edit', 'delete'])
         ->assertTableBulkActionsExistInOrder(['restore', 'forceDelete'])
         ->assertTableHeaderActionsExistInOrder(['create', 'attach'])
@@ -522,12 +522,12 @@ it('has all actions in expected order', function () {
 To ensure that an action or bulk action is enabled or disabled for a user, you can use the `assertTableActionEnabled()` / `assertTableActionDisabled()` or `assertTableBulkActionEnabled()` / `assertTableBulkActionDisabled()` methods:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can not publish, but can delete posts', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableActionDisabled('publish', $post)
         ->assertTableActionEnabled('delete', $post)
         ->assertTableBulkActionDisabled('publish')
@@ -539,12 +539,12 @@ it('can not publish, but can delete posts', function () {
 To ensure that an action or bulk action is visible or hidden for a user, you can use the `assertTableActionVisible()` / `assertTableActionHidden()` or `assertTableBulkActionVisible()` / `assertTableBulkActionHidden()` methods:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can not publish, but can delete posts', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableActionHidden('publish', $post)
         ->assertTableActionVisible('delete', $post)
         ->assertTableBulkActionHidden('publish')
@@ -557,12 +557,12 @@ it('can not publish, but can delete posts', function () {
 To ensure an action or bulk action has the correct label, you can use `assertTableActionHasLabel()` / `assertTableBulkActionHasLabel()` and `assertTableActionDoesNotHaveLabel()` / `assertTableBulkActionDoesNotHaveLabel()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('delete actions have correct labels', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableActionHasLabel('delete', 'Archive Post')
         ->assertTableActionDoesNotHaveLabel('delete', 'Delete');
         ->assertTableBulkActionHasLabel('delete', 'Archive Post')
@@ -573,12 +573,12 @@ it('delete actions have correct labels', function () {
 To ensure an action or bulk action's button is showing the correct icon, you can use `assertTableActionHasIcon()` / `assertTableBulkActionHasIcon()` or `assertTableActionDoesNotHaveIcon()` / `assertTableBulkActionDoesNotHaveIcon()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('delete actions have correct icons', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableActionHasIcon('delete', 'heroicon-m-archive-box')
         ->assertTableActionDoesNotHaveIcon('delete', 'heroicon-m-trash');
         ->assertTableBulkActionHasIcon('delete', 'heroicon-m-archive-box')
@@ -589,12 +589,12 @@ it('delete actions have correct icons', function () {
 To ensure that an action or bulk action's button is displaying the right color, you can use `assertTableActionHasColor()` / `assertTableBulkActionHasColor()` or `assertTableActionDoesNotHaveColor()` / `assertTableBulkActionDoesNotHaveColor()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('delete actions have correct colors', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableActionHasColor('delete', 'warning')
         ->assertTableActionDoesNotHaveColor('delete', 'danger');
         ->assertTableBulkActionHasColor('delete', 'warning')
@@ -607,12 +607,12 @@ it('delete actions have correct colors', function () {
 To ensure an action or bulk action has the correct URL traits, you can use `assertTableActionHasUrl()`, `assertTableActionDoesNotHaveUrl()`, `assertTableActionShouldOpenUrlInNewTab()`, and `assertTableActionShouldNotOpenUrlInNewTab()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('links to the correct Filament sites', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertTableActionHasUrl('filament', 'https://filamentphp.com/')
         ->assertTableActionDoesNotHaveUrl('filament', 'https://github.com/filamentphp/filament')
         ->assertTableActionShouldOpenUrlInNewTab('filament')
@@ -625,12 +625,12 @@ it('links to the correct Filament sites', function () {
 To test that a summary calculation is working, you may use the `assertTableColumnSummarySet()` method:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can average values in a column', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts)
         ->assertTableColumnSummarySet('rating', 'average', $posts->avg('rating'));
 });
@@ -655,12 +655,12 @@ The ID should be unique between summarizers in that column.
 To calculate the average for only one pagination page, use the `isCurrentPaginationPageOnly` argument:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can average values in a column', function () {
     $posts = Post::factory()->count(20)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts->take(10))
         ->assertTableColumnSummarySet('rating', 'average', $posts->take(10)->avg('rating'), isCurrentPaginationPageOnly: true);
 });
@@ -671,12 +671,12 @@ it('can average values in a column', function () {
 To test a range, pass the minimum and maximum value into a tuple-style `[$minimum, $maximum]` array:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can average values in a column', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts)
         ->assertTableColumnSummarySet('rating', 'range', [$posts->min('rating'), $posts->max('rating')]);
 });

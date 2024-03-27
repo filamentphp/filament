@@ -13,12 +13,12 @@ Since the Infolist Builder works on Livewire components, you can use the [Livewi
 You can call an action by passing its infolist component key, and then the name of the action to `callInfolistAction()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can send invoices', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->callInfolistAction('customer', 'send', infolistName: 'infolist');
@@ -31,12 +31,12 @@ it('can send invoices', function () {
 To pass an array of data into an action, use the `data` parameter:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can send invoices', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->callInfolistAction('customer', 'send', data: [
@@ -53,12 +53,12 @@ it('can send invoices', function () {
 If you ever need to only set an action's data without immediately calling it, you can use `setInfolistActionData()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can send invoices', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->mountInfolistAction('customer', 'send')
@@ -73,12 +73,12 @@ it('can send invoices', function () {
 To check if an action has been halted, you can use `assertInfolistActionHalted()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('stops sending if invoice has no email address', function () {
     $invoice = Invoice::factory(['email' => null])->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->callInfolistAction('customer', 'send')
@@ -93,12 +93,12 @@ it('stops sending if invoice has no email address', function () {
 To check if a validation error has occurred with the data, use `assertHasInfolistActionErrors()`, similar to `assertHasErrors()` in Livewire:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can validate invoice recipient email', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->callInfolistAction('customer', 'send', data: [
@@ -111,13 +111,13 @@ it('can validate invoice recipient email', function () {
 To check if an action is pre-filled with data, you can use the `assertInfolistActionDataSet()` method:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can send invoices to the primary contact by default', function () {
     $invoice = Invoice::factory()->create();
     $recipientEmail = $invoice->company->primaryContact->email;
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->mountInfolistAction('customer', 'send')
@@ -138,12 +138,12 @@ it('can send invoices to the primary contact by default', function () {
 To ensure that an action exists or doesn't in an infolist, you can use the `assertInfolistActionExists()` or  `assertInfolistActionDoesNotExist()` method:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can send but not unsend invoices', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertInfolistActionExists('customer', 'send')
@@ -154,12 +154,12 @@ it('can send but not unsend invoices', function () {
 To ensure an action is hidden or visible for a user, you can use the `assertInfolistActionHidden()` or `assertInfolistActionVisible()` methods:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can only print customers', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertInfolistActionHidden('customer', 'send')
@@ -170,12 +170,12 @@ it('can only print customers', function () {
 To ensure an action is enabled or disabled for a user, you can use the `assertInfolistActionEnabled()` or `assertInfolistActionDisabled()` methods:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can only print a customer for a sent invoice', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertInfolistActionDisabled('customer', 'send')
@@ -186,12 +186,12 @@ it('can only print a customer for a sent invoice', function () {
 To check if an action is hidden to a user, you can use the `assertInfolistActionHidden()` method:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can not send invoices', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertInfolistActionHidden('customer', 'send');
@@ -203,12 +203,12 @@ it('can not send invoices', function () {
 To ensure an action has the correct label, you can use `assertInfolistActionHasLabel()` and `assertInfolistActionDoesNotHaveLabel()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('send action has correct label', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertInfolistActionHasLabel('customer', 'send', 'Email Invoice')
@@ -219,12 +219,12 @@ it('send action has correct label', function () {
 To ensure an action's button is showing the correct icon, you can use `assertInfolistActionHasIcon()` or `assertInfolistActionDoesNotHaveIcon()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('when enabled the send button has correct icon', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertInfolistActionEnabled('customer', 'send')
@@ -236,12 +236,12 @@ it('when enabled the send button has correct icon', function () {
 To ensure that an action's button is displaying the right color, you can use `assertInfolistActionHasColor()` or `assertInfolistActionDoesNotHaveColor()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('actions display proper colors', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertInfolistActionHasColor('customer', 'delete', 'danger')
@@ -254,12 +254,12 @@ it('actions display proper colors', function () {
 To ensure an action has the correct URL, you can use `assertInfolistActionHasUrl()`, `assertInfolistActionDoesNotHaveUrl()`, `assertInfolistActionShouldOpenUrlInNewTab()`, and `assertInfolistActionShouldNotOpenUrlInNewTab()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('links to the correct Filament sites', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertInfolistActionHasUrl('customer', 'filament', 'https://filamentphp.com/')

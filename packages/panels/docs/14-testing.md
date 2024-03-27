@@ -44,12 +44,12 @@ Filament includes a selection of helpers for testing tables. A full guide to tes
 To use a table [testing helper](../tables/testing), make assertions on the resource's List page class, which holds the table:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can list posts', function () {
     $posts = Post::factory()->count(10)->create();
 
-    livewire(PostResource\Pages\ListPosts::class)
+    Livewire::test(PostResource\Pages\ListPosts::class)
         ->assertCanSeeTableRecords($posts);
 });
 ```
@@ -71,12 +71,12 @@ it('can render page', function () {
 You may check that data is correctly saved into the database by calling `fillForm()` with your form data, and then asserting that the database contains a matching record:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can create', function () {
     $newData = Post::factory()->make();
 
-    livewire(PostResource\Pages\CreatePost::class)
+    Livewire::test(PostResource\Pages\CreatePost::class)
         ->fillForm([
             'author_id' => $newData->author->getKey(),
             'content' => $newData->content,
@@ -100,10 +100,10 @@ it('can create', function () {
 Use `assertHasFormErrors()` to ensure that data is properly validated in a form:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can validate input', function () {
-    livewire(PostResource\Pages\CreatePost::class)
+    Livewire::test(PostResource\Pages\CreatePost::class)
         ->fillForm([
             'title' => null,
         ])
@@ -131,12 +131,12 @@ it('can render page', function () {
 To check that the form is filled with the correct data from the database, you may `assertFormSet()` that the data in the form matches that of the record:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can retrieve data', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\EditPost::class, [
+    Livewire::test(PostResource\Pages\EditPost::class, [
         'record' => $post->getRouteKey(),
     ])
         ->assertFormSet([
@@ -153,13 +153,13 @@ it('can retrieve data', function () {
 You may check that data is correctly saved into the database by calling `fillForm()` with your form data, and then asserting that the database contains a matching record:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can save', function () {
     $post = Post::factory()->create();
     $newData = Post::factory()->make();
 
-    livewire(PostResource\Pages\EditPost::class, [
+    Livewire::test(PostResource\Pages\EditPost::class, [
         'record' => $post->getRouteKey(),
     ])
         ->fillForm([
@@ -184,12 +184,12 @@ it('can save', function () {
 Use `assertHasFormErrors()` to ensure that data is properly validated in a form:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can validate input', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\EditPost::class, [
+    Livewire::test(PostResource\Pages\EditPost::class, [
         'record' => $post->getRouteKey(),
     ])
         ->fillForm([
@@ -206,12 +206,12 @@ You can test the `DeleteAction` using `callAction()`:
 
 ```php
 use Filament\Actions\DeleteAction;
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can delete', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\EditPost::class, [
+    Livewire::test(PostResource\Pages\EditPost::class, [
         'record' => $post->getRouteKey(),
     ])
         ->callAction(DeleteAction::class);
@@ -224,12 +224,12 @@ You can ensure that a particular user is not able to see a `DeleteAction` using 
 
 ```php
 use Filament\Actions\DeleteAction;
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can not delete', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\EditPost::class, [
+    Livewire::test(PostResource\Pages\EditPost::class, [
         'record' => $post->getRouteKey(),
     ])
         ->assertActionHidden(DeleteAction::class);
@@ -255,12 +255,12 @@ it('can render page', function () {
 To check that the form is filled with the correct data from the database, you may `assertSet()` that the data in the form matches that of the record:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can retrieve data', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ViewPost::class, [
+    Livewire::test(PostResource\Pages\ViewPost::class, [
         'record' => $post->getRouteKey(),
     ])
         ->assertFormSet([
@@ -280,14 +280,14 @@ To ensure that a relation manager is able to render successfully, mount the Live
 
 ```php
 use App\Filament\Resources\CategoryResource\Pages\EditCategory;
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can render relation manager', function () {
     $category = Category::factory()
         ->has(Post::factory()->count(10))
         ->create();
 
-    livewire(CategoryResource\RelationManagers\PostsRelationManager::class, [
+    Livewire::test(CategoryResource\RelationManagers\PostsRelationManager::class, [
         'ownerRecord' => $category,
         'pageClass' => EditCategory::class,
     ])
@@ -303,14 +303,14 @@ To use a table [testing helper](../tables/testing), make assertions on the relat
 
 ```php
 use App\Filament\Resources\CategoryResource\Pages\EditCategory;
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can list posts', function () {
     $category = Category::factory()
         ->has(Post::factory()->count(10))
         ->create();
 
-    livewire(CategoryResource\RelationManagers\PostsRelationManager::class, [
+    Livewire::test(CategoryResource\RelationManagers\PostsRelationManager::class, [
         'ownerRecord' => $category,
         'pageClass' => EditCategory::class,
     ])

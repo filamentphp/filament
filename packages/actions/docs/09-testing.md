@@ -13,12 +13,12 @@ Since all actions are mounted to a Livewire component, we're just using Livewire
 You can call an action by passing its name or class to `callAction()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can send invoices', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->callAction('send');
@@ -31,12 +31,12 @@ it('can send invoices', function () {
 To pass an array of data into an action, use the `data` parameter:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can send invoices', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->callAction('send', data: [
@@ -53,12 +53,12 @@ it('can send invoices', function () {
 If you ever need to only set an action's data without immediately calling it, you can use `setActionData()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can send invoices', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->mountAction('send')
@@ -73,12 +73,12 @@ it('can send invoices', function () {
 To check if an action has been halted, you can use `assertActionHalted()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('stops sending if invoice has no email address', function () {
     $invoice = Invoice::factory(['email' => null])->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->callAction('send')
@@ -93,12 +93,12 @@ it('stops sending if invoice has no email address', function () {
 To check if a validation error has occurred with the data, use `assertHasActionErrors()`, similar to `assertHasErrors()` in Livewire:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can validate invoice recipient email', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->callAction('send', data: [
@@ -111,13 +111,13 @@ it('can validate invoice recipient email', function () {
 To check if an action is pre-filled with data, you can use the `assertActionDataSet()` method:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can send invoices to the primary contact by default', function () {
     $invoice = Invoice::factory()->create();
     $recipientEmail = $invoice->company->primaryContact->email;
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->mountAction('send')
@@ -138,12 +138,12 @@ it('can send invoices to the primary contact by default', function () {
 To ensure that an action exists or doesn't, you can use the `assertActionExists()` or  `assertActionDoesNotExist()` method:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can send but not unsend invoices', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertActionExists('send')
@@ -154,12 +154,12 @@ it('can send but not unsend invoices', function () {
 To ensure an action is hidden or visible for a user, you can use the `assertActionHidden()` or `assertActionVisible()` methods:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can only print invoices', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertActionHidden('send')
@@ -170,12 +170,12 @@ it('can only print invoices', function () {
 To ensure an action is enabled or disabled for a user, you can use the `assertActionEnabled()` or `assertActionDisabled()` methods:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can only print a sent invoice', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertActionDisabled('send')
@@ -186,12 +186,12 @@ it('can only print a sent invoice', function () {
 To ensure sets of actions exist in the correct order, you can use `assertActionsExistInOrder()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can have actions in order', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertActionsExistInOrder(['send', 'export']);
@@ -201,12 +201,12 @@ it('can have actions in order', function () {
 To check if an action is hidden to a user, you can use the `assertActionHidden()` method:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can not send invoices', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertActionHidden('send');
@@ -218,12 +218,12 @@ it('can not send invoices', function () {
 To ensure an action has the correct label, you can use `assertActionHasLabel()` and `assertActionDoesNotHaveLabel()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('send action has correct label', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertActionHasLabel('send', 'Email Invoice')
@@ -234,12 +234,12 @@ it('send action has correct label', function () {
 To ensure an action's button is showing the correct icon, you can use `assertActionHasIcon()` or `assertActionDoesNotHaveIcon()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('when enabled the send button has correct icon', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertActionEnabled('send')
@@ -251,12 +251,12 @@ it('when enabled the send button has correct icon', function () {
 To ensure that an action's button is displaying the right color, you can use `assertActionHasColor()` or `assertActionDoesNotHaveColor()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('actions display proper colors', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertActionHasColor('delete', 'danger')
@@ -269,12 +269,12 @@ it('actions display proper colors', function () {
 To ensure an action has the correct URL, you can use `assertActionHasUrl()`, `assertActionDoesNotHaveUrl()`, `assertActionShouldOpenUrlInNewTab()`, and `assertActionShouldNotOpenUrlInNewTab()`:
 
 ```php
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('links to the correct Filament sites', function () {
     $invoice = Invoice::factory()->create();
 
-    livewire(EditInvoice::class, [
+    Livewire::test(EditInvoice::class, [
         'invoice' => $invoice,
     ])
         ->assertActionHasUrl('filament', 'https://filamentphp.com/')
