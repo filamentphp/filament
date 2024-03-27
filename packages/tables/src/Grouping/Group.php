@@ -275,7 +275,7 @@ class Group extends Component
                 $title = Carbon::parse($title);
             }
 
-            $title = $title->format(Table::$defaultDateDisplayFormat);
+            $title = $title->translatedFormat(Table::$defaultDateDisplayFormat);
         }
 
         return $title;
