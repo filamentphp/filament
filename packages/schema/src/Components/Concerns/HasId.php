@@ -17,6 +17,6 @@ trait HasId
 
     public function getId(): ?string
     {
-        return $this->evaluate($this->id);
+        return $this->evaluate($this->id) ?? $this->getKey();
     }
 }

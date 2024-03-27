@@ -83,18 +83,18 @@ it('can return a flat array of components', function () {
         ->components([
             $fieldset = Fieldset::make(Str::random())
                 ->schema([
-                    $field = TextInput::make(Str::random()),
+                    $field = TextInput::make($fieldName = Str::random()),
                 ]),
-            $section = Section::make(Str::random()),
+            $section = Section::make($sectionHeading = Str::random()),
         ]);
 
     expect($container)
         ->getFlatComponents()
         ->toHaveCount(3)
-        ->toMatchArray([
+        ->toBe([
             $fieldset,
-            $field,
-            $section,
+            $fieldName => $field,
+            Str::slug($sectionHeading) => $section,
         ]);
 });
 
@@ -104,18 +104,18 @@ it('can return a flat array of components with hidden components', function () {
             $fieldset = Fieldset::make(Str::random())
                 ->hidden()
                 ->schema([
-                    $field = TextInput::make(Str::random()),
+                    $field = TextInput::make($fieldName = Str::random()),
                 ]),
-            $section = Section::make(Str::random()),
+            $section = Section::make($sectionHeading = Str::random()),
         ]);
 
     expect($container)
         ->getFlatComponents(withHidden: true)
         ->toHaveCount(3)
-        ->toMatchArray([
+        ->toBe([
             $fieldset,
-            $field,
-            $section,
+            $fieldName => $field,
+            Str::slug($sectionHeading) => $section,
         ]);
 });
 
@@ -190,7 +190,7 @@ it('can return a flat array of fields with absolute path keys', function () {
         ->statePath($containerStatePath = Str::random());
 
     expect($container)
-        ->getFlatFields(withAbsolutePathKeys: true)
+        ->getFlatFields(withAbsoluteKeys: true)
         ->toHaveCount(1)
         ->toMatchArray([
             "{$containerStatePath}.{$name}" => $field,

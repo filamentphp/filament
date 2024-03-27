@@ -63,9 +63,10 @@
             return this.getStepIndex(this.step) + 1 >= this.getSteps().length
         },
 
-        isStepAccessible: function (stepId) {
+        isStepAccessible: function (stepKey) {
             return (
-                @js($isSkippable()) || this.getStepIndex(this.step) > this.getStepIndex(stepId)
+                @js($isSkippable()) ||
+                this.getStepIndex(this.step) > this.getStepIndex(stepKey)
             )
         },
 
@@ -106,7 +107,7 @@
         value="{{
             collect($getChildComponentContainer()->getComponents())
                 ->filter(static fn (\Filament\Schema\Components\Wizard\Step $step): bool => $step->isVisible())
-                ->map(static fn (\Filament\Schema\Components\Wizard\Step $step) => $step->getId())
+                ->map(static fn (\Filament\Schema\Components\Wizard\Step $step): ?string => $step->getKey())
                 ->values()
                 ->toJson()
         }}"
@@ -135,8 +136,8 @@
                 <button
                     type="button"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
-                    x-on:click="step = @js($step->getId())"
-                    x-bind:disabled="! isStepAccessible(@js($step->getId()))"
+                    x-on:click="step = @js($step->getKey())"
+                    x-bind:disabled="! isStepAccessible(@js($step->getKey()))"
                     role="step"
                     class="fi-fo-wizard-header-step-button flex h-full items-center gap-x-4 px-6 py-4 text-start"
                 >

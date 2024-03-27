@@ -8,7 +8,7 @@
     wire:ignore.self
     x-cloak
     x-data="{
-        tab: @if ($isTabPersisted() && filled($persistenceId = $getId())) $persist(null).as('tabs-{{ $persistenceId }}') @else null @endif,
+        tab: @if ($isTabPersisted() && filled($persistenceKey = $getKey())) $persist(null).as('tabs-{{ $persistenceKey }}') @else null @endif,
 
         getTabs: function () {
             if (! this.$refs.tabsData) {
@@ -58,7 +58,7 @@
         $attributes
             ->merge([
                 'id' => $getId(),
-                'wire:key' => "{$this->getId()}.{$getStatePath()}." . \Filament\Schema\Components\Tabs::class . '.container',
+                'wire:key' => $getLivewireKey() . '.container',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
@@ -73,7 +73,7 @@
         value="{{
             collect($getChildComponentContainer()->getComponents())
                 ->filter(static fn (Tab $tab): bool => $tab->isVisible())
-                ->map(static fn (Tab $tab) => $tab->getId())
+                ->map(static fn (Tab $tab) => $tab->getKey())
                 ->values()
                 ->toJson()
         }}"
@@ -83,16 +83,16 @@
     <x-filament::tabs :contained="$isContained" :label="$getLabel()">
         @foreach ($getChildComponentContainer()->getComponents() as $tab)
             @php
-                $tabId = $tab->getId();
+                $tabKey = $tab->getKey();
             @endphp
 
             <x-filament::tabs.item
-                :alpine-active="'tab === \'' . $tabId . '\''"
+                :alpine-active="'tab === \'' . $tabKey . '\''"
                 :badge="$tab->getBadge()"
                 :badge-color="$tab->getBadgeColor()"
                 :icon="$tab->getIcon()"
                 :icon-position="$tab->getIconPosition()"
-                :x-on:click="'tab = \'' . $tabId . '\''"
+                :x-on:click="'tab = \'' . $tabKey . '\''"
             >
                 {{ $tab->getLabel() }}
             </x-filament::tabs.item>

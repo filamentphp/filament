@@ -82,7 +82,7 @@
                     @endphp
 
                     <li
-                        wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
+                        wire:key="{{ $item->getLivewireKey() }}.item"
                         x-data="{
                             isCollapsed: @js($isCollapsed($item)),
                         }"

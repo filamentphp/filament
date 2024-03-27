@@ -587,7 +587,7 @@ class TestsComponentActions
                     continue;
                 }
 
-                $components[] = "{$form->getStatePath()}.{$componentKey}";
+                $components[] = $componentKey;
             }
 
             return [$components, $this->parseNestedActionName($name)];

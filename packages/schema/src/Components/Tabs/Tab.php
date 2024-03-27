@@ -22,7 +22,6 @@ class Tab extends Component implements CanConcealComponents
     final public function __construct(string $label)
     {
         $this->label($label);
-        $this->id(Str::slug($label));
     }
 
     public static function make(string $label): static
@@ -33,9 +32,11 @@ class Tab extends Component implements CanConcealComponents
         return $static;
     }
 
-    public function getId(): string
+    protected function setUp(): void
     {
-        return $this->getContainer()->getParentComponent()->getId() . '-' . parent::getId() . '-tab';
+        parent::setUp();
+
+        $this->key(fn (Tab $component): string => Str::slug($component->getLabel()));
     }
 
     /**

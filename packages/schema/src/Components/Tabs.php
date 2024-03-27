@@ -5,6 +5,7 @@ namespace Filament\Schema\Components;
 use Closure;
 use Filament\Schema\Components\Tabs\Tab;
 use Filament\Support\Concerns;
+use Illuminate\Support\Str;
 
 class Tabs extends Component
 {
@@ -32,6 +33,21 @@ class Tabs extends Component
         $static->configure();
 
         return $static;
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->key(function (Tabs $component): ?string {
+            $label = $component->getLabel();
+
+            if (blank($label)) {
+                return null;
+            }
+
+            return Str::slug($label);
+        });
     }
 
     /**

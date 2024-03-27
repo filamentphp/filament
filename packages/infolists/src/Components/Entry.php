@@ -53,11 +53,6 @@ class Entry extends Component implements HasHintActions
         return $this->getConstantState();
     }
 
-    public function getId(): string
-    {
-        return parent::getId() ?? $this->getStatePath();
-    }
-
     public function getLabel(): string | Htmlable | null
     {
         $label = parent::getLabel() ?? (string) str($this->getName())
@@ -69,11 +64,6 @@ class Entry extends Component implements HasHintActions
         return (is_string($label) && $this->shouldTranslateLabel) ?
             __($label) :
             $label;
-    }
-
-    public function getKey(): string
-    {
-        return parent::getKey() ?? $this->getStatePath();
     }
 
     public function state(mixed $state): static

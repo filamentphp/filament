@@ -42,7 +42,7 @@
                 >
                     @foreach ($containers as $uuid => $item)
                         <li
-                            wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
+                            wire:key="{{ $item->getLivewireKey() }}.item"
                             x-sortable-item="{{ $uuid }}"
                             class="fi-fo-repeater-item simple flex justify-start gap-x-3"
                         >

@@ -1,5 +1,6 @@
 @php
     $id = $getId();
+    $key = $getKey();
     $isContained = $getContainer()->getParentComponent()->isContained();
 
     $activeTabClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -13,10 +14,10 @@
 
 <div
     x-bind:class="{
-        @js($activeTabClasses): tab === @js($id),
-        @js($inactiveTabClasses): tab !== @js($id),
+        @js($activeTabClasses): tab === @js($key),
+        @js($inactiveTabClasses): tab !== @js($key),
     }"
-    x-on:expand="tab = @js($id)"
+    x-on:expand="tab = @js($key)"
     {{
         $attributes
             ->merge([
@@ -24,7 +25,7 @@
                 'id' => $id,
                 'role' => 'tabpanel',
                 'tabindex' => '0',
-                'wire:key' => "{$this->getId()}.{$getStatePath()}." . \Filament\Forms\Components\Tab::class . ".tabs.{$id}",
+                'wire:key' => $getLivewireKey() . '.container',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->class(['fi-fo-tabs-tab outline-none'])

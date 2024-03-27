@@ -131,7 +131,7 @@ trait HasState
                 $container->mutateDehydratedState($state);
             }
 
-            if ($component->getStatePath(isAbsolute: false)) {
+            if (filled($component->getStatePath(isAbsolute: false))) {
                 if (! $component->mutatesDehydratedState()) {
                     continue;
                 }
@@ -170,7 +170,7 @@ trait HasState
                 $container->mutateStateForValidation($state);
             }
 
-            if ($component->getStatePath(isAbsolute: false)) {
+            if (filled($component->getStatePath(isAbsolute: false))) {
                 if (! $component->mutatesStateForValidation()) {
                     continue;
                 }
@@ -313,19 +313,23 @@ trait HasState
         return Arr::except($this->getState($shouldCallHooksBefore), $keys);
     }
 
-    public function getStatePath(bool $isAbsolute = true): string
+    public function getStatePath(bool $isAbsolute = true): ?string
     {
+        if (! $isAbsolute) {
+            return $this->statePath;
+        }
+
         if (isset($this->cachedAbsoluteStatePath)) {
             return $this->cachedAbsoluteStatePath;
         }
 
         $pathComponents = [];
 
-        if ($isAbsolute && $parentComponentStatePath = $this->getParentComponent()?->getStatePath()) {
+        if ($parentComponentStatePath = $this->getParentComponent()?->getStatePath()) {
             $pathComponents[] = $parentComponentStatePath;
         }
 
-        if (($statePath = $this->statePath) !== null) {
+        if (filled($statePath = $this->statePath)) {
             $pathComponents[] = $statePath;
         }
 

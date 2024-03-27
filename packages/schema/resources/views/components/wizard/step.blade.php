@@ -1,5 +1,6 @@
 @php
     $id = $getId();
+    $key = $getKey();
     $isContained = $getContainer()->getParentComponent()->isContained();
 
     $activeStepClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -13,17 +14,17 @@
 
 <div
     x-bind:class="{
-        @js($activeStepClasses): step === @js($id),
-        @js($inactiveStepClasses): step !== @js($id),
+        @js($activeStepClasses): step === @js($key),
+        @js($inactiveStepClasses): step !== @js($key),
     }"
     x-on:expand="
-        if (! isStepAccessible(@js($id))) {
+        if (! isStepAccessible(@js($key))) {
             return
         }
 
-        step = @js($id)
+        step = @js($key)
     "
-    x-ref="step-{{ $id }}"
+    x-ref="step-{{ $key }}"
     {{
         $attributes
             ->merge([

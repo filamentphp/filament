@@ -1,5 +1,5 @@
 <div>
-    @if (filled($key = $getKey()))
+    @if (filled($key = $getLivewireKey()))
         @livewire($getComponent(), $getComponentProperties(), key($key))
     @else
         @livewire($getComponent(), $getComponentProperties())

@@ -43,14 +43,4 @@ class Field extends Component implements Contracts\HasValidationRules, HasHintAc
     {
         return null;
     }
-
-    public function getId(): string
-    {
-        return parent::getId() ?? $this->getStatePath();
-    }
-
-    public function getKey(): string
-    {
-        return parent::getKey() ?? $this->getStatePath();
-    }
 }

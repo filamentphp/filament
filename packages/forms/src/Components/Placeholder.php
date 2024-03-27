@@ -63,11 +63,6 @@ class Placeholder extends Component implements HasHintActions
         return $this;
     }
 
-    public function getId(): string
-    {
-        return parent::getId() ?? $this->getStatePath();
-    }
-
     public function getContent(): mixed
     {
         return $this->evaluate($this->content);

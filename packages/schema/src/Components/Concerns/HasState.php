@@ -203,7 +203,7 @@ trait HasState
             return;
         }
 
-        if ($this->getStatePath(isAbsolute: false)) {
+        if (filled($this->getStatePath(isAbsolute: false))) {
             foreach ($this->getStateToDehydrate() as $key => $value) {
                 Arr::set($state, $key, $value);
             }
@@ -408,10 +408,10 @@ trait HasState
         return $state;
     }
 
-    public function getStatePath(bool $isAbsolute = true): string
+    public function getStatePath(bool $isAbsolute = true): ?string
     {
         if (! $isAbsolute) {
-            return $this->statePath ?? '';
+            return $this->statePath;
         }
 
         if (isset($this->cachedAbsoluteStatePath)) {
@@ -420,7 +420,7 @@ trait HasState
 
         $pathComponents = [];
 
-        if ($containerStatePath = $this->getContainer()->getStatePath()) {
+        if (filled($containerStatePath = $this->getContainer()->getStatePath())) {
             $pathComponents[] = $containerStatePath;
         }
 

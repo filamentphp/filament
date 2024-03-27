@@ -65,7 +65,7 @@
         @endphp
 
         <x-filament::grid.column
-            :wire:key="$schemaComponent instanceof \Filament\Forms\Components\Field ? $this->getId() . '.' . $schemaComponent->getStatePath() . '.' . $schemaComponent::class : null"
+            :wire:key="$schemaComponent->getLivewireKey()"
             :hidden="$isHidden"
             :default="$schemaComponent->getColumnSpan('default')"
             :sm="$schemaComponent->getColumnSpan('sm')"

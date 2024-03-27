@@ -66,6 +66,20 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         parent::setUp();
 
         $this->columnSpan('full');
+
+        $this->key(function (Section $component): ?string {
+            if ($statePath = $component->getStatePath(isAbsolute: false)) {
+                return $statePath;
+            }
+
+            $heading = $this->getHeading();
+
+            if (blank($heading)) {
+                return null;
+            }
+
+            return Str::slug($heading);
+        });
     }
 
     public function aside(bool | Closure | null $condition = true): static
@@ -73,34 +87,6 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
         $this->isAside = $condition;
 
         return $this;
-    }
-
-    public function getId(): ?string
-    {
-        $id = parent::getId();
-
-        if (filled($id)) {
-            return $id;
-        }
-
-        $heading = $this->getHeading();
-
-        if (blank($heading)) {
-            return null;
-        }
-
-        $id = Str::slug($heading);
-
-        if ($statePath = $this->getStatePath()) {
-            $id = "{$statePath}.{$id}";
-        }
-
-        return $id;
-    }
-
-    public function getKey(): ?string
-    {
-        return parent::getKey() ?? ($this->getActions() ? $this->getId() : null);
     }
 
     public function canConcealComponents(): bool

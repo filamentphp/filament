@@ -21,6 +21,7 @@ class ComponentContainer extends ViewComponent
     use ComponentContainer\Concerns\HasEntryWrapper;
     use ComponentContainer\Concerns\HasFieldWrapper;
     use ComponentContainer\Concerns\HasInlineLabels;
+    use ComponentContainer\Concerns\HasKey;
     use ComponentContainer\Concerns\HasOperation;
     use ComponentContainer\Concerns\HasState;
     use ComponentContainer\Concerns\ListensToEvents;

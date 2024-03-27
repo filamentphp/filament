@@ -25,7 +25,6 @@ class Step extends Component implements CanConcealComponents
     final public function __construct(string $label)
     {
         $this->label($label);
-        $this->id(Str::slug($label));
     }
 
     public static function make(string $label): static
@@ -34,6 +33,13 @@ class Step extends Component implements CanConcealComponents
         $static->configure();
 
         return $static;
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->key(fn (Step $component): string => Str::slug($component->getLabel()));
     }
 
     public function afterValidation(?Closure $callback): static

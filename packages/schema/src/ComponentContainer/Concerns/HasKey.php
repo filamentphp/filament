@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Schema\Components\Concerns;
+namespace Filament\Schema\ComponentContainer\Concerns;
 
 use Closure;
 
@@ -37,8 +37,8 @@ trait HasKey
 
         $keyComponents = [];
 
-        if (filled($containerInheritanceKey = $this->getContainer()->getInheritanceKey())) {
-            $keyComponents[] = $containerInheritanceKey;
+        if (filled($parentComponentInheritanceKey = $this->getParentComponent()?->getInheritanceKey())) {
+            $keyComponents[] = $parentComponentInheritanceKey;
         }
 
         if (filled($key)) {
@@ -60,7 +60,7 @@ trait HasKey
             return $this->cacheInheritanceKey($key);
         }
 
-        return $this->cacheInheritanceKey($this->getContainer()->getInheritanceKey());
+        return $this->cacheInheritanceKey($this->getParentComponent()?->getInheritanceKey());
     }
 
     protected function cacheAbsoluteKey(?string $key): ?string
