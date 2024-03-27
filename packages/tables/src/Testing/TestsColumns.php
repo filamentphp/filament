@@ -180,8 +180,18 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
+            $state = $column->getState();
+
+            if (is_array($state)) {
+                $state = json_encode($state);
+            }
+
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+
             Assert::assertTrue(
-                $column->getState() == $value,
+                $state == $value,
                 message: "Failed asserting that a table column with name [{$name}] has value of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
@@ -205,8 +215,18 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
+            $state = $column->getState();
+
+            if (is_array($state)) {
+                $state = json_encode($state);
+            }
+
+            if (is_array($value)) {
+                $value = json_encode($value);
+            }
+
             Assert::assertFalse(
-                $column->getState() == $value,
+                $state == $value,
                 message: "Failed asserting that a table column with name [{$name}] does not have a value of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
