@@ -15,7 +15,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'filament:make:filament-user')]
+#[AsCommand(name: 'make:filament-user')]
 class MakeUserCommand extends Command
 {
     protected $description = 'Create a new Filament user';

@@ -14,7 +14,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'filament:make:filament-cluster')]
+#[AsCommand(name: 'make:filament-cluster')]
 class MakeClusterCommand extends Command
 {
     use CanIndentStrings;

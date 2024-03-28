@@ -18,7 +18,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'filament:make:filament-resource')]
+#[AsCommand(name: 'make:filament-resource')]
 class MakeResourceCommand extends Command
 {
     use CanGenerateForms;

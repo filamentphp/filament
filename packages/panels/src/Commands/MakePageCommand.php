@@ -18,7 +18,7 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'filament:make:filament-page')]
+#[AsCommand(name: 'make:filament-page')]
 class MakePageCommand extends Command
 {
     use CanIndentStrings;

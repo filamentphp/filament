@@ -14,7 +14,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'filament:make:filament-relation-manager')]
+#[AsCommand(name: 'make:filament-relation-manager')]
 class MakeRelationManagerCommand extends Command
 {
     use CanIndentStrings;

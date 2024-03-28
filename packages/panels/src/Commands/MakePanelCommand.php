@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use ReflectionClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'filament:make:filament-panel')]
+#[AsCommand(name: 'make:filament-panel')]
 class MakePanelCommand extends Command
 {
     use CanGeneratePanels;

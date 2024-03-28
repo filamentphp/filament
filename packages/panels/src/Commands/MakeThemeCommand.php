@@ -13,7 +13,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\select;
 
-#[AsCommand(name: 'filament:make:filament-theme')]
+#[AsCommand(name: 'make:filament-theme')]
 class MakeThemeCommand extends Command
 {
     use CanManipulateFiles;
