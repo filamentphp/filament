@@ -52,4 +52,10 @@ return [
 
     ],
 
+    'top_bar' => [
+
+        'avatar' => 'Avatar representing :user'
+
+    ],
+
 ];
