@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Utilities\Get;
 use Filament\Schema\Components\Utilities\Set;
 use Illuminate\Contracts\Filesystem\Filesystem;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use League\Flysystem\UnableToCheckFileExistence;
+use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
 
@@ -614,6 +616,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $rules;
     }
 
+    #[Exposed]
+    #[Renderless]
     public function deleteUploadedFile(string $fileKey): static
     {
         $file = $this->removeUploadedFile($fileKey);
@@ -635,6 +639,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
+    #[Exposed]
+    #[Renderless]
     public function removeUploadedFile(string $fileKey): string | TemporaryUploadedFile | null
     {
         $files = $this->getState();
@@ -685,6 +691,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     /**
      * @param  array<array-key>  $fileKeys
      */
+    #[Exposed]
+    #[Renderless]
     public function reorderUploadedFiles(array $fileKeys): void
     {
         if (! $this->isReorderable) {
@@ -703,6 +711,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     /**
      * @return array<array{name: string, size: int, type: string, url: string} | null> | null
      */
+    #[Exposed]
+    #[Renderless]
     public function getUploadedFiles(): ?array
     {
         $urls = [];

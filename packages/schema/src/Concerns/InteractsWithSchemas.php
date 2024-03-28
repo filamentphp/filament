@@ -3,20 +3,23 @@
 namespace Filament\Schema\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Contracts\HasFileAttachments;
 use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;
 use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Contracts\TranslatableContentDriver;
+use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 use ReflectionMethod;
 use ReflectionNamedType;
 
 trait InteractsWithSchemas
 {
     use ResolvesDynamicLivewireProperties;
+    use WithFileUploads;
 
     /**
      * @var array <string, TemporaryUploadedFile | null>
@@ -41,9 +44,42 @@ trait InteractsWithSchemas
 
     protected bool $isCachingSchemas = false;
 
-    public function getSchemaComponentFileAttachment(string $key): ?TemporaryUploadedFile
+    public function isCachingSchemas(): bool
     {
-        return data_get($this->componentFileAttachments, $key);
+        return $this->isCachingSchemas;
+    }
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function callSchemaComponentMethod(string $componentKey, string $method, array $arguments = []): mixed
+    {
+        $component = $this->getSchemaComponent($componentKey);
+
+        if (! $component) {
+            return null;
+        }
+
+        if (! method_exists($component, $method)) {
+            return null;
+        }
+
+        $methodReflection = new ReflectionMethod($component, $method);
+
+        if (! $methodReflection->getAttributes(Exposed::class)) {
+            return null;
+        }
+
+        if ($methodReflection->getAttributes(Renderless::class)) {
+            $this->skipRender();
+        }
+
+        return $component->{$method}(...$arguments);
+    }
+
+    public function getSchemaComponentFileAttachment(string $componentKey): ?TemporaryUploadedFile
+    {
+        return data_get($this->componentFileAttachments, $componentKey);
     }
 
     /**
@@ -221,21 +257,94 @@ trait InteractsWithSchemas
         return $this->cachedSchemas;
     }
 
-    #[Renderless]
-    public function getSchemaComponentFileAttachmentUrl(string $key): ?string
+    /**
+     * @param  array<string, array<mixed>> | null  $rules
+     * @param  array<string, string>  $messages
+     * @param  array<string, string>  $attributes
+     * @return array<string, mixed>
+     */
+    public function validate($rules = null, $messages = [], $attributes = []): array
     {
-        $attachment = $this->getSchemaComponentFileAttachment($key);
+        try {
+            return parent::validate($rules, $messages, $attributes);
+        } catch (ValidationException $exception) {
+            $this->onValidationError($exception);
 
-        if (! $attachment) {
-            return null;
+            $this->dispatch('form-validation-error', livewireId: $this->getId());
+
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param  string  $field
+     * @param  array<string, array<mixed>>  $rules
+     * @param  array<string, string>  $messages
+     * @param  array<string, string>  $attributes
+     * @param  array<string, string>  $dataOverrides
+     * @return array<string, mixed>
+     */
+    public function validateOnly($field, $rules = null, $messages = [], $attributes = [], $dataOverrides = [])
+    {
+        try {
+            return parent::validateOnly($field, $rules, $messages, $attributes, $dataOverrides);
+        } catch (ValidationException $exception) {
+            $this->onValidationError($exception);
+
+            $this->dispatch('form-validation-error', livewireId: $this->getId());
+
+            throw $exception;
+        }
+    }
+
+    protected function onValidationError(ValidationException $exception): void
+    {
+    }
+
+    /**
+     * @param  array<string, mixed>  $attributes
+     * @return array<string, mixed>
+     */
+    protected function prepareForValidation($attributes): array
+    {
+        foreach ($this->getCachedSchemas() as $form) {
+            $attributes = $form->mutateStateForValidation($attributes);
         }
 
-        $component = $this->getSchemaComponent($key);
+        return $attributes;
+    }
 
-        if (! $component instanceof HasFileAttachments) {
-            return null;
+    /**
+     * @return array<string, array<mixed>>
+     */
+    public function getRules(): array
+    {
+        $rules = parent::getRules();
+
+        foreach ($this->getCachedSchemas() as $form) {
+            $rules = [
+                ...$rules,
+                ...$form->getValidationRules(),
+            ];
         }
 
-        return $component->saveUploadedFileAttachment($attachment);
+        return $rules;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function getValidationAttributes(): array
+    {
+        $attributes = parent::getValidationAttributes();
+
+        foreach ($this->getCachedSchemas() as $form) {
+            $attributes = [
+                ...$attributes,
+                ...$form->getValidationAttributes(),
+            ];
+        }
+
+        return $attributes;
     }
 }

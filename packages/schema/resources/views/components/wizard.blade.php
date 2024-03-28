@@ -1,6 +1,6 @@
 @php
     $isContained = $isContained();
-    $statePath = $getStatePath();
+    $key = $getKey();
 @endphp
 
 <div
@@ -96,7 +96,7 @@
 
         autofocusFields()
     "
-    x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $statePath }}') nextStep()"
+    x-on:next-wizard-step.window="if ($event.detail.key === '{{ $key }}') nextStep()"
     {{
         $attributes
             ->merge([
@@ -268,11 +268,9 @@
         <span
             x-cloak
             x-on:click="
-                $wire.dispatchFormEvent(
-                    'wizard::nextStep',
-                    '{{ $statePath }}',
-                    getStepIndex(step),
-                )
+                $wire.callSchemaComponentMethod(@js($key), 'nextStep', {
+                    currentStepIndex: getStepIndex(step),
+                })
             "
             x-show="! isLastStep()"
         >

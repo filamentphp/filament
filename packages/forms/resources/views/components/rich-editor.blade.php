@@ -40,12 +40,14 @@
                     let attachment = $event.attachment
 
                     $wire.upload(`componentFileAttachments.{{ $key }}`, attachment.file, () => {
-                        $wire.getSchemaComponentFileAttachmentUrl('{{ $key }}').then((url) => {
-                            attachment.setAttributes({
-                                url: url,
-                                href: url,
+                        $wire
+                            .callSchemaComponentMethod('{{ $key }}', 'saveUploadedFileAttachment')
+                            .then((url) => {
+                                attachment.setAttributes({
+                                    url: url,
+                                    href: url,
+                                })
                             })
-                        })
                     })
                 "
                 x-on:trix-change="

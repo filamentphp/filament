@@ -23,7 +23,6 @@ use Filament\Schema\Components\Concerns\HasMaxWidth;
 use Filament\Schema\Components\Concerns\HasMeta;
 use Filament\Schema\Components\Concerns\HasState;
 use Filament\Schema\Components\Concerns\HasStateBindingModifiers;
-use Filament\Schema\Components\Concerns\ListensToEvents;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasExtraAttributes;
@@ -54,7 +53,6 @@ class Component extends ViewComponent
     use HasMeta;
     use HasState;
     use HasStateBindingModifiers;
-    use ListensToEvents;
 
     protected string $evaluationIdentifier = 'component';
 

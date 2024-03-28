@@ -4,6 +4,7 @@ namespace Filament\Schema\Components;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Wizard\Step;
 use Filament\Support\Concerns;
 use Filament\Support\Enums\IconPosition;
@@ -58,41 +59,37 @@ class Wizard extends Component
     {
         parent::setUp();
 
+        $this->key('wizard');
+
         $this->registerActions([
             fn (Wizard $component): Action => $component->getNextAction(),
             fn (Wizard $component): Action => $component->getPreviousAction(),
         ]);
+    }
 
-        $this->registerListeners([
-            'wizard::nextStep' => [
-                function (Wizard $component, string $statePath, int $currentStepIndex): void {
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
+    #[Exposed]
+    public function nextStep(int $currentStepIndex): void
+    {
+        if (! $this->isSkippable()) {
+            /** @var Step $currentStep */
+            $currentStep = array_values(
+                $this
+                    ->getChildComponentContainer()
+                    ->getComponents()
+            )[$currentStepIndex];
 
-                    if (! $component->isSkippable()) {
-                        /** @var Step $currentStep */
-                        $currentStep = array_values(
-                            $component
-                                ->getChildComponentContainer()
-                                ->getComponents()
-                        )[$currentStepIndex];
+            try {
+                $currentStep->callBeforeValidation();
+                $currentStep->getChildComponentContainer()->validate();
+                $currentStep->callAfterValidation();
+            } catch (Halt $exception) {
+                return;
+            }
+        }
 
-                        try {
-                            $currentStep->callBeforeValidation();
-                            $currentStep->getChildComponentContainer()->validate();
-                            $currentStep->callAfterValidation();
-                        } catch (Halt $exception) {
-                            return;
-                        }
-                    }
-
-                    /** @var LivewireComponent $livewire */
-                    $livewire = $component->getLivewire();
-                    $livewire->dispatch('next-wizard-step', statePath: $statePath);
-                },
-            ],
-        ]);
+        /** @var LivewireComponent $livewire */
+        $livewire = $this->getLivewire();
+        $livewire->dispatch('next-wizard-step', key: $this->getKey());
     }
 
     public function getNextAction(): Action
@@ -101,7 +98,7 @@ class Wizard extends Component
             ->label(__('filament-forms::components.wizard.actions.next_step.label'))
             ->iconPosition(IconPosition::After)
             ->livewireClickHandlerEnabled(false)
-            ->livewireTarget('dispatchFormEvent')
+            ->livewireTarget('callSchemaComponentMethod')
             ->button();
 
         if ($this->modifyNextActionUsing) {

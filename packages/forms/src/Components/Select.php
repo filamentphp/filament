@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Schema\ComponentContainer;
+use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Contracts\HasAffixActions;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
@@ -26,6 +27,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
+use Livewire\Attributes\Renderless;
 use Livewire\Component as LivewireComponent;
 use Znck\Eloquent\Relations\BelongsToThrough;
 
@@ -576,6 +578,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->position);
     }
 
+    #[Exposed]
+    #[Renderless]
     public function getOptionLabel(): ?string
     {
         return $this->evaluate($this->getOptionLabelUsing, [
@@ -638,6 +642,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
+    #[Exposed]
+    #[Renderless]
     public function getSearchResultsForJs(string $search): array
     {
         return $this->transformOptionsForJs($this->getSearchResults($search));
@@ -646,6 +652,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
+    #[Exposed]
+    #[Renderless]
     public function getOptionsForJs(): array
     {
         return $this->transformOptionsForJs($this->getOptions());
@@ -654,6 +662,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     /**
      * @return array<array{'label': string, 'value': string}>
      */
+    #[Exposed]
+    #[Renderless]
     public function getOptionLabelsForJs(): array
     {
         return $this->transformOptionsForJs($this->getOptionLabels());
