@@ -10,8 +10,7 @@
     "require": {
         "php": "^8.1",
         "filament/support": "self.version",
-        "spatie/laravel-package-tools": "^1.9",
-        "symfony/console": "^6.0|^7.0"
+        "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {
         "psr-4": {
