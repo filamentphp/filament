@@ -54,7 +54,7 @@ return [
 
     'top_bar' => [
 
-        'avatar' => 'Avatar vertegenwoordigt :user'
+        'avatar' => 'Avatar vertegenwoordigt :user',
 
     ],
 
