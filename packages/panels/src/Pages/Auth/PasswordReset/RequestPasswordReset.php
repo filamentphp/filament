@@ -9,11 +9,11 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
+use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -21,7 +21,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Password;
 
 /**
- * @property Form $form
+ * @property ComponentContainer $form
  */
 class RequestPasswordReset extends SimplePage
 {
@@ -102,13 +102,13 @@ class RequestPasswordReset extends SimplePage
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(ComponentContainer $form): ComponentContainer
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | ComponentContainer>
      */
     protected function getForms(): array
     {

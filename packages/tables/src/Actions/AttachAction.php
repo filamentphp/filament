@@ -5,7 +5,7 @@ namespace Filament\Tables\Actions;
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables\Table;
@@ -70,7 +70,7 @@ class AttachAction extends Action
 
         $this->form(fn (): array => [$this->getRecordSelect()]);
 
-        $this->action(function (array $arguments, array $data, Form $form, Table $table): void {
+        $this->action(function (array $arguments, array $data, ComponentContainer $form, Table $table): void {
             /** @var BelongsToMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 

@@ -3,7 +3,6 @@
 namespace Filament\Forms\Concerns;
 
 use Filament\Actions\Action;
-use Filament\Forms\Form;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Contracts\ExposesStateToActionData;
@@ -234,7 +233,7 @@ trait HasFormComponentActions
             ?->arguments($this->mountedFormComponentActionsArguments[$actionNestingIndex] ?? []);
     }
 
-    protected function getMountedFormComponentActionForm(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?Form
+    protected function getMountedFormComponentActionForm(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?ComponentContainer
     {
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
 

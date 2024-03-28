@@ -4,7 +4,7 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
-use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -42,7 +42,7 @@ class CreateAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::create.single.notifications.created.title'));
 
-        $this->action(function (array $arguments, Form $form, HasTable $livewire): void {
+        $this->action(function (array $arguments, ComponentContainer $form, HasTable $livewire): void {
             $model = $this->getModel();
 
             $record = $this->process(function (array $data, Table $table) use ($model): Model {

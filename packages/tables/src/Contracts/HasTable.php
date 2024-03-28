@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Contracts;
 
-use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
@@ -46,7 +46,7 @@ interface HasTable
 
     public function getMountedTableAction(): ?Action;
 
-    public function getMountedTableActionForm(): ?Form;
+    public function getMountedTableActionForm(): ?ComponentContainer;
 
     public function getMountedTableActionRecord(): ?Model;
 
@@ -54,11 +54,11 @@ interface HasTable
 
     public function getMountedTableBulkAction(): ?BulkAction;
 
-    public function getMountedTableBulkActionForm(): ?Form;
+    public function getMountedTableBulkActionForm(): ?ComponentContainer;
 
     public function getTable(): Table;
 
-    public function getTableFiltersForm(): Form;
+    public function getTableFiltersForm(): ComponentContainer;
 
     public function getTableRecords(): EloquentCollection | Paginator | CursorPaginator;
 
@@ -76,7 +76,7 @@ interface HasTable
 
     public function isTableColumnToggledHidden(string $name): bool;
 
-    public function getTableColumnToggleForm(): Form;
+    public function getTableColumnToggleForm(): ComponentContainer;
 
     public function getTableRecord(?string $key): ?Model;
 

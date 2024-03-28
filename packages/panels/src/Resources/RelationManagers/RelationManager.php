@@ -6,12 +6,12 @@ use Closure;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schema\ComponentContainer;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -94,7 +94,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | ComponentContainer>
      */
     protected function getForms(): array
     {
@@ -218,7 +218,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canCreate())
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
     }
 
     protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
@@ -243,7 +243,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canEdit($record))
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
     }
 
     protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
@@ -269,7 +269,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => $livewire->canView($record))
             ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
     }
 
     protected function configureTableBulkAction(BulkAction $action): void
@@ -329,7 +329,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         }
     }
 
-    public function form(Form $form): Form
+    public function form(ComponentContainer $form): ComponentContainer
     {
         return $form;
     }

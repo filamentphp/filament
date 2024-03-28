@@ -3,8 +3,8 @@
 namespace Filament\Tests\Panels\Fixtures\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schema\ComponentContainer;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Models\User;
@@ -20,7 +20,7 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function form(Form $form): Form
+    public static function form(ComponentContainer $form): ComponentContainer
     {
         return $form
             ->schema([

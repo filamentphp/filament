@@ -2,12 +2,12 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 use Filament\Tables\Filters\BaseFilter;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * @property Form $tableFiltersForm
+ * @property ComponentContainer $tableFiltersForm
  */
 trait HasFilters
 {
@@ -21,7 +21,7 @@ trait HasFilters
      */
     public ?array $tableDeferredFilters = null;
 
-    public function getTableFiltersForm(): Form
+    public function getTableFiltersForm(): ComponentContainer
     {
         if ((! $this->isCachingSchemas) && $this->hasCachedSchema('tableFiltersForm')) {
             return $this->getSchema('tableFiltersForm');
@@ -32,7 +32,7 @@ trait HasFilters
             ->columns($this->getTable()->getFiltersFormColumns())
             ->model($this->getTable()->getModel())
             ->statePath($this->getTable()->hasDeferredFilters() ? 'tableDeferredFilters' : 'tableFilters')
-            ->when(! $this->getTable()->hasDeferredFilters(), fn (Form $form) => $form->live());
+            ->when(! $this->getTable()->hasDeferredFilters(), fn (ComponentContainer $form) => $form->live());
     }
 
     public function updatedTableFilters(): void

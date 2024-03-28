@@ -7,15 +7,15 @@ use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
 use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
+use Filament\Schema\ComponentContainer;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 
 /**
- * @property Form $form
+ * @property ComponentContainer $form
  */
 class EmailVerificationPrompt extends SimplePage
 {

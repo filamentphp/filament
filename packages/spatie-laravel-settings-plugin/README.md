@@ -37,11 +37,9 @@ You must define a form schema to interact with your settings class inside the `f
 Since the [Form Builder](https://filamentphp.com/docs/forms) is installed in the Panel Builder by default, you may use any form [fields](https://filamentphp.com/docs/forms/fields) or [layout components](https://filamentphp.com/docs/forms/layout) you like:
 
 ```php
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Forms\Components\Repeater;use Filament\Forms\Components\TextInput;use Filament\Schema\ComponentContainer;
 
-public function form(Form $form): Form
+public function form(ComponentContainer $form): ComponentContainer
 {
     return $form
         ->schema([

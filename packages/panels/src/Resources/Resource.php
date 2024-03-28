@@ -5,7 +5,6 @@ namespace Filament\Resources;
 use Exception;
 use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
 use Filament\GlobalSearch\Actions\Action;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Infolists\Infolist;
@@ -18,6 +17,7 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use Filament\Schema\ComponentContainer;
 use Filament\Tables\Table;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -123,7 +123,7 @@ abstract class Resource
 
     protected static bool $hasTitleCaseModelLabel = true;
 
-    public static function form(Form $form): Form
+    public static function form(ComponentContainer $form): ComponentContainer
     {
         return $form;
     }

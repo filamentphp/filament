@@ -3,7 +3,6 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
-use Filament\Forms;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
@@ -256,7 +255,7 @@ trait InteractsWithTable
     }
 
     /**
-     * @return array<string, Forms\Form>
+     * @return array<string, \Filament\Schema\ComponentContainer>
      */
     protected function getInteractsWithTableForms(): array
     {

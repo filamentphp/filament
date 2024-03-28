@@ -328,9 +328,9 @@ public static function getPages(): array
 Now, you can define the `form()` for this page, which can contain other fields that are not present on the main Edit page:
 
 ```php
-use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 
-public function form(Form $form): Form
+public function form(ComponentContainer $form): ComponentContainer
 {
     return $form
         ->schema([

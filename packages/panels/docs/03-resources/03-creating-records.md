@@ -268,13 +268,11 @@ public function hasSkippableSteps(): bool
 If you'd like to reduce the amount of repetition between the resource form and wizard steps, it's a good idea to extract public static resource functions for your fields, where you can easily retrieve an instance of a field from the resource or the wizard:
 
 ```php
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Forms;use Filament\Resources\Resource;use Filament\Schema\ComponentContainer;
 
 class CategoryResource extends Resource
 {
-    public static function form(Form $form): Form
+    public static function form(ComponentContainer $form): ComponentContainer
     {
         return $form
             ->schema([

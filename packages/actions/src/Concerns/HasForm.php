@@ -3,7 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Wizard;
 
@@ -50,7 +50,7 @@ trait HasForm
         return $this;
     }
 
-    public function getForm(Form $form): ?Form
+    public function getForm(ComponentContainer $form): ?ComponentContainer
     {
         $modifiedForm = $this->evaluate($this->form, [
             'form' => $form,

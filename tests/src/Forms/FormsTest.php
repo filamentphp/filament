@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
@@ -91,7 +91,7 @@ it('can have visible fields on multiple forms', function () {
 
 class TestComponentWithForm extends Livewire
 {
-    public function form(Form $form): Form
+    public function form(ComponentContainer $form): ComponentContainer
     {
         return $form
             ->schema([
@@ -133,14 +133,14 @@ class TestComponentWithMultipleForms extends Livewire
         ];
     }
 
-    public function fooForm(Form $form): Form
+    public function fooForm(ComponentContainer $form): ComponentContainer
     {
         return $form
             ->schema($this->getSchemaForForms())
             ->statePath('data');
     }
 
-    public function barForm(Form $form): Form
+    public function barForm(ComponentContainer $form): ComponentContainer
     {
         return $form
             ->schema($this->getSchemaForForms())

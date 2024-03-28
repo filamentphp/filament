@@ -3,8 +3,8 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
-use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
+use Filament\Schema\ComponentContainer;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\BulkAction;
@@ -19,7 +19,7 @@ use Throwable;
 use function Livewire\store;
 
 /**
- * @property Form $mountedTableBulkActionForm
+ * @property ComponentContainer $mountedTableBulkActionForm
  */
 trait HasBulkActions
 {
@@ -423,7 +423,7 @@ trait HasBulkActions
         return $this->getTable()->getBulkAction($this->mountedTableBulkAction);
     }
 
-    public function getMountedTableBulkActionForm(?BulkAction $mountedBulkAction = null): ?Form
+    public function getMountedTableBulkActionForm(?BulkAction $mountedBulkAction = null): ?ComponentContainer
     {
         $mountedBulkAction ??= $this->getMountedTableBulkAction();
 

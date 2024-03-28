@@ -203,13 +203,11 @@ In this example, we will customize the profile page. We need to create a new PHP
 
 namespace App\Filament\Pages\Auth;
 
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Pages\Auth\EditProfile as BaseEditProfile;
+use Filament\Forms\Components\TextInput;use Filament\Pages\Auth\EditProfile as BaseEditProfile;use Filament\Schema\ComponentContainer;
 
 class EditProfile extends BaseEditProfile
 {
-    public function form(Form $form): Form
+    public function form(ComponentContainer $form): ComponentContainer
     {
         return $form
             ->schema([

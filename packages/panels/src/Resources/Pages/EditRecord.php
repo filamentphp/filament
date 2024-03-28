@@ -9,7 +9,6 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
@@ -29,7 +28,7 @@ use Throwable;
 use function Filament\Support\is_app_url;
 
 /**
- * @property Form $form
+ * @property ComponentContainer $form
  */
 class EditRecord extends Page
 {
@@ -281,7 +280,7 @@ class EditRecord extends Page
         $action
             ->authorize($resource::canView($this->getRecord()))
             ->infolist(fn (Infolist $infolist): Infolist => static::getResource()::infolist($infolist->columns(2)))
-            ->form(fn (Form $form): Form => static::getResource()::form($form));
+            ->form(fn (ComponentContainer $form): ComponentContainer => static::getResource()::form($form));
 
         if ($resource::hasPage('view')) {
             $action->url(fn (): string => static::getResource()::getUrl('view', ['record' => $this->getRecord()]));
@@ -361,13 +360,13 @@ class EditRecord extends Page
             ->color('gray');
     }
 
-    public function form(Form $form): Form
+    public function form(ComponentContainer $form): ComponentContainer
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | ComponentContainer>
      */
     protected function getForms(): array
     {

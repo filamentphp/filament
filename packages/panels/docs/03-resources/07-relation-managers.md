@@ -73,12 +73,9 @@ php artisan make:filament-relation-manager CategoryResource posts title
 This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](getting-started#resource-forms) and [table](getting-started#resource-tables) for your relation manager:
 
 ```php
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Tables;
-use Filament\Tables\Table;
+use Filament\Forms;use Filament\Schema\ComponentContainer;use Filament\Tables;use Filament\Tables\Table;
 
-public function form(Form $form): Form
+public function form(ComponentContainer $form): ComponentContainer
 {
     return $form
         ->schema([
@@ -195,10 +192,9 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 For `BelongsToMany` and `MorphToMany` relationships, you may also add pivot table attributes. For example, if you have a `TeamsRelationManager` for your `UserResource`, and you want to add the `role` pivot attribute to the create form, you can use:
 
 ```php
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Forms;use Filament\Schema\ComponentContainer;
 
-public function form(Form $form): Form
+public function form(ComponentContainer $form): ComponentContainer
 {
     return $form
         ->schema([
@@ -222,10 +218,9 @@ To learn how to customize the `CreateAction`, including mutating the form data, 
 For `BelongsToMany` and `MorphToMany` relationships, you may also edit pivot table attributes. For example, if you have a `TeamsRelationManager` for your `UserResource`, and you want to add the `role` pivot attribute to the edit form, you can use:
 
 ```php
-use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Forms;use Filament\Schema\ComponentContainer;
 
-public function form(Form $form): Form
+public function form(ComponentContainer $form): ComponentContainer
 {
     return $form
         ->schema([
@@ -595,11 +590,9 @@ $this->getOwnerRecord()
 However, if you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#form-component-utility-injection) to access the `$livewire` instance:
 
 ```php
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Forms;use Filament\Resources\RelationManagers\RelationManager;use Filament\Schema\ComponentContainer;
 
-public function form(Form $form): Form
+public function form(ComponentContainer $form): ComponentContainer
 {
     return $form
         ->schema([
@@ -754,11 +747,9 @@ RelationGroup::make('Contacts', [
 You may decide that you want a resource's form and table to be identical to a relation manager's, and subsequently want to reuse the code you previously wrote. This is easy, by calling the `form()` and `table()` methods of the resource from the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\PostResource;
-use Filament\Forms\Form;
-use Filament\Tables\Table;
+use App\Filament\Resources\Blog\PostResource;use Filament\Schema\ComponentContainer;use Filament\Tables\Table;
 
-public function form(Form $form): Form
+public function form(ComponentContainer $form): ComponentContainer
 {
     return PostResource::form($form);
 }

@@ -5,10 +5,9 @@ namespace Filament\Infolists\Concerns;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
+use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
@@ -273,7 +272,7 @@ trait InteractsWithInfolists
         return $infolist->getComponent($this->mountedInfolistActionsComponent);
     }
 
-    public function getMountedInfolistActionForm(?Action $mountedAction = null): ?Form
+    public function getMountedInfolistActionForm(?Action $mountedAction = null): ?ComponentContainer
     {
         $mountedAction ??= $this->getMountedInfolistAction();
 
@@ -344,7 +343,7 @@ trait InteractsWithInfolists
     }
 
     /**
-     * @return array<string, Forms\Form>
+     * @return array<string, \Filament\Schema\ComponentContainer>
      */
     protected function getInteractsWithInfolistsForms(): array
     {

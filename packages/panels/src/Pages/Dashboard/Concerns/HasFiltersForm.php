@@ -2,7 +2,7 @@
 
 namespace Filament\Pages\Dashboard\Concerns;
 
-use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 
 trait HasFiltersForm
 {
@@ -15,12 +15,12 @@ trait HasFiltersForm
         ];
     }
 
-    public function filtersForm(Form $form): Form
+    public function filtersForm(ComponentContainer $form): ComponentContainer
     {
         return $form;
     }
 
-    public function getFiltersForm(): Form
+    public function getFiltersForm(): ComponentContainer
     {
         if ((! $this->isCachingSchemas) && $this->hasCachedSchema('filtersForm')) {
             return $this->getSchema('filtersForm');

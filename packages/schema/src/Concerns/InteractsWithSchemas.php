@@ -12,6 +12,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use ReflectionMethod;
+use ReflectionNamedType;
 
 trait InteractsWithSchemas
 {
@@ -127,9 +128,15 @@ trait InteractsWithSchemas
             $parameterReflection = $methodReflection->getParameters()[0] ?? null;
 
             if (! $parameterReflection) {
-                $returnTypeReflection = $methodReflection?->getReturnType();
+                $returnTypeReflection = $methodReflection->getReturnType();
 
                 if (! $returnTypeReflection) {
+                    unset($this->cachedSchemas[$name]);
+
+                    return null;
+                }
+
+                if (! $returnTypeReflection instanceof ReflectionNamedType) {
                     unset($this->cachedSchemas[$name]);
 
                     return null;
@@ -146,9 +153,15 @@ trait InteractsWithSchemas
                 return $this->cachedSchemas[$name] = ($this->{$name}())->key($name);
             }
 
-            $typeReflection = $parameterReflection?->getType();
+            $typeReflection = $parameterReflection->getType();
 
             if (! $typeReflection) {
+                unset($this->cachedSchemas[$name]);
+
+                return null;
+            }
+
+            if (! $typeReflection instanceof ReflectionNamedType) {
                 unset($this->cachedSchemas[$name]);
 
                 return null;

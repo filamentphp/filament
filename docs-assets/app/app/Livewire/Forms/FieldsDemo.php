@@ -24,7 +24,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Group;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
@@ -40,7 +40,7 @@ class FieldsDemo extends Component implements HasForms
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(ComponentContainer $form): ComponentContainer
     {
         return $form
             ->statePath('data')

@@ -5,7 +5,6 @@ namespace Filament\Forms\Components;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Forms\Form;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Contracts\HasAffixActions;
@@ -275,7 +274,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         $action = Action::make($this->getCreateOptionActionName())
-            ->form(function (Select $component, Form $form): array | Form | null {
+            ->form(function (Select $component, ComponentContainer $form): array | ComponentContainer | null {
                 return $component->getCreateOptionActionForm($form->model(
                     $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
                 ));
@@ -357,9 +356,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @return array<Component> | Form | null
+     * @return array<Component> | ComponentContainer | null
      */
-    public function getCreateOptionActionForm(Form $form): array | Form | null
+    public function getCreateOptionActionForm(ComponentContainer $form): array | ComponentContainer | null
     {
         return $this->evaluate($this->createOptionActionForm, ['form' => $form]);
     }
@@ -370,9 +369,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @return array<Component> | Form | null
+     * @return array<Component> | ComponentContainer | null
      */
-    public function getEditOptionActionForm(Form $form): array | Form | null
+    public function getEditOptionActionForm(ComponentContainer $form): array | ComponentContainer | null
     {
         return $this->evaluate($this->editOptionActionForm, ['form' => $form]);
     }
@@ -429,7 +428,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         $action = Action::make($this->getEditOptionActionName())
-            ->form(function (Select $component, Form $form): array | Form | null {
+            ->form(function (Select $component, ComponentContainer $form): array | ComponentContainer | null {
                 return $component->getEditOptionActionForm(
                     $form->model($component->getSelectedRecord()),
                 );
@@ -988,7 +987,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationship->syncWithPivotValues($state ?? [], $pivotData);
         });
 
-        $this->createOptionUsing(static function (Select $component, array $data, Form $form) {
+        $this->createOptionUsing(static function (Select $component, array $data, ComponentContainer $form) {
             $record = $component->getRelationship()->getRelated();
             $record->fill($data);
             $record->save();
@@ -1002,7 +1001,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return $component->getSelectedRecord()?->attributesToArray();
         });
 
-        $this->updateOptionUsing(static function (array $data, Form $form) {
+        $this->updateOptionUsing(static function (array $data, ComponentContainer $form) {
             $form->getRecord()?->update($data);
         });
 

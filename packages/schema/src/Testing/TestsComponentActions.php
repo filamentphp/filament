@@ -4,7 +4,6 @@ namespace Filament\Schema\Testing;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Contracts\HasSchemas;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;

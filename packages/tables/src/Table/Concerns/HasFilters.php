@@ -3,7 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Group;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\MaxWidth;
@@ -158,7 +158,7 @@ trait HasFilters
         return $this->getFilters()[$name] ?? null;
     }
 
-    public function getFiltersForm(): Form
+    public function getFiltersForm(): ComponentContainer
     {
         return $this->getLivewire()->getTableFiltersForm();
     }

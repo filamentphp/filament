@@ -9,12 +9,12 @@ use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
+use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;
@@ -22,7 +22,7 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 
 /**
- * @property Form $form
+ * @property ComponentContainer $form
  */
 class Login extends SimplePage
 {
@@ -97,13 +97,13 @@ class Login extends SimplePage
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(ComponentContainer $form): ComponentContainer
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | ComponentContainer>
      */
     protected function getForms(): array
     {

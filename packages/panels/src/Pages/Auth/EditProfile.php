@@ -7,11 +7,11 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns;
 use Filament\Pages\Page;
 use Filament\Panel;
+use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Utilities\Get;
 use Filament\Support\Enums\Alignment;
@@ -30,7 +30,7 @@ use Throwable;
 use function Filament\Support\is_app_url;
 
 /**
- * @property Form $form
+ * @property ComponentContainer $form
  */
 class EditProfile extends Page
 {
@@ -268,13 +268,13 @@ class EditProfile extends Page
             ->dehydrated(false);
     }
 
-    public function form(Form $form): Form
+    public function form(ComponentContainer $form): ComponentContainer
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | ComponentContainer>
      */
     protected function getForms(): array
     {

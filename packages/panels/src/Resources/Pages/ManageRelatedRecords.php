@@ -3,12 +3,12 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
-use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use Filament\Schema\ComponentContainer;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -168,7 +168,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire): bool => $livewire->canCreate())
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
     }
 
     protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
@@ -193,7 +193,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canEdit($record))
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
     }
 
     protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
@@ -219,7 +219,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canView($record))
             ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
     }
 
     protected function configureTableBulkAction(BulkAction $action): void
@@ -279,7 +279,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         }
     }
 
-    public function form(Form $form): Form
+    public function form(ComponentContainer $form): ComponentContainer
     {
         return $form;
     }
@@ -388,7 +388,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | ComponentContainer>
      */
     protected function getForms(): array
     {

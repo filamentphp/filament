@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Contracts;
 
-use Filament\Forms\Form;
 use Filament\Schema\Contracts\HasSchemas;
 
 interface HasForms extends HasSchemas

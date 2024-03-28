@@ -4,7 +4,6 @@ namespace Filament\Forms\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
@@ -202,7 +201,7 @@ trait InteractsWithForms
     }
 
     /**
-     * @return array<string, Form>
+     * @return array<string, ComponentContainer>
      */
     protected function cacheForms(): array
     {
@@ -212,7 +211,7 @@ trait InteractsWithForms
             ...$this->cachedSchemas,
             ...collect($this->getForms())
                 ->merge($this->getTraitForms())
-                ->mapWithKeys(function (Form | string | null $form, string | int $formName): array {
+                ->mapWithKeys(function (ComponentContainer | string | null $form, string | int $formName): array {
                     if ($form === null) {
                         return ['' => null];
                     }
@@ -247,7 +246,7 @@ trait InteractsWithForms
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | ComponentContainer>
      */
     public function getTraitForms(): array
     {
@@ -284,7 +283,7 @@ trait InteractsWithForms
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | ComponentContainer>
      */
     protected function getForms(): array
     {
@@ -293,7 +292,7 @@ trait InteractsWithForms
         ];
     }
 
-    public function form(Form $form): Form
+    public function form(ComponentContainer $form): ComponentContainer
     {
         return $form
             ->schema($this->getFormSchema())
@@ -370,9 +369,9 @@ trait InteractsWithForms
         return $attributes;
     }
 
-    protected function makeForm(): Form
+    protected function makeForm(): ComponentContainer
     {
-        return Form::make($this);
+        return ComponentContainer::make($this);
     }
 
     public function isCachingSchemas(): bool

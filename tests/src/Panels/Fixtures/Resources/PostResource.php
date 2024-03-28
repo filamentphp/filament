@@ -3,8 +3,8 @@
 namespace Filament\Tests\Panels\Fixtures\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schema\ComponentContainer;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
@@ -23,7 +23,7 @@ class PostResource extends Resource
 
     protected static int $globalSearchResultsLimit = 3;
 
-    public static function form(Form $form): Form
+    public static function form(ComponentContainer $form): ComponentContainer
     {
         return $form
             ->schema([

@@ -54,10 +54,7 @@ Action::make('updateAuthor')
 You may fill the form with existing data, using the `fillForm()` method:
 
 ```php
-use App\Models\Post;
-use App\Models\User;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
+use App\Models\Post;use App\Models\User;use Filament\Forms\Components\Select;
 
 Action::make('updateAuthor')
     ->fillForm(fn (Post $record): array => [
@@ -340,10 +337,10 @@ Action::make('updateAuthor')
 You may execute code within a closure when the modal opens, by passing it to the `mountUsing()` method:
 
 ```php
-use Filament\Forms\Form;
+use Filament\Schema\ComponentContainer;
 
 Action::make('create')
-    ->mountUsing(function (Form $form) {
+    ->mountUsing(function (ComponentContainer $form) {
         $form->fill();
 
         // ...

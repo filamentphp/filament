@@ -5,11 +5,11 @@ namespace Filament\Resources\Pages;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Schema\ComponentContainer;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
@@ -21,7 +21,7 @@ use Throwable;
 use function Filament\Support\is_app_url;
 
 /**
- * @property Form $form
+ * @property ComponentContainer $form
  */
 class CreateRecord extends Page
 {
@@ -253,13 +253,13 @@ class CreateRecord extends Page
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(ComponentContainer $form): ComponentContainer
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | ComponentContainer>
      */
     protected function getForms(): array
     {

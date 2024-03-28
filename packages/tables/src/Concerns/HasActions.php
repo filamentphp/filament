@@ -2,8 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
+use Filament\Schema\ComponentContainer;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
@@ -16,7 +16,7 @@ use Throwable;
 use function Livewire\store;
 
 /**
- * @property Form $mountedTableActionForm
+ * @property ComponentContainer $mountedTableActionForm
  */
 trait HasActions
 {
@@ -261,7 +261,7 @@ trait HasActions
         return $this->getTable()->getAction($this->mountedTableActions);
     }
 
-    public function getMountedTableActionForm(?Action $mountedAction = null): ?Form
+    public function getMountedTableActionForm(?Action $mountedAction = null): ?ComponentContainer
     {
         $mountedAction ??= $this->getMountedTableAction();
 
