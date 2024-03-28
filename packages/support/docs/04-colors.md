@@ -10,7 +10,7 @@ Filament uses CSS variables to define its color palette. These CSS variables are
 
 From a service provider's `boot()` method, or middleware, you can call the `FilamentColor::register()` method, which you can use to customize which colors Filament uses for UI elements.
 
-There are 7 default colors that are used throughout Filament that you are able to customize:
+There are 6 default colors that are used throughout Filament that you are able to customize:
 
 ```php
 use Filament\Support\Colors\Color;
