@@ -250,6 +250,15 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Áno',
+            'false' => 'Nie',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
@@ -408,6 +417,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Nová značka',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Skryť heslo',
+            ],
+
+            'show_password' => [
+                'label' => 'Zobraziť heslo',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Áno',
+            'false' => 'Nie',
+        ],
+
     ],
 
     'wizard' => [
