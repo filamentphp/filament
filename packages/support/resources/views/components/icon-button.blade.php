@@ -120,19 +120,24 @@
     $hasTooltip = filled($tooltip);
 @endphp
 
+@if ($hasTooltip)
+    {{-- format-ignore-start --}}<span
+        x-data="{}"
+        class="inline-flex"
+        x-tooltip="{
+            content: @js($tooltip),
+            theme: $store.theme,
+        }"
+    >{{-- format-ignore-end --}}
+@endif
+
 @if ($tag === 'button')
     <button
-        @if ($keyBindings || $hasTooltip)
+        @if ($keyBindings)
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
-        @endif
-        @if ($hasTooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
         @endif
         {{
             $attributes
@@ -140,9 +145,9 @@
                     'disabled' => $disabled,
                     'type' => $type,
                 ], escape: false)
-                ->merge([
+                ->when(! $hasTooltip, fn ($attributes) => $attributes->merge([
                     'title' => $label,
-                ], escape: true)
+                ], escape: true))
                 ->class([$buttonClasses])
                 ->style([$buttonStyles])
         }}
@@ -190,23 +195,17 @@
 @elseif ($tag === 'a')
     <a
         {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
-        @if ($keyBindings || $hasTooltip)
+        @if ($keyBindings)
             x-data="{}"
         @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($hasTooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
-        @endif
         {{
             $attributes
-                ->merge([
+                ->when(! $hasTooltip, fn ($attributes) => $attributes->merge([
                     'title' => $label,
-                ], escape: true)
+                ], escape: true))
                 ->class([$buttonClasses])
                 ->style([$buttonStyles])
         }}
@@ -231,4 +230,8 @@
             </div>
         @endif
     </a>
+@endif
+
+@if ($hasTooltip)
+    {{-- format-ignore-start --}}</span>{{-- format-ignore-end --}}
 @endif

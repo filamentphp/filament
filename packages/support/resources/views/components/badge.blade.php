@@ -72,21 +72,26 @@
     $hasTooltip = filled($tooltip);
 @endphp
 
-<{{ $tag }}
-    @if ($tag === 'a')
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
-    @endif
-    @if ($keyBindings || $hasTooltip)
+@if ($hasTooltip)
+    {{-- format-ignore-start --}}<span
         x-data="{}"
-    @endif
-    @if ($keyBindings)
-        x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
-    @endif
-    @if ($hasTooltip)
+        class="inline-flex"
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
         }"
+    >{{-- format-ignore-end --}}
+@endif
+
+<{{ $tag }}
+    @if ($tag === 'a')
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
+    @endif
+    @if ($keyBindings)
+        x-data="{}"
+    @endif
+    @if ($keyBindings)
+        x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
     @endif
     {{
         $attributes
@@ -233,3 +238,7 @@
         @endif
     @endif
 </{{ $tag }}>
+
+@if ($hasTooltip)
+    {{-- format-ignore-start --}}</span>{{-- format-ignore-end --}}
+@endif
