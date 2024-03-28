@@ -6,7 +6,9 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'filament:assets')]
 class AssetsCommand extends Command
 {
     use CanManipulateFiles;
