@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Login',
+    'title' => 'ဝင်ရန်',
 
-    'heading' => 'Sign in to your account',
+    'heading' => 'သင့်အကောင့်သို့ ဝင်ရန်',
 
     'form' => [
 
