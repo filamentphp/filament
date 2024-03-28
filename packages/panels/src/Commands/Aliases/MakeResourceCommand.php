@@ -3,7 +3,9 @@
 namespace Filament\Commands\Aliases;
 
 use Filament\Commands;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'filament:resource')]
 class MakeResourceCommand extends Commands\MakeResourceCommand
 {
     protected $hidden = true;
