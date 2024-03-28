@@ -35,7 +35,7 @@
                             uploadFileAttachmentUsing: async (file, onSuccess, onError) => {
                                 $wire.upload(`componentFileAttachments.{{ $statePath }}`, file, () => {
                                     $wire
-                                        .getFormComponentFileAttachmentUrl('{{ $statePath }}')
+                                        .getSchemaComponentFileAttachmentUrl('{{ $statePath }}')
                                         .then((url) => {
                                             if (! url) {
                                                 return onError()

@@ -7,9 +7,9 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 interface HasSchemas
 {
-    public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile;
+    public function getSchemaComponentFileAttachment(string $statePath): ?TemporaryUploadedFile;
 
     public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver;
 
-    public function getOldFormState(string $statePath): mixed;
+    public function getOldSchemaState(string $statePath): mixed;
 }

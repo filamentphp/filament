@@ -399,7 +399,7 @@ trait HasState
             return null;
         }
 
-        $state = $this->getLivewire()->getOldFormState($this->getStatePath());
+        $state = $this->getLivewire()->getOldSchemaState($this->getStatePath());
 
         if (blank($state)) {
             return null;

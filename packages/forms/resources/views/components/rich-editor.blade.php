@@ -43,7 +43,7 @@
                         attachment.file,
                         () => {
                             $wire
-                                .getFormComponentFileAttachmentUrl('{{ $statePath }}')
+                                .getSchemaComponentFileAttachmentUrl('{{ $statePath }}')
                                 .then((url) => {
                                     attachment.setAttributes({
                                         url: url,

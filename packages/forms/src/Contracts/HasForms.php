@@ -9,11 +9,11 @@ interface HasForms extends HasSchemas
 {
     public function dispatchFormEvent(mixed ...$args): void;
 
-    public function getActiveFormsLocale(): ?string;
+    public function getActiveSchemaLocale(): ?string;
 
     public function getForm(string $name): ?Form;
 
-    public function getFormComponentFileAttachmentUrl(string $statePath): ?string;
+    public function getSchemaComponentFileAttachmentUrl(string $statePath): ?string;
 
     /**
      * @return array<array{'label': string, 'value': string}>

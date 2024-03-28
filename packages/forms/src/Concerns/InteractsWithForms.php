@@ -12,6 +12,7 @@ use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Renderless;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 trait InteractsWithForms
@@ -37,18 +38,6 @@ trait InteractsWithForms
         foreach ($this->getCachedForms() as $form) {
             $form->dispatchEvent(...$args);
         }
-    }
-
-    #[Renderless]
-    public function getFormComponentFileAttachmentUrl(string $statePath): ?string
-    {
-        foreach ($this->getCachedForms() as $form) {
-            if ($url = $form->getComponentFileAttachmentUrl($statePath)) {
-                return $url;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -199,20 +188,6 @@ trait InteractsWithForms
         }
 
         return $attributes;
-    }
-
-    public function updatingInteractsWithForms(string $statePath): void
-    {
-        $statePath = (string) str($statePath)->before('.');
-
-        $this->oldFormState[$statePath] = data_get($this, $statePath);
-    }
-
-    public function updatedInteractsWithForms(string $statePath): void
-    {
-        foreach ($this->getCachedForms() as $form) {
-            $form->callAfterStateUpdated($statePath);
-        }
     }
 
     protected function cacheForm(string $name, Form | Closure | null $form): ?Form
@@ -416,5 +391,26 @@ trait InteractsWithForms
     public function mountedFormComponentActionInfolist(): Infolist
     {
         return $this->getMountedFormComponentAction()->getInfolist();
+    }
+
+    #[Renderless]
+    public function getFormComponentFileAttachmentUrl(string $statePath): ?string
+    {
+        return $this->getSchemaComponentFileAttachmentUrl($statePath);
+    }
+
+    public function getSchemaComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
+    {
+        return $this->getSchemaComponentFileAttachment($statePath);
+    }
+
+    public function getActiveFormsLocale(): ?string
+    {
+        return $this->getActiveSchemaLocale();
+    }
+
+    public function getOldFormState(string $statePath): mixed
+    {
+        return $this->getOldSchemaState($statePath);
     }
 }
