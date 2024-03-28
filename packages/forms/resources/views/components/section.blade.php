@@ -7,6 +7,7 @@
     :collapsed="$isCollapsed()"
     :collapsible="$isCollapsible() && (! $isAside)"
     :compact="$isCompact()"
+    :contained="$isContained()"
     :content-before="$isFormBefore()"
     :description="$getDescription()"
     :footer-actions="$getFooterActions()"
