@@ -2,6 +2,7 @@
     use Filament\Support\Facades\FilamentView;
 
     $id = $getId();
+    $key = $getKey();
     $statePath = $getStatePath();
 @endphp
 
@@ -38,20 +39,14 @@
 
                     let attachment = $event.attachment
 
-                    $wire.upload(
-                        `componentFileAttachments.{{ $statePath }}`,
-                        attachment.file,
-                        () => {
-                            $wire
-                                .getSchemaComponentFileAttachmentUrl('{{ $statePath }}')
-                                .then((url) => {
-                                    attachment.setAttributes({
-                                        url: url,
-                                        href: url,
-                                    })
-                                })
-                        },
-                    )
+                    $wire.upload(`componentFileAttachments.{{ $key }}`, attachment.file, () => {
+                        $wire.getSchemaComponentFileAttachmentUrl('{{ $key }}').then((url) => {
+                            attachment.setAttributes({
+                                url: url,
+                                href: url,
+                            })
+                        })
+                    })
                 "
                 x-on:trix-change="
                     let value = $event.target.value

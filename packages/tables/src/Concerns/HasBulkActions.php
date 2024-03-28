@@ -187,7 +187,7 @@ trait HasBulkActions
 
     protected function cacheMountedTableBulkActionForm(?BulkAction $mountedBulkAction = null): void
     {
-        $this->cacheForm(
+        $this->cacheSchema(
             'mountedTableBulkActionForm',
             fn () => $this->getMountedTableBulkActionForm($mountedBulkAction),
         );
@@ -431,8 +431,8 @@ trait HasBulkActions
             return null;
         }
 
-        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedTableBulkActionForm')) {
-            return $this->getForm('mountedTableBulkActionForm');
+        if ((! $this->isCachingSchemas) && $this->hasCachedSchema('mountedTableBulkActionForm')) {
+            return $this->getSchema('mountedTableBulkActionForm');
         }
 
         return $mountedBulkAction->getForm(

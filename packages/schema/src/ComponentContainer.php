@@ -25,7 +25,6 @@ class ComponentContainer extends ViewComponent
     use ComponentContainer\Concerns\HasOperation;
     use ComponentContainer\Concerns\HasState;
     use ComponentContainer\Concerns\ListensToEvents;
-    use ComponentContainer\Concerns\SupportsComponentFileAttachments;
     use ComponentContainer\Concerns\SupportsFileUploadFields;
     use ComponentContainer\Concerns\SupportsSelectFields;
     use Components\Concerns\HasColumns;

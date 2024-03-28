@@ -202,7 +202,7 @@ trait HasFormComponentActions
 
     protected function cacheMountedFormComponentActionForm(?Action $mountedAction = null): void
     {
-        $this->cacheForm(
+        $this->cacheSchema(
             'mountedFormComponentActionForm' . array_key_last($this->mountedFormComponentActions),
             fn () => $this->getMountedFormComponentActionForm(mountedAction: $mountedAction),
         );
@@ -244,8 +244,8 @@ trait HasFormComponentActions
             return null;
         }
 
-        if ((! $this->isCachingForms) && $this->hasCachedForm("mountedFormComponentActionForm{$actionNestingIndex}")) {
-            return $this->getForm("mountedFormComponentActionForm{$actionNestingIndex}");
+        if ((! $this->isCachingSchemas) && $this->hasCachedSchema("mountedFormComponentActionForm{$actionNestingIndex}")) {
+            return $this->getSchema("mountedFormComponentActionForm{$actionNestingIndex}");
         }
 
         return $mountedAction->getForm(
@@ -265,7 +265,7 @@ trait HasFormComponentActions
             return null;
         }
 
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             $component = $form->getComponent($componentKey);
 
             if (! $component) {

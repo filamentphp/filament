@@ -55,9 +55,9 @@ trait InteractsWithTable
             ),
         );
 
-        $this->cacheForm('toggleTableColumnForm', $this->getTableColumnToggleForm());
+        $this->cacheSchema('toggleTableColumnForm', $this->getTableColumnToggleForm());
 
-        $this->cacheForm('tableFiltersForm', $this->getTableFiltersForm());
+        $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm());
 
         if (! $this->shouldMountInteractsWithTable) {
             return;

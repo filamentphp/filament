@@ -548,7 +548,7 @@ class TestsComponentActions
             [$component, $name] = $this->parseNestedFormComponentActionComponentAndName($component, $name, $formName);
 
             foreach ($component as $componentNestingIndex => $componentKey) {
-                foreach ($this->instance()->getCachedForms() as $form) {
+                foreach ($this->instance()->getCachedSchemas() as $form) {
                     $formComponent = $form->getComponent($componentKey);
 
                     if (! $formComponent) {
@@ -572,11 +572,6 @@ class TestsComponentActions
             $this->assertFormExists($formName);
 
             $component = Arr::wrap($component);
-
-            $livewire = $this->instance();
-
-            /** @var ComponentContainer $form */
-            $form = $livewire->{$formName};
 
             $components = [];
 

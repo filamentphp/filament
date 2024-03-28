@@ -1,6 +1,7 @@
 @php
     use Filament\Support\Facades\FilamentView;
 
+    $key = $getKey();
     $statePath = $getStatePath();
 @endphp
 
@@ -33,9 +34,9 @@
                             toolbarButtons: @js($getToolbarButtons()),
                             translations: @js(__('filament-forms::components.markdown_editor')),
                             uploadFileAttachmentUsing: async (file, onSuccess, onError) => {
-                                $wire.upload(`componentFileAttachments.{{ $statePath }}`, file, () => {
+                                $wire.upload(`componentFileAttachments.{{ $key }}`, file, () => {
                                     $wire
-                                        .getSchemaComponentFileAttachmentUrl('{{ $statePath }}')
+                                        .getSchemaComponentFileAttachmentUrl('{{ $key }}')
                                         .then((url) => {
                                             if (! url) {
                                                 return onError()

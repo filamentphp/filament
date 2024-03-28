@@ -189,7 +189,7 @@ trait InteractsWithInfolists
             return null;
         }
 
-        $this->cacheForm(
+        $this->cacheSchema(
             'mountedInfolistActionForm',
             fn () => $this->getMountedInfolistActionForm(mountedAction: $action),
         );
@@ -281,8 +281,8 @@ trait InteractsWithInfolists
             return null;
         }
 
-        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedInfolistActionForm')) {
-            return $this->getForm('mountedInfolistActionForm');
+        if ((! $this->isCachingSchemas) && $this->hasCachedSchema('mountedInfolistActionForm')) {
+            return $this->getSchema('mountedInfolistActionForm');
         }
 
         return $mountedAction->getForm(
@@ -328,7 +328,7 @@ trait InteractsWithInfolists
             return;
         }
 
-        $this->cacheForm(
+        $this->cacheSchema(
             'mountedInfolistActionForm',
             fn () => $this->getMountedInfolistActionForm(),
         );

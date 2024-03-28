@@ -43,8 +43,8 @@ trait CanToggleColumns
 
     public function getTableColumnToggleForm(): Form
     {
-        if ((! $this->isCachingForms) && $this->hasCachedForm('toggleTableColumnForm')) {
-            return $this->getForm('toggleTableColumnForm');
+        if ((! $this->isCachingSchemas) && $this->hasCachedSchema('toggleTableColumnForm')) {
+            return $this->getSchema('toggleTableColumnForm');
         }
 
         return $this->makeForm()

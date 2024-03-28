@@ -269,8 +269,8 @@ trait HasActions
             return null;
         }
 
-        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedTableActionForm')) {
-            return $this->getForm('mountedTableActionForm');
+        if ((! $this->isCachingSchemas) && $this->hasCachedSchema('mountedTableActionForm')) {
+            return $this->getSchema('mountedTableActionForm');
         }
 
         return $mountedAction->getForm(
@@ -364,7 +364,7 @@ trait HasActions
 
     protected function cacheMountedTableActionForm(?Action $mountedAction = null): void
     {
-        $this->cacheForm(
+        $this->cacheSchema(
             'mountedTableActionForm',
             fn () => $this->getMountedTableActionForm($mountedAction),
         );

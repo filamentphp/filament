@@ -3,8 +3,8 @@
 namespace Filament\Support\Concerns;
 
 use Filament\Actions\Contracts\HasActions;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Contracts\HasInfolists;
+use Filament\Schema\Contracts\HasSchemas;
 use Livewire\Exceptions\PropertyNotFoundException;
 
 trait ResolvesDynamicLivewireProperties
@@ -22,11 +22,11 @@ trait ResolvesDynamicLivewireProperties
         }
 
         if (
-            $this instanceof HasForms &&
-            (! $this->isCachingForms()) &&
-            $form = $this->getForm($property)
+            $this instanceof HasSchemas &&
+            (! $this->isCachingSchemas()) &&
+            $schema = $this->getSchema($property)
         ) {
-            return $form;
+            return $schema;
         }
 
         if (

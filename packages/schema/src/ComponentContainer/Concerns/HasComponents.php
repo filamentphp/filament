@@ -14,6 +14,11 @@ trait HasComponents
     protected array | Closure $components = [];
 
     /**
+     * @var array<string, Component>
+     */
+    protected array $cachedVisibleComponents;
+
+    /**
      * @param  array<Component> | Closure  $components
      */
     public function components(array | Closure $components): static
@@ -33,15 +38,52 @@ trait HasComponents
         return $this;
     }
 
-    public function getComponent(string | Closure $findComponentUsing, bool $withHidden = false): ?Component
+    public function getComponent(string | Closure $findComponentUsing, bool $withHidden = false, bool $isAbsoluteKey = false): ?Component
     {
-        $components = $this->getFlatComponents($withHidden);
-
-        if (is_string($findComponentUsing)) {
-            return $components[$findComponentUsing] ?? null;
+        if (! is_string($findComponentUsing)) {
+            return collect($this->getFlatComponents($withHidden))->first($findComponentUsing);
         }
 
-        return collect($components)->first($findComponentUsing);
+        if ($withHidden) {
+            return $this->getFlatComponents($withHidden)[$findComponentUsing] ?? null;
+        }
+
+        if ((! $isAbsoluteKey) && filled($key = $this->getKey())) {
+            $findComponentUsing = "{$key}.{$findComponentUsing}";
+        }
+
+        return $this->getCachedVisibleComponents()[$findComponentUsing] ?? null;
+    }
+
+    /**
+     * @return array<string, Component>
+     */
+    public function cacheVisibleComponents(): array
+    {
+        $this->cachedVisibleComponents = [];
+
+        foreach ($this->getComponents() as $component) {
+            if (filled($componentKey = $component->getKey())) {
+                $this->cachedVisibleComponents[$componentKey] = $component;
+            }
+
+            foreach ($component->getChildComponentContainers() as $childComponentContainer) {
+                $this->cachedVisibleComponents = [
+                    ...$this->cachedVisibleComponents,
+                    ...$childComponentContainer->getCachedVisibleComponents(),
+                ];
+            }
+        }
+
+        return $this->cachedVisibleComponents;
+    }
+
+    /**
+     * @return array<string, Component>
+     */
+    public function getCachedVisibleComponents(): array
+    {
+        return $this->cachedVisibleComponents ??= $this->cacheVisibleComponents();
     }
 
     /**

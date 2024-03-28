@@ -9,12 +9,6 @@ interface HasForms extends HasSchemas
 {
     public function dispatchFormEvent(mixed ...$args): void;
 
-    public function getActiveSchemaLocale(): ?string;
-
-    public function getForm(string $name): ?Form;
-
-    public function getSchemaComponentFileAttachmentUrl(string $statePath): ?string;
-
     /**
      * @return array<array{'label': string, 'value': string}>
      */
@@ -36,8 +30,6 @@ interface HasForms extends HasSchemas
      * @return array<array{name: string, size: int, type: string, url: string} | null> | null
      */
     public function getFormUploadedFiles(string $statePath): ?array;
-
-    public function isCachingForms(): bool;
 
     public function removeFormUploadedFile(string $statePath, string $fileKey): void;
 

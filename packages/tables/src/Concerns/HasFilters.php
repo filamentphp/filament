@@ -23,8 +23,8 @@ trait HasFilters
 
     public function getTableFiltersForm(): Form
     {
-        if ((! $this->isCachingForms) && $this->hasCachedForm('tableFiltersForm')) {
-            return $this->getForm('tableFiltersForm');
+        if ((! $this->isCachingSchemas) && $this->hasCachedSchema('tableFiltersForm')) {
+            return $this->getSchema('tableFiltersForm');
         }
 
         return $this->makeForm()

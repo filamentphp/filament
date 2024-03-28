@@ -6,9 +6,9 @@ use Closure;
 use Exception;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
+use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Concerns\InteractsWithSchemas;
-use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Renderless;
@@ -18,24 +18,18 @@ use Livewire\WithFileUploads;
 trait InteractsWithForms
 {
     use HasFormComponentActions;
-    use InteractsWithSchemas;
-    use ResolvesDynamicLivewireProperties;
+    use InteractsWithSchemas {
+        getCachedSchemas as baseGetCachedSchemas;
+    }
     use WithFileUploads;
-
-    /**
-     * @var array<string, Form>
-     */
-    protected ?array $cachedForms = null;
-
-    protected bool $hasCachedForms = false;
-
-    protected bool $isCachingForms = false;
 
     protected bool $hasFormsModalRendered = false;
 
+    protected bool $hasCachedForms = false;
+
     public function dispatchFormEvent(mixed ...$args): void
     {
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             $form->dispatchEvent(...$args);
         }
     }
@@ -46,7 +40,7 @@ trait InteractsWithForms
     #[Renderless]
     public function getFormSelectOptionLabels(string $statePath): array
     {
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             if ($labels = $form->getSelectOptionLabels($statePath)) {
                 return $labels;
             }
@@ -58,7 +52,7 @@ trait InteractsWithForms
     #[Renderless]
     public function getFormSelectOptionLabel(string $statePath): ?string
     {
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             if ($label = $form->getSelectOptionLabel($statePath)) {
                 return $label;
             }
@@ -73,7 +67,7 @@ trait InteractsWithForms
     #[Renderless]
     public function getFormSelectOptions(string $statePath): array
     {
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             if ($results = $form->getSelectOptions($statePath)) {
                 return $results;
             }
@@ -88,7 +82,7 @@ trait InteractsWithForms
     #[Renderless]
     public function getFormSelectSearchResults(string $statePath, string $search): array
     {
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             if ($results = $form->getSelectSearchResults($statePath, $search)) {
                 return $results;
             }
@@ -99,7 +93,7 @@ trait InteractsWithForms
 
     public function deleteUploadedFile(string $statePath, string $fileKey): void
     {
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             $form->deleteUploadedFile($statePath, $fileKey);
         }
     }
@@ -110,7 +104,7 @@ trait InteractsWithForms
     #[Renderless]
     public function getFormUploadedFiles(string $statePath): ?array
     {
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             if ($files = $form->getUploadedFiles($statePath)) {
                 return $files;
             }
@@ -121,14 +115,14 @@ trait InteractsWithForms
 
     public function removeFormUploadedFile(string $statePath, string $fileKey): void
     {
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             $form->removeUploadedFile($statePath, $fileKey);
         }
     }
 
     public function reorderFormUploadedFiles(string $statePath, array $fileKeys): void
     {
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             $form->reorderUploadedFiles($statePath, $fileKeys);
         }
     }
@@ -183,28 +177,28 @@ trait InteractsWithForms
      */
     protected function prepareForValidation($attributes): array
     {
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             $attributes = $form->mutateStateForValidation($attributes);
         }
 
         return $attributes;
     }
 
-    protected function cacheForm(string $name, Form | Closure | null $form): ?Form
+    protected function cacheForm(string $name, ComponentContainer | Closure | null $form): ?ComponentContainer
     {
-        $this->isCachingForms = true;
+        return $this->cacheSchema($name, $form);
+    }
 
-        $form = value($form);
-
-        if ($form) {
-            $this->cachedForms[$name] = $form;
-        } else {
-            unset($this->cachedForms[$name]);
+    /**
+     * @return array<string, ComponentContainer>
+     */
+    public function getCachedSchemas(): array
+    {
+        if (! $this->hasCachedForms) {
+            $this->cacheForms();
         }
 
-        $this->isCachingForms = false;
-
-        return $form;
+        return $this->baseGetCachedSchemas();
     }
 
     /**
@@ -212,42 +206,44 @@ trait InteractsWithForms
      */
     protected function cacheForms(): array
     {
-        $this->isCachingForms = true;
+        $this->isCachingSchemas = true;
 
-        $this->cachedForms = collect($this->getForms())
-            ->merge($this->getTraitForms())
-            ->mapWithKeys(function (Form | string | null $form, string | int $formName): array {
-                if ($form === null) {
-                    return ['' => null];
-                }
+        $this->cachedSchemas = [
+            ...$this->cachedSchemas,
+            ...collect($this->getForms())
+                ->merge($this->getTraitForms())
+                ->mapWithKeys(function (Form | string | null $form, string | int $formName): array {
+                    if ($form === null) {
+                        return ['' => null];
+                    }
 
-                if (is_string($formName)) {
-                    return [$formName => $form];
-                }
+                    if (is_string($formName)) {
+                        return [$formName => $form];
+                    }
 
-                if (! method_exists($this, $form)) {
-                    $livewireClass = $this::class;
+                    if (! method_exists($this, $form)) {
+                        $livewireClass = $this::class;
 
-                    throw new Exception("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
-                }
+                        throw new Exception("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
+                    }
 
-                return [$form => $this->{$form}($this->makeForm())];
-            })
-            ->forget('')
-            ->all();
+                    return [$form => $this->{$form}($this->makeForm()->key($form))];
+                })
+                ->forget('')
+                ->all(),
+        ];
 
-        $this->isCachingForms = false;
-
+        $this->isCachingSchemas = false;
         $this->hasCachedForms = true;
 
         foreach ($this->mountedFormComponentActions as $actionNestingIndex => $actionName) {
-            $this->cacheForm(
+            $this->cacheSchema(
                 "mountedFormComponentActionForm{$actionNestingIndex}",
                 $this->getMountedFormComponentActionForm($actionNestingIndex),
             );
         }
 
-        return $this->cachedForms;
+        return $this->cachedSchemas;
     }
 
     /**
@@ -271,24 +267,20 @@ trait InteractsWithForms
 
     protected function hasCachedForm(string $name): bool
     {
-        return array_key_exists($name, $this->getCachedForms());
+        return $this->hasCachedSchema($name);
     }
 
-    public function getForm(string $name): ?Form
+    public function getForm(string $name): ?ComponentContainer
     {
-        return $this->getCachedForms()[$name] ?? null;
+        return $this->getSchema($name);
     }
 
     /**
-     * @return array<string, Form>
+     * @return array<string, ComponentContainer>
      */
     public function getCachedForms(): array
     {
-        if (! $this->hasCachedForms) {
-            return $this->cacheForms();
-        }
-
-        return $this->cachedForms;
+        return $this->getCachedSchemas();
     }
 
     /**
@@ -351,7 +343,7 @@ trait InteractsWithForms
     {
         $rules = parent::getRules();
 
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             $rules = [
                 ...$rules,
                 ...$form->getValidationRules(),
@@ -368,7 +360,7 @@ trait InteractsWithForms
     {
         $attributes = parent::getValidationAttributes();
 
-        foreach ($this->getCachedForms() as $form) {
+        foreach ($this->getCachedSchemas() as $form) {
             $attributes = [
                 ...$attributes,
                 ...$form->getValidationAttributes(),
@@ -383,9 +375,9 @@ trait InteractsWithForms
         return Form::make($this);
     }
 
-    public function isCachingForms(): bool
+    public function isCachingSchemas(): bool
     {
-        return $this->isCachingForms;
+        return $this->isCachingSchemas;
     }
 
     public function mountedFormComponentActionInfolist(): Infolist
@@ -399,7 +391,7 @@ trait InteractsWithForms
         return $this->getSchemaComponentFileAttachmentUrl($statePath);
     }
 
-    public function getSchemaComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
+    public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
     {
         return $this->getSchemaComponentFileAttachment($statePath);
     }

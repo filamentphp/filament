@@ -279,8 +279,8 @@ trait InteractsWithActions
             return null;
         }
 
-        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedActionForm')) {
-            return $this->getForm('mountedActionForm');
+        if ((! $this->isCachingSchemas) && $this->hasCachedSchema('mountedActionForm')) {
+            return $this->getSchema('mountedActionForm');
         }
 
         return $mountedAction->getForm(
@@ -443,7 +443,7 @@ trait InteractsWithActions
 
     protected function cacheMountedActionForm(?Action $mountedAction = null): void
     {
-        $this->cacheForm(
+        $this->cacheSchema(
             'mountedActionForm',
             fn () => $this->getMountedActionForm($mountedAction),
         );
