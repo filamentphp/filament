@@ -349,7 +349,7 @@ trait CanImportRecords
     {
         $filePath = $file->getRealPath();
 
-        if (config('filament.default_filesystem_disk') !== 's3') {
+        if (config('filesystems.disks.' . config('filament.default_filesystem_disk') . '.driver') !== 's3') {
             return fopen($filePath, mode: 'r');
         }
 
