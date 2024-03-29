@@ -12,7 +12,7 @@ trait CanReorderRecords
     /**
      * @param  array<int | string>  $order
      */
-    public function reorderTable(array $order): void
+    public function reorderTable(array $order, $draggedRecordKey = null): void
     {
         if (! $this->getTable()->isReorderable()) {
             return;

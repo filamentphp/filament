@@ -391,7 +391,7 @@
                         :lg="$contentGrid['lg'] ?? null"
                         :xl="$contentGrid['xl'] ?? null"
                         :two-xl="$contentGrid['2xl'] ?? null"
-                        x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
+                        x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray(), $event.target.sortable.item.getAttribute('x-sortable-item')))"
                         x-sortable
                         :data-sortable-animation-duration="$getReorderAnimationDuration()"
                         @class([
