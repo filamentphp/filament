@@ -217,6 +217,7 @@
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 'x-bind:disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing' : null,
+                'form' => $hasFormProcessingLoadingIndicator ? $form : null,
             ], escape: false)
             ->class([$buttonClasses])
             ->style([$buttonStyles])

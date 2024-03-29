@@ -111,7 +111,8 @@
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
-    $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
+    $hasFormProcessingLoadingIndicator = $type === 'submit' && filled($form);
+    $hasLoadingIndicator = filled($wireTarget) || $hasFormProcessingLoadingIndicator;
 
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
@@ -139,6 +140,7 @@
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
+                    'form' => $hasFormProcessingLoadingIndicator ? $form : null,
                 ], escape: false)
                 ->merge([
                     'title' => $label,
