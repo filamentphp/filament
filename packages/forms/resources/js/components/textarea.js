@@ -1,14 +1,14 @@
 export default function textareaFormComponent({ initialHeight }) {
     return {
         init: function () {
-            this.render()
+            if (this.$el.scrollHeight > 0) {
+                this.$el.style.minHeight = initialHeight + 'rem'
+                this.$el.style.minHeight = this.$el.scrollHeight + 'px'
+            }
         },
 
         render: function () {
-            if (this.$el.scrollHeight > 0) {
-                this.$el.style.height = initialHeight + 'rem'
-                this.$el.style.height = this.$el.scrollHeight + 'px'
-            }
+            //
         },
     }
 }
