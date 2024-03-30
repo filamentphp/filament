@@ -1,8 +1,9 @@
 <?php
 
-namespace Filament\Forms\Concerns;
+namespace Filament\Schema\Concerns;
 
 use Filament\Actions\Action;
+use Filament\Infolists\Infolist;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Contracts\ExposesStateToActionData;
@@ -16,7 +17,7 @@ use function Livewire\store;
 /**
  * @property ComponentContainer $mountedFormComponentActionForm
  */
-trait HasFormComponentActions
+trait InteractsWithComponentActions
 {
     /**
      * @var array<string> | null
@@ -342,5 +343,10 @@ trait HasFormComponentActions
         $this->dispatch('open-modal', id: "{$this->getId()}-form-component-action");
 
         $this->dispatch('opened-form-component-action-modal', id: $this->getId());
+    }
+
+    public function mountedFormComponentActionInfolist(): Infolist
+    {
+        return $this->getMountedFormComponentAction()->getInfolist();
     }
 }

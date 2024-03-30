@@ -4,7 +4,7 @@ namespace Filament\Forms\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Infolists\Infolist;
+use Filament\Forms\Form;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Concerns\InteractsWithSchemas;
@@ -13,16 +13,16 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 trait InteractsWithForms
 {
-    use HasFormComponentActions;
     use InteractsWithSchemas {
         getCachedSchemas as baseGetCachedSchemas;
+        makeSchema as baseMakeSchema;
     }
 
     protected bool $hasFormsModalRendered = false;
 
     protected bool $hasCachedForms = false;
 
-    protected function cacheForm(string $name, ComponentContainer | Closure | null $form): ?ComponentContainer
+    protected function cacheForm(string $name, Form | Closure | null $form): ?ComponentContainer
     {
         return $this->cacheSchema($name, $form);
     }
@@ -85,7 +85,7 @@ trait InteractsWithForms
     }
 
     /**
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Form>
      */
     public function getTraitForms(): array
     {
@@ -122,7 +122,7 @@ trait InteractsWithForms
     }
 
     /**
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Form>
      */
     protected function getForms(): array
     {
@@ -176,17 +176,24 @@ trait InteractsWithForms
 
     protected function makeForm(): ComponentContainer
     {
-        return ComponentContainer::make($this);
+        return Form::make($this);
+    }
+
+    /**
+     * @param  class-string<ComponentContainer>  $type
+     */
+    protected function makeSchema(string $type): ComponentContainer
+    {
+        if (is_a($type, Form::class, allow_string: true)) {
+            return $this->makeForm();
+        }
+
+        return $this->baseMakeSchema($type);
     }
 
     public function isCachingForms(): bool
     {
         return $this->isCachingSchemas();
-    }
-
-    public function mountedFormComponentActionInfolist(): Infolist
-    {
-        return $this->getMountedFormComponentAction()->getInfolist();
     }
 
     public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile

@@ -18,6 +18,7 @@ use ReflectionNamedType;
 
 trait InteractsWithSchemas
 {
+    use InteractsWithComponentActions;
     use ResolvesDynamicLivewireProperties;
     use WithFileUploads;
 
@@ -217,12 +218,20 @@ trait InteractsWithSchemas
                 return null;
             }
 
-            $schema = $type::make($this)->key($name);
+            $schema = $this->makeSchema($type)->key($name);
 
             return $this->cachedSchemas[$name] = $this->{$name}($schema);
         } finally {
             $this->isCachingSchemas = false;
         }
+    }
+
+    /**
+     * @param  class-string<ComponentContainer>  $type
+     */
+    protected function makeSchema(string $type): ComponentContainer
+    {
+        return $type::make($this);
     }
 
     protected function hasCachedSchema(string $name): bool
