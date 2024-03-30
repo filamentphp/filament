@@ -51,7 +51,7 @@ return [
         ],
 
         'avatar' => [
-            'alt' => 'Avatar vertegenwoordigt :user',
+            'alt' => 'Avatar van :user',
         ],
 
         'logo' => [
