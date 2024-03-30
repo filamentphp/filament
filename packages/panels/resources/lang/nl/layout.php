@@ -50,12 +50,12 @@ return [
 
         ],
 
+        'avatar' => [
+            'alt' => 'Avatar vertegenwoordigt :user',
+        ],
+
+        'logo' => [
+            'alt' => ':brand logo',
+        ],
     ],
-
-    'top_bar' => [
-
-        'avatar' => 'Avatar vertegenwoordigt :user',
-
-    ],
-
 ];

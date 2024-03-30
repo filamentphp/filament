@@ -52,10 +52,12 @@ return [
 
     ],
 
-    'top_bar' => [
+    'avatar' => [
+        'alt' => 'Avatar representing :user',
+    ],
 
-        'avatar' => 'Avatar representing :user',
-
+    'logo' => [
+        'alt' => ':brand logo',
     ],
 
 ];
