@@ -35,7 +35,7 @@ trait CanSubmitForm
         return $this;
     }
 
-    public function getFormid(): ?string
+    public function getFormId(): ?string
     {
         return $this->formId;
     }
