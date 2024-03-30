@@ -69,7 +69,7 @@
                         'resize-none' => $shouldAutosize,
                     ])
                     ->style([
-                        "height: {$initialHeight}rem" => $shouldAutosize,
+                        "field-sizing: content" => $shouldAutosize,
                     ])
             }}
         ></textarea>
