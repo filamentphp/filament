@@ -350,6 +350,29 @@ protected function getHeaderActions(): array
 
 The "importer" class [needs to be created](../../actions/prebuilt-actions/import#creating-an-importer) to tell Filament how to import each row of the CSV. You can learn everything about the `ImportAction` in the [Actions documentation](../../actions/prebuilt-actions/import).
 
+## Submit button in header actions
+
+The submit button can be moved to the header actions using `formId()`. In filament panels, the form id of the create and edit page is set to `form`.
+
+```php
+protected function getHeaderActions(): array
+{
+    return [
+        $this->getSaveFormAction()
+            ->formId('form')
+    ];
+}
+```
+
+It is also possible to remove the buttons from the bottom of the form by overriding the `getFormActions()` method:
+
+```php
+protected function getFormActions(): array
+{
+    return [];
+}
+```
+
 ## Custom view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
