@@ -10,6 +10,7 @@
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
+    'formId' => null,
     'grouped' => false,
     'href' => null,
     'icon' => null,
@@ -148,6 +149,7 @@
         :color="$color"
         :disabled="$disabled"
         :form="$form"
+        :form-id="$formId"
         :href="$href"
         :icon="$icon"
         :icon-alias="$iconAlias"
@@ -217,6 +219,7 @@
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 'x-bind:disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing' : null,
+                'form' => $formId,
             ], escape: false)
             ->class([$buttonClasses])
             ->style([$buttonStyles])

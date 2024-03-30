@@ -9,6 +9,7 @@
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
+    'formId' => null,
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
@@ -139,6 +140,7 @@
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
+                    'form' => $formId,
                 ], escape: false)
                 ->merge([
                     'title' => $label,
