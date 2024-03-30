@@ -74,7 +74,7 @@ trait InteractsWithForms
         $this->isCachingSchemas = false;
         $this->hasCachedForms = true;
 
-        foreach ($this->mountedFormComponentActions as $actionNestingIndex => $actionName) {
+        foreach ($this->mountedFormComponentActions as $actionNestingIndex => $action) {
             $this->cacheSchema(
                 "mountedFormComponentActionForm{$actionNestingIndex}",
                 $this->getMountedFormComponentActionForm($actionNestingIndex),

@@ -24,6 +24,7 @@
     $isReorderableWithButtons = $isReorderableWithButtons();
     $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
 
+    $key = $getKey();
     $statePath = $getStatePath();
 @endphp
 
@@ -65,7 +66,7 @@
             <ul
                 x-sortable
                 data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
-                wire:end.stop="{{ 'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })' }}"
+                wire:end.stop="mountFormComponentAction({ name: 'reorder', arguments: { items: $event.target.sortable.toArray() }, context: { schemaComponent: '{{ $key }}' } })'"
                 class="space-y-4"
             >
                 @php
@@ -211,7 +212,7 @@
                                             :after-item="$uuid"
                                             :columns="$blockPickerColumns"
                                             :blocks="$blockPickerBlocks"
-                                            :state-path="$statePath"
+                                            :key="$key"
                                             :width="$blockPickerWidth"
                                         >
                                             <x-slot name="trigger">

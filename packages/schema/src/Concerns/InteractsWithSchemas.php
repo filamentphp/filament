@@ -3,6 +3,7 @@
 namespace Filament\Schema\Concerns;
 
 use Closure;
+use Filament\Actions\Concerns\InteractsWithComponentActions;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;

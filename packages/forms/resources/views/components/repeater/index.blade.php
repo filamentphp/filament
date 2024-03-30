@@ -21,6 +21,7 @@
     $isReorderableWithButtons = $isReorderableWithButtons();
     $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
 
+    $key = $getKey();
     $statePath = $getStatePath();
 @endphp
 
@@ -67,7 +68,7 @@
                     :lg="$getGridColumns('lg')"
                     :xl="$getGridColumns('xl')"
                     :two-xl="$getGridColumns('2xl')"
-                    :wire:end.stop="'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })'"
+                    :wire:end.stop="'mountFormComponentAction({ name: \'reorder\', arguments: { items: $event.target.sortable.toArray() }, context: { schemaComponent: \'' . $key . '\' } })'"
                     x-sortable
                     :data-sortable-animation-duration="$getReorderAnimationDuration()"
                     class="items-start gap-4"

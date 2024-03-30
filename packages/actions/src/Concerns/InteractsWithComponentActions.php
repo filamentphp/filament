@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Schema\Concerns;
+namespace Filament\Actions\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Infolists\Infolist;
@@ -20,24 +20,9 @@ use function Livewire\store;
 trait InteractsWithComponentActions
 {
     /**
-     * @var array<string> | null
+     * @var array<array<string, mixed>> | null
      */
     public ?array $mountedFormComponentActions = [];
-
-    /**
-     * @var array<string, array<string, mixed>> | null
-     */
-    public ?array $mountedFormComponentActionsArguments = [];
-
-    /**
-     * @var array<string, array<string, mixed>> | null
-     */
-    public ?array $mountedFormComponentActionsData = [];
-
-    /**
-     * @var array<string> | null
-     */
-    public ?array $mountedFormComponentActionsComponents = [];
 
     /**
      * @param  array<string, mixed>  $arguments
@@ -136,14 +121,11 @@ trait InteractsWithComponentActions
     }
 
     /**
-     * @param  array<string, mixed>  $arguments
+     * @param  array<string, mixed>  $action
      */
-    public function mountFormComponentAction(string $component, string $name, array $arguments = []): mixed
+    public function mountFormComponentAction(array $action): mixed
     {
-        $this->mountedFormComponentActions[] = $name;
-        $this->mountedFormComponentActionsArguments[] = $arguments;
-        $this->mountedFormComponentActionsComponents[] = $component;
-        $this->mountedFormComponentActionsData[] = [];
+        $this->mountedFormComponentActions[] = $action;
 
         $action = $this->getMountedFormComponentAction();
 
@@ -223,7 +205,8 @@ trait InteractsWithComponentActions
     public function getMountedFormComponentAction(?int $actionNestingIndex = null): ?Action
     {
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
-        $actionName = $this->mountedFormComponentActions[$actionNestingIndex] ?? null;
+        $action = $this->mountedFormComponentActions[$actionNestingIndex] ?? [];
+        $actionName = $action['name'] ?? null;
 
         if (blank($actionName)) {
             return null;
@@ -231,7 +214,7 @@ trait InteractsWithComponentActions
 
         return $this->getMountedFormComponentActionComponent($actionNestingIndex)
             ?->getAction($actionName)
-            ?->arguments($this->mountedFormComponentActionsArguments[$actionNestingIndex] ?? []);
+            ?->arguments($action['arguments'] ?? []);
     }
 
     protected function getMountedFormComponentActionForm(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?ComponentContainer
@@ -251,15 +234,20 @@ trait InteractsWithComponentActions
         return $mountedAction->getForm(
             $this->makeForm()
                 ->model($this->getMountedFormComponentActionComponent($actionNestingIndex)->getActionFormModel())
-                ->statePath('mountedFormComponentActionsData.' . $actionNestingIndex)
-                ->operation(implode('.', array_slice($this->mountedFormComponentActions, 0, $actionNestingIndex + 1))),
+                ->statePath("mountedFormComponentActions.{$actionNestingIndex}.data")
+                ->operation(
+                    collect($this->mountedFormComponentActions)
+                        ->take($actionNestingIndex + 1)
+                        ->pluck('name')
+                        ->implode('.'),
+                ),
         );
     }
 
     public function getMountedFormComponentActionComponent(?int $actionNestingIndex = null): ?Component
     {
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
-        $componentKey = $this->mountedFormComponentActionsComponents[$actionNestingIndex] ?? null;
+        $componentKey = $this->mountedFormComponentActions[$actionNestingIndex]['context']['schemaComponent'] ?? null;
 
         if (blank($componentKey)) {
             return null;
@@ -278,42 +266,23 @@ trait InteractsWithComponentActions
         return null;
     }
 
-    protected function resetMountedFormComponentActionProperties(): void
-    {
-        $this->mountedFormComponentActions = [];
-        $this->mountedFormComponentActionsArguments = [];
-        $this->mountedFormComponentActionsComponents = [];
-        $this->mountedFormComponentActionsData = [];
-    }
-
-    protected function popMountedFormComponentAction(): ?string
-    {
-        try {
-            return array_pop($this->mountedFormComponentActions);
-        } finally {
-            array_pop($this->mountedFormComponentActionsArguments);
-            array_pop($this->mountedFormComponentActionsComponents);
-            array_pop($this->mountedFormComponentActionsData);
-        }
-    }
-
     public function unmountFormComponentAction(bool $shouldCancelParentActions = true): void
     {
         $action = $this->getMountedFormComponentAction();
 
         if (! ($shouldCancelParentActions && $action)) {
-            $this->popMountedFormComponentAction();
+            array_pop($this->mountedFormComponentActions);
         } elseif ($action->shouldCancelAllParentActions()) {
-            $this->resetMountedFormComponentActionProperties();
+            $this->mountedFormComponentActions = [];
         } else {
             $parentActionToCancelTo = $action->getParentActionToCancelTo();
 
             while (true) {
-                $recentlyClosedParentAction = $this->popMountedFormComponentAction();
+                $recentlyClosedParentAction = array_pop($this->mountedFormComponentActions);
 
                 if (
                     blank($parentActionToCancelTo) ||
-                    ($recentlyClosedParentAction === $parentActionToCancelTo)
+                    ($recentlyClosedParentAction['name'] === $parentActionToCancelTo)
                 ) {
                     break;
                 }

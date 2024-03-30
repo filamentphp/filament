@@ -28,9 +28,13 @@ class TestsComponentActions
             foreach ($name as $actionNestingIndex => $actionName) {
                 $this->call(
                     'mountFormComponentAction',
-                    $component[$actionNestingIndex],
-                    $actionName,
-                    $arguments,
+                    [
+                        'name' => $actionName,
+                        'arguments' => $arguments,
+                        'context' => [
+                            'schemaComponent' => $component[$actionNestingIndex] ?? null,
+                        ],
+                    ],
                 );
             }
 
@@ -44,8 +48,13 @@ class TestsComponentActions
                 return $this;
             }
 
-            $this->assertSet('mountedFormComponentActionsComponents', $component);
-            $this->assertSet('mountedFormComponentActions', $name);
+            foreach ($name as $mountedActionNestingIndex => $mountedActionName) {
+                $this->assertSet("mountedFormComponentActions.{$mountedActionNestingIndex}.name", $mountedActionName);
+
+                if (array_key_exists($mountedActionNestingIndex, $component)) {
+                    $this->assertSet("mountedFormComponentActions.{$mountedActionNestingIndex}.context.schemaComponent", $component[$mountedActionNestingIndex]);
+                }
+            }
 
             $this->assertDispatched('open-modal', id: "{$this->instance()->getId()}-form-component-action");
 
@@ -65,7 +74,7 @@ class TestsComponentActions
     public function setFormComponentActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::dot($data, prepend: 'mountedFormComponentActionsData.' . array_key_last($this->instance()->mountedFormComponentActionsData) . '.') as $key => $value) {
+            foreach (Arr::dot($data, prepend: 'mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.') as $key => $value) {
                 $this->set($key, $value);
             }
 
@@ -76,7 +85,7 @@ class TestsComponentActions
     public function assertFormComponentActionDataSet(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::dot($data, prepend: 'mountedFormComponentActionsData.' . array_key_last($this->instance()->mountedFormComponentActionsData) . '.') as $key => $value) {
+            foreach (Arr::dot($data, prepend: 'mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.') as $key => $value) {
                 $this->assertSet($key, $value);
             }
 
@@ -474,7 +483,9 @@ class TestsComponentActions
             /** @phpstan-ignore-next-line */
             [$component, $name] = $this->parseNestedFormComponentActionComponentAndName($component, $name, $formName);
 
-            $this->assertSet('mountedFormComponentActions', $name);
+            foreach ($name as $mountedActionNestingIndex => $mountedActionName) {
+                $this->assertSet("mountedFormComponentActions.{$mountedActionNestingIndex}.name", $mountedActionName);
+            }
 
             return $this;
         };
@@ -489,7 +500,9 @@ class TestsComponentActions
             /** @phpstan-ignore-next-line */
             [$component, $name] = $this->parseNestedFormComponentActionComponentAndName($component, $name, $formName);
 
-            $this->assertNotSet('mountedFormComponentActions', $name);
+            foreach ($name as $mountedActionNestingIndex => $mountedActionName) {
+                $this->assertNotSet("mountedFormComponentActions.{$mountedActionNestingIndex}.name", $name);
+            }
 
             return $this;
         };
@@ -507,10 +520,10 @@ class TestsComponentActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => 'mountedFormComponentActionsData.' . array_key_last($this->instance()->mountedFormComponentActionsData) . '.' . $value];
+                            return [$key => 'mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.' . $value];
                         }
 
-                        return ['mountedFormComponentActionsData.' . array_key_last($this->instance()->mountedFormComponentActionsData) . '.' . $key => $value];
+                        return ['mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.' . $key => $value];
                     })
                     ->all(),
             );
@@ -526,10 +539,10 @@ class TestsComponentActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => 'mountedFormComponentActionsData.' . array_key_last($this->instance()->mountedFormComponentActionsData) . '.' . $value];
+                            return [$key => 'mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.' . $value];
                         }
 
-                        return ['mountedFormComponentActionsData.' . array_key_last($this->instance()->mountedFormComponentActionsData) . '.' . $key => $value];
+                        return ['mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.' . $key => $value];
                     })
                     ->all(),
             );
@@ -576,7 +589,7 @@ class TestsComponentActions
 
             foreach ($component as $componentIndex => $componentKey) {
                 if ($componentIndex) {
-                    $components[] = 'mountedFormComponentActionData.' . ($componentIndex - 1) . ".{$componentKey}";
+                    $components[] = 'mountedFormComponentActions.' . ($componentIndex - 1) . ".data.{$componentKey}";
 
                     continue;
                 }

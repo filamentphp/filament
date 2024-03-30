@@ -41,16 +41,24 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
             return $event;
         }
 
-        $argumentsParameter = '';
+        $action = [
+            'name' => $this->getName(),
+        ];
 
         if (count($arguments = $this->getArguments())) {
-            $argumentsParameter .= ', ';
-            $argumentsParameter .= Js::from($arguments);
+            $action['arguments'] = $arguments;
         }
 
         $component = $this->getComponent();
 
         if (! $component) {
+            $argumentsParameter = '';
+
+            if (count($arguments)) {
+                $argumentsParameter .= ', ';
+                $argumentsParameter .= Js::from($arguments);
+            }
+
             return "mountAction('{$this->getName()}'{$argumentsParameter})";
         }
 
@@ -59,10 +67,12 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
         if (blank($componentKey)) {
             $componentClass = $this->getComponent()::class;
 
-            throw new Exception("The component [{$componentClass}] must have a [key()] set in order to use actions. This [key()] must be a unique identifier for the component.");
+            throw new Exception("The schema component [{$componentClass}] must have a [key()] set in order to use actions. This [key()] must be a unique identifier for the component.");
         }
 
-        return "mountFormComponentAction('{$componentKey}', '{$this->getName()}'{$argumentsParameter})";
+        $action['context']['schemaComponent'] = $componentKey;
+
+        return 'mountFormComponentAction(' . Js::from($action) . ')';
     }
 
     /**
