@@ -83,10 +83,6 @@
 
             {{-- window.clearAllBodyScrollLocks()
             window.disableBodyScroll(this.$root) --}}
-
-            this.$refs.modalContainer.dispatchEvent(
-                new CustomEvent('modal-opened', { id: '{{ $id }}' }),
-            )
         },
     }"
     @if ($id)
@@ -113,6 +109,7 @@
     @endif
 
     <div x-cloak x-show="isOpen">
+        Test
         <div
             aria-hidden="true"
             x-show="isOpen"

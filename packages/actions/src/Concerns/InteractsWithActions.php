@@ -120,7 +120,7 @@ trait InteractsWithActions
             $this->dispatch('close-modal', id: "{$this->getId()}-action-" . (array_key_last($this->mountedActions) - 1));
         }
 
-        $this->dispatch('open-modal', id: "{$this->getId()}-action-" . array_key_last($this->mountedActions));
+        $this->dispatch('queue-open-modal', id: "{$this->getId()}-action-" . array_key_last($this->mountedActions));
 
         return null;
     }
@@ -576,7 +576,7 @@ trait InteractsWithActions
 
         $this->resetErrorBag();
 
-        $this->dispatch('open-modal', id: "{$this->getId()}-action-" . array_key_last($this->mountedActions));
+        $this->dispatch('queue-open-modal', id: "{$this->getId()}-action-" . array_key_last($this->mountedActions));
     }
 
     public function mountedActionInfolist(): Infolist

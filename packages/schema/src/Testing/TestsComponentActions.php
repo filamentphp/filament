@@ -42,7 +42,7 @@ class TestsComponentActions
             }
 
             if (! count($this->instance()->mountedActions)) {
-                $this->assertNotDispatched('open-modal');
+                $this->assertNotDispatched('queue-open-modal');
 
                 return $this;
             }
@@ -55,7 +55,7 @@ class TestsComponentActions
                 }
             }
 
-            $this->assertDispatched('open-modal', id: "{$this->instance()->getId()}-action-" . array_key_last($this->instance()->mountedActions ?? []));
+            $this->assertDispatched('queue-open-modal', id: "{$this->instance()->getId()}-action-" . array_key_last($this->instance()->mountedActions ?? []));
 
             return $this;
         };
