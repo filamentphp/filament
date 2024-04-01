@@ -57,7 +57,7 @@ return [
     ],
 
     'logo' => [
-        'alt' => ':brand logo',
+        'alt' => ':name logo',
     ],
 
 ];
