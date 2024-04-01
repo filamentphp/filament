@@ -139,8 +139,8 @@
             $attributes
                 ->merge([
                     'disabled' => $disabled,
-                    'type' => $type,
                     'form' => $formId,
+                    'type' => $type,
                 ], escape: false)
                 ->merge([
                     'title' => $label,
