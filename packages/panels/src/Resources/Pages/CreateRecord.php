@@ -217,7 +217,6 @@ class CreateRecord extends Page
         return Action::make('create')
             ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
             ->submit('create')
-            ->formId('form')
             ->keyBindings(['mod+s']);
     }
 

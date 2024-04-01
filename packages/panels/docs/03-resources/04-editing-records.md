@@ -305,13 +305,14 @@ To view the entire actions API, please visit the [pages section](../pages#adding
 
 ### Adding a save action button to the header
 
-The "Save" button can be moved to the header of the page by overriding the `getHeaderActions()` method and using `getSaveFormAction()`:
+The "Save" button can be moved to the header of the page by overriding the `getHeaderActions()` method and using `getSaveFormAction()`. You need to pass `formId()` to the action, to specify that the action should submit the form with the ID of `form`, which is the `<form>` ID used in the view of the page:
 
 ```php
 protected function getHeaderActions(): array
 {
     return [
-        $this->getSaveFormAction(),
+        $this->getSaveFormAction()
+            ->formId('form'),
     ];
 }
 ```
