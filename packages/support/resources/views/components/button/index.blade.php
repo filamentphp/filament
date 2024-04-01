@@ -215,11 +215,11 @@
         $attributes
             ->merge([
                 'disabled' => $disabled,
+                'form' => $formId,
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 'x-bind:disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing' : null,
-                'form' => $formId,
             ], escape: false)
             ->class([$buttonClasses])
             ->style([$buttonStyles])
