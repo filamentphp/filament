@@ -51,7 +51,7 @@ class CreateAction extends Action
         $this->action(function (array $arguments, ComponentContainer $form): void {
             $model = $this->getModel();
 
-            $record = $this->process(function (array $data, HasActions&HasSchemas $livewire) use ($model): Model {
+            $record = $this->process(function (array $data, HasActions & HasSchemas $livewire) use ($model): Model {
                 if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                     $record = $translatableContentDriver->makeRecord($model, $data);
                 } else {

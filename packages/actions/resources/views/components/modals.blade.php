@@ -1,5 +1,7 @@
 @if ($this instanceof \Filament\Actions\Contracts\HasActions && (! $this->hasActionsModalRendered))
-    <div x-on:queue-open-modal.window="if ($event.detail.id.startsWith('{{ $this->getId() }}-action-')) $nextTick(() => $dispatch('open-modal', $event.detail))">
+    <div
+        x-on:queue-open-modal.window="if ($event.detail.id.startsWith('{{ $this->getId() }}-action-')) $nextTick(() => $dispatch('open-modal', $event.detail))"
+    >
         @foreach ($this->getMountedActions() as $actionNestingIndex => $action)
             <form wire:submit.prevent="callMountedAction">
                 <x-filament::modal

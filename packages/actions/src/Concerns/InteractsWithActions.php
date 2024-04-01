@@ -56,7 +56,7 @@ trait InteractsWithActions
 
     /**
      * @param  array<string, mixed>  $arguments
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function mountAction(string $name, array $arguments = [], array $context = []): mixed
     {
@@ -239,7 +239,7 @@ trait InteractsWithActions
 
     /**
      * @param  array<string, mixed>  $arguments
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function replaceMountedAction(string $name, array $arguments = [], array $context = []): void
     {
@@ -454,12 +454,10 @@ trait InteractsWithActions
             $actionNames = Arr::wrap($actions);
         }
 
-        if (isset($actionNames)) {
-            $actions = array_map(
-                fn (string $name): array => ['name' => $name],
-                $actionNames,
-            );
-        }
+        $actions = array_map(
+            fn (string $name): array => ['name' => $name],
+            $actionNames,
+        );
 
         return Arr::last($this->resolveActions($actions));
     }

@@ -2,7 +2,6 @@
 
 namespace Filament\Actions;
 
-use Exception;
 use Filament\Schema\Components\Actions\ActionContainer;
 use Filament\Schema\Components\Actions\ActionContainer as InfolistActionContainer;
 use Illuminate\Database\Eloquent\Model;

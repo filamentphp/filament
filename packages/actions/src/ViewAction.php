@@ -34,7 +34,7 @@ class ViewAction extends Action
 
         $this->disabledForm();
 
-        $this->fillForm(function (HasActions&HasSchemas $livewire, Model $record): array {
+        $this->fillForm(function (HasActions & HasSchemas $livewire, Model $record): array {
             if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                 $data = $translatableContentDriver->getRecordAttributesToArray($record);
             } else {
