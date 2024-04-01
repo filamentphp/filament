@@ -53,7 +53,11 @@ class Register extends SimplePage
             redirect()->intended(Filament::getUrl());
         }
 
+        $this->callHook('beforeFill');
+
         $this->form->fill();
+
+        $this->callHook('afterFill');
     }
 
     public function register(): ?RegistrationResponse
@@ -77,9 +81,23 @@ class Register extends SimplePage
         }
 
         $user = $this->wrapInDatabaseTransaction(function () {
+            $this->callHook('beforeValidate');
+
             $data = $this->form->getState();
 
-            return $this->handleRegistration($data);
+            $this->callHook('afterValidate');
+
+            $data = $this->mutateFormDataBeforeRegister($data);
+
+            $this->callHook('beforeRegister');
+
+            $user = $this->handleRegistration($data);
+
+            $this->form->model($user)->saveRelationships();
+
+            $this->callHook('afterRegister');
+
+            return $user;
         });
 
         event(new Registered($user));
@@ -242,5 +260,14 @@ class Register extends SimplePage
     protected function hasFullWidthFormActions(): bool
     {
         return true;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function mutateFormDataBeforeRegister(array $data): array
+    {
+        return $data;
     }
 }

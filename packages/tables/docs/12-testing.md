@@ -171,7 +171,7 @@ use function Pest\Livewire\livewire;
 
 it('has an author column', function () {
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableColumnExists(`author`);
+        ->assertTableColumnExists('author');
 });
 ```
 
@@ -200,8 +200,8 @@ use function Pest\Livewire\livewire;
 
 it('shows the correct columns', function () {
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableColumnVisible(`created_at`)
-        ->assertTableColumnHidden(`author`);
+        ->assertTableColumnVisible('created_at')
+        ->assertTableColumnHidden('author');
 });
 ```
 
