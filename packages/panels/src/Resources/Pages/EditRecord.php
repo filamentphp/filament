@@ -345,6 +345,7 @@ class EditRecord extends Page
         return Action::make('save')
             ->label(__('filament-panels::resources/pages/edit-record.form.actions.save.label'))
             ->submit('save')
+            ->formId('form')
             ->keyBindings(['mod+s']);
     }
 
