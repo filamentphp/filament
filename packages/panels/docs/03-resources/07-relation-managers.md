@@ -681,9 +681,9 @@ public function getContentTabIcon(): ?string
 By default, the form tab is rendered before the relation tabs. To render it after, you can override the `getContentTabPosition()` method on the Edit or View page class:
 
 ```php
-public function getContentTabPosition(): ?ContentPosition
+public function getContentTabPosition(): ?ContentTabPosition
 {
-    return ContentPosition::After;
+    return ContentTabPosition::After;
 }
 ```
 

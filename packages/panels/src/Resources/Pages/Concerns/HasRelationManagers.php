@@ -2,10 +2,10 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
+use Filament\Resources\Pages\ContentTabPosition;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
-use Filament\Support\Enums\ContentPosition;
 use Livewire\Attributes\Url;
 
 trait HasRelationManagers
@@ -75,7 +75,7 @@ trait HasRelationManagers
         return null;
     }
 
-    public function getContentTabPosition(): ?ContentPosition
+    public function getContentTabPosition(): ?ContentTabPosition
     {
         return null;
     }
