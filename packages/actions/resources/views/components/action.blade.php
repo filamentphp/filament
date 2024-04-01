@@ -14,6 +14,7 @@
     :component="$dynamicComponent"
     :disabled="$isDisabled"
     :form="$action->getFormToSubmit()"
+    :form-id="$action->getFormId()"
     :href="$isDisabled ? null : $url"
     :icon="$icon ?? $action->getIcon()"
     :icon-size="$action->getIconSize()"
