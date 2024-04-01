@@ -3,7 +3,6 @@
 namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Select;
 
 trait HasKey
 {

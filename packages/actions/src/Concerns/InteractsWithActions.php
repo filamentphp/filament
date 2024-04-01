@@ -56,7 +56,7 @@ trait InteractsWithActions
 
     /**
      * @param  array<string, mixed>  $arguments
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function mountAction(string $name, array $arguments = [], array $context = []): mixed
     {
@@ -239,7 +239,7 @@ trait InteractsWithActions
 
     /**
      * @param  array<string, mixed>  $arguments
-     * @param array<string, mixed> $context
+     * @param  array<string, mixed>  $context
      */
     public function replaceMountedAction(string $name, array $arguments = [], array $context = []): void
     {
