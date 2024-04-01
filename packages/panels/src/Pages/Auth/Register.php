@@ -91,13 +91,13 @@ class Register extends SimplePage
 
             $this->callHook('beforeRegister');
 
-            $this->record = $this->handleRegistration($data);
+            $user = $this->handleRegistration($data);
 
-            $this->form->model($this->record)->saveRelationships();
+            $this->form->model($user)->saveRelationships();
 
             $this->callHook('afterRegister');
 
-            return $this->record;
+            return $user;
         });
 
         event(new Registered($user));
