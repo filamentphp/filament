@@ -665,7 +665,7 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
 }
 ```
 
-## Setting an icon for the form tab
+### Setting an icon for the form tab
 
 On the Edit or View page class, override the `getContentTabIcon()` method:
 
@@ -676,9 +676,9 @@ public function getContentTabIcon(): ?string
 }
 ```
 
-## Setting the position of the form tab
+### Setting the position of the form tab
 
-By default, the form tab is rendered on the left. To render it on the right, you can override the `getContentTabPosition()` method on the Edit or View page class:
+By default, the form tab is rendered before the relation tabs. To render it after, you can override the `getContentTabPosition()` method on the Edit or View page class:
 
 ```php
 public function getContentTabPosition(): ?ContentPosition
