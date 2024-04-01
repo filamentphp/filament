@@ -87,15 +87,15 @@ class Register extends SimplePage
 
             $this->callHook('afterValidate');
 
-            $data = $this->mutateFormDataBeforeCreate($data);
+            $data = $this->mutateFormDataBeforeRegister($data);
 
-            $this->callHook('beforeCreate');
+            $this->callHook('beforeRegister');
 
             $this->record = $this->handleRegistration($data);
 
             $this->form->model($this->record)->saveRelationships();
 
-            $this->callHook('afterCreate');
+            $this->callHook('afterRegister');
 
             return $this->record;
         });
@@ -266,7 +266,7 @@ class Register extends SimplePage
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
-    protected function mutateFormDataBeforeCreate(array $data): array
+    protected function mutateFormDataBeforeRegister(array $data): array
     {
         return $data;
     }
