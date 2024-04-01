@@ -90,8 +90,8 @@
         },
     }"
     @if ($id)
-        x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') close()"
-        x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
+        x-on:{{ $closeEventName }}.window="if (($event.detail.id === '{{ $id }}') && isOpen) close()"
+        x-on:{{ $openEventName }}.window="if (($event.detail.id === '{{ $id }}') && (! isOpen)) open()"
     @endif
     x-trap.noscroll="isOpen"
     x-bind:class="{

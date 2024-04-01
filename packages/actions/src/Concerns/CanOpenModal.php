@@ -395,10 +395,6 @@ trait CanOpenModal
     {
         $action = $this->getModalAction($name);
 
-        if (! $action) {
-            return null;
-        }
-
         if (! $action instanceof MountableAction) {
             return null;
         }

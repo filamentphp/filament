@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Schema\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,7 +34,7 @@ class ViewAction extends Action
 
         $this->disabledForm();
 
-        $this->fillForm(function (HasActions $livewire, Model $record): array {
+        $this->fillForm(function (HasActions&HasSchemas $livewire, Model $record): array {
             if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                 $data = $translatableContentDriver->getRecordAttributesToArray($record);
             } else {

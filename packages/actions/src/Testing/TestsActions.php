@@ -47,9 +47,19 @@ class TestsActions
                 return $this;
             }
 
-            $this->assertSet('mountedActions', $name);
+            foreach ($name as $actionNestingIndex => $actionName) {
+                $this->assertSet(
+                    "mountedActions.{$actionNestingIndex}.name",
+                    $actionName,
+                );
 
-            $this->assertDispatched('open-modal', id: "{$this->instance()->getId()}-action");
+                $this->assertSet(
+                    "mountedActions.{$actionNestingIndex}.arguments",
+                    $arguments[$actionName] ?? ($actionNestingIndex ? [] : $arguments),
+                );
+            }
+
+            $this->assertDispatched('open-modal', id: "{$this->instance()->getId()}-action-" . array_key_last($this->instance()->mountedActions ?? []));
 
             return $this;
         };
@@ -67,7 +77,7 @@ class TestsActions
     public function setActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::dot($data, prepend: 'mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.') as $key => $value) {
+            foreach (Arr::dot($data, prepend: 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.') as $key => $value) {
                 $this->set($key, $value);
             }
 
@@ -78,7 +88,7 @@ class TestsActions
     public function assertActionDataSet(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::dot($data, prepend: 'mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.') as $key => $value) {
+            foreach (Arr::dot($data, prepend: 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.') as $key => $value) {
                 $this->assertSet($key, $value);
             }
 
@@ -125,7 +135,7 @@ class TestsActions
             }
 
             if (! count($this->instance()->mountedActions)) {
-                $this->assertDispatched('close-modal', id: "{$this->instance()->getId()}-action");
+                $this->assertDispatched('close-modal', id: "{$this->instance()->getId()}-action-0");
             }
 
             return $this;
@@ -525,7 +535,9 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $this->assertActionExists($name);
 
-            $this->assertSet('mountedActions', $name);
+            foreach ($name as $actionNestingIndex => $actionName) {
+                $this->assertSet("mountedActions.{$actionNestingIndex}.name", $actionName);
+            }
 
             return $this;
         };
@@ -567,10 +579,10 @@ class TestsActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => 'mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.' . $value];
+                            return [$key => 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $value];
                         }
 
-                        return ['mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.' . $key => $value];
+                        return ['mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $key => $value];
                     })
                     ->all(),
             );
@@ -586,10 +598,10 @@ class TestsActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => 'mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.' . $value];
+                            return [$key => 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $value];
                         }
 
-                        return ['mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.' . $key => $value];
+                        return ['mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $key => $value];
                     })
                     ->all(),
             );

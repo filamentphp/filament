@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schema\ComponentContainer;
+use Filament\Schema\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -50,7 +51,7 @@ class CreateAction extends Action
         $this->action(function (array $arguments, ComponentContainer $form): void {
             $model = $this->getModel();
 
-            $record = $this->process(function (array $data, HasActions $livewire) use ($model): Model {
+            $record = $this->process(function (array $data, HasActions&HasSchemas $livewire) use ($model): Model {
                 if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                     $record = $translatableContentDriver->makeRecord($model, $data);
                 } else {

@@ -36,7 +36,7 @@
                     :lg="$getGridColumns('lg')"
                     :xl="$getGridColumns('xl')"
                     :two-xl="$getGridColumns('2xl')"
-                    :wire:end.stop="'mountFormComponentAction({ name: \'reorder\', arguments: { items: $event.target.sortable.toArray() }, context: { schemaComponent: \'' . $key . '\' } })'"
+                    :wire:end.stop="'mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })'"
                     x-sortable
                     :data-sortable-animation-duration="$getReorderAnimationDuration()"
                     class="gap-4"

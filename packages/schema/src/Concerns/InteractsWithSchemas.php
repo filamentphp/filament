@@ -3,7 +3,7 @@
 namespace Filament\Schema\Concerns;
 
 use Closure;
-use Filament\Actions\Concerns\InteractsWithComponentActions;
+use Exception;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;
@@ -19,7 +19,6 @@ use ReflectionNamedType;
 
 trait InteractsWithSchemas
 {
-    use InteractsWithComponentActions;
     use ResolvesDynamicLivewireProperties;
     use WithFileUploads;
 
@@ -135,7 +134,13 @@ trait InteractsWithSchemas
 
         $schemaName = (string) str($key)->before('.');
 
-        return $this->getSchema($schemaName)->getComponent($key, isAbsoluteKey: true);
+        $schema = $this->getSchema($schemaName);
+
+        if (! $schema) {
+            throw new Exception("Schema [{$schemaName}] not found.");
+        }
+
+        return $schema->getComponent($key, isAbsoluteKey: true);
     }
 
     protected function cacheSchema(string $name, ComponentContainer | Closure | null $schema = null): ?ComponentContainer
@@ -146,7 +151,7 @@ trait InteractsWithSchemas
 
         try {
             if ($schema) {
-                return $this->cachedSchemas[$name] = $schema;
+                return $this->cachedSchemas[$name] = $schema->key($name);
             }
 
             // If null was explicitly passed as the schema, unset the cached schema.
@@ -219,9 +224,9 @@ trait InteractsWithSchemas
                 return null;
             }
 
-            $schema = $this->makeSchema($type)->key($name);
+            $schema = $this->makeSchema($type);
 
-            return $this->cachedSchemas[$name] = $this->{$name}($schema);
+            return $this->cachedSchemas[$name] = $this->{$name}($schema)->key($name);
         } finally {
             $this->isCachingSchemas = false;
         }

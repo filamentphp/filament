@@ -6,9 +6,9 @@ namespace Livewire\Features\SupportTesting {
     use Closure;
 
     class Testable {
-        public function mountFormComponentAction(string | array $component, string | array $name, array $arguments = [], string $formName = 'form'): static {}
+        public function mountAction(string | array $component, string | array $name, array $arguments = [], string $formName = 'form'): static {}
 
-        public function unmountFormComponentAction(): static {}
+        public function unmountAction(): static {}
 
         public function setFormComponentActionData(array $data): static {}
 
@@ -16,7 +16,7 @@ namespace Livewire\Features\SupportTesting {
 
         public function callFormComponentAction(string | array $component, string | array $name, array $data = [], array $arguments = [], string $formName = 'form'): static {}
 
-        public function callMountedFormComponentAction(array $arguments = []): static {}
+        public function callMountedAction(array $arguments = []): static {}
 
         public function assertFormComponentActionExists(string | array $component, string | array $name, string $formName = 'form'): static {}
 

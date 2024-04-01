@@ -65,21 +65,15 @@ trait InteractsWithForms
                         throw new Exception("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
                     }
 
-                    return [$form => $this->{$form}($this->makeForm()->key($form))];
+                    return [$form => $this->{$form}($this->makeForm())];
                 })
                 ->forget('')
+                ->map(fn (ComponentContainer $form, string $formName) => $form->key($formName))
                 ->all(),
         ];
 
         $this->isCachingSchemas = false;
         $this->hasCachedForms = true;
-
-        foreach ($this->mountedFormComponentActions as $actionNestingIndex => $action) {
-            $this->cacheSchema(
-                "mountedFormComponentActionForm{$actionNestingIndex}",
-                $this->getMountedFormComponentActionForm($actionNestingIndex),
-            );
-        }
 
         return $this->cachedSchemas;
     }

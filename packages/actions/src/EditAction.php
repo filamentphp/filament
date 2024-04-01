@@ -5,6 +5,7 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Schema\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,7 +34,7 @@ class EditAction extends Action
 
         $this->groupedIcon(FilamentIcon::resolve('actions::edit-action.grouped') ?? 'heroicon-m-pencil-square');
 
-        $this->fillForm(function (HasActions $livewire, Model $record): array {
+        $this->fillForm(function (HasActions&HasSchemas $livewire, Model $record): array {
             if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                 $data = $translatableContentDriver->getRecordAttributesToArray($record);
             } else {
@@ -48,7 +49,7 @@ class EditAction extends Action
         });
 
         $this->action(function (): void {
-            $this->process(function (array $data, HasActions $livewire, Model $record) {
+            $this->process(function (array $data, HasActions&HasSchemas $livewire, Model $record) {
                 if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                     $translatableContentDriver->updateRecord($record, $data);
                 } else {

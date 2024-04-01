@@ -66,7 +66,7 @@
             <ul
                 x-sortable
                 data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
-                wire:end.stop="mountFormComponentAction({ name: 'reorder', arguments: { items: $event.target.sortable.toArray() }, context: { schemaComponent: '{{ $key }}' } })'"
+                wire:end.stop="mountAction('reorder', { items: $event.target.sortable.toArray() }, { schemaComponent: '{{ $key }}' })'"
                 class="space-y-4"
             >
                 @php
@@ -243,7 +243,7 @@
                 :action="$addAction"
                 :blocks="$blockPickerBlocks"
                 :columns="$blockPickerColumns"
-                :state-path="$statePath"
+                :key="$key"
                 :width="$blockPickerWidth"
                 class="flex justify-center"
             >

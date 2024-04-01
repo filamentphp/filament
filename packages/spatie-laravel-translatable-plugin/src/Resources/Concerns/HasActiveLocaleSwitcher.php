@@ -18,11 +18,6 @@ trait HasActiveLocaleSwitcher
         return $this->activeLocale;
     }
 
-    public function getActiveActionsLocale(): ?string
-    {
-        return $this->activeLocale;
-    }
-
     /**
      * @return class-string<TranslatableContentDriver> | null
      */

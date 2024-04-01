@@ -4,6 +4,7 @@ namespace Filament\Schema\Testing;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Schema\Components\Component as SchemaComponent;
 use Filament\Schema\Contracts\HasSchemas;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
@@ -27,13 +28,11 @@ class TestsComponentActions
 
             foreach ($name as $actionNestingIndex => $actionName) {
                 $this->call(
-                    'mountFormComponentAction',
+                    'mountAction',
+                    $actionName,
+                    $arguments,
                     [
-                        'name' => $actionName,
-                        'arguments' => $arguments,
-                        'context' => [
-                            'schemaComponent' => $component[$actionNestingIndex] ?? null,
-                        ],
+                        'schemaComponent' => $component[$actionNestingIndex] ?? null,
                     ],
                 );
             }
@@ -42,21 +41,21 @@ class TestsComponentActions
                 return $this;
             }
 
-            if (! count($this->instance()->mountedFormComponentActions)) {
+            if (! count($this->instance()->mountedActions)) {
                 $this->assertNotDispatched('open-modal');
 
                 return $this;
             }
 
             foreach ($name as $mountedActionNestingIndex => $mountedActionName) {
-                $this->assertSet("mountedFormComponentActions.{$mountedActionNestingIndex}.name", $mountedActionName);
+                $this->assertSet("mountedActions.{$mountedActionNestingIndex}.name", $mountedActionName);
 
                 if (array_key_exists($mountedActionNestingIndex, $component)) {
-                    $this->assertSet("mountedFormComponentActions.{$mountedActionNestingIndex}.context.schemaComponent", $component[$mountedActionNestingIndex]);
+                    $this->assertSet("mountedActions.{$mountedActionNestingIndex}.context.schemaComponent", $component[$mountedActionNestingIndex]);
                 }
             }
 
-            $this->assertDispatched('open-modal', id: "{$this->instance()->getId()}-form-component-action");
+            $this->assertDispatched('open-modal', id: "{$this->instance()->getId()}-action-" . array_key_last($this->instance()->mountedActions ?? []));
 
             return $this;
         };
@@ -65,7 +64,7 @@ class TestsComponentActions
     public function unmountFormComponentAction(): Closure
     {
         return function (): static {
-            $this->call('unmountFormComponentAction');
+            $this->call('unmountAction');
 
             return $this;
         };
@@ -74,7 +73,7 @@ class TestsComponentActions
     public function setFormComponentActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::dot($data, prepend: 'mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.') as $key => $value) {
+            foreach (Arr::dot($data, prepend: 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.') as $key => $value) {
                 $this->set($key, $value);
             }
 
@@ -85,7 +84,7 @@ class TestsComponentActions
     public function assertFormComponentActionDataSet(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::dot($data, prepend: 'mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.') as $key => $value) {
+            foreach (Arr::dot($data, prepend: 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.') as $key => $value) {
                 $this->assertSet($key, $value);
             }
 
@@ -102,7 +101,7 @@ class TestsComponentActions
             /** @phpstan-ignore-next-line */
             $this->mountFormComponentAction($component, $name, $arguments, $formName);
 
-            if (! $this->instance()->getMountedFormComponentAction()) {
+            if (! $this->instance()->getMountedAction()) {
                 return $this;
             }
 
@@ -119,20 +118,20 @@ class TestsComponentActions
     public function callMountedFormComponentAction(): Closure
     {
         return function (array $arguments = []): static {
-            $action = $this->instance()->getMountedFormComponentAction();
+            $action = $this->instance()->getMountedAction();
 
             if (! $action) {
                 return $this;
             }
 
-            $this->call('callMountedFormComponentAction', $arguments);
+            $this->call('callMountedAction', $arguments);
 
             if (store($this->instance())->has('redirect')) {
                 return $this;
             }
 
-            if (! count($this->instance()->mountedFormComponentActions)) {
-                $this->assertDispatched('close-modal', id: "{$this->instance()->getId()}-form-component-action");
+            if (! count($this->instance()->mountedActions)) {
+                $this->assertDispatched('close-modal', id: "{$this->instance()->getId()}-action-0");
             }
 
             return $this;
@@ -142,10 +141,19 @@ class TestsComponentActions
     public function assertFormComponentActionExists(): Closure
     {
         return function (string | array $component, string | array $name, string $formName = 'form'): static {
+            $prettyComponentKey = is_array($component) ? implode('.', $component) : $component;
+
             /** @phpstan-ignore-next-line */
             [$component, $action] = $this->getNestedFormComponentActionComponentAndName($component, $name, $formName);
 
             $livewireClass = $this->instance()::class;
+
+            Assert::assertInstanceOf(
+                SchemaComponent::class,
+                $component,
+                message: "Failed asserting that a form component with key [{$prettyComponentKey}] exists on the [{$livewireClass}] component.",
+            );
+
             $prettyName = implode(' > ', Arr::wrap($name));
 
             Assert::assertInstanceOf(
@@ -484,7 +492,7 @@ class TestsComponentActions
             [$component, $name] = $this->parseNestedFormComponentActionComponentAndName($component, $name, $formName);
 
             foreach ($name as $mountedActionNestingIndex => $mountedActionName) {
-                $this->assertSet("mountedFormComponentActions.{$mountedActionNestingIndex}.name", $mountedActionName);
+                $this->assertSet("mountedActions.{$mountedActionNestingIndex}.name", $mountedActionName);
             }
 
             return $this;
@@ -501,7 +509,7 @@ class TestsComponentActions
             [$component, $name] = $this->parseNestedFormComponentActionComponentAndName($component, $name, $formName);
 
             foreach ($name as $mountedActionNestingIndex => $mountedActionName) {
-                $this->assertNotSet("mountedFormComponentActions.{$mountedActionNestingIndex}.name", $name);
+                $this->assertNotSet("mountedActions.{$mountedActionNestingIndex}.name", $name);
             }
 
             return $this;
@@ -520,10 +528,10 @@ class TestsComponentActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => 'mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.' . $value];
+                            return [$key => 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $value];
                         }
 
-                        return ['mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.' . $key => $value];
+                        return ['mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $key => $value];
                     })
                     ->all(),
             );
@@ -539,10 +547,10 @@ class TestsComponentActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => 'mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.' . $value];
+                            return [$key => 'mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $value];
                         }
 
-                        return ['mountedFormComponentActions.' . array_key_last($this->instance()->mountedFormComponentActions) . '.data.' . $key => $value];
+                        return ['mountedActions.' . array_key_last($this->instance()->mountedActions) . '.data.' . $key => $value];
                     })
                     ->all(),
             );
@@ -560,15 +568,7 @@ class TestsComponentActions
             [$component, $name] = $this->parseNestedFormComponentActionComponentAndName($component, $name, $formName);
 
             foreach ($component as $componentNestingIndex => $componentKey) {
-                foreach ($this->instance()->getCachedSchemas() as $form) {
-                    $formComponent = $form->getComponent($componentKey);
-
-                    if (! $formComponent) {
-                        continue;
-                    }
-
-                    break;
-                }
+                $formComponent = $this->instance()->getSchemaComponent($componentKey);
 
                 $action = ($formComponent ?? null)?->getAction($name[$componentNestingIndex]);
                 $action?->arguments($isSingular ? $arguments : $arguments[$componentNestingIndex] ?? []);
@@ -589,12 +589,12 @@ class TestsComponentActions
 
             foreach ($component as $componentIndex => $componentKey) {
                 if ($componentIndex) {
-                    $components[] = 'mountedFormComponentActions.' . ($componentIndex - 1) . ".data.{$componentKey}";
+                    $components[] = 'mountedActions.' . ($componentIndex - 1) . ".data.{$componentKey}";
 
                     continue;
                 }
 
-                $components[] = $componentKey;
+                $components[] = "{$formName}.{$componentKey}";
             }
 
             return [$components, $this->parseNestedActionName($name)];

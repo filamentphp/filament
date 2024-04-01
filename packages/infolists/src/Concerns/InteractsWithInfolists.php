@@ -230,7 +230,7 @@ trait InteractsWithInfolists
     {
         if (
             ($this instanceof HasActions && count($this->mountedActions)) ||
-            ($this instanceof HasForms && count($this->mountedFormComponentActions)) ||
+            ($this instanceof HasForms && count($this->mountedActions)) ||
             /** @phpstan-ignore-next-line */
             ($this instanceof HasTable && (count($this->mountedTableActions) || filled($this->mountedTableBulkAction)))
         ) {

@@ -36,7 +36,7 @@
 
                     $wireClickActionArguments = \Illuminate\Support\Js::from($wireClickActionArguments);
 
-                    $wireClickAction = "mountFormComponentAction({ name: '{$action->getName()}', arguments: {$wireClickActionArguments}, context: { schemaComponent: '{$key}' } })";
+                    $wireClickAction = "mountAction('{$action->getName()}', {$wireClickActionArguments}, { schemaComponent: '{$key}' })";
                 @endphp
 
                 <x-filament::dropdown.list.item

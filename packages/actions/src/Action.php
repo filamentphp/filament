@@ -18,7 +18,7 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
     public function getLivewireCallMountedActionName(): string
     {
         return $this->getComponent() ?
-            'callMountedFormComponentAction' :
+            'callMountedAction' :
             'callMountedAction';
     }
 
@@ -41,38 +41,32 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
             return $event;
         }
 
-        $action = [
-            'name' => $this->getName(),
-        ];
+        $argumentsParameter = '';
 
         if (count($arguments = $this->getArguments())) {
-            $action['arguments'] = $arguments;
+            $argumentsParameter .= ', ';
+            $argumentsParameter .= Js::from($arguments);
         }
 
         $component = $this->getComponent();
+        $context = [];
 
-        if (! $component) {
-            $argumentsParameter = '';
+        if (filled($componentKey = $component?->getKey())) {
+            $context['schemaComponent'] = $componentKey;
+        }
 
-            if (count($arguments)) {
-                $argumentsParameter .= ', ';
-                $argumentsParameter .= Js::from($arguments);
+        $contextParameter = '';
+
+        if (filled($context)) {
+            $contextParameter .= ', ';
+            $contextParameter .= Js::from($context);
+
+            if ($argumentsParameter === '') {
+                $argumentsParameter = ', {}';
             }
-
-            return "mountAction('{$this->getName()}'{$argumentsParameter})";
         }
 
-        $componentKey = $component->getKey();
-
-        if (blank($componentKey)) {
-            $componentClass = $this->getComponent()::class;
-
-            throw new Exception("The schema component [{$componentClass}] must have a [key()] set in order to use actions. This [key()] must be a unique identifier for the component.");
-        }
-
-        $action['context']['schemaComponent'] = $componentKey;
-
-        return 'mountFormComponentAction(' . Js::from($action) . ')';
+        return "mountAction('{$this->getName()}'{$argumentsParameter}{$contextParameter})";
     }
 
     /**
@@ -126,7 +120,7 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
     public function getInfolistName(): string
     {
         return $this->getComponent() ?
-            'mountedFormComponentActionInfolist' :
+            'mountedActionInfolist' :
             'mountedActionInfolist';
     }
 
