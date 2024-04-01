@@ -29,7 +29,7 @@
 
                 if ($content) {
                     match ($contentTabPosition) {
-                        \Filament\Support\Enums\ContentPosition::After => $tabs = $tabs + ["" => null],
+                        \Filament\Support\Enums\ContentPosition::After => $tabs = array_merge($tabs, [null => null]),
                         default => $tabs = array_replace([null => null], $tabs),
                     };
                 }
