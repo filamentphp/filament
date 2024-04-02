@@ -4,6 +4,7 @@ namespace Filament\Forms\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
@@ -15,17 +16,9 @@ trait InteractsWithForms
 {
     use InteractsWithSchemas {
         getCachedSchemas as baseGetCachedSchemas;
-        makeSchema as baseMakeSchema;
     }
-
-    protected bool $hasFormsModalRendered = false;
 
     protected bool $hasCachedForms = false;
-
-    protected function cacheForm(string $name, Form | Closure | null $form): ?ComponentContainer
-    {
-        return $this->cacheSchema($name, $form);
-    }
 
     /**
      * @return array<string, ComponentContainer>
@@ -40,6 +33,16 @@ trait InteractsWithForms
     }
 
     /**
+     * @deprecated Use `cacheSchema()` instead.
+     */
+    protected function cacheForm(string $name, ComponentContainer | Closure | null $form): ?ComponentContainer
+    {
+        return $this->cacheSchema($name, $form);
+    }
+
+    /**
+     * @deprecated You do not need to register forms in the `getForms()` method any longer. Define a method of the form's name and return the form from it.
+     *
      * @return array<string, ComponentContainer>
      */
     protected function cacheForms(): array
@@ -79,7 +82,9 @@ trait InteractsWithForms
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @deprecated You do not need to register forms in the `getForms()` method any longer. Define a method of the form's name and return the form from it.
+     *
+     * @return array<int | string, string | ComponentContainer>
      */
     public function getTraitForms(): array
     {
@@ -97,17 +102,25 @@ trait InteractsWithForms
         return $forms;
     }
 
+    /**
+     * @deprecated Use `hasCachedSchema()` instead.
+     */
     protected function hasCachedForm(string $name): bool
     {
         return $this->hasCachedSchema($name);
     }
 
+    /**
+     * @deprecated Use `getSchema()` instead.
+     */
     public function getForm(string $name): ?ComponentContainer
     {
         return $this->getSchema($name);
     }
 
     /**
+     * @deprecated Use `getCachedSchemas()` instead.
+     *
      * @return array<string, ComponentContainer>
      */
     public function getCachedForms(): array
@@ -116,7 +129,9 @@ trait InteractsWithForms
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @deprecated You do not need to register forms in the `getForms()` method any longer. Define a method of the form's name and return the form from it.
+     *
+     * @return array<int | string, string | ComponentContainer>
      */
     protected function getForms(): array
     {
@@ -168,40 +183,97 @@ trait InteractsWithForms
         return null;
     }
 
+    /**
+     * @deprecated Use `makeSchema()` instead.
+     */
     protected function makeForm(): ComponentContainer
     {
         return Form::make($this);
     }
 
     /**
-     * @param  class-string<ComponentContainer>  $type
+     * @deprecated Use `isCachingSchemas()` instead.
      */
-    protected function makeSchema(string $type): ComponentContainer
-    {
-        if (is_a($type, Form::class, allow_string: true)) {
-            return $this->makeForm();
-        }
-
-        return $this->baseMakeSchema($type);
-    }
-
     public function isCachingForms(): bool
     {
         return $this->isCachingSchemas();
     }
 
+    /**
+     * @deprecated Use `getSchemaComponentFileAttachment()` instead.
+     */
     public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
     {
         return $this->getSchemaComponentFileAttachment($statePath);
     }
 
+    /**
+     * @deprecated Use `getActiveSchemaLocale()` instead.
+     */
     public function getActiveFormsLocale(): ?string
     {
         return $this->getActiveSchemaLocale();
     }
 
+    /**
+     * @deprecated Use `getOldSchemaState()` instead.
+     */
     public function getOldFormState(string $statePath): mixed
     {
         return $this->getOldSchemaState($statePath);
+    }
+
+    /**
+     * @deprecated Use `callMountedAction()` instead.
+     *
+     * @param  array<string, mixed>  $arguments
+     */
+    public function callMountedFormComponentAction(array $arguments = []): mixed
+    {
+        return $this->callMountedAction($arguments);
+    }
+
+    /**
+     * @deprecated Use `mountAction()` instead.
+     *
+     * @param  array<string, mixed>  $arguments
+     */
+    public function mountFormComponentAction(string $component, string $name, array $arguments = []): mixed
+    {
+        return $this->mountAction($name, $arguments, context: [
+            'schemaComponent' => $component,
+        ]);
+    }
+
+    /**
+     * @deprecated Use `mountedActionShouldOpenModal()` instead.
+     */
+    public function mountedFormComponentActionShouldOpenModal(?Action $mountedAction = null): bool
+    {
+        return $this->mountedActionShouldOpenModal($mountedAction);
+    }
+
+    /**
+     * @deprecated Use `mountedActionHasForm()` instead.
+     */
+    public function mountedFormComponentActionHasForm(?Action $mountedAction = null): bool
+    {
+        return $this->mountedActionHasForm($mountedAction);
+    }
+
+    /**
+     * @deprecated Use `getMountedAction()` instead.
+     */
+    public function getMountedFormComponentAction(?int $actionNestingIndex = null): ?Action
+    {
+        return $this->getMountedAction($actionNestingIndex);
+    }
+
+    /**
+     * @deprecated Use `unmountAction()` instead.
+     */
+    public function unmountFormComponentAction(bool $canCancelParentActions = true): void
+    {
+        $this->unmountAction($canCancelParentActions);
     }
 }

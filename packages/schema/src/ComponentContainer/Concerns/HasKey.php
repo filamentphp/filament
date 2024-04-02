@@ -103,4 +103,22 @@ trait HasKey
 
         return "{$this->getLivewire()->getId()}.{$key}";
     }
+
+    /**
+     * @deprecated Use `key()` instead.
+     */
+    public function name(string | Closure | null $name): static
+    {
+        $this->key($name);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `getKey()` instead.
+     */
+    public function getName(): ?string
+    {
+        return $this->getKey();
+    }
 }

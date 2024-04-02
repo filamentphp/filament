@@ -6,7 +6,6 @@ use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
-use Filament\Infolists\Infolist;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Concerns\HasTabs;
@@ -101,7 +100,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return static::getResource()::form($form);
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(ComponentContainer $infolist): ComponentContainer
     {
         return static::getResource()::infolist($infolist);
     }
@@ -182,7 +181,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canView($record))
-            ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
+            ->infolist(fn (ComponentContainer $infolist): ComponentContainer => $this->infolist($infolist->columns(2)))
             ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
 
         if ($resource::hasPage('view')) {

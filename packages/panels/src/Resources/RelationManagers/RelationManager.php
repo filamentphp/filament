@@ -7,7 +7,6 @@ use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Infolists;
-use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\ViewRecord;
@@ -268,7 +267,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => $livewire->canView($record))
-            ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
+            ->infolist(fn (ComponentContainer $infolist): ComponentContainer => $this->infolist($infolist->columns(2)))
             ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
     }
 
@@ -334,7 +333,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         return $form;
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(ComponentContainer $infolist): ComponentContainer
     {
         return $infolist;
     }

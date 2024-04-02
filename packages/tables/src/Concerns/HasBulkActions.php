@@ -3,7 +3,6 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
-use Filament\Infolists\Infolist;
 use Filament\Schema\ComponentContainer;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
@@ -461,7 +460,7 @@ trait HasBulkActions
         return null;
     }
 
-    public function mountedTableBulkActionInfolist(): Infolist
+    public function mountedTableBulkActionInfolist(): ComponentContainer
     {
         return $this->getMountedTableBulkAction()->getInfolist();
     }

@@ -8,7 +8,6 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
-use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Schema\ComponentContainer;
 use Filament\Support\Facades\FilamentIcon;
@@ -72,7 +71,7 @@ class ViewRecord extends Page
 
     protected function hasInfolist(): bool
     {
-        return (bool) count($this->getInfolist('infolist')->getComponents());
+        return (bool) count($this->getSchema('infolist')->getComponents());
     }
 
     protected function fillForm(): void
@@ -216,17 +215,21 @@ class ViewRecord extends Page
         return 'data';
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(ComponentContainer $infolist): ComponentContainer
     {
         return static::getResource()::infolist($infolist);
     }
 
-    protected function makeInfolist(): Infolist
+    protected function makeSchema(string $type, ?string $name): ComponentContainer
     {
-        return parent::makeInfolist()
-            ->record($this->getRecord())
-            ->columns($this->hasInlineLabels() ? 1 : 2)
-            ->inlineLabel($this->hasInlineLabels());
+        if ($name === 'infolist') {
+            return parent::makeSchema($type, $name)
+                ->record($this->getRecord())
+                ->columns($this->hasInlineLabels() ? 1 : 2)
+                ->inlineLabel($this->hasInlineLabels());
+        }
+
+        return parent::makeSchema($type, $name);
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool

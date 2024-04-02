@@ -3,22 +3,25 @@
 namespace Filament\Tests\Infolists\Fixtures;
 
 use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
+use Filament\Schema\ComponentContainer;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class Actions extends Component implements HasForms, HasInfolists
+class Actions extends Component implements HasActions, HasForms, HasInfolists
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithInfolists;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(ComponentContainer $infolist): ComponentContainer
     {
         return $infolist
             ->constantState([])

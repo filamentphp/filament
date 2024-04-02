@@ -2,6 +2,8 @@
 
 namespace Livewire\Features\SupportTesting {
 
+    use Closure;
+
     class Testable {
         public function mountAction(string | array $actions, array $arguments = []): static {}
 
@@ -15,9 +17,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function callMountedAction(array $arguments = []): static {}
 
-        public function assertActionExists(string | array $actions): static {}
+        public function assertActionExists(string | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {}
 
-        public function assertActionDoesNotExist(string | array $actions): static {}
+        public function assertActionDoesNotExist(string | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {}
 
         public function assertActionVisible(string | array $actions): static {}
 

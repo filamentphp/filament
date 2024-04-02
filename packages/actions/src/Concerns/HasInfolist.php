@@ -4,7 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Actions\Contracts\HasRecord;
-use Filament\Infolists\Infolist;
+use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 
 trait HasInfolist
@@ -24,7 +24,7 @@ trait HasInfolist
         return $this;
     }
 
-    public function getInfolist(): ?Infolist
+    public function getInfolist(): ?ComponentContainer
     {
         $infolistName = $this->getInfolistName();
 
@@ -32,8 +32,8 @@ trait HasInfolist
             return null;
         }
 
-        $infolist = Infolist::make($this->getLivewire())
-            ->name($infolistName);
+        $infolist = ComponentContainer::make($this->getLivewire())
+            ->key($infolistName);
 
         if ($this instanceof HasRecord) {
             $infolist->record($this->getRecord());

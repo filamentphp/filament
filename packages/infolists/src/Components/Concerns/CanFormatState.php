@@ -4,7 +4,7 @@ namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schema\ComponentContainer;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\ArgumentValue;
 use Illuminate\Contracts\Support\Htmlable;
@@ -56,7 +56,7 @@ trait CanFormatState
     {
         $this->isDate = true;
 
-        $format ??= Infolist::$defaultDateDisplayFormat;
+        $format ??= ComponentContainer::$defaultDateDisplayFormat;
 
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($format, $timezone): ?string {
             if (blank($state)) {
@@ -75,7 +75,7 @@ trait CanFormatState
     {
         $this->isDateTime = true;
 
-        $format ??= Infolist::$defaultDateTimeDisplayFormat;
+        $format ??= ComponentContainer::$defaultDateTimeDisplayFormat;
 
         $this->date($format, $timezone);
 
@@ -112,7 +112,7 @@ trait CanFormatState
                 return $state;
             }
 
-            $currency = $component->evaluate($currency) ?? Infolist::$defaultCurrency;
+            $currency = $component->evaluate($currency) ?? ComponentContainer::$defaultCurrency;
 
             if ($divideBy) {
                 $state /= $divideBy;
@@ -163,7 +163,7 @@ trait CanFormatState
     {
         $this->isTime = true;
 
-        $format ??= Infolist::$defaultTimeDisplayFormat;
+        $format ??= ComponentContainer::$defaultTimeDisplayFormat;
 
         $this->date($format, $timezone);
 

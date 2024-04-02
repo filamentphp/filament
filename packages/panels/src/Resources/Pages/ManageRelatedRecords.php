@@ -3,7 +3,6 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -218,7 +217,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canView($record))
-            ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
+            ->infolist(fn (ComponentContainer $infolist): ComponentContainer => $this->infolist($infolist->columns(2)))
             ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
     }
 
@@ -284,7 +283,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         return $form;
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(ComponentContainer $infolist): ComponentContainer
     {
         return $infolist;
     }

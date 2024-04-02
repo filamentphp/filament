@@ -18,7 +18,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->mountAction($actions);
 
@@ -58,7 +58,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, array $data = [], array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->callAction($actions, $data);
 
@@ -80,7 +80,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName);
 
             $this->assertActionExists($actions);
 
@@ -93,7 +93,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName);
 
             $this->assertActionDoesNotExist($actions);
 
@@ -106,7 +106,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionVisible($actions);
 
@@ -119,7 +119,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionHidden($actions);
 
@@ -132,7 +132,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionEnabled($actions);
 
@@ -145,7 +145,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionDisabled($actions);
 
@@ -158,7 +158,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string $icon, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionHasIcon($actions, $icon);
 
@@ -171,7 +171,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string $icon, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionDoesNotHaveIcon($actions, $icon);
 
@@ -184,7 +184,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string $label, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionHasLabel($actions, $label);
 
@@ -197,7 +197,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string $label, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionDoesNotHaveLabel($actions, $label);
 
@@ -210,7 +210,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string | array $color, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionHasColor($actions, $color);
 
@@ -223,7 +223,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string | array $color, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionDoesNotHaveColor($actions, $color);
 
@@ -236,7 +236,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string $url, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionHasUrl($actions, $url);
 
@@ -249,7 +249,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string $url, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionDoesNotHaveUrl($actions, $url);
 
@@ -262,7 +262,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionShouldOpenUrlInNewTab($actions);
 
@@ -275,7 +275,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, array $arguments = [], string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName, $arguments);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName, $arguments);
 
             $this->assertActionShouldNotOpenUrlInNewTab($actions);
 
@@ -288,7 +288,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName);
 
             $this->assertActionMounted($actions);
 
@@ -301,7 +301,7 @@ class TestsFormComponentActions
         return function (string | array $components, string | array $actions, string $formName = 'form'): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedSchemaComponentActions($components, $actions, $formName);
+            $actions = $this->parseNestedFormComponentActions($components, $actions, $formName);
 
             $this->assertActionNotMounted($actions);
 
@@ -332,10 +332,10 @@ class TestsFormComponentActions
         };
     }
 
-    public function parseNestedSchemaComponentActions(): Closure
+    public function parseNestedFormComponentActions(): Closure
     {
-        return function (string | array $components, string | array $actions, string $schema, array $arguments = []): array {
-            $this->assertFormExists($schema);
+        return function (string | array $components, string | array $actions, string $form, array $arguments = []): array {
+            $this->assertFormExists($form);
 
             /** @var array<array<string, mixed>> $actions */
             $actions = $this->parseNestedActions($actions, $arguments);
@@ -352,7 +352,7 @@ class TestsFormComponentActions
                 if ($actionNestingIndex) {
                     $component = 'mountedActions.' . ($actionNestingIndex - 1) . ".data.{$component}";
                 } else {
-                    $component = "{$schema}.{$component}";
+                    $component = "{$form}.{$component}";
                 }
 
                 $action['context']['schemaComponent'] = $component;

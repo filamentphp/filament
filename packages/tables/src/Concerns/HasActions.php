@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Infolists\Infolist;
 use Filament\Schema\ComponentContainer;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
@@ -398,7 +397,7 @@ trait HasActions
         return null;
     }
 
-    public function mountedTableActionInfolist(): Infolist
+    public function mountedTableActionInfolist(): ComponentContainer
     {
         return $this->getMountedTableAction()->getInfolist();
     }

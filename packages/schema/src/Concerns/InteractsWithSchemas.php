@@ -4,6 +4,8 @@ namespace Filament\Schema\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;
@@ -161,7 +163,19 @@ trait InteractsWithSchemas
                 return null;
             }
 
-            if (! method_exists($this, $name)) {
+            if (method_exists($this, $name)) {
+                $methodName = $name;
+            } elseif (method_exists($this, "{$name}Schema")) {
+                $methodName = "{$name}Schema";
+            } elseif (
+                str($name)->startsWith('mountedAction') &&
+                method_exists($this, 'cacheMountedActions') &&
+                property_exists($this, 'mountedActions')
+            ) {
+                $this->cacheMountedActions($this->mountedActions);
+
+                return $this->getSchema($name);
+            } else {
                 unset($this->cachedSchemas[$name]);
 
                 return null;
@@ -193,7 +207,7 @@ trait InteractsWithSchemas
                     return null;
                 }
 
-                return $this->cachedSchemas[$name] = ($this->{$name}())->key($name);
+                return $this->cachedSchemas[$name] = ($this->{$methodName}())->key($name);
             }
 
             $typeReflection = $parameterReflection->getType();
@@ -224,7 +238,7 @@ trait InteractsWithSchemas
                 return null;
             }
 
-            $schema = $this->makeSchema($type);
+            $schema = $this->makeSchema($type, $name);
 
             return $this->cachedSchemas[$name] = $this->{$name}($schema)->key($name);
         } finally {
@@ -235,8 +249,16 @@ trait InteractsWithSchemas
     /**
      * @param  class-string<ComponentContainer>  $type
      */
-    protected function makeSchema(string $type): ComponentContainer
+    protected function makeSchema(string $type, ?string $name): ComponentContainer
     {
+        if (method_exists($this, 'makeForm') && is_a($type, Form::class, allow_string: true)) {
+            return $this->makeForm();
+        }
+
+        if (method_exists($this, 'makeInfolist') && is_a($type, Infolist::class, allow_string: true)) {
+            return $this->makeInfolist();
+        }
+
         return $type::make($this);
     }
 

@@ -9,7 +9,6 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
-use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
@@ -279,7 +278,7 @@ class EditRecord extends Page
 
         $action
             ->authorize($resource::canView($this->getRecord()))
-            ->infolist(fn (Infolist $infolist): Infolist => static::getResource()::infolist($infolist->columns(2)))
+            ->infolist(fn (ComponentContainer $infolist): ComponentContainer => static::getResource()::infolist($infolist->columns(2)))
             ->form(fn (ComponentContainer $form): ComponentContainer => static::getResource()::form($form));
 
         if ($resource::hasPage('view')) {

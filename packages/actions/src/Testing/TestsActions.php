@@ -534,7 +534,8 @@ class TestsActions
             $livewireClass = $this->instance()::class;
 
             /** @var array<string> $names */
-            $names = array_map(fn (string $name): string => $this->parseActionName($name), $names); // @phpstan-ignore-line
+            /** @phpstan-ignore-next-line */
+            $names = array_map(fn (string $name): string => $this->parseActionName($name), $names);
             $namesIndex = 0;
 
             $actions = array_reduce(

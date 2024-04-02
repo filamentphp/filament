@@ -5,7 +5,6 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
-use Filament\Infolists\Infolist;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Contracts\ExposesStateToActionData;
 use Filament\Schema\Concerns\InteractsWithSchemas;
@@ -580,7 +579,7 @@ trait InteractsWithActions
         $this->dispatch('sync-action-modals', id: $this->getId(), newActionNestingIndex: array_key_last($this->mountedActions));
     }
 
-    public function mountedActionInfolist(): Infolist
+    public function mountedActionInfolist(): ComponentContainer
     {
         return $this->getMountedAction()->getInfolist();
     }

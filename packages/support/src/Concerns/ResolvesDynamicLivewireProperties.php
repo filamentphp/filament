@@ -3,7 +3,6 @@
 namespace Filament\Support\Concerns;
 
 use Filament\Actions\Contracts\HasActions;
-use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Schema\Contracts\HasSchemas;
 use Livewire\Exceptions\PropertyNotFoundException;
 
@@ -27,13 +26,6 @@ trait ResolvesDynamicLivewireProperties
             $schema = $this->getSchema($property)
         ) {
             return $schema;
-        }
-
-        if (
-            $this instanceof HasInfolists &&
-            $infolist = $this->getInfolist($property)
-        ) {
-            return $infolist;
         }
 
         if (

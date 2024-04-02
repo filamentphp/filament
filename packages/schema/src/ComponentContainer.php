@@ -34,6 +34,14 @@ class ComponentContainer extends ViewComponent
 
     protected string $viewIdentifier = 'container';
 
+    public static string $defaultCurrency = 'usd';
+
+    public static string $defaultDateDisplayFormat = 'M j, Y';
+
+    public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';
+
+    public static string $defaultTimeDisplayFormat = 'H:i:s';
+
     final public function __construct(Component & HasSchemas $livewire)
     {
         $this->livewire($livewire);

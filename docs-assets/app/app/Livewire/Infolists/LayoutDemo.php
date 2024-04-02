@@ -10,7 +10,7 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
+use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Actions;
 use Filament\Schema\Components\Fieldset;
 use Filament\Schema\Components\Grid;
@@ -30,7 +30,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
     use InteractsWithForms;
     use InteractsWithInfolists;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(ComponentContainer $infolist): ComponentContainer
     {
         return $infolist
             ->schema([

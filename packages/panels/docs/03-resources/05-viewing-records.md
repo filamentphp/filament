@@ -23,10 +23,9 @@ php artisan make:filament-resource User --view
 By default, the View page will display a disabled form with the record's data. If you preferred to display the record's data in an "infolist", you can define an `infolist()` method on the resource class:
 
 ```php
-use Filament\Infolists;
-use Filament\Infolists\Infolist;
+use Filament\Infolists;use Filament\Schema\ComponentContainer;
 
-public static function infolist(Infolist $infolist): Infolist
+public static function infolist(ComponentContainer $infolist): ComponentContainer
 {
     return $infolist
         ->schema([
@@ -136,9 +135,9 @@ public static function getPages(): array
 Now, you can define the `infolist()` or `form()` for this page, which can contain other components that are not present on the main View page:
 
 ```php
-use Filament\Infolists\Infolist;
+use Filament\Schema\ComponentContainer;
 
-public function infolist(Infolist $infolist): Infolist
+public function infolist(ComponentContainer $infolist): ComponentContainer
 {
     return $infolist
         ->schema([

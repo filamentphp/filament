@@ -7,7 +7,6 @@ use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\Actions\Action;
 use Filament\GlobalSearch\GlobalSearchResult;
-use Filament\Infolists\Infolist;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\SubNavigationPosition;
@@ -128,7 +127,7 @@ abstract class Resource
         return $form;
     }
 
-    public static function infolist(Infolist $infolist): Infolist
+    public static function infolist(ComponentContainer $infolist): ComponentContainer
     {
         return $infolist;
     }
