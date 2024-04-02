@@ -9,6 +9,7 @@
     'closeButton' => \Filament\Support\View\Components\Modal::$hasCloseButton,
     'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
     'closeEventName' => 'close-modal',
+    'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
     'displayClasses' => 'inline-block',
     'footer' => null,
@@ -56,6 +57,7 @@
         aria-labelledby="{{ "{$id}.heading" }}"
     @endif
     aria-modal="true"
+    id="{{ $id }}"
     role="dialog"
     x-data="{
         isOpen: false,
@@ -63,11 +65,15 @@
         livewire: null,
 
         close: function () {
-            this.isOpen = false
+            this.closeQuietly()
 
             this.$refs.modalContainer.dispatchEvent(
                 new CustomEvent('modal-closed', { id: '{{ $id }}' }),
             )
+        },
+
+        closeQuietly: function () {
+            this.isOpen = false
 
             {{-- this.$nextTick(() => {
                 if (document.getElementsByClassName('fi-modal-open').length) {
@@ -87,6 +93,7 @@
     }"
     @if ($id)
         x-on:{{ $closeEventName }}.window="if (($event.detail.id === '{{ $id }}') && isOpen) close()"
+        x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === '{{ $id }}') && isOpen) closeQuietly()"
         x-on:{{ $openEventName }}.window="if (($event.detail.id === '{{ $id }}') && (! isOpen)) open()"
     @endif
     x-trap.noscroll="isOpen"
@@ -109,7 +116,6 @@
     @endif
 
     <div x-cloak x-show="isOpen">
-        Test
         <div
             aria-hidden="true"
             x-show="isOpen"

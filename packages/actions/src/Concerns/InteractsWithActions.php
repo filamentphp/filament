@@ -3,8 +3,8 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
+use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Infolists\Infolist;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Contracts\ExposesStateToActionData;
@@ -66,19 +66,25 @@ trait InteractsWithActions
             'context' => $context,
         ];
 
-        $action = $this->getMountedAction();
+        try {
+            $action = $this->getMountedAction();
+        } catch (ActionNotResolvableException $exception) {
+            $action = null;
+        }
 
         if (! $action) {
-            $this->unmountAction();
+            $this->unmountAction(canCancelParentActions: false);
 
             return null;
         }
 
         if ($action->isDisabled()) {
-            $this->unmountAction();
+            $this->unmountAction(canCancelParentActions: false);
 
             return null;
         }
+
+        $this->syncActionModals();
 
         if (($actionComponent = $action->getComponent()) instanceof ExposesStateToActionData) {
             foreach ($actionComponent->getChildComponentContainers() as $actionComponentChildComponentContainer) {
@@ -105,7 +111,7 @@ trait InteractsWithActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-            $this->unmountAction(shouldCancelParentActions: false);
+            $this->unmountAction(canCancelParentActions: false);
 
             return null;
         }
@@ -115,12 +121,6 @@ trait InteractsWithActions
         }
 
         $this->resetErrorBag();
-
-        if (count($this->mountedActions) > 1) {
-            $this->dispatch('close-modal', id: "{$this->getId()}-action-" . (array_key_last($this->mountedActions) - 1));
-        }
-
-        $this->dispatch('queue-open-modal', id: "{$this->getId()}-action-" . array_key_last($this->mountedActions));
 
         return null;
     }
@@ -295,7 +295,7 @@ trait InteractsWithActions
             return [];
         }
 
-        if (array_key_exists(count($this->mountedActions) - 1, $this->cachedMountedActions)) {
+        if (array_key_exists(count($this->mountedActions) - 1, $this->cachedMountedActions ?? [])) {
             return $this->cachedMountedActions;
         }
 
@@ -354,7 +354,7 @@ trait InteractsWithActions
 
         foreach ($actions as $action) {
             if (blank($action['name'] ?? null)) {
-                throw new Exception('An action tried to resolve without a name.');
+                throw new ActionNotResolvableException('An action tried to resolve without a name.');
             }
 
             if (filled($action['context']['schemaComponent'] ?? null)) {
@@ -380,7 +380,7 @@ trait InteractsWithActions
             $resolvedAction = $parentAction->getMountableModalAction($action['name']);
 
             if (! $resolvedAction) {
-                throw new Exception("Action [{$action['name']}] was not found for action [{$parentAction->getName()}].");
+                throw new ActionNotResolvableException("Action [{$action['name']}] was not found for action [{$parentAction->getName()}].");
             }
         } elseif (array_key_exists($action['name'], $this->cachedActions)) {
             $resolvedAction = $this->cachedActions[$action['name']];
@@ -393,7 +393,7 @@ trait InteractsWithActions
             } elseif (method_exists($this, $action['name'])) {
                 $methodName = $action['name'];
             } else {
-                throw new Exception("Action was not resolvable from methods [{$action['name']}Action] or [{$action['name']}]");
+                throw new ActionNotResolvableException("Action was not resolvable from methods [{$action['name']}Action] or [{$action['name']}]");
             }
 
             $resolvedAction = Action::configureUsing(
@@ -402,7 +402,7 @@ trait InteractsWithActions
             );
 
             if (! $resolvedAction instanceof Action) {
-                throw new Exception('Actions must be an instance of ' . Action::class . ". The [{$methodName}] method on the Livewire component returned an instance of [" . get_class($resolvedAction) . '].');
+                throw new ActionNotResolvableException('Actions must be an instance of ' . Action::class . ". The [{$methodName}] method on the Livewire component returned an instance of [" . get_class($resolvedAction) . '].');
             }
 
             $this->cacheAction($resolvedAction);
@@ -425,19 +425,19 @@ trait InteractsWithActions
     protected function resolveSchemaComponentAction(array $action, array $parentActions): Action
     {
         if (! $this instanceof HasSchemas) {
-            throw new Exception('Failed to resolve action schema component for Livewire component without the ' . InteractsWithSchemas::class . ' trait.');
+            throw new ActionNotResolvableException('Failed to resolve action schema component for Livewire component without the ' . InteractsWithSchemas::class . ' trait.');
         }
 
         $component = $this->getSchemaComponent($action['context']['schemaComponent']);
 
         if (! $component) {
-            throw new Exception("Schema component [{$action['context']['schemaComponent']}] not found.");
+            throw new ActionNotResolvableException("Schema component [{$action['context']['schemaComponent']}] not found.");
         }
 
         $componentAction = $component->getAction($action['name']);
 
         if (! $componentAction) {
-            throw new Exception("Action [{$action['name']}] not found on schema component [{$action['context']['schemaComponent']}].");
+            throw new ActionNotResolvableException("Action [{$action['name']}] not found on schema component [{$action['context']['schemaComponent']}].");
         }
 
         return $componentAction->arguments($action['arguments'] ?? []);
@@ -448,15 +448,9 @@ trait InteractsWithActions
      */
     public function getAction(string | array $actions): ?Action
     {
-        if (is_string($actions) && str($actions)->contains('.')) {
-            $actionNames = explode('.', $actions);
-        } else {
-            $actionNames = Arr::wrap($actions);
-        }
-
         $actions = array_map(
-            fn (string $name): array => ['name' => $name],
-            $actionNames,
+            fn (string | array $action): array => is_array($action) ? $action : ['name' => $action],
+            Arr::wrap($actions),
         );
 
         return Arr::last($this->resolveActions($actions));
@@ -534,15 +528,15 @@ trait InteractsWithActions
     {
     }
 
-    public function unmountAction(bool $shouldCancelParentActions = true): void
+    public function unmountAction(bool $canCancelParentActions = true): void
     {
-        if (count($this->mountedActions)) {
-            $this->dispatch('close-modal', id: "{$this->getId()}-action-" . array_key_last($this->mountedActions));
+        try {
+            $action = $this->getMountedAction();
+        } catch (ActionNotResolvableException $exception) {
+            $action = null;
         }
 
-        $action = $this->getMountedAction();
-
-        if (! ($shouldCancelParentActions && $action)) {
+        if (! ($canCancelParentActions && $action)) {
             array_pop($this->mountedActions);
         } elseif ($action->shouldCancelAllParentActions()) {
             $this->mountedActions = [];
@@ -561,6 +555,12 @@ trait InteractsWithActions
             }
         }
 
+        $this->syncActionModals();
+
+        while (count($this->cachedMountedActions ?? []) > count($this->mountedActions)) {
+            array_pop($this->cachedMountedActions);
+        }
+
         if (! count($this->mountedActions)) {
             $action?->clearRecordAfter();
 
@@ -573,8 +573,11 @@ trait InteractsWithActions
         }
 
         $this->resetErrorBag();
+    }
 
-        $this->dispatch('queue-open-modal', id: "{$this->getId()}-action-" . array_key_last($this->mountedActions));
+    protected function syncActionModals(): void
+    {
+        $this->dispatch('sync-action-modals', id: $this->getId(), newActionNestingIndex: array_key_last($this->mountedActions));
     }
 
     public function mountedActionInfolist(): Infolist

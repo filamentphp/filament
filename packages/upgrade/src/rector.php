@@ -19,7 +19,6 @@ return static function (RectorConfig $rectorConfig): void {
         // @todo Alphabetical
         [
             'Filament\\Forms\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schema\\Commands\\MakeLayoutComponentCommand',
-            'Filament\\Forms\\Testing\\TestsComponentActions' => 'Filament\\Schema\\Testing\\TestsComponentActions',
             'Filament\\Pages\\Actions\\Action' => 'Filament\\Actions\\Action',
             'Filament\\Forms\\Components\\BelongsToManyCheckboxList' => 'Filament\\Forms\\Components\\CheckboxList',
             'Filament\\Forms\\Components\\BelongsToManyMultiSelect' => 'Filament\\Forms\\Components\\MultiSelect',

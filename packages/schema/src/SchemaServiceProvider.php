@@ -2,9 +2,7 @@
 
 namespace Filament\Schema;
 
-use Filament\Schema\Testing\TestsComponentActions;
 use Illuminate\Filesystem\Filesystem;
-use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -28,8 +26,6 @@ class SchemaServiceProvider extends PackageServiceProvider
                 ], 'filament-stubs');
             }
         }
-
-        Testable::mixin(new TestsComponentActions());
     }
 
     /**

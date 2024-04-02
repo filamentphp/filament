@@ -1,7 +1,62 @@
 @if ($this instanceof \Filament\Actions\Contracts\HasActions && (! $this->hasActionsModalRendered))
     <div
-        x-on:queue-open-modal.window="if ($event.detail.id.startsWith('{{ $this->getId() }}-action-')) $nextTick(() => $dispatch('open-modal', $event.detail))"
+        x-data="{
+            actionNestingIndex: null,
+
+            syncActionModals: function (newActionNestingIndex) {
+                if (this.actionNestingIndex === newActionNestingIndex) {
+                    return
+                }
+
+                if (this.actionNestingIndex !== null) {
+                    this.closeModal()
+                }
+
+                this.actionNestingIndex = newActionNestingIndex
+
+                if (this.actionNestingIndex === null) {
+                    return
+                }
+
+                if (! this.$el.querySelector(`#${this.generateModalId(newActionNestingIndex)}`)) {
+                    $nextTick(() => this.openModal())
+
+                    return
+                }
+
+                this.openModal()
+            },
+
+            generateModalId: function (actionNestingIndex) {
+                return '{{ $this->getId() }}-action-' + actionNestingIndex
+            },
+
+            openModal: function () {
+                const id = this.generateModalId(this.actionNestingIndex)
+
+                if (! this.$el.querySelector(`#${id}`)) {
+                    return
+                }
+
+                this.$dispatch('open-modal', { id })
+            },
+
+            closeModal: function () {
+                const id = this.generateModalId(this.actionNestingIndex)
+
+                if (! this.$el.querySelector(`#${id}`)) {
+                    return
+                }
+
+                this.$dispatch('close-modal-quietly', { id })
+            },
+        }"
+        x-on:sync-action-modals.window="
+            if ($event.detail.id === '{{ $this->getId() }}')
+                syncActionModals($event.detail.newActionNestingIndex)
+        "
     >
+        1
         @foreach ($this->getMountedActions() as $actionNestingIndex => $action)
             <form wire:submit.prevent="callMountedAction">
                 <x-filament::modal
