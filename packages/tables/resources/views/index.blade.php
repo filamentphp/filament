@@ -9,6 +9,10 @@
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Illuminate\Support\Str;
 
+    $noResultsStateHeading = 'No records';
+    $noResultsStateDescription = 'No matching records found';
+    $noResultsStateIcon = 'heroicon-s-x-mark';
+
     $actions = $getActions();
     $actionsAlignment = $getActionsAlignment();
     $actionsPosition = $getActionsPosition();
@@ -1206,6 +1210,16 @@
                 </x-filament-tables::table>
             @elseif ($records === null)
                 <div class="h-32"></div>
+            @elseif ($activeFiltersCount || $this->tableSearch)
+                <tr>
+                    <td colspan="{{ $columnsCount }}">
+                        <x-filament-tables::empty-state
+                            :description="$noResultsStateDescription"
+                            :heading="$noResultsStateHeading"
+                            :icon="$noResultsStateIcon"
+                        />
+                    </td>
+                </tr>
             @elseif ($emptyState = $getEmptyState())
                 {{ $emptyState }}
             @else
