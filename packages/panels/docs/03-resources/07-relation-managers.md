@@ -665,6 +665,28 @@ public function hasCombinedRelationManagerTabsWithContent(): bool
 }
 ```
 
+### Setting an icon for the form tab
+
+On the Edit or View page class, override the `getContentTabIcon()` method:
+
+```php
+public function getContentTabIcon(): ?string
+{
+    return 'heroicon-m-cog';
+}
+```
+
+### Setting the position of the form tab
+
+By default, the form tab is rendered before the relation tabs. To render it after, you can override the `getContentTabPosition()` method on the Edit or View page class:
+
+```php
+public function getContentTabPosition(): ?ContentTabPosition
+{
+    return ContentTabPosition::After;
+}
+```
+
 ## Adding badges to relation manager tabs
 
 You can add a badge to a relation manager tab by setting the `$badge` property:
