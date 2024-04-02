@@ -707,6 +707,20 @@ ImportColumn::make('name')
     ->validationAttribute('full name')
 ```
 
+## Import File Storage
+
+By default the import action will use the path of the temporary file to store the CSV, unless your default filesystem is driven by S3 in which case it will use the S3 disk.
+
+### Support for S3 Compatible Storage
+
+If you are using an S3 compatible storage, such as DigitalOcean Spaces, you can set a custom disk to use for the import file storage by calling the `disk()` method on the action:
+
+```php
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->disk('digitalocean')
+```
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code at various points within an importer's lifecycle, like before a record is saved. To set up a hook, create a protected method on the importer class with the name of the hook:
