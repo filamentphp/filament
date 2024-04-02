@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\ImportColumn;
@@ -51,6 +52,8 @@ trait CanImportRecords
     protected int | Closure | null $headerOffset = null;
 
     protected string | Closure | null $csvDelimiter = null;
+
+    protected string | Closure $disk = 's3';
 
     /**
      * @var array<string, mixed> | Closure
@@ -347,6 +350,7 @@ trait CanImportRecords
      */
     public function getUploadedFileStream(TemporaryUploadedFile $file)
     {
+        $disk = $this->getDisk();
         $filePath = $file->getRealPath();
 
         if (config('filesystems.disks.' . config('filament.default_filesystem_disk') . '.driver') !== 's3') {
@@ -354,10 +358,10 @@ trait CanImportRecords
         }
 
         /** @var AwsS3V3Adapter $s3Adapter */
-        $s3Adapter = Storage::disk('s3')->getAdapter();
+        $s3Adapter = Storage::disk($disk)->getAdapter();
 
         invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-        $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
+        $fileS3Path = 's3://' . config("filesystems.disks.$disk.bucket") . '/' . $filePath;
 
         return fopen($fileS3Path, mode: 'r', context: stream_context_create([
             's3' => [
@@ -408,6 +412,13 @@ trait CanImportRecords
     public function headerOffset(int | Closure | null $offset): static
     {
         $this->headerOffset = $offset;
+
+        return $this;
+    }
+
+    public function disk(string | Closure $disk): static
+    {
+        $this->disk = $disk;
 
         return $this;
     }
@@ -482,5 +493,18 @@ trait CanImportRecords
     public function getOptions(): array
     {
         return $this->evaluate($this->options);
+    }
+
+    /**
+     * @throws Exception if the disk is not an S3 disk
+     */
+    private function getDisk(): string
+    {
+        $disk = $this->evaluate($this->disk);
+
+        if (config('filesystems.disks.' . $disk . '.driver') !== 's3') {
+            throw new Exception('The disk must be an S3 compatible disk.');
+        }
+        return $disk;
     }
 }
