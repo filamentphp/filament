@@ -17,10 +17,14 @@ trait HasRelationship
 
     protected bool | Closure $isPreloaded = false;
 
-    public function relationship(string $name, string $titleAttribute, ?Closure $modifyQueryUsing = null): static
-    {
-        $this->attribute("{$name}.{$titleAttribute}");
+    protected string | Closure | null $relationship = null;
 
+    protected string | Closure | null $relationshipTitleAttribute = null;
+
+    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, ?Closure $modifyQueryUsing = null): static
+    {
+        $this->relationship = $name;
+        $this->relationshipTitleAttribute = $titleAttribute;
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
         return $this;
@@ -40,7 +44,7 @@ trait HasRelationship
 
     public function queriesRelationships(): bool
     {
-        return str($this->getAttribute())->contains('.');
+        return filled($this->getRelationshipName());
     }
 
     public function getRelationship(): Relation | Builder
@@ -65,12 +69,12 @@ trait HasRelationship
 
     public function getRelationshipName(): string
     {
-        return (string) str($this->getAttribute())->beforeLast('.');
+        return $this->evaluate($this->relationship);
     }
 
     public function getRelationshipTitleAttribute(): string
     {
-        return (string) str($this->getAttribute())->afterLast('.');
+        return $this->evaluate($this->relationshipTitleAttribute);
     }
 
     public function getModifyRelationshipQueryUsing(): ?Closure
