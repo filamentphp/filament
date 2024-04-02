@@ -707,7 +707,7 @@ ImportColumn::make('name')
     ->validationAttribute('full name')
 ```
 
-## Import File Storage
+## Storage
 
 By default the import action will use the path of the temporary file to store the CSV, unless your default filesystem is driven by S3 in which case it will use the S3 disk.
 
