@@ -5,6 +5,7 @@
         @endphp
 
         <x-filament::modal
+            :action-name="$action?->getName()"
             :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
@@ -64,6 +65,7 @@
         @endphp
 
         <x-filament::modal
+            :action-name="$action?->getName()"
             :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
@@ -117,6 +119,7 @@
         @endphp
 
         <x-filament::modal
+            :action-name="$action?->getName()"
             :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
@@ -176,6 +179,7 @@
         @endphp
 
         <x-filament::modal
+            :action-name="$action?->getName()"
             :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
@@ -235,6 +239,7 @@
 
     <form wire:submit.prevent="callMountedFormComponentAction">
         <x-filament::modal
+            :action-name="$action?->getName()"
             :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"

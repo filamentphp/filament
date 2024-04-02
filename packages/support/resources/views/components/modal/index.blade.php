@@ -4,6 +4,7 @@
 @endphp
 
 @props([
+    'actionName' => null,
     'alignment' => Alignment::Start,
     'ariaLabelledby' => null,
     'closeButton' => \Filament\Support\View\Components\Modal::$hasCloseButton,
@@ -172,6 +173,7 @@
                     @endif
                     @class([
                         'fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
+                        'fi-modal-window-' . str($actionName)->camel()->kebab() => $actionName,
                         'fi-modal-slide-over-window ms-auto overflow-y-auto' => $slideOver,
                         // Using an arbitrary value instead of the h-dvh class that was added in Tailwind CSS v3.4.0
                         // to ensure compatibility with custom themes that may use an older version of Tailwind CSS.
