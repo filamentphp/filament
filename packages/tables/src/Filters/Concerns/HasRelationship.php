@@ -67,12 +67,12 @@ trait HasRelationship
         return $relationship;
     }
 
-    public function getRelationshipName(): string
+    public function getRelationshipName(): ?string
     {
         return $this->evaluate($this->relationship);
     }
 
-    public function getRelationshipTitleAttribute(): string
+    public function getRelationshipTitleAttribute(): ?string
     {
         return $this->evaluate($this->relationshipTitleAttribute);
     }
