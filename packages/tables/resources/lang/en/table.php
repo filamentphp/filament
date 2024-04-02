@@ -109,6 +109,14 @@ return [
 
     ],
 
+    'no_result' => [
+
+        'heading' => 'No :model',
+
+        'description' => 'No matching :model found.',
+
+    ],
+
     'filters' => [
 
         'actions' => [

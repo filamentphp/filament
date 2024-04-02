@@ -9,10 +9,6 @@
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Illuminate\Support\Str;
 
-    $noResultsStateHeading = 'No records';
-    $noResultsStateDescription = 'No matching records found';
-    $noResultsStateIcon = 'heroicon-s-x-mark';
-
     $actions = $getActions();
     $actionsAlignment = $getActionsAlignment();
     $actionsPosition = $getActionsPosition();
@@ -1214,9 +1210,10 @@
                 <tr>
                     <td colspan="{{ $columnsCount }}">
                         <x-filament-tables::empty-state
-                            :description="$noResultsStateDescription"
-                            :heading="$noResultsStateHeading"
-                            :icon="$noResultsStateIcon"
+                            :actions="$getNoResultStateActions()"
+                            :description="$getNoResultStateDescription()"
+                            :heading="$getNoResultStateHeading()"
+                            :icon="$getNoResultStateIcon()"
                         />
                     </td>
                 </tr>
