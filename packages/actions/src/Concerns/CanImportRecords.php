@@ -503,7 +503,7 @@ trait CanImportRecords
         $disk = $this->evaluate($this->disk);
 
         if (config('filesystems.disks.' . $disk . '.driver') !== 's3') {
-            throw new Exception('The disk must be an S3 compatible disk.');
+            throw new Exception('The disk for the storage of import data can only be customised when using an S3 compatible disk.');
         }
         return $disk;
     }
