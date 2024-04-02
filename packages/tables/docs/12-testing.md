@@ -300,7 +300,7 @@ To reset all filters to their original state, call `resetTableFilters()`:
 ```php
 use function Pest\Livewire\livewire;
 
-it('can reset table filters`', function () {
+it('can reset table filters', function () {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
