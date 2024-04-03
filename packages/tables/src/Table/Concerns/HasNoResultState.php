@@ -120,7 +120,7 @@ trait HasNoResultState
     public function getNoResultStateIcon(): string
     {
         return $this->evaluate($this->noResultStateIcon)
-            ?? FilamentIcon::resolve('tables::empty-state')
+            ?? FilamentIcon::resolve('tables::no-result-state')
             ?? 'heroicon-o-x-mark';
     }
 }
