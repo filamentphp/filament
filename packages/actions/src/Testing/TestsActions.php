@@ -10,6 +10,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
+use Filament\Actions\Testing\Fixtures\TestAction;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Features\SupportTesting\Testable;
@@ -25,7 +26,7 @@ class TestsActions
 {
     public function mountAction(): Closure
     {
-        return function (string | array $actions, array $arguments = []): static {
+        return function (string | TestAction | array $actions, array $arguments = []): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedActions($actions, $arguments);
@@ -89,7 +90,7 @@ class TestsActions
 
     public function callAction(): Closure
     {
-        return function (string | array $actions, array $data = [], array $arguments = []): static {
+        return function (string | TestAction | array $actions, array $data = [], array $arguments = []): static {
             /** @phpstan-ignore-next-line */
             $this->assertActionVisible($actions);
 
@@ -135,7 +136,7 @@ class TestsActions
 
     public function assertActionExists(): Closure
     {
-        return function (string | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {
+        return function (string | TestAction | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedActions($actions);
@@ -168,7 +169,7 @@ class TestsActions
 
     public function assertActionDoesNotExist(): Closure
     {
-        return function (string | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {
+        return function (string | TestAction | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedActions($actions);
@@ -211,7 +212,7 @@ class TestsActions
 
     public function assertActionVisible(): Closure
     {
-        return function (string | array $actions): static {
+        return function (string | TestAction | array $actions): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->isVisible(),
@@ -224,7 +225,7 @@ class TestsActions
 
     public function assertActionHidden(): Closure
     {
-        return function (string | array $actions): static {
+        return function (string | TestAction | array $actions): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->isHidden(),
@@ -237,7 +238,7 @@ class TestsActions
 
     public function assertActionEnabled(): Closure
     {
-        return function (string | array $actions): static {
+        return function (string | TestAction | array $actions): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->isEnabled(),
@@ -250,7 +251,7 @@ class TestsActions
 
     public function assertActionDisabled(): Closure
     {
-        return function (string | array $actions): static {
+        return function (string | TestAction | array $actions): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->isDisabled(),
@@ -263,7 +264,7 @@ class TestsActions
 
     public function assertActionHasIcon(): Closure
     {
-        return function (string | array $actions, string $icon): static {
+        return function (string | TestAction | array $actions, string $icon): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->getIcon() === $icon,
@@ -276,7 +277,7 @@ class TestsActions
 
     public function assertActionDoesNotHaveIcon(): Closure
     {
-        return function (string | array $actions, string $icon): static {
+        return function (string | TestAction | array $actions, string $icon): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->getIcon() !== $icon,
@@ -289,7 +290,7 @@ class TestsActions
 
     public function assertActionHasLabel(): Closure
     {
-        return function (string | array $actions, string $label): static {
+        return function (string | TestAction | array $actions, string $label): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->getLabel() === $label,
@@ -302,7 +303,7 @@ class TestsActions
 
     public function assertActionDoesNotHaveLabel(): Closure
     {
-        return function (string | array $actions, string $label): static {
+        return function (string | TestAction | array $actions, string $label): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->getLabel() !== $label,
@@ -315,7 +316,7 @@ class TestsActions
 
     public function assertActionHasColor(): Closure
     {
-        return function (string | array $actions, string | array $color): static {
+        return function (string | TestAction | array $actions, string | array $color): static {
             $colorName = is_string($color) ? $color : 'custom';
 
             $this->assertActionExists(
@@ -330,7 +331,7 @@ class TestsActions
 
     public function assertActionDoesNotHaveColor(): Closure
     {
-        return function (string | array $actions, string | array $color): static {
+        return function (string | TestAction | array $actions, string | array $color): static {
             $colorName = is_string($color) ? $color : 'custom';
 
             $this->assertActionExists(
@@ -345,7 +346,7 @@ class TestsActions
 
     public function assertActionHasUrl(): Closure
     {
-        return function (string | array $actions, string $url): static {
+        return function (string | TestAction | array $actions, string $url): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->getUrl() === $url,
@@ -358,7 +359,7 @@ class TestsActions
 
     public function assertActionDoesNotHaveUrl(): Closure
     {
-        return function (string | array $actions, string $url): static {
+        return function (string | TestAction | array $actions, string $url): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->getUrl() !== $url,
@@ -371,7 +372,7 @@ class TestsActions
 
     public function assertActionShouldOpenUrlInNewTab(): Closure
     {
-        return function (string | array $actions): static {
+        return function (string | TestAction | array $actions): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => $action->shouldOpenUrlInNewTab(),
@@ -384,7 +385,7 @@ class TestsActions
 
     public function assertActionShouldNotOpenUrlInNewTab(): Closure
     {
-        return function (string | array $actions): static {
+        return function (string | TestAction | array $actions): static {
             $this->assertActionExists(
                 $actions,
                 checkActionUsing: fn (Action $action): bool => ! $action->shouldOpenUrlInNewTab(),
@@ -397,7 +398,7 @@ class TestsActions
 
     public function assertActionMounted(): Closure
     {
-        return function (string | array $actions = []): static {
+        return function (string | TestAction | array $actions = []): static {
             if (empty($actions)) {
                 $this->assertNotSet('mountedActions', []);
 
@@ -438,7 +439,7 @@ class TestsActions
 
     public function assertActionNotMounted(): Closure
     {
-        return function (string | array $actions = []): static {
+        return function (string | TestAction | array $actions = []): static {
             if (empty($actions)) {
                 $this->assertSet('mountedActions', []);
 
@@ -623,32 +624,35 @@ class TestsActions
 
     public function parseNestedActions(): Closure
     {
-        return function (string | array $actions, array $arguments = []): array {
+        return function (string | TestAction | array $actions, array $arguments = []): array {
             if (is_string($actions)) {
-                $actions = explode('.', $actions);
+                $actions = str($actions)
+                    ->explode('.')
+                    ->map(fn (string $name): array => [
+                        'name' => $name,
+                    ])
+                    ->all();
+            } elseif (
+                ($actions instanceof TestAction) ||
+                array_key_exists('name', $actions)
+            ) {
+                $actions = [$actions];
             }
 
             $areArgumentsKeyedByActionName = false;
 
             foreach ($actions as $actionNestingIndex => $action) {
-                if (! is_array($action)) {
-                    $actionName = $action;
+                if ($action instanceof TestAction) {
+                    $action = $action->toArray();
+                }
 
-                    if (! class_exists($actionName)) {
-                        $action = [
-                            'name' => $actionName,
-                        ];
-                    } elseif (! is_subclass_of($actionName, MountableAction::class)) {
-                        $action = [
-                            'name' => $actionName,
-                        ];
-                    } else {
-                        $action = [
-                            'name' => $actionName = $actionName::getDefaultName(),
-                        ];
-                    }
-                } else {
-                    $actionName = $action['name'] ?? throw new Exception("Action name at index [{$actionNestingIndex}] is not specified.");
+                $actionName = $action['name'] ?? throw new Exception("Action name at index [{$actionNestingIndex}] is not specified.");
+
+                if (
+                    class_exists($actionName) &&
+                    is_subclass_of($actionName, MountableAction::class)
+                ) {
+                    $action['name'] = $actionName = $actionName::getDefaultName();
                 }
 
                 if (filled($arguments) && (! array_key_exists('arguments', $action))) {
