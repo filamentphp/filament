@@ -50,12 +50,14 @@ return [
 
         ],
 
-        'avatar' => [
-            'alt' => 'Avatar van :name',
-        ],
-
-        'logo' => [
-            'alt' => ':name logo',
-        ],
     ],
+
+    'avatar' => [
+        'alt' => 'Avatar van :name',
+    ],
+
+    'logo' => [
+        'alt' => ':name logo',
+    ],
+
 ];
