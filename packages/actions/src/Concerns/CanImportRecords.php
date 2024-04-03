@@ -361,7 +361,7 @@ trait CanImportRecords
         $s3Adapter = Storage::disk($disk)->getAdapter();
 
         invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-        $fileS3Path = 's3://' . config("filesystems.disks.$disk.bucket") . '/' . $filePath;
+        $fileS3Path = 's3://' . config("filesystems.disks.{$disk}.bucket") . '/' . $filePath;
 
         return fopen($fileS3Path, mode: 'r', context: stream_context_create([
             's3' => [
