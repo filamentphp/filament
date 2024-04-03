@@ -8,7 +8,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
-use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Filament\Actions\Testing\Fixtures\TestAction;
 use Illuminate\Support\Arr;
@@ -591,7 +590,7 @@ class TestsActions
                 return $name;
             }
 
-            if (! is_subclass_of($name, MountableAction::class)) {
+            if (! is_subclass_of($name, Action::class)) {
                 return $name;
             }
 
@@ -611,7 +610,7 @@ class TestsActions
                     continue;
                 }
 
-                if (! is_subclass_of($actionName, MountableAction::class)) {
+                if (! is_subclass_of($actionName, Action::class)) {
                     continue;
                 }
 
@@ -649,7 +648,7 @@ class TestsActions
 
                 if (
                     class_exists($actionName) &&
-                    is_subclass_of($actionName, MountableAction::class)
+                    is_subclass_of($actionName, Action::class)
                 ) {
                     $action['name'] = $actionName = $actionName::getDefaultName();
                 }

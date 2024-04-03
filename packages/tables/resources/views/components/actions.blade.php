@@ -10,15 +10,24 @@
 ])
 
 @php
-    $actions = array_filter(
+    $actions = array_reduce(
         $actions,
-        function ($action) use ($record): bool {
+        function (array $carry, $action) use ($record): array {
+            $action = clone $action;
+
             if (! $action instanceof \Filament\Tables\Actions\BulkAction) {
                 $action->record($record);
             }
 
-            return $action->isVisible();
+            if ($action->isHidden()) {
+                return $carry;
+            }
+
+            $carry[] = $action;
+
+            return $carry;
         },
+        initial: [],
     );
 
     if (! $alignment instanceof Alignment) {

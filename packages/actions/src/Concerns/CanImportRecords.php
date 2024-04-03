@@ -4,6 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\Action as TableAction;
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
@@ -18,7 +19,6 @@ use Filament\Schema\Components\Utilities\Get;
 use Filament\Schema\Components\Utilities\Set;
 use Filament\Support\ChunkIterator;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ImportAction as ImportTableAction;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Contracts\Auth\Authenticatable;

@@ -56,7 +56,7 @@
         </a>
     @elseif (($action || $recordAction) && (! $isClickDisabled))
         @php
-            if ($action instanceof \Filament\Tables\Actions\Action) {
+            if ($action instanceof \Filament\Actions\Action) {
                 $wireClickAction = "mountTableAction('{$action->getName()}', '{$recordKey}')";
             } elseif ($action) {
                 $wireClickAction = "callTableColumnAction('{$name}', '{$recordKey}')";

@@ -2,12 +2,13 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Actions\Action;
 use Filament\Schema\ComponentContainer;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Url;
 use Throwable;
@@ -257,7 +258,7 @@ trait HasActions
             return null;
         }
 
-        return $this->getTable()->getAction($this->mountedTableActions);
+        return $this->getTable()->getAction(Arr::first($this->mountedTableActions));
     }
 
     public function getMountedTableActionForm(?Action $mountedAction = null): ?ComponentContainer

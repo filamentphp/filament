@@ -183,7 +183,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         return $this->ownerRecord;
     }
 
-    protected function configureTableAction(Tables\Actions\Action $action): void
+    protected function configureTableAction(Actions\Action $action): void
     {
         match (true) {
             $action instanceof Tables\Actions\AssociateAction => $this->configureAssociateAction($action),

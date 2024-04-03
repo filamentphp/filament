@@ -4,6 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Contracts\ExposesStateToActionData;
@@ -11,6 +12,7 @@ use Filament\Schema\Concerns\InteractsWithSchemas;
 use Filament\Schema\Contracts\HasSchemas;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
@@ -53,7 +55,11 @@ trait InteractsWithActions
     public function bootedInteractsWithActions(): void
     {
         $this->cacheTraitActions();
-        $this->cacheMountedActions($this->mountedActions);
+
+        // Boot the InteractsWithTable trait first so the table object is available.
+        if (! ($this instanceof HasTable)) {
+            $this->cacheMountedActions($this->mountedActions);
+        }
     }
 
     /**
@@ -88,7 +94,7 @@ trait InteractsWithActions
 
         $this->syncActionModals();
 
-        if (($actionComponent = $action->getComponent()) instanceof ExposesStateToActionData) {
+        if (($actionComponent = $action->getSchemaComponent()) instanceof ExposesStateToActionData) {
             foreach ($actionComponent->getChildComponentContainers() as $actionComponentChildComponentContainer) {
                 $actionComponentChildComponentContainer->validate();
             }
@@ -158,7 +164,7 @@ trait InteractsWithActions
 
             $schemaState = [];
 
-            if (($actionComponent = $action->getComponent()) instanceof ExposesStateToActionData) {
+            if (($actionComponent = $action->getSchemaComponent()) instanceof ExposesStateToActionData) {
                 foreach ($actionComponent->getChildComponentContainers() as $actionComponentChildComponentContainer) {
                     $schemaState = [
                         ...$schemaState,
@@ -313,7 +319,7 @@ trait InteractsWithActions
      */
     public function getMountedActions(): array
     {
-        if (! count($this->mountedActions ?? [])) {
+        if (blank($this->mountedActions ?? [])) {
             return [];
         }
 
@@ -394,6 +400,12 @@ trait InteractsWithActions
                 continue;
             }
 
+            if ($this instanceof HasTable && filled($action['context']['table'] ?? null)) {
+                $resolvedActions[] = $this->resolveTableAction($action, $resolvedActions);
+
+                continue;
+            }
+
             $resolvedActions[] = $this->resolveAction($action, $resolvedActions);
         }
 
@@ -437,6 +449,32 @@ trait InteractsWithActions
             }
 
             $this->cacheAction($resolvedAction);
+        }
+
+        if (
+            (($actionArguments = ($action['arguments'] ?? null)) !== null) &&
+            (! $resolvedAction->hasArguments())
+        ) {
+            $resolvedAction->arguments($actionArguments);
+        }
+
+        return $resolvedAction;
+    }
+
+    /**
+     * @param  array<string, mixed>  $action
+     * @param  array<Action>  $parentActions
+     */
+    protected function resolveTableAction(array $action, array $parentActions): Action
+    {
+        $resolvedAction = $this->getTable()->getAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] not found on table.");
+
+        if (filled($action['context']['recordKey'] ?? null)) {
+            $resolvedAction->record($this->getTableRecord($action['context']['recordKey']));
+
+            if (($actionGroup = $resolvedAction->getGroup()) instanceof HasRecord) {
+                $actionGroup->record($resolvedAction->getRecord());
+            }
         }
 
         if (
@@ -539,7 +577,7 @@ trait InteractsWithActions
 
         return $mountedAction->getSchema(
             $this->makeSchema(ComponentContainer::class, name: "mountedActionSchema{$actionNestingIndex}")
-                ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getComponent()?->getActionFormModel() ?? $this->getMountedActionSchemaModel())
+                ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionFormModel() ?? $this->getMountedActionSchemaModel())
                 ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")
                 ->operation(

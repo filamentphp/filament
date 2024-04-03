@@ -23,6 +23,14 @@ trait BelongsToLivewire
             return $this->livewire;
         }
 
+        if ($livewire = $this->getSchemaComponent()?->getLivewire()) {
+            return $livewire;
+        }
+
+        if ($livewire = $this->getTable()?->getLivewire()) {
+            return $livewire;
+        }
+
         $group = $this->getGroup();
 
         if (! ($group instanceof HasLivewire)) {

@@ -3,7 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,6 +57,8 @@ trait InteractsWithTable
         $this->cacheSchema('toggleTableColumnForm', $this->getTableColumnToggleForm());
 
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm());
+
+        $this->cacheMountedActions($this->mountedActions);
 
         if (! $this->shouldMountInteractsWithTable) {
             return;

@@ -3,7 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\HeaderActionsPosition;
@@ -51,16 +51,10 @@ trait HasHeaderActions
 
             if ($action instanceof ActionGroup) {
                 foreach ($action->getFlatActions() as $flatAction) {
-                    if ($flatAction instanceof BulkAction) {
-                        $this->cacheBulkAction($flatAction);
-                    } elseif ($flatAction instanceof Action) {
-                        $this->cacheAction($flatAction);
-                    }
+                    $this->cacheAction($flatAction);
                 }
             } elseif ($action instanceof Action) {
                 $this->cacheAction($action);
-            } elseif ($action instanceof BulkAction) {
-                $this->cacheBulkAction($action);
             } else {
                 throw new InvalidArgumentException('Table header actions must be an instance of ' . Action::class . ', ' . BulkAction::class . ' or ' . ActionGroup::class . '.');
             }

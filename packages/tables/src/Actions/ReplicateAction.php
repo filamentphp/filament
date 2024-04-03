@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Actions\Action;
 use Filament\Actions\Concerns\CanReplicateRecords;
 use Filament\Actions\Contracts\ReplicatesRecords;
 use Filament\Support\Facades\FilamentIcon;

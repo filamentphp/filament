@@ -26,14 +26,9 @@ export default function table() {
             })
         },
 
-        mountAction: function (name, record = null) {
+        mountAction: function (...args) {
             this.$wire.set('selectedTableRecords', this.selectedRecords, false)
-            this.$wire.mountTableAction(name, record)
-        },
-
-        mountBulkAction: function (name) {
-            this.$wire.set('selectedTableRecords', this.selectedRecords, false)
-            this.$wire.mountTableBulkAction(name)
+            this.$wire.mountAction(...args)
         },
 
         toggleSelectRecordsOnPage: function () {

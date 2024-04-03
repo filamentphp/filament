@@ -2,9 +2,9 @@
 
 namespace Filament\Tables\Contracts;
 
+use Filament\Actions\Action;
 use Filament\Schema\ComponentContainer;
 use Filament\Support\Contracts\TranslatableContentDriver;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Grouping\Group;

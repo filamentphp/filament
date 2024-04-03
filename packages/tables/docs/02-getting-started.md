@@ -122,10 +122,7 @@ It's possible to define as many filters as you need, and use any component from 
 Filament's tables can use [Actions](../actions/overview). They are buttons that can be added to the [end of any table row](actions#row-actions), or even in the [header](actions#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](actions#bulk-actions) can be used to execute code when records in the table are selected.
 
 ```php
-use App\Models\Post;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use App\Models\Post;use Filament\Actions\Action;use Filament\Tables\Actions\BulkActionGroup;use Filament\Tables\Actions\DeleteBulkAction;
 
 public function table(Table $table): Table
 {

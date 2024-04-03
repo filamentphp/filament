@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Schema\ComponentContainer;

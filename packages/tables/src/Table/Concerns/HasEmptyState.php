@@ -3,8 +3,8 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;

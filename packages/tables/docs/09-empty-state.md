@@ -62,8 +62,7 @@ public function table(Table $table): Table
 You can add [Actions](actions) to the empty state to prompt users to take action. Pass these to the `emptyStateActions()` method:
 
 ```php
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Table;
+use Filament\Actions\Action;use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
@@ -85,7 +84,6 @@ public function table(Table $table): Table
 You may use a completely custom empty state view by passing it to the `emptyState()` method:
 
 ```php
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table

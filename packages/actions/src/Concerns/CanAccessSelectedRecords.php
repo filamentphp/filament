@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Actions\Concerns;
+namespace Filament\Actions\Concerns;
 
 use Closure;
 use Exception;
@@ -26,7 +26,7 @@ trait CanAccessSelectedRecords
     public function getSelectedRecords(): EloquentCollection | Collection
     {
         if (! $this->canAccessSelectedRecords()) {
-            throw new Exception("The table action [{$this->getName()}] is attempting to access the selected records from the table, but it is not using [accessSelectedRecords()], so they are not available.");
+            throw new Exception("The action [{$this->getName()}] is attempting to access the selected records from the table, but it is not using [accessSelectedRecords()], so they are not available.");
         }
 
         return $this->getLivewire()->getSelectedTableRecords($this->shouldFetchSelectedRecords());

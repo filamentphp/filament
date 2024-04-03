@@ -3,7 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasRecordAction

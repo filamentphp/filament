@@ -38,8 +38,7 @@ Actions may be created using the static `make()` method, passing its unique name
 You can then pass a function to `action()` which executes the task, or a function to `url()` which creates a link:
 
 ```php
-use App\Models\Post;
-use Filament\Tables\Actions\Action;
+use App\Models\Post;use Filament\Actions\Action;
 
 Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
@@ -99,10 +98,7 @@ You may want an action to be able to access all the selected rows in the table. 
 For example, you may want to have a row action that copies the row data to all the selected records. To force the table to be selectable, even if there aren't bulk actions defined, you need to use the `selectable()` method. To allow the action to access the selected records, you need to use the `accessSelectedRecords()` method. Then, you can use the `$selectedRecords` parameter in your action to access the selected records:
 
 ```php
-use Filament\Tables\Table;
-use Filament\Tables\Actions\Action;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Actions\Action;use Filament\Tables\Table;use Illuminate\Database\Eloquent\Collection;use Illuminate\Database\Eloquent\Model;
 
 public function table(Table $table): Table
 {

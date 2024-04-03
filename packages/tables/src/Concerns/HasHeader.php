@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Contracts\Support\Htmlable;

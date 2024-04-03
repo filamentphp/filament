@@ -3,8 +3,11 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Exception;
 use Filament\Actions\Contracts\HasRecord;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 use function Filament\Support\get_model_label;
@@ -12,7 +15,18 @@ use function Filament\Support\locale_has_pluralization;
 
 trait InteractsWithRecord
 {
-    protected Model | Closure | null $record = null;
+    protected EloquentCollection | Collection | Closure | null $records = null;
+
+    public function records(EloquentCollection | Collection | Closure | null $records): static
+    {
+        $this->records = $records;
+
+        return $this;
+    }
+
+    protected Model | string | Closure | null $record = null;
+
+    protected ?Closure $resolveRecordUsing = null;
 
     protected string | Closure | null $model = null;
 
@@ -24,9 +38,16 @@ trait InteractsWithRecord
 
     protected string | Closure | null $recordTitleAttribute = null;
 
-    public function record(Model | Closure | null $record): static
+    public function record(Model | string | Closure | null $record): static
     {
         $this->record = $record;
+
+        return $this;
+    }
+
+    public function resolveRecordUsing(?Closure $callback): static
+    {
+        $this->resolveRecordUsing = $callback;
 
         return $this;
     }
@@ -70,6 +91,22 @@ trait InteractsWithRecord
     {
         $record = $this->evaluate($this->record);
 
+        $isRecordKey = filled($record) && (! $record instanceof Model);
+
+        if ($isRecordKey && (! $this->resolveRecordUsing)) {
+            throw new Exception("Could not resolve record from key [{$record}] without a [resolveRecordUsing()] callback.");
+        }
+
+        if ($isRecordKey) {
+            $record = $this->evaluate($this->resolveRecordUsing, [
+                'key' => $record,
+            ]);
+        }
+
+        if ($isRecordKey && $record && (! $this->record instanceof Closure)) {
+            $this->record = $record;
+        }
+
         if ($record) {
             return $record;
         }
@@ -85,7 +122,9 @@ trait InteractsWithRecord
 
     public function getRecordTitle(?Model $record = null): ?string
     {
-        return $this->getCustomRecordTitle($record) ?? $this->getModelLabel();
+        $record ??= $this->getRecord();
+
+        return $this->getCustomRecordTitle($record) ?? $this->getTable()?->getRecordTitle($record) ?? $this->getModelLabel();
     }
 
     public function getCustomRecordTitle(?Model $record = null): ?string
@@ -116,6 +155,11 @@ trait InteractsWithRecord
         return $record->getAttributeValue($titleAttribute);
     }
 
+    public function getRecordTitleAttribute(): ?string
+    {
+        return $this->getCustomRecordTitleAttribute() ?? $this->getTable()?->getRecordTitleAttribute();
+    }
+
     public function getCustomRecordTitleAttribute(): ?string
     {
         return $this->evaluate($this->recordTitleAttribute);
@@ -134,6 +178,12 @@ trait InteractsWithRecord
     public function getModel(): ?string
     {
         $model = $this->getCustomModel();
+
+        if (filled($model)) {
+            return $model;
+        }
+
+        $model = $this->getTable()?->getModel();
 
         if (filled($model)) {
             return $model;
@@ -161,6 +211,12 @@ trait InteractsWithRecord
             return $label;
         }
 
+        $label = $this->getTable()?->getModelLabel();
+
+        if (filled($label)) {
+            return $label;
+        }
+
         $model = $this->getModel();
 
         if (! $model) {
@@ -178,6 +234,12 @@ trait InteractsWithRecord
     public function getPluralModelLabel(): ?string
     {
         $label = $this->getCustomPluralModelLabel();
+
+        if (filled($label)) {
+            return $label;
+        }
+
+        $label = $this->getTable()?->getPluralModelLabel();
 
         if (filled($label)) {
             return $label;
@@ -214,5 +276,10 @@ trait InteractsWithRecord
         }
 
         return $arguments;
+    }
+
+    public function getRecords(): EloquentCollection | Collection | null
+    {
+        return $this->records = $this->evaluate($this->records);
     }
 }

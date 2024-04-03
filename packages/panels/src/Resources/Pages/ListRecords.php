@@ -124,7 +124,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         }
     }
 
-    protected function configureTableAction(Tables\Actions\Action $action): void
+    protected function configureTableAction(\Filament\Actions\Action $action): void
     {
         match (true) {
             $action instanceof Tables\Actions\CreateAction => $this->configureCreateAction($action),
@@ -280,6 +280,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                     if (! $action) {
                         continue;
                     }
+
+                    $action = clone $action;
 
                     $action->record($record);
 

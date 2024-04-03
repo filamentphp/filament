@@ -3,7 +3,7 @@
 namespace Filament;
 
 use Closure;
-use Filament\Actions\MountableAction;
+use Filament\Actions\Action;
 use Filament\Support\Components\Component;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
@@ -88,8 +88,8 @@ class Panel extends Component
         $this->registerRenderHooks();
 
         if ($this->hasDatabaseTransactions()) {
-            MountableAction::configureUsing(
-                fn (MountableAction $action) => $action->databaseTransaction(),
+            Action::configureUsing(
+                fn (Action $action) => $action->databaseTransaction(),
             );
         }
 

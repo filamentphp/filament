@@ -3,12 +3,12 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Group;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
 

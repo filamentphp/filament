@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Exception;
+use Filament\Actions\Action;
 use Filament\Actions\ActionGroup as BaseActionGroup;
 use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\HasRecord;
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property array<Action | BulkAction> $actions
  */
-class ActionGroup extends BaseActionGroup implements HasRecord, HasTable
+class ActionGroup extends BaseActionGroup implements HasRecord
 {
     use InteractsWithRecord;
 

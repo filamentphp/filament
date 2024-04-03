@@ -35,7 +35,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->sortable()
                     ->searchable()
                     ->action(
-                        Tables\Actions\Action::make('column-action-object')
+                        \Filament\Actions\Action::make('column-action-object')
                             ->action(fn () => $this->dispatch('column-action-object-called')),
                     )
                     ->summarize([
@@ -103,7 +103,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
             ])
             ->persistFiltersInSession()
             ->headerActions([
-                Tables\Actions\Action::make('data')
+                \Filament\Actions\Action::make('data')
                     ->mountUsing(fn (ComponentContainer $form) => $form->fill(['foo' => 'bar']))
                     ->form([
                         TextInput::make('payload')->required(),
@@ -111,37 +111,37 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->action(function (array $data) {
                         $this->dispatch('data-called', data: $data);
                     }),
-                Tables\Actions\Action::make('arguments')
+                \Filament\Actions\Action::make('arguments')
                     ->requiresConfirmation()
                     ->action(function (array $arguments) {
                         $this->dispatch('arguments-called', arguments: $arguments);
                     }),
-                Tables\Actions\Action::make('halt')
+                \Filament\Actions\Action::make('halt')
                     ->requiresConfirmation()
-                    ->action(function (Tables\Actions\Action $action) {
+                    ->action(function (\Filament\Actions\Action $action) {
                         $this->dispatch('halt-called');
 
                         $action->halt();
                     }),
-                Tables\Actions\Action::make('visible'),
-                Tables\Actions\Action::make('hidden')
+                \Filament\Actions\Action::make('visible'),
+                \Filament\Actions\Action::make('hidden')
                     ->hidden(),
-                Tables\Actions\Action::make('enabled'),
-                Tables\Actions\Action::make('disabled')
+                \Filament\Actions\Action::make('enabled'),
+                \Filament\Actions\Action::make('disabled')
                     ->disabled(),
-                Tables\Actions\Action::make('hasIcon')
+                \Filament\Actions\Action::make('hasIcon')
                     ->icon('heroicon-m-pencil-square'),
-                Tables\Actions\Action::make('hasLabel')
+                \Filament\Actions\Action::make('hasLabel')
                     ->label('My Action'),
-                Tables\Actions\Action::make('hasColor')
+                \Filament\Actions\Action::make('hasColor')
                     ->color('primary'),
-                Tables\Actions\Action::make('exists'),
-                Tables\Actions\Action::make('existsInOrder'),
-                Tables\Actions\Action::make('url')
+                \Filament\Actions\Action::make('exists'),
+                \Filament\Actions\Action::make('existsInOrder'),
+                \Filament\Actions\Action::make('url')
                     ->url('https://filamentphp.com'),
-                Tables\Actions\Action::make('urlInNewTab')
+                \Filament\Actions\Action::make('urlInNewTab')
                     ->url('https://filamentphp.com', true),
-                Tables\Actions\Action::make('urlNotInNewTab')
+                \Filament\Actions\Action::make('urlNotInNewTab')
                     ->url('https://filamentphp.com'),
                 Tables\Actions\AttachAction::make(),
                 Tables\Actions\AttachAction::make('attachMultiple')
@@ -196,8 +196,8 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Actions\BulkAction::make('existsInOrder'),
             ])
             ->emptyStateActions([
-                Tables\Actions\Action::make('emptyExists'),
-                Tables\Actions\Action::make('emptyExistsInOrder'),
+                \Filament\Actions\Action::make('emptyExists'),
+                \Filament\Actions\Action::make('emptyExistsInOrder'),
             ]);
     }
 

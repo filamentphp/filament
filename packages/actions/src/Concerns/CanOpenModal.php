@@ -3,8 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Actions\Contracts\HasRecord;
-use Filament\Actions\MountableAction;
+use Filament\Actions\Action;
 use Filament\Actions\StaticAction;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
@@ -391,11 +390,11 @@ trait CanOpenModal
         return $this->getModalActions()[$name] ?? null;
     }
 
-    public function getMountableModalAction(string $name): ?MountableAction
+    public function getMountableModalAction(string $name): ?Action
     {
         $action = $this->getModalAction($name);
 
-        if (! $action instanceof MountableAction) {
+        if (! $action instanceof Action) {
             return null;
         }
 
@@ -404,20 +403,15 @@ trait CanOpenModal
 
     public function prepareModalAction(StaticAction $action): StaticAction
     {
-        if (! $action instanceof MountableAction) {
+        if (! $action instanceof Action) {
             return $action;
         }
 
-        $action->livewire($this->getLivewire());
-
-        if (
-            ($this instanceof HasRecord) &&
-            ($action instanceof HasRecord)
-        ) {
-            $action->record($this->getRecord());
-        }
-
-        return $action;
+        return $action
+            ->schemaComponent($this->getSchemaComponent())
+            ->livewire($this->getLivewire())
+            ->record($this->getRecord())
+            ->table($this->getTable());
     }
 
     /**

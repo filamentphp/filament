@@ -159,7 +159,7 @@ trait HasActions
 
     public function prepareAction(Action $action): Action
     {
-        return $action->component($this);
+        return $action->schemaComponent($this);
     }
 
     public function actionFormModel(Model | string | null $model): static

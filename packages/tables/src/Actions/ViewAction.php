@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Actions\StaticAction;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Table;

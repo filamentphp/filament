@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Actions\Action;
 use Filament\Actions\Concerns;
 
 class SelectAction extends Action

@@ -2,26 +2,54 @@
 
 namespace Filament\Actions;
 
+use Filament\Actions\Contracts\HasLivewire;
+use Filament\Notifications\Notification;
 use Filament\Schema\Components\Actions\ActionContainer;
 use Filament\Schema\Components\Actions\ActionContainer as InfolistActionContainer;
+use Filament\Support\Exceptions\Cancel;
+use Filament\Support\Exceptions\Halt;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 
-class Action extends MountableAction implements Contracts\Groupable, Contracts\HasRecord
+class Action extends StaticAction implements Contracts\HasRecord, HasLivewire
 {
-    use Concerns\BelongsToComponent;
+    use Concerns\BelongsToLivewire;
+    use Concerns\BelongsToSchemaComponent;
+    use Concerns\BelongsToTable;
+    use Concerns\CanAccessSelectedRecords;
+    use Concerns\CanBeMounted;
+    use Concerns\CanDeselectRecordsAfterCompletion;
+    use Concerns\CanFetchSelectedRecords;
+    use Concerns\CanNotify;
+    use Concerns\CanOpenModal;
+    use Concerns\CanRedirect;
+    use Concerns\CanRequireConfirmation;
     use Concerns\CanSubmitForm;
+    use Concerns\CanUseDatabaseTransactions;
+    use Concerns\HasForm;
+    use Concerns\HasInfolist;
+    use Concerns\HasLifecycleHooks;
     use Concerns\HasMountableArguments;
+    use Concerns\HasParentActions;
+    use Concerns\HasSchema;
+    use Concerns\HasWizard;
     use Concerns\InteractsWithRecord;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->defaultView(static::BUTTON_VIEW);
+
+        $this->failureNotification(fn (Notification $notification): Notification => $notification);
+        $this->successNotification(fn (Notification $notification): Notification => $notification);
+    }
 
     public function getLivewireCallMountedActionName(): string
     {
         return 'callMountedAction';
-    }
-
-    public function getLivewire(): object
-    {
-        return $this->getComponent()?->getLivewire() ?? parent::getLivewire();
     }
 
     public function getLivewireClickHandler(): ?string
@@ -38,6 +66,15 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
             return $event;
         }
 
+        if ($this->canAccessSelectedRecords()) {
+            return null;
+        }
+
+        return $this->getJavaScriptClickHandler();
+    }
+
+    protected function getJavaScriptClickHandler(): string
+    {
         $argumentsParameter = '';
 
         if (count($arguments = $this->getArguments())) {
@@ -45,11 +82,20 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
             $argumentsParameter .= Js::from($arguments);
         }
 
-        $component = $this->getComponent();
         $context = [];
 
-        if (filled($componentKey = $component?->getKey())) {
+        $table = $this->getTable();
+
+        if ($record = $this->getRecord()) {
+            $context['recordKey'] = $table?->getRecordKey($record) ?? $record->getKey();
+        }
+
+        if (filled($componentKey = $this->getSchemaComponent()?->getKey())) {
             $context['schemaComponent'] = $componentKey;
+        }
+
+        if ($table) {
+            $context['table'] = true;
         }
 
         $contextParameter = '';
@@ -66,19 +112,52 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
         return "mountAction('{$this->getName()}'{$argumentsParameter}{$contextParameter})";
     }
 
+    public function getAlpineClickHandler(): ?string
+    {
+        if (filled($handler = parent::getAlpineClickHandler())) {
+            return $handler;
+        }
+
+        if (! $this->canAccessSelectedRecords()) {
+            return null;
+        }
+
+        return $this->getJavaScriptClickHandler();
+    }
+
+    public function getLivewireTarget(): ?string
+    {
+        if (filled($target = parent::getLivewireTarget())) {
+            return $target;
+        }
+
+        if (! $this->canAccessSelectedRecords()) {
+            return null;
+        }
+
+        return $this->getJavaScriptClickHandler();
+    }
+
     /**
      * @return array<mixed>
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
-            'component' => [$this->getComponent()],
-            'context', 'operation' => [$this->getComponent()->getContainer()->getOperation()],
-            'get' => [$this->getComponent()->makeGetUtility()],
-            'model' => [$this->getModel() ?? $this->getComponent()?->getModel()],
-            'record' => [$this->getRecord() ?? $this->getComponent()?->getRecord()],
-            'set' => [$this->getComponent()->makeSetUtility()],
-            'state' => [$this->getComponent()->getState()],
+            'arguments' => [$this->getArguments()],
+            'component' => [$this->getSchemaComponent()],
+            'context', 'operation' => [$this->getSchemaComponent()->getContainer()->getOperation()],
+            'data' => [$this->getFormData()],
+            'get' => [$this->getSchemaComponent()->makeGetUtility()],
+            'livewire' => [$this->getLivewire()],
+            'model' => [$this->getModel() ?? $this->getSchemaComponent()?->getModel()],
+            'record' => [$this->getRecord() ?? $this->getSchemaComponent()?->getRecord()],
+            'records' => [$this->getRecords()],
+            'schemaComponent' => [$this->getSchemaComponent()],
+            'selectedRecords' => [$this->getSelectedRecords()],
+            'set' => [$this->getSchemaComponent()->makeSetUtility()],
+            'state' => [$this->getSchemaComponent()->getState()],
+            'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
@@ -88,14 +167,11 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
      */
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        $record = $this->getRecord() ?? $this->getComponent()?->getRecord();
-
-        if (! $record) {
-            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
-        }
+        $record = $this->getRecord() ?? $this->getSchemaComponent()?->getRecord();
 
         return match ($parameterType) {
-            Model::class, $record::class => [$record],
+            EloquentCollection::class, Collection::class => [$this->getRecords()],
+            Model::class, $record ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
@@ -118,7 +194,7 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
     {
         $component = ActionContainer::make($this);
 
-        $this->component($component);
+        $this->schemaComponent($component);
 
         return $component;
     }
@@ -127,8 +203,52 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
     {
         $component = InfolistActionContainer::make($this);
 
-        $this->component($component);
+        $this->schemaComponent($component);
 
         return $component;
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public function call(array $parameters = []): mixed
+    {
+        try {
+            return $this->evaluate($this->getActionFunction(), $parameters);
+        } finally {
+            if ($this->shouldDeselectRecordsAfterCompletion()) {
+                $this->getLivewire()->deselectAllTableRecords();
+            }
+        }
+    }
+
+    public function cancel(bool $shouldRollBackDatabaseTransaction = false): void
+    {
+        throw (new Cancel())->rollBackDatabaseTransaction($shouldRollBackDatabaseTransaction);
+    }
+
+    public function halt(bool $shouldRollBackDatabaseTransaction = false): void
+    {
+        throw (new Halt())->rollBackDatabaseTransaction($shouldRollBackDatabaseTransaction);
+    }
+
+    /**
+     * @deprecated Use `halt()` instead.
+     */
+    public function hold(): void
+    {
+        $this->halt();
+    }
+
+    public function success(): void
+    {
+        $this->sendSuccessNotification();
+        $this->dispatchSuccessRedirect();
+    }
+
+    public function failure(): void
+    {
+        $this->sendFailureNotification();
+        $this->dispatchFailureRedirect();
     }
 }
