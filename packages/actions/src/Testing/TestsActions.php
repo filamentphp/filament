@@ -668,6 +668,10 @@ class TestsActions
                     }
                 }
 
+                if (($actionNestingIndex > 0) && filled($schemaComponent = $action['context']['schemaComponent'] ?? null)) {
+                    $action['context']['schemaComponent'] = 'mountedActions.' . ($actionNestingIndex - 1) . ".data.{$schemaComponent}";
+                }
+
                 $actions[$actionNestingIndex] = $action;
             }
 

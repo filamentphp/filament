@@ -34,7 +34,7 @@ class TestAction implements Arrayable
         return $this;
     }
 
-    public function component(string $key): static
+    public function schemaComponent(?string $key): static
     {
         $this->schemaComponent = $key;
 

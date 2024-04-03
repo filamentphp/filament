@@ -349,9 +349,7 @@ class TestsFormComponentActions
                     continue;
                 }
 
-                if ($actionNestingIndex) {
-                    $component = 'mountedActions.' . ($actionNestingIndex - 1) . ".data.{$component}";
-                } else {
+                if (! $actionNestingIndex) {
                     $component = "{$form}.{$component}";
                 }
 
