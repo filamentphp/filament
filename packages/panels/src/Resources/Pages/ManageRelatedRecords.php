@@ -133,7 +133,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         $this->configureActionRecord($action);
     }
 
-    protected function configureTableAction(\Filament\Actions\Action $action): void
+    protected function configureTableAction(Action $action): void
     {
         match (true) {
             $action instanceof Tables\Actions\AssociateAction => $this->configureAssociateAction($action),

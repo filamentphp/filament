@@ -124,7 +124,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         }
     }
 
-    protected function configureTableAction(\Filament\Actions\Action $action): void
+    protected function configureTableAction(Action $action): void
     {
         match (true) {
             $action instanceof Tables\Actions\CreateAction => $this->configureCreateAction($action),
