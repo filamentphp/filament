@@ -626,12 +626,7 @@ class TestsActions
     {
         return function (string | TestAction | array $actions, array $arguments = []): array {
             if (is_string($actions)) {
-                $actions = str($actions)
-                    ->explode('.')
-                    ->map(fn (string $name): array => [
-                        'name' => $name,
-                    ])
-                    ->all();
+                $actions = explode('.', $actions);
             } elseif (
                 ($actions instanceof TestAction) ||
                 array_key_exists('name', $actions)
@@ -642,7 +637,11 @@ class TestsActions
             $areArgumentsKeyedByActionName = false;
 
             foreach ($actions as $actionNestingIndex => $action) {
-                if ($action instanceof TestAction) {
+                if (is_string($action)) {
+                    $action = [
+                        'name' => $action,
+                    ];
+                } elseif ($action instanceof TestAction) {
                     $action = $action->toArray();
                 }
 
@@ -669,7 +668,7 @@ class TestsActions
                 }
 
                 if (($actionNestingIndex > 0) && filled($schemaComponent = $action['context']['schemaComponent'] ?? null)) {
-                    $action['context']['schemaComponent'] = 'mountedActions.' . ($actionNestingIndex - 1) . ".data.{$schemaComponent}";
+                    $action['context']['schemaComponent'] = 'mountedActionForm' . ($actionNestingIndex - 1) . ".{$schemaComponent}";
                 }
 
                 $actions[$actionNestingIndex] = $action;

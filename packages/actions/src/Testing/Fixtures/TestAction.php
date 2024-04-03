@@ -41,6 +41,13 @@ class TestAction implements Arrayable
         return $this;
     }
 
+    public function record(?string $key): static
+    {
+        $this->schemaComponent = $key;
+
+        return $this;
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -49,10 +56,10 @@ class TestAction implements Arrayable
         return [
             'name' => $this->name,
             'arguments' => $this->arguments,
-            'context' => array_merge(
+            'context' => [
                 ...($this->schemaComponent ? ['schemaComponent' => $this->schemaComponent] : []),
                 ...$this->context,
-            ),
+            ],
         ];
     }
 }

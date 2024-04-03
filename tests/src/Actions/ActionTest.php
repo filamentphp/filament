@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Testing\Fixtures\TestAction;
 use Filament\Notifications\Notification;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\Actions\TestCase;
@@ -56,6 +57,14 @@ it('can mount an action with arguments', function () {
 
 it('can mount a nested action with parent arguments', function () {
     livewire(Actions::class)
+        ->mountAction([
+            TestAction::make('arguments')->arguments(['payload' => Str::random()]),
+            'nested',
+        ])
+        ->callMountedAction()
+        ->assertDispatched('nested-called', arguments: []);
+
+    livewire(Actions::class)
         ->mountAction('arguments.nested', arguments: [
             'arguments' => ['payload' => Str::random()],
         ])
@@ -64,6 +73,16 @@ it('can mount a nested action with parent arguments', function () {
 });
 
 it('can mount a nested action with nested arguments', function () {
+    livewire(Actions::class)
+        ->mountAction([
+            'arguments',
+            TestAction::make('nested')->arguments(['payload' => $payload = Str::random()]),
+        ])
+        ->callMountedAction()
+        ->assertDispatched('nested-called', arguments: [
+            'payload' => $payload,
+        ]);
+
     livewire(Actions::class)
         ->mountAction('arguments.nested', arguments: [
             'nested' => ['payload' => $payload = Str::random()],
