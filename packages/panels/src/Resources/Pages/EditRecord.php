@@ -140,15 +140,15 @@ class EditRecord extends Page
 
             $this->callHook('beforeValidate');
 
-            $data = $this->form->getState(shouldSaveRelationships: false);
+            $this->form->validate();
 
             $this->callHook('afterValidate');
 
-            $data = $this->mutateFormDataBeforeSave($data);
-
             $this->callHook('beforeSave');
 
-            $this->form->saveRelationships();
+            $data = $this->form->getState();
+
+            $data = $this->mutateFormDataBeforeSave($data);
 
             $this->handleRecordUpdate($this->getRecord(), $data);
 
