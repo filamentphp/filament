@@ -14,6 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use League\Csv\ByteSequence;
 use League\Csv\Writer;
 use SplTempFileObject;
 
@@ -53,6 +54,7 @@ class PrepareCsvExport implements ShouldQueue
         $csv = Writer::createFromFileObject(new SplTempFileObject());
         $csv->setDelimiter($this->exporter::getCsvDelimiter());
         $csv->insertOne(array_values($this->columnMap));
+        $csv->setOutputBOM(ByteSequence::BOM_UTF8);
 
         $filePath = $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv';
         $this->export->getFileDisk()->put($filePath, $csv->toString(), Filesystem::VISIBILITY_PRIVATE);
