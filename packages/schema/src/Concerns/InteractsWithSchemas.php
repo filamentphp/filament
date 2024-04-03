@@ -167,14 +167,6 @@ trait InteractsWithSchemas
                 $methodName = $name;
             } elseif (method_exists($this, "{$name}Schema")) {
                 $methodName = "{$name}Schema";
-            } elseif (
-                str($name)->startsWith('mountedAction') &&
-                method_exists($this, 'cacheMountedActions') &&
-                property_exists($this, 'mountedActions')
-            ) {
-                $this->cacheMountedActions($this->mountedActions);
-
-                return $this->getSchema($name);
             } else {
                 unset($this->cachedSchemas[$name]);
 
@@ -205,6 +197,10 @@ trait InteractsWithSchemas
                     unset($this->cachedSchemas[$name]);
 
                     return null;
+                }
+
+                if (! in_array($this->discoveredSchemaNames, $name)) {
+                    $this->discoveredSchemaNames[] = $name;
                 }
 
                 return $this->cachedSchemas[$name] = ($this->{$methodName}())->key($name);

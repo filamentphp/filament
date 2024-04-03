@@ -50,6 +50,12 @@ trait InteractsWithActions
 
     protected bool $hasActionsModalRendered = false;
 
+    public function bootedInteractsWithActions(): void
+    {
+        $this->cacheTraitActions();
+        $this->cacheMountedActions($this->mountedActions);
+    }
+
     /**
      * @param  array<string, mixed>  $arguments
      * @param  array<string, mixed>  $context
@@ -316,6 +322,20 @@ trait InteractsWithActions
         }
 
         return $this->cacheMountedActions($this->mountedActions);
+    }
+
+    public function cacheTraitActions(): void
+    {
+        foreach (class_uses_recursive($class = static::class) as $trait) {
+            $traitBasename = class_basename($trait);
+
+            if (
+                str($traitBasename)->endsWith('Actions') &&
+                method_exists($class, $method = "cache{$traitBasename}")
+            ) {
+                $this->{$method}();
+            }
+        }
     }
 
     public function getMountedAction(?int $actionNestingIndex = null): ?Action
