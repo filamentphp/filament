@@ -220,14 +220,17 @@ trait HasState
     /**
      * @return array<string, mixed>
      */
-    public function getState(bool $shouldCallHooksBefore = true): array
+    public function getState(bool $shouldCallHooksBefore = true, bool $skipSavingRelationships = false): array
     {
         $state = $this->validate();
 
         if ($shouldCallHooksBefore) {
             $this->callBeforeStateDehydrated();
-            $this->saveRelationships();
-            $this->loadStateFromRelationships(andHydrate: true);
+
+            if (! $skipSavingRelationships) {
+                $this->saveRelationships();
+                $this->loadStateFromRelationships(andHydrate: true);
+            }
         }
 
         $this->dehydrateState($state);
