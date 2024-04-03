@@ -20,6 +20,7 @@ abstract class MountableAction extends StaticAction implements HasLivewire
     use Concerns\HasInfolist;
     use Concerns\HasLifecycleHooks;
     use Concerns\HasParentActions;
+    use Concerns\HasSchema;
     use Concerns\HasWizard;
 
     protected function setUp(): void

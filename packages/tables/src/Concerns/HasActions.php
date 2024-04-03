@@ -242,7 +242,7 @@ trait HasActions
     public function mountedTableActionShouldOpenModal(?Action $mountedAction = null): bool
     {
         return ($mountedAction ?? $this->getMountedTableAction())->shouldOpenModal(
-            checkForFormUsing: $this->mountedTableActionHasForm(...),
+            checkForSchemaUsing: $this->mountedTableActionHasForm(...),
         );
     }
 
@@ -272,7 +272,7 @@ trait HasActions
             return $this->getSchema('mountedTableActionForm');
         }
 
-        return $mountedAction->getForm(
+        return $mountedAction->getSchema(
             $this->makeForm()
                 ->model($this->getMountedTableActionRecord() ?? $this->getTable()->getModel())
                 ->statePath('mountedTableActionsData.' . array_key_last($this->mountedTableActionsData))

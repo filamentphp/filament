@@ -298,7 +298,7 @@ class CreateRecord extends Page
         return [];
     }
 
-    protected function getMountedActionFormModel(): Model | string | null
+    protected function getMountedActionSchemaModel(): Model | string | null
     {
         return $this->getModel();
     }

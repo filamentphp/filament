@@ -79,10 +79,8 @@
                 >
                     {{ $action->getModalContent() }}
 
-                    @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
-                        {{ $infolist }}
-                    @elseif ($this->mountedActionHasForm(mountedAction: $action))
-                        {{ $this->getMountedActionForm(mountedAction: $action) }}
+                    @if ($this->mountedActionHasSchema(mountedAction: $action))
+                        {{ $this->getMountedActionSchema(mountedAction: $action) }}
                     @endif
 
                     {{ $action->getModalContentFooter() }}

@@ -16,9 +16,7 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
 
     public function getLivewireCallMountedActionName(): string
     {
-        return $this->getComponent() ?
-            'callMountedAction' :
-            'callMountedAction';
+        return 'callMountedAction';
     }
 
     public function getLivewire(): object
@@ -114,13 +112,6 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
         }
 
         $this->record(null);
-    }
-
-    public function getInfolistName(): string
-    {
-        return $this->getComponent() ?
-            'mountedActionInfolist' :
-            'mountedActionInfolist';
     }
 
     public function toFormComponent(): ActionContainer

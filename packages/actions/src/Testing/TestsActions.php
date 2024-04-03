@@ -668,7 +668,7 @@ class TestsActions
                 }
 
                 if (($actionNestingIndex > 0) && filled($schemaComponent = $action['context']['schemaComponent'] ?? null)) {
-                    $action['context']['schemaComponent'] = 'mountedActionForm' . ($actionNestingIndex - 1) . ".{$schemaComponent}";
+                    $action['context']['schemaComponent'] = 'mountedActionSchema' . ($actionNestingIndex - 1) . ".{$schemaComponent}";
                 }
 
                 $actions[$actionNestingIndex] = $action;

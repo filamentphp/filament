@@ -19,9 +19,6 @@ use Throwable;
 
 use function Livewire\store;
 
-/**
- * @property ComponentContainer $mountedActionForm
- */
 trait InteractsWithActions
 {
     /**
@@ -91,20 +88,23 @@ trait InteractsWithActions
             }
         }
 
-        $this->cacheMountedActionForm(mountedAction: $action);
+        $this->cacheMountedActionSchema(mountedAction: $action);
 
         try {
-            $hasForm = $this->mountedActionHasForm(mountedAction: $action);
+            $hasSchema = $this->mountedActionHasSchema(mountedAction: $action);
 
-            if ($hasForm) {
+            if ($hasSchema) {
                 $action->callBeforeFormFilled();
             }
 
+            $schema = $this->getMountedActionSchema(mountedAction: $action);
+
             $action->mount([
-                'form' => $this->getMountedActionForm(mountedAction: $action),
+                'form' => $schema,
+                'schema' => $schema,
             ]);
 
-            if ($hasForm) {
+            if ($hasSchema) {
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
@@ -141,7 +141,7 @@ trait InteractsWithActions
 
         $action->mergeArguments($arguments);
 
-        $form = $this->getMountedActionForm(mountedAction: $action);
+        $schema = $this->getMountedActionSchema(mountedAction: $action);
 
         $originallyMountedActions = $this->mountedActions;
 
@@ -150,34 +150,35 @@ trait InteractsWithActions
         try {
             $action->beginDatabaseTransaction();
 
-            $formData = [];
+            $schemaState = [];
 
             if (($actionComponent = $action->getComponent()) instanceof ExposesStateToActionData) {
                 foreach ($actionComponent->getChildComponentContainers() as $actionComponentChildComponentContainer) {
-                    $formData = [
-                        ...$formData,
+                    $schemaState = [
+                        ...$schemaState,
                         ...$actionComponentChildComponentContainer->getState(),
                     ];
                 }
             }
 
-            if ($this->mountedActionHasForm(mountedAction: $action)) {
+            if ($this->mountedActionHasSchema(mountedAction: $action)) {
                 $action->callBeforeFormValidated();
 
-                $formData = [
-                    ...$formData,
-                    ...$form->getState(),
+                $schemaState = [
+                    ...$schemaState,
+                    ...$schema->getState(),
                 ];
 
                 $action->callAfterFormValidated();
             }
 
-            $action->formData($formData);
+            $action->formData($schemaState);
 
             $action->callBefore();
 
             $result = $action->call([
-                'form' => $form,
+                'form' => $schema,
+                'schema' => $schema,
             ]);
 
             $result = $action->callAfter() ?? $result;
@@ -247,12 +248,20 @@ trait InteractsWithActions
         $this->mountAction($name, $arguments, $context);
     }
 
-    protected function cacheMountedActionForm(?Action $mountedAction = null): void
+    protected function cacheMountedActionSchema(?Action $mountedAction = null): void
     {
         $this->cacheSchema(
-            'mountedActionForm' . array_key_last($this->mountedActions),
-            fn () => $this->getMountedActionForm(mountedAction: $mountedAction),
+            'mountedActionSchema' . array_key_last($this->mountedActions),
+            fn () => $this->getMountedActionSchema(mountedAction: $mountedAction),
         );
+    }
+
+    /**
+     * @deprecated Use `cacheMountedActionSchema()` instead.
+     */
+    protected function cacheMountedActionForm(?Action $mountedAction = null): void
+    {
+        $this->cacheMountedActionSchema($mountedAction);
     }
 
     public function cacheAction(Action $action): Action
@@ -276,13 +285,21 @@ trait InteractsWithActions
     public function mountedActionShouldOpenModal(?Action $mountedAction = null): bool
     {
         return ($mountedAction ?? $this->getMountedAction())->shouldOpenModal(
-            checkForFormUsing: $this->mountedActionHasForm(...),
+            checkForSchemaUsing: $this->mountedActionHasSchema(...),
         );
     }
 
+    public function mountedActionHasSchema(?Action $mountedAction = null): bool
+    {
+        return (bool) count($this->getMountedActionSchema(mountedAction: $mountedAction)?->getComponents() ?? []);
+    }
+
+    /**
+     * @deprecated Use `mountedActionHasSchema()` instead.
+     */
     public function mountedActionHasForm(?Action $mountedAction = null): bool
     {
-        return (bool) count($this->getMountedActionForm(mountedAction: $mountedAction)?->getComponents() ?? []);
+        return $this->mountedActionHasSchema($mountedAction);
     }
 
     /**
@@ -330,17 +347,12 @@ trait InteractsWithActions
 
         foreach ($this->cachedMountedActions as $actionNestingIndex => $action) {
             $this->cacheSchema(
-                "mountedActionForm{$actionNestingIndex}",
-                $this->getMountedActionForm($actionNestingIndex, $action),
+                "mountedActionSchema{$actionNestingIndex}",
+                $this->getMountedActionSchema($actionNestingIndex, $action),
             );
         }
 
         return $this->cachedMountedActions;
-    }
-
-    public function mountedActionForm(): ComponentContainer
-    {
-        return $this->getMountedActionForm();
     }
 
     /**
@@ -491,7 +503,7 @@ trait InteractsWithActions
         return $action;
     }
 
-    protected function getMountedActionForm(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?ComponentContainer
+    protected function getMountedActionSchema(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?ComponentContainer
     {
         $actionNestingIndex ??= array_key_last($this->mountedActions);
 
@@ -501,13 +513,14 @@ trait InteractsWithActions
             return null;
         }
 
-        if ((! $this->isCachingSchemas) && $this->hasCachedSchema("mountedActionForm{$actionNestingIndex}")) {
-            return $this->getSchema("mountedActionForm{$actionNestingIndex}");
+        if ((! $this->isCachingSchemas) && $this->hasCachedSchema("mountedActionSchema{$actionNestingIndex}")) {
+            return $this->getSchema("mountedActionSchema{$actionNestingIndex}");
         }
 
-        return $mountedAction->getForm(
-            $this->makeForm()
-                ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getComponent()?->getActionFormModel() ?? $this->getMountedActionFormModel())
+        return $mountedAction->getSchema(
+            $this->makeSchema(ComponentContainer::class, name: "mountedActionSchema{$actionNestingIndex}")
+                ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getComponent()?->getActionFormModel() ?? $this->getMountedActionSchemaModel())
+                ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")
                 ->operation(
                     collect($this->mountedActions)
@@ -518,7 +531,15 @@ trait InteractsWithActions
         );
     }
 
-    protected function getMountedActionFormModel(): Model | string | null
+    /**
+     * @deprecated Use `getMountedActionSchema()` instead.
+     */
+    protected function getMountedActionForm(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?ComponentContainer
+    {
+        return $this->getMountedActionSchema($actionNestingIndex, $mountedAction);
+    }
+
+    protected function getMountedActionSchemaModel(): Model | string | null
     {
         return null;
     }
@@ -577,10 +598,5 @@ trait InteractsWithActions
     protected function syncActionModals(): void
     {
         $this->dispatch('sync-action-modals', id: $this->getId(), newActionNestingIndex: array_key_last($this->mountedActions));
-    }
-
-    public function mountedActionInfolist(): ComponentContainer
-    {
-        return $this->getMountedAction()->getInfolist();
     }
 }

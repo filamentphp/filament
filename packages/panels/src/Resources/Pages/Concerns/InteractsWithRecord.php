@@ -117,7 +117,7 @@ trait InteractsWithRecord
         ];
     }
 
-    protected function getMountedActionFormModel(): Model | string | null
+    protected function getMountedActionSchemaModel(): Model | string | null
     {
         return $this->getRecord();
     }

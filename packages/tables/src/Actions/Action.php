@@ -154,11 +154,6 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
             ->record($this->getRecord());
     }
 
-    public function getInfolistName(): string
-    {
-        return 'mountedTableActionInfolist';
-    }
-
     /**
      * @param  array<string, mixed>  $parameters
      */

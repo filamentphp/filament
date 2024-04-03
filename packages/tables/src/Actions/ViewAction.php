@@ -32,7 +32,7 @@ class ViewAction extends Action
 
         $this->icon(FilamentIcon::resolve('actions::view-action') ?? 'heroicon-m-eye');
 
-        $this->disabledForm();
+        $this->disabledSchema();
 
         $this->fillForm(function (Model $record, Table $table): array {
             if ($translatableContentDriver = $table->makeTranslatableContentDriver()) {

@@ -258,7 +258,7 @@ trait InteractsWithForms
      */
     public function mountedFormComponentActionHasForm(?Action $mountedAction = null): bool
     {
-        return $this->mountedActionHasForm($mountedAction);
+        return $this->mountedActionHasSchema($mountedAction);
     }
 
     /**

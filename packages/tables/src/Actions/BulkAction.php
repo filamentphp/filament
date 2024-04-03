@@ -98,9 +98,4 @@ class BulkAction extends MountableAction implements Groupable, HasTable
 
         return $arguments;
     }
-
-    public function getInfolistName(): string
-    {
-        return 'mountedTableBulkActionInfolist';
-    }
 }

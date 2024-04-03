@@ -32,7 +32,7 @@ class ViewAction extends Action
 
         $this->groupedIcon(FilamentIcon::resolve('actions::view-action.grouped') ?? 'heroicon-m-eye');
 
-        $this->disabledForm();
+        $this->disabledSchema();
 
         $this->fillForm(function (HasActions & HasSchemas $livewire, Model $record): array {
             if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {

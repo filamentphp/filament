@@ -212,7 +212,7 @@ trait HasBulkActions
     public function mountedTableBulkActionShouldOpenModal(?BulkAction $mountedBulkAction = null): bool
     {
         return ($mountedBulkAction ?? $this->getMountedTableBulkAction())->shouldOpenModal(
-            checkForFormUsing: $this->mountedTableBulkActionHasForm(...),
+            checkForSchemaUsing: $this->mountedTableBulkActionHasForm(...),
         );
     }
 
@@ -434,7 +434,7 @@ trait HasBulkActions
             return $this->getSchema('mountedTableBulkActionForm');
         }
 
-        return $mountedBulkAction->getForm(
+        return $mountedBulkAction->getSchema(
             $this->makeForm()
                 ->model($this->getTable()->getModel())
                 ->statePath('mountedTableBulkActionData')

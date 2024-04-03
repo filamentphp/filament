@@ -75,7 +75,7 @@ trait InteractsWithInfolists
      */
     public function mountedInfolistActionHasForm(?Action $mountedAction = null): bool
     {
-        return $this->mountedActionHasForm($mountedAction);
+        return $this->mountedActionHasSchema($mountedAction);
     }
 
     /**
