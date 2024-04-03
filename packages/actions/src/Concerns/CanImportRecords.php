@@ -495,9 +495,6 @@ trait CanImportRecords
         return $this->evaluate($this->options);
     }
 
-    /**
-     * @throws Exception if the disk is not an S3 disk
-     */
     private function getDisk(): string
     {
         $disk = $this->evaluate($this->disk);
