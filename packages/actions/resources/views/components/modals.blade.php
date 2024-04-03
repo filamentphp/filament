@@ -5,7 +5,6 @@
         @endphp
 
         <x-filament::modal
-            :action-name="$action?->getName()"
             :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
@@ -17,6 +16,7 @@
             :icon="$action?->getModalIcon()"
             :icon-color="$action?->getModalIconColor()"
             :id="$this->getId() . '-action'"
+            :modal-window-class="$action?->getModalWindowClass()"
             :slide-over="$action?->isModalSlideOver()"
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
@@ -65,7 +65,6 @@
         @endphp
 
         <x-filament::modal
-            :action-name="$action?->getName()"
             :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
@@ -77,6 +76,7 @@
             :icon="$action?->getModalIcon()"
             :icon-color="$action?->getModalIconColor()"
             :id="$this->getId() . '-table-action'"
+            :modal-window-class="$action?->getModalWindowClass()"
             :slide-over="$action?->isModalSlideOver()"
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
@@ -119,7 +119,6 @@
         @endphp
 
         <x-filament::modal
-            :action-name="$action?->getName()"
             :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
@@ -131,6 +130,7 @@
             :icon="$action?->getModalIcon()"
             :icon-color="$action?->getModalIconColor()"
             :id="$this->getId() . '-table-bulk-action'"
+            :modal-window-class="$action?->getModalWindowClass()"
             :slide-over="$action?->isModalSlideOver()"
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
@@ -179,7 +179,6 @@
         @endphp
 
         <x-filament::modal
-            :action-name="$action?->getName()"
             :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
@@ -191,6 +190,7 @@
             :icon="$action?->getModalIcon()"
             :icon-color="$action?->getModalIconColor()"
             :id="$this->getId() . '-infolist-action'"
+            :modal-window-class="$action?->getModalWindowClass()"            
             :slide-over="$action?->isModalSlideOver()"
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
@@ -239,7 +239,6 @@
 
     <form wire:submit.prevent="callMountedFormComponentAction">
         <x-filament::modal
-            :action-name="$action?->getName()"
             :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
@@ -251,6 +250,7 @@
             :icon="$action?->getModalIcon()"
             :icon-color="$action?->getModalIconColor()"
             :id="$this->getId() . '-form-component-action'"
+            :modal-window-class="$action?->getModalWindowClass()"            
             :slide-over="$action?->isModalSlideOver()"
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
