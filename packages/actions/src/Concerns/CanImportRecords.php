@@ -495,7 +495,7 @@ trait CanImportRecords
         return $this->evaluate($this->options);
     }
 
-    private function getDisk(): string
+    public function getDisk(): string
     {
         $disk = $this->evaluate($this->disk);
 
