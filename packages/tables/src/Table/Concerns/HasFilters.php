@@ -42,6 +42,8 @@ trait HasFilters
 
     protected ?Closure $modifyFiltersApplyActionUsing = null;
 
+    protected bool $isFiltered = false;
+
     public function deferFilters(bool | Closure $condition = true): static
     {
         $this->hasDeferredFilters = $condition;
@@ -293,15 +295,19 @@ trait HasFilters
 
     public function getActiveFiltersCount(): int
     {
-        return array_reduce(
+        $activeFiltersCount = array_reduce(
             $this->getFilters(),
             fn (int $carry, BaseFilter $filter): int => $carry + $filter->getActiveCount(),
             0,
         );
+
+        $this->isFiltered = $activeFiltersCount > 0;
+
+        return $activeFiltersCount;
     }
 
     public function isFiltered(): bool
     {
-        return $this->getActiveFiltersCount() || $this->livewire->tableSearch;
-    }
+        return $this->isFiltered;
+    }    
 }
