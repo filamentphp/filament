@@ -272,8 +272,8 @@ trait InteractsWithForms
     /**
      * @deprecated Use `unmountAction()` instead.
      */
-    public function unmountFormComponentAction(bool $canCancelParentActions = true): void
+    public function unmountFormComponentAction(bool $shouldCancelParentActions = true): void
     {
-        $this->unmountAction($canCancelParentActions);
+        $this->unmountAction($shouldCancelParentActions);
     }
 }

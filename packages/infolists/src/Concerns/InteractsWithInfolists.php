@@ -89,9 +89,9 @@ trait InteractsWithInfolists
     /**
      * @deprecated Use `getMountedActionComponent()` instead.
      */
-    public function unmountInfolistAction(bool $canCancelParentActions = true): void
+    public function unmountInfolistAction(bool $shouldCancelParentActions = true): void
     {
-        $this->unmountAction($canCancelParentActions);
+        $this->unmountAction($shouldCancelParentActions);
     }
 
     /**

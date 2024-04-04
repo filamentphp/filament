@@ -50,9 +50,7 @@ interface HasTable
 
     public function getMountedTableActionRecord(): ?Model;
 
-    public function getMountedTableActionRecordKey(): int | string | null;
-
-    public function getMountedTableBulkAction(): ?BulkAction;
+    public function getMountedTableBulkAction(): ?Action;
 
     public function getMountedTableBulkActionForm(): ?ComponentContainer;
 
@@ -81,8 +79,6 @@ interface HasTable
     public function getTableRecord(?string $key): ?Model;
 
     public function getTableRecordKey(Model $record): string;
-
-    public function mountedTableActionRecord(int | string | null $record): void;
 
     public function toggleTableReordering(): void;
 
