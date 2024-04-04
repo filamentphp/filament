@@ -1206,17 +1206,6 @@
                 </x-filament-tables::table>
             @elseif ($records === null)
                 <div class="h-32"></div>
-            @elseif ($activeFiltersCount || $this->tableSearch)
-                <tr>
-                    <td colspan="{{ $columnsCount }}">
-                        <x-filament-tables::empty-state
-                            :actions="$getNoResultStateActions()"
-                            :description="$getNoResultStateDescription()"
-                            :heading="$getNoResultStateHeading()"
-                            :icon="$getNoResultStateIcon()"
-                        />
-                    </td>
-                </tr>
             @elseif ($emptyState = $getEmptyState())
                 {{ $emptyState }}
             @else

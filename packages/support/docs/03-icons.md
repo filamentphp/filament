@@ -150,7 +150,6 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `tables::columns.icon-column.false` - Falsy state of an icon column
 - `tables::columns.icon-column.true` - Truthy state of an icon column
 - `tables::empty-state` - Empty state icon
-- `tables::no-result-state` - No result state icon
 - `tables::filters.query-builder.constraints.boolean` - Default icon for a boolean constraint in the query builder
 - `tables::filters.query-builder.constraints.date` - Default icon for a date constraint in the query builder
 - `tables::filters.query-builder.constraints.number` - Default icon for a number constraint in the query builder
