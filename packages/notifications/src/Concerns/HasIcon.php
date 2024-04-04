@@ -14,7 +14,7 @@ trait HasIcon
     public function getIcon(): ?string
     {
         return $this->baseGetIcon() ?? match ($this->getStatus()) {
-            'danger' => FilamentIcon::resolve('notifications::notification.danger') ?? 'heroicon-o-x-circle',
+            'danger' => FilamentIcon::resolve('notifications::notification.danger') ?? 'heroicon-o-exclamation-triangle',
             'info' => FilamentIcon::resolve('notifications::notification.info') ?? 'heroicon-o-information-circle',
             'success' => FilamentIcon::resolve('notifications::notification.success') ?? 'heroicon-o-check-circle',
             'warning' => FilamentIcon::resolve('notifications::notification.warning') ?? 'heroicon-o-exclamation-circle',
