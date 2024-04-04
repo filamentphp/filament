@@ -16,10 +16,10 @@ abstract class MountableAction extends StaticAction implements HasLivewire
     use Concerns\CanRedirect;
     use Concerns\CanRequireConfirmation;
     use Concerns\CanUseDatabaseTransactions;
+    use Concerns\HasExtraModalAttributes;
     use Concerns\HasForm;
     use Concerns\HasInfolist;
     use Concerns\HasLifecycleHooks;
-    use Concerns\HasExtraModalAttributes;
     use Concerns\HasParentActions;
     use Concerns\HasWizard;
 
