@@ -397,9 +397,4 @@ trait HasActions
     {
         return null;
     }
-
-    public function mountedTableActionInfolist(): ComponentContainer
-    {
-        return $this->getMountedTableAction()->getInfolist();
-    }
 }

@@ -10,6 +10,7 @@ class BulkAction extends Action
     {
         parent::setUp();
 
+        $this->bulk();
         $this->accessSelectedRecords();
 
         $this->extraAttributes([

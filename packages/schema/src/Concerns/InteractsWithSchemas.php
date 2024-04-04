@@ -199,7 +199,7 @@ trait InteractsWithSchemas
                     return null;
                 }
 
-                if (! in_array($this->discoveredSchemaNames, $name)) {
+                if (! in_array($name, $this->discoveredSchemaNames)) {
                     $this->discoveredSchemaNames[] = $name;
                 }
 

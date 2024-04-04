@@ -459,9 +459,4 @@ trait HasBulkActions
     {
         return null;
     }
-
-    public function mountedTableBulkActionInfolist(): ComponentContainer
-    {
-        return $this->getMountedTableBulkAction()->getInfolist();
-    }
 }

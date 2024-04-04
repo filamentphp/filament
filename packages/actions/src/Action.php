@@ -2,6 +2,7 @@
 
 namespace Filament\Actions;
 
+use Closure;
 use Filament\Actions\Contracts\HasLivewire;
 use Filament\Notifications\Notification;
 use Filament\Schema\Components\Actions\ActionContainer;
@@ -36,6 +37,8 @@ class Action extends StaticAction implements Contracts\HasRecord, HasLivewire
     use Concerns\HasSchema;
     use Concerns\HasWizard;
     use Concerns\InteractsWithRecord;
+
+    protected bool | Closure $isBulk = false;
 
     protected function setUp(): void
     {
@@ -96,6 +99,10 @@ class Action extends StaticAction implements Contracts\HasRecord, HasLivewire
 
         if ($table) {
             $context['table'] = true;
+        }
+
+        if ($table && $this->isBulk()) {
+            $context['bulk'] = true;
         }
 
         $contextParameter = '';
@@ -250,5 +257,17 @@ class Action extends StaticAction implements Contracts\HasRecord, HasLivewire
     {
         $this->sendFailureNotification();
         $this->dispatchFailureRedirect();
+    }
+
+    public function bulk(bool | Closure $condition = true): static
+    {
+        $this->isBulk = $condition;
+
+        return $this;
+    }
+
+    public function isBulk(): bool
+    {
+        return (bool) $this->evaluate($this->isBulk);
     }
 }

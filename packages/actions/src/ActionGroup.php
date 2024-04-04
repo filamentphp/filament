@@ -3,7 +3,9 @@
 namespace Filament\Actions;
 
 use Exception;
+use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\HasLivewire;
+use Filament\Actions\Contracts\HasRecord;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
@@ -12,12 +14,13 @@ use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Facades\FilamentIcon;
 use Livewire\Component;
 
-class ActionGroup extends ViewComponent implements HasLivewire
+class ActionGroup extends ViewComponent implements HasLivewire, HasRecord
 {
     use Concerns\BelongsToGroup;
     use Concerns\BelongsToTable;
     use Concerns\CanBeHidden {
         isHidden as baseIsHidden;
+        InteractsWithRecord::parseAuthorizationArguments insteadof Concerns\CanBeHidden;
     }
     use Concerns\CanBeLabeledFrom;
     use Concerns\CanBeOutlined;
@@ -32,6 +35,7 @@ class ActionGroup extends ViewComponent implements HasLivewire
     use HasIcon {
         getIcon as getBaseIcon;
     }
+    use InteractsWithRecord;
 
     public const BADGE_VIEW = 'filament-actions::badge-group';
 

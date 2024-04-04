@@ -535,7 +535,6 @@ class TestsActions
             $livewireClass = $this->instance()::class;
 
             /** @var array<string> $names */
-            /** @phpstan-ignore-next-line */
             $names = array_map(function (string $name): string {
                 if (! class_exists($name)) {
                     return $name;
