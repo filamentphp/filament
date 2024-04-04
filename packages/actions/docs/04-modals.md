@@ -272,6 +272,15 @@ Now, in the view file, you can render the action button by calling `getModalActi
 </div>
 ```
 
+## Adding extra attributes to modal container
+
+You may also pass extra HTML attributes to the modal container using `extraModalAttributes()`:
+
+```php
+Action::make('updateAuthor')
+    ->extraModalAttributes(['class' => 'update-author-modal'])
+```
+
 ## Using a slide-over instead of a modal
 
 You can open a "slide-over" dialog instead of a modal by using the `slideOver()` method:
