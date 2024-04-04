@@ -3,6 +3,8 @@
 namespace Filament\Tests\Tables\Fixtures;
 
 use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -15,8 +17,9 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Livewire\Component;
 
-class PostsTable extends Component implements HasForms, Tables\Contracts\HasTable
+class PostsTable extends Component implements HasActions, HasForms, Tables\Contracts\HasTable
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use Tables\Concerns\InteractsWithTable;
 

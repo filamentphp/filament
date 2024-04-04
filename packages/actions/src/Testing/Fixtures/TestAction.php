@@ -14,6 +14,8 @@ class TestAction implements Arrayable
 
     protected ?string $schemaComponent = null;
 
+    protected mixed $table = null;
+
     final public function __construct(
         protected string $name,
     ) {
@@ -41,9 +43,9 @@ class TestAction implements Arrayable
         return $this;
     }
 
-    public function record(?string $key): static
+    public function table(mixed $recordKey = true): static
     {
-        $this->schemaComponent = $key;
+        $this->table = $recordKey;
 
         return $this;
     }
@@ -53,7 +55,7 @@ class TestAction implements Arrayable
      */
     public function toArray(): array
     {
-        return [
+        $array = [
             'name' => $this->name,
             'arguments' => $this->arguments,
             'context' => [
@@ -61,5 +63,19 @@ class TestAction implements Arrayable
                 ...$this->context,
             ],
         ];
+
+        if (blank($this->table) || ($this->table === false)) {
+            return $array;
+        }
+
+        $array['context']['table'] = true;
+
+        if ($this->table === true) {
+            return $array;
+        }
+
+        $array['context']['recordKey'] = $this->table;
+
+        return $array;
     }
 }

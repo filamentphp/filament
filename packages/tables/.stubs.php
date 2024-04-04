@@ -7,58 +7,6 @@ namespace Livewire\Features\SupportTesting {
     use Illuminate\Support\Collection;
 
     class Testable {
-        public function mountTableAction(string | array $name, $record = null): static {}
-
-        public function unmountTableAction(): static {}
-
-        public function setTableActionData(array $data): static {}
-
-        public function assertTableActionDataSet(array $data): static {}
-
-        public function callTableAction(string | array $name, $record = null, array $data = [], array $arguments = []): static {}
-
-        public function callTableColumnAction(string $name, $record = null): static {}
-
-        public function callMountedTableAction(array $arguments = []): static {}
-
-        public function assertTableActionExists(string | array $name, ?Closure $checkActionUsing = null, $record = null): static {}
-
-        public function assertTableActionDoesNotExist(string | array $name, ?Closure $checkActionUsing = null, $record = null): static {}
-
-        public function assertTableActionsExistInOrder(array $names): static {}
-
-        public function assertTableHeaderActionsExistInOrder(array $names): static {}
-
-        public function assertTableEmptyStateActionsExistInOrder(array $names): static {}
-
-        public function assertTableActionVisible(string | array $name, $record = null): static {}
-
-        public function assertTableActionHidden(string | array $name, $record = null): static {}
-
-        public function assertTableActionEnabled(string | array $name, $record = null): static {}
-
-        public function assertTableActionDisabled(string | array $name, $record = null): static {}
-
-        public function assertTableActionMounted(string | array $name): static {}
-
-        public function assertTableActionNotMounted(string | array $name): static {}
-
-        public function assertTableActionHalted(string | array $name): static {}
-
-        public function assertHasTableActionErrors(array $keys = []): static {}
-
-        public function assertHasNoTableActionErrors(array $keys = []): static {}
-
-        public function mountTableBulkAction(string $name, array | Collection $records): static {}
-
-        public function setTableBulkActionData(array $data): static {}
-
-        public function assertTableBulkActionDataSet(array $data): static {}
-
-        public function callTableBulkAction(string $name, array | Collection $records, array $data = [], array $arguments = []): static {}
-
-        public function callMountedTableBulkAction(array $arguments = []): static {}
-
         public function assertTableBulkActionExists(string $name): static {}
 
         public function assertTableBulkActionDoesNotExist(string $name): static {}

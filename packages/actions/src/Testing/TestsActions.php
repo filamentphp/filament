@@ -10,6 +10,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Actions\StaticAction;
 use Filament\Actions\Testing\Fixtures\TestAction;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Features\SupportTesting\Testable;
@@ -535,7 +536,17 @@ class TestsActions
 
             /** @var array<string> $names */
             /** @phpstan-ignore-next-line */
-            $names = array_map(fn (string $name): string => $this->parseActionName($name), $names);
+            $names = array_map(function (string $name): string {
+                if (! class_exists($name)) {
+                    return $name;
+                }
+
+                if (! is_subclass_of($name, Action::class)) {
+                    return $name;
+                }
+
+                return $name::getDefaultName();
+            }, $names);
             $namesIndex = 0;
 
             $actions = array_reduce(
@@ -580,44 +591,6 @@ class TestsActions
             );
 
             return $this;
-        };
-    }
-
-    public function parseActionName(): Closure
-    {
-        return function (string $name): string {
-            if (! class_exists($name)) {
-                return $name;
-            }
-
-            if (! is_subclass_of($name, Action::class)) {
-                return $name;
-            }
-
-            return $name::getDefaultName();
-        };
-    }
-
-    public function parseNestedActionName(): Closure
-    {
-        return function (string | array $name): array {
-            if (is_string($name)) {
-                $name = explode('.', $name);
-            }
-
-            foreach ($name as $actionNestingIndex => $actionName) {
-                if (! class_exists($actionName)) {
-                    continue;
-                }
-
-                if (! is_subclass_of($actionName, Action::class)) {
-                    continue;
-                }
-
-                $name[$actionNestingIndex] = $actionName::getDefaultName();
-            }
-
-            return $name;
         };
     }
 
@@ -666,8 +639,19 @@ class TestsActions
                     }
                 }
 
-                if (($actionNestingIndex > 0) && filled($schemaComponent = $action['context']['schemaComponent'] ?? null)) {
+                if (
+                    ($actionNestingIndex > 0) &&
+                    filled($schemaComponent = $action['context']['schemaComponent'] ?? null)
+                ) {
                     $action['context']['schemaComponent'] = 'mountedActionSchema' . ($actionNestingIndex - 1) . ".{$schemaComponent}";
+                }
+
+                if (
+                    ($action['context']['table'] ?? false) &&
+                    filled($tableRecordKey = $action['context']['recordKey'] ?? null) &&
+                    ($tableRecordKey instanceof Model)
+                ) {
+                    $action['context']['recordKey'] = $this->instance()->getTableRecordKey($tableRecordKey);
                 }
 
                 $actions[$actionNestingIndex] = $action;

@@ -469,4 +469,19 @@ class TestsBulkActions
             return $this;
         };
     }
+
+    public function parseActionName(): Closure
+    {
+        return function (string $name): string {
+            if (! class_exists($name)) {
+                return $name;
+            }
+
+            if (! is_subclass_of($name, Action::class)) {
+                return $name;
+            }
+
+            return $name::getDefaultName();
+        };
+    }
 }

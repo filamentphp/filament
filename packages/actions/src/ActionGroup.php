@@ -15,6 +15,7 @@ use Livewire\Component;
 class ActionGroup extends ViewComponent implements HasLivewire
 {
     use Concerns\BelongsToGroup;
+    use Concerns\BelongsToTable;
     use Concerns\CanBeHidden {
         isHidden as baseIsHidden;
     }

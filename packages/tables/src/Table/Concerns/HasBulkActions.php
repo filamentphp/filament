@@ -3,7 +3,6 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -20,6 +19,11 @@ trait HasBulkActions
      * @var array<BulkAction | ActionGroup>
      */
     protected array $bulkActions = [];
+
+    /**
+     * @var array<string, BulkAction>
+     */
+    protected array $flatBulkActions = [];
 
     protected ?Closure $checkIfRecordIsSelectableUsing = null;
 
@@ -49,14 +53,14 @@ trait HasBulkActions
             $action->table($this);
 
             if ($action instanceof ActionGroup) {
-                /** @var array<string, Action> $flatActions */
+                /** @var array<string, BulkAction> $flatActions */
                 $flatActions = $action->getFlatActions();
 
-                $this->mergeCachedFlatActions($flatActions);
-            } elseif ($action instanceof Action) {
-                $this->cacheAction($action);
+                $this->mergeCachedFlatBulkActions($flatActions);
+            } elseif ($action instanceof BulkAction) {
+                $this->cacheBulkAction($action);
             } else {
-                throw new InvalidArgumentException('Table bulk actions must be an instance of ' . Action::class . ' or ' . ActionGroup::class . '.');
+                throw new InvalidArgumentException('Table bulk actions must be an instance of ' . BulkAction::class . ' or ' . ActionGroup::class . '.');
             }
 
             $this->bulkActions[] = $action;
@@ -73,6 +77,22 @@ trait HasBulkActions
         $this->bulkActions([BulkActionGroup::make($actions)]);
 
         return $this;
+    }
+
+    protected function cacheBulkAction(BulkAction $action): void
+    {
+        $this->flatBulkActions[$action->getName()] = $action;
+    }
+
+    /**
+     * @param  array<string, BulkAction>  $actions
+     */
+    protected function mergeCachedFlatBulkActions(array $actions): void
+    {
+        $this->flatBulkActions = [
+            ...$this->flatBulkActions,
+            ...$actions,
+        ];
     }
 
     public function checkIfRecordIsSelectableUsing(?Closure $callback): static
@@ -102,7 +122,7 @@ trait HasBulkActions
      */
     public function getFlatBulkActions(): array
     {
-        return [];
+        return $this->flatBulkActions;
     }
 
     public function getBulkAction(string $name): ?BulkAction

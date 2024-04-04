@@ -13,7 +13,9 @@
     $actions = array_reduce(
         $actions,
         function (array $carry, $action) use ($record): array {
-            $action = clone $action;
+            if (! $action instanceof \Filament\Tables\Actions\ActionGroup) {
+                $action = clone $action;
+            }
 
             if (! $action instanceof \Filament\Tables\Actions\BulkAction) {
                 $action->record($record);
