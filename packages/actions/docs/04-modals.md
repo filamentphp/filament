@@ -272,7 +272,7 @@ Now, in the view file, you can render the action button by calling `getModalActi
 </div>
 ```
 
-## Adding extra attributes to modal container
+## Adding extra attributes to the modal container
 
 You may also pass extra HTML attributes to the modal container using `extraModalAttributes()`:
 
