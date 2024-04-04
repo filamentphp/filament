@@ -16,7 +16,6 @@
             :icon="$action?->getModalIcon()"
             :icon-color="$action?->getModalIconColor()"
             :id="$this->getId() . '-action'"
-            :modal-window-class="$action?->getModalWindowClass()"
             :slide-over="$action?->isModalSlideOver()"
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
@@ -38,6 +37,11 @@
                 $wire.unmountAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes(
+                    new \Illuminate\View\ComponentAttributeBag($action?->getExtraModalAttributes() ?? [])
+                )
+            "
         >
             @if ($action)
                 {{ $action->getModalContent() }}
@@ -76,7 +80,6 @@
             :icon="$action?->getModalIcon()"
             :icon-color="$action?->getModalIconColor()"
             :id="$this->getId() . '-table-action'"
-            :modal-window-class="$action?->getModalWindowClass()"
             :slide-over="$action?->isModalSlideOver()"
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
@@ -98,6 +101,11 @@
                 $wire.unmountTableAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes(
+                    new \Illuminate\View\ComponentAttributeBag($action?->getExtraModalAttributes() ?? [])
+                )
+            "
         >
             @if ($action)
                 {{ $action->getModalContent() }}
@@ -130,7 +138,6 @@
             :icon="$action?->getModalIcon()"
             :icon-color="$action?->getModalIconColor()"
             :id="$this->getId() . '-table-bulk-action'"
-            :modal-window-class="$action?->getModalWindowClass()"
             :slide-over="$action?->isModalSlideOver()"
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
@@ -152,6 +159,11 @@
                 $wire.unmountTableBulkAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes(
+                    new \Illuminate\View\ComponentAttributeBag($action?->getExtraModalAttributes() ?? [])
+                )
+            "
         >
             @if ($action)
                 {{ $action->getModalContent() }}
@@ -190,7 +202,6 @@
             :icon="$action?->getModalIcon()"
             :icon-color="$action?->getModalIconColor()"
             :id="$this->getId() . '-infolist-action'"
-            :modal-window-class="$action?->getModalWindowClass()"            
             :slide-over="$action?->isModalSlideOver()"
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
@@ -212,6 +223,11 @@
                 $wire.unmountInfolistAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes(
+                    new \Illuminate\View\ComponentAttributeBag($action?->getExtraModalAttributes() ?? [])
+                )
+            "
         >
             @if ($action)
                 {{ $action->getModalContent() }}
@@ -250,7 +266,6 @@
             :icon="$action?->getModalIcon()"
             :icon-color="$action?->getModalIconColor()"
             :id="$this->getId() . '-form-component-action'"
-            :modal-window-class="$action?->getModalWindowClass()"            
             :slide-over="$action?->isModalSlideOver()"
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
@@ -263,6 +278,11 @@
                 if (mountedFormComponentActionShouldOpenModal) {
                     $wire.unmountFormComponentAction(false)
                 }
+            "
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes(
+                    new \Illuminate\View\ComponentAttributeBag($action?->getExtraModalAttributes() ?? [])
+                )
             "
         >
             @if ($action)

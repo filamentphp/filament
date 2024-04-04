@@ -20,7 +20,6 @@
     'iconAlias' => null,
     'iconColor' => 'primary',
     'id' => null,
-    'modalWindowClass' => null,
     'openEventName' => 'open-modal',
     'slideOver' => false,
     'stickyFooter' => false,
@@ -173,7 +172,6 @@
                     @endif
                     @class([
                         'fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
-                        $modalWindowClass => $modalWindowClass,
                         'fi-modal-slide-over-window ms-auto overflow-y-auto' => $slideOver,
                         // Using an arbitrary value instead of the h-dvh class that was added in Tailwind CSS v3.4.0
                         // to ensure compatibility with custom themes that may use an older version of Tailwind CSS.
