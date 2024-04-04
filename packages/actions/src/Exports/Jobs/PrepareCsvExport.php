@@ -63,6 +63,19 @@ class PrepareCsvExport implements ShouldQueue
         $keyName = $query->getModel()->getKeyName();
         $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
 
+        if (config('database.default') === 'pgsql') {
+            $originalOrderings = collect($query->getQuery()->orders)
+                ->reject(function ($order) use ($keyName, $qualifiedKeyName) {
+                    return in_array($order['column'], [$keyName, $qualifiedKeyName]);
+                })
+                ->unique('column');
+
+            $query->reorder()->orderBy($qualifiedKeyName);
+            foreach ($originalOrderings as $ordering) {
+                $query->orderBy($ordering['column'], $ordering['direction']);
+            }
+        }
+
         $exportCsvJob = $this->getExportCsvJob();
 
         $totalRows = 0;
