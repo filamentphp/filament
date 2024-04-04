@@ -653,9 +653,4 @@ trait CanOpenModal
 
         return $this;
     }
-
-    public function getModalWindowClass(): string
-    {
-        return 'fi-modal-window-' . str($this->getName())->camel()->kebab();
-    }
 }
