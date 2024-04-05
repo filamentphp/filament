@@ -78,8 +78,11 @@ class RequestPasswordReset extends SimplePage
                     throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
                 }
 
+                $locale = app()->getLocale();
+
                 $notification = new ResetPasswordNotification($token);
-                $notification->url = Filament::getResetPasswordUrl($token, $user);
+                $notification->url = Filament::getResetPasswordUrl($token, $user, ['locale' => $locale]);
+                $notification->locale = $locale;
 
                 $user->notify($notification);
             },
