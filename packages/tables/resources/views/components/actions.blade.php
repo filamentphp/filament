@@ -13,11 +13,11 @@
     $actions = array_reduce(
         $actions,
         function (array $carry, $action) use ($record): array {
-            if (! $action instanceof \Filament\Tables\Actions\ActionGroup) {
+            if (! $action instanceof \Filament\Actions\ActionGroup) {
                 $action = clone $action;
             }
 
-            if (! $action instanceof \Filament\Tables\Actions\BulkAction) {
+            if (! $action instanceof \Filament\Actions\BulkAction) {
                 $action->record($record);
             }
 

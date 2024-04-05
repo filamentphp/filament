@@ -3,8 +3,8 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Schema\ComponentContainer;
-use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasActions

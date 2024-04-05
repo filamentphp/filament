@@ -23,9 +23,7 @@ CreateAction::make()
 If you want to add this action to the header of a table instead, you can use `Filament\Tables\Actions\CreateAction`:
 
 ```php
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Table;
+use Filament\Actions\CreateAction;use Filament\Forms\Components\TextInput;use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {

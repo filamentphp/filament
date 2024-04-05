@@ -147,15 +147,15 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                     ->url('https://filamentphp.com', true),
                 Action::make('urlNotInNewTab')
                     ->url('https://filamentphp.com'),
-                Tables\Actions\AttachAction::make(),
-                Tables\Actions\AttachAction::make('attachMultiple')
+                \Filament\Actions\AttachAction::make(),
+                \Filament\Actions\AttachAction::make('attachMultiple')
                     ->multiple(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
+                \Filament\Actions\EditAction::make(),
+                \Filament\Actions\DeleteAction::make(),
+                \Filament\Actions\ForceDeleteAction::make(),
+                \Filament\Actions\RestoreAction::make(),
                 Action::make('parent')
                     ->schema([
                         TextInput::make('foo')
@@ -195,10 +195,10 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                             ])
                             ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
                     ]),
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\DeleteAction::make('groupedDelete'),
-                    Tables\Actions\ForceDeleteAction::make('groupedForceDelete'),
-                    Tables\Actions\RestoreAction::make('groupedRestore'),
+                \Filament\Actions\ActionGroup::make([
+                    \Filament\Actions\DeleteAction::make('groupedDelete'),
+                    \Filament\Actions\ForceDeleteAction::make('groupedForceDelete'),
+                    \Filament\Actions\RestoreAction::make('groupedRestore'),
                     Action::make('groupedParent')
                         ->schema([
                             TextInput::make('foo')
@@ -241,8 +241,8 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                 ]),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\BulkAction::make('data')
+                \Filament\Actions\DeleteBulkAction::make(),
+                \Filament\Actions\BulkAction::make('data')
                     ->mountUsing(fn (ComponentContainer $form) => $form->fill(['foo' => 'bar']))
                     ->form([
                         TextInput::make('payload')->required(),
@@ -250,32 +250,32 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                     ->action(function (array $data) {
                         $this->dispatch('data-called', data: $data);
                     }),
-                Tables\Actions\BulkAction::make('arguments')
+                \Filament\Actions\BulkAction::make('arguments')
                     ->requiresConfirmation()
                     ->action(function (array $arguments) {
                         $this->dispatch('arguments-called', arguments: $arguments);
                     }),
-                Tables\Actions\BulkAction::make('halt')
+                \Filament\Actions\BulkAction::make('halt')
                     ->requiresConfirmation()
-                    ->action(function (Tables\Actions\BulkAction $action) {
+                    ->action(function (\Filament\Actions\BulkAction $action) {
                         $this->dispatch('halt-called');
 
                         $action->halt();
                     }),
-                Tables\Actions\BulkAction::make('visible'),
-                Tables\Actions\BulkAction::make('hidden')
+                \Filament\Actions\BulkAction::make('visible'),
+                \Filament\Actions\BulkAction::make('hidden')
                     ->hidden(),
-                Tables\Actions\BulkAction::make('enabled'),
-                Tables\Actions\BulkAction::make('disabled')
+                \Filament\Actions\BulkAction::make('enabled'),
+                \Filament\Actions\BulkAction::make('disabled')
                     ->disabled(),
-                Tables\Actions\BulkAction::make('hasIcon')
+                \Filament\Actions\BulkAction::make('hasIcon')
                     ->icon('heroicon-m-pencil-square'),
-                Tables\Actions\BulkAction::make('hasLabel')
+                \Filament\Actions\BulkAction::make('hasLabel')
                     ->label('My Action'),
-                Tables\Actions\BulkAction::make('hasColor')
+                \Filament\Actions\BulkAction::make('hasColor')
                     ->color('primary'),
-                Tables\Actions\BulkAction::make('exists'),
-                Tables\Actions\BulkAction::make('existsInOrder'),
+                \Filament\Actions\BulkAction::make('exists'),
+                \Filament\Actions\BulkAction::make('existsInOrder'),
             ])
             ->emptyStateActions([
                 Action::make('emptyExists'),

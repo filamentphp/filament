@@ -4,8 +4,8 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\ActionSize;
-use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Enums\ActionsPosition;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;

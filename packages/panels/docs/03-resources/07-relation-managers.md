@@ -250,7 +250,6 @@ php artisan make:filament-relation-manager CategoryResource posts title --attach
 Alternatively, if you've already generated your resource, you can just add the actions to the `$table` arrays:
 
 ```php
-use Filament\Tables;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -261,16 +260,16 @@ public function table(Table $table): Table
         ])
         ->headerActions([
             // ...
-            Tables\Actions\AttachAction::make(),
+            \Filament\Actions\AttachAction::make(),
         ])
         ->actions([
             // ...
-            Tables\Actions\DetachAction::make(),
+            \Filament\Actions\DetachAction::make(),
         ])
         ->bulkActions([
-            Tables\Actions\BulkActionGroup::make([
+            \Filament\Actions\BulkActionGroup::make([
                 // ...
-                Tables\Actions\DetachBulkAction::make(),
+                \Filament\Actions\DetachBulkAction::make(),
             ]),
         ]);
 }
@@ -281,7 +280,7 @@ public function table(Table $table): Table
 By default, as you search for a record to attach, options will load from the database via AJAX. If you wish to preload these options when the form is first loaded instead, you can use the `preloadRecordSelect()` method of `AttachAction`:
 
 ```php
-use Filament\Tables\Actions\AttachAction;
+use Filament\Actions\AttachAction;
 
 AttachAction::make()
     ->preloadRecordSelect()
@@ -292,8 +291,7 @@ AttachAction::make()
 When you attach record with the `Attach` button, you may wish to define a custom form to add pivot attributes to the relationship:
 
 ```php
-use Filament\Forms;
-use Filament\Tables\Actions\AttachAction;
+use Filament\Actions\AttachAction;use Filament\Forms;
 
 AttachAction::make()
     ->form(fn (AttachAction $action): array => [
@@ -311,8 +309,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 You may want to scope the options available to `AttachAction`:
 
 ```php
-use Filament\Tables\Actions\AttachAction;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Actions\AttachAction;use Illuminate\Database\Eloquent\Builder;
 
 AttachAction::make()
     ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
@@ -323,7 +320,7 @@ AttachAction::make()
 By default, the options available to `AttachAction` will be searched in the `recordTitleAttribute()` of the table. If you wish to search across multiple columns, you can use the `recordSelectSearchColumns()` method:
 
 ```php
-use Filament\Tables\Actions\AttachAction;
+use Filament\Actions\AttachAction;
 
 AttachAction::make()
     ->recordSelectSearchColumns(['title', 'description'])
@@ -334,7 +331,7 @@ AttachAction::make()
 The `multiple()` method on the `AttachAction` component allows you to select multiple values:
 
 ```php
-use Filament\Tables\Actions\AttachAction;
+use Filament\Actions\AttachAction;
 
 AttachAction::make()
     ->multiple()
@@ -345,8 +342,7 @@ AttachAction::make()
 You may customize the select field object that is used during attachment by passing a function to the `recordSelect()` method:
 
 ```php
-use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AttachAction;
+use Filament\Actions\AttachAction;use Filament\Forms\Components\Select;
 
 AttachAction::make()
     ->recordSelect(
@@ -383,7 +379,6 @@ php artisan make:filament-relation-manager CategoryResource posts title --associ
 Alternatively, if you've already generated your resource, you can just add the actions to the `$table` arrays:
 
 ```php
-use Filament\Tables;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -394,16 +389,16 @@ public function table(Table $table): Table
         ])
         ->headerActions([
             // ...
-            Tables\Actions\AssociateAction::make(),
+            \Filament\Actions\AssociateAction::make(),
         ])
         ->actions([
             // ...
-            Tables\Actions\DissociateAction::make(),
+            \Filament\Actions\DissociateAction::make(),
         ])
         ->bulkActions([
-            Tables\Actions\BulkActionGroup::make([
+            \Filament\Actions\BulkActionGroup::make([
                 // ...
-                Tables\Actions\DissociateBulkAction::make(),
+                \Filament\Actions\DissociateBulkAction::make(),
             ]),
         ]);
 }
@@ -414,7 +409,7 @@ public function table(Table $table): Table
 By default, as you search for a record to associate, options will load from the database via AJAX. If you wish to preload these options when the form is first loaded instead, you can use the `preloadRecordSelect()` method of `AssociateAction`:
 
 ```php
-use Filament\Tables\Actions\AssociateAction;
+use Filament\Actions\AssociateAction;
 
 AssociateAction::make()
     ->preloadRecordSelect()
@@ -425,8 +420,7 @@ AssociateAction::make()
 You may want to scope the options available to `AssociateAction`:
 
 ```php
-use Filament\Tables\Actions\AssociateAction;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Actions\AssociateAction;use Illuminate\Database\Eloquent\Builder;
 
 AssociateAction::make()
     ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
@@ -437,7 +431,7 @@ AssociateAction::make()
 By default, the options available to `AssociateAction` will be searched in the `recordTitleAttribute()` of the table. If you wish to search across multiple columns, you can use the `recordSelectSearchColumns()` method:
 
 ```php
-use Filament\Tables\Actions\AssociateAction;
+use Filament\Actions\AssociateAction;
 
 AssociateAction::make()
     ->recordSelectSearchColumns(['title', 'description'])
@@ -448,7 +442,7 @@ AssociateAction::make()
 The `multiple()` method on the `AssociateAction` component allows you to select multiple values:
 
 ```php
-use Filament\Tables\Actions\AssociateAction;
+use Filament\Actions\AssociateAction;
 
 AssociateAction::make()
     ->multiple()
@@ -459,8 +453,7 @@ AssociateAction::make()
 You may customize the select field object that is used during association by passing a function to the `recordSelect()` method:
 
 ```php
-use Filament\Forms\Components\Select;
-use Filament\Tables\Actions\AssociateAction;
+use Filament\Actions\AssociateAction;use Filament\Forms\Components\Select;
 
 AssociateAction::make()
     ->recordSelect(
@@ -479,7 +472,6 @@ php artisan make:filament-relation-manager CategoryResource posts title --view
 Alternatively, if you've already generated your relation manager, you can just add the `ViewAction` to the `$table->actions()` array:
 
 ```php
-use Filament\Tables;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -489,7 +481,7 @@ public function table(Table $table): Table
             // ...
         ])
         ->actions([
-            Tables\Actions\ViewAction::make(),
+            \Filament\Actions\ViewAction::make(),
             // ...
         ]);
 }
@@ -506,10 +498,7 @@ php artisan make:filament-relation-manager CategoryResource posts title --soft-d
 Alternatively, you may add soft deleting functionality to an existing relation manager:
 
 ```php
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables;use Filament\Tables\Table;use Illuminate\Database\Eloquent\Builder;use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 public function table(Table $table): Table
 {
@@ -525,16 +514,16 @@ public function table(Table $table): Table
             // ...
         ])
         ->actions([
-            Tables\Actions\DeleteAction::make(),
-            Tables\Actions\ForceDeleteAction::make(),
-            Tables\Actions\RestoreAction::make(),
+            \Filament\Actions\DeleteAction::make(),
+            \Filament\Actions\ForceDeleteAction::make(),
+            \Filament\Actions\RestoreAction::make(),
             // ...
         ])
         ->bulkActions([
             BulkActionGroup::make([
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
+                \Filament\Actions\DeleteBulkAction::make(),
+                \Filament\Actions\ForceDeleteBulkAction::make(),
+                \Filament\Actions\RestoreBulkAction::make(),
                 // ...
             ]),
         ]);
@@ -840,16 +829,14 @@ public function table(Table $table): Table
 It is probably also useful to provide extra configuration on the relation manager if you wanted to add a header action to [create](#creating-related-records), [attach](#attaching-and-detaching-records), or [associate](#associating-and-dissociating-records) records in the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\PostResource;
-use Filament\Tables;
-use Filament\Tables\Table;
+use App\Filament\Resources\Blog\PostResource;use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
     return PostResource::table($table)
         ->headerActions([
-            Tables\Actions\CreateAction::make(),
-            Tables\Actions\AttachAction::make(),
+            \Filament\Actions\CreateAction::make(),
+            \Filament\Actions\AttachAction::make(),
         ]);
 }
 ```
@@ -937,8 +924,7 @@ public function table(Table $table): Table
 If you're using `recordTitle()`, and you have an [associate action](#associating-and-dissociating-records) or [attach action](#attaching-and-detaching-records), you will also want to specify search columns for those actions:
 
 ```php
-use Filament\Tables\Actions\AssociateAction;
-use Filament\Tables\Actions\AttachAction;
+use Filament\Actions\AssociateAction;use Filament\Actions\AttachAction;
 
 AssociateAction::make()
     ->recordSelectSearchColumns(['title', 'id']);

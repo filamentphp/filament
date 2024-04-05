@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Actions;
+namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Support\Facades\FilamentIcon;
@@ -9,44 +9,38 @@ use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-class RestoreBulkAction extends BulkAction
+class ForceDeleteBulkAction extends BulkAction
 {
     use CanCustomizeProcess;
 
     public static function getDefaultName(): ?string
     {
-        return 'restore';
+        return 'forceDelete';
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label(__('filament-actions::restore.multiple.label'));
+        $this->label(__('filament-actions::force-delete.multiple.label'));
 
-        $this->modalHeading(fn (): string => __('filament-actions::restore.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::force-delete.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
 
-        $this->modalSubmitActionLabel(__('filament-actions::restore.multiple.modal.actions.restore.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::force-delete.multiple.modal.actions.delete.label'));
 
-        $this->successNotificationTitle(__('filament-actions::restore.multiple.notifications.restored.title'));
+        $this->successNotificationTitle(__('filament-actions::force-delete.multiple.notifications.deleted.title'));
 
-        $this->color('gray');
+        $this->color('danger');
 
-        $this->icon(FilamentIcon::resolve('actions::restore-action') ?? 'heroicon-m-arrow-uturn-left');
+        $this->icon(FilamentIcon::resolve('actions::force-delete-action') ?? 'heroicon-m-trash');
 
         $this->requiresConfirmation();
 
-        $this->modalIcon(FilamentIcon::resolve('actions::restore-action.modal') ?? 'heroicon-o-arrow-uturn-left');
+        $this->modalIcon(FilamentIcon::resolve('actions::force-delete-action.modal') ?? 'heroicon-o-trash');
 
         $this->action(function (): void {
             $this->process(static function (Collection $records): void {
-                $records->each(function (Model $record): void {
-                    if (! method_exists($record, 'restore')) {
-                        return;
-                    }
-
-                    $record->restore();
-                });
+                $records->each(fn (Model $record) => $record->forceDelete());
             });
 
             $this->success();

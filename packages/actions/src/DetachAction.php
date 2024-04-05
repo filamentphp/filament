@@ -1,15 +1,14 @@
 <?php
 
-namespace Filament\Tables\Actions;
+namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class DetachBulkAction extends BulkAction
+class DetachAction extends Action
 {
     use CanCustomizeProcess;
 
@@ -22,13 +21,13 @@ class DetachBulkAction extends BulkAction
     {
         parent::setUp();
 
-        $this->label(__('filament-actions::detach.multiple.label'));
+        $this->label(__('filament-actions::detach.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-actions::detach.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::detach.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalSubmitActionLabel(__('filament-actions::detach.multiple.modal.actions.detach.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::detach.single.modal.actions.detach.label'));
 
-        $this->successNotificationTitle(__('filament-actions::detach.multiple.notifications.detached.title'));
+        $this->successNotificationTitle(__('filament-actions::detach.single.notifications.detached.title'));
 
         $this->color('danger');
 
@@ -39,22 +38,18 @@ class DetachBulkAction extends BulkAction
         $this->modalIcon(FilamentIcon::resolve('actions::detach-action.modal') ?? 'heroicon-o-x-mark');
 
         $this->action(function (): void {
-            $this->process(function (Collection $records, Table $table): void {
+            $this->process(function (Model $record, Table $table): void {
                 /** @var BelongsToMany $relationship */
                 $relationship = $table->getRelationship();
 
                 if ($table->allowsDuplicates()) {
-                    $records->each(
-                        fn (Model $record) => $record->{$relationship->getPivotAccessor()}->delete(),
-                    );
+                    $record->{$relationship->getPivotAccessor()}->delete();
                 } else {
-                    $relationship->detach($records);
+                    $relationship->detach($record);
                 }
             });
 
             $this->success();
         });
-
-        $this->deselectRecordsAfterCompletion();
     }
 }

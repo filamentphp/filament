@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
@@ -11,7 +12,6 @@ use Filament\Navigation\NavigationItem;
 use Filament\Resources\Concerns\HasTabs;
 use Filament\Schema\ComponentContainer;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
@@ -105,7 +105,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return static::getResource()::infolist($infolist);
     }
 
-    protected function configureCreateAction(CreateAction | Tables\Actions\CreateAction $action): void
+    protected function configureCreateAction(CreateAction $action): void
     {
         $resource = static::getResource();
 
@@ -127,24 +127,24 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function configureTableAction(Action $action): void
     {
         match (true) {
-            $action instanceof Tables\Actions\CreateAction => $this->configureCreateAction($action),
-            $action instanceof Tables\Actions\DeleteAction => $this->configureDeleteAction($action),
-            $action instanceof Tables\Actions\EditAction => $this->configureEditAction($action),
-            $action instanceof Tables\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
-            $action instanceof Tables\Actions\ReplicateAction => $this->configureReplicateAction($action),
-            $action instanceof Tables\Actions\RestoreAction => $this->configureRestoreAction($action),
-            $action instanceof Tables\Actions\ViewAction => $this->configureViewAction($action),
+            $action instanceof \Filament\Actions\CreateAction => $this->configureCreateAction($action),
+            $action instanceof \Filament\Actions\DeleteAction => $this->configureDeleteAction($action),
+            $action instanceof \Filament\Actions\EditAction => $this->configureEditAction($action),
+            $action instanceof \Filament\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
+            $action instanceof \Filament\Actions\ReplicateAction => $this->configureReplicateAction($action),
+            $action instanceof \Filament\Actions\RestoreAction => $this->configureRestoreAction($action),
+            $action instanceof \Filament\Actions\ViewAction => $this->configureViewAction($action),
             default => null,
         };
     }
 
-    protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
+    protected function configureDeleteAction(\Filament\Actions\DeleteAction $action): void
     {
         $action
             ->authorize(fn (Model $record): bool => static::getResource()::canDelete($record));
     }
 
-    protected function configureEditAction(Tables\Actions\EditAction $action): void
+    protected function configureEditAction(\Filament\Actions\EditAction $action): void
     {
         $resource = static::getResource();
 
@@ -157,25 +157,25 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         }
     }
 
-    protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
+    protected function configureForceDeleteAction(\Filament\Actions\ForceDeleteAction $action): void
     {
         $action
             ->authorize(fn (Model $record): bool => static::getResource()::canForceDelete($record));
     }
 
-    protected function configureReplicateAction(Tables\Actions\ReplicateAction $action): void
+    protected function configureReplicateAction(\Filament\Actions\ReplicateAction $action): void
     {
         $action
             ->authorize(fn (Model $record): bool => static::getResource()::canReplicate($record));
     }
 
-    protected function configureRestoreAction(Tables\Actions\RestoreAction $action): void
+    protected function configureRestoreAction(\Filament\Actions\RestoreAction $action): void
     {
         $action
             ->authorize(fn (Model $record): bool => static::getResource()::canRestore($record));
     }
 
-    protected function configureViewAction(Tables\Actions\ViewAction $action): void
+    protected function configureViewAction(\Filament\Actions\ViewAction $action): void
     {
         $resource = static::getResource();
 
@@ -192,26 +192,26 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function configureTableBulkAction(BulkAction $action): void
     {
         match (true) {
-            $action instanceof Tables\Actions\DeleteBulkAction => $this->configureDeleteBulkAction($action),
-            $action instanceof Tables\Actions\ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
-            $action instanceof Tables\Actions\RestoreBulkAction => $this->configureRestoreBulkAction($action),
+            $action instanceof \Filament\Actions\DeleteBulkAction => $this->configureDeleteBulkAction($action),
+            $action instanceof \Filament\Actions\ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
+            $action instanceof \Filament\Actions\RestoreBulkAction => $this->configureRestoreBulkAction($action),
             default => null,
         };
     }
 
-    protected function configureDeleteBulkAction(Tables\Actions\DeleteBulkAction $action): void
+    protected function configureDeleteBulkAction(\Filament\Actions\DeleteBulkAction $action): void
     {
         $action
             ->authorize(static::getResource()::canDeleteAny());
     }
 
-    protected function configureForceDeleteBulkAction(Tables\Actions\ForceDeleteBulkAction $action): void
+    protected function configureForceDeleteBulkAction(\Filament\Actions\ForceDeleteBulkAction $action): void
     {
         $action
             ->authorize(static::getResource()::canForceDeleteAny());
     }
 
-    protected function configureRestoreBulkAction(Tables\Actions\RestoreBulkAction $action): void
+    protected function configureRestoreBulkAction(\Filament\Actions\RestoreBulkAction $action): void
     {
         $action
             ->authorize(static::getResource()::canRestoreAny());

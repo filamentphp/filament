@@ -8,9 +8,13 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Contracts\HasSchemas;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
 
 class CreateAction extends Action
 {
@@ -51,7 +55,18 @@ class CreateAction extends Action
         $this->action(function (array $arguments, ComponentContainer $form): void {
             $model = $this->getModel();
 
-            $record = $this->process(function (array $data, HasActions & HasSchemas $livewire) use ($model): Model {
+            $record = $this->process(function (array $data, HasActions & HasSchemas $livewire, ?Table $table) use ($model): Model {
+                $relationship = $table?->getRelationship() ?? $this->getRelationship();
+
+                $pivotData = [];
+
+                if ($relationship instanceof BelongsToMany) {
+                    $pivotColumns = $relationship->getPivotColumns();
+
+                    $pivotData = Arr::only($data, $pivotColumns);
+                    $data = Arr::except($data, $pivotColumns);
+                }
+
                 if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                     $record = $translatableContentDriver->makeRecord($model, $data);
                 } else {
@@ -59,14 +74,23 @@ class CreateAction extends Action
                     $record->fill($data);
                 }
 
-                if ($relationship = $this->getRelationship()) {
-                    /** @phpstan-ignore-next-line */
-                    $relationship->save($record);
+                if (
+                    (! $relationship) ||
+                    $relationship instanceof HasManyThrough
+                ) {
+                    $record->save();
 
                     return $record;
                 }
 
-                $record->save();
+                if ($relationship instanceof BelongsToMany) {
+                    $relationship->save($record, $pivotData);
+
+                    return $record;
+                }
+
+                /** @phpstan-ignore-next-line */
+                $relationship->save($record);
 
                 return $record;
             });

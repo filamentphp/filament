@@ -16,8 +16,7 @@ ReplicateAction::make()
 If you want to replicate table rows, you can use the `Filament\Tables\Actions\ReplicateAction` instead:
 
 ```php
-use Filament\Tables\Actions\ReplicateAction;
-use Filament\Tables\Table;
+use Filament\Actions\ReplicateAction;use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {

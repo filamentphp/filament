@@ -4,8 +4,8 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
 use Filament\Tables\Actions\HeaderActionsPosition;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;

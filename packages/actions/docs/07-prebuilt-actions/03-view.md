@@ -23,9 +23,7 @@ ViewAction::make()
 If you want to view table rows, you can use the `Filament\Tables\Actions\ViewAction` instead:
 
 ```php
-use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\ViewAction;
-use Filament\Tables\Table;
+use Filament\Actions\ViewAction;use Filament\Forms\Components\TextInput;use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {

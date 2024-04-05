@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Actions;
+namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanExportRecords;
 

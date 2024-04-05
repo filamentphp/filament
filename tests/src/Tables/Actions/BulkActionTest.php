@@ -1,7 +1,7 @@
 <?php
 
+use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\Testing\Fixtures\TestAction;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;

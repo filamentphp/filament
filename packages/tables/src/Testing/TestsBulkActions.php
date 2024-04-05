@@ -3,7 +3,7 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;

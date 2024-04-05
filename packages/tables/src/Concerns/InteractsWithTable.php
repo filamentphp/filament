@@ -4,7 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\BulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

@@ -171,9 +171,7 @@ Forms\Components\TextInput::make('password')
 Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records):
 
 ```php
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables;use Filament\Tables\Table;use Illuminate\Database\Eloquent\Builder;
 
 public static function table(Table $table): Table
 {
@@ -189,11 +187,11 @@ public static function table(Table $table): Table
             // ...
         ])
         ->actions([
-            Tables\Actions\EditAction::make(),
+            \Filament\Actions\EditAction::make(),
         ])
         ->bulkActions([
-            Tables\Actions\BulkActionGroup::make([
-                Tables\Actions\DeleteBulkAction::make(),
+            \Filament\Actions\BulkActionGroup::make([
+                \Filament\Actions\DeleteBulkAction::make(),
             ]),
         ]);
 }
@@ -402,8 +400,7 @@ This can be especially useful if you are using [simple resources](#simple-modal-
 To generate a URL for an action in the resource's table, you should pass the `tableAction` and `tableActionRecord` as URL parameters:
 
 ```php
-use App\Filament\Resources\CustomerResource;
-use Filament\Tables\Actions\EditAction;
+use App\Filament\Resources\CustomerResource;use Filament\Actions\EditAction;
 
 CustomerResource::getUrl(parameters: [
     'tableAction' => EditAction::getDefaultName(),

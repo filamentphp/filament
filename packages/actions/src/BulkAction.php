@@ -1,8 +1,6 @@
 <?php
 
-namespace Filament\Tables\Actions;
-
-use Filament\Actions\Action;
+namespace Filament\Actions;
 
 class BulkAction extends Action
 {

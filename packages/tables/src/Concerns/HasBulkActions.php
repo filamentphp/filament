@@ -4,8 +4,8 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Schema\ComponentContainer;
-use Filament\Tables\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

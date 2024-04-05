@@ -1,26 +1,25 @@
 <?php
 
-namespace Filament\Tables\Actions;
+namespace Filament\Actions;
 
 use Closure;
-use Filament\Actions\Action;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Schema\ComponentContainer;
 use Filament\Support\Enums\MaxWidth;
-use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables\Table;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Arr;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
 
-class AttachAction extends Action
+class AssociateAction extends Action
 {
     use CanCustomizeProcess;
 
@@ -28,11 +27,9 @@ class AttachAction extends Action
 
     protected ?Closure $modifyRecordSelectOptionsQueryUsing = null;
 
-    protected bool | Closure $canAttachAnother = true;
+    protected bool | Closure $canAssociateAnother = true;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
-
-    protected bool | Closure $isMultiple = false;
 
     /**
      * @var array<string> | Closure | null
@@ -41,58 +38,56 @@ class AttachAction extends Action
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
+    protected bool | Closure $isMultiple = false;
+
     public static function getDefaultName(): ?string
     {
-        return 'attach';
+        return 'associate';
     }
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->label(__('filament-actions::attach.single.label'));
+        $this->label(__('filament-actions::associate.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-actions::attach.single.modal.heading', ['label' => $this->getModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::associate.single.modal.heading', ['label' => $this->getModelLabel()]));
 
-        $this->modalSubmitActionLabel(__('filament-actions::attach.single.modal.actions.attach.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::associate.single.modal.actions.associate.label'));
 
         $this->modalWidth(MaxWidth::Large);
 
         $this->extraModalFooterActions(function (): array {
-            return $this->canAttachAnother() ? [
-                $this->makeModalSubmitAction('attachAnother', ['another' => true])
-                    ->label(__('filament-actions::attach.single.modal.actions.attach_another.label')),
+            return $this->canAssociateAnother ? [
+                $this->makeModalSubmitAction('associateAnother', arguments: ['another' => true])
+                    ->label(__('filament-actions::associate.single.modal.actions.associate_another.label')),
             ] : [];
         });
 
-        $this->successNotificationTitle(__('filament-actions::attach.single.notifications.attached.title'));
+        $this->successNotificationTitle(__('filament-actions::associate.single.notifications.associated.title'));
 
         $this->color('gray');
 
         $this->form(fn (): array => [$this->getRecordSelect()]);
 
         $this->action(function (array $arguments, array $data, ComponentContainer $form, Table $table): void {
-            /** @var BelongsToMany $relationship */
+            /** @var HasMany | MorphMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-            $isMultiple = is_array($data['recordId']);
-
-            $record = $relationshipQuery
-                ->{$isMultiple ? 'whereIn' : 'where'}($relationship->getQualifiedRelatedKeyName(), $data['recordId'])
-                ->{$isMultiple ? 'get' : 'first'}();
+            $record = $relationship->getQuery()->find($data['recordId']);
 
             if ($record instanceof Model) {
                 $this->record($record);
             }
 
-            $this->process(function () use ($data, $record, $relationship) {
-                $relationship->attach(
-                    $record,
-                    Arr::only($data, $relationship->getPivotColumns()),
-                );
+            /** @var BelongsTo $inverseRelationship */
+            $inverseRelationship = $table->getInverseRelationshipFor($record);
+
+            $this->process(function () use ($inverseRelationship, $record, $relationship) {
+                $inverseRelationship->associate($relationship->getParent());
+                $record->save();
             }, [
+                'inverseRelationship' => $inverseRelationship,
                 'relationship' => $relationship,
             ]);
 
@@ -127,19 +122,19 @@ class AttachAction extends Action
         return $this;
     }
 
-    public function attachAnother(bool | Closure $condition = true): static
+    public function associateAnother(bool | Closure $condition = true): static
     {
-        $this->canAttachAnother = $condition;
+        $this->canAssociateAnother = $condition;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `attachAnother()` instead.
+     * @deprecated Use `associateAnother()` instead.
      */
-    public function disableAttachAnother(bool | Closure $condition = true): static
+    public function disableAssociateAnother(bool | Closure $condition = true): static
     {
-        $this->attachAnother(fn (AttachAction $action): bool => ! $action->evaluate($condition));
+        $this->associateAnother(fn (AssociateAction $action): bool => ! $action->evaluate($condition));
 
         return $this;
     }
@@ -151,26 +146,14 @@ class AttachAction extends Action
         return $this;
     }
 
-    public function canAttachAnother(): bool
+    public function canAssociateAnother(): bool
     {
-        return (bool) $this->evaluate($this->canAttachAnother);
+        return (bool) $this->evaluate($this->canAssociateAnother);
     }
 
     public function isRecordSelectPreloaded(): bool
     {
         return (bool) $this->evaluate($this->isRecordSelectPreloaded);
-    }
-
-    public function multiple(bool | Closure $condition = true): static
-    {
-        $this->isMultiple = $condition;
-
-        return $this;
-    }
-
-    public function isMultiple(): bool
-    {
-        return (bool) $this->evaluate($this->isMultiple);
     }
 
     /**
@@ -191,15 +174,27 @@ class AttachAction extends Action
         return $this->evaluate($this->recordSelectSearchColumns);
     }
 
+    public function multiple(bool | Closure $condition = true): static
+    {
+        $this->isMultiple = $condition;
+
+        return $this;
+    }
+
+    public function isMultiple(): bool
+    {
+        return (bool) $this->evaluate($this->isMultiple);
+    }
+
     public function getRecordSelect(): Select
     {
         $table = $this->getTable();
 
         $getOptions = function (int $optionsLimit, ?string $search = null, ?array $searchColumns = []) use ($table): array {
-            /** @var BelongsToMany $relationship */
+            /** @var HasMany | MorphMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
+            $relationshipQuery = $relationship->getQuery();
 
             if ($this->modifyRecordSelectOptionsQueryUsing) {
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
@@ -244,20 +239,18 @@ class AttachAction extends Action
 
             $relationCountHash = $relationship->getRelationCountHash(incrementJoinCount: false);
 
-            $relationshipQuery
-                ->when(
-                    ! $table->allowsDuplicates(),
-                    fn (Builder $query): Builder => $query->whereDoesntHave(
-                        $table->getInverseRelationship(),
-                        fn (Builder $query): Builder => $query->where(
-                            // https://github.com/filamentphp/filament/issues/8067
-                            $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?
-                                "{$relationCountHash}.{$relationship->getParent()->getKeyName()}" :
-                                $relationship->getParent()->getQualifiedKeyName(),
-                            $relationship->getParent()->getKey(),
-                        ),
-                    ),
-                );
+            if ($relationship instanceof MorphMany) {
+                $relationshipQuery->whereNotMorphedTo($table->getInverseRelationship(), $relationship->getParent());
+            } else {
+                $relationshipQuery
+                    ->whereDoesntHave($table->getInverseRelationship(), fn (Builder $query): Builder => $query->where(
+                        // https://github.com/filamentphp/filament/issues/8067
+                        $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?
+                            "{$relationCountHash}.{$relationship->getParent()->getKeyName()}" :
+                            $relationship->getParent()->getQualifiedKeyName(),
+                        $relationship->getParent()->getKey(),
+                    ));
+            }
 
             if (
                 filled($titleAttribute) &&
@@ -269,20 +262,18 @@ class AttachAction extends Action
                 }
 
                 return $relationshipQuery
-                    ->pluck($titleAttribute, $relationship->getQualifiedRelatedKeyName())
+                    ->pluck($titleAttribute, $relationship->getModel()->getQualifiedKeyName())
                     ->all();
             }
 
-            $relatedKeyName = $relationship->getRelatedKeyName();
-
             return $relationshipQuery
                 ->get()
-                ->mapWithKeys(fn (Model $record): array => [$record->{$relatedKeyName} => $this->getRecordTitle($record)])
+                ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
                 ->all();
         };
 
         $select = Select::make('recordId')
-            ->label(__('filament-actions::attach.single.modal.fields.record_id.label'))
+            ->label(__('filament-actions::associate.single.modal.fields.record_id.label'))
             ->required()
             ->multiple($this->isMultiple())
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
@@ -290,16 +281,12 @@ class AttachAction extends Action
             ->getOptionLabelUsing(function ($value) use ($table): string {
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-                $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-                return $this->getRecordTitle($relationshipQuery->find($value));
+                return $this->getRecordTitle($relationship->getQuery()->find($value));
             })
             ->getOptionLabelsUsing(function (array $values) use ($table): array {
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-                $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
-
-                return $relationshipQuery->find($values)
+                return $relationship->getQuery()->find($values)
                     ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
                     ->all();
             })

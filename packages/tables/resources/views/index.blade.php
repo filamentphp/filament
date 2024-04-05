@@ -27,14 +27,14 @@
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),
-        fn (\Filament\Actions\Action | \Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
+        fn (\Filament\Actions\Action | \Filament\Actions\BulkAction | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $headerActionsPosition = $getHeaderActionsPosition();
     $heading = $getHeading();
     $group = $getGrouping();
     $bulkActions = array_filter(
         $getBulkActions(),
-        fn (\Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
+        fn (\Filament\Actions\BulkAction | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $groups = $getGroups();
     $description = $getDescription();

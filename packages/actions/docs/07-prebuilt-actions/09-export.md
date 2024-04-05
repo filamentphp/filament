@@ -37,9 +37,7 @@ ExportAction::make()
 If you want to add this action to the header of a table instead, you can use `Filament\Tables\Actions\ExportAction`:
 
 ```php
-use App\Filament\Exports\ProductExporter;
-use Filament\Tables\Actions\ExportAction;
-use Filament\Tables\Table;
+use App\Filament\Exports\ProductExporter;use Filament\Actions\ExportAction;use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
@@ -54,9 +52,7 @@ public function table(Table $table): Table
 Or if you want to add it as a table bulk action, so that the user can choose which rows to export, they can use `Filament\Tables\Actions\ExportBulkAction`:
 
 ```php
-use App\Filament\Exports\ProductExporter;
-use Filament\Tables\Actions\ExportBulkAction;
-use Filament\Tables\Table;
+use App\Filament\Exports\ProductExporter;use Filament\Actions\ExportBulkAction;use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {

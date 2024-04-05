@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -10,7 +11,6 @@ use Filament\Resources\RelationManagers\RelationManagerConfiguration;
 use Filament\Schema\ComponentContainer;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkAction;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -136,84 +136,84 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     protected function configureTableAction(Action $action): void
     {
         match (true) {
-            $action instanceof Tables\Actions\AssociateAction => $this->configureAssociateAction($action),
-            $action instanceof Tables\Actions\AttachAction => $this->configureAttachAction($action),
-            $action instanceof Tables\Actions\CreateAction => $this->configureCreateAction($action),
-            $action instanceof Tables\Actions\DeleteAction => $this->configureDeleteAction($action),
-            $action instanceof Tables\Actions\DetachAction => $this->configureDetachAction($action),
-            $action instanceof Tables\Actions\DissociateAction => $this->configureDissociateAction($action),
-            $action instanceof Tables\Actions\EditAction => $this->configureEditAction($action),
-            $action instanceof Tables\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
-            $action instanceof Tables\Actions\ReplicateAction => $this->configureReplicateAction($action),
-            $action instanceof Tables\Actions\RestoreAction => $this->configureRestoreAction($action),
-            $action instanceof Tables\Actions\ViewAction => $this->configureViewAction($action),
+            $action instanceof \Filament\Actions\AssociateAction => $this->configureAssociateAction($action),
+            $action instanceof \Filament\Actions\AttachAction => $this->configureAttachAction($action),
+            $action instanceof \Filament\Actions\CreateAction => $this->configureCreateAction($action),
+            $action instanceof \Filament\Actions\DeleteAction => $this->configureDeleteAction($action),
+            $action instanceof \Filament\Actions\DetachAction => $this->configureDetachAction($action),
+            $action instanceof \Filament\Actions\DissociateAction => $this->configureDissociateAction($action),
+            $action instanceof \Filament\Actions\EditAction => $this->configureEditAction($action),
+            $action instanceof \Filament\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
+            $action instanceof \Filament\Actions\ReplicateAction => $this->configureReplicateAction($action),
+            $action instanceof \Filament\Actions\RestoreAction => $this->configureRestoreAction($action),
+            $action instanceof \Filament\Actions\ViewAction => $this->configureViewAction($action),
             default => null,
         };
     }
 
-    protected function configureAssociateAction(Tables\Actions\AssociateAction $action): void
+    protected function configureAssociateAction(\Filament\Actions\AssociateAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire): bool => $livewire->canAssociate());
     }
 
-    protected function configureAttachAction(Tables\Actions\AttachAction $action): void
+    protected function configureAttachAction(\Filament\Actions\AttachAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire): bool => $livewire->canAttach());
     }
 
-    protected function configureCreateAction(Tables\Actions\CreateAction $action): void
+    protected function configureCreateAction(\Filament\Actions\CreateAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire): bool => $livewire->canCreate())
             ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
     }
 
-    protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
+    protected function configureDeleteAction(\Filament\Actions\DeleteAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canDelete($record));
     }
 
-    protected function configureDetachAction(Tables\Actions\DetachAction $action): void
+    protected function configureDetachAction(\Filament\Actions\DetachAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canDetach($record));
     }
 
-    protected function configureDissociateAction(Tables\Actions\DissociateAction $action): void
+    protected function configureDissociateAction(\Filament\Actions\DissociateAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canDissociate($record));
     }
 
-    protected function configureEditAction(Tables\Actions\EditAction $action): void
+    protected function configureEditAction(\Filament\Actions\EditAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canEdit($record))
             ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
     }
 
-    protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
+    protected function configureForceDeleteAction(\Filament\Actions\ForceDeleteAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canForceDelete($record));
     }
 
-    protected function configureReplicateAction(Tables\Actions\ReplicateAction $action): void
+    protected function configureReplicateAction(\Filament\Actions\ReplicateAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canReplicate($record));
     }
 
-    protected function configureRestoreAction(Tables\Actions\RestoreAction $action): void
+    protected function configureRestoreAction(\Filament\Actions\RestoreAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canRestore($record));
     }
 
-    protected function configureViewAction(Tables\Actions\ViewAction $action): void
+    protected function configureViewAction(\Filament\Actions\ViewAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canView($record))
@@ -224,40 +224,40 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     protected function configureTableBulkAction(BulkAction $action): void
     {
         match (true) {
-            $action instanceof Tables\Actions\DeleteBulkAction => $this->configureDeleteBulkAction($action),
-            $action instanceof Tables\Actions\DetachBulkAction => $this->configureDetachBulkAction($action),
-            $action instanceof Tables\Actions\DissociateBulkAction => $this->configureDissociateBulkAction($action),
-            $action instanceof Tables\Actions\ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
-            $action instanceof Tables\Actions\RestoreBulkAction => $this->configureRestoreBulkAction($action),
+            $action instanceof \Filament\Actions\DeleteBulkAction => $this->configureDeleteBulkAction($action),
+            $action instanceof \Filament\Actions\DetachBulkAction => $this->configureDetachBulkAction($action),
+            $action instanceof \Filament\Actions\DissociateBulkAction => $this->configureDissociateBulkAction($action),
+            $action instanceof \Filament\Actions\ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
+            $action instanceof \Filament\Actions\RestoreBulkAction => $this->configureRestoreBulkAction($action),
             default => null,
         };
     }
 
-    protected function configureDeleteBulkAction(Tables\Actions\DeleteBulkAction $action): void
+    protected function configureDeleteBulkAction(\Filament\Actions\DeleteBulkAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire): bool => $livewire->canDeleteAny());
     }
 
-    protected function configureDetachBulkAction(Tables\Actions\DetachBulkAction $action): void
+    protected function configureDetachBulkAction(\Filament\Actions\DetachBulkAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire): bool => $livewire->canDetachAny());
     }
 
-    protected function configureDissociateBulkAction(Tables\Actions\DissociateBulkAction $action): void
+    protected function configureDissociateBulkAction(\Filament\Actions\DissociateBulkAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire): bool => $livewire->canDissociateAny());
     }
 
-    protected function configureForceDeleteBulkAction(Tables\Actions\ForceDeleteBulkAction $action): void
+    protected function configureForceDeleteBulkAction(\Filament\Actions\ForceDeleteBulkAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire): bool => $livewire->canForceDeleteAny());
     }
 
-    protected function configureRestoreBulkAction(Tables\Actions\RestoreBulkAction $action): void
+    protected function configureRestoreBulkAction(\Filament\Actions\RestoreBulkAction $action): void
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire): bool => $livewire->canRestoreAny());

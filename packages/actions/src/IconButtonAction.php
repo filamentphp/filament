@@ -1,11 +1,9 @@
 <?php
 
-namespace Filament\Tables\Actions;
-
-use Filament\Actions\Action;
+namespace Filament\Actions;
 
 /**
- * @deprecated Use `\Filament\Tables\Actions\Action` instead, with the `iconButton()` method.
+ * @deprecated Use `\Filament\Actions\Action` instead, with the `iconButton()` method.
  * @see Action
  */
 class IconButtonAction extends Action

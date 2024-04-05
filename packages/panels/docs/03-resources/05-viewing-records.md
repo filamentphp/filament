@@ -70,7 +70,6 @@ If your resource is simple, you may wish to view records in modals rather than o
 If your resource doesn't contain a `ViewAction`, you can add one to the `$table->actions()` array:
 
 ```php
-use Filament\Tables;
 use Filament\Tables\Table;
 
 public static function table(Table $table): Table
@@ -80,7 +79,7 @@ public static function table(Table $table): Table
             // ...
         ])
         ->actions([
-            Tables\Actions\ViewAction::make(),
+            \Filament\Actions\ViewAction::make(),
             // ...
         ]);
 }

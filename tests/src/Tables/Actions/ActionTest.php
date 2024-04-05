@@ -1,8 +1,8 @@
 <?php
 
+use Filament\Actions\AttachAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\Testing\Fixtures\TestAction;
-use Filament\Tables\Actions\AttachAction;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
