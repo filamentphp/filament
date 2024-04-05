@@ -7,8 +7,14 @@ use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraModalWindowAttributes
 {
+    /**
+     * @var array<mixed> | Closure>
+     */
     protected array $extraModalWindowAttributes = [];
 
+    /**
+     * @param  array<mixed> | Closure  $attributes
+     */
     public function extraModalWindowAttributes(array | Closure $attributes): static
     {
         $this->extraModalWindowAttributes = $attributes;
@@ -16,6 +22,9 @@ trait HasExtraModalWindowAttributes
         return $this;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getExtraModalWindowAttributes(): array
     {
         return $this->evaluate($this->extraModalWindowAttributes);
