@@ -156,10 +156,88 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
+                Action::make('parent')
+                    ->schema([
+                        TextInput::make('foo')
+                            ->required()
+                            ->registerActions([
+                                Action::make('nested')
+                                    ->schema([
+                                        TextInput::make('bar')
+                                            ->required(),
+                                    ])
+                                    ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                                Action::make('cancelParent')
+                                    ->schema([
+                                        TextInput::make('bar')
+                                            ->required(),
+                                    ])
+                                    ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey()))
+                                    ->cancelParentActions(),
+                            ]),
+                    ])
+                    ->action(function (array $data, Post $record) {
+                        $this->dispatch('parent-called', foo: $data['foo'], recordKey: $record->getKey());
+                    })
+                    ->extraModalFooterActions([
+                        Action::make('footer')
+                            ->schema([
+                                TextInput::make('bar')
+                                    ->required(),
+                            ])
+                            ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                    ])
+                    ->registerModalActions([
+                        Action::make('manuallyRegisteredModal')
+                            ->schema([
+                                TextInput::make('bar')
+                                    ->required(),
+                            ])
+                            ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                    ]),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\DeleteAction::make('groupedDelete'),
                     Tables\Actions\ForceDeleteAction::make('groupedForceDelete'),
                     Tables\Actions\RestoreAction::make('groupedRestore'),
+                    Action::make('groupedParent')
+                        ->schema([
+                            TextInput::make('foo')
+                                ->required()
+                                ->registerActions([
+                                    Action::make('nested')
+                                        ->schema([
+                                            TextInput::make('bar')
+                                                ->required(),
+                                        ])
+                                        ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                                    Action::make('cancelParent')
+                                        ->schema([
+                                            TextInput::make('bar')
+                                                ->required(),
+                                        ])
+                                        ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey()))
+                                        ->cancelParentActions(),
+                                ]),
+                        ])
+                        ->action(function (array $data, Post $record) {
+                            $this->dispatch('grouped-parent-called', foo: $data['foo'], recordKey: $record->getKey());
+                        })
+                        ->extraModalFooterActions([
+                            Action::make('footer')
+                                ->schema([
+                                    TextInput::make('bar')
+                                        ->required(),
+                                ])
+                                ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                        ])
+                        ->registerModalActions([
+                            Action::make('manuallyRegisteredModal')
+                                ->schema([
+                                    TextInput::make('bar')
+                                        ->required(),
+                                ])
+                                ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                        ]),
                 ]),
             ])
             ->bulkActions([

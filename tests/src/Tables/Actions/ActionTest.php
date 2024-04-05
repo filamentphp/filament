@@ -95,6 +95,158 @@ it('can set default action data when mounted', function () {
         ]);
 });
 
+it('can call a nested action registered in the modal footer', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('parent')->table($post),
+            TestAction::make('footer'),
+        ], [
+            'bar' => $bar = Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertDispatched('nested-called', bar: $bar, recordKey: $post->getKey())
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('parent-called', foo: $foo, recordKey: $post->getKey());
+});
+
+it('can call a manually modal registered nested action', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('parent')->table($post),
+            TestAction::make('manuallyRegisteredModal'),
+        ], [
+            'bar' => $bar = Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertDispatched('nested-called', bar: $bar, recordKey: $post->getKey())
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('parent-called', foo: $foo, recordKey: $post->getKey());
+});
+
+it('can call a nested action registered on a schema component', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('parent')->table($post),
+            TestAction::make('nested')->schemaComponent('foo'),
+        ], [
+            'bar' => $bar = Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertDispatched('nested-called', bar: $bar, recordKey: $post->getKey())
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('parent-called', foo: $foo, recordKey: $post->getKey());
+});
+
+it('can cancel a parent action when calling a nested action', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('parent')->table($post),
+            TestAction::make('cancelParent')->schemaComponent('foo'),
+        ], [
+            'bar' => $bar = Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertDispatched('nested-called', bar: $bar, recordKey: $post->getKey())
+        ->assertActionNotMounted()
+        ->assertNotDispatched('parent-called');
+});
+
+it('can call a grouped nested action registered in the modal footer', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('groupedParent')->table($post),
+            TestAction::make('footer'),
+        ], [
+            'bar' => $bar = Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertDispatched('nested-called', bar: $bar, recordKey: $post->getKey())
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('grouped-parent-called', foo: $foo, recordKey: $post->getKey());
+});
+
+it('can call a grouped manually modal registered nested action', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('groupedParent')->table($post),
+            TestAction::make('manuallyRegisteredModal'),
+        ], [
+            'bar' => $bar = Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertDispatched('nested-called', bar: $bar, recordKey: $post->getKey())
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('grouped-parent-called', foo: $foo, recordKey: $post->getKey());
+});
+
+it('can call a grouped nested action registered on a schema component', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('groupedParent')->table($post),
+            TestAction::make('nested')->schemaComponent('foo'),
+        ], [
+            'bar' => $bar = Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertDispatched('nested-called', bar: $bar, recordKey: $post->getKey())
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('grouped-parent-called', foo: $foo, recordKey: $post->getKey());
+});
+
+it('can cancel a grouped parent action when calling a nested action', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callAction([
+            TestAction::make('groupedParent')->table($post),
+            TestAction::make('cancelParent')->schemaComponent('foo'),
+        ], [
+            'bar' => $bar = Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertDispatched('nested-called', bar: $bar, recordKey: $post->getKey())
+        ->assertActionNotMounted()
+        ->assertNotDispatched('grouped-parent-called');
+});
+
 it('can call an action with arguments', function () {
     livewire(PostsTable::class)
         ->callAction(TestAction::make('arguments')->table()->arguments([

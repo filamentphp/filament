@@ -44,17 +44,6 @@ it('can set default action data when mounted', function () {
         ]);
 });
 
-it('can mount an action with arguments', function () {
-    livewire(Actions::class)
-        ->mountAction('arguments', arguments: [
-            'payload' => $payload = Str::random(),
-        ])
-        ->callMountedAction()
-        ->assertDispatched('arguments-called', arguments: [
-            'payload' => $payload,
-        ]);
-});
-
 it('can call a nested action registered in the modal footer', function () {
     livewire(Actions::class)
         ->callAction([
@@ -106,6 +95,30 @@ it('can call a nested action registered on a schema component', function () {
         ->assertDispatched('parent-called', foo: $foo);
 });
 
+it('can cancel a parent action when calling a nested action', function () {
+    livewire(Actions::class)
+        ->callAction([
+            'parent',
+            TestAction::make('cancelParent')->schemaComponent('foo'),
+        ], [
+            'bar' => Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertActionNotMounted()
+        ->assertNotDispatched('parent-called');
+});
+
+it('can mount an action with arguments', function () {
+    livewire(Actions::class)
+        ->mountAction('arguments', arguments: [
+            'payload' => $payload = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertDispatched('arguments-called', arguments: [
+            'payload' => $payload,
+        ]);
+});
+
 it('can mount a nested action with parent arguments', function () {
     livewire(Actions::class)
         ->mountAction([
@@ -142,18 +155,6 @@ it('can mount a nested action with nested arguments', function () {
         ->assertDispatched('nested-called', arguments: [
             'payload' => $payload,
         ]);
-});
-
-it('can cancel a parent action when calling a nested action', function () {
-    livewire(Actions::class)
-        ->callAction([
-            'parent',
-            TestAction::make('cancelParent')->schemaComponent('foo'),
-        ], [
-            'bar' => Str::random(),
-        ])
-        ->assertHasNoActionErrors()
-        ->assertActionNotMounted();
 });
 
 it('can call an action with arguments', function () {
