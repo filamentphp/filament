@@ -6,6 +6,15 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
@@ -127,24 +136,24 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function configureTableAction(Action $action): void
     {
         match (true) {
-            $action instanceof \Filament\Actions\CreateAction => $this->configureCreateAction($action),
-            $action instanceof \Filament\Actions\DeleteAction => $this->configureDeleteAction($action),
-            $action instanceof \Filament\Actions\EditAction => $this->configureEditAction($action),
-            $action instanceof \Filament\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
-            $action instanceof \Filament\Actions\ReplicateAction => $this->configureReplicateAction($action),
-            $action instanceof \Filament\Actions\RestoreAction => $this->configureRestoreAction($action),
-            $action instanceof \Filament\Actions\ViewAction => $this->configureViewAction($action),
+            $action instanceof CreateAction => $this->configureCreateAction($action),
+            $action instanceof DeleteAction => $this->configureDeleteAction($action),
+            $action instanceof EditAction => $this->configureEditAction($action),
+            $action instanceof ForceDeleteAction => $this->configureForceDeleteAction($action),
+            $action instanceof ReplicateAction => $this->configureReplicateAction($action),
+            $action instanceof RestoreAction => $this->configureRestoreAction($action),
+            $action instanceof ViewAction => $this->configureViewAction($action),
             default => null,
         };
     }
 
-    protected function configureDeleteAction(\Filament\Actions\DeleteAction $action): void
+    protected function configureDeleteAction(DeleteAction $action): void
     {
         $action
             ->authorize(fn (Model $record): bool => static::getResource()::canDelete($record));
     }
 
-    protected function configureEditAction(\Filament\Actions\EditAction $action): void
+    protected function configureEditAction(EditAction $action): void
     {
         $resource = static::getResource();
 
@@ -157,25 +166,25 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         }
     }
 
-    protected function configureForceDeleteAction(\Filament\Actions\ForceDeleteAction $action): void
+    protected function configureForceDeleteAction(ForceDeleteAction $action): void
     {
         $action
             ->authorize(fn (Model $record): bool => static::getResource()::canForceDelete($record));
     }
 
-    protected function configureReplicateAction(\Filament\Actions\ReplicateAction $action): void
+    protected function configureReplicateAction(ReplicateAction $action): void
     {
         $action
             ->authorize(fn (Model $record): bool => static::getResource()::canReplicate($record));
     }
 
-    protected function configureRestoreAction(\Filament\Actions\RestoreAction $action): void
+    protected function configureRestoreAction(RestoreAction $action): void
     {
         $action
             ->authorize(fn (Model $record): bool => static::getResource()::canRestore($record));
     }
 
-    protected function configureViewAction(\Filament\Actions\ViewAction $action): void
+    protected function configureViewAction(ViewAction $action): void
     {
         $resource = static::getResource();
 
@@ -192,26 +201,26 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function configureTableBulkAction(BulkAction $action): void
     {
         match (true) {
-            $action instanceof \Filament\Actions\DeleteBulkAction => $this->configureDeleteBulkAction($action),
-            $action instanceof \Filament\Actions\ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
-            $action instanceof \Filament\Actions\RestoreBulkAction => $this->configureRestoreBulkAction($action),
+            $action instanceof DeleteBulkAction => $this->configureDeleteBulkAction($action),
+            $action instanceof ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
+            $action instanceof RestoreBulkAction => $this->configureRestoreBulkAction($action),
             default => null,
         };
     }
 
-    protected function configureDeleteBulkAction(\Filament\Actions\DeleteBulkAction $action): void
+    protected function configureDeleteBulkAction(DeleteBulkAction $action): void
     {
         $action
             ->authorize(static::getResource()::canDeleteAny());
     }
 
-    protected function configureForceDeleteBulkAction(\Filament\Actions\ForceDeleteBulkAction $action): void
+    protected function configureForceDeleteBulkAction(ForceDeleteBulkAction $action): void
     {
         $action
             ->authorize(static::getResource()::canForceDeleteAny());
     }
 
-    protected function configureRestoreBulkAction(\Filament\Actions\RestoreBulkAction $action): void
+    protected function configureRestoreBulkAction(RestoreBulkAction $action): void
     {
         $action
             ->authorize(static::getResource()::canRestoreAny());
