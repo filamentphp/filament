@@ -31,7 +31,6 @@
 ])
 
 @php
-    ray($extraModalWindowAttributes);
     $hasDescription = filled($description);
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
