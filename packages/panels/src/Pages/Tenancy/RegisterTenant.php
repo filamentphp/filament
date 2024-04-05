@@ -9,7 +9,7 @@ use Filament\Pages\Concerns;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Filament\Panel;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -21,7 +21,7 @@ use function Filament\authorize;
 use function Filament\Support\is_app_url;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 abstract class RegisterTenant extends SimplePage
 {
@@ -121,13 +121,13 @@ abstract class RegisterTenant extends SimplePage
         return Filament::getUrl($this->tenant);
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {

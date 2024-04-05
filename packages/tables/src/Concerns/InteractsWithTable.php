@@ -257,7 +257,7 @@ trait InteractsWithTable
     }
 
     /**
-     * @return array<string, \Filament\Schema\ComponentContainer>
+     * @return array<string, \Filament\Schema\Schema>
      */
     protected function getInteractsWithTableForms(): array
     {

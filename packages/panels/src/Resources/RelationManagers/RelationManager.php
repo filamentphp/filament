@@ -11,7 +11,7 @@ use Filament\Infolists;
 use Filament\Pages\Page;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -93,7 +93,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     }
 
     /**
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
@@ -217,7 +217,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canCreate())
-            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
+            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
     }
 
     protected function configureDeleteAction(Actions\DeleteAction $action): void
@@ -242,7 +242,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canEdit($record))
-            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
+            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
     }
 
     protected function configureForceDeleteAction(Actions\ForceDeleteAction $action): void
@@ -267,8 +267,8 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => $livewire->canView($record))
-            ->infolist(fn (ComponentContainer $infolist): ComponentContainer => $this->infolist($infolist->columns(2)))
-            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
+            ->infolist(fn (Schema $infolist): Schema => $this->infolist($infolist->columns(2)))
+            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
     }
 
     protected function configureTableBulkAction(BulkAction $action): void
@@ -328,12 +328,12 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         }
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
-    public function infolist(ComponentContainer $infolist): ComponentContainer
+    public function infolist(Schema $infolist): Schema
     {
         return $infolist;
     }

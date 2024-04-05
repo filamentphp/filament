@@ -10,12 +10,12 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
 use Filament\Pages\SimplePage;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 class EmailVerificationPrompt extends SimplePage
 {

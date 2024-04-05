@@ -8,7 +8,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -24,7 +24,7 @@ class Actions extends Component implements HasActions, HasForms
         $this->form->fill();
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([

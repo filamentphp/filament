@@ -12,8 +12,8 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Group;
+use Filament\Schema\Schema;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
@@ -24,7 +24,7 @@ class EntriesDemo extends Component implements HasInfolists
     use InteractsWithForms;
     use InteractsWithInfolists;
 
-    public function infolist(ComponentContainer $infolist): ComponentContainer
+    public function infolist(Schema $infolist): Schema
     {
         return $infolist
             ->schema([

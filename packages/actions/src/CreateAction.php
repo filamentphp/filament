@@ -5,8 +5,8 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Contracts\HasSchemas;
+use Filament\Schema\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,7 +52,7 @@ class CreateAction extends Action
 
         $this->record(null);
 
-        $this->action(function (array $arguments, ComponentContainer $form): void {
+        $this->action(function (array $arguments, Schema $form): void {
             $model = $this->getModel();
 
             $record = $this->process(function (array $data, HasActions & HasSchemas $livewire, ?Table $table) use ($model): Model {

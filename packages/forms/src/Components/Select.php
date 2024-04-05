@@ -5,10 +5,10 @@ namespace Filament\Forms\Components;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Contracts\HasAffixActions;
+use Filament\Schema\Schema;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Services\RelationshipJoiner;
@@ -276,12 +276,12 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         $action = Action::make($this->getCreateOptionActionName())
-            ->form(function (Select $component, ComponentContainer $form): array | ComponentContainer | null {
+            ->form(function (Select $component, Schema $form): array | Schema | null {
                 return $component->getCreateOptionActionForm($form->model(
                     $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
                 ));
             })
-            ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
+            ->action(static function (Action $action, array $arguments, Select $component, array $data, Schema $form) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
                 }
@@ -358,9 +358,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @return array<Component> | ComponentContainer | null
+     * @return array<Component> | Schema | null
      */
-    public function getCreateOptionActionForm(ComponentContainer $form): array | ComponentContainer | null
+    public function getCreateOptionActionForm(Schema $form): array | Schema | null
     {
         return $this->evaluate($this->createOptionActionForm, ['form' => $form]);
     }
@@ -371,9 +371,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     }
 
     /**
-     * @return array<Component> | ComponentContainer | null
+     * @return array<Component> | Schema | null
      */
-    public function getEditOptionActionForm(ComponentContainer $form): array | ComponentContainer | null
+    public function getEditOptionActionForm(Schema $form): array | Schema | null
     {
         return $this->evaluate($this->editOptionActionForm, ['form' => $form]);
     }
@@ -430,13 +430,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         }
 
         $action = Action::make($this->getEditOptionActionName())
-            ->form(function (Select $component, ComponentContainer $form): array | ComponentContainer | null {
+            ->form(function (Select $component, Schema $form): array | Schema | null {
                 return $component->getEditOptionActionForm(
                     $form->model($component->getSelectedRecord()),
                 );
             })
             ->fillForm($this->getEditOptionActionFormData())
-            ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
+            ->action(static function (Action $action, array $arguments, Select $component, array $data, Schema $form) {
                 if (! $component->getUpdateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [updateOptionUsing()] closure set.");
                 }
@@ -997,7 +997,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $relationship->syncWithPivotValues($state ?? [], $pivotData);
         });
 
-        $this->createOptionUsing(static function (Select $component, array $data, ComponentContainer $form) {
+        $this->createOptionUsing(static function (Select $component, array $data, Schema $form) {
             $record = $component->getRelationship()->getRelated();
             $record->fill($data);
             $record->save();
@@ -1011,7 +1011,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return $component->getSelectedRecord()?->attributesToArray();
         });
 
-        $this->updateOptionUsing(static function (array $data, ComponentContainer $form) {
+        $this->updateOptionUsing(static function (array $data, Schema $form) {
             $form->getRecord()?->update($data);
         });
 

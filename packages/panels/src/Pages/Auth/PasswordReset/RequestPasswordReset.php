@@ -13,15 +13,15 @@ use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Password;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 class RequestPasswordReset extends SimplePage
 {
@@ -102,13 +102,13 @@ class RequestPasswordReset extends SimplePage
         $this->form->fill();
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {

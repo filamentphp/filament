@@ -3,10 +3,10 @@
 namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schema\Contracts\HasSchemas;
+use Filament\Schema\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -157,7 +157,7 @@ trait EntanglesStateWithSingularRelationship
     /**
      * @param  array-key  $key
      */
-    public function getChildComponentContainer($key = null): ComponentContainer
+    public function getChildComponentContainer($key = null): Schema
     {
         $container = parent::getChildComponentContainer($key);
 

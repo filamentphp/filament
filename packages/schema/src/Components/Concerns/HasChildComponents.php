@@ -3,8 +3,8 @@
 namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 
 trait HasChildComponents
 {
@@ -44,19 +44,19 @@ trait HasChildComponents
     /**
      * @param  array-key  $key
      */
-    public function getChildComponentContainer($key = null): ComponentContainer
+    public function getChildComponentContainer($key = null): Schema
     {
         if (filled($key) && array_key_exists($key, $containers = $this->getChildComponentContainers())) {
             return $containers[$key];
         }
 
-        return ComponentContainer::make($this->getLivewire())
+        return Schema::make($this->getLivewire())
             ->parentComponent($this)
             ->components($this->getChildComponents());
     }
 
     /**
-     * @return array<ComponentContainer>
+     * @return array<Schema>
      */
     public function getChildComponentContainers(bool $withHidden = false): array
     {

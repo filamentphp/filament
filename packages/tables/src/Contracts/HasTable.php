@@ -3,7 +3,7 @@
 namespace Filament\Tables\Contracts;
 
 use Filament\Actions\Action;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Grouping\Group;
@@ -45,17 +45,17 @@ interface HasTable
 
     public function getMountedTableAction(): ?Action;
 
-    public function getMountedTableActionForm(): ?ComponentContainer;
+    public function getMountedTableActionForm(): ?Schema;
 
     public function getMountedTableActionRecord(): ?Model;
 
     public function getMountedTableBulkAction(): ?Action;
 
-    public function getMountedTableBulkActionForm(): ?ComponentContainer;
+    public function getMountedTableBulkActionForm(): ?Schema;
 
     public function getTable(): Table;
 
-    public function getTableFiltersForm(): ComponentContainer;
+    public function getTableFiltersForm(): Schema;
 
     public function getTableRecords(): EloquentCollection | Paginator | CursorPaginator;
 
@@ -73,7 +73,7 @@ interface HasTable
 
     public function isTableColumnToggledHidden(string $name): bool;
 
-    public function getTableColumnToggleForm(): ComponentContainer;
+    public function getTableColumnToggleForm(): Schema;
 
     public function getTableRecord(?string $key): ?Model;
 

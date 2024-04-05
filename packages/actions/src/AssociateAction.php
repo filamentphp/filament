@@ -5,7 +5,7 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Table;
 use Illuminate\Database\Connection;
@@ -70,7 +70,7 @@ class AssociateAction extends Action
 
         $this->form(fn (): array => [$this->getRecordSelect()]);
 
-        $this->action(function (array $arguments, array $data, ComponentContainer $form, Table $table): void {
+        $this->action(function (array $arguments, array $data, Schema $form, Table $table): void {
             /** @var HasMany | MorphMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 

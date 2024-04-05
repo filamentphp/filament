@@ -13,8 +13,8 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
@@ -27,7 +27,7 @@ use Throwable;
 use function Filament\Support\is_app_url;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 class EditRecord extends Page
 {
@@ -181,7 +181,7 @@ class EditRecord extends Page
 
             $this->callHook('beforeValidate');
 
-            $data = ComponentContainer::make($component->getLivewire())
+            $data = Schema::make($component->getLivewire())
                 ->schema([$component])
                 ->model($component->getRecord())
                 ->statePath($this->getFormStatePath())
@@ -278,8 +278,8 @@ class EditRecord extends Page
 
         $action
             ->authorize($resource::canView($this->getRecord()))
-            ->infolist(fn (ComponentContainer $infolist): ComponentContainer => static::getResource()::infolist($infolist->columns(2)))
-            ->form(fn (ComponentContainer $form): ComponentContainer => static::getResource()::form($form));
+            ->infolist(fn (Schema $infolist): Schema => static::getResource()::infolist($infolist->columns(2)))
+            ->form(fn (Schema $form): Schema => static::getResource()::form($form));
 
         if ($resource::hasPage('view')) {
             $action->url(fn (): string => static::getResource()::getUrl('view', ['record' => $this->getRecord()]));
@@ -359,13 +359,13 @@ class EditRecord extends Page
             ->color('gray');
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {

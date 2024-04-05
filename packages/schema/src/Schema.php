@@ -8,24 +8,24 @@ use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
 
-class ComponentContainer extends ViewComponent
+class Schema extends ViewComponent
 {
-    use ComponentContainer\Concerns\BelongsToLivewire;
-    use ComponentContainer\Concerns\BelongsToModel;
-    use ComponentContainer\Concerns\BelongsToParentComponent;
-    use ComponentContainer\Concerns\CanBeDisabled;
-    use ComponentContainer\Concerns\CanBeHidden;
-    use ComponentContainer\Concerns\CanBeValidated;
-    use ComponentContainer\Concerns\Cloneable;
-    use ComponentContainer\Concerns\HasComponents;
-    use ComponentContainer\Concerns\HasEntryWrapper;
-    use ComponentContainer\Concerns\HasFieldWrapper;
-    use ComponentContainer\Concerns\HasInlineLabels;
-    use ComponentContainer\Concerns\HasKey;
-    use ComponentContainer\Concerns\HasOperation;
-    use ComponentContainer\Concerns\HasState;
-    use Components\Concerns\HasColumns;
-    use Components\Concerns\HasStateBindingModifiers;
+    use Concerns\BelongsToLivewire;
+    use Concerns\BelongsToModel;
+    use Concerns\BelongsToParentComponent;
+    use Concerns\CanBeDisabled;
+    use Concerns\CanBeHidden;
+    use Concerns\CanBeValidated;
+    use Concerns\Cloneable;
+    use Concerns\HasColumns;
+    use Concerns\HasComponents;
+    use Concerns\HasEntryWrapper;
+    use Concerns\HasFieldWrapper;
+    use Concerns\HasInlineLabels;
+    use Concerns\HasKey;
+    use Concerns\HasOperation;
+    use Concerns\HasState;
+    use Concerns\HasStateBindingModifiers;
     use HasExtraAttributes;
 
     protected string $view = 'filament-schema::component-container';

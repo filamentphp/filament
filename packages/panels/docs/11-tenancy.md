@@ -119,7 +119,7 @@ To set up a registration page, you'll need to create a new page class that exten
 ```php
 namespace App\Filament\Pages\Tenancy;
 
-use App\Models\Team;use Filament\Forms\Components\TextInput;use Filament\Pages\Tenancy\RegisterTenant;use Filament\Schema\ComponentContainer;
+use App\Models\Team;use Filament\Forms\Components\TextInput;use Filament\Pages\Tenancy\RegisterTenant;use Filament\Schema\Schema;
 
 class RegisterTeam extends RegisterTenant
 {
@@ -128,7 +128,7 @@ class RegisterTeam extends RegisterTenant
         return 'Register team';
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -177,7 +177,7 @@ To set up a profile page, you'll need to create a new page class that extends `F
 ```php
 namespace App\Filament\Pages\Tenancy;
 
-use Filament\Forms\Components\TextInput;use Filament\Pages\Tenancy\EditTenantProfile;use Filament\Schema\ComponentContainer;
+use Filament\Forms\Components\TextInput;use Filament\Pages\Tenancy\EditTenantProfile;use Filament\Schema\Schema;
 
 class EditTeamProfile extends EditTenantProfile
 {
@@ -186,7 +186,7 @@ class EditTeamProfile extends EditTenantProfile
         return 'Team profile';
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([

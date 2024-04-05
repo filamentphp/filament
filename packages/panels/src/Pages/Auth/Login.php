@@ -14,15 +14,15 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 class Login extends SimplePage
 {
@@ -97,13 +97,13 @@ class Login extends SimplePage
         ]);
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {

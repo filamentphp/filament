@@ -6,9 +6,9 @@ use Closure;
 use Exception;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Validation\ValidationException;
@@ -41,7 +41,7 @@ trait InteractsWithSchemas
     public array $discoveredSchemaNames = [];
 
     /**
-     * @var array<string, ?ComponentContainer>
+     * @var array<string, ?Schema>
      */
     protected array $cachedSchemas = [];
 
@@ -145,7 +145,7 @@ trait InteractsWithSchemas
         return $schema->getComponent($key, isAbsoluteKey: true);
     }
 
-    protected function cacheSchema(string $name, ComponentContainer | Closure | null $schema = null): ?ComponentContainer
+    protected function cacheSchema(string $name, Schema | Closure | null $schema = null): ?Schema
     {
         $this->isCachingSchemas = true;
 
@@ -193,7 +193,7 @@ trait InteractsWithSchemas
 
                 $type = $returnTypeReflection->getName();
 
-                if (! is_a($type, ComponentContainer::class, allow_string: true)) {
+                if (! is_a($type, Schema::class, allow_string: true)) {
                     unset($this->cachedSchemas[$name]);
 
                     return null;
@@ -228,7 +228,7 @@ trait InteractsWithSchemas
                 return null;
             }
 
-            if (! is_a($type, ComponentContainer::class, allow_string: true)) {
+            if (! is_a($type, Schema::class, allow_string: true)) {
                 unset($this->cachedSchemas[$name]);
 
                 return null;
@@ -243,9 +243,9 @@ trait InteractsWithSchemas
     }
 
     /**
-     * @param  class-string<ComponentContainer>  $type
+     * @param  class-string<Schema>  $type
      */
-    protected function makeSchema(string $type, ?string $name): ComponentContainer
+    protected function makeSchema(string $type, ?string $name): Schema
     {
         if (method_exists($this, 'makeForm') && is_a($type, Form::class, allow_string: true)) {
             return $this->makeForm();
@@ -263,7 +263,7 @@ trait InteractsWithSchemas
         return array_key_exists($name, $this->getCachedSchemas());
     }
 
-    public function getSchema(string $name): ?ComponentContainer
+    public function getSchema(string $name): ?Schema
     {
         if ($this->hasCachedSchema($name)) {
             return $this->getCachedSchemas()[$name];
@@ -273,7 +273,7 @@ trait InteractsWithSchemas
     }
 
     /**
-     * @return array<string, ?ComponentContainer>
+     * @return array<string, ?Schema>
      */
     public function getCachedSchemas(): array
     {

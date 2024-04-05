@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Forms\Components\TextInput;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Pest\Expectation;
@@ -19,7 +19,7 @@ test('computed properties used to generate form schema can be accessed before ca
 
 class ComputedPropertySchema extends Livewire
 {
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema($this->schema);

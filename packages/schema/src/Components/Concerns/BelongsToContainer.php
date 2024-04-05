@@ -2,22 +2,22 @@
 
 namespace Filament\Schema\Components\Concerns;
 
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Contracts\HasSchemas;
+use Filament\Schema\Schema;
 use Livewire\Component;
 
 trait BelongsToContainer
 {
-    protected ComponentContainer $container;
+    protected Schema $container;
 
-    public function container(ComponentContainer $container): static
+    public function container(Schema $container): static
     {
         $this->container = $container;
 
         return $this;
     }
 
-    public function getContainer(): ComponentContainer
+    public function getContainer(): Schema
     {
         return $this->container;
     }

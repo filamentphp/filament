@@ -5,7 +5,7 @@ namespace Filament\Tables\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -13,7 +13,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
 /**
- * @property ComponentContainer $mountedTableBulkActionForm
+ * @property Schema $mountedTableBulkActionForm
  */
 trait HasBulkActions
 {
@@ -266,7 +266,7 @@ trait HasBulkActions
     /**
      * @deprecated Use the `getMountedActionSchema()` method instead.
      */
-    public function getMountedTableBulkActionForm(?BulkAction $mountedBulkAction = null): ?ComponentContainer
+    public function getMountedTableBulkActionForm(?BulkAction $mountedBulkAction = null): ?Schema
     {
         return $this->getMountedActionSchema(0, $mountedBulkAction);
     }

@@ -5,10 +5,10 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Contracts\ExposesStateToActionData;
 use Filament\Schema\Concerns\InteractsWithSchemas;
 use Filament\Schema\Contracts\HasSchemas;
+use Filament\Schema\Schema;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Contracts\HasTable;
@@ -541,7 +541,7 @@ trait InteractsWithActions
         return $action;
     }
 
-    protected function getMountedActionSchema(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?ComponentContainer
+    protected function getMountedActionSchema(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?Schema
     {
         $actionNestingIndex ??= array_key_last($this->mountedActions);
 
@@ -556,7 +556,7 @@ trait InteractsWithActions
         }
 
         return $mountedAction->getSchema(
-            $this->makeSchema(ComponentContainer::class, name: "mountedActionSchema{$actionNestingIndex}")
+            $this->makeSchema(Schema::class, name: "mountedActionSchema{$actionNestingIndex}")
                 ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionFormModel() ?? $this->getMountedActionSchemaModel())
                 ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")
@@ -572,7 +572,7 @@ trait InteractsWithActions
     /**
      * @deprecated Use `getMountedActionSchema()` instead.
      */
-    protected function getMountedActionForm(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?ComponentContainer
+    protected function getMountedActionForm(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?Schema
     {
         return $this->getMountedActionSchema($actionNestingIndex, $mountedAction);
     }

@@ -16,7 +16,7 @@ use Filament\Actions\RestoreAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
@@ -116,7 +116,7 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
             ->persistFiltersInSession()
             ->headerActions([
                 Action::make('data')
-                    ->mountUsing(fn (ComponentContainer $form) => $form->fill(['foo' => 'bar']))
+                    ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
                     ->form([
                         TextInput::make('payload')->required(),
                     ])
@@ -251,7 +251,7 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
             ->bulkActions([
                 DeleteBulkAction::make(),
                 BulkAction::make('data')
-                    ->mountUsing(fn (ComponentContainer $form) => $form->fill(['foo' => 'bar']))
+                    ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
                     ->form([
                         TextInput::make('payload')->required(),
                     ])

@@ -4,7 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Illuminate\Database\Eloquent\Model;
 
 trait HasActions
@@ -76,7 +76,7 @@ trait HasActions
     /**
      * @deprecated Use `getMountedActionSchema()` instead.
      */
-    public function getMountedTableActionForm(?Action $mountedAction = null): ?ComponentContainer
+    public function getMountedTableActionForm(?Action $mountedAction = null): ?Schema
     {
         return $this->getMountedActionSchema(0, $mountedAction);
     }

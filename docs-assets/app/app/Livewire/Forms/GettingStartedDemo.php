@@ -8,9 +8,9 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Group;
 use Filament\Schema\Components\Section;
+use Filament\Schema\Schema;
 use Livewire\Component;
 
 class GettingStartedDemo extends Component implements HasForms
@@ -24,7 +24,7 @@ class GettingStartedDemo extends Component implements HasForms
         $this->form->fill();
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form
             ->statePath('data')

@@ -3,9 +3,9 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Wizard;
+use Filament\Schema\Schema;
 
 trait HasSchema
 {
@@ -38,7 +38,7 @@ trait HasSchema
         return (bool) $this->evaluate($this->isSchemaDisabled);
     }
 
-    public function getSchema(ComponentContainer $schema): ?ComponentContainer
+    public function getSchema(Schema $schema): ?Schema
     {
         $modifiedSchema = $this->evaluate($this->schema, [
             'form' => $schema,

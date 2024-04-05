@@ -2,8 +2,8 @@
 
 namespace Filament\Forms;
 
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 
-class Form extends ComponentContainer
+class Form extends Schema
 {
 }

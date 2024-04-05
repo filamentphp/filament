@@ -4,8 +4,8 @@ namespace Filament\Resources\Pages\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Wizard;
+use Filament\Schema\Schema;
 
 trait HasWizard
 {
@@ -14,7 +14,7 @@ trait HasWizard
         return 1;
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return parent::form($form)
             ->schema([

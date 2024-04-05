@@ -16,7 +16,7 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Tables\Table;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -122,12 +122,12 @@ abstract class Resource
 
     protected static bool $hasTitleCaseModelLabel = true;
 
-    public static function form(ComponentContainer $form): ComponentContainer
+    public static function form(Schema $form): Schema
     {
         return $form;
     }
 
-    public static function infolist(ComponentContainer $infolist): ComponentContainer
+    public static function infolist(Schema $infolist): Schema
     {
         return $infolist;
     }

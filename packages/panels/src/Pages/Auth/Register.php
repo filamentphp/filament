@@ -16,8 +16,8 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 class Register extends SimplePage
 {
@@ -141,13 +141,13 @@ class Register extends SimplePage
         $user->notify($notification);
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {

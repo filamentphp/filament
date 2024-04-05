@@ -116,9 +116,9 @@ This is required for features like [global search](global-search) to work.
 Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages:
 
 ```php
-use Filament\Forms;use Filament\Schema\ComponentContainer;
+use Filament\Forms;use Filament\Schema\Schema;
 
-public static function form(ComponentContainer $form): ComponentContainer
+public static function form(Schema $form): Schema
 {
     return $form
         ->schema([

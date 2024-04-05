@@ -118,13 +118,13 @@ Firstly, you must [replace the original Dashboard page](#customizing-the-dashboa
 Now, in your new `app/Filament/Pages/Dashboard.php` file, you may add the `HasFiltersForm` trait, and add the `filtersForm()` method to return form components:
 
 ```php
-use Filament\Forms\Components\DatePicker;use Filament\Pages\Dashboard as BaseDashboard;use Filament\Pages\Dashboard\Concerns\HasFiltersForm;use Filament\Schema\Components\Section;use Filament\Schema\ComponentContainer;
+use Filament\Forms\Components\DatePicker;use Filament\Pages\Dashboard as BaseDashboard;use Filament\Pages\Dashboard\Concerns\HasFiltersForm;use Filament\Schema\Components\Section;use Filament\Schema\Schema;
 
 class Dashboard extends BaseDashboard
 {
     use HasFiltersForm;
 
-    public function filtersForm(ComponentContainer $form): ComponentContainer
+    public function filtersForm(Schema $form): Schema
     {
         return $form
             ->schema([

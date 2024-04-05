@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Schema\ComponentContainer\Concerns;
+namespace Filament\Schema\Concerns;
 
 trait HasOperation
 {

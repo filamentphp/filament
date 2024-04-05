@@ -22,9 +22,9 @@ Layout components are used to group fields together, and to control how they are
 Initialise a field or layout component with the `make()` method, and build a schema array with multiple fields:
 
 ```php
-use Filament\Forms\Components\RichEditor;use Filament\Forms\Components\TextInput;use Filament\Schema\ComponentContainer;
+use Filament\Forms\Components\RichEditor;use Filament\Forms\Components\TextInput;use Filament\Schema\Schema;
 
-public function form(ComponentContainer $form): ComponentContainer
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([

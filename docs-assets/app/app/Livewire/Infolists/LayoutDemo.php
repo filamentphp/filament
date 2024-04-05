@@ -10,7 +10,6 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Actions;
 use Filament\Schema\Components\Fieldset;
 use Filament\Schema\Components\Grid;
@@ -19,6 +18,7 @@ use Filament\Schema\Components\Section;
 use Filament\Schema\Components\Split;
 use Filament\Schema\Components\Tabs;
 use Filament\Schema\Components\Tabs\Tab;
+use Filament\Schema\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
@@ -30,7 +30,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
     use InteractsWithForms;
     use InteractsWithInfolists;
 
-    public function infolist(ComponentContainer $infolist): ComponentContainer
+    public function infolist(Schema $infolist): Schema
     {
         return $infolist
             ->schema([

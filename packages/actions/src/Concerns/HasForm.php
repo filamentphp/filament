@@ -3,8 +3,8 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 
 trait HasForm
 {
@@ -48,7 +48,7 @@ trait HasForm
     /**
      * @deprecated Use `getSchema()` instead.
      */
-    public function getForm(ComponentContainer $form): ?ComponentContainer
+    public function getForm(Schema $form): ?Schema
     {
         return $this->getSchema($form);
     }

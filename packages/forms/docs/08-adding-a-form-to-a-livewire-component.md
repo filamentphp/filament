@@ -40,7 +40,7 @@ There are 5 main tasks when adding a form to a Livewire component class. Each on
 
 namespace App\Livewire;
 
-use Filament\Forms\Components\MarkdownEditor;use Filament\Forms\Components\TextInput;use Filament\Forms\Concerns\InteractsWithForms;use Filament\Forms\Contracts\HasForms;use Filament\Schema\ComponentContainer;use Illuminate\Contracts\View\View;use Livewire\Component;
+use Filament\Forms\Components\MarkdownEditor;use Filament\Forms\Components\TextInput;use Filament\Forms\Concerns\InteractsWithForms;use Filament\Forms\Contracts\HasForms;use Filament\Schema\Schema;use Illuminate\Contracts\View\View;use Livewire\Component;
 
 class CreatePost extends Component implements HasForms
 {
@@ -53,7 +53,7 @@ class CreatePost extends Component implements HasForms
         $this->form->fill();
     }
     
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -136,11 +136,11 @@ It is advised to always pass the model to the form when there is one. As explain
 To pass the model to the form, use the `$form->model()` method:
 
 ```php
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 
 public Post $post;
 
-public function form(ComponentContainer $form): ComponentContainer
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -156,9 +156,9 @@ public function form(ComponentContainer $form): ComponentContainer
 In some cases, the form's model is not available until the form has been submitted. For example, in a Create Post form, the post does not exist until the form has been submitted. Therefore, you can't pass it in to `$form->model()`. However, you can pass a model class instead:
 
 ```php
-use App\Models\Post;use Filament\Schema\ComponentContainer;
+use App\Models\Post;use Filament\Schema\Schema;
 
-public function form(ComponentContainer $form): ComponentContainer
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -188,13 +188,13 @@ public function create(): void
 In all of our previous examples, we've been saving the form's data to the public `$data` property on the Livewire component. However, you can save the data to individual properties instead. For example, if you have a form with a `title` field, you can save the form's data to the `$title` property instead. To do this, don't pass a `statePath()` to the form at all. Ensure that all of your fields have their own **public** properties on the class.
 
 ```php
-use Filament\Forms\Components\MarkdownEditor;use Filament\Forms\Components\TextInput;use Filament\Schema\ComponentContainer;
+use Filament\Forms\Components\MarkdownEditor;use Filament\Forms\Components\TextInput;use Filament\Schema\Schema;
 
 public ?string $title = null;
 
 public ?string $content = null;
 
-public function form(ComponentContainer $form): ComponentContainer
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -223,9 +223,9 @@ protected function getForms(): array
 Each of these forms can now be defined within the Livewire component, using a method with the same name:
 
 ```php
-use Filament\Forms\Components\MarkdownEditor;use Filament\Forms\Components\TextInput;use Filament\Schema\ComponentContainer;
+use Filament\Forms\Components\MarkdownEditor;use Filament\Forms\Components\TextInput;use Filament\Schema\Schema;
 
-public function editPostForm(ComponentContainer $form): ComponentContainer
+public function editPostForm(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -238,7 +238,7 @@ public function editPostForm(ComponentContainer $form): ComponentContainer
         ->model($this->post);
 }
 
-public function createCommentForm(ComponentContainer $form): ComponentContainer
+public function createCommentForm(Schema $form): Schema
 {
     return $form
         ->schema([

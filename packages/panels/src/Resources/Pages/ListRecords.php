@@ -18,7 +18,7 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Concerns\HasTabs;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -104,12 +104,12 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         };
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return static::getResource()::form($form);
     }
 
-    public function infolist(ComponentContainer $infolist): ComponentContainer
+    public function infolist(Schema $infolist): Schema
     {
         return static::getResource()::infolist($infolist);
     }
@@ -122,7 +122,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->authorize($resource::canCreate())
             ->model($this->getModel())
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
-            ->schema(fn (ComponentContainer $schema): ComponentContainer => $this->form($schema->columns(2)));
+            ->schema(fn (Schema $schema): Schema => $this->form($schema->columns(2)));
 
         if (($action instanceof CreateAction) && static::getResource()::isScopedToTenant()) {
             $action->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null);
@@ -160,7 +160,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canEdit($record))
-            ->schema(fn (ComponentContainer $schema): ComponentContainer => $this->form($schema->columns(2)))
+            ->schema(fn (Schema $schema): Schema => $this->form($schema->columns(2)))
             ->icon(FilamentIcon::resolve('actions::edit-action') ?? 'heroicon-m-pencil-square');
 
         if ($resource::hasPage('edit')) {
@@ -196,7 +196,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         $action
             ->authorize(fn (Model $record): bool => $resource::canView($record))
             ->icon(FilamentIcon::resolve('actions::view-action') ?? 'heroicon-m-eye')
-            ->schema(fn (ComponentContainer $schema): ComponentContainer => $this->infolist($this->form($schema->columns(2))));
+            ->schema(fn (Schema $schema): Schema => $this->infolist($this->form($schema->columns(2))));
 
         if ($resource::hasPage('view')) {
             $action->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]));
@@ -338,7 +338,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     }
 
     /**
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {

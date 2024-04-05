@@ -2,8 +2,8 @@
 
 namespace Filament\Infolists;
 
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 
-class Infolist extends ComponentContainer
+class Infolist extends Schema
 {
 }

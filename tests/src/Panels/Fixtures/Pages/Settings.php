@@ -5,7 +5,7 @@ namespace Filament\Tests\Panels\Fixtures\Pages;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 
 class Settings extends Page
 {
@@ -29,7 +29,7 @@ class Settings extends Page
             ->send();
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([

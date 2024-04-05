@@ -5,10 +5,10 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Concerns\CanBeCollapsed;
 use Filament\Schema\Components\Contracts\CanConcealComponents;
 use Filament\Schema\Components\Contracts\HasExtraItemActions;
+use Filament\Schema\Schema;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\MaxWidth;
@@ -747,7 +747,7 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
         return collect($this->getState())
             ->filter(fn (array $itemData): bool => filled($itemData['type'] ?? null) && $this->hasBlock($itemData['type']))
             ->map(
-                fn (array $itemData, $itemIndex): ComponentContainer => $this
+                fn (array $itemData, $itemIndex): Schema => $this
                     ->getBlock($itemData['type'])
                     ->getChildComponentContainer()
                     ->statePath("{$itemIndex}.data")

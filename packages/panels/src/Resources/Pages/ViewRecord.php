@@ -9,14 +9,14 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Pages\Concerns\InteractsWithFormActions;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 class ViewRecord extends Page
 {
@@ -139,7 +139,7 @@ class ViewRecord extends Page
 
         $action
             ->authorize($resource::canEdit($this->getRecord()))
-            ->form(fn (ComponentContainer $form): ComponentContainer => static::getResource()::form($form));
+            ->form(fn (Schema $form): Schema => static::getResource()::form($form));
 
         if ($resource::hasPage('edit')) {
             $action->url(fn (): string => static::getResource()::getUrl('edit', ['record' => $this->getRecord()]));
@@ -187,13 +187,13 @@ class ViewRecord extends Page
         ]);
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
@@ -215,12 +215,12 @@ class ViewRecord extends Page
         return 'data';
     }
 
-    public function infolist(ComponentContainer $infolist): ComponentContainer
+    public function infolist(Schema $infolist): Schema
     {
         return static::getResource()::infolist($infolist);
     }
 
-    protected function makeSchema(string $type, ?string $name): ComponentContainer
+    protected function makeSchema(string $type, ?string $name): Schema
     {
         if ($name === 'infolist') {
             return parent::makeSchema($type, $name)

@@ -2,7 +2,7 @@
 
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
@@ -11,7 +11,7 @@ uses(TestCase::class);
 
 it('sets its state path from its name', function () {
     $field = (new Field($name = Str::random()))
-        ->container(ComponentContainer::make(Livewire::make()));
+        ->container(Schema::make(Livewire::make()));
 
     expect($field)
         ->getStatePath()->toBe($name);
@@ -19,7 +19,7 @@ it('sets its state path from its name', function () {
 
 it('sets its fallback label from its name', function () {
     $field = (new Field($name = Str::random()))
-        ->container(ComponentContainer::make(Livewire::make()));
+        ->container(Schema::make(Livewire::make()));
 
     expect($field)
         ->getLabel()->toBe(

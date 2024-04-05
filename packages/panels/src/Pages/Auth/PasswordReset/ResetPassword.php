@@ -12,8 +12,8 @@ use Filament\Http\Responses\Auth\Contracts\PasswordResetResponse;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -26,7 +26,7 @@ use Illuminate\Validation\Rules\Password as PasswordRule;
 use Livewire\Attributes\Locked;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 class ResetPassword extends SimplePage
 {
@@ -115,7 +115,7 @@ class ResetPassword extends SimplePage
         return null;
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([

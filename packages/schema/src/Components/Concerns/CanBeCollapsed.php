@@ -3,7 +3,7 @@
 namespace Filament\Schema\Components\Concerns;
 
 use Closure;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 
 trait CanBeCollapsed
 {
@@ -24,7 +24,7 @@ trait CanBeCollapsed
         return $this;
     }
 
-    public function isCollapsed(?ComponentContainer $item = null): bool
+    public function isCollapsed(?Schema $item = null): bool
     {
         return (bool) $this->evaluate($this->isCollapsed, ['item' => $item]);
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Schema\ComponentContainer\Concerns;
+namespace Filament\Schema\Concerns;
 
 use Filament\Forms\Components;
 use Filament\Schema\Components\Component;

@@ -4,14 +4,14 @@ namespace Filament\Infolists\Concerns;
 
 use Filament\Actions\Action;
 use Filament\Infolists\Infolist;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 
 trait InteractsWithInfolists
 {
     /**
      * @deprecated Use `getSchema()` instead.
      */
-    public function getInfolist(string $name): ?ComponentContainer
+    public function getInfolist(string $name): ?Schema
     {
         return $this->getSchema($name);
     }
@@ -19,15 +19,15 @@ trait InteractsWithInfolists
     /**
      * @deprecated Use `cacheSchema()` instead.
      */
-    protected function cacheInfolist(string $name, ComponentContainer $infolist): ?ComponentContainer
+    protected function cacheInfolist(string $name, Schema $infolist): ?Schema
     {
         return $this->cacheSchema($name, $infolist);
     }
 
     /**
-     * @deprecated Use `getCachedSchemas()` instead.
+     * @return array<string, Schema>
      *
-     * @return array<string, ComponentContainer>
+     *@deprecated Use `getCachedSchemas()` instead.
      */
     public function getCachedInfolists(): array
     {
@@ -97,7 +97,7 @@ trait InteractsWithInfolists
     /**
      * @deprecated Use `makeSchema()` instead.
      */
-    protected function makeInfolist(): ComponentContainer
+    protected function makeInfolist(): Schema
     {
         return Infolist::make($this);
     }

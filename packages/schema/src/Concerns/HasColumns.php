@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Schema\Components\Concerns;
+namespace Filament\Schema\Concerns;
 
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 
 trait HasColumns
 {
@@ -49,7 +49,7 @@ trait HasColumns
      */
     public function getColumnsConfig(): array
     {
-        if ($this instanceof ComponentContainer && $this->getParentComponent()) {
+        if ($this instanceof Schema && $this->getParentComponent()) {
             return $this->getParentComponent()->getColumnsConfig();
         }
 

@@ -157,9 +157,9 @@ If you open the `PatientResource.php` file, there's a `form()` method with an em
 Filament bundles a large selection of [form fields](../forms/fields/getting-started). Let's start with a simple [text input field](../forms/fields/text-input):
 
 ```php
-use Filament\Forms;use Filament\Schema\ComponentContainer;
+use Filament\Forms;use Filament\Schema\Schema;
 
-public static function form(ComponentContainer $form): ComponentContainer
+public static function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -187,9 +187,9 @@ Attempt to submit the form to create a new patient without a name and observe th
 Let's add a second field for the type of patient: a choice between a cat, dog, or rabbit. Since there's a fixed set of options to choose from, a [select](../forms/fields/select) field works well:
 
 ```php
-use Filament\Forms;use Filament\Schema\ComponentContainer;
+use Filament\Forms;use Filament\Schema\Schema;
 
-public static function form(ComponentContainer $form): ComponentContainer
+public static function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -227,9 +227,9 @@ Forms\Components\Select::make('type')
 Let's add a [date picker field](../forms/fields/date-time-picker) for the `date_of_birth` column along with the validation (the date of birth is required and the date should be no later than the current day).
 
 ```php
-use Filament\Forms;use Filament\Schema\ComponentContainer;
+use Filament\Forms;use Filament\Schema\Schema;
 
-public static function form(ComponentContainer $form): ComponentContainer
+public static function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -255,9 +255,9 @@ public static function form(ComponentContainer $form): ComponentContainer
 We should also add an owner when creating a new patient. Since we added a `BelongsTo` relationship in the Patient model (associating it to the related `Owner` model), we can use the **[`relationship()` method](../forms/fields/select#integrating-with-an-eloquent-relationship)** from the select field to load a list of owners to choose from:
 
 ```php
-use Filament\Forms;use Filament\Schema\ComponentContainer;
+use Filament\Forms;use Filament\Schema\Schema;
 
-public static function form(ComponentContainer $form): ComponentContainer
+public static function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -474,9 +474,9 @@ public static function getRelations(): array
 The `TreatmentsRelationManager.php` file contains a class that is prepopulated with a form and table using the parameters from the `make:filament-relation-manager` artisan command. You can customize the fields and columns in the relation manager similar to how you would in a resource:
 
 ```php
-use Filament\Forms;use Filament\Schema\ComponentContainer;use Filament\Tables;use Filament\Tables\Table;
+use Filament\Forms;use Filament\Schema\Schema;use Filament\Tables;use Filament\Tables\Table;
 
-public function form(ComponentContainer $form): ComponentContainer
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -513,9 +513,9 @@ Forms\Components\TextInput::make('description')
 Let's add the `notes` field, which can be used to add more details about the treatment. We can use a [textarea](../forms/fields/textarea) field with a `columnSpan('full')`:
 
 ```php
-use Filament\Forms;use Filament\Schema\ComponentContainer;
+use Filament\Forms;use Filament\Schema\Schema;
 
-public function form(ComponentContainer $form): ComponentContainer
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -535,9 +535,9 @@ public function form(ComponentContainer $form): ComponentContainer
 Let's add a `price` field for the treatment. We can use a text input with some customizations to make it suitable for currency input. It should be `numeric()`, which adds validation and changes the keyboard layout on mobile devices. Add your preferred currency prefix using the `prefix()` method; for example, `prefix('€')` will add a `€` before the input without impacting the saved output value:
 
 ```php
-use Filament\Forms;use Filament\Schema\ComponentContainer;
+use Filament\Forms;use Filament\Schema\Schema;
 
-public function form(ComponentContainer $form): ComponentContainer
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([

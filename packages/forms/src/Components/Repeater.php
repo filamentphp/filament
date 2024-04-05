@@ -5,10 +5,10 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Concerns\CanBeCollapsed;
 use Filament\Schema\Components\Contracts\CanConcealComponents;
 use Filament\Schema\Components\Contracts\HasExtraItemActions;
+use Filament\Schema\Schema;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Facades\FilamentIcon;
@@ -741,7 +741,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     }
 
     /**
-     * @return array<ComponentContainer>
+     * @return array<Schema>
      */
     public function getChildComponentContainers(bool $withHidden = false): array
     {

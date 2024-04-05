@@ -7,7 +7,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Throwable;
@@ -15,7 +15,7 @@ use Throwable;
 use function Filament\Support\is_app_url;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 class SettingsPage extends Page
 {
@@ -169,13 +169,13 @@ class SettingsPage extends Page
         return $this->getSaveFormAction();
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {

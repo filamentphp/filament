@@ -6,9 +6,9 @@ use Closure;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Form;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Concerns\InteractsWithSchemas;
+use Filament\Schema\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -21,7 +21,7 @@ trait InteractsWithForms
     protected bool $hasCachedForms = false;
 
     /**
-     * @return array<string, ComponentContainer>
+     * @return array<string, Schema>
      */
     public function getCachedSchemas(): array
     {
@@ -35,7 +35,7 @@ trait InteractsWithForms
     /**
      * @deprecated Use `cacheSchema()` instead.
      */
-    protected function cacheForm(string $name, ComponentContainer | Closure | null $form): ?ComponentContainer
+    protected function cacheForm(string $name, Schema | Closure | null $form): ?Schema
     {
         return $this->cacheSchema($name, $form);
     }
@@ -43,7 +43,7 @@ trait InteractsWithForms
     /**
      * @deprecated You do not need to register forms in the `getForms()` method any longer. Define a method of the form's name and return the form from it.
      *
-     * @return array<string, ComponentContainer>
+     * @return array<string, Schema>
      */
     protected function cacheForms(): array
     {
@@ -53,7 +53,7 @@ trait InteractsWithForms
             ...$this->cachedSchemas,
             ...collect($this->getForms())
                 ->merge($this->getTraitForms())
-                ->mapWithKeys(function (ComponentContainer | string | null $form, string | int $formName): array {
+                ->mapWithKeys(function (Schema | string | null $form, string | int $formName): array {
                     if ($form === null) {
                         return ['' => null];
                     }
@@ -71,7 +71,7 @@ trait InteractsWithForms
                     return [$form => $this->{$form}($this->makeForm())];
                 })
                 ->forget('')
-                ->map(fn (ComponentContainer $form, string $formName) => $form->key($formName))
+                ->map(fn (Schema $form, string $formName) => $form->key($formName))
                 ->all(),
         ];
 
@@ -84,7 +84,7 @@ trait InteractsWithForms
     /**
      * @deprecated You do not need to register forms in the `getForms()` method any longer. Define a method of the form's name and return the form from it.
      *
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Schema>
      */
     public function getTraitForms(): array
     {
@@ -113,15 +113,15 @@ trait InteractsWithForms
     /**
      * @deprecated Use `getSchema()` instead.
      */
-    public function getForm(string $name): ?ComponentContainer
+    public function getForm(string $name): ?Schema
     {
         return $this->getSchema($name);
     }
 
     /**
-     * @deprecated Use `getCachedSchemas()` instead.
+     * @return array<string, Schema>
      *
-     * @return array<string, ComponentContainer>
+     *@deprecated Use `getCachedSchemas()` instead.
      */
     public function getCachedForms(): array
     {
@@ -131,7 +131,7 @@ trait InteractsWithForms
     /**
      * @deprecated You do not need to register forms in the `getForms()` method any longer. Define a method of the form's name and return the form from it.
      *
-     * @return array<int | string, string | ComponentContainer>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
@@ -140,7 +140,7 @@ trait InteractsWithForms
         ];
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema($this->getFormSchema())
@@ -186,7 +186,7 @@ trait InteractsWithForms
     /**
      * @deprecated Use `makeSchema()` instead.
      */
-    protected function makeForm(): ComponentContainer
+    protected function makeForm(): Schema
     {
         return Form::make($this);
     }

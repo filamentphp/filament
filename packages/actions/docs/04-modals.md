@@ -337,10 +337,10 @@ Action::make('updateAuthor')
 You may execute code within a closure when the modal opens, by passing it to the `mountUsing()` method:
 
 ```php
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 
 Action::make('create')
-    ->mountUsing(function (ComponentContainer $form) {
+    ->mountUsing(function (Schema $form) {
         $form->fill();
 
         // ...

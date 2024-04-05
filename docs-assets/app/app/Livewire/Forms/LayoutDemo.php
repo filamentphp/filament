@@ -12,7 +12,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Actions;
 use Filament\Schema\Components\Fieldset;
 use Filament\Schema\Components\Grid;
@@ -22,6 +21,7 @@ use Filament\Schema\Components\Split;
 use Filament\Schema\Components\Tabs;
 use Filament\Schema\Components\Tabs\Tab;
 use Filament\Schema\Components\Wizard;
+use Filament\Schema\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\VerticalAlignment;
@@ -38,7 +38,7 @@ class LayoutDemo extends Component implements HasForms
         $this->form->fill();
     }
 
-    public function form(ComponentContainer $form): ComponentContainer
+    public function form(Schema $form): Schema
     {
         return $form
             ->statePath('data')

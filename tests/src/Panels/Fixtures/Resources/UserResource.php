@@ -7,7 +7,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Resources\Resource;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Models\User;
@@ -23,7 +23,7 @@ class UserResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    public static function form(ComponentContainer $form): ComponentContainer
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([

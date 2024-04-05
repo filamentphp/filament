@@ -6,7 +6,7 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schema\ComponentContainer;
+use Filament\Schema\Schema;
 
 class Actions extends Page
 {
@@ -20,7 +20,7 @@ class Actions extends Page
                     $this->dispatch('simple-called');
                 }),
             Action::make('data')
-                ->mountUsing(fn (ComponentContainer $form) => $form->fill(['foo' => 'bar']))
+                ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
                 ->form([
                     TextInput::make('payload')->required(),
                 ])
