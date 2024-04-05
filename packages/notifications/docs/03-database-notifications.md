@@ -141,8 +141,7 @@ event(new DatabaseNotificationsSent($recipient));
 There is a button at the top of the modal to mark all notifications as read at once. You may also add [Actions](sending-notifications#adding-actions-to-notifications) to notifications, which you can use to mark individual notifications as read. To do this, use the `markAsRead()` method on the action:
 
 ```php
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
+use Filament\Actions\Action;use Filament\Notifications\Notification;
 
 Notification::make()
     ->title('Saved successfully')
@@ -159,8 +158,7 @@ Notification::make()
 Alternatively, you may use the `markAsUnread()` method to mark a notification as unread:
 
 ```php
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
+use Filament\Actions\Action;use Filament\Notifications\Notification;
 
 Notification::make()
     ->title('Saved successfully')

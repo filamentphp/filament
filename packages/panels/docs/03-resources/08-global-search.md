@@ -81,7 +81,7 @@ Global search supports actions, which are buttons that render below each search 
 Actions can be defined as follows:
 
 ```php
-use Filament\GlobalSearch\Actions\Action;
+use Filament\Actions\Action;
 
 public static function getGlobalSearchResultActions(Model $record): array
 {
@@ -99,7 +99,7 @@ You can learn more about how to style action buttons [here](../../actions/trigge
 You can open a URL, optionally in a new tab, when clicking on an action:
 
 ```php
-use Filament\GlobalSearch\Actions\Action;
+use Filament\Actions\Action;
 
 Action::make('view')
     ->url(static::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)
@@ -110,7 +110,7 @@ Action::make('view')
 Sometimes you want to execute additional code when a global search result action is clicked. This can be achieved by setting a Livewire event which should be dispatched on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
 
 ```php
-use Filament\GlobalSearch\Actions\Action;
+use Filament\Actions\Action;
 
 Action::make('quickView')
     ->dispatch('quickView', [$record->id])

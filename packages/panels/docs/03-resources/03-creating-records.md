@@ -157,8 +157,7 @@ Alternatively, if you're creating records in a modal action, check out the [Acti
 At any time, you may call `$this->halt()` from inside a lifecycle hook or mutation method, which will halt the entire creation process:
 
 ```php
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
+use Filament\Actions\Action;use Filament\Notifications\Notification;
 
 protected function beforeCreate(): void
 {

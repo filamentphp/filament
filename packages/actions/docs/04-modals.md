@@ -358,11 +358,11 @@ By default, there are two actions in the footer of a modal. The first is a butto
 To modify the action instance that is used to render one of the default action buttons, you may pass a closure to the `modalSubmitAction()` and `modalCancelAction()` methods:
 
 ```php
-use Filament\Actions\StaticAction;
+use Filament\Actions\Action;
 
 Action::make('help')
     ->modalContent(view('actions.help'))
-    ->modalCancelAction(fn (StaticAction $action) => $action->label('Close'))
+    ->modalCancelAction(fn (Action $action) => $action->label('Close'))
 ```
 
 The [methods available to customize trigger buttons](trigger-button) will work to modify the `$action` instance inside the closure.

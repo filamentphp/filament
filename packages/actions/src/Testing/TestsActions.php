@@ -8,7 +8,6 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
-use Filament\Actions\StaticAction;
 use Filament\Actions\Testing\Fixtures\TestAction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -550,7 +549,7 @@ class TestsActions
 
             $actions = array_reduce(
                 $actions,
-                function (array $carry, StaticAction | ActionGroup $action): array {
+                function (array $carry, Action | ActionGroup $action): array {
                     if ($action instanceof ActionGroup) {
                         return [
                             ...$carry,

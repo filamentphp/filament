@@ -12,15 +12,16 @@ use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Facades\FilamentIcon;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
-class ActionGroup extends ViewComponent implements HasLivewire, HasRecord
+class ActionGroup extends ViewComponent implements Arrayable, HasLivewire, HasRecord
 {
     use Concerns\BelongsToGroup;
     use Concerns\BelongsToTable;
     use Concerns\CanBeHidden {
         isHidden as baseIsHidden;
-        InteractsWithRecord::parseAuthorizationArguments insteadof Concerns\CanBeHidden;
     }
     use Concerns\CanBeLabeledFrom;
     use Concerns\CanBeOutlined;
@@ -33,7 +34,7 @@ class ActionGroup extends ViewComponent implements HasLivewire, HasRecord
     use HasColor;
     use HasExtraAttributes;
     use HasIcon {
-        getIcon as getBaseIcon;
+        HasIcon::getIcon as getBaseIcon;
     }
     use InteractsWithRecord;
 
@@ -48,12 +49,12 @@ class ActionGroup extends ViewComponent implements HasLivewire, HasRecord
     public const LINK_VIEW = 'filament-actions::link-group';
 
     /**
-     * @var array<StaticAction | ActionGroup>
+     * @var array<Action | ActionGroup>
      */
     protected array $actions;
 
     /**
-     * @var array<string, StaticAction>
+     * @var array<string, Action>
      */
     protected array $flatActions;
 
@@ -64,7 +65,7 @@ class ActionGroup extends ViewComponent implements HasLivewire, HasRecord
     protected string $viewIdentifier = 'group';
 
     /**
-     * @param  array<StaticAction | ActionGroup>  $actions
+     * @param  array<Action | ActionGroup>  $actions
      */
     public function __construct(array $actions)
     {
@@ -72,7 +73,7 @@ class ActionGroup extends ViewComponent implements HasLivewire, HasRecord
     }
 
     /**
-     * @param  array<StaticAction | ActionGroup>  $actions
+     * @param  array<Action | ActionGroup>  $actions
      */
     public static function make(array $actions): static
     {
@@ -90,7 +91,7 @@ class ActionGroup extends ViewComponent implements HasLivewire, HasRecord
     }
 
     /**
-     * @param  array<StaticAction | ActionGroup>  $actions
+     * @param  array<Action | ActionGroup>  $actions
      */
     public function actions(array $actions): static
     {
@@ -187,18 +188,18 @@ class ActionGroup extends ViewComponent implements HasLivewire, HasRecord
     }
 
     /**
-     * @return array<StaticAction | ActionGroup>
+     * @return array<Action | ActionGroup>
      */
     public function getActions(): array
     {
         return array_map(
-            fn (StaticAction | ActionGroup $action) => $action->defaultView($action::GROUPED_VIEW),
+            fn (Action | ActionGroup $action) => $action->defaultView($action::GROUPED_VIEW),
             $this->actions,
         );
     }
 
     /**
-     * @return array<string, StaticAction>
+     * @return array<string, Action>
      */
     public function getFlatActions(): array
     {
@@ -225,5 +226,80 @@ class ActionGroup extends ViewComponent implements HasLivewire, HasRecord
         }
 
         return true;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'actions' => collect($this->getActions())->toArray(),
+            'color' => $this->getColor(),
+            'dropdownMaxHeight' => $this->getDropdownMaxHeight(),
+            'dropdownOffset' => $this->getDropdownOffset(),
+            'dropdownPlacement' => $this->getDropdownPlacement(),
+            'dropdownWidth' => $this->getDropdownWidth(),
+            'extraAttributes' => $this->getExtraAttributes(),
+            'hasDropdown' => $this->hasDropdown(),
+            'icon' => $this->getIcon(),
+            'iconPosition' => $this->getIconPosition(),
+            'iconSize' => $this->getIconSize(),
+            'isOutlined' => $this->isOutlined(),
+            'label' => $this->getLabel(),
+            'size' => $this->getSize(),
+            'tooltip' => $this->getTooltip(),
+            'view' => $this->getView(),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public static function fromArray(array $data): static
+    {
+        $static = static::make(
+            array_map(
+                fn (array $action): Action | \Filament\Actions\ActionGroup => match (array_key_exists('actions', $action)) {
+                    true => ActionGroup::fromArray($action),
+                    false => Action::fromArray($action),
+                },
+                $data['actions'] ?? [],
+            ),
+        );
+
+        $view = $data['view'] ?? null;
+
+        if (filled($view) && ($static->getView() !== $view) && static::isViewSafe($view)) {
+            $static->view($view);
+        }
+
+        if (filled($size = $data['size'] ?? null)) {
+            $static->size($size);
+        }
+
+        $static->color($data['color'] ?? null);
+        $static->dropdown($data['hasDropdown'] ?? false);
+        $static->dropdownMaxHeight($data['dropdownMaxHeight'] ?? null);
+        $static->dropdownOffset($data['dropdownOffset'] ?? null);
+        $static->dropdownPlacement($data['dropdownPlacement'] ?? null);
+        $static->dropdownWidth($data['dropdownWidth'] ?? null);
+        $static->extraAttributes($data['extraAttributes'] ?? []);
+        $static->icon($data['icon'] ?? null);
+        $static->iconPosition($data['iconPosition'] ?? null);
+        $static->iconSize($data['iconSize'] ?? null);
+        $static->label($data['label'] ?? null);
+        $static->outlined($data['isOutlined'] ?? null);
+        $static->tooltip($data['tooltip'] ?? null);
+
+        return $static;
+    }
+
+    /**
+     * @param  view-string  $view
+     */
+    protected static function isViewSafe(string $view): bool
+    {
+        return Str::startsWith($view, 'filament-actions::');
     }
 }

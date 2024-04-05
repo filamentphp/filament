@@ -263,21 +263,6 @@ trait InteractsWithRecord
         return $this->evaluate($this->pluralModelLabel);
     }
 
-    /**
-     * @param  array<mixed>  $arguments
-     * @return array<mixed>
-     */
-    protected function parseAuthorizationArguments(array $arguments): array
-    {
-        if ($record = $this->getRecord()) {
-            array_unshift($arguments, $record);
-        } elseif ($model = $this->getModel()) {
-            array_unshift($arguments, $model);
-        }
-
-        return $arguments;
-    }
-
     public function getRecords(): EloquentCollection | Collection | null
     {
         return $this->records = $this->evaluate($this->records);

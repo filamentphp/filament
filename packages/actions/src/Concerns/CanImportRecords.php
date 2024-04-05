@@ -4,6 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\Action as NotificationAction;
 use Filament\Actions\Action as TableAction;
 use Filament\Actions\ImportAction;
 use Filament\Actions\ImportAction as ImportTableAction;
@@ -13,7 +14,6 @@ use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
-use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Schema\Components\Fieldset;
 use Filament\Schema\Components\Utilities\Get;

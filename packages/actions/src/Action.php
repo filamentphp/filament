@@ -7,38 +7,104 @@ use Filament\Actions\Contracts\HasLivewire;
 use Filament\Notifications\Notification;
 use Filament\Schema\Components\Actions\ActionContainer;
 use Filament\Schema\Components\Actions\ActionContainer as InfolistActionContainer;
+use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasBadge;
+use Filament\Support\Concerns\HasColor;
+use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
+use Illuminate\Support\Str;
 
-class Action extends StaticAction implements Contracts\HasRecord, HasLivewire
+class Action extends ViewComponent implements Arrayable, Contracts\HasRecord, HasLivewire
 {
+    use Concerns\BelongsToGroup;
     use Concerns\BelongsToLivewire;
     use Concerns\BelongsToSchemaComponent;
     use Concerns\BelongsToTable;
     use Concerns\CanAccessSelectedRecords;
+    use Concerns\CanBeDisabled;
+    use Concerns\CanBeHidden;
+    use Concerns\CanBeLabeledFrom;
     use Concerns\CanBeMounted;
+    use Concerns\CanBeOutlined;
+    use Concerns\CanCallParentAction;
+    use Concerns\CanClose;
     use Concerns\CanDeselectRecordsAfterCompletion;
+    use Concerns\CanDispatchEvent;
     use Concerns\CanFetchSelectedRecords;
     use Concerns\CanNotify;
     use Concerns\CanOpenModal;
+    use Concerns\CanOpenUrl;
     use Concerns\CanRedirect;
     use Concerns\CanRequireConfirmation;
     use Concerns\CanSubmitForm;
+    use Concerns\CanSubmitForm;
     use Concerns\CanUseDatabaseTransactions;
+    use Concerns\HasAction;
+    use Concerns\HasArguments;
     use Concerns\HasForm;
+    use Concerns\HasGroupedIcon;
     use Concerns\HasInfolist;
+    use Concerns\HasKeyBindings;
+    use Concerns\HasLabel;
     use Concerns\HasLifecycleHooks;
     use Concerns\HasMountableArguments;
+    use Concerns\HasName;
     use Concerns\HasParentActions;
     use Concerns\HasSchema;
+    use Concerns\HasSize;
+    use Concerns\HasTooltip;
     use Concerns\HasWizard;
     use Concerns\InteractsWithRecord;
+    use HasBadge;
+    use HasColor;
+    use HasExtraAttributes;
+    use HasIcon;
 
     protected bool | Closure $isBulk = false;
+
+    public const BADGE_VIEW = 'filament-actions::badge-action';
+
+    public const BUTTON_VIEW = 'filament-actions::button-action';
+
+    public const GROUPED_VIEW = 'filament-actions::grouped-action';
+
+    public const ICON_BUTTON_VIEW = 'filament-actions::icon-button-action';
+
+    public const LINK_VIEW = 'filament-actions::link-action';
+
+    protected string $evaluationIdentifier = 'action';
+
+    protected string $viewIdentifier = 'action';
+
+    protected ?string $livewireTarget = null;
+
+    protected string | Closure | null $alpineClickHandler = null;
+
+    protected bool | Closure $shouldMarkAsRead = false;
+
+    protected bool | Closure $shouldMarkAsUnread = false;
+
+    final public function __construct(?string $name)
+    {
+        $this->name($name);
+    }
+
+    public static function make(?string $name = null): static
+    {
+        $static = app(static::class, [
+            'name' => $name ?? static::getDefaultName(),
+        ]);
+        $static->configure();
+
+        return $static;
+    }
 
     protected function setUp(): void
     {
@@ -50,9 +116,142 @@ class Action extends StaticAction implements Contracts\HasRecord, HasLivewire
         $this->successNotification(fn (Notification $notification): Notification => $notification);
     }
 
-    public function getLivewireCallMountedActionName(): string
+    public function markAsRead(bool | Closure $condition = true): static
     {
-        return 'callMountedAction';
+        $this->shouldMarkAsRead = $condition;
+
+        return $this;
+    }
+
+    public function markAsUnread(bool | Closure $condition = true): static
+    {
+        $this->shouldMarkAsUnread = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->getName(),
+            'color' => $this->getColor(),
+            'event' => $this->getEvent(),
+            'eventData' => $this->getEventData(),
+            'dispatchDirection' => $this->getDispatchDirection(),
+            'dispatchToComponent' => $this->getDispatchToComponent(),
+            'extraAttributes' => $this->getExtraAttributes(),
+            'icon' => $this->getIcon(),
+            'iconPosition' => $this->getIconPosition(),
+            'iconSize' => $this->getIconSize(),
+            'isOutlined' => $this->isOutlined(),
+            'isDisabled' => $this->isDisabled(),
+            'label' => $this->getLabel(),
+            'shouldClose' => $this->shouldClose(),
+            'shouldMarkAsRead' => $this->shouldMarkAsRead(),
+            'shouldMarkAsUnread' => $this->shouldMarkAsUnread(),
+            'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
+            'size' => $this->getSize(),
+            'tooltip' => $this->getTooltip(),
+            'url' => $this->getUrl(),
+            'view' => $this->getView(),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public static function fromArray(array $data): static
+    {
+        $static = static::make($data['name']);
+
+        $view = $data['view'] ?? null;
+
+        if (filled($view) && ($static->getView() !== $view) && static::isViewSafe($view)) {
+            $static->view($view);
+        }
+
+        if (filled($size = $data['size'] ?? null)) {
+            $static->size($size);
+        }
+
+        $static->close($data['shouldClose'] ?? false);
+        $static->color($data['color'] ?? null);
+        $static->disabled($data['isDisabled'] ?? false);
+
+        match ($data['dispatchDirection'] ?? null) {
+            'self' => $static->dispatchSelf($data['event'] ?? null, $data['eventData'] ?? []),
+            'to' => $static->dispatchTo($data['dispatchToComponent'] ?? null, $data['event'] ?? null, $data['eventData'] ?? []),
+            default => $static->dispatch($data['event'] ?? null, $data['eventData'] ?? [])
+        };
+
+        $static->extraAttributes($data['extraAttributes'] ?? []);
+        $static->icon($data['icon'] ?? null);
+        $static->iconPosition($data['iconPosition'] ?? null);
+        $static->iconSize($data['iconSize'] ?? null);
+        $static->label($data['label'] ?? null);
+        $static->markAsRead($data['shouldMarkAsRead'] ?? false);
+        $static->markAsUnread($data['shouldMarkAsUnread'] ?? false);
+        $static->outlined($data['isOutlined'] ?? false);
+        $static->url($data['url'] ?? null, $data['shouldOpenUrlInNewTab'] ?? false);
+        $static->tooltip($data['tooltip'] ?? null);
+
+        return $static;
+    }
+
+    public function isBadge(): bool
+    {
+        return $this->getView() === static::BADGE_VIEW;
+    }
+
+    public function button(): static
+    {
+        return $this->view(static::BUTTON_VIEW);
+    }
+
+    public function isButton(): bool
+    {
+        return $this->getView() === static::BUTTON_VIEW;
+    }
+
+    public function grouped(): static
+    {
+        return $this->view(static::GROUPED_VIEW);
+    }
+
+    public function iconButton(): static
+    {
+        return $this->view(static::ICON_BUTTON_VIEW);
+    }
+
+    public function isIconButton(): bool
+    {
+        return $this->getView() === static::ICON_BUTTON_VIEW;
+    }
+
+    public function link(): static
+    {
+        return $this->view(static::LINK_VIEW);
+    }
+
+    public function isLink(): bool
+    {
+        return $this->getView() === static::LINK_VIEW;
+    }
+
+    public function alpineClickHandler(string | Closure | null $handler): static
+    {
+        $this->alpineClickHandler = $handler;
+        $this->livewireClickHandlerEnabled(blank($handler));
+
+        return $this;
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return null;
     }
 
     public function getLivewireClickHandler(): ?string
@@ -69,11 +268,108 @@ class Action extends StaticAction implements Contracts\HasRecord, HasLivewire
             return $event;
         }
 
+        if (filled($handler = $this->getParentActionCallLivewireClickHandler())) {
+            $handler .= '(';
+            $handler .= Js::from($this->getArguments());
+            $handler .= ')';
+
+            return $handler;
+        }
+
         if ($this->canAccessSelectedRecords()) {
             return null;
         }
 
         return $this->getJavaScriptClickHandler();
+    }
+
+    public function getLivewireEventClickHandler(): ?string
+    {
+        $event = $this->getEvent();
+
+        if (blank($event)) {
+            return null;
+        }
+
+        $arguments = '';
+
+        if ($component = $this->getDispatchToComponent()) {
+            $arguments .= Js::from($component)->toHtml();
+            $arguments .= ', ';
+        }
+
+        $arguments .= Js::from($event)->toHtml();
+
+        if ($this->getEventData()) {
+            $arguments .= ', ';
+            $arguments .= Js::from($this->getEventData())->toHtml();
+        }
+
+        return match ($this->getDispatchDirection()) {
+            'self' => "\$dispatchSelf($arguments)",
+            'to' => "\$dispatchTo($arguments)",
+            default => "\$dispatch($arguments)"
+        };
+    }
+
+    public function getAlpineClickHandler(): ?string
+    {
+        if (filled($handler = $this->evaluate($this->alpineClickHandler))) {
+            return $handler;
+        }
+
+        if ($this->shouldClose()) {
+            return 'close()';
+        }
+
+        if ($this->shouldMarkAsRead()) {
+            return 'markAsRead()';
+        }
+
+        if ($this->shouldMarkAsUnread()) {
+            return 'markAsUnread()';
+        }
+
+        if (! $this->canAccessSelectedRecords()) {
+            return null;
+        }
+
+        return $this->getJavaScriptClickHandler();
+    }
+
+    public function livewireTarget(?string $target): static
+    {
+        $this->livewireTarget = $target;
+
+        return $this;
+    }
+
+    public function getLivewireTarget(): ?string
+    {
+        if (filled($this->livewireTarget)) {
+            return $this->livewireTarget;
+        }
+
+        if (! $this->canAccessSelectedRecords()) {
+            return null;
+        }
+
+        return $this->getJavaScriptClickHandler();
+    }
+
+    /**
+     * @deprecated Use `extraAttributes()` instead.
+     *
+     * @param  array<mixed>  $attributes
+     */
+    public function withAttributes(array $attributes): static
+    {
+        return $this->extraAttributes($attributes);
+    }
+
+    public function getLivewireCallMountedActionName(): string
+    {
+        return 'callMountedAction';
     }
 
     protected function getJavaScriptClickHandler(): string
@@ -117,32 +413,6 @@ class Action extends StaticAction implements Contracts\HasRecord, HasLivewire
         }
 
         return "mountAction('{$this->getName()}'{$argumentsParameter}{$contextParameter})";
-    }
-
-    public function getAlpineClickHandler(): ?string
-    {
-        if (filled($handler = parent::getAlpineClickHandler())) {
-            return $handler;
-        }
-
-        if (! $this->canAccessSelectedRecords()) {
-            return null;
-        }
-
-        return $this->getJavaScriptClickHandler();
-    }
-
-    public function getLivewireTarget(): ?string
-    {
-        if (filled($target = parent::getLivewireTarget())) {
-            return $target;
-        }
-
-        if (! $this->canAccessSelectedRecords()) {
-            return null;
-        }
-
-        return $this->getJavaScriptClickHandler();
     }
 
     /**
@@ -269,5 +539,23 @@ class Action extends StaticAction implements Contracts\HasRecord, HasLivewire
     public function isBulk(): bool
     {
         return (bool) $this->evaluate($this->isBulk);
+    }
+
+    /**
+     * @param  view-string  $view
+     */
+    protected static function isViewSafe(string $view): bool
+    {
+        return Str::startsWith($view, 'filament-actions::');
+    }
+
+    public function shouldMarkAsRead(): bool
+    {
+        return (bool) $this->evaluate($this->shouldMarkAsRead);
+    }
+
+    public function shouldMarkAsUnread(): bool
+    {
+        return (bool) $this->evaluate($this->shouldMarkAsUnread);
     }
 }

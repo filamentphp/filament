@@ -3,9 +3,9 @@
 namespace Filament\Resources;
 
 use Exception;
+use Filament\Actions\Action;
 use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
-use Filament\GlobalSearch\Actions\Action;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;

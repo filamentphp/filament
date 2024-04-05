@@ -166,7 +166,7 @@ EditAction::make()
 At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire saving process:
 
 ```php
-use App\Models\Post;use Filament\Actions\EditAction;use Filament\Notifications\Actions\Action;use Filament\Notifications\Notification;
+use App\Models\Post;use Filament\Actions\Action;use Filament\Actions\EditAction;use Filament\Notifications\Notification;
 
 EditAction::make()
     ->before(function (EditAction $action, Post $record) {

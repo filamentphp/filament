@@ -211,8 +211,7 @@ The `$operation` helper is available, to ensure that the action is only visible 
 At any time, you may call `$this->halt()` from inside a lifecycle hook or mutation method, which will halt the entire saving process:
 
 ```php
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
+use Filament\Actions\Action;use Filament\Notifications\Notification;
 
 protected function beforeSave(): void
 {

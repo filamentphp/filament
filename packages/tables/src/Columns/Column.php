@@ -13,7 +13,6 @@ use Filament\Support\Concerns\HasPlaceholder;
 use Filament\Support\Concerns\HasVerticalAlignment;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Traits\Conditionable;
 
 class Column extends ViewComponent
 {
@@ -42,7 +41,6 @@ class Column extends ViewComponent
     use Concerns\HasTooltip;
     use Concerns\HasWidth;
     use Concerns\InteractsWithTableQuery;
-    use Conditionable;
     use HasAlignment;
     use HasCellState;
     use HasExtraAttributes;
