@@ -128,6 +128,17 @@ Action::make('edit')
 
 <AutoScreenshot name="actions/trigger-button/icon-after" alt="Trigger with icon after the label" version="3.x" />
 
+## Setting a URL target
+
+You may optionally set a custom URL target, which can be useful if you are previewing content in a different tab & prevents opening multiple tabs.
+
+```php
+Action::make('View Post')
+    ->url(fn (): string => route('posts.view', ['post' => $this->post]))
+    ->setUrlTarget(fn () => 'post-' . $this->post->getKey())
+    ->icon('heroicon-m-newspaper')
+```
+
 ## Authorization
 
 You may conditionally show or hide actions for certain users. To do this, you can use either the `visible()` or `hidden()` methods:

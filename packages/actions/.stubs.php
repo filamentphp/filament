@@ -43,6 +43,8 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertActionShouldOpenUrlInNewTab(string | array $name): static {}
 
+        public function assertActionHasUrlTarget(string | array $name, string $target): static {}
+
         public function assertActionShouldNotOpenUrlInNewTab(string | array $name): static {}
 
         public function assertActionDoesNotHaveLabel(string | array $name, string $label): static {}

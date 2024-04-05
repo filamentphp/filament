@@ -133,6 +133,11 @@ it('can open a URL in a new tab', function () {
         ->assertActionShouldNotOpenUrlInNewTab('urlNotInNewTab');
 });
 
+it('can have a URL target', function () {
+    livewire(Actions::class)
+        ->assertActionHasUrlTarget('urlTarget', 'foo');
+});
+
 it('can state whether a page action exists', function () {
     livewire(Actions::class)
         ->assertActionExists('exists')

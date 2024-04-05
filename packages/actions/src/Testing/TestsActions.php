@@ -515,6 +515,30 @@ class TestsActions
         };
     }
 
+    public function assertActionHasUrlTarget(): Closure
+    {
+        return function (string | array $name, string $url, $record = null): static {
+            /** @var array<string> $name */
+            /** @phpstan-ignore-next-line */
+            $name = $this->parseNestedActionName($name);
+
+            /** @phpstan-ignore-next-line */
+            $this->assertActionExists($name);
+
+            $action = $this->instance()->getAction($name);
+
+            $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
+
+            Assert::assertTrue(
+                $action->getUrlTarget() === 'foo',
+                message: "Failed asserting that an action with name [{$prettyName}] has URL target [{$url}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function assertActionMounted(): Closure
     {
         return function (string | array $name): static {

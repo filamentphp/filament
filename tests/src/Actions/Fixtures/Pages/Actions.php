@@ -65,6 +65,8 @@ class Actions extends Page
                 ->url('https://filamentphp.com', true),
             Action::make('urlNotInNewTab')
                 ->url('https://filamentphp.com', false),
+            Action::make('urlTarget')
+                ->setUrlTarget('foo'),
             Action::make('shows-notification')
                 ->action(function () {
                     Notification::make()

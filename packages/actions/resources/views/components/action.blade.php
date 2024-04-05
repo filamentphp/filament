@@ -6,6 +6,7 @@
 
 @php
     $isDisabled = $action->isDisabled();
+    $target = $action->shouldOpenUrlInNewTab() ? '_blank' : $action->getUrlTarget();
     $url = $action->getUrl();
 @endphp
 
@@ -21,7 +22,7 @@
     :key-bindings="$action->getKeyBindings()"
     :label-sr-only="$action->isLabelHidden()"
     :tag="$url ? 'a' : 'button'"
-    :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
+    :target="($url && $target) ? $target : null"
     :tooltip="$action->getTooltip()"
     :type="$action->canSubmitForm() ? 'submit' : 'button'"
     :wire:click="$action->getLivewireClickHandler()"
