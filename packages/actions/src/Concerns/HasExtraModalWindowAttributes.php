@@ -22,11 +22,12 @@ trait HasExtraModalWindowAttributes
         return $this;
     }
 
-    /**
-     * @return array<mixed>
-     */
-    public function getExtraModalWindowAttributes(): array
+    public function getExtraModalWindowAttributesBag(): ComponentAttributeBag
     {
-        return $this->evaluate($this->extraModalWindowAttributes);
+        $temporaryAttributeBag = new ComponentAttributeBag();
+
+        $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($this->extraModalWindowAttributes));
+
+        return $temporaryAttributeBag;
     }
 }
