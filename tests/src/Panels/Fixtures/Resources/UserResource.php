@@ -2,6 +2,9 @@
 
 namespace Filament\Tests\Panels\Fixtures\Resources;
 
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schema\ComponentContainer;
@@ -55,11 +58,11 @@ class UserResource extends Resource
                     ->label('Posts Rating Sum'),
             ])
             ->actions([
-                \Filament\Actions\ViewAction::make(),
-                \Filament\Actions\EditAction::make(),
+                ViewAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                \Filament\Actions\DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
             ]);
     }
 
