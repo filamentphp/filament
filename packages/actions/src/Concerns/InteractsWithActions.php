@@ -100,8 +100,6 @@ trait InteractsWithActions
             }
         }
 
-        $this->cacheMountedActionSchema(mountedAction: $action);
-
         try {
             $hasSchema = $this->mountedActionHasSchema(mountedAction: $action);
 
@@ -260,22 +258,6 @@ trait InteractsWithActions
         $this->mountAction($name, $arguments, $context);
     }
 
-    protected function cacheMountedActionSchema(?Action $mountedAction = null): void
-    {
-        $this->cacheSchema(
-            'mountedActionSchema' . array_key_last($this->mountedActions),
-            fn () => $this->getMountedActionSchema(mountedAction: $mountedAction),
-        );
-    }
-
-    /**
-     * @deprecated Use `cacheMountedActionSchema()` instead.
-     */
-    protected function cacheMountedActionForm(?Action $mountedAction = null): void
-    {
-        $this->cacheMountedActionSchema($mountedAction);
-    }
-
     public function cacheAction(Action $action): Action
     {
         $action->livewire($this);
@@ -369,16 +351,7 @@ trait InteractsWithActions
      */
     protected function cacheMountedActions(array $mountedActions): array
     {
-        $this->cachedMountedActions = $this->resolveActions($mountedActions);
-
-        foreach ($this->cachedMountedActions as $actionNestingIndex => $action) {
-            $this->cacheSchema(
-                "mountedActionSchema{$actionNestingIndex}",
-                $this->getMountedActionSchema($actionNestingIndex, $action),
-            );
-        }
-
-        return $this->cachedMountedActions;
+        return $this->cachedMountedActions = $this->resolveActions($mountedActions);
     }
 
     /**
@@ -389,24 +362,23 @@ trait InteractsWithActions
     {
         $resolvedActions = [];
 
-        foreach ($actions as $action) {
+        foreach ($actions as $actionNestingIndex => $action) {
             if (blank($action['name'] ?? null)) {
                 throw new ActionNotResolvableException('An action tried to resolve without a name.');
             }
 
             if (filled($action['context']['schemaComponent'] ?? null)) {
                 $resolvedActions[] = $this->resolveSchemaComponentAction($action, $resolvedActions);
-
-                continue;
-            }
-
-            if ($this instanceof HasTable && filled($action['context']['table'] ?? null)) {
+            } elseif ($this instanceof HasTable && filled($action['context']['table'] ?? null)) {
                 $resolvedActions[] = $this->resolveTableAction($action, $resolvedActions);
-
-                continue;
+            } else {
+                $resolvedActions[] = $this->resolveAction($action, $resolvedActions);
             }
 
-            $resolvedActions[] = $this->resolveAction($action, $resolvedActions);
+            $this->cacheSchema(
+                "mountedActionSchema{$actionNestingIndex}",
+                $this->getMountedActionSchema($actionNestingIndex, Arr::last($resolvedActions)),
+            );
         }
 
         return $resolvedActions;
@@ -482,8 +454,8 @@ trait InteractsWithActions
         if (filled($action['context']['recordKey'] ?? null)) {
             $resolvedAction->record($this->getTableRecord($action['context']['recordKey']));
 
-            if (($actionGroup = $resolvedAction->getGroup()) instanceof HasRecord) {
-                $actionGroup->record($resolvedAction->getRecord());
+            if (($resolvedActionGroup = $resolvedAction->getGroup()) instanceof HasRecord) {
+                $resolvedActionGroup->record($resolvedAction->getRecord());
             }
         }
 

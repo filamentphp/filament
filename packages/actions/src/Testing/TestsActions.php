@@ -640,7 +640,8 @@ class TestsActions
 
                 if (
                     ($actionNestingIndex > 0) &&
-                    filled($schemaComponent = $action['context']['schemaComponent'] ?? null)
+                    filled($schemaComponent = $action['context']['schemaComponent'] ?? null) &&
+                    (! str($schemaComponent)->startsWith('mountedActionSchema' . ($actionNestingIndex - 1) . '.'))
                 ) {
                     $action['context']['schemaComponent'] = 'mountedActionSchema' . ($actionNestingIndex - 1) . ".{$schemaComponent}";
                 }

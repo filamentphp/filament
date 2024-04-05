@@ -93,6 +93,23 @@ it('can mount a nested action with nested arguments', function () {
         ]);
 });
 
+it('can call a nested action registered on a schema component', function () {
+    livewire(Actions::class)
+        ->callAction([
+            'parent',
+            TestAction::make('nested')->schemaComponent('foo'),
+        ], [
+            'bar' => Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('parent-called', foo: $foo);
+});
+
 it('can call an action with arguments', function () {
     livewire(Actions::class)
         ->callAction('arguments', arguments: [

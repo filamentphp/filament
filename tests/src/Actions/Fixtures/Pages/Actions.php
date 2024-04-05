@@ -39,6 +39,22 @@ class Actions extends Page
                             $this->dispatch('nested-called', arguments: $arguments);
                         }),
                 ]),
+            Action::make('parent')
+                ->schema([
+                    TextInput::make('foo')
+                        ->required()
+                        ->hintAction(
+                            Action::make('nested')
+                                ->schema([
+                                    TextInput::make('bar')
+                                        ->required(),
+                                ])
+                                ->action(fn () => null),
+                        ),
+                ])
+                ->action(function (array $data) {
+                    $this->dispatch('parent-called', foo: $data['foo']);
+                }),
             Action::make('halt')
                 ->requiresConfirmation()
                 ->action(function (Action $action) {
