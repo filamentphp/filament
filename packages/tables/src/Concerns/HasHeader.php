@@ -1,49 +1,84 @@
 <?php
 
-namespace Filament\Tables\Concerns;
+namespace Filament\Tables\Table\Concerns;
 
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\BulkAction;
-use Illuminate\Contracts\Support\Htmlable;
+use Closure;
 use Illuminate\Contracts\View\View;
+use Filament\Support\Enums\IconSize;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Support\Concerns\HasIconColor;
 
-/**
- * @deprecated Override the `table()` method to configure the table.
- */
 trait HasHeader
 {
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected function getTableDescription(): string | Htmlable | null
+    use HasIconColor;
+
+    protected string | Closure | null $icon = null;
+
+    protected IconSize | string | Closure | null $iconSize = null;
+    
+    protected string | Htmlable | Closure | null $heading = null;
+
+    protected View | Htmlable | Closure | null $header = null;
+
+    protected string | Htmlable | Closure | null $description = null;
+
+    public function icon(string | Closure | null $icon): static
     {
-        return null;
+        $this->icon = $icon;
+
+        return $this;
     }
 
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected function getTableHeader(): View | Htmlable | null
+    public function iconSize(IconSize | string | Closure | null $size): static
     {
-        return null;
+        $this->iconSize = $size;
+
+        return $this;
     }
 
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     *
-     * @return array<Action | BulkAction | ActionGroup>
-     */
-    protected function getTableHeaderActions(): array
+    public function description(string | Htmlable | Closure | null $description): static
     {
-        return [];
+        $this->description = $description;
+
+        return $this;
     }
 
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected function getTableHeading(): string | Htmlable | null
+    public function header(View | Htmlable | Closure | null $header): static
     {
-        return null;
+        $this->header = $header;
+
+        return $this;
+    }
+
+    public function heading(string | Htmlable | Closure | null $heading): static
+    {
+        $this->heading = $heading;
+
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->evaluate($this->icon);
+    }
+
+    public function getIconSize(): IconSize | string | null
+    {
+        return $this->evaluate($this->iconSize);
+    }
+
+    public function getHeader(): View | Htmlable | null
+    {
+        return $this->evaluate($this->header);
+    }
+
+    public function getHeading(): string | Htmlable | null
+    {
+        return $this->evaluate($this->heading);
+    }
+
+    public function getDescription(): string | Htmlable | null
+    {
+        return $this->evaluate($this->description);
     }
 }

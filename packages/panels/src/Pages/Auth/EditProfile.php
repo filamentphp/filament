@@ -196,7 +196,17 @@ class EditProfile extends Page
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
+        $oldEmail = auth()->user()->email;
+
         $record->update($data);
+
+        if ($oldEmail != $user->email) {
+            $record->update([
+                'email_verified_at' => null,
+            ]);
+
+            $this->sendEmailVerificationNotification($record);
+        }
 
         return $record;
     }
