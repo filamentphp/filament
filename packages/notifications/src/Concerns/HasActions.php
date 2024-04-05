@@ -32,7 +32,7 @@ trait HasActions
     {
         return array_map(
             fn (Action $action) => $action
-                ->defaultView(\Filament\Actions\Action::LINK_VIEW)
+                ->defaultView(Action::LINK_VIEW)
                 ->defaultSize(ActionSize::Small),
             Arr::wrap($this->evaluate($this->actions)),
         );
