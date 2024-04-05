@@ -5,9 +5,14 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Filament\Support\Concerns\HasIcon;
+use Filament\Support\Concerns\HasIconColor;
 
 trait HasHeader
 {
+    use HasIcon;
+    use HasIconColor;
+    
     protected string | Htmlable | Closure | null $heading = null;
 
     protected View | Htmlable | Closure | null $header = null;
