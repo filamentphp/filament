@@ -10,7 +10,7 @@ trait HasExtraModalWindowAttributes
     /**
      * @var array<mixed> | Closure>
      */
-    protected array $extraModalWindowAttributes = [];
+    protected array | Closure $extraModalWindowAttributes = [];
 
     /**
      * @param  array<mixed> | Closure  $attributes
