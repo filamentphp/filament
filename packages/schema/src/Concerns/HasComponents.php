@@ -144,9 +144,9 @@ trait HasComponents
             return $components;
         }
 
-        return array_filter(
-            $components,
-            fn (Component $component) => $component->isVisible(),
-        );
+        return collect($components)
+            ->filter(fn (Component $component) => $component->isVisible())
+            ->values()
+            ->all();
     }
 }
