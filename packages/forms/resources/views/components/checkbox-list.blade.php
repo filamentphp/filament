@@ -196,7 +196,7 @@
 
                         <div class="grid text-sm leading-6">
                             <span
-                                class="fi-fo-checkbox-list-option-label font-medium text-gray-950 dark:text-white"
+                                class="fi-fo-checkbox-list-option-label overflow-hidden break-words font-medium text-gray-950 dark:text-white"
                             >
                                 {{ $label }}
                             </span>

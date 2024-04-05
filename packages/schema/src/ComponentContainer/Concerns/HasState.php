@@ -2,6 +2,7 @@
 
 namespace Filament\Schema\ComponentContainer\Concerns;
 
+use Closure;
 use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -267,9 +268,11 @@ trait HasState
     /**
      * @return array<string, mixed>
      */
-    public function getState(bool $shouldCallHooksBefore = true): array
+    public function getState(bool $shouldCallHooksBefore = true, ?Closure $afterValidate = null): array
     {
         $state = $this->validate();
+
+        value($afterValidate);
 
         if ($shouldCallHooksBefore) {
             $this->callBeforeStateDehydrated();
