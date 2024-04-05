@@ -121,7 +121,7 @@ trait CanExportRecords
                 ]) ?? $query;
             }
 
-            $records = $action instanceof ExportBulkAction ? $action->getRecords() : null;
+            $records = $action instanceof ExportBulkAction ? $action->getSelectedRecords() : null;
 
             $totalRows = $records ? $records->count() : $query->count();
             $maxRows = $action->getMaxRows() ?? $totalRows;
@@ -204,7 +204,7 @@ trait CanExportRecords
                     columnMap: $columnMap,
                     options: $options,
                     chunkSize: $action->getChunkSize(),
-                    records: $action instanceof ExportBulkAction ? $action->getRecords()->all() : null,
+                    records: $action instanceof ExportBulkAction ? $action->getSelectedRecords()->all() : null,
                 )])
                     ->when(
                         filled($jobQueue),

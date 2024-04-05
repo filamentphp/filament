@@ -4,9 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Exception;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 use function Filament\Support\get_model_label;
@@ -14,15 +12,6 @@ use function Filament\Support\locale_has_pluralization;
 
 trait InteractsWithRecord
 {
-    protected EloquentCollection | Collection | Closure | null $records = null;
-
-    public function records(EloquentCollection | Collection | Closure | null $records): static
-    {
-        $this->records = $records;
-
-        return $this;
-    }
-
     protected Model | string | Closure | null $record = null;
 
     protected ?Closure $resolveRecordUsing = null;
@@ -254,10 +243,5 @@ trait InteractsWithRecord
     public function getCustomPluralModelLabel(): ?string
     {
         return $this->evaluate($this->pluralModelLabel);
-    }
-
-    public function getRecords(): EloquentCollection | Collection | null
-    {
-        return $this->records = $this->evaluate($this->records);
     }
 }

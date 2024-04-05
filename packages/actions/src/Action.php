@@ -43,7 +43,6 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\CanRedirect;
     use Concerns\CanRequireConfirmation;
     use Concerns\CanSubmitForm;
-    use Concerns\CanSubmitForm;
     use Concerns\CanUseDatabaseTransactions;
     use Concerns\HasAction;
     use Concerns\HasArguments;
@@ -421,16 +420,14 @@ class Action extends ViewComponent implements Arrayable
     {
         return match ($parameterName) {
             'arguments' => [$this->getArguments()],
-            'component' => [$this->getSchemaComponent()],
+            'component', 'schemaComponent' => [$this->getSchemaComponent()],
             'context', 'operation' => [$this->getSchemaComponent()->getContainer()->getOperation()],
             'data' => [$this->getFormData()],
             'get' => [$this->getSchemaComponent()->makeGetUtility()],
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel() ?? $this->getSchemaComponent()?->getModel()],
             'record' => [$this->getRecord() ?? $this->getSchemaComponent()?->getRecord()],
-            'records' => [$this->getRecords()],
-            'schemaComponent' => [$this->getSchemaComponent()],
-            'selectedRecords' => [$this->getSelectedRecords()],
+            'records', 'selectedRecords' => [$this->getSelectedRecords()],
             'set' => [$this->getSchemaComponent()->makeSetUtility()],
             'state' => [$this->getSchemaComponent()->getState()],
             'table' => [$this->getTable()],
@@ -446,7 +443,7 @@ class Action extends ViewComponent implements Arrayable
         $record = $this->getRecord() ?? $this->getSchemaComponent()?->getRecord();
 
         return match ($parameterType) {
-            EloquentCollection::class, Collection::class => [$this->getRecords()],
+            EloquentCollection::class, Collection::class => [$this->getSelectedRecords()],
             Model::class, $record ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
