@@ -32,7 +32,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ImportAction extends Action
+class ImportAction extends NotificationAction
 {
     /**
      * @var class-string<Importer>
@@ -290,7 +290,7 @@ class ImportAction extends Action
         });
 
         $this->registerModalActions([
-            Action::make('downloadExample')
+            NotificationAction::make('downloadExample')
                 ->label(__('filament-actions::import.modal.actions.download_example.label'))
                 ->link()
                 ->action(function (): StreamedResponse {
