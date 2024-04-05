@@ -19,6 +19,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Concerns\HasTabs;
 use Filament\Schema\ComponentContainer;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
@@ -121,7 +122,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->authorize($resource::canCreate())
             ->model($this->getModel())
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
-            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
+            ->schema(fn (ComponentContainer $schema): ComponentContainer => $this->form($schema->columns(2)));
 
         if (($action instanceof CreateAction) && static::getResource()::isScopedToTenant()) {
             $action->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null);
@@ -149,7 +150,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function configureDeleteAction(DeleteAction $action): void
     {
         $action
-            ->authorize(fn (Model $record): bool => static::getResource()::canDelete($record));
+            ->authorize(fn (Model $record): bool => static::getResource()::canDelete($record))
+            ->icon(FilamentIcon::resolve('actions::delete-action') ?? 'heroicon-m-trash');
     }
 
     protected function configureEditAction(EditAction $action): void
@@ -158,7 +160,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canEdit($record))
-            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
+            ->schema(fn (ComponentContainer $schema): ComponentContainer => $this->form($schema->columns(2)))
+            ->icon(FilamentIcon::resolve('actions::edit-action') ?? 'heroicon-m-pencil-square');
 
         if ($resource::hasPage('edit')) {
             $action->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]));
@@ -168,19 +171,22 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function configureForceDeleteAction(ForceDeleteAction $action): void
     {
         $action
-            ->authorize(fn (Model $record): bool => static::getResource()::canForceDelete($record));
+            ->authorize(fn (Model $record): bool => static::getResource()::canForceDelete($record))
+            ->icon(FilamentIcon::resolve('actions::force-delete-action') ?? 'heroicon-m-trash');
     }
 
     protected function configureReplicateAction(ReplicateAction $action): void
     {
         $action
-            ->authorize(fn (Model $record): bool => static::getResource()::canReplicate($record));
+            ->authorize(fn (Model $record): bool => static::getResource()::canReplicate($record))
+            ->icon(FilamentIcon::resolve('actions::replicate-action') ?? 'heroicon-m-square-2-stack');
     }
 
     protected function configureRestoreAction(RestoreAction $action): void
     {
         $action
-            ->authorize(fn (Model $record): bool => static::getResource()::canRestore($record));
+            ->authorize(fn (Model $record): bool => static::getResource()::canRestore($record))
+            ->icon(FilamentIcon::resolve('actions::restore-action') ?? 'heroicon-m-arrow-uturn-left');
     }
 
     protected function configureViewAction(ViewAction $action): void
@@ -189,8 +195,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canView($record))
-            ->infolist(fn (ComponentContainer $infolist): ComponentContainer => $this->infolist($infolist->columns(2)))
-            ->form(fn (ComponentContainer $form): ComponentContainer => $this->form($form->columns(2)));
+            ->icon(FilamentIcon::resolve('actions::view-action') ?? 'heroicon-m-eye')
+            ->schema(fn (ComponentContainer $schema): ComponentContainer => $this->infolist($this->form($schema->columns(2))));
 
         if ($resource::hasPage('view')) {
             $action->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]));
