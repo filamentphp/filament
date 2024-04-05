@@ -164,6 +164,7 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Infolists\\Components\\Concerns\\CanBeCompacted' => 'Filament\\Schema\\Components\\Concerns\\CanBeCompacted',
             'Filament\\Infolists\\Components\\Concerns\\HasFooterActions' => 'Filament\\Schema\\Components\\Concerns\\HasFooterActions',
             'Filament\\Infolists\\Components\\Concerns\\HasHeaderActions' => 'Filament\\Schema\\Components\\Concerns\\HasHeaderActions',
+            'Filament\\Actions\\MountableAction' => 'Filament\\Actions\\Action',
             'Filament\\Tables\\Actions\\Action' => 'Filament\\Actions\\Action',
             'Filament\\Tables\\Actions\\BulkAction' => 'Filament\\Actions\\BulkAction',
             'Filament\\Tables\\Actions\\AssociateAction' => 'Filament\\Actions\\AssociateAction',
