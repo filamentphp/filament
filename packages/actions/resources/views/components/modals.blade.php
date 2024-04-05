@@ -10,6 +10,7 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             :description="$action?->getModalDescription()"
             display-classes="block"
+            :extra-modal-window-attributes="$action?->getExtraModalWindowAttributes()"
             :footer-actions="$action?->getVisibleModalFooterActions()"
             :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
             :heading="$action?->getModalHeading()"
@@ -37,11 +38,6 @@
                 $wire.unmountAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
-            :attributes="
-                \Filament\Support\prepare_inherited_attributes(
-                    new \Illuminate\View\ComponentAttributeBag($action?->getExtraModalAttributes() ?? [])
-                )
-            "
         >
             @if ($action)
                 {{ $action->getModalContent() }}
@@ -74,6 +70,7 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             :description="$action?->getModalDescription()"
             display-classes="block"
+            :extra-modal-window-attributes="$action?->getExtraModalWindowAttributes()"
             :footer-actions="$action?->getVisibleModalFooterActions()"
             :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
             :heading="$action?->getModalHeading()"
@@ -101,11 +98,6 @@
                 $wire.unmountTableAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
-            :attributes="
-                \Filament\Support\prepare_inherited_attributes(
-                    new \Illuminate\View\ComponentAttributeBag($action?->getExtraModalAttributes() ?? [])
-                )
-            "
         >
             @if ($action)
                 {{ $action->getModalContent() }}
@@ -132,6 +124,7 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             :description="$action?->getModalDescription()"
             display-classes="block"
+            :extra-modal-window-attributes="$action?->getExtraModalWindowAttributes()"
             :footer-actions="$action?->getVisibleModalFooterActions()"
             :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
             :heading="$action?->getModalHeading()"
@@ -159,11 +152,6 @@
                 $wire.unmountTableBulkAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
-            :attributes="
-                \Filament\Support\prepare_inherited_attributes(
-                    new \Illuminate\View\ComponentAttributeBag($action?->getExtraModalAttributes() ?? [])
-                )
-            "
         >
             @if ($action)
                 {{ $action->getModalContent() }}
@@ -196,6 +184,7 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             :description="$action?->getModalDescription()"
             display-classes="block"
+            :extra-modal-window-attributes="$action?->getExtraModalWindowAttributes()"
             :footer-actions="$action?->getVisibleModalFooterActions()"
             :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
             :heading="$action?->getModalHeading()"
@@ -223,11 +212,6 @@
                 $wire.unmountInfolistAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
-            :attributes="
-                \Filament\Support\prepare_inherited_attributes(
-                    new \Illuminate\View\ComponentAttributeBag($action?->getExtraModalAttributes() ?? [])
-                )
-            "
         >
             @if ($action)
                 {{ $action->getModalContent() }}
@@ -260,6 +244,7 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             :description="$action?->getModalDescription()"
             display-classes="block"
+            :extra-modal-window-attributes="$action?->getExtraModalWindowAttributes()"
             :footer-actions="$action?->getVisibleModalFooterActions()"
             :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
             :heading="$action?->getModalHeading()"
@@ -278,11 +263,6 @@
                 if (mountedFormComponentActionShouldOpenModal) {
                     $wire.unmountFormComponentAction(false)
                 }
-            "
-            :attributes="
-                \Filament\Support\prepare_inherited_attributes(
-                    new \Illuminate\View\ComponentAttributeBag($action?->getExtraModalAttributes() ?? [])
-                )
             "
         >
             @if ($action)
