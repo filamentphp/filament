@@ -109,9 +109,9 @@ trait HasComponents
             return $components;
         }
 
-        return array_filter(
+        return array_values(array_filter(
             $components,
             fn (Component $component) => $component->isVisible(),
-        );
+        ));
     }
 }

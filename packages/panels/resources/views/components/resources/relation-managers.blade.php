@@ -3,6 +3,8 @@
     'activeManager',
     'content' => null,
     'contentTabLabel' => null,
+    'contentTabIcon' => null,
+    'contentTabPosition' => null,
     'managers',
     'ownerRecord',
     'pageClass',
@@ -26,7 +28,10 @@
                 $tabs = $managers;
 
                 if ($content) {
-                    $tabs = array_replace([null => null], $tabs);
+                    match ($contentTabPosition) {
+                        \Filament\Resources\Pages\ContentTabPosition::After => $tabs = array_merge($tabs, [null => null]),
+                        default => $tabs = array_replace([null => null], $tabs),
+                    };
                 }
             @endphp
 
@@ -48,8 +53,8 @@
                     :badge="filled($tabKey) ? ($isGroup ? $manager->getBadge() : $manager::getBadge($ownerRecord, $pageClass)) : null"
                     :badge-color="filled($tabKey) ? ($isGroup ? $manager->getBadgeColor() : $manager::getBadgeColor($ownerRecord, $pageClass)) : null"
                     :badge-tooltip="filled($tabKey) ? ($isGroup ? $manager->getBadgeTooltip() : $manager::getBadgeTooltip($ownerRecord, $pageClass)) : null"
-                    :icon="filled($tabKey) ? ($isGroup ? $manager->getIcon() : $manager::getIcon($ownerRecord, $pageClass)) : null"
-                    :icon-position="filled($tabKey) ? ($isGroup ? $manager->getIconPosition() : $manager::getIconPosition($ownerRecord, $pageClass)) : null"
+                    :icon="filled($tabKey) ? ($isGroup ? $manager->getIcon() : $manager::getIcon($ownerRecord, $pageClass)) : ($contentTabIcon ?? null)"
+                    :icon-position="filled($tabKey) ? ($isGroup ? $manager->getIconPosition() : $manager::getIconPosition($ownerRecord, $pageClass)) : ($contentTabIconPosition ?? null)"
                     :wire:click="'$set(\'activeRelationManager\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
                 >
                     @if (filled($tabKey))
@@ -88,7 +93,7 @@
 
                     @livewire(
                         $normalizedGroupedManagerClass,
-                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? [...$groupedManager->relationManager::getDefaultProperties(), ...$groupedManager->properties] : $groupedManager::getDefaultProperties())],
+                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? [...$groupedManager->relationManager::getDefaultProperties(), ...$groupedManager->getProperties()] : $groupedManager::getDefaultProperties())],
                         key("{$normalizedGroupedManagerClass}-{$groupedManagerKey}"),
                     )
                 @endforeach
@@ -100,7 +105,7 @@
 
                 @livewire(
                     $normalizedManagerClass,
-                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? [...$manager->relationManager::getDefaultProperties(), ...$manager->properties] : $manager::getDefaultProperties())],
+                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? [...$manager->relationManager::getDefaultProperties(), ...$manager->getProperties()] : $manager::getDefaultProperties())],
                     key($normalizedManagerClass),
                 )
             @endif

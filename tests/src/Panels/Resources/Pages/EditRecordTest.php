@@ -3,6 +3,7 @@
 use Filament\Actions\DeleteAction;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
+use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\EditPost;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Support\Str;
 
@@ -20,7 +21,7 @@ it('can render page', function () {
 it('can retrieve data', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\EditPost::class, [
+    livewire(EditPost::class, [
         'record' => $post->getKey(),
     ])
         ->assertFormSet([
@@ -36,7 +37,7 @@ it('can save', function () {
     $post = Post::factory()->create();
     $newData = Post::factory()->make();
 
-    livewire(PostResource\Pages\EditPost::class, [
+    livewire(EditPost::class, [
         'record' => $post->getKey(),
     ])
         ->fillForm([
@@ -59,7 +60,7 @@ it('can save', function () {
 it('can validate input', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\EditPost::class, [
+    livewire(EditPost::class, [
         'record' => $post->getKey(),
     ])
         ->fillForm([
@@ -72,7 +73,7 @@ it('can validate input', function () {
 it('can delete', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\EditPost::class, [
+    livewire(EditPost::class, [
         'record' => $post->getKey(),
     ])
         ->callAction(DeleteAction::class);
@@ -83,7 +84,7 @@ it('can delete', function () {
 it('can refresh data', function () {
     $post = Post::factory()->create();
 
-    $page = livewire(PostResource\Pages\EditPost::class, [
+    $page = livewire(EditPost::class, [
         'record' => $post->getKey(),
     ]);
 

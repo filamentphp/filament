@@ -10,7 +10,15 @@ class WidgetConfiguration
      */
     public function __construct(
         readonly public string $widget,
-        readonly public array $properties = [],
+        protected array $properties = [],
     ) {
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getProperties(): array
+    {
+        return $this->properties;
     }
 }

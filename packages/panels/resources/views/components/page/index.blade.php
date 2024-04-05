@@ -29,17 +29,28 @@
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
+            @php
+                $subheading = $this->getSubheading();
+            @endphp
+
             <x-filament-panels::header
                 :actions="$this->getCachedHeaderActions()"
                 :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
-                {{-- These are passed through in the bag otherwise Laravel converts View objects to strings prematurely. --}}
-                :attributes="
-                    new \Illuminate\View\ComponentAttributeBag([
-                        'heading' => $heading,
-                        'subheading' => $this->getSubheading(),
-                    ])
-                "
-            />
+                :heading="$heading"
+                :subheading="$subheading"
+            >
+                @if ($heading instanceof \Illuminate\Contracts\Support\Htmlable)
+                    <x-slot name="heading">
+                        {{ $heading }}
+                    </x-slot>
+                @endif
+
+                @if ($subheading instanceof \Illuminate\Contracts\Support\Htmlable)
+                    <x-slot name="subheading">
+                        {{ $subheading }}
+                    </x-slot>
+                @endif
+            </x-filament-panels::header>
         @endif
 
         <div

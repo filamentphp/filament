@@ -3,6 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Actions\Contracts\HasRecord;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -127,6 +128,10 @@ trait HasActions
 
         if (! $action) {
             return null;
+        }
+
+        if (($actionGroup = $action->getGroup()) instanceof HasRecord) {
+            $actionGroup->record($mountedRecord);
         }
 
         return $this->getMountableModalActionFromAction(

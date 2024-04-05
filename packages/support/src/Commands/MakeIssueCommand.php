@@ -4,7 +4,9 @@ namespace Filament\Support\Commands;
 
 use Composer\InstalledVersions;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Attribute\AsCommand;
 
+#[AsCommand(name: 'make:filament-issue')]
 class MakeIssueCommand extends Command
 {
     protected $signature = 'make:filament-issue';

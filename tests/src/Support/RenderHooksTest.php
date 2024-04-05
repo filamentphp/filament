@@ -2,6 +2,7 @@
 
 use Filament\Support\Facades\FilamentView;
 use Filament\Tests\TestCase;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 
@@ -18,7 +19,7 @@ test('render hooks can be registered', function () {
 });
 
 test('render hooks can render view files', function () {
-    FilamentView::registerRenderHook('view-foo', function (): Illuminate\Contracts\View\View {
+    FilamentView::registerRenderHook('view-foo', function (): View {
         return view('app.fixtures.pages.render-hooks.foo');
     });
 

@@ -40,6 +40,13 @@ class Average extends Summarizer
         return $this->selectedState[$this->getSelectAlias()];
     }
 
+    public function selectAlias(?string $alias): static
+    {
+        $this->selectAlias = $alias;
+
+        return $this;
+    }
+
     public function getSelectAlias(): string
     {
         return $this->selectAlias ??= Str::random();

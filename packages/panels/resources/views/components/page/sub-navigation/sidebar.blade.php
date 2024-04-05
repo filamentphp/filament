@@ -4,7 +4,7 @@
 
 <ul
     wire:ignore
-    {{ $attributes->class(['hidden w-72 flex-col gap-y-7 md:flex']) }}
+    {{ $attributes->class(['fi-page-sub-navigation-sidebar hidden w-72 flex-col gap-y-7 md:flex']) }}
 >
     @foreach ($navigation as $navigationGroup)
         <x-filament-panels::sidebar.group

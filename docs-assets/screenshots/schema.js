@@ -1202,9 +1202,18 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/section/actions': {
+    'forms/layout/section/header/actions': {
         url: 'forms/layout',
         selector: '#sectionHeaderActions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/section/footer/actions': {
+        url: 'forms/layout',
+        selector: '#sectionFooterActions',
         viewport: {
             width: 1920,
             height: 640,
@@ -1730,9 +1739,18 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'infolists/layout/section/actions': {
+    'infolists/layout/section/header/actions': {
         url: 'infolists/layout',
         selector: '#sectionHeaderActions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/section/footer/actions': {
+        url: 'infolists/layout',
+        selector: '#sectionFooterActions',
         viewport: {
             width: 1920,
             height: 640,

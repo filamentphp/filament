@@ -18,14 +18,15 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Livewire\Component as LivewireComponent;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
 use function Filament\Support\generate_search_column_expression;
 use function Filament\Support\generate_search_term_expression;
@@ -46,6 +47,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     use Concerns\HasLoadingMessage;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
+    use Concerns\HasPivotData;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
@@ -432,10 +434,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             })
             ->fillForm($this->getEditOptionActionFormData())
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
-                $statePath = $component->getStatePath();
-
                 if (! $component->getUpdateOptionUsing()) {
-                    throw new Exception("Select field [{$statePath}] must have a [updateOptionUsing()] closure set.");
+                    throw new Exception("Select field [{$component->getStatePath()}] must have a [updateOptionUsing()] closure set.");
                 }
 
                 $component->evaluate($component->getUpdateOptionUsing(), [
@@ -443,9 +443,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     'form' => $form,
                 ]);
 
-                /** @var LivewireComponent $livewire */
-                $livewire = $component->getLivewire();
-                $livewire->dispatch('filament-forms::select.refreshSelectedOptionLabel', livewireId: $livewire->getId(), statePath: $statePath);
+                $component->refreshSelectedOptionLabel();
             })
             ->color('gray')
             ->icon(FilamentIcon::resolve('forms::components.select.actions.edit-option') ?? 'heroicon-m-pencil-square')
@@ -829,8 +827,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             }
 
             if (
-                ($relationship instanceof HasOneThrough) ||
-                ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough)
+                ($relationship instanceof HasManyThrough) ||
+                ($relationship instanceof BelongsToThrough)
             ) {
                 $relatedModel = $relationship->getResults();
 
@@ -940,7 +938,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
                 if (! (
                     $relationship instanceof BelongsTo ||
-                    $relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough
+                    $relationship instanceof BelongsToThrough
                 )) {
                     return false;
                 }
@@ -952,18 +950,40 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) {
             $relationship = $component->getRelationship();
 
-            if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+            if (
+                ($relationship instanceof HasOneOrMany) ||
+                ($relationship instanceof HasManyThrough) ||
+                ($relationship instanceof BelongsToThrough)
+            ) {
                 return;
             }
 
             if (! $relationship instanceof BelongsToMany) {
+                // If the model is new and the foreign key is already filled, we don't need to fill it again.
+                // This could be a security issue if the foreign key was mutated in some way before it
+                // was saved, and we don't want to overwrite that value.
+                if (
+                    $record->wasRecentlyCreated &&
+                    filled($record->getAttributeValue($relationship->getForeignKeyName()))
+                ) {
+                    return;
+                }
+
                 $relationship->associate($state);
                 $record->wasRecentlyCreated && $record->save();
 
                 return;
             }
 
-            $relationship->sync($state ?? []);
+            $pivotData = $component->getPivotData();
+
+            if ($pivotData === []) {
+                $relationship->sync($state ?? []);
+
+                return;
+            }
+
+            $relationship->syncWithPivotValues($state ?? [], $pivotData);
         });
 
         $this->createOptionUsing(static function (Select $component, array $data, Form $form) {
@@ -1063,7 +1083,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return parent::getLabel();
     }
 
-    public function getRelationship(): BelongsTo | BelongsToMany | HasOneOrMany | HasOneThrough | \Znck\Eloquent\Relations\BelongsToThrough | null
+    public function getRelationship(): BelongsTo | BelongsToMany | HasOneOrMany | HasManyThrough | BelongsToThrough | null
     {
         if (blank($this->getRelationshipName())) {
             return null;
@@ -1188,13 +1208,13 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             return $relationship->getQualifiedRelatedKeyName();
         }
 
-        if ($relationship instanceof HasOneThrough) {
+        if ($relationship instanceof HasManyThrough) {
             return $relationship->getQualifiedForeignKeyName();
         }
 
         if (
             ($relationship instanceof HasOneOrMany) ||
-            ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough)
+            ($relationship instanceof BelongsToThrough)
         ) {
             return $relationship->getRelated()->getQualifiedKeyName();
         }
@@ -1202,5 +1222,17 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         /** @var BelongsTo $relationship */
 
         return $relationship->getQualifiedOwnerKeyName();
+    }
+
+    public function refreshSelectedOptionLabel(): void
+    {
+        /** @var LivewireComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        $livewire->dispatch(
+            'filament-forms::select.refreshSelectedOptionLabel',
+            livewireId: $livewire->getId(),
+            statePath: $this->getStatePath(),
+        );
     }
 }

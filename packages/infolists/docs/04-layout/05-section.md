@@ -32,7 +32,11 @@ Section::make()
 
 <AutoScreenshot name="infolists/layout/section/without-header" alt="Section without header" version="3.x" />
 
-## Adding actions to the section's header
+## Adding actions to the section's header or footer
+
+Sections can have actions in their [header](#adding-actions-to-the-sections-header) or [footer](#adding-actions-to-the-sections-footer).
+
+### Adding actions to the section's header
 
 You may add [actions](../actions) to the section's header using the `headerActions()` method:
 
@@ -52,7 +56,57 @@ Section::make('Rate limiting')
     ])
 ```
 
-<AutoScreenshot name="infolists/layout/section/actions" alt="Section with header actions" version="3.x" />
+<AutoScreenshot name="infolists/layout/section/header/actions" alt="Section with header actions" version="3.x" />
+
+> [Make sure the section has a heading or ID](#adding-actions-to-a-section-without-heading)
+
+### Adding actions to the section's footer
+
+In addition to [header actions](#adding-an-icon-to-the-sections-header), you may add [actions](../actions) to the section's footer using the `footerActions()` method:
+
+```php
+use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Components\Section;
+
+Section::make('Rate limiting')
+    ->footerActions([
+        Action::make('edit')
+            ->action(function () {
+                // ...
+            }),
+    ])
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="infolists/layout/section/footer/actions" alt="Section with footer actions" version="3.x" />
+
+> [Make sure the section has a heading or ID](#adding-actions-to-a-section-without-heading)
+
+#### Aligning section footer actions
+
+Footer actions are aligned to the inline start by default. You may customize the alignment using the `footerActionsAlignment()` method:
+
+```php
+use Filament\Infolists\Components\Actions\Action;
+use Filament\Infolists\Components\Section;
+use Filament\Support\Enums\Alignment;
+
+Section::make('Rate limiting')
+    ->footerActions([
+        Action::make('edit')
+            ->action(function () {
+                // ...
+            }),
+    ])
+    ->footerActionsAlignment(Alignment::End)
+    ->schema([
+        // ...
+    ])
+```
+
+### Adding actions to a section without heading
 
 If your section does not have a heading, Filament has no way of locating the action inside it. In this case, you must pass a unique `id()` to the section:
 

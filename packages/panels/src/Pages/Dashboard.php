@@ -26,7 +26,7 @@ class Dashboard extends Page
             __('filament-panels::pages/dashboard.title');
     }
 
-    public static function getNavigationIcon(): ?string
+    public static function getNavigationIcon(): string | Htmlable | null
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::pages.dashboard.navigation-item')

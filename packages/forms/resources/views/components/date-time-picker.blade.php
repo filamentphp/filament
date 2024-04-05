@@ -3,10 +3,13 @@
 
     $datalistOptions = $getDatalistOptions();
     $extraAlpineAttributes = $getExtraAlpineAttributes();
+    $hasTime = $hasTime();
     $id = $getId();
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
+    $maxDate = $getMaxDate();
+    $minDate = $getMinDate();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
@@ -48,8 +51,8 @@
                             'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
                             'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                             'list' => $datalistOptions ? $id . '-list' : null,
-                            'max' => $getMaxDate(),
-                            'min' => $getMinDate(),
+                            'max' => $hasTime ? $maxDate : ($maxDate ? \Carbon\Carbon::parse($maxDate)->toDateString() : null),
+                            'min' => $hasTime ? $minDate : ($minDate ? \Carbon\Carbon::parse($minDate)->toDateString() : null),
                             'placeholder' => $getPlaceholder(),
                             'readonly' => $isReadOnly(),
                             'required' => $isRequired() && (! $isConcealed()),
@@ -86,17 +89,9 @@
                         ->class(['fi-fo-date-time-picker'])
                 }}
             >
-                <input
-                    x-ref="maxDate"
-                    type="hidden"
-                    value="{{ $getMaxDate() }}"
-                />
+                <input x-ref="maxDate" type="hidden" value="{{ $maxDate }}" />
 
-                <input
-                    x-ref="minDate"
-                    type="hidden"
-                    value="{{ $getMinDate() }}"
-                />
+                <input x-ref="minDate" type="hidden" value="{{ $minDate }}" />
 
                 <input
                     x-ref="disabledDates"
@@ -137,7 +132,7 @@
                         x-model="displayText"
                         @if ($id = $getId()) id="{{ $id }}" @endif
                         @class([
-                            'w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
+                            'fi-fo-date-time-picker-display-text-input w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
                         ])
                     />
                 </button>
@@ -231,7 +226,7 @@
                             </div>
                         @endif
 
-                        @if ($hasTime())
+                        @if ($hasTime)
                             <div
                                 class="flex items-center justify-center rtl:flex-row-reverse"
                             >

@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
 class SelectFilter extends BaseFilter
 {
@@ -22,6 +23,8 @@ class SelectFilter extends BaseFilter
     protected bool | Closure $isStatic = false;
 
     protected bool | Closure $isSearchable = false;
+
+    protected bool | Closure $canSelectPlaceholder = true;
 
     protected int | Closure $optionsLimit = 50;
 
@@ -50,12 +53,12 @@ class SelectFilter extends BaseFilter
 
                     $labels = $relationshipQuery
                         ->when(
-                            $filter->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough,
+                            $filter->getRelationship() instanceof BelongsToThrough,
                             fn (Builder $query) => $query->distinct(),
                         )
                         ->when(
                             $this->getRelationshipKey(),
-                            fn (Builder $query) => $query->whereIn($this->getRelationshipKey(), $state['values']),
+                            fn (Builder $query, string $relationshipKey) => $query->whereIn($relationshipKey, $state['values']),
                             fn (Builder $query) => $query->whereKey($state['values'])
                         )
                         ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
@@ -87,7 +90,7 @@ class SelectFilter extends BaseFilter
                 $label = $filter->getRelationshipQuery()
                     ->when(
                         $this->getRelationshipKey(),
-                        fn (Builder $query) => $query->where($this->getRelationshipKey(), $state['value']),
+                        fn (Builder $query, string $relationshipKey) => $query->where($relationshipKey, $state['value']),
                         fn (Builder $query) => $query->whereKey($state['value'])
                     )
                     ->first()
@@ -161,7 +164,7 @@ class SelectFilter extends BaseFilter
                     ]) ?? $query;
                 }
 
-                if ($relationshipKey = $this->getRelationshipKey()) {
+                if ($relationshipKey = $this->getRelationshipKey($query)) {
                     return $query->{$isMultiple ? 'whereIn' : 'where'}(
                         $relationshipKey,
                         $values,
@@ -211,6 +214,13 @@ class SelectFilter extends BaseFilter
         return $this;
     }
 
+    public function selectablePlaceholder(bool | Closure $condition = true): static
+    {
+        $this->canSelectPlaceholder = $condition;
+
+        return $this;
+    }
+
     public function getAttribute(): string
     {
         return $this->evaluate($this->attribute) ?? $this->getName();
@@ -243,6 +253,7 @@ class SelectFilter extends BaseFilter
             ->multiple($this->isMultiple())
             ->placeholder($this->getPlaceholder())
             ->searchable($this->isSearchable())
+            ->selectablePlaceholder($this->canSelectPlaceholder())
             ->preload($this->isPreloaded())
             ->native($this->isNative())
             ->optionsLimit($this->getOptionsLimit());
@@ -290,6 +301,11 @@ class SelectFilter extends BaseFilter
     public function isSearchable(): bool
     {
         return (bool) $this->evaluate($this->isSearchable);
+    }
+
+    public function canSelectPlaceholder(): bool
+    {
+        return (bool) $this->evaluate($this->canSelectPlaceholder);
     }
 
     public function optionsLimit(int | Closure $limit): static

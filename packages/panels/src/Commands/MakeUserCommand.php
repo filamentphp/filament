@@ -9,10 +9,12 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
+#[AsCommand(name: 'make:filament-user')]
 class MakeUserCommand extends Command
 {
     protected $description = 'Create a new Filament user';
