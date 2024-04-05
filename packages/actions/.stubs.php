@@ -52,9 +52,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertActionMounted(string | TestAction | array $actions): static {}
 
-        public function assertActionNotMounted(string | TestAction | array $actions): static {}
+        public function assertActionNotMounted(string | TestAction | array $actions = []): static {}
 
-        public function assertActionHalted(string | TestAction | array $actions): static {}
+        public function assertActionHalted(string | TestAction | array $actions = []): static {}
 
         public function assertHasActionErrors(array $keys = []): static {}
 

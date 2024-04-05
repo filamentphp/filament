@@ -43,18 +43,41 @@ class Actions extends Page
                 ->schema([
                     TextInput::make('foo')
                         ->required()
-                        ->hintAction(
+                        ->registerActions([
                             Action::make('nested')
                                 ->schema([
                                     TextInput::make('bar')
                                         ->required(),
                                 ])
                                 ->action(fn () => null),
-                        ),
+                            Action::make('cancelParent')
+                                ->schema([
+                                    TextInput::make('bar')
+                                        ->required(),
+                                ])
+                                ->action(fn () => null)
+                                ->cancelParentActions(),
+                        ]),
                 ])
                 ->action(function (array $data) {
                     $this->dispatch('parent-called', foo: $data['foo']);
-                }),
+                })
+                ->extraModalFooterActions([
+                    Action::make('footer')
+                        ->schema([
+                            TextInput::make('bar')
+                                ->required(),
+                        ])
+                        ->action(fn () => null),
+                ])
+                ->registerModalActions([
+                    Action::make('manuallyRegisteredModal')
+                        ->schema([
+                            TextInput::make('bar')
+                                ->required(),
+                        ])
+                        ->action(fn () => null),
+                ]),
             Action::make('halt')
                 ->requiresConfirmation()
                 ->action(function (Action $action) {
