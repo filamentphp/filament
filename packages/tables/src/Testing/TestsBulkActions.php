@@ -38,6 +38,7 @@ class TestsBulkActions
     public function mountTableBulkAction(): Closure
     {
         return function (string | array $actions, array | Collection $records): static {
+            /** @phpstan-ignore-next-line */
             $this->selectTableRecords($records);
 
             /** @var array<array<string, mixed>> $actions */
@@ -71,6 +72,7 @@ class TestsBulkActions
     public function callTableBulkAction(): Closure
     {
         return function (string | array $actions, array | Collection $records, array $data = [], array $arguments = []): static {
+            /** @phpstan-ignore-next-line */
             $this->selectTableRecords($records);
 
             /** @var array<array<string, mixed>> $actions */
