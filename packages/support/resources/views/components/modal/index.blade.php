@@ -11,7 +11,7 @@
     'closeEventName' => 'close-modal',
     'description' => null,
     'displayClasses' => 'inline-block',
-    'extraModalWindowAttributesBag' => new \Illuminate\View\ComponentAttributeBag([]),
+    'extraModalWindowAttributesBag' => null,
     'footer' => null,
     'footerActions' => [],
     'footerActionsAlignment' => Alignment::Start,
