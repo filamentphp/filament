@@ -3,7 +3,6 @@
 namespace Filament\Actions;
 
 use Closure;
-use Filament\Actions\Contracts\HasLivewire;
 use Filament\Notifications\Notification;
 use Filament\Schema\Components\Actions\ActionContainer;
 use Filament\Schema\Components\Actions\ActionContainer as InfolistActionContainer;
@@ -21,7 +20,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
-class Action extends ViewComponent implements Arrayable, Contracts\HasRecord, HasLivewire
+class Action extends ViewComponent implements Arrayable
 {
     use Concerns\BelongsToGroup;
     use Concerns\BelongsToLivewire;

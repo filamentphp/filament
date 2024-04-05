@@ -4,7 +4,6 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Schema\ComponentContainer;
 use Filament\Schema\Components\Contracts\ExposesStateToActionData;
@@ -452,11 +451,10 @@ trait InteractsWithActions
         $resolvedAction ??= $this->getTable()->getAction($action['name']) ?? throw new ActionNotResolvableException("Action [{$action['name']}] not found on table.");
 
         if (filled($action['context']['recordKey'] ?? null)) {
-            $resolvedAction->record($this->getTableRecord($action['context']['recordKey']));
+            $record = $record = $this->getTableRecord($action['context']['recordKey']);
 
-            if (($resolvedActionGroup = $resolvedAction->getGroup()) instanceof HasRecord) {
-                $resolvedActionGroup->record($resolvedAction->getRecord());
-            }
+            $resolvedAction->record($record);
+            $resolvedAction->getGroup()?->record($record);
         }
 
         if (

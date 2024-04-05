@@ -2,10 +2,7 @@
 
 namespace Filament\Actions;
 
-use Exception;
 use Filament\Actions\Concerns\InteractsWithRecord;
-use Filament\Actions\Contracts\HasLivewire;
-use Filament\Actions\Contracts\HasRecord;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
@@ -16,7 +13,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class ActionGroup extends ViewComponent implements Arrayable, HasLivewire, HasRecord
+class ActionGroup extends ViewComponent implements Arrayable
 {
     use Concerns\BelongsToGroup;
     use Concerns\BelongsToTable;
@@ -171,13 +168,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasLivewire, HasRe
             return $this->livewire;
         }
 
-        $group = $this->getGroup();
-
-        if (! ($group instanceof HasLivewire)) {
-            throw new Exception('This action group does not belong to a Livewire component.');
-        }
-
-        return $group->getLivewire();
+        return $this->getGroup()?->getLivewire();
     }
 
     public function getLabel(): string

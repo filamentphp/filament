@@ -4,7 +4,6 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Actions\Contracts\HasRecord;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -111,13 +110,7 @@ trait InteractsWithRecord
             return $record;
         }
 
-        $group = $this->getGroup();
-
-        if (! ($group instanceof HasRecord)) {
-            return null;
-        }
-
-        return $group->getRecord();
+        return $this->getGroup()?->getRecord();
     }
 
     public function getRecordTitle(?Model $record = null): ?string

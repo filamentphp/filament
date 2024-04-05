@@ -4,7 +4,6 @@ namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
-use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -263,10 +262,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                     }
 
                     $action->record($record);
-
-                    if (($actionGroup = $action->getGroup()) instanceof HasRecord) {
-                        $actionGroup->record($record);
-                    }
+                    $action->getGroup()?->record($record);
 
                     if ($action->isHidden()) {
                         continue;
@@ -293,10 +289,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                     $action = clone $action;
 
                     $action->record($record);
-
-                    if (($actionGroup = $action->getGroup()) instanceof HasRecord) {
-                        $actionGroup->record($record);
-                    }
+                    $action->getGroup()?->record($record);
 
                     if ($action->isHidden()) {
                         continue;
