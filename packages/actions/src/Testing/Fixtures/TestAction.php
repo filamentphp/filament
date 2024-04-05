@@ -16,6 +16,8 @@ class TestAction implements Arrayable
 
     protected mixed $table = null;
 
+    protected bool $isBulk = false;
+
     final public function __construct(
         protected string $name,
     ) {
@@ -50,6 +52,13 @@ class TestAction implements Arrayable
         return $this;
     }
 
+    public function bulk(bool $condition = true): static
+    {
+        $this->isBulk = $condition;
+
+        return $this;
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -59,6 +68,7 @@ class TestAction implements Arrayable
             'name' => $this->name,
             'arguments' => $this->arguments,
             'context' => [
+                ...($this->isBulk ? ['bulk' => true] : []),
                 ...($this->schemaComponent ? ['schemaComponent' => $this->schemaComponent] : []),
                 ...$this->context,
             ],

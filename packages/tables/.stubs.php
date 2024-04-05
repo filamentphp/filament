@@ -7,61 +7,7 @@ namespace Livewire\Features\SupportTesting {
     use Illuminate\Support\Collection;
 
     class Testable {
-        public function assertTableBulkActionExists(string $name): static {}
-
-        public function assertTableBulkActionDoesNotExist(string $name): static {}
-
-        public function assertTableBulkActionsExistInOrder(array $names): static {}
-
-        public function assertTableBulkActionVisible(string $name): static {}
-
-        public function assertTableBulkActionHidden(string $name): static {}
-
-        public function assertTableBulkActionEnabled(string $name): static {}
-
-        public function assertTableBulkActionDisabled(string $name): static {}
-
-        public function assertTableActionHasIcon(string | array $name, string $icon): static {}
-
-        public function assertTableActionDoesNotHaveIcon(string | array $name, string $icon): static {}
-
-        public function assertTableActionHasLabel(string | array $name, string $label): static {}
-
-        public function assertTableActionDoesNotHaveLabel(string | array $name, string $label): static {}
-
-        public function assertTableActionHasColor(string | array $name, string | array $color): static {}
-
-        public function assertTableActionDoesNotHaveColor(string | array $name, string | array $color): static {}
-
-        public function assertTableBulkActionHasIcon(string $name, string $icon): static {}
-
-        public function assertTableBulkActionDoesNotHaveIcon(string $name, string $icon): static {}
-
-        public function assertTableBulkActionHasLabel(string $name, string $label): static {}
-
-        public function assertTableBulkActionDoesNotHaveLabel(string $name, string $label): static {}
-
-        public function assertTableBulkActionHasColor(string $name, string | array $color): static {}
-
-        public function assertTableBulkActionDoesNotHaveColor(string $name, string | array $color): static {}
-
-        public function assertTableActionHasUrl(string | array $name, string $url): static {}
-
-        public function assertTableActionDoesNotHaveUrl(string | array $name, string $url): static {}
-
-        public function assertTableActionShouldOpenUrlInNewTab(string | array $name): static {}
-
-        public function assertTableActionShouldNotOpenUrlInNewTab(string | array $name): static {}
-
-        public function assertTableBulkActionMounted(string $name): static {}
-
-        public function assertTableBulkActionNotMounted(string $name): static {}
-
-        public function assertTableBulkActionHalted(string $name): static {}
-
-        public function assertHasTableBulkActionErrors(array $keys = []): static {}
-
-        public function assertHasNoTableBulkActionErrors(array $keys = []): static {}
+        public function selectTableRecords(array | Collection $records): static {}
 
         public function assertCanRenderTableColumn(string $name): static {}
 

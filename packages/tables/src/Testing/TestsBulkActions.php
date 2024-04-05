@@ -17,9 +17,9 @@ use Livewire\Features\SupportTesting\Testable;
  */
 class TestsBulkActions
 {
-    public function mountTableBulkAction(): Closure
+    public function selectTableRecords(): Closure
     {
-        return function (string | array $actions, array | Collection $records): static {
+        return function (array | Collection $records): static {
             $this->set('selectedTableRecords', array_map(
                 function ($record) {
                     if ($record instanceof Model) {
@@ -30,6 +30,15 @@ class TestsBulkActions
                 },
                 $records instanceof Collection ? $records->all() : $records,
             ));
+
+            return $this;
+        };
+    }
+
+    public function mountTableBulkAction(): Closure
+    {
+        return function (string | array $actions, array | Collection $records): static {
+            $this->selectTableRecords($records);
 
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
@@ -62,16 +71,7 @@ class TestsBulkActions
     public function callTableBulkAction(): Closure
     {
         return function (string | array $actions, array | Collection $records, array $data = [], array $arguments = []): static {
-            $this->set('selectedTableRecords', array_map(
-                function ($record) {
-                    if ($record instanceof Model) {
-                        return $this->instance()->getTableRecordKey($record);
-                    }
-
-                    return $record;
-                },
-                $records instanceof Collection ? $records->all() : $records,
-            ));
+            $this->selectTableRecords($records);
 
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
