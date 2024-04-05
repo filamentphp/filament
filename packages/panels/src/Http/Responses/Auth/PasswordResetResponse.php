@@ -12,7 +12,8 @@ class PasswordResetResponse implements Responsable
     public function toResponse($request): RedirectResponse | Redirector
     {
         return redirect()->to(
-            Filament::hasLogin() ? Filament::getLoginUrl() : Filament::getUrl(),
+            (Filament::hasLogin() ? Filament::getLoginUrl() : Filament::getUrl()) .
+                ($request->query('locale') ? '?locale=' . $request->query('locale', app()->getLocale()) : null)
         );
     }
 }
