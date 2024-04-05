@@ -49,7 +49,7 @@
 
     $closeEventHandler = filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()';
 
-    $modalWindowAttributes = $extraModalWindowAttributesBag ?? new \Illuminate\View\ComponentAttributeBag([]);
+    $modalWindowAttributes = $extraModalWindowAttributesBag ?? new \Illuminate\View\ComponentAttributeBag();
 @endphp
 
 <div
