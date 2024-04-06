@@ -256,6 +256,8 @@ public function table(Table $table): Table
         ]);
 ```
 
+You can pass `$table->icon()` and `$table->iconColor('primary')` method to add the icon in the header:
+
 ## Polling table content
 
 You may poll table content so that it refreshes at a set interval, using the `$table->poll()` method:
