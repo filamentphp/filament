@@ -181,7 +181,7 @@ class SettingsPage extends Page
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->schema($this->getFormSchema())
                     ->statePath('data')
                     ->columns(2)

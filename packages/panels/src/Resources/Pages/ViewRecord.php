@@ -199,7 +199,7 @@ class ViewRecord extends Page
     {
         return [
             'form' => $this->form(static::getResource()::form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->operation('view')
                     ->disabled()
                     ->model($this->getRecord())
@@ -215,21 +215,14 @@ class ViewRecord extends Page
         return 'data';
     }
 
-    public function infolist(Schema $infolist): Schema
+    public function infolist(): Schema
     {
-        return static::getResource()::infolist($infolist);
-    }
-
-    protected function makeSchema(string $type, ?string $name): Schema
-    {
-        if ($name === 'infolist') {
-            return parent::makeSchema($type, $name)
+        return static::getResource()::infolist(
+            $this->makeSchema()
                 ->record($this->getRecord())
                 ->columns($this->hasInlineLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineLabels());
-        }
-
-        return parent::makeSchema($type, $name);
+                ->inlineLabel($this->hasInlineLabels()),
+        );
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool

@@ -4,8 +4,6 @@ namespace Filament\Schema\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
 use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Schema;
@@ -234,7 +232,7 @@ trait InteractsWithSchemas
                 return null;
             }
 
-            $schema = $this->makeSchema($type, $name);
+            $schema = $this->makeSchema();
 
             return $this->cachedSchemas[$name] = $this->{$name}($schema)->key($name);
         } finally {
@@ -242,20 +240,9 @@ trait InteractsWithSchemas
         }
     }
 
-    /**
-     * @param  class-string<Schema>  $type
-     */
-    protected function makeSchema(string $type, ?string $name): Schema
+    protected function makeSchema(): Schema
     {
-        if (method_exists($this, 'makeForm') && is_a($type, Form::class, allow_string: true)) {
-            return $this->makeForm();
-        }
-
-        if (method_exists($this, 'makeInfolist') && is_a($type, Infolist::class, allow_string: true)) {
-            return $this->makeInfolist();
-        }
-
-        return $type::make($this);
+        return Schema::make($this);
     }
 
     protected function hasCachedSchema(string $name): bool

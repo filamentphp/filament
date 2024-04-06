@@ -265,7 +265,7 @@ class CreateRecord extends Page
     {
         return [
             'form' => $this->form(static::getResource()::form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->operation('create')
                     ->model($this->getModel())
                     ->statePath($this->getFormStatePath())

@@ -280,7 +280,7 @@ class EditProfile extends Page
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->schema([
                         $this->getNameFormComponent(),
                         $this->getEmailFormComponent(),

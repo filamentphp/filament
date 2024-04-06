@@ -556,7 +556,7 @@ trait InteractsWithActions
         }
 
         return $mountedAction->getSchema(
-            $this->makeSchema(Schema::class, name: "mountedActionSchema{$actionNestingIndex}")
+            $this->makeSchema()
                 ->model($mountedAction->getRecord() ?? $mountedAction->getModel() ?? $mountedAction->getSchemaComponent()?->getActionFormModel() ?? $this->getMountedActionSchemaModel())
                 ->key("mountedActionSchema{$actionNestingIndex}")
                 ->statePath("mountedActions.{$actionNestingIndex}.data")

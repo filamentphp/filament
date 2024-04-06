@@ -191,7 +191,7 @@ abstract class EditTenantProfile extends Page
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->operation('edit')
                     ->model($this->tenant)
                     ->statePath('data'),

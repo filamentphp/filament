@@ -26,7 +26,7 @@ trait HasFiltersForm
             return $this->getSchema('filtersForm');
         }
 
-        return $this->filtersForm($this->makeForm()
+        return $this->filtersForm($this->makeSchema()
             ->columns([
                 'md' => 2,
                 'xl' => 3,

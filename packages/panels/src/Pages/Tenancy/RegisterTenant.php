@@ -133,7 +133,7 @@ abstract class RegisterTenant extends SimplePage
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->model($this->getModel())
                     ->statePath('data'),
             ),

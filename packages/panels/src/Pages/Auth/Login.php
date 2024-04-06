@@ -109,7 +109,7 @@ class Login extends SimplePage
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->schema([
                         $this->getEmailFormComponent(),
                         $this->getPasswordFormComponent(),

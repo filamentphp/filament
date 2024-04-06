@@ -27,7 +27,7 @@ trait HasFilters
             return $this->getSchema('tableFiltersForm');
         }
 
-        return $this->makeForm()
+        return $this->makeSchema()
             ->schema($this->getTable()->getFiltersFormSchema())
             ->columns($this->getTable()->getFiltersFormColumns())
             ->model($this->getTable()->getModel())

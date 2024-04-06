@@ -5,7 +5,6 @@ namespace Filament\Forms\Concerns;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Forms\Form;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Concerns\InteractsWithSchemas;
 use Filament\Schema\Schema;
@@ -68,7 +67,7 @@ trait InteractsWithForms
                         throw new Exception("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
                     }
 
-                    return [$form => $this->{$form}($this->makeForm())];
+                    return [$form => $this->{$form}($this->makeSchema())];
                 })
                 ->forget('')
                 ->map(fn (Schema $form, string $formName) => $form->key($formName))
@@ -181,14 +180,6 @@ trait InteractsWithForms
     protected function getFormStatePath(): ?string
     {
         return null;
-    }
-
-    /**
-     * @deprecated Use `makeSchema()` instead.
-     */
-    protected function makeForm(): Schema
-    {
-        return Form::make($this);
     }
 
     /**

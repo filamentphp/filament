@@ -371,7 +371,7 @@ class EditRecord extends Page
     {
         return [
             'form' => $this->form(static::getResource()::form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->operation('edit')
                     ->model($this->getRecord())
                     ->statePath($this->getFormStatePath())

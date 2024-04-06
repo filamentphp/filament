@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Concerns;
 
 use Filament\Actions\Action;
-use Filament\Infolists\Infolist;
 use Filament\Schema\Schema;
 
 trait InteractsWithInfolists
@@ -92,13 +91,5 @@ trait InteractsWithInfolists
     public function unmountInfolistAction(bool $shouldCancelParentActions = true): void
     {
         $this->unmountAction($shouldCancelParentActions);
-    }
-
-    /**
-     * @deprecated Use `makeSchema()` instead.
-     */
-    protected function makeInfolist(): Schema
-    {
-        return Infolist::make($this);
     }
 }

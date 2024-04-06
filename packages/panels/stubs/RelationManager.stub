@@ -3,8 +3,8 @@
 namespace {{ namespace }};
 
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +14,7 @@ class {{ managerClass }} extends RelationManager
 {
     protected static string $relationship = '{{ relationship }}';
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
