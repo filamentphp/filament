@@ -418,6 +418,18 @@ Any fields that you use from `$state` should be `live()` if you wish to see the 
 
 <AutoScreenshot name="forms/fields/repeater/labelled" alt="Repeater with item labels" version="3.x" />
 
+## Adding extra classes to repeater items
+You can use the `extraItemClasses()` method to add extra classes to repeater items. This method accepts classes string or a closure that receives the current item's data in a `$data` variable.
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    // ...
+    ->extraItemClasses(fn (array $data): ?string => $data['is_admin'] ? '!bg-success-100' : null),
+```
+
+
 ## Simple repeaters with one field
 
 You can use the `simple()` method to create a repeater with a single field, using a minimal design

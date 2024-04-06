@@ -94,7 +94,7 @@
                                 {{
                                     $attributes
                                         ->class(['fi-fo-repeater-item divide-y divide-gray-100 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-white/5 dark:ring-white/10'])
-                                        ->merge($getExtraItemClasses(['item' => $uuid]))
+                                        ->merge(['class' => $getExtraItemClasses(['item' => $uuid]) ?? ''])
 
                                 }}
                                 x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
