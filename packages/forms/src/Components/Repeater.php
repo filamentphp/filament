@@ -27,6 +27,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
     use Concerns\HasExtraItemActions;
+    use Concerns\HasExtraItemClasses;
     use HasReorderAnimationDuration;
 
     protected string | Closure | null $addActionLabel = null;
