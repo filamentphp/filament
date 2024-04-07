@@ -36,6 +36,9 @@
     </div>
 
     <div class="flex gap-x-3">
+
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::BULKACTION_INDICATE_AFTER, scopes: static::class) }}
+
         <x-filament::link
             color="primary"
             :id="$this->getId() . '.table.selection.indicator.record-count.' . $allSelectableRecordsCount"
@@ -53,6 +56,8 @@
         >
             {{ __('filament-tables::table.selection_indicator.actions.deselect_all.label') }}
         </x-filament::link>
+
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::BULKACTION_INDICATE_BEFORE, scopes: static::class) }}
 
         {{ $end }}
     </div>

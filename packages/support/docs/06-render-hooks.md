@@ -116,6 +116,8 @@ All these render hooks [can be scoped](#scoping-render-hooks) to any table Livew
 - `TablesRenderHook::TOOLBAR_START` - The start of the toolbar
 - `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER` - After the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
 - `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE` - Before the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+- `TablesRenderHook::BULKACTION_INDICATE_AFTER` - After the select and deselect rows in bulk action indicator 
+- `TablesRenderHook::BULKACTION_INDICATE_BEFORE` - Before the select and deselect rows in bulk action indicator 
 
 
 ### Widgets render hooks

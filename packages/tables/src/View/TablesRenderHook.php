@@ -23,4 +23,8 @@ class TablesRenderHook
     const TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER = 'tables::toolbar.toggle-column-trigger.after';
 
     const TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE = 'tables::toolbar.toggle-column-trigger.before';
+
+    const BULKACTION_INDICATE_AFTER = 'tables::bulkactions.indicate.after';
+
+    const BULKACTION_INDICATE_BEFORE = 'tables::bulkactions.indicate.before';
 }
