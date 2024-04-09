@@ -256,7 +256,36 @@ public function table(Table $table): Table
         ]);
 ```
 
-You can pass `$table->icon()` and `$table->iconColor('primary')` method to add the icon in the header:
+## Icon in table header
+
+You can add an icon to a table header using the `$table->icon()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->icon('heroicon-o-table-cells')
+        ->columns([
+            // ...
+        ]);
+```
+
+You can also change the icon color, using the `$table->iconColor('primary')` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->icon('heroicon-o-table-cells')
+        ->iconColor('primary')
+        ->columns([
+            // ...
+        ]);
+```
 
 ## Polling table content
 
