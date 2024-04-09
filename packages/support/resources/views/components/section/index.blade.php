@@ -174,7 +174,7 @@
         @endif
         @class([
             'fi-section-content-ctn',
-            'border-t border-gray-200 dark:border-white/10' => $hasHeader && (! $aside),
+            'border-t border-gray-200 dark:border-white/10' => $hasHeader && ! $aside && $contained,
             'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:col-span-2' => $aside,
             'md:order-first' => $contentBefore,
         ])
