@@ -52,4 +52,12 @@ return [
 
     ],
 
+    'avatar' => [
+        'alt' => 'Avatar de :name',
+    ],
+
+    'logo' => [
+        'alt' => 'Logótipo de :name',
+    ],
+
 ];
