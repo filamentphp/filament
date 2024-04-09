@@ -235,6 +235,21 @@ Section::make('Rate limiting')
 
 <AutoScreenshot name="forms/layout/section/compact" alt="Compact section" version="3.x" />
 
+## Compact section without border
+
+You also can use an uncontained styling without a border:
+
+```php
+use Filament\Forms\Components\Section;
+
+Section::make('Rate limiting')
+    ->description('Prevent abuse by limiting the number of requests per period')
+    ->schema([
+        // ...
+    ])
+    ->contained(false)
+```
+
 ## Using grid columns within a section
 
 You may use the `columns()` method to easily create a [grid](grid) within the section:
