@@ -2945,4 +2945,13 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'tables/header-icon': {
+        url: 'tables?table=headerIcon',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
 }
