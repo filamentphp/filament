@@ -19,7 +19,7 @@
 
                 document.addEventListener('livewire:navigate', (event) => {
                     if (typeof @this !== 'undefined') {
-                        if (! window.shouldPreventNavigation()) {
+                        if (! shouldPreventNavigation()) {
                             return
                         }
 
@@ -30,7 +30,7 @@
                 })
 
                 window.addEventListener('beforeunload', (event) => {
-                    if (! window.shouldPreventNavigation()) {
+                    if (! shouldPreventNavigation()) {
                         return;
                     }
 
