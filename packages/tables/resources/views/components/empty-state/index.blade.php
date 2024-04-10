@@ -34,7 +34,7 @@
             </x-filament-tables::empty-state.description>
         @endif
 
-        @if ($actions)
+        @if (array_filter($actions, fn ($action): bool => $action->isVisible()))
             <x-filament-tables::actions
                 :actions="$actions"
                 :alignment="Alignment::Center"
