@@ -91,7 +91,7 @@ trait Translatable
 
         // Form::getState triggers the dehydrate hooks of the fields
         // the before hooks are skipped to allow relationships to be translated
-        // without making it a hastle
+        // without making it a hassle
         $state = $this->form->getState(false);
         $this->otherLocaleData[$this->oldActiveLocale] = Arr::only($state, $translatableAttributes);
 
@@ -105,6 +105,7 @@ trait Translatable
             unset($this->otherLocaleData[$this->activeLocale]);
         } catch (ValidationException $e) {
             $this->activeLocale = $this->oldActiveLocale;
+
             throw $e;
         }
     }
