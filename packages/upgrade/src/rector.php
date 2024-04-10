@@ -1,6 +1,10 @@
 <?php
 
-use Filament\Upgrade\Rector;
+use Filament\Upgrade\Rector\FixGetSetClosureTypesRector;
+use Filament\Upgrade\Rector\MoveImportedClassesRector;
+use Filament\Upgrade\Rector\SecondaryToGrayColorRector;
+use Filament\Upgrade\Rector\SimpleMethodChangesRector;
+use Filament\Upgrade\Rector\SimplePropertyChangesRector;
 use Rector\Config\RectorConfig;
 use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
@@ -10,11 +14,11 @@ use Rector\Renaming\ValueObject\MethodCallRename;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rules([
-        Rector\FixGetSetClosureTypesRector::class,
-        Rector\MoveImportedClassesRector::class,
-        Rector\SecondaryToGrayColorRector::class,
-        Rector\SimpleMethodChangesRector::class,
-        Rector\SimplePropertyChangesRector::class,
+        FixGetSetClosureTypesRector::class,
+        MoveImportedClassesRector::class,
+        SecondaryToGrayColorRector::class,
+        SimpleMethodChangesRector::class,
+        SimplePropertyChangesRector::class,
     ]);
 
     $rectorConfig->ruleWithConfiguration(

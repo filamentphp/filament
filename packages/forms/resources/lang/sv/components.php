@@ -250,6 +250,15 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Ja',
+            'false' => 'Nej',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
@@ -408,6 +417,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Ny tagg',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Dölj lösenord',
+            ],
+
+            'show_password' => [
+                'label' => 'Visa lösenord',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Ja',
+            'false' => 'Nej',
+        ],
+
     ],
 
     'wizard' => [

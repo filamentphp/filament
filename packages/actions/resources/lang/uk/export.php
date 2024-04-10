@@ -17,7 +17,7 @@ return [
                 'form' => [
 
                     'is_enabled' => [
-                        'label' => ':стовпець увімкнено',
+                        'label' => ':column увімкнено',
                     ],
 
                     'label' => [

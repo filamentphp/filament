@@ -27,6 +27,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
+use League\Csv\ByteSequence;
 use League\Csv\Info;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
@@ -326,9 +327,11 @@ trait CanImportRecords
                     }
 
                     return response()->streamDownload(function () use ($csv) {
+                        $csv->setOutputBOM(ByteSequence::BOM_UTF8);
+
                         echo $csv->toString();
                     }, __('filament-actions::import.example_csv.file_name', ['importer' => (string) str($this->getImporter())->classBasename()->kebab()]), [
-                        'Content-Type' => 'text/csv',
+                        'Content-Type' => 'text/csv; charset=UTF-8',
                     ]);
                 }),
         ]);
@@ -349,7 +352,7 @@ trait CanImportRecords
     {
         $filePath = $file->getRealPath();
 
-        if (config('filament.default_filesystem_disk') !== 's3') {
+        if (config('filesystems.disks.' . config('filament.default_filesystem_disk') . '.driver') !== 's3') {
             return fopen($filePath, mode: 'r');
         }
 

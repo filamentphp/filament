@@ -20,7 +20,8 @@
         "spatie/color": "^1.5",
         "spatie/invade": "^1.0|^2.0",
         "spatie/laravel-package-tools": "^1.9",
-        "symfony/html-sanitizer": "^6.1"
+        "symfony/html-sanitizer": "^6.1|^7.0",
+        "symfony/console": "^6.0|^7.0"
     },
     "autoload": {
         "files": [

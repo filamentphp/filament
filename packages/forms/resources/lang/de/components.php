@@ -355,6 +355,25 @@ return [
 
             ],
 
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Bearbeiten',
+
+                    'actions' => [
+
+                        'save' => [
+
+                            'label' => 'Speichern',
+
+                        ],
+
+                    ],
+                ],
+
+            ],
+
         ],
 
         'boolean' => [

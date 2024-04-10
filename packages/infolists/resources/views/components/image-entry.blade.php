@@ -1,7 +1,14 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
+        $state = $getState();
+
+        if ($state instanceof \Illuminate\Support\Collection) {
+            $state = $state->all();
+        }
+
+        $state = \Illuminate\Support\Arr::wrap($state);
+
         $limit = $getLimit();
-        $state = \Illuminate\Support\Arr::wrap($getState());
         $limitedState = array_slice($state, 0, $limit);
         $isCircular = $isCircular();
         $isSquare = $isSquare();

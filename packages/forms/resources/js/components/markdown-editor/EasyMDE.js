@@ -124,7 +124,7 @@ function removeListStyleWhenCheckbox(htmlText) {
                 listItemChild instanceof HTMLInputElement &&
                 listItemChild.type === 'checkbox'
             ) {
-                // From Github: margin: 0 .2em .25em -1.6em;
+                // From GitHub: margin: 0 .2em .25em -1.6em;
                 listItem.style.marginLeft = '-1.5em'
                 listItem.style.listStyleType = 'none'
             }

@@ -4,8 +4,8 @@ namespace Filament\Tables\Grouping;
 
 use BackedEnum;
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Closure;
-use DateTimeInterface;
 use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Tables\Table;
@@ -215,11 +215,11 @@ class Group extends Component
         }
 
         if (filled($key) && $this->isDate()) {
-            if (! ($key instanceof DateTimeInterface)) {
+            if (! ($key instanceof CarbonInterface)) {
                 $key = Carbon::parse($key);
             }
 
-            $key = $key->format('Y-m-d');
+            $key = $key->toDateString();
         }
 
         return filled($key) ? strval($key) : null;
@@ -271,11 +271,11 @@ class Group extends Component
         }
 
         if (filled($title) && $this->isDate()) {
-            if (! ($title instanceof DateTimeInterface)) {
+            if (! ($title instanceof CarbonInterface)) {
                 $title = Carbon::parse($title);
             }
 
-            $title = $title->format(Table::$defaultDateDisplayFormat);
+            $title = $title->translatedFormat(Table::$defaultDateDisplayFormat);
         }
 
         return $title;

@@ -5,12 +5,13 @@ use Filament\Http\Controllers\Auth\EmailVerificationController;
 use Filament\Http\Controllers\Auth\LogoutController;
 use Filament\Http\Controllers\RedirectToHomeController;
 use Filament\Http\Controllers\RedirectToTenantController;
+use Filament\Panel;
 use Illuminate\Support\Facades\Route;
 
 Route::name('filament.')
     ->group(function () {
         foreach (Filament::getPanels() as $panel) {
-            /** @var \Filament\Panel $panel */
+            /** @var Panel $panel */
             $panelId = $panel->getId();
             $hasTenancy = $panel->hasTenancy();
             $tenantRoutePrefix = $panel->getTenantRoutePrefix();
@@ -56,10 +57,6 @@ Route::name('filament.')
                             ->group(function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute): void {
                                 if ($routes = $panel->getAuthenticatedRoutes()) {
                                     $routes($panel);
-                                }
-
-                                if ($hasTenancy) {
-                                    Route::get('/', RedirectToTenantController::class)->name('tenant');
                                 }
 
                                 Route::name('auth.')
@@ -137,6 +134,10 @@ Route::name('filament.')
                                             $resource::registerRoutes($panel);
                                         }
                                     });
+
+                                if ($hasTenancy) {
+                                    Route::get('/', RedirectToTenantController::class)->name('tenant');
+                                }
                             });
 
                         if ($hasTenancy) {

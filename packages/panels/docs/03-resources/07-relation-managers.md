@@ -337,6 +337,17 @@ AttachAction::make()
     ->recordSelectSearchColumns(['title', 'description'])
 ```
 
+### Attaching multiple records
+
+The `multiple()` method on the `AttachAction` component allows you to select multiple values:
+
+```php
+use Filament\Tables\Actions\AttachAction;
+
+AttachAction::make()
+    ->multiple()
+```
+
 ### Customizing the select field in the attached modal
 
 You may customize the select field object that is used during attachment by passing a function to the `recordSelect()` method:
@@ -438,6 +449,17 @@ use Filament\Tables\Actions\AssociateAction;
 
 AssociateAction::make()
     ->recordSelectSearchColumns(['title', 'description'])
+```
+
+### Associating multiple records
+
+The `multiple()` method on the `AssociateAction` component allows you to select multiple values:
+
+```php
+use Filament\Tables\Actions\AssociateAction;
+
+AssociateAction::make()
+    ->multiple()
 ```
 
 ### Customizing the select field in the associate modal
@@ -640,6 +662,30 @@ On the Edit or View page class, override the `hasCombinedRelationManagerTabsWith
 public function hasCombinedRelationManagerTabsWithContent(): bool
 {
     return true;
+}
+```
+
+### Setting an icon for the form tab
+
+On the Edit or View page class, override the `getContentTabIcon()` method:
+
+```php
+public function getContentTabIcon(): ?string
+{
+    return 'heroicon-m-cog';
+}
+```
+
+### Setting the position of the form tab
+
+By default, the form tab is rendered before the relation tabs. To render it after, you can override the `getContentTabPosition()` method on the Edit or View page class:
+
+```php
+use Filament\Resources\Pages\ContentTabPosition;
+
+public function getContentTabPosition(): ?ContentTabPosition
+{
+    return ContentTabPosition::After;
 }
 ```
 
