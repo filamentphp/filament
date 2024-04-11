@@ -64,7 +64,10 @@ class PrepareCsvExport implements ShouldQueue
         $keyName = $query->getModel()->getKeyName();
         $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
 
-        if (config('database.default') === 'pgsql') {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        if ($databaseConnection->getDriverName() === 'pgsql') {
             $originalOrderings = collect($query->getQuery()->orders)
                 ->reject(function ($order) use ($keyName, $qualifiedKeyName) {
                     return in_array($order['column'], [$keyName, $qualifiedKeyName]);
