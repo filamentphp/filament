@@ -8,26 +8,40 @@ use Illuminate\View\ComponentAttributeBag;
 trait HasExtraModalWindowAttributes
 {
     /**
-     * @var array<mixed> | Closure>
+     * @var array<array<mixed> | Closure>
      */
-    protected array | Closure $extraModalWindowAttributes = [];
+    protected array $extraModalWindowAttributes = [];
 
     /**
      * @param  array<mixed> | Closure  $attributes
      */
-    public function extraModalWindowAttributes(array | Closure $attributes): static
+    public function extraModalWindowAttributes(array | Closure $attributes, bool $merge = false): static
     {
-        $this->extraModalWindowAttributes = $attributes;
+        if ($merge) {
+            $this->extraModalWindowAttributes[] = $attributes;
+        } else {
+            $this->extraModalWindowAttributes = [$attributes];
+        }
 
         return $this;
     }
 
-    public function getExtraModalWindowAttributesBag(): ComponentAttributeBag
+    /**
+     * @return array<mixed>
+     */
+    public function getExtraModalWindowAttributes(): array
     {
         $temporaryAttributeBag = new ComponentAttributeBag();
 
-        $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($this->extraModalWindowAttributes));
+        foreach ($this->extraModalWindowAttributes as $extraModalWindowAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraModalWindowAttributes));
+        }
 
-        return $temporaryAttributeBag;
+        return $temporaryAttributeBag->getAttributes();
+    }
+
+    public function getExtraModalWindowAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->getExtraModalWindowAttributes());
     }
 }

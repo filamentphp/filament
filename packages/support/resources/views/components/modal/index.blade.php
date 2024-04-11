@@ -11,7 +11,7 @@
     'closeEventName' => 'close-modal',
     'description' => null,
     'displayClasses' => 'inline-block',
-    'extraModalWindowAttributesBag' => null,
+    'extraModalWindowAttributeBag' => null,
     'footer' => null,
     'footerActions' => [],
     'footerActionsAlignment' => Alignment::Start,
@@ -49,7 +49,7 @@
 
     $closeEventHandler = filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()';
 
-    $modalWindowAttributes = $extraModalWindowAttributesBag ?? new \Illuminate\View\ComponentAttributeBag();
+    $modalWindowAttributes = $extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag();
 @endphp
 
 <div
