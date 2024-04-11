@@ -23,16 +23,20 @@ document.addEventListener('livewire:init', () => {
             Alpine.$nextTick(() => {
                 console.log(component.effects.partials)
 
-                for (const [name, html] of Object.entries(component.effects.partials ?? {})) {
-                    let el = component.el.querySelector('[wire\\:partial="' + name + '"]')
+                for (const [name, html] of Object.entries(
+                    component.effects.partials ?? {},
+                )) {
+                    let el = component.el.querySelector(
+                        '[wire\\:partial="' + name + '"]',
+                    )
 
                     if (!el) {
                         continue
                     }
 
                     let wrapperTag = el.parentElement
-                        // If the root element is a "tr", we need the wrapper to be a "table"...
-                        ? el.parentElement.tagName.toLowerCase()
+                        ? // If the root element is a "tr", we need the wrapper to be a "table"...
+                          el.parentElement.tagName.toLowerCase()
                         : 'div'
 
                     let wrapper = document.createElement(wrapperTag)
@@ -42,8 +46,7 @@ document.addEventListener('livewire:init', () => {
 
                     try {
                         parentComponent = closestComponent(el.parentElement)
-                    } catch (e) {
-                    }
+                    } catch (e) {}
 
                     parentComponent && (wrapper.__livewire = parentComponent)
 
@@ -56,11 +59,17 @@ document.addEventListener('livewire:init', () => {
                             if (isntElement(el)) return
 
                             if (el.__livewire_ignore === true) return skip()
-                            if (el.__livewire_ignore_self === true) childrenOnly()
+                            if (el.__livewire_ignore_self === true)
+                                childrenOnly()
 
-                            if (isComponentRootEl(el) && el.getAttribute('wire:id') !== component.id) return skip()
+                            if (
+                                isComponentRootEl(el) &&
+                                el.getAttribute('wire:id') !== component.id
+                            )
+                                return skip()
 
-                            if (isComponentRootEl(el)) toEl.__livewire = component
+                            if (isComponentRootEl(el))
+                                toEl.__livewire = component
                         },
 
                         key: (el) => {
@@ -69,15 +78,15 @@ document.addEventListener('livewire:init', () => {
                             return el.hasAttribute(`wire:key`)
                                 ? el.getAttribute(`wire:key`)
                                 : el.hasAttribute(`wire:id`)
-                                    ? el.getAttribute(`wire:id`)
-                                    : el.id
+                                  ? el.getAttribute(`wire:id`)
+                                  : el.id
                         },
 
                         lookahead: false,
                     })
                 }
             })
-        });
+        })
 
         function isntElement(el) {
             return typeof el.hasAttribute !== 'function'
@@ -88,10 +97,11 @@ document.addEventListener('livewire:init', () => {
         }
 
         function closestComponent(el, strict = true) {
-            let closestRoot = Alpine.findClosest(el, i => i.__livewire)
+            let closestRoot = Alpine.findClosest(el, (i) => i.__livewire)
 
-            if (! closestRoot) {
-                if (strict) throw "Could not find Livewire component in DOM tree"
+            if (!closestRoot) {
+                if (strict)
+                    throw 'Could not find Livewire component in DOM tree'
 
                 return
             }
