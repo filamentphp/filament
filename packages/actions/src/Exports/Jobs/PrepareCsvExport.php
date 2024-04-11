@@ -68,15 +68,14 @@ class PrepareCsvExport implements ShouldQueue
         $databaseConnection = $query->getConnection();
 
         if ($databaseConnection->getDriverName() === 'pgsql') {
-            $originalOrderings = collect($query->getQuery()->orders)
-                ->reject(function ($order) use ($keyName, $qualifiedKeyName) {
-                    return in_array($order['column'], [$keyName, $qualifiedKeyName]);
-                })
+            $originalOrders = collect($query->getQuery()->orders)
+                ->reject(fn (array $order): bool => in_array($order['column'] ?? null, [$keyName, $qualifiedKeyName]))
                 ->unique('column');
 
-            $query->reorder()->orderBy($qualifiedKeyName);
-            foreach ($originalOrderings as $ordering) {
-                $query->orderBy($ordering['column'], $ordering['direction']);
+            $query->reorder($qualifiedKeyName);
+            
+            foreach ($originalOrders as $order) {
+                $query->orderBy($order['column'], $order['direction']);
             }
         }
 
