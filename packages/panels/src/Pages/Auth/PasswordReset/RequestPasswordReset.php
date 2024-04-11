@@ -123,7 +123,7 @@ class RequestPasswordReset extends SimplePage
         ];
     }
 
-    protected function getEmailFormComponent(): Component
+    protected function getEmailFormComponent(): TextInput
     {
         return TextInput::make('email')
             ->label(__('filament-panels::pages/auth/password-reset/request-password-reset.form.email.label'))

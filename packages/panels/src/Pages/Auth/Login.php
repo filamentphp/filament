@@ -120,7 +120,7 @@ class Login extends SimplePage
         ];
     }
 
-    protected function getEmailFormComponent(): Component
+    protected function getEmailFormComponent(): TextInput
     {
         return TextInput::make('email')
             ->label(__('filament-panels::pages/auth/login.form.email.label'))
@@ -131,7 +131,7 @@ class Login extends SimplePage
             ->extraInputAttributes(['tabindex' => 1]);
     }
 
-    protected function getPasswordFormComponent(): Component
+    protected function getPasswordFormComponent(): TextInput
     {
         return TextInput::make('password')
             ->label(__('filament-panels::pages/auth/login.form.password.label'))
@@ -143,7 +143,7 @@ class Login extends SimplePage
             ->extraInputAttributes(['tabindex' => 2]);
     }
 
-    protected function getRememberFormComponent(): Component
+    protected function getRememberFormComponent(): Checkbox
     {
         return Checkbox::make('remember')
             ->label(__('filament-panels::pages/auth/login.form.remember.label'));

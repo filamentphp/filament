@@ -165,7 +165,7 @@ class Register extends SimplePage
         ];
     }
 
-    protected function getNameFormComponent(): Component
+    protected function getNameFormComponent(): TextInput
     {
         return TextInput::make('name')
             ->label(__('filament-panels::pages/auth/register.form.name.label'))
@@ -174,7 +174,7 @@ class Register extends SimplePage
             ->autofocus();
     }
 
-    protected function getEmailFormComponent(): Component
+    protected function getEmailFormComponent(): TextInput
     {
         return TextInput::make('email')
             ->label(__('filament-panels::pages/auth/register.form.email.label'))
@@ -184,7 +184,7 @@ class Register extends SimplePage
             ->unique($this->getUserModel());
     }
 
-    protected function getPasswordFormComponent(): Component
+    protected function getPasswordFormComponent(): TextInput
     {
         return TextInput::make('password')
             ->label(__('filament-panels::pages/auth/register.form.password.label'))
@@ -197,7 +197,7 @@ class Register extends SimplePage
             ->validationAttribute(__('filament-panels::pages/auth/register.form.password.validation_attribute'));
     }
 
-    protected function getPasswordConfirmationFormComponent(): Component
+    protected function getPasswordConfirmationFormComponent(): TextInput
     {
         return TextInput::make('passwordConfirmation')
             ->label(__('filament-panels::pages/auth/register.form.password_confirmation.label'))
