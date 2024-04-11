@@ -15,14 +15,16 @@
 ])
 
 <div
-    {{ $attributes->class([
-        'fi-ta-header flex flex-col gap-3 p-4 sm:px-6',
-        'sm:flex-row sm:items-center' => $actionsPosition === HeaderActionsPosition::Adaptive,
-    ]) }}>
-
+    {{
+        $attributes->class([
+            'fi-ta-header flex flex-col gap-3 p-4 sm:px-6',
+            'sm:flex-row sm:items-center' => $actionsPosition === HeaderActionsPosition::Adaptive,
+        ])
+    }}
+>
     @if ($icon)
-        <x-filament::icon 
-            :icon="$icon" 
+        <x-filament::icon
+            :icon="$icon"
             @class([
                 'fi-ta-header-icon self-start',
                 match ($iconColor) {
@@ -43,20 +45,24 @@
                     shades: [400, 500],
                     alias: 'table.header.icon',
                 ) => $iconColor !== 'gray',
-            ]) 
+            ])
         />
     @endif
 
     @if ($heading || $description)
         <div class="grid gap-y-1">
             @if ($heading)
-                <h3 class="text-base font-semibold leading-6 fi-ta-header-heading text-gray-950 dark:text-white">
+                <h3
+                    class="fi-ta-header-heading text-base font-semibold leading-6 text-gray-950 dark:text-white"
+                >
                     {{ $heading }}
                 </h3>
             @endif
 
             @if ($description)
-                <p class="text-sm text-gray-600 fi-ta-header-description dark:text-gray-400">
+                <p
+                    class="fi-ta-header-description text-sm text-gray-600 dark:text-gray-400"
+                >
                     {{ $description }}
                 </p>
             @endif
@@ -64,11 +70,15 @@
     @endif
 
     @if ($actions)
-        <x-filament-tables::actions :actions="$actions" :alignment="Alignment::Start" wrap @class([
-            'ms-auto' =>
-                $actionsPosition === HeaderActionsPosition::Adaptive &&
-                !($heading || $description),
-            'sm:ms-auto' => $actionsPosition === HeaderActionsPosition::Adaptive,
-        ]) />
+        <x-filament-tables::actions
+            :actions="$actions"
+            :alignment="Alignment::Start"
+            wrap
+            @class([
+                'ms-auto' => $actionsPosition === HeaderActionsPosition::Adaptive &&
+                    ! ($heading || $description),
+                'sm:ms-auto' => $actionsPosition === HeaderActionsPosition::Adaptive,
+            ])
+        />
     @endif
 </div>
