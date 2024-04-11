@@ -293,7 +293,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
                 $state = $component->isMultiple()
                     ? [
-                        ...$component->getState(),
+                        ...$component->getState() ?? [],
                         $createdOptionKey,
                     ]
                     : $createdOptionKey;

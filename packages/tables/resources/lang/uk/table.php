@@ -1,20 +1,30 @@
 <?php
 
 return [
+
     'column_toggle' => [
 
         'heading' => 'Стовпці',
 
     ],
+
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Показати :count менше',
+                'expand_list' => 'Показати :count більше',
+            ],
+
             'more_list_items' => 'і :count ще',
+
         ],
 
     ],
 
     'fields' => [
+
         'bulk_select_page' => [
             'label' => 'Обрати/зняти всі елементи для масових дій.',
         ],
@@ -60,6 +70,7 @@ return [
             ],
 
         ],
+
     ],
 
     'actions' => [
@@ -75,9 +86,11 @@ return [
         'filter' => [
             'label' => 'Фільтр',
         ],
+
         'group' => [
             'label' => 'Групувати',
         ],
+
         'open_bulk_actions' => [
             'label' => 'Відкрити дії',
         ],
@@ -98,6 +111,10 @@ return [
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'Застосувати фільтри',
+            ],
 
             'remove' => [
                 'label' => 'Видалити фільтр',
