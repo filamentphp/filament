@@ -17,11 +17,17 @@ trait HasStateBindingModifiers
 
     protected bool $isLiveOnBlur = false;
 
-    public function live(bool $onBlur = false, int | string | null $debounce = null, ?bool $condition = true): static
+    protected array $livePartials = [];
+
+    /**
+     * @param  array<string>  $partiallyRender
+     */
+    public function live(bool $onBlur = false, int | string | null $debounce = null, ?bool $condition = true, array $partiallyRender = []): static
     {
         $this->isLive = $condition;
         $this->isLiveOnBlur = $onBlur;
         $this->liveDebounce = $debounce;
+        $this->livePartials = $partiallyRender;
 
         return $this;
     }
@@ -33,9 +39,12 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    public function lazy(): static
+    /**
+     * @param  array<string>  $partials
+     */
+    public function lazy(array $partials = []): static
     {
-        $this->live(onBlur: true);
+        $this->live(onBlur: true, partiallyRender: $partials);
 
         return $this;
     }
@@ -157,6 +166,11 @@ trait HasStateBindingModifiers
     public function isLazy(): bool
     {
         return $this->isLiveOnBlur();
+    }
+
+    public function getLivePartials(): array
+    {
+        return $this->livePartials;
     }
 
     public function isLiveDebounced(): bool

@@ -44,7 +44,7 @@ trait InteractsWithTable
 
     protected bool $shouldMountInteractsWithTable = false;
 
-    public function bootedInteractsWithTable(): void
+    public function bootInteractsWithTable(): void
     {
         $this->table = Action::configureUsing(
             Closure::fromCallable([$this, 'configureTableAction']),
@@ -310,7 +310,7 @@ trait InteractsWithTable
     {
         $this->cacheForms();
 
-        $this->bootedInteractsWithTable();
+        $this->bootInteractsWithTable();
 
         $this->resetTableFiltersForm();
 

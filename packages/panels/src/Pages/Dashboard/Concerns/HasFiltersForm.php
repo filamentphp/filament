@@ -27,6 +27,7 @@ trait HasFiltersForm
         }
 
         return $this->filtersForm($this->makeSchema()
+            ->extraAttributes(['wire:partial' => 'table-filters-form'])
             ->columns([
                 'md' => 2,
                 'xl' => 3,

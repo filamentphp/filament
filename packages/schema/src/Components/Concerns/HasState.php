@@ -7,6 +7,7 @@ use Filament\Infolists\Components\Entry;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Utilities\Get;
 use Filament\Schema\Components\Utilities\Set;
+use Filament\Support\Partials\SupportPartials;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -114,6 +115,23 @@ trait HasState
             $this->callAfterStateUpdatedHook($callback);
 
             store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
+        }
+
+        if (filled($livePartials = $this->getLivePartials())) {
+            app(SupportPartials::class)->renderPartial($this->getLivewire(), function () use ($livePartials) {
+                $html = [];
+
+                foreach ($livePartials as $key) {
+                    $key = $this->generateRelativeKey($key);
+
+                    $html = [
+                        ...$html,
+                        "schema-component.{$key}" => $this->getLivewire()->getSchemaComponent($key)->toHtml(),
+                    ];
+                }
+
+                return $html;
+            });
         }
 
         return $this;
@@ -511,6 +529,33 @@ trait HasState
         }
 
         return "{$containerPath}.{$path}";
+    }
+
+    public function generateRelativeKey(string | Component $key, bool $isAbsolute = false): string
+    {
+        if ($key instanceof Component) {
+            return $key->getKey();
+        }
+
+        if ($isAbsolute) {
+            return $key;
+        }
+
+        $containerKey = $this->getContainer()->getKey();
+
+        while (str($key)->startsWith('../')) {
+            $containerKey = Str::contains($containerKey, '.') ?
+                (string) str($containerKey)->beforeLast('.') :
+                null;
+
+            $key = (string) str($key)->after('../');
+        }
+
+        if (blank($containerKey)) {
+            return $key;
+        }
+
+        return "{$containerKey}.{$key}";
     }
 
     protected function flushCachedAbsoluteStatePath(): void

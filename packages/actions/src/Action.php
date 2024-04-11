@@ -14,11 +14,15 @@ use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
+use Livewire\Drawer\Utils;
 
 class Action extends ViewComponent implements Arrayable
 {
@@ -553,5 +557,15 @@ class Action extends ViewComponent implements Arrayable
     public function shouldMarkAsUnread(): bool
     {
         return (bool) $this->evaluate($this->shouldMarkAsUnread);
+    }
+
+    public function renderModal(int $actionNestingIndex): Htmlable
+    {
+        return new HtmlString(Utils::insertAttributesIntoHtmlRoot(view('filament-actions::action-modal', [
+            'action' => $this,
+            'actionNestingIndex' => $actionNestingIndex,
+        ])->render(), [
+            'wire:partial' => "action-modals.{$actionNestingIndex}",
+        ]));
     }
 }

@@ -17,6 +17,8 @@ use Filament\Support\Components\ComponentManager;
 use Filament\Support\Components\Contracts\ScopedComponentManager;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
+use Filament\Support\Overrides\OverrideHandleComponents;
+use Filament\Support\Partials\SupportPartials;
 use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
@@ -24,6 +26,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Laravel\Octane\Events\RequestReceived;
+use Livewire\Mechanisms\HandleComponents\HandleComponents;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
@@ -91,10 +94,14 @@ class SupportServiceProvider extends PackageServiceProvider
                     ->withMaxInputLength(500000),
             ),
         );
+
+        $this->app->bind(HandleComponents::class, OverrideHandleComponents::class);
     }
 
     public function packageBooted(): void
     {
+        app('livewire')->componentHook(new SupportPartials());
+
         FilamentAsset::register([
             Js::make('async-alpine', __DIR__ . '/../dist/async-alpine.js'),
             Css::make('support', __DIR__ . '/../dist/index.css'),

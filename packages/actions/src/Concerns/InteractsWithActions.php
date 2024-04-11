@@ -15,6 +15,7 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Throwable;
 
@@ -26,6 +27,8 @@ trait InteractsWithActions
      * @var array<array<string, mixed>> | null
      */
     public ?array $mountedActions = [];
+
+    protected ?int $originallyMountedActionIndex = null;
 
     /**
      * @var mixed
@@ -51,8 +54,12 @@ trait InteractsWithActions
 
     protected bool $hasActionsModalRendered = false;
 
-    public function bootedInteractsWithActions(): void
+    public function bootInteractsWithActions(): void
     {
+        if ($originallyMountedActionIndex = array_key_last($this->mountedActions)) {
+            $this->originallyMountedActionIndex = $originallyMountedActionIndex;
+        }
+
         $this->cacheTraitActions();
 
         // Boot the InteractsWithTable trait first so the table object is available.
@@ -636,5 +643,10 @@ trait InteractsWithActions
     protected function syncActionModals(): void
     {
         $this->dispatch('sync-action-modals', id: $this->getId(), newActionNestingIndex: array_key_last($this->mountedActions));
+    }
+
+    public function getOriginallyMountedActionIndex(): ?int
+    {
+        return $this->originallyMountedActionIndex;
     }
 }

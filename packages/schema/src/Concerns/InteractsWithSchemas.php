@@ -13,6 +13,7 @@ use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Livewire\Mechanisms\HandleComponents\ComponentContext;
 use Livewire\WithFileUploads;
 use ReflectionMethod;
 use ReflectionNamedType;
@@ -44,6 +45,10 @@ trait InteractsWithSchemas
     protected array $cachedSchemas = [];
 
     protected bool $isCachingSchemas = false;
+
+    public function hydrateInteractsWithSchemas()
+    {
+    }
 
     public function isCachingSchemas(): bool
     {

@@ -17,6 +17,90 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(Tooltip)
 })
 
+document.addEventListener('livewire:init', () => {
+    Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+        respond(() => {
+            Alpine.$nextTick(() => {
+                console.log(component.effects.partials)
+
+                for (const [name, html] of Object.entries(component.effects.partials ?? {})) {
+                    let el = component.el.querySelector('[wire\\:partial="' + name + '"]')
+
+                    if (!el) {
+                        continue
+                    }
+
+                    let wrapperTag = el.parentElement
+                        // If the root element is a "tr", we need the wrapper to be a "table"...
+                        ? el.parentElement.tagName.toLowerCase()
+                        : 'div'
+
+                    let wrapper = document.createElement(wrapperTag)
+
+                    wrapper.innerHTML = html
+                    let parentComponent
+
+                    try {
+                        parentComponent = closestComponent(el.parentElement)
+                    } catch (e) {
+                    }
+
+                    parentComponent && (wrapper.__livewire = parentComponent)
+
+                    let to = wrapper.firstElementChild
+
+                    to.__livewire = component
+
+                    window.Alpine.morph(el, to, {
+                        updating: (el, toEl, childrenOnly, skip) => {
+                            if (isntElement(el)) return
+
+                            if (el.__livewire_ignore === true) return skip()
+                            if (el.__livewire_ignore_self === true) childrenOnly()
+
+                            if (isComponentRootEl(el) && el.getAttribute('wire:id') !== component.id) return skip()
+
+                            if (isComponentRootEl(el)) toEl.__livewire = component
+                        },
+
+                        key: (el) => {
+                            if (isntElement(el)) return
+
+                            return el.hasAttribute(`wire:key`)
+                                ? el.getAttribute(`wire:key`)
+                                : el.hasAttribute(`wire:id`)
+                                    ? el.getAttribute(`wire:id`)
+                                    : el.id
+                        },
+
+                        lookahead: false,
+                    })
+                }
+            })
+        });
+
+        function isntElement(el) {
+            return typeof el.hasAttribute !== 'function'
+        }
+
+        function isComponentRootEl(el) {
+            return el.hasAttribute('wire:id')
+        }
+
+        function closestComponent(el, strict = true) {
+            let closestRoot = Alpine.findClosest(el, i => i.__livewire)
+
+            if (! closestRoot) {
+                if (strict) throw "Could not find Livewire component in DOM tree"
+
+                return
+            }
+
+            return closestRoot.__livewire
+        }
+    })
+})
+
 // document.addEventListener('livewire:navigating', () => {
 //     clearAllBodyScrollLocks()
 // })
