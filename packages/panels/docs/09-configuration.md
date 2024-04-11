@@ -185,6 +185,21 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Disabling broadcasting
+
+By default, broadcasting is enabled for every panel once Laravel Echo is installed and websockets are set up. This means Echo will attempt to connect to your websocket server in every panel. To disable this you can use the `broadcasting()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->broadcasting(false);
+}
+```
+
 ## Unsaved changes alerts
 
 You may alert users if they attempt to navigate away from a page without saving their changes. This is applied on [Create](resources/creating-records) and [Edit](resources/editing-records) pages of a resource, as well as any open action modals. To enable this feature, you can use the `unsavedChangesAlerts()` method:
