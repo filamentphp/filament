@@ -106,6 +106,8 @@ All these render hooks [can be scoped](#scoping-render-hooks) to any table Livew
     use Filament\Tables\View\TablesRenderHook;
 ```
 
+- `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER` - After the "select all" and "deselect all" action buttons in the selection indicator bar
+- `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE` - Before the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::TOOLBAR_END` - The end of the toolbar
 - `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER` - After the [grouping](../tables/grouping) selector
 - `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE` - Before the [grouping](../tables/grouping) selector
@@ -116,8 +118,6 @@ All these render hooks [can be scoped](#scoping-render-hooks) to any table Livew
 - `TablesRenderHook::TOOLBAR_START` - The start of the toolbar
 - `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER` - After the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
 - `TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE` - Before the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
-- `TablesRenderHook::BULKACTION_INDICATE_AFTER` - After the select and deselect rows in bulk action indicator 
-- `TablesRenderHook::BULKACTION_INDICATE_BEFORE` - Before the select and deselect rows in bulk action indicator 
 
 
 ### Widgets render hooks
