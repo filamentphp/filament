@@ -5,6 +5,7 @@
     use Illuminate\Support\Arr;
 
     $color = $getColor() ?? 'gray';
+    $status = $getStatus();
     $isInline = $isInline();
     $title = $getTitle();
     $hasTitle = filled($title);
@@ -52,6 +53,7 @@
                     default => 'fi-color-custom ring-custom-600/20 dark:ring-custom-400/30',
                 },
                 is_string($color) ? 'fi-color-' . $color : null,
+                is_string($status) ? 'fi-status-' . $status : null,
             ],
         },
     ])
