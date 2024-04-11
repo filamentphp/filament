@@ -131,7 +131,7 @@ class EditRecord extends Page
         return $data;
     }
 
-    public function save(bool $shouldSendSavedNotification = true, bool $shouldRedirect = true): void
+    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
     {
         $this->authorizeAccess();
 
