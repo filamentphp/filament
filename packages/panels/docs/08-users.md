@@ -240,9 +240,9 @@ In the `form()` method of the example, we call methods like `getNameFormComponen
 If you'd like to customize a field in an authentication form without needing to define a new `form()` method, you could extend the specific field method and chain your customizations:
 
 ```php
-use Filament\Forms\Components\Component;
+use Filament\Forms\Components\TextInput;
 
-protected function getPasswordFormComponent(): Component
+protected function getPasswordFormComponent(): TextInput
 {
     return parent::getPasswordFormComponent()
         ->revealable(false);
