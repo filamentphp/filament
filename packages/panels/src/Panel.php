@@ -18,6 +18,7 @@ class Panel extends Component
     use Panel\Concerns\HasBrandLogo;
     use Panel\Concerns\HasBrandName;
     use Panel\Concerns\HasBreadcrumbs;
+    use Panel\Concerns\HasBroadcasting;
     use Panel\Concerns\HasColors;
     use Panel\Concerns\HasComponents;
     use Panel\Concerns\HasDarkMode;
