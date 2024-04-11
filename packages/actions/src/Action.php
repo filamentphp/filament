@@ -46,6 +46,7 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\CanUseDatabaseTransactions;
     use Concerns\HasAction;
     use Concerns\HasArguments;
+    use Concerns\HasExtraModalWindowAttributes;
     use Concerns\HasForm;
     use Concerns\HasGroupedIcon;
     use Concerns\HasInfolist;

@@ -66,6 +66,7 @@
                     :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
                     :description="$action?->getModalDescription()"
                     display-classes="block"
+                    :extra-modal-window-attribute-bag="$action?->getExtraModalWindowAttributeBag()"
                     :footer-actions="$action?->getVisibleModalFooterActions()"
                     :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
                     :heading="$action?->getModalHeading()"
