@@ -73,7 +73,7 @@ class PrepareCsvExport implements ShouldQueue
                 ->unique('column');
 
             $query->reorder($qualifiedKeyName);
-            
+
             foreach ($originalOrders as $order) {
                 $query->orderBy($order['column'], $order['direction']);
             }
