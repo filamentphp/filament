@@ -48,7 +48,7 @@
                     const tabs = getTabs()
 
                     if (! tabs.includes(tab)) {
-                        tab = tabs[@js($getActiveTab()) - 1]
+                        tab = tabs[@js($getActiveTab()) - 1] ?? tab
                     }
                 })
             })
