@@ -54,3 +54,18 @@ public function toBroadcast(User $notifiable): BroadcastMessage
         ->getBroadcastMessage();
 }
 ```
+
+## Disabling broadcasting on specific panels
+
+By default, broadcasting is enabled for every panel once configured. To disable it on a specific panel you can use the `broadcasting()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->broadcasting(false);
+}
+```

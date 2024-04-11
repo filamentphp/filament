@@ -528,6 +528,11 @@ class FilamentManager
         return $this->getCurrentPanel()->hasBreadcrumbs();
     }
 
+    public function hasBroadcasting(): bool
+    {
+        return $this->getCurrentPanel()->hasBroadcasting();
+    }
+
     public function hasCollapsibleNavigationGroups(): bool
     {
         return $this->getCurrentPanel()->hasCollapsibleNavigationGroups();
