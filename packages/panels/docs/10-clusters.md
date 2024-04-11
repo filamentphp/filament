@@ -64,7 +64,7 @@ protected static ?string $cluster = Settings::class;
 
 ## Code structure recommendations for panels using clusters
 
-When using clusters, it is recommended that you move all of your resources and pages into a directory with the same name as the cluster. For example, here is an directory structure for a panel that uses a cluster called `Settings`, containing a `ColorResource` and two custom pages:
+When using clusters, it is recommended that you move all of your resources and pages into a directory with the same name as the cluster. For example, here is a directory structure for a panel that uses a cluster called `Settings`, containing a `ColorResource` and two custom pages:
 
 ```
 .

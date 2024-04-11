@@ -32,7 +32,7 @@ ColorColumn::make('color')
 
 ### Customizing the text that is copied to the clipboard
 
-You can customize the text that gets copied to the clipboard using the `copyableState() method:
+You can customize the text that gets copied to the clipboard using the `copyableState()` method:
 
 ```php
 use Filament\Tables\Columns\ColorColumn;

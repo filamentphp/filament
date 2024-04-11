@@ -8,6 +8,8 @@ trait CanSubmitForm
 
     protected ?string $formToSubmit = null;
 
+    protected ?string $formId = null;
+
     public function submit(?string $form): static
     {
         $this->canSubmitForm = filled($form);
@@ -24,5 +26,17 @@ trait CanSubmitForm
     public function getFormToSubmit(): ?string
     {
         return $this->formToSubmit;
+    }
+
+    public function formId(?string $id): static
+    {
+        $this->formId = $id;
+
+        return $this;
+    }
+
+    public function getFormId(): ?string
+    {
+        return $this->formId;
     }
 }

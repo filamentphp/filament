@@ -42,7 +42,7 @@ TextInput::make('backgroundColor')
 
 ## Setting the HTML input mode
 
-You may set the [`inputmode` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attributes) of the input using the `inputMode()` method:
+You may set the [`inputmode` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#inputmode) of the input using the `inputMode()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -213,13 +213,13 @@ TextInput::make('amount')
 
 ## Making the field read-only
 
-Not to be confused with [disabling the field](getting-started#disabling-a-field), you may make the field "read-only" using the `readonly()` method:
+Not to be confused with [disabling the field](getting-started#disabling-a-field), you may make the field "read-only" using the `readOnly()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
-    ->readonly()
+    ->readOnly()
 ```
 
 There are a few differences, compared to [`disabled()`](getting-started#disabling-a-field):

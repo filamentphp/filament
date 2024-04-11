@@ -30,13 +30,13 @@ return [
         ],
 
         'remember' => [
-            'label' => 'Beni Hatırla',
+            'label' => 'Beni hatırla',
         ],
 
         'actions' => [
 
             'authenticate' => [
-                'label' => 'Giriş Yap',
+                'label' => 'Giriş yap',
             ],
 
         ],

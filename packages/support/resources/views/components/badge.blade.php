@@ -9,6 +9,7 @@
     'deleteButton' => null,
     'disabled' => false,
     'form' => null,
+    'formId' => null,
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
@@ -92,6 +93,7 @@
         $attributes
             ->merge([
                 'disabled' => $disabled,
+                'form' => $tag === 'button' ? $formId : null,
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,

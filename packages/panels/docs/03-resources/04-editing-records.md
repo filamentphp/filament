@@ -303,6 +303,29 @@ class EditUser extends EditRecord
 
 To view the entire actions API, please visit the [pages section](../pages#adding-actions-to-pages).
 
+### Adding a save action button to the header
+
+The "Save" button can be moved to the header of the page by overriding the `getHeaderActions()` method and using `getSaveFormAction()`. You need to pass `formId()` to the action, to specify that the action should submit the form with the ID of `form`, which is the `<form>` ID used in the view of the page:
+
+```php
+protected function getHeaderActions(): array
+{
+    return [
+        $this->getSaveFormAction()
+            ->formId('form'),
+    ];
+}
+```
+
+You may remove all actions from the form by overriding the `getFormActions()` method to return an empty array:
+
+```php
+protected function getFormActions(): array
+{
+    return [];
+}
+```
+
 ## Creating another Edit page
 
 One Edit page may not be enough space to allow users to navigate many form fields. You can create as many Edit pages for a resource as you want. This is especially useful if you are using [resource sub-navigation](getting-started#resource-sub-navigation), as you are then easily able to switch between the different Edit pages.

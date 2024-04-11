@@ -59,15 +59,15 @@ class Range extends Summarizer
             $originalFrom = CarbonImmutable::make($state[0]);
             $originalTo = CarbonImmutable::make($state[1]);
 
-            $fromDate = $originalFrom->format(Table::$defaultDateDisplayFormat);
-            $toDate = $originalTo->format(Table::$defaultDateDisplayFormat);
+            $fromDate = $originalFrom->translatedFormat(Table::$defaultDateDisplayFormat);
+            $toDate = $originalTo->translatedFormat(Table::$defaultDateDisplayFormat);
 
             if ($fromDate !== $toDate) {
                 return [$fromDate, $toDate];
             }
 
-            $fromDateTime = $originalFrom->format(Table::$defaultDateTimeDisplayFormat);
-            $toDateTime = $originalTo->format(Table::$defaultDateTimeDisplayFormat);
+            $fromDateTime = $originalFrom->translatedFormat(Table::$defaultDateTimeDisplayFormat);
+            $toDateTime = $originalTo->translatedFormat(Table::$defaultDateTimeDisplayFormat);
 
             if ($fromDateTime === $toDateTime) {
                 return [$fromDateTime];

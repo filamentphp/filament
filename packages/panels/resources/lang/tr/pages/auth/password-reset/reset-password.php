@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Şifrenizi Sıfırlayın',
+    'title' => 'Şifrenizi sıfırlayın',
 
-    'heading' => 'Şifrenizi Sıfırlayın',
+    'heading' => 'Şifrenizi sıfırlayın',
 
     'form' => [
 
@@ -18,13 +18,13 @@ return [
         ],
 
         'password_confirmation' => [
-            'label' => 'Şifreyi Onayla',
+            'label' => 'Şifreyi onayla',
         ],
 
         'actions' => [
 
             'reset' => [
-                'label' => 'Şifreyi Sıfırla',
+                'label' => 'Şifreyi sıfırla',
             ],
 
         ],
