@@ -27,11 +27,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
+use Illuminate\Validation\ValidationException;
 use League\Csv\ByteSequence;
 use League\Csv\Info;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
 use League\Csv\Writer;
+use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -76,10 +78,19 @@ trait CanImportRecords
             FileUpload::make('file')
                 ->label(__('filament-actions::import.modal.form.file.label'))
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
-                ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain'])
-                ->afterStateUpdated(function (Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
+                ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
+                ->rule('extensions:csv')
+                ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
                     if (! $state instanceof TemporaryUploadedFile) {
                         return;
+                    }
+
+                    try {
+                        $livewire->validateOnly($component->getStatePath());
+                    } catch (ValidationException $exception) {
+                        $component->state([]);
+                        
+                        throw $exception;
                     }
 
                     $csvStream = $this->getUploadedFileStream($state);
