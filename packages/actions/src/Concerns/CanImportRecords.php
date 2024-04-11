@@ -89,7 +89,7 @@ trait CanImportRecords
                         $livewire->validateOnly($component->getStatePath());
                     } catch (ValidationException $exception) {
                         $component->state([]);
-                        
+
                         throw $exception;
                     }
 

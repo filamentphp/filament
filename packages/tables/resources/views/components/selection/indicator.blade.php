@@ -48,7 +48,7 @@
             >
                 {{ trans_choice('filament-tables::table.selection_indicator.actions.select_all.label', $allSelectableRecordsCount) }}
             </x-filament::link>
-    
+
             <x-filament::link
                 color="danger"
                 tag="button"
