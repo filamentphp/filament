@@ -272,15 +272,6 @@ Now, in the view file, you can render the action button by calling `getModalActi
 </div>
 ```
 
-## Adding extra attributes to the modal window
-
-You may also pass extra HTML attributes to the modal window using `extraModalWindowAttributes()`:
-
-```php
-Action::make('updateAuthor')
-    ->extraModalWindowAttributes(['class' => 'update-author-modal'])
-```
-
 ## Using a slide-over instead of a modal
 
 You can open a "slide-over" dialog instead of a modal by using the `slideOver()` method:
@@ -560,4 +551,13 @@ Action::make('create')
     })
     ->modalHidden(fn (): bool => $this->role !== 'admin')
     ->modalContent(view('filament.pages.actions.create'))
+```
+
+## Adding extra attributes to the modal window
+
+You may also pass extra HTML attributes to the modal window using `extraModalWindowAttributes()`:
+
+```php
+Action::make('updateAuthor')
+    ->extraModalWindowAttributes(['class' => 'update-author-modal'])
 ```
