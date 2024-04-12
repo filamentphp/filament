@@ -53,7 +53,7 @@ trait InteractsWithActions
 
     protected bool $hasActionsModalRendered = false;
 
-    public function bootInteractsWithActions(): void
+    public function bootedInteractsWithActions(): void
     {
         if (filled($originallyMountedActionIndex = array_key_last($this->mountedActions))) {
             $this->originallyMountedActionIndex = $originallyMountedActionIndex;
