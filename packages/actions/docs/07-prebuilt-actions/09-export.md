@@ -319,6 +319,17 @@ ExportAction::make()
 
 Alternatively, you can override the `getFormats()` method on the exporter class, which will set the default formats for all actions that use that exporter:
 
+```php
+use Filament\Actions\Exports\Enums\ExportFormat;
+
+public function getFormats(): array
+{
+    return [
+        ExportFormat::Csv,
+    ];
+}
+```
+
 ## Modifying the export query
 
 By default, if you are using the `ExportAction` with a table, the action will use the table's currently filtered and sorted query to export the data. If you don't have a table, it will use the model's default query. To modify the query builder before exporting, you can use the `modifyQueryUsing()` method on the action:
