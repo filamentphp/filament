@@ -319,17 +319,6 @@ ExportAction::make()
 
 Alternatively, you can override the `getFormats()` method on the exporter class, which will set the default formats for all actions that use that exporter:
 
-```php
-use Filament\Actions\Exports\Enums\ExportFormat;
-
-public function getFormats(): array
-{
-    return [
-        ExportFormat::Csv,
-    ];
-}
-```
-
 ## Modifying the export query
 
 By default, if you are using the `ExportAction` with a table, the action will use the table's currently filtered and sorted query to export the data. If you don't have a table, it will use the model's default query. To modify the query builder before exporting, you can use the `modifyQueryUsing()` method on the action:
@@ -658,6 +647,31 @@ By default, the export system doesn't define any name for the job batches. If yo
 public function getJobBatchName(): ?string
 {
     return 'product-export';
+}
+```
+
+## Using own XLSX writer
+
+By default, Filament uses the [OpenSpout](github.com/openspout/openspout) package to generate XLSX files. If you want to use your own XLSX writer in custom jobs, you can use the `customWriter()` method on the action
+
+```php
+use App\Filament\Exports\OrderExporter;
+use App\Jobs\OrdersExport;
+
+ExportAction::make('exportOrders')
+    ->exporter(OrderExporter::class)
+    ->job(OrdersExport::class)
+    ->customWriter()
+```
+
+```php
+use Filament\Actions\Exports\Enums\ExportFormat;
+
+public function getFormats(): array
+{
+    return [
+        ExportFormat::Csv,
+    ];
 }
 ```
 

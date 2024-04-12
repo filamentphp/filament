@@ -62,6 +62,8 @@ trait CanExportRecords
 
     protected bool | Closure $hasColumnMapping = true;
 
+    protected bool | Closure $hasCustomWriter = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -219,7 +221,7 @@ trait CanExportRecords
                         fn (PendingBatch $batch) => $batch->name($jobBatchName),
                     )
                     ->allowFailures(),
-                ...(($hasXlsx && (! $hasCsv)) ? [$makeCreateXlsxFileJob()] : []),
+                ...(($hasXlsx && (! $hasCsv) && (! $action->hasCustomWriter())) ? [$makeCreateXlsxFileJob()] : []),
                 app(ExportCompletion::class, [
                     'export' => $export,
                     'columnMap' => $columnMap,
@@ -409,5 +411,17 @@ trait CanExportRecords
     public function hasColumnMapping(): bool
     {
         return (bool) $this->evaluate($this->hasColumnMapping);
+    }
+
+    public function customWriter(bool | Closure $condition = true): static
+    {
+        $this->hasCustomWriter = $condition;
+
+        return $this;
+    }
+
+    public function hasCustomWriter(): bool
+    {
+        return (bool) $this->evaluate($this->hasCustomWriter);
     }
 }
