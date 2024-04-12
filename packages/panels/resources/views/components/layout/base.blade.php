@@ -112,7 +112,7 @@
 
         @filamentScripts(withCore: true)
 
-        @if (config('filament.broadcasting.echo'))
+        @if (filament()->hasBroadcasting() && config('filament.broadcasting.echo'))
             <script data-navigate-once>
                 window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
 

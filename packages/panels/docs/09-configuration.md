@@ -344,3 +344,18 @@ public function panel(Panel $panel): Panel
         ], isPersistent: true);
 }
 ```
+
+## Disabling broadcasting
+
+By default, Laravel Echo will automatically connect for every panel, if credentials have been set up in the [published `config/filament.php` configuration file](installation#publishing-configuration). To disable this automatic connection in a panel, you can use the `broadcasting(false)` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->broadcasting(false);
+}
+```
