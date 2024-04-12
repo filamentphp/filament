@@ -74,7 +74,6 @@ class ExportCsv implements ShouldQueue
 
         $csv = Writer::createFromFileObject(new SplTempFileObject());
         $csv->setDelimiter($this->exporter::getCsvDelimiter());
-        $csv->setOutputBOM(ByteSequence::BOM_UTF8);
 
         $query = EloquentSerializeFacade::unserialize($this->query);
 
