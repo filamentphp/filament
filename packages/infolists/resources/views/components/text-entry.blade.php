@@ -167,6 +167,18 @@
                                     'max-w-max' => ! ($isBulleted || $isBadge),
                                     'w-max' => $isBadge,
                                     'cursor-pointer' => $itemIsCopyable,
+                                    match ($color) {
+                                        null => 'text-gray-950 dark:text-white',
+                                        'gray' => 'text-gray-500 dark:text-gray-400',
+                                        default => 'text-custom-600 dark:text-custom-400',
+                                    } => $isBulleted,
+                                ])
+                                @style([
+                                    \Filament\Support\get_color_css_variables(
+                                        $color,
+                                        shades: [400, 600],
+                                        alias: 'infolists::components.text-entry.item.container',
+                                    ) => $isBulleted && (! in_array($color, [null, 'gray'])),
                                 ])
                             >
                                 @if ($isBadge)
@@ -183,10 +195,10 @@
                                             'fi-in-text-item inline-flex items-center gap-1.5',
                                             'group/item' => $url,
                                             match ($color) {
-                                                null => null,
-                                                'gray' => 'fi-color-gray',
+                                                null, 'gray' => null,
                                                 default => 'fi-color-custom',
                                             },
+                                            is_string($color) ? "fi-color-{$color}" : null,
                                         ])
                                     >
                                         @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))

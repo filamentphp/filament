@@ -1,14 +1,9 @@
 @props([
     'actions' => [],
     'breadcrumbs' => [],
+    'heading',
+    'subheading' => null,
 ])
-
-@php
-    // These are passed through in the bag otherwise Laravel converts View objects to strings prematurely.
-    $heading = $attributes->get('heading');
-    $subheading = $attributes->get('subheading');
-    $attributes = $attributes->except(['heading', 'subheading']);
-@endphp
 
 <header
     {{ $attributes->class(['fi-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between']) }}

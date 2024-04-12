@@ -221,7 +221,17 @@ In this example, the table will calculate how many posts are published.
 
 ### Number formatting
 
-The `numeric()` method allows you to format a summary as a number, using PHP's `number_format()`:
+The `numeric()` method allows you to format an entry as a number:
+
+```php
+use Filament\Tables\Columns\Summarizers\Average;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('rating')
+    ->summarize(Average::make()->numeric())
+```
+
+If you would like to customize the number of decimal places used to format the number with, you can use the `decimalPlaces` argument:
 
 ```php
 use Filament\Tables\Columns\Summarizers\Average;
@@ -230,9 +240,27 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('rating')
     ->summarize(Average::make()->numeric(
         decimalPlaces: 0,
-        decimalSeparator: '.',
-        thousandsSeparator: ',',
     ))
+```
+
+By default, your app's locale will be used to format the number suitably. If you would like to customize the locale used, you can pass it to the `locale` argument:
+
+```php
+use Filament\Tables\Columns\Summarizers\Average;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('rating')
+    ->summarize(Average::make()->numeric(
+        locale: 'nl',
+    ))
+```
+
+Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+
+```php
+use Illuminate\Support\Number;
+
+Number::useLocale('nl');
 ```
 
 ### Currency formatting
@@ -255,6 +283,24 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('price')
     ->summarize(Sum::make()->money('EUR', divideBy: 100))
+```
+
+By default, your app's locale will be used to format the money suitably. If you would like to customize the locale used, you can pass it to the `locale` argument:
+
+```php
+use Filament\Tables\Columns\Summarizers\Average;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('price')
+    ->summarize(Sum::make()->money('EUR', locale: 'nl'))
+```
+
+Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+
+```php
+use Illuminate\Support\Number;
+
+Number::useLocale('nl');
 ```
 
 ### Limiting text length

@@ -240,6 +240,20 @@ CheckboxList::make('authors')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
+### Saving pivot data to the relationship
+
+If your pivot table has additional columns, you can use the `pivotData()` method to specify the data that should be saved in them:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('primaryTechnologies')
+    ->relationship(name: 'technologies', titleAttribute: 'name')
+    ->pivotData([
+        'is_primary' => true,
+    ])
+```
+
 ## Setting a custom no search results message
 
 When you're using a searchable checkbox list, you may want to display a custom message when no search results are found. You can do this using the `noSearchResultsMessage()` method:

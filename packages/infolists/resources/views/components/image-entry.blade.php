@@ -1,7 +1,14 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
+        $state = $getState();
+
+        if ($state instanceof \Illuminate\Support\Collection) {
+            $state = $state->all();
+        }
+
+        $state = \Illuminate\Support\Arr::wrap($state);
+
         $limit = $getLimit();
-        $state = \Illuminate\Support\Arr::wrap($getState());
         $limitedState = array_slice($state, 0, $limit);
         $isCircular = $isCircular();
         $isSquare = $isSquare();
@@ -11,10 +18,15 @@
         $height = $getHeight() ?? ($isStacked ? '2.5rem' : '8rem');
         $width = $getWidth() ?? (($isCircular || $isSquare) ? $height : null);
 
+        $stateCount = count($state);
+        $limitedStateCount = count($limitedState);
+
         $defaultImageUrl = $getDefaultImageUrl();
 
-        if ((! count($limitedState)) && filled($defaultImageUrl)) {
+        if ((! $limitedStateCount) && filled($defaultImageUrl)) {
             $limitedState = [null];
+
+            $limitedStateCount = 1;
         }
 
         $ringClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -29,7 +41,7 @@
             },
         ]);
 
-        $hasLimitedRemainingText = $hasLimitedRemainingText();
+        $hasLimitedRemainingText = $hasLimitedRemainingText() && ($limitedStateCount < $stateCount);
         $isLimitedRemainingTextSeparate = $isLimitedRemainingTextSeparate();
 
         $limitedRemainingTextSizeClasses = match ($getLimitedRemainingTextSize()) {
@@ -50,7 +62,7 @@
                 ])
         }}
     >
-        @if (count($limitedState))
+        @if ($limitedStateCount)
             <div
                 @class([
                     'flex flex-wrap',
@@ -86,7 +98,7 @@
                     />
                 @endforeach
 
-                @if ($hasLimitedRemainingText && ($loop->iteration < count($limitedState)) && (! $isLimitedRemainingTextSeparate) && $isCircular)
+                @if ($hasLimitedRemainingText && (! $isLimitedRemainingTextSeparate) && $isCircular)
                     <div
                         style="
                             @if ($height) height: {{ $height }}; @endif
@@ -104,20 +116,20 @@
                         ])
                     >
                         <span class="-ms-0.5">
-                            +{{ count($state) - count($limitedState) }}
+                            +{{ $stateCount - $limitedStateCount }}
                         </span>
                     </div>
                 @endif
             </div>
 
-            @if ($hasLimitedRemainingText && ($loop->iteration < count($limitedState)) && ($isLimitedRemainingTextSeparate || (! $isCircular)))
+            @if ($hasLimitedRemainingText && ($isLimitedRemainingTextSeparate || (! $isCircular)))
                 <div
                     @class([
                         'font-medium text-gray-500 dark:text-gray-400',
                         $limitedRemainingTextSizeClasses,
                     ])
                 >
-                    +{{ count($state) - count($limitedState) }}
+                    +{{ $stateCount - $limitedStateCount }}
                 </div>
             @endif
         @elseif (($placeholder = $getPlaceholder()) !== null)

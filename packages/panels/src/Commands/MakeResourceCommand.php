@@ -12,10 +12,12 @@ use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
+#[AsCommand(name: 'make:filament-resource')]
 class MakeResourceCommand extends Command
 {
     use CanGenerateForms;

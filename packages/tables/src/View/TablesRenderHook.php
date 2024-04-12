@@ -4,6 +4,10 @@ namespace Filament\Tables\View;
 
 class TablesRenderHook
 {
+    const SELECTION_INDICATOR_ACTIONS_AFTER = 'tables::selection.indicator.actions.after';
+
+    const SELECTION_INDICATOR_ACTIONS_BEFORE = 'tables::selection.indicator.actions.before';
+
     const TOOLBAR_END = 'tables::toolbar.end';
 
     const TOOLBAR_GROUPING_SELECTOR_AFTER = 'tables::toolbar.grouping-selector.after';

@@ -2,8 +2,9 @@
 
 namespace Livewire\Features\SupportTesting {
 
-    use Illuminate\Support\Collection;
     use Closure;
+    use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Support\Collection;
 
     class Testable {
         public function mountTableAction(string | array $name, $record = null): static {}
@@ -20,9 +21,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function callMountedTableAction(array $arguments = []): static {}
 
-        public function assertTableActionExists(string | array $name): static {}
+        public function assertTableActionExists(string | array $name, ?Closure $checkActionUsing = null, $record = null): static {}
 
-        public function assertTableActionDoesNotExist(string | array $name): static {}
+        public function assertTableActionDoesNotExist(string | array $name, ?Closure $checkActionUsing = null, $record = null): static {}
 
         public function assertTableActionsExistInOrder(array $names): static {}
 
@@ -119,6 +120,8 @@ namespace Livewire\Features\SupportTesting {
         public function assertCanNotRenderTableColumn(string $name): static {}
 
         public function assertTableColumnExists(string $name, ?Closure $checkColumnUsing = null, $record = null): static {}
+
+        public function assertTableColumnDoesNotExist(string $name, ?Closure $checkColumnUsing = null, $record = null): static {}
 
         public function assertTableColumnVisible(string $name): static {}
 

@@ -14,7 +14,7 @@ class CsvDownloader implements Downloader
         $directory = $export->getFileDirectory();
 
         if (! $disk->exists($directory)) {
-            abort(419);
+            abort(404);
         }
 
         return response()->streamDownload(function () use ($disk, $directory) {
@@ -31,7 +31,14 @@ class CsvDownloader implements Downloader
                     continue;
                 }
 
-                echo $disk->get($file);
+                $fileContents = $disk->get($file);
+
+                // Remove the BOM for subsequent CSV files
+                if (substr($fileContents, 0, 3) === "\xEF\xBB\xBF") {
+                    $fileContents = substr($fileContents, 3);
+                }
+
+                echo $fileContents;
 
                 flush();
             }

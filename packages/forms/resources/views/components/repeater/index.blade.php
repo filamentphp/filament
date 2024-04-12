@@ -79,6 +79,7 @@
                                 $extraItemActions,
                                 fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
                             );
+                            $itemHasToolbar = $isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions);
                         @endphp
 
                         <li
@@ -90,10 +91,10 @@
                             x-on:repeater-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                             x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                             x-sortable-item="{{ $uuid }}"
-                            class="fi-fo-repeater-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
+                            class="fi-fo-repeater-item divide-y divide-gray-100 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-white/5 dark:ring-white/10"
                             x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                         >
-                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
+                            @if ($itemHasToolbar)
                                 <div
                                     @if ($isCollapsible)
                                         x-on:click.stop="isCollapsed = !isCollapsed"
@@ -193,7 +194,7 @@
 
                             <div
                                 x-show="! isCollapsed"
-                                class="fi-fo-repeater-item-content border-t border-gray-100 p-4 dark:border-white/10"
+                                class="fi-fo-repeater-item-content p-4"
                             >
                                 {{ $item }}
                             </div>
@@ -225,7 +226,7 @@
             </ul>
         @endif
 
-        @if ($isAddable)
+        @if ($isAddable && $addAction->isVisible())
             <div class="flex justify-center">
                 {{ $addAction }}
             </div>

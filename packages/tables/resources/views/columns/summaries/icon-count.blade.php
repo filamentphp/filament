@@ -32,9 +32,10 @@
                                 @class([
                                     'fi-ta-icon-count-summary-icon h-6 w-6',
                                     match ($color) {
-                                        'gray' => 'fi-color-gray text-gray-400 dark:text-gray-500',
+                                        'gray' => 'text-gray-400 dark:text-gray-500',
                                         default => 'fi-color-custom text-custom-500 dark:text-custom-400',
                                     },
+                                    is_string($color) ? 'fi-color-' . $color : null,
                                 ])
                                 @style([
                                     \Filament\Support\get_color_css_variables(

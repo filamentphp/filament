@@ -1,17 +1,26 @@
 @php
+    use Filament\Notifications\Livewire\Notifications;
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\VerticalAlignment;
+    use Illuminate\Support\Arr;
 
     $color = $getColor() ?? 'gray';
     $isInline = $isInline();
+    $status = $getStatus();
+    $title = $getTitle();
+    $hasTitle = filled($title);
+    $date = $getDate();
+    $hasDate = filled($date);
+    $body = $getBody();
+    $hasBody = filled($body);
 @endphp
 
 <x-filament-notifications::notification
     :notification="$notification"
     :x-transition:enter-start="
-        \Illuminate\Support\Arr::toCssClasses([
+        Arr::toCssClasses([
             'opacity-0',
-            ($this instanceof \Filament\Notifications\Livewire\Notifications)
+            ($this instanceof Notifications)
             ? match (static::$alignment) {
                 Alignment::Start, Alignment::Left => '-translate-x-12',
                 Alignment::End, Alignment::Right => 'translate-x-12',
@@ -26,7 +35,7 @@
         ])
     "
     :x-transition:leave-end="
-        \Illuminate\Support\Arr::toCssClasses([
+        Arr::toCssClasses([
             'opacity-0',
             'scale-95' => ! $isInline,
         ])
@@ -40,9 +49,11 @@
             false => [
                 'max-w-sm rounded-xl bg-white shadow-lg ring-1 dark:bg-gray-900',
                 match ($color) {
-                    'gray' => 'fi-color-gray ring-gray-950/5 dark:ring-white/10',
+                    'gray' => 'ring-gray-950/5 dark:ring-white/10',
                     default => 'fi-color-custom ring-custom-600/20 dark:ring-custom-400/30',
                 },
+                is_string($color) ? 'fi-color-' . $color : null,
+                'fi-status-' . $status => $status,
             ],
         },
     ])
@@ -72,20 +83,22 @@
         @endif
 
         <div class="mt-0.5 grid flex-1">
-            @if (filled($title = $getTitle()))
+            @if ($hasTitle)
                 <x-filament-notifications::title>
                     {{ str($title)->sanitizeHtml()->toHtmlString() }}
                 </x-filament-notifications::title>
             @endif
 
-            @if (filled($date = $getDate()))
-                <x-filament-notifications::date class="mt-1">
+            @if ($hasDate)
+                <x-filament-notifications::date @class(['mt-1' => $hasTitle])>
                     {{ $date }}
                 </x-filament-notifications::date>
             @endif
 
-            @if (filled($body = $getBody()))
-                <x-filament-notifications::body class="mt-1">
+            @if ($hasBody)
+                <x-filament-notifications::body
+                    @class(['mt-1' => $hasTitle || $hasDate])
+                >
                     {{ str($body)->sanitizeHtml()->toHtmlString() }}
                 </x-filament-notifications::body>
             @endif
@@ -93,7 +106,7 @@
             @if ($actions = $getActions())
                 <x-filament-notifications::actions
                     :actions="$actions"
-                    class="mt-3"
+                    @class(['mt-3' => $hasTitle || $hasDate || $hasBody])
                 />
             @endif
         </div>

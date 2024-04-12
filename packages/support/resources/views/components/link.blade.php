@@ -10,6 +10,7 @@
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
+    'formId' => null,
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
@@ -19,6 +20,7 @@
     'labelSrOnly' => false,
     'loadingIndicator' => true,
     'size' => ActionSize::Medium,
+    'spaMode' => null,
     'tag' => 'a',
     'target' => null,
     'tooltip' => null,
@@ -59,9 +61,10 @@
             default => $size,
         },
         match ($color) {
-            'gray' => 'fi-color-gray',
+            'gray' => null,
             default => 'fi-color-custom',
         },
+        is_string($color) ? "fi-color-{$color}" : null,
     ]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -126,7 +129,7 @@
 
 @if ($tag === 'a')
     <a
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
         @if ($keyBindings || $hasTooltip)
             x-data="{}"
         @endif
@@ -190,6 +193,7 @@
             $attributes
                 ->merge([
                     'disabled' => $disabled,
+                    'form' => $formId,
                     'type' => $type,
                     'wire:loading.attr' => 'disabled',
                     'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,

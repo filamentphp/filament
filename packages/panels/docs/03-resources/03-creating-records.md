@@ -162,7 +162,7 @@ use Filament\Notifications\Notification;
 
 protected function beforeCreate(): void
 {
-    if (! $this->getRecord()->team->subscribed()) {
+    if (! auth()->user()->team->subscribed()) {
         Notification::make()
             ->warning()
             ->title('You don\'t have an active subscription!')
@@ -349,6 +349,83 @@ protected function getHeaderActions(): array
 ```
 
 The "importer" class [needs to be created](../../actions/prebuilt-actions/import#creating-an-importer) to tell Filament how to import each row of the CSV. You can learn everything about the `ImportAction` in the [Actions documentation](../../actions/prebuilt-actions/import).
+
+## Custom actions
+
+"Actions" are buttons that are displayed on pages, which allow the user to run a Livewire method on the page or visit a URL.
+
+On resource pages, actions are usually in 2 places: in the top right of the page, and below the form.
+
+For example, you may add a new button action in the header of the Create page:
+
+```php
+use App\Filament\Imports\UserImporter;
+use Filament\Actions;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateUser extends CreateRecord
+{
+    // ...
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\ImportAction::make()
+                ->importer(UserImporter::class),
+        ];
+    }
+}
+```
+
+Or, a new button next to "Create" below the form:
+
+```php
+use Filament\Actions\Action;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateUser extends CreateRecord
+{
+    // ...
+
+    protected function getFormActions(): array
+    {
+        return [
+            ...parent::getFormActions(),
+            Action::make('close')->action('createAndClose'),
+        ];
+    }
+
+    public function createAndClose(): void
+    {
+        // ...
+    }
+}
+```
+
+To view the entire actions API, please visit the [pages section](../pages#adding-actions-to-pages).
+
+### Adding a create action button to the header
+
+The "Create" button can be moved to the header of the page by overriding the `getHeaderActions()` method and using `getCreateFormAction()`. You need to pass `formId()` to the action, to specify that the action should submit the form with the ID of `form`, which is the `<form>` ID used in the view of the page:
+
+```php
+protected function getHeaderActions(): array
+{
+    return [
+        $this->getCreateFormAction()
+            ->formId('form'),
+    ];
+}
+```
+
+You may remove all actions from the form by overriding the `getFormActions()` method to return an empty array:
+
+```php
+protected function getFormActions(): array
+{
+    return [];
+}
+```
 
 ## Custom view
 

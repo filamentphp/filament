@@ -81,7 +81,7 @@ return [
         ],
 
         'open_bulk_actions' => [
-            'label' => 'بازکردن عملیات',
+            'label' => 'عملیات گروهی',
         ],
 
         'toggle_columns' => [

@@ -7,9 +7,11 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Finder\SplFileInfo;
 
+#[AsCommand(name: 'filament:check-translations')]
 class CheckTranslationsCommand extends Command
 {
     protected $signature = 'filament:check-translations

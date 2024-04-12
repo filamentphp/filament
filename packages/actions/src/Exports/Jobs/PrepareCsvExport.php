@@ -9,11 +9,13 @@ use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Connection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use League\Csv\ByteSequence;
 use League\Csv\Writer;
 use SplTempFileObject;
 
@@ -53,6 +55,7 @@ class PrepareCsvExport implements ShouldQueue
         $csv = Writer::createFromFileObject(new SplTempFileObject());
         $csv->setDelimiter($this->exporter::getCsvDelimiter());
         $csv->insertOne(array_values($this->columnMap));
+        $csv->setOutputBOM(ByteSequence::BOM_UTF8);
 
         $filePath = $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . 'headers.csv';
         $this->export->getFileDisk()->put($filePath, $csv->toString(), Filesystem::VISIBILITY_PRIVATE);
@@ -60,6 +63,21 @@ class PrepareCsvExport implements ShouldQueue
         $query = EloquentSerializeFacade::unserialize($this->query);
         $keyName = $query->getModel()->getKeyName();
         $qualifiedKeyName = $query->getModel()->getQualifiedKeyName();
+
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        if ($databaseConnection->getDriverName() === 'pgsql') {
+            $originalOrders = collect($query->getQuery()->orders)
+                ->reject(fn (array $order): bool => in_array($order['column'] ?? null, [$keyName, $qualifiedKeyName]))
+                ->unique('column');
+
+            $query->reorder($qualifiedKeyName);
+
+            foreach ($originalOrders as $order) {
+                $query->orderBy($order['column'], $order['direction']);
+            }
+        }
 
         $exportCsvJob = $this->getExportCsvJob();
 

@@ -8,9 +8,11 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\select;
 
+#[AsCommand(name: 'make:filament-theme')]
 class MakeThemeCommand extends Command
 {
     use CanManipulateFiles;
@@ -91,7 +93,7 @@ class MakeThemeCommand extends Command
 
         $this->components->info("Filament theme [resources/css/filament/{$panelId}/theme.css] and [resources/css/filament/{$panelId}/tailwind.config.js] created successfully.");
 
-        if (! file_exists(base_path('vite.config.js'))) {
+        if (empty(glob(base_path('vite.config.*s')))) {
             $this->components->warn('Action is required to complete the theme setup:');
             $this->components->bulletList([
                 "It looks like you don't have Vite installed. Please use your asset bundling system of choice to compile `resources/css/filament/{$panelId}/theme.css` into `public/css/filament/{$panelId}/theme.css`.",

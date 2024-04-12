@@ -111,7 +111,7 @@ FileUpload::make('attachments')
     ->storeFileNamesIn('attachment_file_names')
 ```
 
-`attachment_file_names` will now store the original file name/s of your uploaded files, so you can save them to the database when the form is submitted. If you're uploading `multiple()` files, make sure that you add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to this Eloquent model property too.
+`attachment_file_names` will now store the original file names of your uploaded files, so you can save them to the database when the form is submitted. If you're uploading `multiple()` files, make sure that you add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to this Eloquent model property too.
 
 ## Avatar mode
 

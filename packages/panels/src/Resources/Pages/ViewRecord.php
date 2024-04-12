@@ -37,7 +37,7 @@ class ViewRecord extends Page
      */
     public ?array $data = [];
 
-    public static function getNavigationIcon(): ?string
+    public static function getNavigationIcon(): string | Htmlable | null
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.view-record.navigation-item')

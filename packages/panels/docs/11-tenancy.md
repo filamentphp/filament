@@ -10,7 +10,7 @@ Multi-tenancy is a very sensitive topic. It's important to understand the securi
 
 ## Simple one-to-many tenancy
 
-The term "multi-tenancy" is broad and may mean different things in different contexts. Filament's tenancy system implies that the user belongs to **many** tenants (*organizations, teams, companies, etc.*) and may switch between them. 
+The term "multi-tenancy" is broad and may mean different things in different contexts. Filament's tenancy system implies that the user belongs to **many** tenants (*organizations, teams, companies, etc.*) and may switch between them.
 
 If your case is simpler and you don't need a many-to-many relationship, then you don't need to set up the tenancy in Filament. You could use [observers](https://laravel.com/docs/eloquent#observers) and [global scopes](https://laravel.com/docs/eloquent#global-scopes) instead.
 
@@ -85,19 +85,19 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 {
     // ...
 
-    public function getTenants(Panel $panel): Collection
-    {
-        return $this->teams;
-    }
-    
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);
     }
 
+    public function getTenants(Panel $panel): Collection
+    {
+        return $this->teams;
+    }
+
     public function canAccessTenant(Model $tenant): bool
     {
-        return $this->teams->contains($tenant);
+        return $this->teams()->whereKey($tenant)->exists();
     }
 }
 ```
@@ -119,10 +119,10 @@ To set up a registration page, you'll need to create a new page class that exten
 ```php
 namespace App\Filament\Pages\Tenancy;
 
+use App\Models\Team;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
-use Illuminate\Database\Eloquent\Model;
 
 class RegisterTeam extends RegisterTenant
 {
@@ -130,7 +130,7 @@ class RegisterTeam extends RegisterTenant
     {
         return 'Register team';
     }
-    
+
     public function form(Form $form): Form
     {
         return $form
@@ -139,13 +139,13 @@ class RegisterTeam extends RegisterTenant
                 // ...
             ]);
     }
-    
+
     protected function handleRegistration(array $data): Team
     {
         $team = Team::create($data);
-        
+
         $team->members()->attach(auth()->user());
-        
+
         return $team;
     }
 }
@@ -183,7 +183,6 @@ namespace App\Filament\Pages\Tenancy;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
-use Illuminate\Database\Eloquent\Model;
 
 class EditTeamProfile extends EditTenantProfile
 {
@@ -191,7 +190,7 @@ class EditTeamProfile extends EditTenantProfile
     {
         return 'Team profile';
     }
-    
+
     public function form(Form $form): Form
     {
         return $form
@@ -316,7 +315,7 @@ class ExampleBillingProvider implements Provider
             return redirect('https://billing.example.com');
         };
     }
-    
+
     public function getSubscribedMiddleware(): string
     {
         return RedirectIfUserNotSubscribed::class;
@@ -435,6 +434,18 @@ MenuItem::make()
     ->hidden(fn (): bool => ! auth()->user()->can('manage-team'))
 ```
 
+### Sending a `POST` HTTP request from a tenant menu item
+
+You can send a `POST` HTTP request from a tenant menu item by passing a URL to the `postAction()` method:
+
+```php
+use Filament\Navigation\MenuItem;
+
+MenuItem::make()
+    ->label('Lock session')
+    ->postAction(fn (): string => route('lock-session'))
+```
+
 ### Hiding the tenant menu
 
 You can hide the tenant menu by using the `tenantMenu(false)`
@@ -489,6 +500,7 @@ When creating and listing records associated with a Tenant, Filament needs acces
 You can customize the name of the ownership relationship used across all resources at once, using the `ownershipRelationship` argument on the `tenant()` configuration method. In this example, resource model classes have an `owner` relationship defined:
 
 ```php
+use App\Models\Team;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -532,6 +544,7 @@ class PostResource extends Resource
 When using a tenant like a team, you might want to add a slug field to the URL rather than the team's ID. You can do that with the `slugAttribute` argument on the `tenant()` configuration method:
 
 ```php
+use App\Models\Team;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -582,7 +595,7 @@ use Illuminate\Database\Eloquent\Model;
 class Team extends Model implements HasCurrentTenantLabel
 {
     // ...
-    
+
     public function getCurrentTenantLabel(): string
     {
         return 'Active team';
@@ -613,12 +626,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
 {
     // ...
-    
+
     public function getDefaultTenant(Panel $panel): ?Model
     {
         return $this->latestTeam;
     }
-    
+
     public function latestTeam(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'latest_team_id');
@@ -663,6 +676,7 @@ public function panel(Panel $panel): Panel
 By default the URL structure will put the tenant ID or slug immediately after the panel path. If you wish to prefix it with another URL segment, use the `tenantRoutePrefix()` method:
 
 ```php
+use App\Models\Team;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -676,6 +690,42 @@ public function panel(Panel $panel): Panel
 ```
 
 Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1`.
+
+## Using a domain to identify the tenant
+
+When using a tenant, you might want to use domain or subdomain routing like `team1.example.com/posts` instead of a route prefix like `/team1/posts` . You can do that with the `tenantDomain()` method, alongside the `tenant()` configuration method. The `tenant` argument corresponds to the slug attribute of the tenant model:
+
+```php
+use App\Models\Team;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenant(Team::class, slugAttribute: 'slug')
+        ->tenantDomain('{tenant:slug}.example.com');
+}
+```
+
+In the above examples, the tenants live on subdomains of the main app domain. You may also set the system up to resolve the entire domain from the tenant as well:
+
+```php
+use App\Models\Team;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenant(Team::class, slugAttribute: 'domain')
+        ->tenantDomain('{tenant:domain}');
+}
+```
+
+In this example, the `domain` attribute should contain a valid domain host, like `example.com` or `subdomain.example.com`.
+
+> Note: When using a parameter for the entire domain (`tenantDomain('{tenant:domain}')`), Filament will register a [global route parameter pattern](https://laravel.com/docs/routing#parameters-global-constraints) for all `tenant` parameters in the application to be `[a-z0-9.\-]+`. This is because Laravel does not allow the `.` character in route parameters by default. This might conflict with other panels using tenancy, or other parts of your application that use a `tenant` route parameter.
 
 ## Disabling tenancy for a resource
 
@@ -754,7 +804,7 @@ class ApplyTenantScopes
         Author::addGlobalScope(
             fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
         );
-        
+
         return $next($request);
     }
 }

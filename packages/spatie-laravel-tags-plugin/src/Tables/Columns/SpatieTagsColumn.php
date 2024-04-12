@@ -5,18 +5,22 @@ namespace Filament\Tables\Columns;
 use Closure;
 use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
-class SpatieTagsColumn extends TagsColumn
+class SpatieTagsColumn extends TextColumn
 {
-    protected string | Closure | AllTagTypes | null $type;
+    protected string | AllTagTypes | Closure | null $type;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->type(new AllTagTypes());
+        $this->type(AllTagTypes::make());
+
+        $this->badge();
     }
 
     /**
@@ -33,30 +37,37 @@ class SpatieTagsColumn extends TagsColumn
         $record = $this->getRecord();
 
         if ($this->hasRelationship($record)) {
-            $record = $record->getRelationValue($this->getRelationshipName());
+            $record = $this->getRelationshipResults($record);
         }
 
-        if (! $record) {
-            return [];
+        $records = Arr::wrap($record);
+
+        $state = [];
+
+        foreach ($records as $record) {
+            /** @var Model $record */
+            if (! (method_exists($record, 'tags') && method_exists($record, 'tagsWithType'))) {
+                continue;
+            }
+
+            $type = $this->getType();
+
+            if ($this->isAnyTagTypeAllowed()) {
+                $tags = $record->getRelationValue('tags');
+            } else {
+                $tags = $record->tagsWithType($type);
+            }
+
+            $state = [
+                ...$state,
+                ...$tags->pluck('name')->all(),
+            ];
         }
 
-        if (! (method_exists($record, 'tags') && method_exists($record, 'tagsWithType'))) {
-            return [];
-        }
-
-        $type = $this->getType();
-
-        if ($this->isAnyTagTypeAllowed()) {
-            /** @phpstan-ignore-next-line */
-            $tags = $record->tags;
-        } else {
-            $tags = $record->tagsWithType($type);
-        }
-
-        return $tags->pluck('name')->all();
+        return array_unique($state);
     }
 
-    public function type(string | Closure | AllTagTypes | null $type): static
+    public function type(string | AllTagTypes | Closure | null $type): static
     {
         $this->type = $type;
 

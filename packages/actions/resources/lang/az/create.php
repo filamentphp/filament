@@ -17,7 +17,7 @@ return [
                 ],
 
                 'create_another' => [
-                    'label' => 'Yarat ve başqasını yarat',
+                    'label' => 'Yarat və başqasını yarat',
                 ],
 
             ],
