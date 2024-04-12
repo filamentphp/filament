@@ -4,6 +4,7 @@ namespace Filament\Schema\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Support\Partials\SupportPartials;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -18,6 +19,8 @@ trait HasState
      * @var array<string, mixed> | null
      */
     protected ?array $constantState = null;
+
+    protected bool | Closure $shouldPartiallyRender = false;
 
     /**
      * @param  array<string, mixed> | null  $state
@@ -39,6 +42,13 @@ trait HasState
         return $this;
     }
 
+    public function partiallyRender(bool | Closure $condition = true): static
+    {
+        $this->shouldPartiallyRender = $condition;
+
+        return $this;
+    }
+
     public function callAfterStateHydrated(): void
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
@@ -52,25 +62,33 @@ trait HasState
 
     public function callAfterStateUpdated(string $path): bool
     {
-        foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->getStatePath() === $path) {
-                $component->callAfterStateUpdated();
+        try {
+            foreach ($this->getComponents(withHidden: true) as $component) {
+                if ($component->getStatePath() === $path) {
+                    $component->callAfterStateUpdated();
 
-                return true;
-            }
-
-            if (str($path)->startsWith("{$component->getStatePath()}.")) {
-                $component->callAfterStateUpdated();
-            }
-
-            foreach ($component->getChildComponentContainers() as $container) {
-                if ($container->callAfterStateUpdated($path)) {
                     return true;
                 }
+
+                if (str($path)->startsWith("{$component->getStatePath()}.")) {
+                    $component->callAfterStateUpdated();
+                }
+
+                foreach ($component->getChildComponentContainers() as $container) {
+                    if ($container->callAfterStateUpdated($path)) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        } finally {
+            if ($this->shouldPartiallyRender($path)) {
+                app(SupportPartials::class)->renderPartial($this->getLivewire(), fn (): array => [
+                    "schema.{$this->getKey()}" => $this->toHtml(),
+                ]);
             }
         }
-
-        return false;
     }
 
     public function callBeforeStateDehydrated(): void
@@ -342,5 +360,18 @@ trait HasState
     protected function flushCachedAbsoluteStatePath(): void
     {
         unset($this->cachedAbsoluteStatePath);
+    }
+
+    public function shouldPartiallyRender(?string $updatedStatePath = null): bool
+    {
+        if (! $this->evaluate($this->shouldPartiallyRender)) {
+            return false;
+        }
+
+        if (blank($this->getKey())) {
+            throw new Exception('You cannot partially render a schema without a [key()] or [statePath()] defined.');
+        }
+
+        return blank($updatedStatePath) || str($updatedStatePath)->startsWith("{$this->getStatePath()}.");
     }
 }

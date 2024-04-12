@@ -15,7 +15,6 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
-use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Throwable;
 
@@ -56,7 +55,7 @@ trait InteractsWithActions
 
     public function bootInteractsWithActions(): void
     {
-        if ($originallyMountedActionIndex = array_key_last($this->mountedActions)) {
+        if (filled($originallyMountedActionIndex = array_key_last($this->mountedActions))) {
             $this->originallyMountedActionIndex = $originallyMountedActionIndex;
         }
 

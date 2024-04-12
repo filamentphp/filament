@@ -205,6 +205,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
@@ -249,6 +251,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -288,6 +292,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -326,6 +332,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -364,6 +372,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -412,6 +422,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()

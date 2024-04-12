@@ -118,7 +118,7 @@ trait HasState
         }
 
         if (filled($livePartials = $this->getLivePartials())) {
-            app(SupportPartials::class)->renderPartial($this->getLivewire(), function () use ($livePartials) {
+            app(SupportPartials::class)->renderPartial($this->getLivewire(), function () use ($livePartials): array {
                 $html = [];
 
                 foreach ($livePartials as $key) {
@@ -535,6 +535,11 @@ trait HasState
     {
         if ($key instanceof Component) {
             return $key->getKey();
+        }
+
+        if (str($key)->startsWith('/')) {
+            $isAbsolute = true;
+            $key = (string) str($key)->after('/');
         }
 
         if ($isAbsolute) {

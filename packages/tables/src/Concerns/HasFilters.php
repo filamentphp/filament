@@ -27,12 +27,21 @@ trait HasFilters
             return $this->getSchema('tableFiltersForm');
         }
 
+        $table = $this->getTable();
+
         return $this->makeSchema()
-            ->schema($this->getTable()->getFiltersFormSchema())
-            ->columns($this->getTable()->getFiltersFormColumns())
-            ->model($this->getTable()->getModel())
-            ->statePath($this->getTable()->hasDeferredFilters() ? 'tableDeferredFilters' : 'tableFilters')
-            ->when(! $this->getTable()->hasDeferredFilters(), fn (Schema $form) => $form->live());
+            ->schema($table->getFiltersFormSchema())
+            ->columns($table->getFiltersFormColumns())
+            ->model($table->getModel())
+            ->when(
+                $table->hasDeferredFilters(),
+                fn (Schema $schema) => $schema
+                    ->statePath('tableDeferredFilters')
+                    ->partiallyRender(),
+                fn (Schema $schema) => $schema
+                    ->statePath('tableFilters')
+                    ->live(),
+            );
     }
 
     public function updatedTableFilters(): void

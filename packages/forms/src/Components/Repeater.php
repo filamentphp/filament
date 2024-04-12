@@ -174,6 +174,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->button()
             ->size(ActionSize::Small)
@@ -225,6 +227,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->button()
             ->size(ActionSize::Small)
@@ -280,6 +284,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -319,6 +325,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -357,6 +365,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -395,6 +405,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -436,6 +448,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()

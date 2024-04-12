@@ -42,8 +42,6 @@ trait InteractsWithTable
 
     protected bool $hasTableModalRendered = false;
 
-    protected bool $shouldMountInteractsWithTable = false;
-
     public function bootInteractsWithTable(): void
     {
         $this->table = Action::configureUsing(
@@ -59,11 +57,10 @@ trait InteractsWithTable
         $this->cacheSchema('tableFiltersForm', $this->getTableFiltersForm());
 
         $this->cacheMountedActions($this->mountedActions);
+    }
 
-        if (! $this->shouldMountInteractsWithTable) {
-            return;
-        }
-
+    public function mountInteractsWithTable(): void
+    {
         if (! count($this->toggledTableColumns ?? [])) {
             $this->getTableColumnToggleForm()->fill(session()->get(
                 $this->getTableColumnToggleFormStateSessionKey(),
@@ -177,11 +174,6 @@ trait InteractsWithTable
         if ($this->getTable()->isPaginated()) {
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
         }
-    }
-
-    public function mountInteractsWithTable(): void
-    {
-        $this->shouldMountInteractsWithTable = true;
     }
 
     public function table(Table $table): Table

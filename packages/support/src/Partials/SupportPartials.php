@@ -5,6 +5,7 @@ namespace Filament\Support\Partials;
 use Closure;
 use Livewire\Component;
 use Livewire\ComponentHook;
+use Livewire\Features\SupportValidation\SupportValidation;
 use Livewire\Mechanisms\ExtendBlade\ExtendBlade;
 use Livewire\Mechanisms\HandleComponents\ComponentContext;
 
@@ -88,64 +89,92 @@ class SupportPartials extends ComponentHook
             return false;
         }
 
-        if (blank($this->component->mountedActions)) {
+        $mountedActionIndex = array_key_last($this->component->mountedActions);
+
+        if (blank($mountedActionIndex)) {
             return false;
         }
 
-        return $originallyMountedActionIndex === array_key_last($this->component->mountedActions);
+        return $originallyMountedActionIndex === $mountedActionIndex;
     }
 
-    public function shouldRenderMountedActionsOnly(): bool
+    public function shouldRenderMountedActionsOnly(bool $whenActionMounted = true): bool
     {
         if (! property_exists($this->component, 'mountedActions')) {
             return false;
         }
 
-        return $this->component->getOriginallyMountedActionIndex() !== array_key_last($this->component->mountedActions);
+        $mountedActionIndex = array_key_last($this->component->mountedActions);
+
+        if ($whenActionMounted && blank($mountedActionIndex)) {
+            return false;
+        }
+
+        return $this->component->getOriginallyMountedActionIndex() !== $mountedActionIndex;
+    }
+
+    protected function renderAndQueuePartials(Closure $getPartialsUsing): void
+    {
+        app(ExtendBlade::class)->startLivewireRendering($this->component);
+
+        $this->partials = [
+            ...$this->partials,
+            ...$getPartialsUsing(),
+        ];
+
+        app(ExtendBlade::class)->endLivewireRendering();
     }
 
     public function dehydrate(ComponentContext $context): void
     {
-        if (! $this->shouldRender()) {
-            $replacements = [];
+        $partials = [];
 
+        $renderAndQueuePartials = function (Closure $getPartialsUsing) use (&$partials): void {
             app(ExtendBlade::class)->startLivewireRendering($this->component);
 
-            foreach ($this->storeGet('partials') ?? [] as $renderPartial) {
-                $replacements = [
-                    ...$replacements,
-                    ...$renderPartial(),
-                ];
-            }
+            $supportValidationHook = app(SupportValidation::class);
+            $supportValidationHook->setComponent($this->component);
+
+            $revertSupportValidation = $supportValidationHook->render(null, null);
+
+            $partials = [
+                ...$partials,
+                ...$getPartialsUsing(),
+            ];
+
+            $revertSupportValidation();
 
             app(ExtendBlade::class)->endLivewireRendering();
+        };
 
-            $context->addEffect('partials', $replacements);
+        if (! ($shouldRender = $this->shouldRender())) {
+            $renderAndQueuePartials(function (): array {
+                $partials = [];
 
-            return;
-        }
+                foreach ($this->storeGet('partials') ?? [] as $renderPartials) {
+                    $partials = [
+                        ...$partials,
+                        ...$renderPartials(),
+                    ];
+                }
 
-        if ($this->shouldRenderMountedActionOnly()) {
+                return $partials;
+            });
+        } elseif ($this->shouldRenderMountedActionOnly()) {
             $actionNestingIndex = array_key_last($this->component->mountedActions);
 
-            app(ExtendBlade::class)->startLivewireRendering($this->component);
-
-            $context->addEffect('partials', [
+            $renderAndQueuePartials(fn (): array => [
                 "action-modals.{$actionNestingIndex}" => $this->component->getMountedAction()->renderModal($actionNestingIndex)->toHtml(),
             ]);
-
-            app(ExtendBlade::class)->endLivewireRendering();
         }
 
-        if ($this->shouldRenderMountedActionsOnly()) {
-            app(ExtendBlade::class)->startLivewireRendering($this->component);
-
-            $context->addEffect('partials', [
+        if ($this->shouldRenderMountedActionsOnly(whenActionMounted: $shouldRender)) {
+            $renderAndQueuePartials(fn (): array => [
                 'action-modals' => view('filament-actions::components.modals')->render(),
             ]);
-
-            app(ExtendBlade::class)->endLivewireRendering();
         }
+
+        $context->addEffect('partials', $partials);
     }
 
     public function skipPartialRender(Component $component): void

@@ -2,6 +2,7 @@
 
 namespace Filament\Schema\Components;
 
+use Exception;
 use Filament\Schema\Components\Concerns\BelongsToContainer;
 use Filament\Schema\Components\Concerns\BelongsToModel;
 use Filament\Schema\Components\Concerns\CanBeConcealed;
@@ -26,6 +27,7 @@ use Filament\Schema\Concerns\HasStateBindingModifiers;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Partials\SupportPartials;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Drawer\Utils;
 
@@ -91,10 +93,31 @@ class Component extends ViewComponent
         };
     }
 
+    public function partiallyRender(): void
+    {
+        app(SupportPartials::class)->renderPartial($this->getLivewire(), function (): array {
+            $key = $this->getKey();
+
+            if (blank($key)) {
+                throw new Exception('A [key()] or [statePath()] is required to partially render a component.');
+            }
+
+            return [
+                "schema-component.{$key}" => $this->toHtml(),
+            ];
+        });
+    }
+
     public function toHtml(): string
     {
+        $key = $this->getKey();
+
+        if (blank($key)) {
+            return parent::toHtml();
+        }
+
         return Utils::insertAttributesIntoHtmlRoot(parent::toHtml(), [
-            'wire:partial' => "schema-component.{$this->getKey()}",
+            'wire:partial' => "schema-component.{$key}",
         ]);
     }
 }
