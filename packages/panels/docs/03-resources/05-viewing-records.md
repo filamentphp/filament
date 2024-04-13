@@ -138,7 +138,7 @@ Now, you can define the `infolist()` or `form()` for this page, which can contai
 ```php
 use Filament\Infolists\Infolist;
 
-public function infolist(Infolist $infolist): Infolist
+public static function infolist(Infolist $infolist): Infolist
 {
     return $infolist
         ->schema([
