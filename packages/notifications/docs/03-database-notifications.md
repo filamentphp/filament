@@ -104,8 +104,7 @@ By default, Livewire polls for new notifications every 30 seconds:
 ```php
 use Filament\Notifications\Livewire\DatabaseNotifications;
 
-DatabaseNotifications::databaseNotifications();
-DatabaseNotifications::databaseNotificationsPollingInterval('30s');
+DatabaseNotifications::pollingInterval('30s');
 ```
 
 You may completely disable polling if you wish:
@@ -113,8 +112,7 @@ You may completely disable polling if you wish:
 ```php
 use Filament\Notifications\Livewire\DatabaseNotifications;
 
-DatabaseNotifications::databaseNotifications();
-DatabaseNotifications::databaseNotificationsPollingInterval(null);
+DatabaseNotifications::pollingInterval(null);
 ```
 
 ### Using Echo to receive new database notifications with websockets
