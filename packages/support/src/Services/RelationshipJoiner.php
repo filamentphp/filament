@@ -97,9 +97,10 @@ class RelationshipJoiner
                     continue;
                 }
 
-                if (Str::startsWith($order['column'], "{$relationshipQuery->getModel()->getTable()}.")) {
+                if (str($order['column'])->startsWith("{$relationshipQuery->getModel()->getTable()}.")) {
                     continue;
                 }
+                
                 $relationshipQuery->addSelect($order['column']);
             }
         }
