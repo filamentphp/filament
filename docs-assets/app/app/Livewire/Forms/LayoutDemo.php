@@ -250,14 +250,14 @@ class LayoutDemo extends Component implements HasForms
                         Wizard::make([
                             Wizard\Step::make('Order')
                                 ->icon('heroicon-m-shopping-bag')
-                                ->completedIcon('heroicon-m-hand-thumb-up')
-                                ,
+                                ->completedIcon('heroicon-m-hand-thumb-up'),
                             Wizard\Step::make('Delivery')
                                 ->icon('heroicon-m-truck')
                                 ->completedIcon('heroicon-m-hand-thumb-up'),
                             Wizard\Step::make('Billing')
                                 ->icon('heroicon-m-credit-card')
-                                ->completedIcon('heroicon-m-hand-thumb-up')->schema([
+                                ->completedIcon('heroicon-m-hand-thumb-up')
+                                ->schema([
                                     Repeater::make('items')
                                         ->hiddenLabel()
                                         ->schema([
@@ -278,7 +278,8 @@ class LayoutDemo extends Component implements HasForms
                                         ]),
                                     Textarea::make('specialOrderNotes'),
                                 ]),
-                        ])->startOnStep(3)
+                        ])
+                            ->startOnStep(3)
                             ->statePath('wizardCompletedIcons'),
                     ]),
                 Group::make()
