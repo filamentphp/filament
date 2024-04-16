@@ -28,12 +28,14 @@ trait CanPaginateRecords
     protected function paginateTableQuery(Builder $query): Paginator | CursorPaginator
     {
         $perPage = $this->getTableRecordsPerPage();
+        $total = $query->toBase()->getCountForPagination();
 
         /** @var LengthAwarePaginator $records */
         $records = $query->paginate(
-            $perPage === 'all' ? $query->toBase()->getCountForPagination() : $perPage,
-            ['*'],
-            $this->getTablePaginationPageName(),
+            perPage: ($perPage === 'all') ? $total : $perPage,
+            columns: ['*'],
+            pageName: $this->getTablePaginationPageName(),
+            total: $total,
         );
 
         return $records->onEachSide(0);
