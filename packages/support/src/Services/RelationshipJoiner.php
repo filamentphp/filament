@@ -100,7 +100,7 @@ class RelationshipJoiner
                 if (str($order['column'])->startsWith("{$relationshipQuery->getModel()->getTable()}.")) {
                     continue;
                 }
-                
+
                 $relationshipQuery->addSelect($order['column']);
             }
         }
