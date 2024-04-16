@@ -84,9 +84,9 @@ Wizard\Step::make('Order')
 
 <AutoScreenshot name="forms/layout/wizard/icons" alt="Wizard with step icons" version="3.x" />
 
-## Customize the step completed icons
+## Customizing the icon for completed steps
 
-You can customize the [icon](https://blade-ui-kit.com/blade-icons?set=1#search) once a step is completed using the `completedIcon()` method:
+You may customize the [icon](#setting-up-step-icons) of a completed step using the `completedIcon()` method:
 
 ```php
 use Filament\Forms\Components\Wizard;
