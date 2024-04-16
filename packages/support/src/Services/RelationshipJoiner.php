@@ -93,9 +93,14 @@ class RelationshipJoiner
                 ->select($relationshipQuery->getModel()->getTable() . '.*');
 
             foreach ($relationshipQuery->getQuery()->orders as $order) {
-                if (array_key_exists('column', $order)) {
-                    $relationshipQuery->addSelect($order['column']);
+                if (! array_key_exists('column', $order)) {
+                    continue;
                 }
+
+                if (Str::startsWith($order['column'], "{$relationshipQuery->getModel()->getTable()}.")) {
+                    continue;
+                }
+                $relationshipQuery->addSelect($order['column']);
             }
         }
 
