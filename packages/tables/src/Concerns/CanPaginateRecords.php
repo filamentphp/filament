@@ -32,7 +32,7 @@ trait CanPaginateRecords
 
         /** @var LengthAwarePaginator $records */
         $records = $query->paginate(
-            perPage: $perPage === 'all' ? $total : $perPage,
+            perPage: ($perPage === 'all') ? $total : $perPage,
             columns: ['*'],
             pageName: $this->getTablePaginationPageName(),
             total: $total,
