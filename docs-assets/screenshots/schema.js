@@ -1184,6 +1184,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/layout/wizard/completed-icons': {
+        url: 'forms/layout',
+        selector: '#wizardCompletedIcons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/layout/wizard/descriptions': {
         url: 'forms/layout',
         selector: '#wizardDescriptions',
