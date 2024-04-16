@@ -8,6 +8,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Arrayable;
@@ -64,6 +65,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     protected ?Closure $createOptionUsing = null;
 
     protected string | Closure | null $createOptionModalHeading = null;
+
+    protected string | Closure | null $createOptionModalWidth = null;
 
     protected string | Closure | null $editOptionModalHeading = null;
 
@@ -313,6 +316,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
+            ->modalWidth($this->getCreateOptionModalWidth())
             ->extraModalFooterActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
                 $action->makeModalSubmitAction('createAnother', arguments: ['another' => true])
                     ->label(__('filament-forms::components.select.actions.create_option.modal.actions.create_another.label')),
@@ -336,6 +340,17 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function createOptionModalHeading(string | Closure | null $heading): static
     {
         $this->createOptionModalHeading = $heading;
+
+        return $this;
+    }
+
+    public function createOptionModalWidth(string | Closure | null | MaxWidth $width): static
+    {
+        if ($width instanceof MaxWidth) {
+            $this->createOptionModalWidth = $width->value;
+        } else {
+            $this->createOptionModalWidth = $width;
+        }
 
         return $this;
     }
@@ -484,6 +499,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     public function getCreateOptionModalHeading(): ?string
     {
         return $this->evaluate($this->createOptionModalHeading);
+    }
+
+    public function getCreateOptionModalWidth(): ?string
+    {
+        return $this->evaluate($this->createOptionModalWidth);
     }
 
     public function getEditOptionModalHeading(): ?string
