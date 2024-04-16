@@ -12,12 +12,20 @@ export default function textareaFormComponent({ initialHeight }) {
         },
 
         input: {
-            ['@intersect.once']() { this.render() },
-            ['@input']() { this.render() },
-            ['@resize.window']() { this.render() },
-            ['@form-validation-error.window']() {
-                this.$nextTick(() => { this.render() })
+            ['@intersect.once']() {
+                this.render()
             },
-        }
+            ['@input']() {
+                this.render()
+            },
+            ['@resize.window']() {
+                this.render()
+            },
+            ['@form-validation-error.window']() {
+                this.$nextTick(() => {
+                    this.render()
+                })
+            },
+        },
     }
 }
