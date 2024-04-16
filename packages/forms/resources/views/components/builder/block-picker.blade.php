@@ -30,7 +30,7 @@
                 @php
                     $wireClickActionArguments = ['block' => $block->getName()];
 
-                    if ($afterItem) {
+                    if (isset($afterItem)) {
                         $wireClickActionArguments['afterItem'] = $afterItem;
                     }
 
