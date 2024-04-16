@@ -46,7 +46,7 @@
                 x-intersect.once="render()"
                 x-on:input="render()"
                 x-on:resize.window="render()"
-                x-on:form-validation-error.window = '$nextTick(() => render())'
+                x-on:form-validation-error.window="$nextTick(() => render())"
                 wire:ignore.style.height
                 {{ $getExtraAlpineAttributeBag() }}
             @endif
