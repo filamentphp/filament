@@ -42,7 +42,11 @@
                 @endif
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms') }}"
                 x-data="textareaFormComponent({ initialHeight: @js($initialHeight) })"
-                x-bind="input"
+                x-ignore
+                x-intersect.once="render()"
+                x-on:input="render()"
+                x-on:resize.window="render()"
+                x-on:form-validation-error.window = '$nextTick(() => render())'
                 wire:ignore.style.height
                 {{ $getExtraAlpineAttributeBag() }}
             @endif
