@@ -98,7 +98,7 @@ Wizard\Step::make('Order')
     ]),
 ```
 
-<AutoScreenshot name="forms/layout/wizard/completedIcons" alt="Wizard with completed step icons" version="3.x" />
+<AutoScreenshot name="forms/layout/wizard/completed-icons" alt="Wizard with completed step icons" version="3.x" />
 
 ## Adding descriptions to steps
 
