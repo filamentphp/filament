@@ -160,23 +160,13 @@
                                 getStepIndex(step) < {{ $loop->index }},
                         }"
                     >
-                        @if (filled($completedIcon = $step->getCompletedIcon()))
-                            <x-filament::icon
-                                alias="forms::components.wizard.completed-step"
-                                :icon="$completedIcon"
-                                x-cloak="x-cloak"
-                                x-show="getStepIndex(step) > {{ $loop->index }}"
-                                class="fi-fo-wizard-header-step-icon h-6 w-6 text-white"
-                            />
-                        @else
-                            <x-filament::icon
-                                alias="forms::components.wizard.completed-step"
-                                icon="heroicon-o-check"
-                                x-cloak="x-cloak"
-                                x-show="getStepIndex(step) > {{ $loop->index }}"
-                                class="fi-fo-wizard-header-step-icon h-6 w-6 text-white"
-                            />
-                        @endif
+                        <x-filament::icon
+                            :alias="filled($completedIcon) ? null : 'forms::components.wizard.completed-step'"
+                            :icon="$completedIcon ?? 'heroicon-o-check'"
+                            x-cloak="x-cloak"
+                            x-show="getStepIndex(step) > {{ $loop->index }}"
+                            class="fi-fo-wizard-header-step-icon h-6 w-6 text-white"
+                        />
 
                         @if (filled($icon = $step->getIcon()))
                             <x-filament::icon
