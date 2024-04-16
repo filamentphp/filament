@@ -92,7 +92,7 @@ class RelationshipJoiner
                 ->distinct()
                 ->select($relationshipQuery->getModel()->getTable() . '.*');
 
-            foreach ($relationshipQuery->getQuery()->orders as $order) {
+            foreach (($relationshipQuery->getQuery()->orders ?? []) as $order) {
                 if (! array_key_exists('column', $order)) {
                     continue;
                 }
