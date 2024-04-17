@@ -811,7 +811,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if (
                 ($relationship instanceof BelongsToMany) ||
                 ($relationship instanceof HasManyThrough)
-            ){
+            ) {
                 /** @var Collection $relatedModels */
                 $relatedModels = $relationship->getResults();
 
