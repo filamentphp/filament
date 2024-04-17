@@ -4,6 +4,14 @@ title: Installation
 
 **The Notifications package is pre-installed with the [Panel Builder](/docs/panels).** This guide is for using the Notifications package in a custom TALL Stack application (Tailwind, Alpine, Livewire, Laravel).
 
+## Enable Database Notifications
+
+In order to enable database notifications you need to add the following to your AppPanelProvider configuration:
+
+```php
+->databaseNotifications()
+```
+
 ## Requirements
 
 Filament requires the following to run:
