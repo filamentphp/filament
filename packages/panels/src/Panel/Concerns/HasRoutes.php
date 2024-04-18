@@ -11,13 +11,25 @@ use Laravel\SerializableClosure\Serializers\Native;
 
 trait HasRoutes
 {
-    protected Closure | Native | null $routes = null;
+    /**
+     * @var array<Closure | Native>
+     */
+    protected array $routes = [];
 
-    protected Closure | Native | null $authenticatedRoutes = null;
+    /**
+     * @var array<Closure | Native>
+     */
+    protected array $authenticatedRoutes = [];
 
-    protected Closure | Native | null $tenantRoutes = null;
+    /**
+     * @var array<Closure | Native>
+     */
+    protected array $tenantRoutes = [];
 
-    protected Closure | Native | null $authenticatedTenantRoutes = null;
+    /**
+     * @var array<Closure | Native>
+     */
+    protected array $authenticatedTenantRoutes = [];
 
     protected string | Closure | null $homeUrl = null;
 
@@ -61,28 +73,28 @@ trait HasRoutes
 
     public function routes(?Closure $routes): static
     {
-        $this->routes = $routes;
+        $this->routes[] = $routes;
 
         return $this;
     }
 
     public function authenticatedRoutes(?Closure $routes): static
     {
-        $this->authenticatedRoutes = $routes;
+        $this->authenticatedRoutes[] = $routes;
 
         return $this;
     }
 
     public function tenantRoutes(?Closure $routes): static
     {
-        $this->tenantRoutes = $routes;
+        $this->tenantRoutes[] = $routes;
 
         return $this;
     }
 
     public function authenticatedTenantRoutes(?Closure $routes): static
     {
-        $this->authenticatedTenantRoutes = $routes;
+        $this->authenticatedTenantRoutes[] = $routes;
 
         return $this;
     }
@@ -97,22 +109,34 @@ trait HasRoutes
         return "filament.{$this->getId()}.{$name}";
     }
 
-    public function getRoutes(): ?Closure
+    /**
+     * @return array<Closure | Native>
+     */
+    public function getRoutes(): array
     {
         return $this->routes;
     }
 
-    public function getAuthenticatedRoutes(): ?Closure
+    /**
+     * @return array<Closure | Native>
+     */
+    public function getAuthenticatedRoutes(): array
     {
         return $this->authenticatedRoutes;
     }
 
-    public function getTenantRoutes(): ?Closure
+    /**
+     * @return array<Closure | Native>
+     */
+    public function getTenantRoutes(): array
     {
         return $this->tenantRoutes;
     }
 
-    public function getAuthenticatedTenantRoutes(): ?Closure
+    /**
+     * @return array<Closure | Native>
+     */
+    public function getAuthenticatedTenantRoutes(): array
     {
         return $this->authenticatedTenantRoutes;
     }
