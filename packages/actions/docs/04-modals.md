@@ -552,3 +552,12 @@ Action::make('create')
     ->modalHidden(fn (): bool => $this->role !== 'admin')
     ->modalContent(view('filament.pages.actions.create'))
 ```
+
+## Adding extra attributes to the modal window
+
+You may also pass extra HTML attributes to the modal window using `extraModalWindowAttributes()`:
+
+```php
+Action::make('updateAuthor')
+    ->extraModalWindowAttributes(['class' => 'update-author-modal'])
+```

@@ -6,6 +6,7 @@
 
     $color = $getColor() ?? 'gray';
     $isInline = $isInline();
+    $status = $getStatus();
     $title = $getTitle();
     $hasTitle = filled($title);
     $date = $getDate();
@@ -52,6 +53,7 @@
                     default => 'fi-color-custom ring-custom-600/20 dark:ring-custom-400/30',
                 },
                 is_string($color) ? 'fi-color-' . $color : null,
+                'fi-status-' . $status => $status,
             ],
         },
     ])
