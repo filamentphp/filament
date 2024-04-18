@@ -8,17 +8,22 @@
             <script>
                 let formSubmitted = false
 
-                document.addEventListener('submit', () => formSubmitted = true)
+                document.addEventListener(
+                    'submit',
+                    () => (formSubmitted = true),
+                )
 
                 shouldPreventNavigation = () => {
                     if (formSubmitted) {
                         return
                     }
 
-                    return window.jsMd5(
-                        JSON.stringify($wire.data).replace(/\\/g, ''),
-                    ) !== $wire.savedDataHash ||
-                    $wire?.__instance?.effects?.redirect
+                    return (
+                        window.jsMd5(
+                            JSON.stringify($wire.data).replace(/\\/g, ''),
+                        ) !== $wire.savedDataHash ||
+                        $wire?.__instance?.effects?.redirect
+                    )
                 }
 
                 const showUnsavedChangesAlert = () => {
