@@ -6,16 +6,14 @@
     @if (FilamentView::hasSpaMode())
         @script
             <script>
-                shouldPreventNavigation = () => {
-                    return window.jsMd5(
+                shouldPreventNavigation = () => window.jsMd5(
                         JSON.stringify($wire.data).replace(/\\/g, ''),
                     ) !== $wire.savedDataHash ||
-                    $wire?.__instance?.effects?.redirect;
-                };
+                    $wire?.__instance?.effects?.redirect
 
                 const showUnsavedChangesAlert = () => {
                     return confirm(@js(__('filament-panels::unsaved-changes.wire_navigate_alert')));
-                };
+                }
 
                 document.addEventListener('livewire:navigate', (event) => {
                     if (typeof @this !== 'undefined') {
@@ -23,9 +21,11 @@
                             return
                         }
 
-                        if (! showUnsavedChangesAlert()) {
-                            event.preventDefault()
+                        if (showUnsavedChangesAlert()) {
+                            return
                         }
+
+                        event.preventDefault()
                     }
                 })
 
@@ -36,7 +36,7 @@
 
                     event.preventDefault()
                     event.returnValue = true
-                })                
+                })
             </script>
         @endscript
     @else
