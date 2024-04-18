@@ -61,6 +61,9 @@ trait CanImportRecords
      */
     protected array | Closure $options = [];
 
+    /**
+     * @var array<string, string>
+     */
     protected array $encoding_standards = [];
 
     protected function setUp(): void
