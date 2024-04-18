@@ -161,6 +161,10 @@
                                 getStepIndex(step) < {{ $loop->index }},
                         }"
                     >
+                        @php
+                            $completedIcon = $step->getCompletedIcon();
+                        @endphp
+
                         <x-filament::icon
                             :alias="filled($completedIcon) ? null : 'forms::components.wizard.completed-step'"
                             :icon="$completedIcon ?? 'heroicon-o-check'"
