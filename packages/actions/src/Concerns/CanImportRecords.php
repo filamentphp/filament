@@ -82,7 +82,7 @@ trait CanImportRecords
         $this->form(fn (ImportAction | ImportTableAction $action): array => array_merge([
             Select::make('encoding')
                 ->options($this->encoding_standards)
-                ->afterStateUpdated(fn(Forms\Get $get, Forms\Set $set, ?string $state) => $get('file') ? $set('file', null) : null)
+                ->afterStateUpdated(fn (Forms\Get $get, Forms\Set $set, ?string $state) => $get('file') ? $set('file', null) : null)
                 ->live(),
             FileUpload::make('file')
                 ->hidden(fn (Forms\Get $get) => ! $get('encoding'))
