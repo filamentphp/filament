@@ -821,7 +821,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     //
                     // https://github.com/filamentphp/filament/issues/1111
                     $relatedModels
-                        ->pluck($relationship->getRelated()->getKeyName())
+                        ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
                         ->map(static fn ($key): string => strval($key))
                         ->toArray(),
                 );
