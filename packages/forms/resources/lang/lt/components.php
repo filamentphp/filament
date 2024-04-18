@@ -189,7 +189,7 @@ return [
 
                 'messages' => [
                     'confirmation' => 'Redaguoti SVG failų nerekomenduojama, kadangi tai gali įtakoti kokybės praradimą keičiant mastelį.\n Ar tikrai norite tęsti?',
-                    'disabled' => 'SVG failų redagavimas išjungtas, kadangi tai gali įtakoti kokybės praradimą keičiant mastelį.'
+                    'disabled' => 'SVG failų redagavimas išjungtas, kadangi tai gali įtakoti kokybės praradimą keičiant mastelį.',
                 ],
 
             ],

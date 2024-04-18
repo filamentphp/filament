@@ -3,7 +3,7 @@
         <script>
             window.addEventListener('beforeunload', (event) => {
                 if (typeof @this === 'undefined') {
-                    return;
+                    return
                 }
 
                 if (

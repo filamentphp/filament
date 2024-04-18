@@ -3,7 +3,6 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
-use Exception;
 
 trait HasUnsavedChangesAlerts
 {
