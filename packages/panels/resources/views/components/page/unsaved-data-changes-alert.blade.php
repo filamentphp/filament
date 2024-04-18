@@ -8,9 +8,7 @@
             <script>
                 let formSubmitted = false
 
-                document.addEventListener('submit', () => {
-                    formSubmitted = true
-                });
+                document.addEventListener('submit', () => formSubmitted = true)
 
                 shouldPreventNavigation = () => {
                     if (formSubmitted) {
