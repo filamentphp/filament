@@ -61,16 +61,9 @@ trait CanImportRecords
      */
     protected array | Closure $options = [];
 
-    /**
-     * @var array<string, string>
-     */
-    protected array $encoding_standards = [];
-
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->encoding_standards = array_combine(mb_list_encodings(), mb_list_encodings());
 
         $this->label(fn (ImportAction | ImportTableAction $action): string => __('filament-actions::import.label', ['label' => $action->getPluralModelLabel()]));
 
@@ -83,12 +76,7 @@ trait CanImportRecords
         $this->groupedIcon(FilamentIcon::resolve('actions::import-action.grouped') ?? 'heroicon-m-arrow-up-tray');
 
         $this->form(fn (ImportAction | ImportTableAction $action): array => array_merge([
-            Select::make('encoding')
-                ->options($this->encoding_standards)
-                ->afterStateUpdated(fn (Forms\Get $get, Forms\Set $set, ?string $state) => $get('file') ? $set('file', null) : null)
-                ->live(),
             FileUpload::make('file')
-                ->hidden(fn (Forms\Get $get) => ! $get('encoding'))
                 ->label(__('filament-actions::import.modal.form.file.label'))
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
                 ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
@@ -106,7 +94,8 @@ trait CanImportRecords
                         throw $exception;
                     }
 
-                    $csvStream = $this->getUploadedFileStream($state, $get('encoding'));
+                    $encoding = $this->mb_detect_encoding_in_order($state);
+                    $csvStream = $this->getUploadedFileStream($state, $encoding);
 
                     if (! $csvStream) {
                         return;
@@ -155,7 +144,8 @@ trait CanImportRecords
                         return [];
                     }
 
-                    $csvStream = $this->getUploadedFileStream($csvFile, $get('encoding'));
+                    $encoding = $this->mb_detect_encoding_in_order($csvFile);
+                    $csvStream = $this->getUploadedFileStream($csvFile, $encoding);
 
                     if (! $csvStream) {
                         return [];
@@ -185,7 +175,8 @@ trait CanImportRecords
             /** @var TemporaryUploadedFile $csvFile */
             $csvFile = $data['file'];
 
-            $csvStream = $this->getUploadedFileStream($csvFile, $data['encoding']);
+            $encoding = $this->mb_detect_encoding_in_order($csvFile);
+            $csvStream = $this->getUploadedFileStream($csvFile, $encoding);
 
             if (! $csvStream) {
                 return;
@@ -409,6 +400,20 @@ trait CanImportRecords
         );
 
         return $resource;
+    }
+
+    public function mb_detect_encoding_in_order(TemporaryUploadedFile $file): string | false
+    {
+        $encodings = ['UTF-8', 'ISO-8859-1', 'GB18030', 'Windows-1251', 'Windows-1252', 'EUC-JP'];
+        $string = file_get_contents($file->getRealPath());
+
+        foreach ($encodings as $enc) {
+            if (mb_check_encoding($string, $enc)) {
+                return $enc;
+            }
+        }
+
+        return false;
     }
 
     public static function getDefaultName(): ?string
