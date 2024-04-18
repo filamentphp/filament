@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
 use Illuminate\Validation\ValidationException;
 use League\Csv\ByteSequence;
+use League\Csv\CharsetConverter;
 use League\Csv\Info;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
@@ -60,9 +61,13 @@ trait CanImportRecords
      */
     protected array | Closure $options = [];
 
+    protected array $encoding_standards = [];
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->encoding_standards = array_combine(mb_list_encodings(), mb_list_encodings());
 
         $this->label(fn (ImportAction | ImportTableAction $action): string => __('filament-actions::import.label', ['label' => $action->getPluralModelLabel()]));
 
@@ -75,12 +80,17 @@ trait CanImportRecords
         $this->groupedIcon(FilamentIcon::resolve('actions::import-action.grouped') ?? 'heroicon-m-arrow-up-tray');
 
         $this->form(fn (ImportAction | ImportTableAction $action): array => array_merge([
+            Select::make('encoding')
+                ->options($this->encoding_standards)
+                ->afterStateUpdated(fn(Forms\Get $get, Forms\Set $set, ?string $state) => $get('file') ? $set('file', null) : null)
+                ->live(),
             FileUpload::make('file')
+                ->hidden(fn (Forms\Get $get) => ! $get('encoding'))
                 ->label(__('filament-actions::import.modal.form.file.label'))
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
                 ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
                 ->rule('extensions:csv,txt')
-                ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
+                ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state, Forms\Get $get) use ($action) {
                     if (! $state instanceof TemporaryUploadedFile) {
                         return;
                     }
@@ -93,7 +103,7 @@ trait CanImportRecords
                         throw $exception;
                     }
 
-                    $csvStream = $this->getUploadedFileStream($state);
+                    $csvStream = $this->getUploadedFileStream($state, $get('encoding'));
 
                     if (! $csvStream) {
                         return;
@@ -142,7 +152,7 @@ trait CanImportRecords
                         return [];
                     }
 
-                    $csvStream = $this->getUploadedFileStream($csvFile);
+                    $csvStream = $this->getUploadedFileStream($csvFile, $get('encoding'));
 
                     if (! $csvStream) {
                         return [];
@@ -172,7 +182,7 @@ trait CanImportRecords
             /** @var TemporaryUploadedFile $csvFile */
             $csvFile = $data['file'];
 
-            $csvStream = $this->getUploadedFileStream($csvFile);
+            $csvStream = $this->getUploadedFileStream($csvFile, $data['encoding']);
 
             if (! $csvStream) {
                 return;
@@ -359,12 +369,22 @@ trait CanImportRecords
     /**
      * @return resource | false
      */
-    public function getUploadedFileStream(TemporaryUploadedFile $file)
+    public function getUploadedFileStream(TemporaryUploadedFile $file, string $encoding)
     {
         $filePath = $file->getRealPath();
 
+        CharsetConverter::register();
+
         if (config('filesystems.disks.' . config('filament.default_filesystem_disk') . '.driver') !== 's3') {
-            return fopen($filePath, mode: 'r');
+            $resource = fopen($filePath, mode: 'r');
+
+            stream_filter_append(
+                $resource,
+                CharsetConverter::getFiltername($encoding, 'utf-8'),
+                STREAM_FILTER_READ
+            );
+
+            return $resource;
         }
 
         /** @var AwsS3V3Adapter $s3Adapter */
@@ -373,11 +393,19 @@ trait CanImportRecords
         invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
         $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
 
-        return fopen($fileS3Path, mode: 'r', context: stream_context_create([
+        $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
             's3' => [
                 'seekable' => true,
             ],
         ]));
+
+        stream_filter_append(
+            $resource,
+            CharsetConverter::getFiltername($encoding, 'utf-8'),
+            STREAM_FILTER_READ
+        );
+
+        return $resource;
     }
 
     public static function getDefaultName(): ?string
