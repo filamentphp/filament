@@ -33,7 +33,7 @@ return [
         'actions' => [
 
             'export' => [
-                'label' => 'Eskportuoti',
+                'label' => 'Eksportuoti',
             ],
 
         ],
@@ -66,7 +66,7 @@ return [
         ],
 
         'started' => [
-            'title' => 'Eskportas pradėtas',
+            'title' => 'Eksportas pradėtas',
             'body' => 'Eksportas pradėtas ir 1 eilutė bus apdorota fone.|Eksportas pradėtas ir :count eilutės bus apdorotos fone.',
         ],
 
