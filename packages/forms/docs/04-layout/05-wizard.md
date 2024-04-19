@@ -84,6 +84,22 @@ Wizard\Step::make('Order')
 
 <AutoScreenshot name="forms/layout/wizard/icons" alt="Wizard with step icons" version="3.x" />
 
+## Customizing the icon for completed steps
+
+You may customize the [icon](#setting-up-step-icons) of a completed step using the `completedIcon()` method:
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard\Step::make('Order')
+    ->completedIcon('heroicon-m-hand-thumb-up')
+    ->schema([
+        // ...
+    ]),
+```
+
+<AutoScreenshot name="forms/layout/wizard/completed-icons" alt="Wizard with completed step icons" version="3.x" />
+
 ## Adding descriptions to steps
 
 You may add a short description after the title of each step using the `description()` method:

@@ -2,6 +2,10 @@
     @script
         <script>
             window.addEventListener('beforeunload', (event) => {
+                if (typeof @this === 'undefined') {
+                    return
+                }
+
                 if (
                     [
                         ...(@js($this instanceof \Filament\Actions\Contracts\HasActions) ? $wire.mountedActions ?? [] : []),
