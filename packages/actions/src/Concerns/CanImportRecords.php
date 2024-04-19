@@ -315,6 +315,7 @@ trait CanImportRecords
                     $columns = $this->getImporter()::getColumns();
 
                     $csv = Writer::createFromFileObject(new SplTempFileObject());
+                    $csv->setOutputBOM(ByteSequence::BOM_UTF8);
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter())) {
                         $csv->setDelimiter($csvDelimiter);
@@ -338,8 +339,6 @@ trait CanImportRecords
                     }
 
                     return response()->streamDownload(function () use ($csv) {
-                        $csv->setOutputBOM(ByteSequence::BOM_UTF8);
-
                         echo $csv->toString();
                     }, __('filament-actions::import.example_csv.file_name', ['importer' => (string) str($this->getImporter())->classBasename()->kebab()]), [
                         'Content-Type' => 'text/csv',
