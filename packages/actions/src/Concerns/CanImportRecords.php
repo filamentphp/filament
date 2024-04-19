@@ -409,7 +409,10 @@ trait CanImportRecords
 
     protected function detectCsvEncoding(TemporaryUploadedFile $file): ?string
     {
-        $fileContents = file_get_contents($file->getRealPath());
+        $filePath = $file->getRealPath();
+        $stream = fopen($filePath, mode: 'r');
+
+        $fileContents = stream_get_contents($stream, 1000);
 
         foreach ([
             'UTF-8',
