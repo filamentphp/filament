@@ -92,6 +92,7 @@ export default function markdownEditorFormComponent({
     state,
     translations,
     toolbarButtons,
+    uploadFileAllowed,
     uploadFileAttachmentUsing,
 }) {
     return {
@@ -125,7 +126,7 @@ export default function markdownEditorFormComponent({
                     },
                 ],
                 toolbar: this.getToolbar(),
-                uploadImage: true,
+                uploadImage: uploadFileAllowed,
             })
 
             this.editor.codemirror.setOption(

@@ -32,6 +32,7 @@
                             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                             toolbarButtons: @js($getToolbarButtons()),
                             translations: @js(__('filament-forms::components.markdown_editor')),
+                            uploadFileAllowed: @js($hasToolbarButton('attachFiles')),
                             uploadFileAttachmentUsing: async (file, onSuccess, onError) => {
                                 $wire.upload(`componentFileAttachments.{{ $statePath }}`, file, () => {
                                     $wire
