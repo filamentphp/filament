@@ -81,7 +81,7 @@ trait CanImportRecords
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
                 ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
                 ->rule('extensions:csv,txt')
-                ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state, Forms\Get $get) use ($action) {
+                ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
                     if (! $state instanceof TemporaryUploadedFile) {
                         return;
                     }
@@ -366,7 +366,9 @@ trait CanImportRecords
 
         $filePath = $file->getRealPath();
 
-        CharsetConverter::register();
+        if (filled($encoding)) {
+            CharsetConverter::register();
+        }
 
         if (config('filesystems.disks.' . config('filament.default_filesystem_disk') . '.driver') !== 's3') {
             $resource = fopen($filePath, mode: 'r');
