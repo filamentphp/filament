@@ -94,8 +94,7 @@ trait CanImportRecords
                         throw $exception;
                     }
 
-                    $encoding = $this->mb_detect_encoding_in_order($state);
-                    $csvStream = $this->getUploadedFileStream($state, $encoding);
+                    $csvStream = $this->getUploadedFileStream($state);
 
                     if (! $csvStream) {
                         return;
@@ -144,8 +143,7 @@ trait CanImportRecords
                         return [];
                     }
 
-                    $encoding = $this->mb_detect_encoding_in_order($csvFile);
-                    $csvStream = $this->getUploadedFileStream($csvFile, $encoding);
+                    $csvStream = $this->getUploadedFileStream($csvFile);
 
                     if (! $csvStream) {
                         return [];
@@ -175,8 +173,7 @@ trait CanImportRecords
             /** @var TemporaryUploadedFile $csvFile */
             $csvFile = $data['file'];
 
-            $encoding = $this->mb_detect_encoding_in_order($csvFile);
-            $csvStream = $this->getUploadedFileStream($csvFile, $encoding);
+            $csvStream = $this->getUploadedFileStream($csvFile);
 
             if (! $csvStream) {
                 return;
@@ -363,8 +360,10 @@ trait CanImportRecords
     /**
      * @return resource | false
      */
-    public function getUploadedFileStream(TemporaryUploadedFile $file, string $encoding)
+    public function getUploadedFileStream(TemporaryUploadedFile $file)
     {
+        $encoding = $this->detectCsvEncoding($file);
+
         $filePath = $file->getRealPath();
 
         CharsetConverter::register();
@@ -372,11 +371,13 @@ trait CanImportRecords
         if (config('filesystems.disks.' . config('filament.default_filesystem_disk') . '.driver') !== 's3') {
             $resource = fopen($filePath, mode: 'r');
 
-            stream_filter_append(
-                $resource,
-                CharsetConverter::getFiltername($encoding, 'utf-8'),
-                STREAM_FILTER_READ
-            );
+            if (filled($encoding)) {
+                stream_filter_append(
+                    $resource,
+                    CharsetConverter::getFiltername($encoding, 'utf-8'),
+                    STREAM_FILTER_READ,
+                );
+            }
 
             return $resource;
         }
@@ -393,27 +394,37 @@ trait CanImportRecords
             ],
         ]));
 
-        stream_filter_append(
-            $resource,
-            CharsetConverter::getFiltername($encoding, 'utf-8'),
-            STREAM_FILTER_READ
-        );
+        if (filled($encoding)) {
+            stream_filter_append(
+                $resource,
+                CharsetConverter::getFiltername($encoding, 'utf-8'),
+                STREAM_FILTER_READ
+            );
+        }
 
         return $resource;
     }
 
-    public function mb_detect_encoding_in_order(TemporaryUploadedFile $file): string | false
+    protected function detectCsvEncoding(TemporaryUploadedFile $file): ?string
     {
-        $encodings = ['UTF-8', 'ISO-8859-1', 'GB18030', 'Windows-1251', 'Windows-1252', 'EUC-JP'];
-        $string = file_get_contents($file->getRealPath());
+        $fileContents = file_get_contents($file->getRealPath());
 
-        foreach ($encodings as $enc) {
-            if (mb_check_encoding($string, $enc)) {
-                return $enc;
+        foreach ([
+            'UTF-8',
+            'ISO-8859-1',
+            'GB18030',
+            'Windows-1251',
+            'Windows-1252',
+            'EUC-JP',
+        ] as $encoding) {
+            if (! mb_check_encoding($fileContents, $encoding)) {
+                continue;
             }
+
+            return $encoding;
         }
 
-        return false;
+        return null;
     }
 
     public static function getDefaultName(): ?string
