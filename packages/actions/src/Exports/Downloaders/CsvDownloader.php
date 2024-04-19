@@ -31,14 +31,7 @@ class CsvDownloader implements Downloader
                     continue;
                 }
 
-                $fileContents = $disk->get($file);
-
-                // Remove the BOM for subsequent CSV files
-                if (substr($fileContents, 0, 3) === "\xEF\xBB\xBF") {
-                    $fileContents = substr($fileContents, 3);
-                }
-
-                echo $fileContents;
+                echo $disk->get($file);
 
                 flush();
             }
