@@ -342,7 +342,7 @@ trait CanImportRecords
 
                         echo $csv->toString();
                     }, __('filament-actions::import.example_csv.file_name', ['importer' => (string) str($this->getImporter())->classBasename()->kebab()]), [
-                        'Content-Type' => 'text/csv; charset=UTF-8',
+                        'Content-Type' => 'text/csv',
                     ]);
                 }),
         ]);
