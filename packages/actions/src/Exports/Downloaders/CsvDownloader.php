@@ -31,7 +31,7 @@ class CsvDownloader implements Downloader
                     continue;
                 }
 
-                return $disk->get($file);
+                echo $disk->get($file);
 
                 flush();
             }
