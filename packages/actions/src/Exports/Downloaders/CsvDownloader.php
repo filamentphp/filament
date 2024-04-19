@@ -14,7 +14,7 @@ class CsvDownloader implements Downloader
         $directory = $export->getFileDirectory();
 
         if (! $disk->exists($directory)) {
-            abort(419);
+            abort(404);
         }
 
         return response()->streamDownload(function () use ($disk, $directory) {

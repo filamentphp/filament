@@ -29,10 +29,11 @@ trait Translatable
         $translatableAttributes = static::getResource()::getTranslatableAttributes();
 
         $this->otherLocaleData[$this->oldActiveLocale] = Arr::only($this->data, $translatableAttributes);
-        $this->data = [
+
+        $this->form->fill([
             ...$this->data,
             ...$this->otherLocaleData[$this->activeLocale] ?? [],
-        ];
+        ]);
     }
 
     public function getTranslatableLocales(): array
