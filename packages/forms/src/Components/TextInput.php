@@ -88,7 +88,7 @@ class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLen
         return $this;
     }
 
-    public function maskMoney(int | Closure | null $decimalPlaces = 2, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
+    public function money(int | Closure | null $decimalPlaces = 2, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
     {
         $decimalPlaces = $this->evaluate($decimalPlaces);
         $decimalSeparator = $this->evaluate($decimalSeparator);

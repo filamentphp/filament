@@ -217,7 +217,7 @@ or
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('amount')
-    ->maskMoney()
+    ->money()
 ```
 
 ## Making the field read-only
