@@ -5,6 +5,7 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Support\Enums\ActionSize;
+use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Enums\ActionsPosition;
@@ -63,8 +64,8 @@ trait HasActions
 
                 $this->mergeCachedFlatActions($flatActions);
             } elseif ($action instanceof Action) {
-                $action->defaultSize(ActionSize::Small);
-                $action->defaultView($action::LINK_VIEW);
+                $action->defaultSize(Table::$defaultActionSize ?? ActionSize::Small);
+                $action->defaultView(Table::$defaultActionView ?? $action::LINK_VIEW);
 
                 $this->cacheAction($action);
             } else {

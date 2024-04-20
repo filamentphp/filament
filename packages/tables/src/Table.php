@@ -2,6 +2,8 @@
 
 namespace Filament\Tables;
 
+use Closure;
+use Filament\Support\Enums\ActionSize;
 use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Contracts\HasTable;
 
@@ -65,6 +67,10 @@ class Table extends ViewComponent
     public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';
 
     public static string $defaultTimeDisplayFormat = 'H:i:s';
+
+    public static string | Closure | null $defaultActionView = null;
+
+    public static string | Closure | ActionSize | null $defaultActionSize = null;
 
     final public function __construct(HasTable $livewire)
     {
