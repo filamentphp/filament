@@ -362,41 +362,29 @@ trait CanImportRecords
      */
     public function getUploadedFileStream(TemporaryUploadedFile $file)
     {
-        $encoding = $this->detectCsvEncoding($file);
-
         $filePath = $file->getRealPath();
-
-        if (filled($encoding)) {
-            CharsetConverter::register();
-        }
 
         if (config('filesystems.disks.' . config('filament.default_filesystem_disk') . '.driver') !== 's3') {
             $resource = fopen($filePath, mode: 'r');
+        } else {
+            /** @var AwsS3V3Adapter $s3Adapter */
+            $s3Adapter = Storage::disk('s3')->getAdapter();
 
-            if (filled($encoding)) {
-                stream_filter_append(
-                    $resource,
-                    CharsetConverter::getFiltername($encoding, 'utf-8'),
-                    STREAM_FILTER_READ,
-                );
-            }
+            invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
+            $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
 
-            return $resource;
+            $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
+                's3' => [
+                    'seekable' => true,
+                ],
+            ]));
         }
 
-        /** @var AwsS3V3Adapter $s3Adapter */
-        $s3Adapter = Storage::disk('s3')->getAdapter();
-
-        invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-        $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
-
-        $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
-            's3' => [
-                'seekable' => true,
-            ],
-        ]));
+        $encoding = $this->detectCsvEncoding($resource);
 
         if (filled($encoding)) {
+            CharsetConverter::register();
+
             stream_filter_append(
                 $resource,
                 CharsetConverter::getFiltername($encoding, 'utf-8'),
@@ -407,12 +395,9 @@ trait CanImportRecords
         return $resource;
     }
 
-    protected function detectCsvEncoding(TemporaryUploadedFile $file): ?string
+    protected function detectCsvEncoding(mixed $resource): ?string
     {
-        $filePath = $file->getRealPath();
-        $stream = fopen($filePath, mode: 'r');
-
-        $fileContents = stream_get_contents($stream, 1000);
+        $fileContents = stream_get_contents($resource, 1000);
 
         foreach ([
             'UTF-8',
