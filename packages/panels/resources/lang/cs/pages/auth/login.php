@@ -10,7 +10,7 @@ return [
 
         'register' => [
             'before' => 'nebo',
-            'label' => 'se zaregistrujte ',
+            'label' => 'se zaregistrujte',
         ],
 
         'request_password_reset' => [
