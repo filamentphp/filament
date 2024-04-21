@@ -2,8 +2,10 @@
 
 namespace Filament\Tables;
 
+use Closure;
 use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Table extends ViewComponent
 {
@@ -65,6 +67,8 @@ class Table extends ViewComponent
     public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';
 
     public static string $defaultTimeDisplayFormat = 'H:i:s';
+
+    public static string | Closure | Htmlable | null $defaultActionsColumnLabel = null;
 
     final public function __construct(HasTable $livewire)
     {

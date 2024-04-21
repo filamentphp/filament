@@ -5,6 +5,7 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Support\Enums\ActionSize;
+use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Enums\ActionsPosition;
@@ -244,6 +245,6 @@ trait HasActions
 
     public function getActionsColumnLabel(): string | Htmlable | null
     {
-        return $this->evaluate($this->actionsColumnLabel);
+        return $this->evaluate($this->actionsColumnLabel ?? Table::$defaultActionsColumnLabel);
     }
 }
