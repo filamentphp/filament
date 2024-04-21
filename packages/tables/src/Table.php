@@ -68,8 +68,6 @@ class Table extends ViewComponent
 
     public static string $defaultTimeDisplayFormat = 'H:i:s';
 
-    public static string | Closure | Htmlable | null $defaultActionsColumnLabel = null;
-
     final public function __construct(HasTable $livewire)
     {
         $this->livewire($livewire);
