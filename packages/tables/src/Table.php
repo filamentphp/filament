@@ -68,9 +68,9 @@ class Table extends ViewComponent
 
     public static string $defaultTimeDisplayFormat = 'H:i:s';
 
-    public static string | Closure | null $defaultActionView = null;
+    public static string | Closure | null $defaultActionsColumnActionView = null;
 
-    public static string | Closure | ActionSize | null $defaultActionSize = null;
+    public static string | Closure | ActionSize | null $defaultActionsColumnActionSize = null;
 
     final public function __construct(HasTable $livewire)
     {

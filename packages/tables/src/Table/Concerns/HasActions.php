@@ -64,8 +64,8 @@ trait HasActions
 
                 $this->mergeCachedFlatActions($flatActions);
             } elseif ($action instanceof Action) {
-                $action->defaultSize(Table::$defaultActionSize ?? ActionSize::Small);
-                $action->defaultView(Table::$defaultActionView ?? $action::LINK_VIEW);
+                $action->defaultSize(Table::$defaultActionsColumnActionSize ?? ActionSize::Small);
+                $action->defaultView(Table::$defaultActionsColumnActionView ?? $action::LINK_VIEW);
 
                 $this->cacheAction($action);
             } else {
