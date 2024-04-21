@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Table extends ViewComponent
 {
@@ -71,6 +72,8 @@ class Table extends ViewComponent
     public static string | Closure | null $defaultActionsColumnActionView = null;
 
     public static string | Closure | ActionSize | null $defaultActionsColumnActionSize = null;
+  
+    public static string | Closure | Htmlable | null $defaultActionsColumnLabel = null;
 
     final public function __construct(HasTable $livewire)
     {

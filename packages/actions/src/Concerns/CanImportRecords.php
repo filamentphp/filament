@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
 use Illuminate\Validation\ValidationException;
 use League\Csv\ByteSequence;
+use League\Csv\CharsetConverter;
 use League\Csv\Info;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
@@ -363,20 +364,56 @@ trait CanImportRecords
         $filePath = $file->getRealPath();
 
         if (config('filesystems.disks.' . config('filament.default_filesystem_disk') . '.driver') !== 's3') {
-            return fopen($filePath, mode: 'r');
+            $resource = fopen($filePath, mode: 'r');
+        } else {
+            /** @var AwsS3V3Adapter $s3Adapter */
+            $s3Adapter = Storage::disk('s3')->getAdapter();
+
+            invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
+            $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
+
+            $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
+                's3' => [
+                    'seekable' => true,
+                ],
+            ]));
         }
 
-        /** @var AwsS3V3Adapter $s3Adapter */
-        $s3Adapter = Storage::disk('s3')->getAdapter();
+        $encoding = $this->detectCsvEncoding($resource);
 
-        invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-        $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
+        if (filled($encoding)) {
+            CharsetConverter::register();
 
-        return fopen($fileS3Path, mode: 'r', context: stream_context_create([
-            's3' => [
-                'seekable' => true,
-            ],
-        ]));
+            stream_filter_append(
+                $resource,
+                CharsetConverter::getFiltername($encoding, 'utf-8'),
+                STREAM_FILTER_READ
+            );
+        }
+
+        return $resource;
+    }
+
+    protected function detectCsvEncoding(mixed $resource): ?string
+    {
+        $fileContents = stream_get_contents($resource, 1000);
+
+        foreach ([
+            'UTF-8',
+            'ISO-8859-1',
+            'GB18030',
+            'Windows-1251',
+            'Windows-1252',
+            'EUC-JP',
+        ] as $encoding) {
+            if (! mb_check_encoding($fileContents, $encoding)) {
+                continue;
+            }
+
+            return $encoding;
+        }
+
+        return null;
     }
 
     public static function getDefaultName(): ?string
