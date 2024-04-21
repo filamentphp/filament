@@ -245,6 +245,6 @@ trait HasActions
 
     public function getActionsColumnLabel(): string | Htmlable | null
     {
-        return $this->evaluate($this->actionsColumnLabel ?? Table::$defaultActionsColumnLabel);
+        return $this->evaluate($this->actionsColumnLabel) ?? $this->evaluate(Table::$defaultActionsColumnLabel);
     }
 }
