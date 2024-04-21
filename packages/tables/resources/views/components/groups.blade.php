@@ -2,6 +2,7 @@
     'dropdownOnDesktop' => false,
     'groups',
     'triggerAction',
+    'groupingDirectionVisible' => true,
 ])
 
 @php
@@ -121,17 +122,19 @@
                     {{ __('filament-tables::table.grouping.fields.direction.label') }}
                 </span>
 
-                <x-filament::input.wrapper>
-                    <x-filament::input.select x-model="direction">
-                        <option value="asc">
-                            {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
-                        </option>
+                @if ($groupingDirectionVisible)
+                    <x-filament::input.wrapper>
+                        <x-filament::input.select x-model="direction">
+                            <option value="asc">
+                                {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                            </option>
 
-                        <option value="desc">
-                            {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                        </option>
-                    </x-filament::input.select>
-                </x-filament::input.wrapper>
+                            <option value="desc">
+                                {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                            </option>
+                        </x-filament::input.select>
+                    </x-filament::input.wrapper>
+                @endif
             </label>
         </div>
     @endif
