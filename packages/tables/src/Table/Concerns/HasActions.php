@@ -5,13 +5,12 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Support\Enums\ActionSize;
-use Filament\Tables\Table;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Enums\ActionsPosition;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Contracts\Support\Htmlable;
 use InvalidArgumentException;
 
 trait HasActions

@@ -366,7 +366,7 @@ return [
                             'label' => 'Erstellen',
                         ],
 
-                         'create_another' => [
+                        'create_another' => [
                             'label' => 'Erstellen & weiteres erstellen',
                         ],
 

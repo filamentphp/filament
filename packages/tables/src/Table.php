@@ -2,10 +2,8 @@
 
 namespace Filament\Tables;
 
-use Closure;
 use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Contracts\Support\Htmlable;
 
 class Table extends ViewComponent
 {
