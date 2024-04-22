@@ -394,13 +394,13 @@ class ImportAction extends NotificationAction
         $fileContents = stream_get_contents($resource, 1000);
 
         foreach ([
-             'UTF-8',
-             'ISO-8859-1',
-             'GB18030',
-             'Windows-1251',
-             'Windows-1252',
-             'EUC-JP',
-         ] as $encoding) {
+            'UTF-8',
+            'ISO-8859-1',
+            'GB18030',
+            'Windows-1251',
+            'Windows-1252',
+            'EUC-JP',
+        ] as $encoding) {
             if (! mb_check_encoding($fileContents, $encoding)) {
                 continue;
             }
