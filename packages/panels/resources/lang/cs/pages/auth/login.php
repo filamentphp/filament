@@ -18,7 +18,7 @@ return [
         ],
 
     ],
-    
+
     'form' => [
 
         'email' => [
