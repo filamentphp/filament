@@ -47,6 +47,35 @@ DatabaseNotifications::trigger('filament.notifications.database-notifications-tr
 
 Now, click on the trigger button that is rendered in your view. A modal should appear containing your database notifications when clicked!
 
+## Enabling database notifications
+
+If you'd like to receive database notifications, you can enable them in the configuration:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->databaseNotifications();
+}
+```
+
+You may also control database notification polling:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->databaseNotifications()
+        ->databaseNotificationsPolling('30s');
+}
+```
+
 ## Sending database notifications
 
 There are several ways to send database notifications, depending on which one suits you best.
