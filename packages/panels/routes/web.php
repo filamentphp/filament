@@ -25,7 +25,7 @@ Route::name('filament.')
                     ->name("{$panelId}.")
                     ->prefix($panel->getPath())
                     ->group(function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute) {
-                        if ($routes = $panel->getRoutes()) {
+                        foreach ($panel->getRoutes() as $routes) {
                             $routes($panel);
                         }
 
@@ -55,7 +55,7 @@ Route::name('filament.')
 
                         Route::middleware($panel->getAuthMiddleware())
                             ->group(function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute): void {
-                                if ($routes = $panel->getAuthenticatedRoutes()) {
+                                foreach ($panel->getAuthenticatedRoutes() as $routes) {
                                     $routes($panel);
                                 }
 
@@ -109,7 +109,7 @@ Route::name('filament.')
 
                                 $routeGroup
                                     ->group(function () use ($panel): void {
-                                        if ($routes = $panel->getAuthenticatedTenantRoutes()) {
+                                        foreach ($panel->getAuthenticatedTenantRoutes() as $routes) {
                                             $routes($panel);
                                         }
 
@@ -161,7 +161,7 @@ Route::name('filament.')
 
                             $routeGroup
                                 ->group(function () use ($panel): void {
-                                    if ($routes = $panel->getTenantRoutes()) {
+                                    foreach ($panel->getTenantRoutes() as $routes) {
                                         $routes($panel);
                                     }
                                 });

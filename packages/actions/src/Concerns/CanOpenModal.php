@@ -494,7 +494,7 @@ trait CanOpenModal
 
     public function getModalAlignment(): Alignment | string
     {
-        return $this->evaluate($this->modalAlignment) ?? (in_array($this->getModalWidth(), [MaxWidth::ExtraSmall, MaxWidth::Small, 'xs', 'sm'])) ? Alignment::Center : Alignment::Start;
+        return $this->evaluate($this->modalAlignment) ?? (in_array($this->getModalWidth(), [MaxWidth::ExtraSmall, MaxWidth::Small, 'xs', 'sm']) ? Alignment::Center : Alignment::Start);
     }
 
     public function getModalSubmitActionLabel(): string

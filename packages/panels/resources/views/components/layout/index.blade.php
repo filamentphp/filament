@@ -131,7 +131,7 @@
                             activeSidebarItem.offsetTop -
                                 window.innerHeight / 2,
                         )
-                    }, 0)
+                    }, 10)
                 })
             </script>
         @endif

@@ -808,7 +808,10 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             $relationship = $component->getRelationship();
 
-            if ($relationship instanceof BelongsToMany) {
+            if (
+                ($relationship instanceof BelongsToMany) ||
+                ($relationship instanceof HasManyThrough)
+            ) {
                 /** @var Collection $relatedModels */
                 $relatedModels = $relationship->getResults();
 
@@ -818,7 +821,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     //
                     // https://github.com/filamentphp/filament/issues/1111
                     $relatedModels
-                        ->pluck($relationship->getRelatedKeyName())
+                        ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
                         ->map(static fn ($key): string => strval($key))
                         ->toArray(),
                 );
@@ -826,10 +829,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 return;
             }
 
-            if (
-                ($relationship instanceof HasManyThrough) ||
-                ($relationship instanceof BelongsToThrough)
-            ) {
+            if ($relationship instanceof BelongsToThrough) {
                 $relatedModel = $relationship->getResults();
 
                 $component->state(
