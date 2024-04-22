@@ -35,7 +35,7 @@ Before we dive into the specifics of building plugins, there are a few concepts 
 
 ### The Plugin object
 
-Filament v3 introduces the concept of a Plugin object that is used to configure the plugin. This object is a simple PHP class that extends the `Filament\Support\Plugin` class. This class is used to configure the plugin and is the main entry point for the plugin. It is also used to register Resources and Icons that might be used by your plugin.
+Filament v3 introduces the concept of a Plugin object that is used to configure the plugin. This object is a simple PHP class that implements the `Filament\Contracts\Plugin` interface. This class is used to configure the plugin and is the main entry point for the plugin. It is also used to register Resources and Icons that might be used by your plugin.
 
 While the plugin object is extremely helpful, it is not required to build a plugin. You can still build plugins without using the plugin object as you can see in the [Building a Panel Plugin](/docs/3.x/support/plugins/build-a-panel-plugin) tutorial.
 
