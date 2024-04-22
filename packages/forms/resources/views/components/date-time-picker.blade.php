@@ -214,11 +214,13 @@
                                                 focusedDate.date() !== day &&
                                                 ! dayIsDisabled(day),
                                             'bg-gray-50 dark:bg-white/5':
-                                                focusedDate.date() === day && ! dayIsSelected(day),
+                                                focusedDate.date() === day &&
+                                                ! dayIsSelected(day) &&
+                                                ! dayIsDisabled(day),
                                             'text-primary-600 bg-gray-50 dark:bg-white/5 dark:text-primary-400':
                                                 dayIsSelected(day),
                                             'pointer-events-none': dayIsDisabled(day),
-                                            'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
+                                            'opacity-50': dayIsDisabled(day),
                                         }"
                                         class="rounded-full text-center text-sm leading-loose transition duration-75"
                                     ></div>
