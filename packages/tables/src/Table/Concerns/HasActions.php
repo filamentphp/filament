@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Enums\ActionsPosition;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
@@ -23,7 +24,7 @@ trait HasActions
      */
     protected array $flatActions = [];
 
-    protected string | Closure | null $actionsColumnLabel = null;
+    protected string | Htmlable | Closure | null $actionsColumnLabel = null;
 
     protected string | Closure | null $actionsAlignment = null;
 
@@ -76,7 +77,7 @@ trait HasActions
         return $this;
     }
 
-    public function actionsColumnLabel(string | Closure | null $label): static
+    public function actionsColumnLabel(string | Htmlable | Closure | null $label): static
     {
         $this->actionsColumnLabel = $label;
 
@@ -210,7 +211,7 @@ trait HasActions
         return $this->evaluate($this->actionsAlignment);
     }
 
-    public function getActionsColumnLabel(): ?string
+    public function getActionsColumnLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->actionsColumnLabel);
     }

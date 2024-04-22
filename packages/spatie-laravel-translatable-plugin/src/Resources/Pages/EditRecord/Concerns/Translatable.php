@@ -91,10 +91,10 @@ trait Translatable
 
         $this->otherLocaleData[$this->oldActiveLocale] = Arr::only($this->data, $translatableAttributes);
 
-        $this->form->fill([
+        $this->data = [
             ...Arr::except($this->data, $translatableAttributes),
             ...$this->otherLocaleData[$this->activeLocale] ?? [],
-        ]);
+        ];
 
         unset($this->otherLocaleData[$this->activeLocale]);
     }
