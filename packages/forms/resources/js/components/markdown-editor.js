@@ -83,6 +83,7 @@ CodeMirror.commands.shiftTabAndUnindentMarkdownList = function (codemirror) {
 }
 
 export default function markdownEditorFormComponent({
+    canAttachFiles,
     isLiveDebounced,
     isLiveOnBlur,
     liveDebounce,
@@ -92,7 +93,6 @@ export default function markdownEditorFormComponent({
     state,
     translations,
     toolbarButtons,
-    uploadFileAllowed,
     uploadFileAttachmentUsing,
 }) {
     return {
@@ -126,7 +126,7 @@ export default function markdownEditorFormComponent({
                     },
                 ],
                 toolbar: this.getToolbar(),
-                uploadImage: uploadFileAllowed,
+                uploadImage: canAttachFiles,
             })
 
             this.editor.codemirror.setOption(
