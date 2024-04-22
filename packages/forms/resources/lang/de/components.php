@@ -11,11 +11,11 @@ return [
             ],
 
             'add' => [
-                'label' => 'Hinzufügen',
+                'label' => 'Zu :label hinzufügen',
             ],
 
             'add_between' => [
-                'label' => 'Einfügen',
+                'label' => 'Dazwischen einfügen',
             ],
 
             'delete' => [
@@ -59,11 +59,11 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'Alle deselektieren',
+                'label' => 'Alle abwählen',
             ],
 
             'select_all' => [
-                'label' => 'Alle selektieren',
+                'label' => 'Alle auswählen',
             ],
 
         ],
@@ -81,7 +81,7 @@ return [
                 ],
 
                 'drag_crop' => [
-                    'label' => 'Drag Modus "beschneiden"',
+                    'label' => 'Drag Modus "zuschneiden"',
                 ],
 
                 'drag_move' => [
@@ -117,15 +117,15 @@ return [
                 ],
 
                 'rotate_left' => [
-                    'label' => 'Bild nach links kippen',
+                    'label' => 'Bild nach links drehen',
                 ],
 
                 'rotate_right' => [
-                    'label' => 'Bild nach rechts kippen',
+                    'label' => 'Bild nach rechts drehen',
                 ],
 
                 'set_aspect_ratio' => [
-                    'label' => 'Seitenverhältnis festlegen :ratio',
+                    'label' => 'Seitenverhältnis auf :ratio setzen',
                 ],
 
                 'save' => [
@@ -211,7 +211,7 @@ return [
             ],
 
             'reorder' => [
-                'label' => 'Zeile neu sortieren',
+                'label' => 'Zeile neu ordnen',
             ],
 
         ],
@@ -233,16 +233,28 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Dateien hinzufügen',
+            'attach_files' => 'Dateien beifügen',
+            'blockquote' => 'Zitat',
             'bold' => 'Fett',
-            'bullet_list' => 'Liste',
+            'bullet_list' => 'Aufzählungsliste',
             'code_block' => 'Code Block',
-            'edit' => 'Bearbeiten',
+            'heading' => 'Überschrift',
             'italic' => 'Kursiv',
             'link' => 'Link',
             'ordered_list' => 'Nummerierte Liste',
-            'preview' => 'Vorschau',
+            'redo' => 'Wiederherstellen',
             'strike' => 'Durchgestrichen',
+            'table' => 'Tabelle',
+            'undo' => 'Rückgängig',
+        ],
+
+    ],
+
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Ja',
+            'false' => 'Nein',
         ],
 
     ],
@@ -252,7 +264,11 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'Hinzufügen',
+                'label' => 'Zu :label hinzufügen',
+            ],
+
+            'add_between' => [
+                'label' => 'Dazwischen einfügen',
             ],
 
             'delete' => [
@@ -260,7 +276,7 @@ return [
             ],
 
             'clone' => [
-                'label' => 'Kopieren',
+                'label' => 'Duplizieren',
             ],
 
             'reorder' => [
@@ -318,7 +334,7 @@ return [
             'attach_files' => 'Dateien anhängen',
             'blockquote' => 'Zitat',
             'bold' => 'Fett',
-            'bullet_list' => 'Aufzählung',
+            'bullet_list' => 'Aufzählungsliste',
             'code_block' => 'Code Block',
             'h1' => 'Titel',
             'h2' => 'Überschrift',
@@ -326,8 +342,9 @@ return [
             'italic' => 'Kursiv',
             'link' => 'Link',
             'ordered_list' => 'Nummerierte Aufzählung',
-            'redo' => 'Wiederholen',
+            'redo' => 'Wiederherstellen',
             'strike' => 'Durchgestrichen',
+            'underline' => 'Unterstreichen',
             'undo' => 'Rückgängig',
         ],
 
@@ -347,6 +364,10 @@ return [
 
                         'create' => [
                             'label' => 'Erstellen',
+                        ],
+
+                        'create_another' => [
+                            'label' => 'Erstellen & weiteres erstellen',
                         ],
 
                     ],
@@ -396,7 +417,32 @@ return [
     ],
 
     'tags_input' => [
-        'placeholder' => 'Neues Etikett',
+        'placeholder' => 'Neue Kennzeichnung',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Passwort verbergen',
+            ],
+
+            'show_password' => [
+                'label' => 'Passwort anzeigen',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Ja',
+            'false' => 'Nein',
+        ],
+
     ],
 
     'wizard' => [

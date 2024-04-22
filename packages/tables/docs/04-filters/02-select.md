@@ -103,7 +103,7 @@ SelectFilter::make('author')
 
 ## Disable placeholder selection
 
-You can prevent the placeholder (null option) from being selected using the `selectablePlaceholder()` method:
+You can remove the placeholder (null option), which disables the filter so all options are applied, using the `selectablePlaceholder()` method:
 
 ```php
 use Filament\Tables\Filters\SelectFilter;
