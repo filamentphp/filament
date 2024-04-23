@@ -13,6 +13,13 @@ use function Livewire\store;
 
 class SupportPartials extends ComponentHook
 {
+    public function hydrate(): void
+    {
+        if (! app()->runningUnitTests()) {
+            $this->storeSet('skipRender', fn (): bool => $this->shouldSkipRender());
+        }
+    }
+
     public function call(): Closure
     {
         $this->storeSet('callsCount', ($this->storeGet('callsCount') ?? 0) + 1);
@@ -62,13 +69,13 @@ class SupportPartials extends ComponentHook
 
     public function shouldRender(): bool
     {
-        $effects = ($this->storeGet('callsCount') ?? 0) + ($this->storeGet('updatesCount') ?? 0);
+        $effects = intval($this->storeGet('callsCount') ?? 0) + intval($this->storeGet('updatesCount') ?? 0);
 
         if (! $effects) {
             return true;
         }
 
-        $renders = count($this->storeGet('partials') ?? []) + ($this->storeGet('partialSkipsCount') ?? 0);
+        $renders = count($this->storeGet('partials') ?? []) + intval($this->storeGet('partialSkipsCount') ?? 0);
 
         if (! $renders) {
             return true;
@@ -111,18 +118,6 @@ class SupportPartials extends ComponentHook
         }
 
         return $this->component->getOriginallyMountedActionIndex() !== $mountedActionIndex;
-    }
-
-    protected function renderAndQueuePartials(Closure $getPartialsUsing): void
-    {
-        app(ExtendBlade::class)->startLivewireRendering($this->component);
-
-        $this->partials = [
-            ...$this->partials,
-            ...$getPartialsUsing(),
-        ];
-
-        app(ExtendBlade::class)->endLivewireRendering();
     }
 
     public function dehydrate(ComponentContext $context): void

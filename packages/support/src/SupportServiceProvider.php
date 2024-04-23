@@ -94,8 +94,6 @@ class SupportServiceProvider extends PackageServiceProvider
                     ->withMaxInputLength(500000),
             ),
         );
-
-        $this->app->bind(HandleComponents::class, OverrideHandleComponents::class);
     }
 
     public function packageBooted(): void
