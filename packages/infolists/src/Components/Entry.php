@@ -41,7 +41,8 @@ class Entry extends Component implements HasHintActions
     public function getLabel(): string | Htmlable | null
     {
         $label = parent::getLabel() ?? (string) str($this->getName())
-            ->before('.')
+            ->beforeLast('.')
+            ->afterLast('.')
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
