@@ -16,7 +16,21 @@ class SupportPartials extends ComponentHook
     public function hydrate(): void
     {
         if (! app()->runningUnitTests()) {
-            $this->storeSet('skipRender', fn (): bool => $this->shouldSkipRender());
+            $this->storeSet('skipRender', function (): bool {
+                if (! $this->isLackingPartialRendersToCoverAllCallsAndUpdates()) {
+                    return true;
+                }
+
+                if ($this->shouldRenderMountedActionOnly()) {
+                    return true;
+                }
+
+                if ($this->shouldRenderMountedActionsOnly()) {
+                    return true;
+                }
+
+                return false;
+            });
         }
     }
 
@@ -50,24 +64,7 @@ class SupportPartials extends ComponentHook
         };
     }
 
-    public function shouldSkipRender(): bool
-    {
-        if (! $this->shouldRender()) {
-            return true;
-        }
-
-        if ($this->shouldRenderMountedActionOnly()) {
-            return true;
-        }
-
-        if ($this->shouldRenderMountedActionsOnly()) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public function shouldRender(): bool
+    public function isLackingPartialRendersToCoverAllCallsAndUpdates(): bool
     {
         $effects = intval($this->storeGet('callsCount') ?? 0) + intval($this->storeGet('updatesCount') ?? 0);
 
@@ -142,7 +139,9 @@ class SupportPartials extends ComponentHook
             app(ExtendBlade::class)->endLivewireRendering();
         };
 
-        if (! ($shouldRender = $this->shouldRender())) {
+        $isLackingPartialRendersToCoverAllCallsAndUpdates = $this->isLackingPartialRendersToCoverAllCallsAndUpdates();
+
+        if (! $isLackingPartialRendersToCoverAllCallsAndUpdates) {
             $renderAndQueuePartials(function (): array {
                 $partials = [];
 
@@ -163,7 +162,7 @@ class SupportPartials extends ComponentHook
             ]);
         }
 
-        if ($this->shouldRenderMountedActionsOnly(whenActionMounted: $shouldRender)) {
+        if ($this->shouldRenderMountedActionsOnly(whenActionMounted: $isLackingPartialRendersToCoverAllCallsAndUpdates)) {
             $renderAndQueuePartials(fn (): array => [
                 'action-modals' => view('filament-actions::components.modals')->render(),
             ]);
