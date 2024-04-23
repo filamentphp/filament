@@ -144,8 +144,6 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
                 $component->getChildComponentContainer($newUuid)->fill();
 
-                $component->collapsed(false, shouldMakeComponentCollapsible: false);
-
                 $component->callAfterStateUpdated();
             })
             ->livewireClickHandlerEnabled(false)
