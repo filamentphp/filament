@@ -7,6 +7,7 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
 use Laravel\SerializableClosure\Serializers\Native;
 
 trait HasRoutes
@@ -108,12 +109,11 @@ trait HasRoutes
     {
         $domain = '';
         if (filled($this->domains) && sizeof($this->domains) > 1) {
-            $hostFromRequest = request()->getHost();
-            if (empty($hostFromRequest)) {
+            if (App::runningInConsole()) {
                 // If route is requested from Worker/Job/Console. Pick the first domain
                 $domain = $this->domains[0] . '.';
             } else {
-                $domain = $hostFromRequest . '.';
+                $domain = request()->getHost() . '.';
             }
         }
         
