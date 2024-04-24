@@ -48,6 +48,8 @@ abstract class TestCase extends BaseTestCase
             SlugsPanelProvider::class,
             TenancyPanelProvider::class,
             DomainTenancyPanelProvider::class,
+            SingleDomainPanel::class,
+            MultiDomainPanel::class,
         ];
     }
 
