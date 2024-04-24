@@ -70,7 +70,7 @@ class MakeResourceCommand extends Command
             $panel = Filament::getPanel($panel);
         }
 
-        if (!$panel) {
+        if (! $panel) {
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
@@ -91,9 +91,11 @@ class MakeResourceCommand extends Command
             select(
                 label: 'Which namespace would you like to create this in?',
                 options: $resourceNamespaces
-            ) : (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
+            ) :
+            (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
         $path = (count($resourceDirectories) > 1) ?
-            $resourceDirectories[array_search($namespace, $resourceNamespaces)] : (Arr::first($resourceDirectories) ?? app_path('Filament/Resources/'));
+            $resourceDirectories[array_search($namespace, $resourceNamespaces)] :
+            (Arr::first($resourceDirectories) ?? app_path('Filament/Resources/'));
 
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";
@@ -120,7 +122,7 @@ class MakeResourceCommand extends Command
         $editResourcePagePath = "{$resourcePagesDirectory}/{$editResourcePageClass}.php";
         $viewResourcePagePath = "{$resourcePagesDirectory}/{$viewResourcePageClass}.php";
 
-        if (!$this->option('force') && $this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $resourcePath,
             $listResourcePagePath,
             $manageResourcePagePath,
@@ -134,7 +136,7 @@ class MakeResourceCommand extends Command
         $pages = '';
         $pages .= '\'index\' => Pages\\' . ($this->option('simple') ? $manageResourcePageClass : $listResourcePageClass) . '::route(\'/\'),';
 
-        if (!$this->option('simple')) {
+        if (! $this->option('simple')) {
             $pages .= PHP_EOL . "'create' => Pages\\{$createResourcePageClass}::route('/create'),";
 
             if ($this->option('view')) {
