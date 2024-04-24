@@ -12,9 +12,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 
-/**
- * @property Schema $mountedTableBulkActionForm
- */
 trait HasBulkActions
 {
     /**

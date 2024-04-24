@@ -256,17 +256,6 @@ trait InteractsWithTable
         return $property;
     }
 
-    /**
-     * @return array<string, \Filament\Schema\Schema>
-     */
-    protected function getInteractsWithTableForms(): array
-    {
-        return [
-            'mountedTableActionForm' => $this->getMountedTableActionForm(),
-            'mountedTableBulkActionForm' => $this->getMountedTableBulkActionForm(),
-        ];
-    }
-
     public function getActiveTableLocale(): ?string
     {
         return null;

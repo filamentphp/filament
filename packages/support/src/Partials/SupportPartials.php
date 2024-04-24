@@ -13,72 +13,47 @@ use function Livewire\store;
 
 class SupportPartials extends ComponentHook
 {
-    public function hydrate(): void
+    public function shouldSkipRender(): bool
     {
-        if (! app()->runningUnitTests()) {
-            $this->storeSet('skipRender', function (): bool {
-                if (! $this->isLackingPartialRendersToCoverAllCallsAndUpdates()) {
-                    return true;
-                }
-
-                if ($this->shouldRenderMountedActionOnly()) {
-                    return true;
-                }
-
-                if ($this->shouldRenderMountedActionsOnly()) {
-                    return true;
-                }
-
-                return false;
-            });
+        if (! $this->isLackingPartialRendersToCoverAllCallsAndUpdates()) {
+            return true;
         }
+
+        if ($this->shouldRenderMountedActionOnly()) {
+            return true;
+        }
+
+        if ($this->shouldRenderMountedActionsOnly()) {
+            return true;
+        }
+
+        return false;
     }
 
-    public function call(): Closure
-    {
-        $this->storeSet('callsCount', ($this->storeGet('callsCount') ?? 0) + 1);
-
-        $this->storeSet('isPendingPartialRender', true);
-
-        return function () {
-            if (! $this->storeGet('skipRender')) {
-                return;
-            }
-
-            $this->skipPartialRender($this->component);
-        };
-    }
-
-    public function update(): Closure
+    public function update(...$args): void
     {
         $this->storeSet('updatesCount', ($this->storeGet('updatesCount') ?? 0) + 1);
 
         $this->storeSet('isPendingPartialRender', true);
+    }
 
-        return function () {
-            if (! $this->storeGet('skipRender')) {
-                return;
-            }
+    public function call(): void
+    {
+        $this->storeSet('callsCount', ($this->storeGet('callsCount') ?? 0) + 1);
 
-            $this->skipPartialRender($this->component);
-        };
+        $this->storeSet('isPendingPartialRender', true);
     }
 
     public function isLackingPartialRendersToCoverAllCallsAndUpdates(): bool
     {
-        $effects = intval($this->storeGet('callsCount') ?? 0) + intval($this->storeGet('updatesCount') ?? 0);
+        $updatesCount = intval($this->storeGet('updatesCount') ?? 0);
+        $callsCount = intval($this->storeGet('callsCount') ?? 0);
 
-        if (! $effects) {
+        if (($updatesCount + $callsCount) === 0) {
             return true;
         }
 
-        $renders = count($this->storeGet('partials') ?? []) + intval($this->storeGet('partialSkipsCount') ?? 0);
-
-        if (! $renders) {
-            return true;
-        }
-
-        return $effects > $renders;
+        return ($updatesCount + $callsCount) !== intval($this->storeGet('partialRendersCount') ?? 0);
     }
 
     public function shouldRenderMountedActionOnly(): bool
@@ -173,23 +148,23 @@ class SupportPartials extends ComponentHook
 
     public function skipPartialRender(Component $component): void
     {
-        if (! store($component)->get('isPendingPartialRender')) {
-            return;
-        }
-
-        store($component)->set('partialSkipsCount', (store($component)->get('partialSkipsCount') ?? 0) + 1);
-
-        store($component)->set('isPendingPartialRender', false);
+        $this->recordPartialRender($component);
     }
 
     public function renderPartial(Component $component, Closure $renderUsing): void
+    {
+        store($component)->push('partials', $renderUsing);
+
+        $this->recordPartialRender($component);
+    }
+
+    protected function recordPartialRender(Component $component): void
     {
         if (! store($component)->get('isPendingPartialRender')) {
             return;
         }
 
-        store($component)->push('partials', $renderUsing);
-
+        store($component)->set('partialRendersCount', (store($component)->get('partialRendersCount') ?? 0) + 1);
         store($component)->set('isPendingPartialRender', false);
     }
 }
