@@ -27,6 +27,7 @@ it('can render page with a custom slug', function () {
 });
 
 it('can authenticate', function () {
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
     $this->assertGuest();
 
     $userToAuthenticate = User::factory()->create();
@@ -43,6 +44,7 @@ it('can authenticate', function () {
 });
 
 it('can authenticate and redirect user to their intended URL', function () {
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
     session()->put('url.intended', $intendedUrl = Str::random());
 
     $userToAuthenticate = User::factory()->create();
@@ -91,6 +93,8 @@ it('cannot authenticate on unauthorized panel', function () {
 });
 
 it('can throttle authentication attempts', function () {
+    Filament::setCurrentPanel(Filament::getPanel('admin'));
+    
     $this->assertGuest();
 
     $userToAuthenticate = User::factory()->create();
