@@ -108,7 +108,7 @@ trait HasRoutes
     public function generateRouteName(string $name): string
     {
         $domain = '';
-        if (filled($this->domains) && sizeof($this->domains) > 1) {
+        if (filled($this->domains) && count($this->domains) > 1) {
             if (App::runningInConsole()) {
                 // If route is requested from Worker/Job/Console. Pick the first domain
                 $domain = $this->domains[0] . '.';
@@ -116,7 +116,7 @@ trait HasRoutes
                 $domain = request()->getHost() . '.';
             }
         }
-        
+
         return "filament.{$this->getId()}.{$domain}{$name}";
     }
 

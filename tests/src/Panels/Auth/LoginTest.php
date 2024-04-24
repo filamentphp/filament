@@ -94,7 +94,7 @@ it('cannot authenticate on unauthorized panel', function () {
 
 it('can throttle authentication attempts', function () {
     Filament::setCurrentPanel(Filament::getPanel('admin'));
-    
+
     $this->assertGuest();
 
     $userToAuthenticate = User::factory()->create();

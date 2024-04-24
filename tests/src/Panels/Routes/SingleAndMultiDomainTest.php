@@ -1,10 +1,6 @@
 <?php
 
-use Filament\Facades\Filament;
-use Filament\Tests\Models\DomainTeam;
-use Filament\Tests\Models\Team;
 use Filament\Tests\Panels\Pages\TestCase;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 uses(TestCase::class);
@@ -29,11 +25,11 @@ it('admin panel with multi domain should resolve to their respective routes', fu
     $routeName = 'filament.multi-domain.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
     expect($route)->toBeEmpty(); // this route should never exists
-    
+
     $routeName = 'filament.multi-domain.first.local.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
     expect($route)->not->toBeEmpty(); // it should exists
-    
+
     $routeName = 'filament.multi-domain.second.local.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
     expect($route)->not->toBeEmpty(); // it should exists
