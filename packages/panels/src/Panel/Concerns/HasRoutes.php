@@ -107,7 +107,7 @@ trait HasRoutes
     public function generateRouteName(string $name): string
     {
         $domain = '';
-        if (filled($this->domains) && sizeof($this->domains) > 0) {
+        if (filled($this->domains) && sizeof($this->domains) > 1) {
             $domain = request()->getHost() . '.';
             if (empty($domain)) {
                 $domain = $this->domains[0] . '.';
