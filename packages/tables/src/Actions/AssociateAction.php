@@ -75,21 +75,24 @@ class AssociateAction extends Action
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
             $record = $relationship->getQuery()->find($data['recordId']);
+            $records = $this->isMultiple ? $record : collect([$record]);
 
-            if ($record instanceof Model) {
-                $this->record($record);
-            }
+            $records->each(function ($record) use ($table, $relationship) {
+                if ($record instanceof Model) {
+                    $this->record($record);
+                }
 
-            /** @var BelongsTo $inverseRelationship */
-            $inverseRelationship = $table->getInverseRelationshipFor($record);
+                /** @var BelongsTo $inverseRelationship */
+                $inverseRelationship = $table->getInverseRelationshipFor($record);
 
-            $this->process(function () use ($inverseRelationship, $record, $relationship) {
-                $inverseRelationship->associate($relationship->getParent());
-                $record->save();
-            }, [
-                'inverseRelationship' => $inverseRelationship,
-                'relationship' => $relationship,
-            ]);
+                $this->process(function () use ($inverseRelationship, $record, $relationship) {
+                    $inverseRelationship->associate($relationship->getParent());
+                    $record->save();
+                }, [
+                    'inverseRelationship' => $inverseRelationship,
+                    'relationship' => $relationship,
+                ]);
+            });
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
