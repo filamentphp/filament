@@ -19,10 +19,12 @@ Route::name('filament.')
             $tenantSlugAttribute = $panel->getTenantSlugAttribute();
             $domains = $panel->getDomains();
 
+            $domainLength = empty($domains) ? 0 : sizeof($domains);
+
             foreach ((empty($domains) ? [null] : $domains) as $domain) {
                 Route::domain($domain)
                     ->middleware($panel->getMiddleware())
-                    ->name("{$panelId}." . (empty($domain) ? "" : "{$domain}."))
+                    ->name("{$panelId}." . ((empty($domain) || $domainLength > 1) ? "" : "{$domain}."))
                     ->prefix($panel->getPath())
                     ->group(function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute) {
                         foreach ($panel->getRoutes() as $routes) {
