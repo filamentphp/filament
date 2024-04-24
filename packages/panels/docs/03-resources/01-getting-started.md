@@ -92,7 +92,7 @@ Now when [generating the resource](#automatically-generating-forms-and-tables), 
 
 ### Automatically generating model and factory
 
-If you'd like to save time, Filament can automatically generate your model and factory related to the specified resource, using --model-factory flag
+If you'd like to save time, Filament can automatically generate your model and factory related to the specified resource, using `--model-factory` flag
 
 ```bash
 php artisan make:filament-resource Customer --model-factory
