@@ -7,8 +7,9 @@ use Closure;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 use function Filament\Support\get_model_label;
@@ -25,6 +26,15 @@ trait HasRecords
     protected string | Closure | null $recordTitle = null;
 
     protected string | Closure | null $recordTitleAttribute = null;
+
+    protected ?Closure $records = null;
+
+    public function records(Closure $records): static
+    {
+        $this->records = $records;
+
+        return $this;
+    }
 
     public function allowDuplicates(bool | Closure $condition = true): static
     {
@@ -61,9 +71,15 @@ trait HasRecords
         return $this;
     }
 
-    public function getRecords(): Collection | Paginator | CursorPaginator
+    public function getRecords(): EloquentCollection | Collection | Paginator | CursorPaginator
     {
-        return $this->getLivewire()->getTableRecords();
+        $records = $this->evaluate($this->records);
+
+        if (! $records) {
+            return $this->getLivewire()->getTableRecords();
+        }
+
+        return Collection::wrap($records);
     }
 
     public function getRecordKey(Model $record): string
@@ -71,9 +87,15 @@ trait HasRecords
         return $this->getLivewire()->getTableRecordKey($record);
     }
 
-    public function getModel(): string
+    public function getModel(): ?string
     {
-        return $this->getQuery()->getModel()::class;
+        $query = $this->getQuery();
+
+        if (! $query) {
+            return null;
+        }
+
+        return $query->getModel()::class;
     }
 
     public function allowsDuplicates(): bool
@@ -83,7 +105,19 @@ trait HasRecords
 
     public function getModelLabel(): string
     {
-        return $this->evaluate($this->modelLabel) ?? get_model_label($this->getModel());
+        $label = $this->evaluate($this->modelLabel);
+
+        if (filled($label)) {
+            return $label;
+        }
+
+        $model = $this->getModel();
+
+        if (filled($model)) {
+            return get_model_label($model);
+        }
+
+        return __('filament-tables::table.default_model_label');
     }
 
     public function getPluralModelLabel(): string

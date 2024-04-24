@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Exception;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,7 +24,15 @@ trait HasRecords
 
     public function getFilteredTableQuery(): Builder
     {
-        return $this->filterTableQuery($this->getTable()->getQuery());
+        $query = $this->getTable()->getQuery();
+
+        if (! $query) {
+            $livewireClass = $this::class;
+
+            throw new Exception("Table [{$livewireClass}] must have a [query()], [relationship()], or [records()].");
+        }
+
+        return $this->filterTableQuery($query);
     }
 
     public function filterTableQuery(Builder $query): Builder

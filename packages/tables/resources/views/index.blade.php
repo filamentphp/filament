@@ -7,6 +7,7 @@
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\RecordCheckboxPosition;
+    use Illuminate\Database\Eloquent\Model;
     use Illuminate\Support\Str;
 
     $actions = $getActions();
@@ -406,10 +407,13 @@
                             $previousRecordGroupTitle = null;
                         @endphp
 
-                        @foreach ($records as $record)
+                        @foreach ($records as $recordKey => $record)
                             @php
+                                if ($record instanceof Model) {
+                                    $recordKey = $getRecordKey($record);
+                                }
+
                                 $recordAction = $getRecordAction($record);
-                                $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
                                 $recordGroupKey = $group?->getStringKey($record);
                                 $recordGroupTitle = $group?->getTitle($record);
@@ -941,10 +945,13 @@
                             $previousRecordGroupTitle = null;
                         @endphp
 
-                        @foreach ($records as $record)
+                        @foreach ($records as $recordKey => $record)
                             @php
+                                if ($record instanceof Model) {
+                                    $recordKey = $getRecordKey($record);
+                                }
+
                                 $recordAction = $getRecordAction($record);
-                                $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
                                 $recordGroupKey = $group?->getStringKey($record);
                                 $recordGroupTitle = $group?->getTitle($record);
