@@ -76,7 +76,7 @@ class AssociateAction extends Action
 
             $record = $relationship->getQuery()->find($data['recordId']);
 
-            foreach ($this->isMultiple ? $record : [$record] as $record) {
+            foreach (($this->isMultiple ? $record : [$record]) as $record) {
                 if ($record instanceof Model) {
                     $this->record($record);
                 }
