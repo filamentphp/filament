@@ -17,7 +17,7 @@ class Set
 
         data_set(
             $livewire,
-            $this->component->generateRelativeStatePath($path, $isAbsolute),
+            $this->component->resolveRelativeStatePath($path, $isAbsolute),
             $this->component->evaluate($state),
         );
 

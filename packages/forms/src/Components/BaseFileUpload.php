@@ -573,7 +573,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return null;
         }
 
-        return $this->generateRelativeStatePath($this->fileNamesStatePath);
+        return $this->resolveRelativeStatePath($this->fileNamesStatePath);
     }
 
     /**

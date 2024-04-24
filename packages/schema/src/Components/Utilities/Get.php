@@ -17,7 +17,7 @@ class Get
 
         return data_get(
             $livewire,
-            $this->component->generateRelativeStatePath($path, $isAbsolute)
+            $this->component->resolveRelativeStatePath($path, $isAbsolute)
         );
     }
 }

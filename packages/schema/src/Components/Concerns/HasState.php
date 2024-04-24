@@ -7,7 +7,6 @@ use Filament\Infolists\Components\Entry;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Utilities\Get;
 use Filament\Schema\Components\Utilities\Set;
-use Filament\Support\Partials\SupportPartials;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -117,21 +116,18 @@ trait HasState
             store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
         }
 
-        if (filled($livePartials = $this->getLivePartials())) {
-            app(SupportPartials::class)->renderPartial($this->getLivewire(), function () use ($livePartials): array {
-                $html = [];
+        if ($this->isPartiallyRenderedAfterStateUpdated()) {
+            $this->partiallyRender();
+        }
 
-                foreach ($livePartials as $key) {
-                    $key = $this->generateRelativeKey($key);
+        if (filled($components = $this->getComponentsToPartiallyRenderAfterStateUpdated())) {
+            foreach ($components as $key) {
+                $this->getLivewire()->getSchemaComponent($this->resolveRelativeKey($key))->partiallyRender();
+            }
+        }
 
-                    $html = [
-                        ...$html,
-                        "schema-component::{$key}" => $this->getLivewire()->getSchemaComponent($key)->render(),
-                    ];
-                }
-
-                return $html;
-            });
+        if ($this->isRenderlessAfterStateUpdated()) {
+            $this->skipRender();
         }
 
         return $this;
@@ -504,10 +500,15 @@ trait HasState
         return $this->makeSetUtility();
     }
 
-    public function generateRelativeStatePath(string | Component $path, bool $isAbsolute = false): string
+    public function resolveRelativeStatePath(string | Component $path, bool $isAbsolute = false): string
     {
         if ($path instanceof Component) {
             return $path->getStatePath();
+        }
+
+        if (str($path)->startsWith('/')) {
+            $isAbsolute = true;
+            $path = (string) str($path)->after('/');
         }
 
         if ($isAbsolute) {
@@ -531,7 +532,7 @@ trait HasState
         return "{$containerPath}.{$path}";
     }
 
-    public function generateRelativeKey(string | Component $key, bool $isAbsolute = false): string
+    public function resolveRelativeKey(string | Component $key, bool $isAbsolute = false): string
     {
         if ($key instanceof Component) {
             return $key->getKey();
