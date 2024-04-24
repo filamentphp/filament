@@ -4,7 +4,6 @@ namespace Filament\Support\Overrides;
 
 use Filament\Support\Partials\SupportPartials;
 use Livewire\Livewire;
-use Livewire\LivewireManager;
 use Livewire\Mechanisms\DataStore;
 
 class DataStoreOverride extends DataStore
