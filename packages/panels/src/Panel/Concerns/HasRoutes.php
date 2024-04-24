@@ -108,9 +108,12 @@ trait HasRoutes
     {
         $domain = '';
         if (filled($this->domains) && sizeof($this->domains) > 1) {
-            $domain = request()->getHost() . '.';
-            if (empty($domain)) {
+            $hostFromRequest = request()->getHost();
+            if (empty($hostFromRequest)) {
+                // If route is requested from Worker/Job/Console. Pick the first domain
                 $domain = $this->domains[0] . '.';
+            } else {
+                $domain = $hostFromRequest . '.';
             }
         }
         
