@@ -75,9 +75,8 @@ class AssociateAction extends Action
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
             $record = $relationship->getQuery()->find($data['recordId']);
-            $records = $this->isMultiple ? $record : collect([$record]);
 
-            $records->each(function ($record) use ($table, $relationship) {
+            foreach ($this->isMultiple ? $record : [$record] as $record) {
                 if ($record instanceof Model) {
                     $this->record($record);
                 }
@@ -92,7 +91,7 @@ class AssociateAction extends Action
                     'inverseRelationship' => $inverseRelationship,
                     'relationship' => $relationship,
                 ]);
-            });
+            }
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
