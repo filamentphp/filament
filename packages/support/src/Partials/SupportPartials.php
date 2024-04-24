@@ -3,13 +3,15 @@
 namespace Filament\Support\Partials;
 
 use Closure;
+use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\ComponentHook;
-use Livewire\Features\SupportValidation\SupportValidation;
-use Livewire\Mechanisms\ExtendBlade\ExtendBlade;
+use Livewire\Drawer\Utils;
 use Livewire\Mechanisms\HandleComponents\ComponentContext;
+use Livewire\Mechanisms\HandleComponents\ViewContext;
 
 use function Livewire\store;
+use function Livewire\trigger;
 
 class SupportPartials extends ComponentHook
 {
@@ -30,7 +32,7 @@ class SupportPartials extends ComponentHook
         return false;
     }
 
-    public function update(...$args): void
+    public function update(): void
     {
         $this->storeSet('updatesCount', ($this->storeGet('updatesCount') ?? 0) + 1);
 
@@ -97,21 +99,33 @@ class SupportPartials extends ComponentHook
         $partials = [];
 
         $renderAndQueuePartials = function (Closure $getPartialsUsing) use (&$partials): void {
-            app(ExtendBlade::class)->startLivewireRendering($this->component);
+            foreach ($getPartialsUsing() as $partialName => $view) {
+                $finish = trigger('render', $this->component, $view, []);
 
-            $supportValidationHook = app(SupportValidation::class);
-            $supportValidationHook->setComponent($this->component);
+                $revertSharingComponentWithViews = Utils::shareWithViews('__livewire', $this->component);
 
-            $revertSupportValidation = $supportValidationHook->render(null, null);
+                $viewContext = app(ViewContext::class);
 
-            $partials = [
-                ...$partials,
-                ...$getPartialsUsing(),
-            ];
+                $html = $view->render(function (View $view) use ($viewContext) {
+                    $viewContext->extractFromEnvironment($view->getFactory());
+                });
 
-            $revertSupportValidation();
+                $revertSharingComponentWithViews();
 
-            app(ExtendBlade::class)->endLivewireRendering();
+                if (! str_contains($html, "wire:partial=\"{$partialName}\"")) {
+                    $html = Utils::insertAttributesIntoHtmlRoot($html, [
+                        'wire:partial' => $partialName,
+                    ]);
+                }
+
+                $replaceHtml = function ($newHtml) use (&$html) {
+                    $html = $newHtml;
+                };
+
+                $html = $finish($html, $replaceHtml, $viewContext);
+
+                $partials[$partialName] = $html;
+            }
         };
 
         $isLackingPartialRendersToCoverAllCallsAndUpdates = $this->isLackingPartialRendersToCoverAllCallsAndUpdates();
@@ -133,13 +147,13 @@ class SupportPartials extends ComponentHook
             $actionNestingIndex = array_key_last($this->component->mountedActions);
 
             $renderAndQueuePartials(fn (): array => [
-                "action-modals.{$actionNestingIndex}" => $this->component->getMountedAction()->renderModal($actionNestingIndex)->toHtml(),
+                "action-modals.{$actionNestingIndex}" => $this->component->getMountedAction()->renderModal($actionNestingIndex),
             ]);
         }
 
         if ($this->shouldRenderMountedActionsOnly(whenActionMounted: $isLackingPartialRendersToCoverAllCallsAndUpdates)) {
             $renderAndQueuePartials(fn (): array => [
-                'action-modals' => view('filament-actions::components.modals')->render(),
+                'action-modals' => view('filament-actions::components.modals'),
             ]);
         }
 

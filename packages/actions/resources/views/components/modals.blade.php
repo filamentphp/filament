@@ -60,7 +60,7 @@
         "
     >
         @foreach ($this->getMountedActions() as $actionNestingIndex => $action)
-            {{ $action->renderModal($actionNestingIndex) }}
+            {{ $action->toModalHtmlable($actionNestingIndex) }}
         @endforeach
     </div>
 

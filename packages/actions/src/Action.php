@@ -560,12 +560,17 @@ class Action extends ViewComponent implements Arrayable
         return (bool) $this->evaluate($this->shouldMarkAsUnread);
     }
 
-    public function renderModal(int $actionNestingIndex): Htmlable
+    public function renderModal(int $actionNestingIndex): View
     {
-        return new HtmlString(Utils::insertAttributesIntoHtmlRoot(view('filament-actions::action-modal', [
+        return view('filament-actions::action-modal', [
             'action' => $this,
             'actionNestingIndex' => $actionNestingIndex,
-        ])->render(), [
+        ]);
+    }
+
+    public function toModalHtmlable(int $actionNestingIndex): Htmlable
+    {
+        return new HtmlString(Utils::insertAttributesIntoHtmlRoot($this->renderModal($actionNestingIndex)->render(), [
             'wire:partial' => "action-modals.{$actionNestingIndex}",
         ]));
     }

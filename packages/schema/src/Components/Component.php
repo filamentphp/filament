@@ -103,7 +103,7 @@ class Component extends ViewComponent
             }
 
             return [
-                "schema-component.{$key}" => $this->toHtml(),
+                "schema-component::{$key}" => $this->render(),
             ];
         });
     }
@@ -117,7 +117,7 @@ class Component extends ViewComponent
         }
 
         return Utils::insertAttributesIntoHtmlRoot(parent::toHtml(), [
-            'wire:partial' => "schema-component.{$key}",
+            'wire:partial' => "schema-component::{$key}",
         ]);
     }
 }

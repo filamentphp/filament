@@ -126,7 +126,7 @@ trait HasState
 
                     $html = [
                         ...$html,
-                        "schema-component.{$key}" => $this->getLivewire()->getSchemaComponent($key)->toHtml(),
+                        "schema-component::{$key}" => $this->getLivewire()->getSchemaComponent($key)->render(),
                     ];
                 }
 
