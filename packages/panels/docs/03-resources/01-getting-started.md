@@ -90,6 +90,16 @@ In this example, the model should exist at `Custom\Path\Models\Customer`. Please
 
 Now when [generating the resource](#automatically-generating-forms-and-tables), Filament will be able to locate the model and read the database schema.
 
+### Automatically generating model and factory
+
+If you'd like to save time, Filament can automatically generate your model and factory related to the specified resource, using --model-factory flag
+
+```bash
+php artisan make:filament-resource Customer --model-factory
+```
+
+Using this flag, you are not able to [specify a custom modal namespace](#specifiying-a-custom-model-namespace).
+
 ## Record titles
 
 A `$recordTitleAttribute` may be set for your resource, which is the name of the column on your model that can be used to identify it from others.
