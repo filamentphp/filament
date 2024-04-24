@@ -49,7 +49,7 @@ class MakeResourceCommand extends Command
             $model = 'Resource';
         }
 
-        if ($this->option('model-factory') && !$this->option('model-namespace')) {
+        if ($this->option('model-factory') && ! $this->option('model-namespace')) {
             $this->callSilently('make:model', [
                 'name' => $model,
                 '--factory' => true,
