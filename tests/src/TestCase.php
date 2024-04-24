@@ -29,7 +29,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function getPackageProviders($app): array
     {
-        return [
+        $providers = [
             ActionsServiceProvider::class,
             BladeCaptureDirectiveServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
@@ -51,6 +51,10 @@ abstract class TestCase extends BaseTestCase
             TenancyPanelProvider::class,
             DomainTenancyPanelProvider::class,
         ];
+
+        sort($providers);
+
+        return $providers;
     }
 
     protected function defineEnvironment($app): void
