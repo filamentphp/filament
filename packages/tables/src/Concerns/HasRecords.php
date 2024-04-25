@@ -6,10 +6,11 @@ use Exception;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 use function Livewire\invade;
 
@@ -22,14 +23,12 @@ trait HasRecords
 
     protected Collection | Paginator | CursorPaginator | null $cachedTableRecords = null;
 
-    public function getFilteredTableQuery(): Builder
+    public function getFilteredTableQuery(): ?Builder
     {
         $query = $this->getTable()->getQuery();
 
         if (! $query) {
-            $livewireClass = $this::class;
-
-            throw new Exception("Table [{$livewireClass}] must have a [query()], [relationship()], or [records()].");
+            return null;
         }
 
         return $this->filterTableQuery($query);
@@ -58,9 +57,13 @@ trait HasRecords
         return $query;
     }
 
-    public function getFilteredSortedTableQuery(): Builder
+    public function getFilteredSortedTableQuery(): ?Builder
     {
         $query = $this->getFilteredTableQuery();
+
+        if (! $query) {
+            return null;
+        }
 
         $this->applyGroupingToTableQuery($query);
 
@@ -80,7 +83,7 @@ trait HasRecords
         return $query;
     }
 
-    protected function hydratePivotRelationForTableRecords(Collection | Paginator | CursorPaginator $records): Collection | Paginator | CursorPaginator
+    protected function hydratePivotRelationForTableRecords(EloquentCollection | Paginator | CursorPaginator $records): EloquentCollection | Paginator | CursorPaginator
     {
         $table = $this->getTable();
         $relationship = $table->getRelationship();
@@ -94,14 +97,58 @@ trait HasRecords
 
     public function getTableRecords(): Collection | Paginator | CursorPaginator
     {
+        if (! $this->getTable()->hasQuery()) {
+            if ($this->cachedTableRecords) {
+                return $this->cachedTableRecords;
+            }
+
+            $records = $this->getTable()->evaluate($this->getTable()->getDataSource(), [
+                'columnSearches' => fn (): array => $this->getTableColumnSearches(),
+                'filters' => fn (): array => $this->tableFilters,
+                'search' => fn () => $this->getTableSearch(),
+                'sort' => fn (): array => [$this->getTableSortColumn(), $this->getTableSortDirection()],
+                'sortColumn' => fn (): ?string => $this->getTableSortColumn(),
+                'sortDirection' => fn (): ?string => $this->getTableSortDirection(),
+            ]);
+
+            if (is_array($records)) {
+                $collection = collect($records);
+            } elseif (
+                ($records instanceof Paginator || $records instanceof CursorPaginator) &&
+                method_exists($records, 'getCollection')
+            ) {
+                $collection = $records->getCollection();
+            } else {
+                $collection = $records;
+            }
+
+            $collection = $collection->mapWithKeys(function (array $record, string | int $key): array {
+                $record['key'] ??= $key;
+                $record['key'] = (string) $record['key'];
+
+                return [$record['key'] => $record];
+            });
+
+            if (
+                ($records instanceof Paginator || $records instanceof CursorPaginator) &&
+                method_exists($records, 'setCollection')
+            ) {
+                $records->setCollection($collection);
+            } else {
+                $records = $collection;
+            }
+
+            return $this->cachedTableRecords = $records;
+        }
+
         if ($translatableContentDriver = $this->makeFilamentTranslatableContentDriver()) {
-            $setRecordLocales = function (Collection | Paginator | CursorPaginator $records) use ($translatableContentDriver): Collection | Paginator | CursorPaginator {
+            $setRecordLocales = function (EloquentCollection | Paginator | CursorPaginator $records) use ($translatableContentDriver): EloquentCollection | Paginator | CursorPaginator {
                 $records->transform(fn (Model $record) => $translatableContentDriver->setRecordLocale($record));
 
                 return $records;
             };
         } else {
-            $setRecordLocales = fn (Collection | Paginator | CursorPaginator $records): Collection | Paginator | CursorPaginator => $records;
+            $setRecordLocales = fn (EloquentCollection | Paginator | CursorPaginator $records): EloquentCollection | Paginator | CursorPaginator => $records;
         }
 
         if ($this->cachedTableRecords) {
@@ -109,6 +156,12 @@ trait HasRecords
         }
 
         $query = $this->getFilteredSortedTableQuery();
+
+        if (! $query) {
+            $livewireClass = $this::class;
+
+            throw new Exception("Table [{$livewireClass}] must have a [query()], [relationship()], or [records()].");
+        }
 
         if (
             (! $this->getTable()->isPaginated()) ||
@@ -120,10 +173,17 @@ trait HasRecords
         return $setRecordLocales($this->cachedTableRecords = $this->hydratePivotRelationForTableRecords($this->paginateTableQuery($query)));
     }
 
-    protected function resolveTableRecord(?string $key): ?Model
+    /**
+     * @return Model | array<string, mixed> | null
+     */
+    protected function resolveTableRecord(?string $key): Model | array | null
     {
         if ($key === null) {
             return null;
+        }
+
+        if (! $this->getTable()->hasQuery()) {
+            return $this->getTable()->getRecords()[$key] ?? null;
         }
 
         if (! ($this->getTable()->getRelationship() instanceof BelongsToMany)) {
@@ -149,7 +209,10 @@ trait HasRecords
         return $record?->setRawAttributes($record->getRawOriginal());
     }
 
-    public function getTableRecord(?string $key): ?Model
+    /**
+     * @return Model | array<string, mixed> | null
+     */
+    public function getTableRecord(?string $key): Model | array | null
     {
         $record = $this->resolveTableRecord($key);
 
@@ -160,8 +223,15 @@ trait HasRecords
         return $record;
     }
 
-    public function getTableRecordKey(Model $record): string
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getTableRecordKey(Model | array $record): string
     {
+        if (is_array($record)) {
+            return $record['key'] ?? throw new Exception('Record arrays must have a unique [key] entry for identification.');
+        }
+
         $table = $this->getTable();
 
         if (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {

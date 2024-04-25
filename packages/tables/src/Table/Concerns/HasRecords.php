@@ -7,7 +7,6 @@ use Closure;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -27,11 +26,11 @@ trait HasRecords
 
     protected string | Closure | null $recordTitleAttribute = null;
 
-    protected ?Closure $records = null;
+    protected ?Closure $dataSource = null;
 
     public function records(Closure $records): static
     {
-        $this->records = $records;
+        $this->dataSource = $records;
 
         return $this;
     }
@@ -71,18 +70,25 @@ trait HasRecords
         return $this;
     }
 
-    public function getRecords(): EloquentCollection | Collection | Paginator | CursorPaginator
+    public function getRecords(): Collection | Paginator | CursorPaginator
     {
-        $records = $this->evaluate($this->records);
-
-        if (! $records) {
-            return $this->getLivewire()->getTableRecords();
-        }
-
-        return Collection::wrap($records);
+        return $this->getLivewire()->getTableRecords();
     }
 
-    public function getRecordKey(Model $record): string
+    public function hasQuery(): bool
+    {
+        return ! $this->dataSource;
+    }
+
+    public function getDataSource(): Closure
+    {
+        return $this->dataSource;
+    }
+
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getRecordKey(Model | array $record): string
     {
         return $this->getLivewire()->getTableRecordKey($record);
     }

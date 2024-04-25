@@ -407,13 +407,10 @@
                             $previousRecordGroupTitle = null;
                         @endphp
 
-                        @foreach ($records as $recordKey => $record)
+                        @foreach ($records as $record)
                             @php
-                                if ($record instanceof Model) {
-                                    $recordKey = $getRecordKey($record);
-                                }
-
                                 $recordAction = $getRecordAction($record);
+                                $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
                                 $recordGroupKey = $group?->getStringKey($record);
                                 $recordGroupTitle = $group?->getTitle($record);
@@ -945,13 +942,10 @@
                             $previousRecordGroupTitle = null;
                         @endphp
 
-                        @foreach ($records as $recordKey => $record)
+                        @foreach ($records as $record)
                             @php
-                                if ($record instanceof Model) {
-                                    $recordKey = $getRecordKey($record);
-                                }
-
                                 $recordAction = $getRecordAction($record);
+                                $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
                                 $recordGroupKey = $group?->getStringKey($record);
                                 $recordGroupTitle = $group?->getTitle($record);

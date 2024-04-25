@@ -386,15 +386,15 @@ class Action extends ViewComponent implements Arrayable
 
         $context = [];
 
-        $table = $this->getTable();
-
         if ($record = $this->getRecord()) {
-            $context['recordKey'] = $table?->getRecordKey($record) ?? $record->getKey();
+            $context['recordKey'] = $this->resolveRecordKey($record);
         }
 
         if (filled($componentKey = $this->getSchemaComponent()?->getKey())) {
             $context['schemaComponent'] = $componentKey;
         }
+
+        $table = $this->getTable();
 
         if ($table) {
             $context['table'] = true;
@@ -449,14 +449,20 @@ class Action extends ViewComponent implements Arrayable
 
         return match ($parameterType) {
             EloquentCollection::class, Collection::class => [$this->getSelectedRecords()],
-            Model::class, $record ? $record::class : null => [$record],
+            Model::class, ($record instanceof Model) ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
 
     public function shouldClearRecordAfter(): bool
     {
-        return ! $this->getRecord()?->exists;
+        $record = $this->getRecord();
+
+        if (! ($record instanceof Model)) {
+            return false;
+        }
+
+        return ! $record->exists;
     }
 
     public function clearRecordAfter(): void
