@@ -106,7 +106,7 @@ trait HasBulkActions
                 ->all();
         }
 
-        $records = ($this->getTable()->selectsCurrentPageOnly() || (! $this->getTable()->hasQuery())) ?
+        $records = $this->getTable()->selectsCurrentPageOnly() ?
             $this->getTableRecords() :
             $query->get();
 
@@ -205,7 +205,14 @@ trait HasBulkActions
             (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates()))
         ) {
             if (! $table->hasQuery()) {
-                return $this->cachedSelectedTableRecords = $this->getTableRecords()->only($this->selectedTableRecords);
+                $resolveSelectedRecords = $table->getResolveSelectedRecordsCallback();
+
+                return $this->cachedSelectedTableRecords = $resolveSelectedRecords ?
+                    $table->evaluate($resolveSelectedRecords, [
+                        'keys' => $this->selectedTableRecords,
+                        'records' => $this->selectedTableRecords,
+                    ]) :
+                    $this->getTableRecords()->only($this->selectedTableRecords);
             }
 
             $query = $table->getQuery()->whereKey($this->selectedTableRecords);

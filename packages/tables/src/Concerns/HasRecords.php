@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Exception;
+use Filament\Support\ArrayRecord;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -105,6 +106,7 @@ trait HasRecords
             $records = $this->getTable()->evaluate($this->getTable()->getDataSource(), [
                 'columnSearches' => fn (): array => $this->getTableColumnSearches(),
                 'filters' => fn (): array => $this->tableFilters,
+                'page' => fn (): int => $this->getTablePage(),
                 'search' => fn () => $this->getTableSearch(),
                 'sort' => fn (): array => [$this->getTableSortColumn(), $this->getTableSortDirection()],
                 'sortColumn' => fn (): ?string => $this->getTableSortColumn(),
@@ -123,10 +125,12 @@ trait HasRecords
             }
 
             $collection = $collection->mapWithKeys(function (array $record, string | int $key): array {
-                $record['key'] ??= $key;
-                $record['key'] = (string) $record['key'];
+                $keyName = ArrayRecord::getKeyName();
 
-                return [$record['key'] => $record];
+                $record[$keyName] ??= $key;
+                $record[$keyName] = (string) $record[$keyName];
+
+                return [$record[$keyName] => $record];
             });
 
             if (
@@ -229,7 +233,7 @@ trait HasRecords
     public function getTableRecordKey(Model | array $record): string
     {
         if (is_array($record)) {
-            return $record['key'] ?? throw new Exception('Record arrays must have a unique [key] entry for identification.');
+            return $record[ArrayRecord::getKeyName()] ?? throw new Exception('Record arrays must have a unique [key] entry for identification.');
         }
 
         $table = $this->getTable();

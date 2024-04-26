@@ -174,7 +174,7 @@ trait HasBulkActions
 
     public function selectsCurrentPageOnly(): bool
     {
-        return (bool) $this->evaluate($this->selectsCurrentPageOnly);
+        return $this->evaluate($this->selectsCurrentPageOnly) || (! $this->hasQuery());
     }
 
     public function checksIfRecordIsSelectable(): bool

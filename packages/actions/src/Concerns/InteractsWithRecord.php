@@ -4,6 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Support\ArrayRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -124,7 +125,7 @@ trait InteractsWithRecord
     public function resolveRecordKey(Model | array $record): string
     {
         if (is_array($record)) {
-            return $record['key'] ?? throw new Exception('Record arrays must have a unique [key] entry for identification.');
+            return $record[ArrayRecord::getKeyName()] ?? throw new Exception('Record arrays must have a unique [' . ArrayRecord::getKeyName() . '] entry for identification.');
         }
 
         return $record->getKey();

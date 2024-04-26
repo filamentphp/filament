@@ -28,9 +28,18 @@ trait HasRecords
 
     protected ?Closure $dataSource = null;
 
-    public function records(Closure $records): static
+    protected ?Closure $resolveSelectedRecordsUsing = null;
+
+    public function records(?Closure $dataSource): static
     {
-        $this->dataSource = $records;
+        $this->dataSource = $dataSource;
+
+        return $this;
+    }
+
+    public function resolveSelectedRecordsUsing(?Closure $callback): static
+    {
+        $this->resolveSelectedRecordsUsing = $callback;
 
         return $this;
     }
@@ -80,9 +89,14 @@ trait HasRecords
         return ! $this->dataSource;
     }
 
-    public function getDataSource(): Closure
+    public function getDataSource(): ?Closure
     {
         return $this->dataSource;
+    }
+
+    public function getResolveSelectedRecordsCallback(): ?Closure
+    {
+        return $this->resolveSelectedRecordsUsing;
     }
 
     /**
