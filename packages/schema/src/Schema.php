@@ -76,7 +76,7 @@ class Schema extends ViewComponent
     {
         $record = $this->getRecord();
 
-        if (! $record) {
+        if (! ($record instanceof Model)) {
             return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
         }
 

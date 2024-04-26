@@ -19,7 +19,7 @@ trait HasBulkActions
      */
     public array $selectedTableRecords = [];
 
-    protected EloquentCollection | Collection $cachedSelectedTableRecords;
+    protected Collection $cachedSelectedTableRecords;
 
     protected function configureTableBulkAction(BulkAction $action): void
     {
@@ -92,13 +92,17 @@ trait HasBulkActions
         $query = $this->getFilteredTableQuery();
 
         if (! $this->getTable()->checksIfRecordIsSelectable()) {
+            if (! $this->getTable()->hasQuery()) {
+                /** @phpstan-ignore-next-line */
+                return $this->getTableRecords()->keys()->all();
+            }
+
             $records = $this->getTable()->selectsCurrentPageOnly() ?
                 $this->getTableRecords()->pluck($query->getModel()->getKeyName()) :
                 $query->pluck($query->getModel()->getQualifiedKeyName());
 
-            return $records
-                ->map(fn ($key): string => (string) $key)
-                ->all();
+            /** @phpstan-ignore-next-line */
+            return $records->map(fn ($key): string => (string) $key)->all();
         }
 
         $records = $this->getTable()->selectsCurrentPageOnly() ?
@@ -106,12 +110,12 @@ trait HasBulkActions
             $query->get();
 
         return $records->reduce(
-            function (array $carry, Model $record): array {
+            function (array $carry, Model | array $record, string $key): array {
                 if (! $this->getTable()->isRecordSelectable($record)) {
                     return $carry;
                 }
 
-                $carry[] = (string) $record->getKey();
+                $carry[] = ($record instanceof Model) ? ((string) $record->getKey()) : $key;
 
                 return $carry;
             },
@@ -172,7 +176,7 @@ trait HasBulkActions
                 $this->getFilteredTableQuery()->get();
 
             return $records
-                ->filter(fn (Model $record): bool => $this->getTable()->isRecordSelectable($record))
+                ->filter(fn (Model | array $record): bool => $this->getTable()->isRecordSelectable($record))
                 ->count();
         }
 
@@ -184,7 +188,7 @@ trait HasBulkActions
             return $this->cachedTableRecords->total();
         }
 
-        return $this->getFilteredTableQuery()->count();
+        return $this->getFilteredTableQuery()?->count() ?? $this->cachedTableRecords->count();
     }
 
     public function getSelectedTableRecords(bool $shouldFetchSelectedRecords = true): EloquentCollection | Collection
@@ -199,6 +203,17 @@ trait HasBulkActions
             $shouldFetchSelectedRecords ||
             (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates()))
         ) {
+            if (! $table->hasQuery()) {
+                $resolveSelectedRecords = $table->getResolveSelectedRecordsCallback();
+
+                return $this->cachedSelectedTableRecords = $resolveSelectedRecords ?
+                    $table->evaluate($resolveSelectedRecords, [
+                        'keys' => $this->selectedTableRecords,
+                        'records' => $this->selectedTableRecords,
+                    ]) :
+                    $this->getTableRecords()->only($this->selectedTableRecords);
+            }
+
             $query = $table->getQuery()->whereKey($this->selectedTableRecords);
             $this->applySortingToTableQuery($query);
 

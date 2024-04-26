@@ -128,17 +128,20 @@ trait HasBulkActions
         return $this->getFlatBulkActions()[$name] ?? null;
     }
 
-    public function isRecordSelectable(Model $record): bool
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function isRecordSelectable(Model | array $record): bool
     {
         return (bool) ($this->evaluate(
             $this->checkIfRecordIsSelectableUsing,
             namedInjections: [
                 'record' => $record,
             ],
-            typedInjections: [
+            typedInjections: ($record instanceof Model) ? [
                 Model::class => $record,
                 $record::class => $record,
-            ],
+            ] : [],
         ) ?? true);
     }
 
@@ -171,7 +174,7 @@ trait HasBulkActions
 
     public function selectsCurrentPageOnly(): bool
     {
-        return (bool) $this->evaluate($this->selectsCurrentPageOnly);
+        return $this->evaluate($this->selectsCurrentPageOnly) || (! $this->hasQuery());
     }
 
     public function checksIfRecordIsSelectable(): bool

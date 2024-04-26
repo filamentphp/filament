@@ -57,7 +57,7 @@ interface HasTable
 
     public function getTableFiltersForm(): Schema;
 
-    public function getTableRecords(): EloquentCollection | Paginator | CursorPaginator;
+    public function getTableRecords(): Collection | Paginator | CursorPaginator;
 
     public function getTableRecordsPerPage(): int | string | null;
 
@@ -75,9 +75,15 @@ interface HasTable
 
     public function getTableColumnToggleForm(): Schema;
 
-    public function getTableRecord(?string $key): ?Model;
+    /**
+     * @return Model | array<string, mixed> | null
+     */
+    public function getTableRecord(?string $key): Model | array | null;
 
-    public function getTableRecordKey(Model $record): string;
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getTableRecordKey(Model | array $record): string;
 
     public function toggleTableReordering(): void;
 
@@ -98,9 +104,9 @@ interface HasTable
      */
     public function getTableColumnSearchIndicators(): array;
 
-    public function getFilteredTableQuery(): Builder;
+    public function getFilteredTableQuery(): ?Builder;
 
-    public function getFilteredSortedTableQuery(): Builder;
+    public function getFilteredSortedTableQuery(): ?Builder;
 
     public function getTableQueryForExport(): Builder;
 

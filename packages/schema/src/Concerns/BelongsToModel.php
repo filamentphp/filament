@@ -6,16 +6,25 @@ use Illuminate\Database\Eloquent\Model;
 
 trait BelongsToModel
 {
-    public Model | string | null $model = null;
+    /**
+     * @var Model | array<string, mixed> | string | null
+     */
+    public Model | array | string | null $model = null;
 
-    public function model(Model | string | null $model = null): static
+    /**
+     * @param  Model | array<string, mixed> | string | null  $model
+     */
+    public function model(Model | array | string | null $model = null): static
     {
         $this->model = $model;
 
         return $this;
     }
 
-    public function record(?Model $record): static
+    /**
+     * @param  Model | array<string, mixed> | null  $record
+     */
+    public function record(Model | array | null $record): static
     {
         $this->model($record);
 
@@ -67,11 +76,14 @@ trait BelongsToModel
         return $this->getParentComponent()?->getModel();
     }
 
-    public function getRecord(): ?Model
+    /**
+     * @return Model | array<string, mixed> | null
+     */
+    public function getRecord(): Model | array | null
     {
         $model = $this->model;
 
-        if ($model instanceof Model) {
+        if (($model instanceof Model) || is_array($model)) {
             return $model;
         }
 

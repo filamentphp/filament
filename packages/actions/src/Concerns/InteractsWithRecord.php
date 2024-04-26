@@ -4,6 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Support\ArrayRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -12,7 +13,10 @@ use function Filament\Support\locale_has_pluralization;
 
 trait InteractsWithRecord
 {
-    protected Model | string | Closure | null $record = null;
+    /**
+     * @var Model | string | array<string, mixed> | Closure | null
+     */
+    protected Model | string | array | Closure | null $record = null;
 
     protected ?Closure $resolveRecordUsing = null;
 
@@ -26,7 +30,10 @@ trait InteractsWithRecord
 
     protected string | Closure | null $recordTitleAttribute = null;
 
-    public function record(Model | string | Closure | null $record): static
+    /**
+     * @param  Model | string | array<string, mixed> | Closure | null  $record
+     */
+    public function record(Model | string | array | Closure | null $record): static
     {
         $this->record = $record;
 
@@ -75,11 +82,14 @@ trait InteractsWithRecord
         return $this;
     }
 
-    public function getRecord(): ?Model
+    /**
+     * @return Model | array<string, mixed> | null
+     */
+    public function getRecord(): Model | array | null
     {
         $record = $this->evaluate($this->record);
 
-        $isRecordKey = filled($record) && (! $record instanceof Model);
+        $isRecordKey = filled($record) && (! $record instanceof Model) && (! is_array($record));
 
         if ($isRecordKey && (! $this->resolveRecordUsing)) {
             throw new Exception("Could not resolve record from key [{$record}] without a [resolveRecordUsing()] callback.");
@@ -109,6 +119,18 @@ trait InteractsWithRecord
         return $this->getCustomRecordTitle($record) ?? $this->getTable()?->getRecordTitle($record) ?? $this->getModelLabel();
     }
 
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function resolveRecordKey(Model | array $record): string
+    {
+        if (is_array($record)) {
+            return $record[ArrayRecord::getKeyName()] ?? throw new Exception('Record arrays must have a unique [' . ArrayRecord::getKeyName() . '] entry for identification.');
+        }
+
+        return $record->getKey();
+    }
+
     public function getCustomRecordTitle(?Model $record = null): ?string
     {
         $record ??= $this->getRecord();
@@ -118,10 +140,10 @@ trait InteractsWithRecord
             namedInjections: [
                 'record' => $record,
             ],
-            typedInjections: [
+            typedInjections: ($record instanceof Model) ? [
                 Model::class => $record,
                 $record::class => $record,
-            ],
+            ] : [],
         );
 
         if (filled($title)) {
@@ -173,7 +195,7 @@ trait InteractsWithRecord
 
         $record = $this->getRecord();
 
-        if (! $record) {
+        if (! ($record instanceof Model)) {
             return null;
         }
 

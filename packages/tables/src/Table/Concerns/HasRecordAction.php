@@ -17,17 +17,20 @@ trait HasRecordAction
         return $this;
     }
 
-    public function getRecordAction(Model $record): ?string
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getRecordAction(Model | array $record): ?string
     {
         $action = $this->evaluate(
             $this->recordAction,
             namedInjections: [
                 'record' => $record,
             ],
-            typedInjections: [
+            typedInjections: $record instanceof Model ? [
                 Model::class => $record,
                 $record::class => $record,
-            ],
+            ] : [],
         );
 
         if (! $action) {
