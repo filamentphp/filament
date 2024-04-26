@@ -316,9 +316,4 @@ abstract class Page extends BasePage
 
         return $name;
     }
-
-    public static function canAccess(): bool
-    {
-        return true;
-    }
 }
