@@ -7,7 +7,6 @@
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\RecordCheckboxPosition;
-    use Illuminate\Database\Eloquent\Model;
     use Illuminate\Support\Str;
 
     $actions = $getActions();
