@@ -44,6 +44,8 @@ class EditProfile extends Page
 
     protected ?string $maxWidth = null;
 
+    protected bool $hasTopbar = true;
+
     protected static bool $isDiscovered = false;
 
     public function getLayout(): string
@@ -358,6 +360,7 @@ class EditProfile extends Page
     protected function getLayoutData(): array
     {
         return [
+            'hasTopbar' => $this->hasTopbar(),
             'maxWidth' => $this->getMaxWidth(),
         ];
     }
@@ -365,5 +368,10 @@ class EditProfile extends Page
     public function getMaxWidth(): MaxWidth | string | null
     {
         return $this->maxWidth;
+    }
+
+    public function hasTopbar(): bool
+    {
+        return $this->hasTopbar;
     }
 }
