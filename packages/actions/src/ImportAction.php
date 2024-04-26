@@ -3,7 +3,7 @@
 namespace Filament\Actions;
 
 use Closure;
-use Filament\Actions\Action as NotificationAction;
+use Filament\Actions\Action ;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Jobs\ImportCsv;
@@ -36,7 +36,7 @@ use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ImportAction extends NotificationAction
+class ImportAction extends Action
 {
     /**
      * @var class-string<Importer>
@@ -280,7 +280,7 @@ class ImportAction extends NotificationAction
                         ->when(
                             $failedRowsCount,
                             fn (Notification $notification) => $notification->actions([
-                                NotificationAction::make('downloadFailedRowsCsv')
+                                Action::make('downloadFailedRowsCsv')
                                     ->label(trans_choice('filament-actions::import.notifications.completed.actions.download_failed_rows_csv.label', $failedRowsCount, [
                                         'count' => Number::format($failedRowsCount),
                                     ]))
@@ -303,7 +303,7 @@ class ImportAction extends NotificationAction
         });
 
         $this->registerModalActions([
-            NotificationAction::make('downloadExample')
+            Action::make('downloadExample')
                 ->label(__('filament-actions::import.modal.actions.download_example.label'))
                 ->link()
                 ->action(function (): StreamedResponse {
