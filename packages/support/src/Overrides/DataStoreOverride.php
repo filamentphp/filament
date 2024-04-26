@@ -17,13 +17,21 @@ class DataStoreOverride extends DataStore
      */
     public function get($instance, $key, $default = null)
     {
-        if (($key === 'skipRender') && Livewire::isLivewireRequest()) {
-            $supportPartials = app(SupportPartials::class);
-            $supportPartials->setComponent($instance);
-
-            return parent::get($instance, $key, $default) || $supportPartials->shouldSkipRender();
+        if ($key !== 'skipRender') {
+            return parent::get($instance, $key, $default);
         }
 
-        return parent::get($instance, $key, $default);
+        if (! Livewire::isLivewireRequest()) {
+            return parent::get($instance, $key, $default);
+        }
+
+        if ($trueOrPlaceholderHtml = parent::get($instance, $key, $default)) {
+            return $trueOrPlaceholderHtml;
+        }
+
+        $supportPartials = app(SupportPartials::class);
+        $supportPartials->setComponent($instance);
+
+        return $supportPartials->shouldSkipRender();
     }
 }

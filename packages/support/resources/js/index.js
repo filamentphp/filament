@@ -21,6 +21,10 @@ document.addEventListener('livewire:init', () => {
     Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
         respond(() => {
             queueMicrotask(() => {
+                if (component.effects.html) {
+                    return
+                }
+
                 for (const [name, html] of Object.entries(
                     component.effects.partials ?? {},
                 )) {
