@@ -107,6 +107,7 @@ trait HasRecords
                 'columnSearches' => fn (): array => $this->getTableColumnSearches(),
                 'filters' => fn (): array => $this->tableFilters,
                 'page' => fn (): int => $this->getTablePage(),
+                'recordsPerPage' => fn (): int => $this->getTableRecordsPerPage(),
                 'search' => fn () => $this->getTableSearch(),
                 'sort' => fn (): array => [$this->getTableSortColumn(), $this->getTableSortDirection()],
                 'sortColumn' => fn (): ?string => $this->getTableSortColumn(),
