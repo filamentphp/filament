@@ -101,9 +101,8 @@ trait HasBulkActions
                 $this->getTableRecords()->pluck($query->getModel()->getKeyName()) :
                 $query->pluck($query->getModel()->getQualifiedKeyName());
 
-            return $records
-                ->map(fn ($key): string => (string) $key)
-                ->all(); /** @phpstan-ignore-line */
+            /** @phpstan-ignore-next-line */
+            return $records->map(fn ($key): string => (string) $key)->all();
         }
 
         $records = $this->getTable()->selectsCurrentPageOnly() ?
