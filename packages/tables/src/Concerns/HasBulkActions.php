@@ -103,7 +103,7 @@ trait HasBulkActions
 
             return $records
                 ->map(fn ($key): string => (string) $key)
-                ->all();
+                ->all(); /** @phpstan-ignore-line */
         }
 
         $records = $this->getTable()->selectsCurrentPageOnly() ?
