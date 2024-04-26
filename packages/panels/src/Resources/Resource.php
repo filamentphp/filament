@@ -160,6 +160,10 @@ abstract class Resource
      */
     public static function getNavigationItems(): array
     {
+        if (! static::hasPage('index')) {
+            return [];
+        }
+
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
@@ -182,6 +186,18 @@ abstract class Resource
     public static function table(Table $table): Table
     {
         return $table;
+    }
+
+    public static function configureTable(Table $table): void
+    {
+        $table
+            ->modelLabel(static::getModelLabel(...))
+            ->pluralModelLabel(static::getPluralModelLabel(...))
+            ->recordTitleAttribute(static::getRecordTitleAttribute(...))
+            ->recordTitle(static::getRecordTitle(...))
+            ->authorizeReorder(static::canReorder(...));
+
+        static::table($table);
     }
 
     public static function resolveRecordRouteBinding(int | string $key): ?Model
@@ -267,6 +283,27 @@ abstract class Resource
     public static function canDeleteAny(): bool
     {
         return static::can('deleteAny');
+    }
+
+    public static function getParentResource(): string | ParentResourceRegistration | null
+    {
+        return null;
+    }
+
+    public static function asParent(): ParentResourceRegistration
+    {
+        return new ParentResourceRegistration(static::class);
+    }
+
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        $parentResource = static::getParentResource();
+
+        if (is_string($parentResource)) {
+            $parentResource = $parentResource::asParent();
+        }
+
+        return $parentResource;
     }
 
     public static function canForceDelete(Model $record): bool

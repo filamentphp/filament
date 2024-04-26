@@ -3,7 +3,6 @@
 namespace Filament\Schema\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Schema;
@@ -136,11 +135,7 @@ trait InteractsWithSchemas
 
         $schema = $this->getSchema($schemaName);
 
-        if (! $schema) {
-            throw new Exception("Schema [{$schemaName}] not found.");
-        }
-
-        return $schema->getComponent($key, isAbsoluteKey: true);
+        return $schema?->getComponent($key, isAbsoluteKey: true);
     }
 
     protected function cacheSchema(string $name, Schema | Closure | null $schema = null): ?Schema

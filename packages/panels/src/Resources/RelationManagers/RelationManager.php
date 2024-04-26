@@ -217,7 +217,11 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canCreate())
-            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
     }
 
     protected function configureDeleteAction(Actions\DeleteAction $action): void
@@ -242,7 +246,11 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canEdit($record))
-            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
     }
 
     protected function configureForceDeleteAction(Actions\ForceDeleteAction $action): void
@@ -267,8 +275,16 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => $livewire->canView($record))
-            ->infolist(fn (Schema $infolist): Schema => $this->infolist($infolist->columns(2)))
-            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
+            ->infolist(function (Schema $infolist): Schema {
+                $this->configureInfolist($infolist);
+
+                return $infolist;
+            })
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
     }
 
     protected function configureTableBulkAction(BulkAction $action): void
@@ -508,11 +524,10 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     protected function makeTable(): Table
     {
         return $this->makeBaseRelationshipTable()
-            ->query($this->getTableQuery())
-            ->inverseRelationship(static::getInverseRelationshipName())
-            ->modelLabel(static::getModelLabel())
-            ->pluralModelLabel(static::getPluralModelLabel())
-            ->recordTitleAttribute(static::getRecordTitleAttribute())
+            ->when(static::getInverseRelationshipName(), fn (Table $table, ?string $inverseRelationshipName): Table => $table->inverseRelationship($inverseRelationshipName))
+            ->when(static::getModelLabel(), fn (Table $table, string $modelLabel): Table => $table->modelLabel($modelLabel))
+            ->when(static::getPluralModelLabel(), fn (Table $table, string $pluralModelLabel): Table => $table->pluralModelLabel($pluralModelLabel))
+            ->when(static::getRecordTitleAttribute(), fn (Table $table, string $recordTitleAttribute): Table => $table->recordTitleAttribute($recordTitleAttribute))
             ->heading($this->getTableHeading() ?? static::getTitle($this->getOwnerRecord(), $this->getPageClass()))
             ->when(
                 $this->getTableRecordUrlUsing(),

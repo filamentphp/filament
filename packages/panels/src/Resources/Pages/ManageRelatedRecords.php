@@ -183,7 +183,11 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire): bool => $livewire->canCreate())
-            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
     }
 
     protected function configureDeleteAction(DeleteAction $action): void
@@ -208,7 +212,11 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canEdit($record))
-            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
     }
 
     protected function configureForceDeleteAction(ForceDeleteAction $action): void
@@ -233,8 +241,16 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     {
         $action
             ->authorize(static fn (ManageRelatedRecords $livewire, Model $record): bool => $livewire->canView($record))
-            ->infolist(fn (Schema $infolist): Schema => $this->infolist($infolist->columns(2)))
-            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
+            ->infolist(function (Schema $infolist): Schema {
+                $this->configureInfolist($infolist);
+
+                return $infolist;
+            })
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
     }
 
     protected function configureTableBulkAction(BulkAction $action): void
@@ -366,6 +382,10 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 
     protected function canReorder(): bool
     {
+        if ($relatedResource = static::getRelatedResource()) {
+            return $relatedResource::canReorder();
+        }
+
         return $this->can('reorder');
     }
 

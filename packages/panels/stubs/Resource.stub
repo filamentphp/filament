@@ -7,7 +7,7 @@ use {{ resource }}\RelationManagers;
 use {{ model }};
 use Filament\Forms;
 use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
+use Filament\Schema\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
