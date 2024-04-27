@@ -12,10 +12,12 @@ use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
+#[AsCommand(name: 'make:filament-resource')]
 class MakeResourceCommand extends Command
 {
     use CanGenerateForms;
@@ -127,13 +129,13 @@ class MakeResourceCommand extends Command
         $viewResourcePagePath = "{$resourcePagesDirectory}/{$viewResourcePageClass}.php";
 
         if (! $this->option('force') && $this->checkForCollision([
-                $resourcePath,
-                $listResourcePagePath,
-                $manageResourcePagePath,
-                $createResourcePagePath,
-                $editResourcePagePath,
-                $viewResourcePagePath,
-            ])) {
+            $resourcePath,
+            $listResourcePagePath,
+            $manageResourcePagePath,
+            $createResourcePagePath,
+            $editResourcePagePath,
+            $viewResourcePagePath,
+        ])) {
             return static::INVALID;
         }
 
