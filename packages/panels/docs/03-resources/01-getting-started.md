@@ -92,13 +92,15 @@ Now when [generating the resource](#automatically-generating-forms-and-tables), 
 
 ### Automatically generating model and factory
 
-If you'd like to save time, Filament can automatically generate your model and factory related to the specified resource, using `--model-factory` flag
+If you'd like to save time, Filament can automatically generate your model and factory related to the specified resource:
 
 ```bash
-php artisan make:filament-resource Customer --model-factory
-```
+# For model
+php artisan make:filament-resource Customer --model
 
-Using this flag, you are not able to [specify a custom modal namespace](#specifiying-a-custom-model-namespace).
+# For factory
+php artisan make:filament-resource Customer --factory
+```
 
 ## Record titles
 
