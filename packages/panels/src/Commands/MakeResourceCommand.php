@@ -12,12 +12,10 @@ use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-resource')]
 class MakeResourceCommand extends Command
 {
     use CanGenerateForms;
@@ -28,7 +26,7 @@ class MakeResourceCommand extends Command
 
     protected $description = 'Create a new Filament resource class and default page classes';
 
-    protected $signature = 'make:filament-resource {name?} {--model-namespace=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--F|force} {--model-factory}';
+    protected $signature = 'make:filament-resource {name?} {--model-namespace=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=}  {--model} {--factory} {--F|force}';
 
     public function handle(): int
     {
@@ -49,10 +47,17 @@ class MakeResourceCommand extends Command
             $model = 'Resource';
         }
 
-        if ($this->option('model-factory') && ! $this->option('model-namespace')) {
+        $modelNamespace = $this->option('model-namespace') ?? 'App\\Models';
+
+        if ($this->option('model')) {
             $this->callSilently('make:model', [
+                'name' =>  $modelNamespace.'\\'. $model,
+            ]);
+        }
+
+        if ($this->option('factory')) {
+            $this->callSilently('make:factory', [
                 'name' => $model,
-                '--factory' => true,
             ]);
         }
 
@@ -60,7 +65,6 @@ class MakeResourceCommand extends Command
         $modelSubNamespace = str($model)->contains('\\') ?
             (string) str($model)->beforeLast('\\') :
             '';
-        $modelNamespace = $this->option('model-namespace') ?? 'App\\Models';
         $pluralModelClass = (string) str($modelClass)->pluralStudly();
         $needsAlias = $modelClass === 'Record';
 
@@ -123,13 +127,13 @@ class MakeResourceCommand extends Command
         $viewResourcePagePath = "{$resourcePagesDirectory}/{$viewResourcePageClass}.php";
 
         if (! $this->option('force') && $this->checkForCollision([
-            $resourcePath,
-            $listResourcePagePath,
-            $manageResourcePagePath,
-            $createResourcePagePath,
-            $editResourcePagePath,
-            $viewResourcePagePath,
-        ])) {
+                $resourcePath,
+                $listResourcePagePath,
+                $manageResourcePagePath,
+                $createResourcePagePath,
+                $editResourcePagePath,
+                $viewResourcePagePath,
+            ])) {
             return static::INVALID;
         }
 
