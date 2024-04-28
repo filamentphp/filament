@@ -426,10 +426,19 @@ trait CanBeValidated
     }
 
     /**
-     * @param  string | array<mixed>  $rules
+     * @param  string | array<mixed> | Closure  $rules
      */
-    public function rules(string | array $rules, bool | Closure $condition = true): static
+    public function rules(string | array | Closure $rules, bool | Closure $condition = true): static
     {
+        if ($rules instanceof Closure) {
+            $this->rules = [
+                ...$this->rules,
+                [$rules, $condition]
+            ];
+
+            return $this;
+        }
+
         if (is_string($rules)) {
             $rules = explode('|', $rules);
         }
@@ -667,7 +676,16 @@ trait CanBeValidated
             if (is_numeric($rule)) {
                 $rules[] = $this->evaluate($condition);
             } elseif ($this->evaluate($condition)) {
-                $rules[] = $this->evaluate($rule);
+                $evaluted = $this->evaluate($rule);
+
+                if (is_array($evaluted)) {
+                    $rules = [
+                        ...$rules,
+                        ...$evaluted
+                    ];
+                } else {
+                    $rules[] = $evaluted;
+                }
             }
         }
 
