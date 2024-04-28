@@ -5,32 +5,32 @@ use Illuminate\Support\Facades\Route;
 
 uses(TestCase::class);
 
-it('admin panel without any domain should resolve to default routes', function () {
+it('panels without any domain should not use the domain in the names of routes', function () {
     $routeName = 'filament.admin.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
     expect($route)->not->toBeEmpty();
 });
 
-it('admin panel with single domain should resolve to default routes', function () {
+it('panels with a single domain should not use the domain in the names of routes', function () {
     $routeName = 'filament.single-domain.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
     expect($route)->not->toBeEmpty();
 
-    $routeName = 'filament.single-domain.single.local.auth.login';
+    $routeName = 'filament.single-domain.example3.com.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
     expect($route)->toBeEmpty();
 });
 
-it('admin panel with multi domain should resolve to their respective routes', function () {
+it('panels with multiple domains should use the domain in names of all routes', function () {
     $routeName = 'filament.multi-domain.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
-    expect($route)->toBeEmpty(); // this route should never exists
+    expect($route)->toBeEmpty();
 
-    $routeName = 'filament.multi-domain.first.local.auth.login';
+    $routeName = 'filament.multi-domain.example.com.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
-    expect($route)->not->toBeEmpty(); // it should exists
+    expect($route)->not->toBeEmpty();
 
-    $routeName = 'filament.multi-domain.second.local.auth.login';
+    $routeName = 'filament.multi-domain.example2.com.auth.login';
     $route = Route::getRoutes()->getByName($routeName);
-    expect($route)->not->toBeEmpty(); // it should exists
+    expect($route)->not->toBeEmpty();
 });

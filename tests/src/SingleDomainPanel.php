@@ -27,9 +27,8 @@ class SingleDomainPanel extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
             ->id('single-domain')
-            ->domain('single.local')
+            ->domain('example3.com')
             ->login()
             ->registration()
             ->passwordReset()

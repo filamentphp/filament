@@ -7,7 +7,6 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationManager;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 use Laravel\SerializableClosure\Serializers\Native;
 
 trait HasRoutes
@@ -108,13 +107,9 @@ trait HasRoutes
     public function generateRouteName(string $name): string
     {
         $domain = '';
-        if (filled($this->domains) && count($this->domains) > 1) {
-            if (App::runningInConsole()) {
-                // If route is requested from Worker/Job/Console. Pick the first domain
-                $domain = $this->domains[0] . '.';
-            } else {
-                $domain = request()->getHost() . '.';
-            }
+
+        if (count($this->domains) > 1) {
+            $domain = Filament::getCurrentDomain(testingDomain: Arr::first($this->domains)) . '.';
         }
 
         return "filament.{$this->getId()}.{$domain}{$name}";

@@ -27,9 +27,8 @@ class MultiDomainPanel extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->default()
             ->id('multi-domain')
-            ->domains(['first.local', 'second.local'])
+            ->domains(['example.com', 'example2.com'])
             ->login()
             ->registration()
             ->passwordReset()
