@@ -90,16 +90,12 @@ In this example, the model should exist at `Custom\Path\Models\Customer`. Please
 
 Now when [generating the resource](#automatically-generating-forms-and-tables), Filament will be able to locate the model and read the database schema.
 
-### Automatically generating model and factory
+### Generating the model, migration and factory at the same name
 
-If you'd like to save time, Filament can automatically generate your model and factory related to the specified resource:
+If you'd like to save time when scaffolding your resources, Filament can also generate the model, migration and factory for the new resource at the same time using the `--model`, `--migration` and `--factory` flags in any combination:
 
 ```bash
-# For model
-php artisan make:filament-resource Customer --model
-
-# For factory
-php artisan make:filament-resource Customer --factory
+php artisan make:filament-resource Customer --model --migration --factory
 ```
 
 ## Record titles
