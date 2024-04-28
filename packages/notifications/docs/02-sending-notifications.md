@@ -45,6 +45,8 @@ Notification::make()
     ->send();
 ```
 
+The title text can contain HTML: `->title(str('Saved **successfully**')->markdown())`
+
 Or with JavaScript:
 
 ```js
@@ -206,6 +208,8 @@ Notification::make()
     ->body('Changes to the post have been saved.')
     ->send();
 ```
+
+The body text can contain HTML: `->body(str('Changes to the **post** have been saved.')->markdown())`
 
 Or with JavaScript:
 
