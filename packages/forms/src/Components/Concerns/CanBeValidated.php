@@ -676,15 +676,15 @@ trait CanBeValidated
             if (is_numeric($rule)) {
                 $rules[] = $this->evaluate($condition);
             } elseif ($this->evaluate($condition)) {
-                $evaluted = $this->evaluate($rule);
+                $evaluated = $this->evaluate($rule);
 
-                if (is_array($evaluted)) {
+                if (is_array($evaluated)) {
                     $rules = [
                         ...$rules,
-                        ...$evaluted
+                        ...$evaluated
                     ];
                 } else {
-                    $rules[] = $evaluted;
+                    $rules[] = $evaluated;
                 }
             }
         }
