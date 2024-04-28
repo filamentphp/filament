@@ -35,6 +35,7 @@ use function Filament\Support\is_app_url;
 class EditProfile extends Page
 {
     use Concerns\CanUseDatabaseTransactions;
+    use Concerns\HasTopbar;
     use Concerns\InteractsWithFormActions;
 
     /**
@@ -43,8 +44,6 @@ class EditProfile extends Page
     public ?array $data = [];
 
     protected ?string $maxWidth = null;
-
-    protected bool $hasTopbar = true;
 
     protected static bool $isDiscovered = false;
 
@@ -368,10 +367,5 @@ class EditProfile extends Page
     public function getMaxWidth(): MaxWidth | string | null
     {
         return $this->maxWidth;
-    }
-
-    public function hasTopbar(): bool
-    {
-        return $this->hasTopbar;
     }
 }

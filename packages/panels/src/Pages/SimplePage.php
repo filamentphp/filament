@@ -6,11 +6,11 @@ use Filament\Support\Enums\MaxWidth;
 
 abstract class SimplePage extends BasePage
 {
+    use Concerns\HasTopbar;
+
     protected static string $layout = 'filament-panels::components.layout.simple';
 
     protected ?string $maxWidth = null;
-
-    protected bool $hasTopbar = true;
 
     protected function getLayoutData(): array
     {
@@ -28,10 +28,5 @@ abstract class SimplePage extends BasePage
     public function hasLogo(): bool
     {
         return true;
-    }
-
-    public function hasTopbar(): bool
-    {
-        return $this->hasTopbar;
     }
 }
