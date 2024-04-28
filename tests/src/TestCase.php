@@ -46,6 +46,8 @@ abstract class TestCase extends BaseTestCase
             AdminPanelProvider::class,
             CustomPanelProvider::class,
             SlugsPanelProvider::class,
+            SingleDomainPanel::class,
+            MultiDomainPanel::class,
             TenancyPanelProvider::class,
             DomainTenancyPanelProvider::class,
         ];
