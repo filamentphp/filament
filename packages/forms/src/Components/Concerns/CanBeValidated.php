@@ -675,18 +675,26 @@ trait CanBeValidated
         foreach ($this->rules as [$rule, $condition]) {
             if (is_numeric($rule)) {
                 $rules[] = $this->evaluate($condition);
-            } elseif ($this->evaluate($condition)) {
-                $evaluated = $this->evaluate($rule);
 
-                if (is_array($evaluated)) {
-                    $rules = [
-                        ...$rules,
-                        ...$evaluated
-                    ];
-                } else {
-                    $rules[] = $evaluated;
-                }
+                continue;
             }
+            
+            if (! $this->evaluate($condition)) {
+                continue;
+            }
+
+            $rule = $this->evaluate($rule);
+
+            if (is_array($rule)) {
+                $rules = [
+                    ...$rules,
+                    ...$rule
+                ];
+
+                continue;
+            }
+
+            $rules[] = $rule;
         }
 
         return $rules;
