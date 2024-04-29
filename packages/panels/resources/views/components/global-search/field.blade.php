@@ -4,7 +4,6 @@
     $suffix = filament()->getGlobalSearchSuffix();
 @endphp
 
-
 <div
     x-id="['input']"
     {{ $attributes->class(['fi-global-search-field']) }}
