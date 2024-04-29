@@ -32,3 +32,9 @@ public function panel(Panel $panel): Panel
         ->databaseNotificationsPolling('30s');
 }
 ```
+
+Ensure that queue daemon is running for notifications to be processed.
+
+```php
+php artisan queue:work
+```
