@@ -410,6 +410,14 @@ trait CanImportRecords
                 continue;
             }
 
+            if (
+                ($encoding === 'ISO-8859-1') &&
+                mb_detect_encoding($fileContents, 'EUC-KR')
+            ) {
+                // EUC-KR is a superset of ISO-8859-1
+                $encoding = 'EUC-KR';
+            }
+
             return $encoding;
         }
 
