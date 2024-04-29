@@ -20,10 +20,18 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'První',
+        ],
+    
         'go_to_page' => [
             'label' => 'Jít na stránku :page',
         ],
 
+        'last' => [
+            'label' => 'Poslední',
+        ],
+    
         'next' => [
             'label' => 'Další',
         ],
