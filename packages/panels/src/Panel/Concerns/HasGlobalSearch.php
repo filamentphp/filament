@@ -108,11 +108,14 @@ trait HasGlobalSearch
                     ->replace('option', '⌥')
                     ->replace('meta', '⌘')
                     ->replace('command', '⌘')
+                    ->replace('mod', '⌘')
                     ->replace('ctrl', '⌃'),
                 default: fn (Stringable $str) => $str
                     ->replace('option', 'alt')
                     ->replace('command', 'meta')
+                    ->replace('mod', 'ctrl')
             )
+            ->replace('shift', '⇧')
             ->upper()
             ->toString();
     }
