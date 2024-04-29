@@ -170,3 +170,36 @@ public function panel(Panel $panel): Panel
         ->globalSearchDebounce('750ms');
 }
 ```
+
+## Configuring the global search suffix
+Global search field by default doesn't include any suffix. If you would like to show for example the current key-binding, you may configure the suffix using the `globalSearchSuffix()` method in the [configuration](configuration).
+
+If no parameter is passed, filament will attempt to parse the user-agent to render the first key-binding set compatible with the user's OS:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->globalSearchSuffix();
+}
+```
+
+You can customize this behaviour by providing a string value yourself or a Closure and customize the appearance for each platform:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->globalSearchSuffix(fn(string $platform) => match($platform) {
+            'Windows'|'Linux' => 'CTRL+K',
+            'Mac' => '⌘K'
+            default => null,
+        });
+}
+```
