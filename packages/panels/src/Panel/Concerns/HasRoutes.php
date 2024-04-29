@@ -106,7 +106,13 @@ trait HasRoutes
 
     public function generateRouteName(string $name): string
     {
-        return "filament.{$this->getId()}.{$name}";
+        $domain = '';
+
+        if (count($this->domains) > 1) {
+            $domain = Filament::getCurrentDomain(testingDomain: Arr::first($this->domains)) . '.';
+        }
+
+        return "filament.{$this->getId()}.{$domain}{$name}";
     }
 
     /**

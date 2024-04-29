@@ -88,7 +88,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     public function table(Table $table): Table
     {
-        return static::getResource()::table($table);
+        return $table;
     }
 
     public function getTitle(): string | Htmlable
@@ -254,11 +254,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function makeTable(): Table
     {
-        return $this->makeBaseTable()
+        $table = $this->makeBaseTable()
             ->query(fn (): Builder => $this->getTableQuery())
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
-            ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
-            ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
+            ->when($this->getModelLabel(), fn (Table $table, string $modelLabel): Table => $table->modelLabel($modelLabel))
+            ->when($this->getPluralModelLabel(), fn (Table $table, string $pluralModelLabel): Table => $table->pluralModelLabel($pluralModelLabel))
             ->recordAction(function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
@@ -283,7 +283,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
                 return null;
             })
-            ->recordTitle(fn (Model $record): string => static::getResource()::getRecordTitle($record))
             ->recordUrl($this->getTableRecordUrlUsing() ?? function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
@@ -325,8 +324,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                 }
 
                 return null;
-            })
-            ->authorizeReorder(static::getResource()::canReorder());
+            });
+
+        static::getResource()::configureTable($table);
+
+        return $table;
     }
 
     /**

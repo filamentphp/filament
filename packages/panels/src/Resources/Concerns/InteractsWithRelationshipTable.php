@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Concerns;
 
+use Filament\Schema\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,6 +22,13 @@ trait InteractsWithRelationshipTable
     protected static bool $shouldCheckPolicyExistence = true;
 
     protected static bool $shouldSkipAuthorization = false;
+
+    protected static ?string $relatedResource = null;
+
+    public static function getRelatedResource(): ?string
+    {
+        return static::$relatedResource;
+    }
 
     public static function checkPolicyExistence(bool $condition = true): void
     {
@@ -49,12 +57,38 @@ trait InteractsWithRelationshipTable
 
     public static function getRelationshipName(): string
     {
-        return static::$relationship;
+        if (isset(static::$relationship)) {
+            return static::$relationship;
+        }
+
+        return static::getRelatedResource()::getParentResourceRegistration()->getRelationshipName();
+    }
+
+    public function configureForm(Schema $form): void
+    {
+        $form->columns(2);
+
+        if (static::getRelatedResource()) {
+            static::getRelatedResource()::form($form);
+        }
+
+        $this->form($form);
+    }
+
+    public function configureInfolist(Schema $infolist): void
+    {
+        $infolist->columns(2);
+
+        if (static::getRelatedResource()) {
+            static::getRelatedResource()::infolist($infolist);
+        }
+
+        $this->infolist($infolist);
     }
 
     protected function makeTable(): Table
     {
-        return $this->makeBaseTable()
+        $table = $this->makeBaseTable()
             ->relationship(fn (): Relation | Builder => $this->getRelationship())
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
             ->queryStringIdentifier(Str::lcfirst(class_basename(static::class)))
@@ -107,5 +141,11 @@ trait InteractsWithRelationshipTable
                 return null;
             })
             ->authorizeReorder(fn (): bool => $this->canReorder());
+
+        if ($relatedResource = static::getRelatedResource()) {
+            $relatedResource::configureTable($table);
+        }
+
+        return $table;
     }
 }

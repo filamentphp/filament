@@ -5,7 +5,7 @@ namespace {{ namespace }};
 {{ clusterImport }}use App\Settings\{{ settingsClass }};
 use Filament\Forms;
 use Filament\Pages\SettingsPage;
-use Filament\Schemas\Schema;
+use Filament\Schema\Schema;
 
 class {{ class }} extends SettingsPage
 {

@@ -9,8 +9,8 @@ return [
     'actions' => [
 
         'register' => [
-            'before' => 'or',
-            'label' => 'sign up for an account',
+            'before' => 'alebo',
+            'label' => 'si založte účet',
         ],
 
         'request_password_reset' => [

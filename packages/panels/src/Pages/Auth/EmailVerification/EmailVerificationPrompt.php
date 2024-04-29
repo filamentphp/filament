@@ -53,7 +53,7 @@ class EmailVerificationPrompt extends SimplePage
             throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
         }
 
-        $notification = new VerifyEmail();
+        $notification = app(VerifyEmail::class);
         $notification->url = Filament::getVerifyEmailUrl($user);
 
         $user->notify($notification);

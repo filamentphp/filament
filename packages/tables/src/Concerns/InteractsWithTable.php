@@ -186,7 +186,17 @@ trait InteractsWithTable
 
     public function table(Table $table): Table
     {
-        return $table
+        return $table;
+    }
+
+    public function getTable(): Table
+    {
+        return $this->table;
+    }
+
+    protected function makeTable(): Table
+    {
+        return Table::make($this)
             ->query($this->getTableQuery())
             ->actions($this->getTableActions())
             ->actionsColumnLabel($this->getTableActionsColumnLabel())
@@ -230,16 +240,6 @@ trait InteractsWithTable
             ->reorderable($this->getTableReorderColumn())
             ->selectCurrentPageOnly($this->shouldSelectCurrentPageOnly())
             ->striped($this->isTableStriped());
-    }
-
-    public function getTable(): Table
-    {
-        return $this->table;
-    }
-
-    protected function makeTable(): Table
-    {
-        return Table::make($this);
     }
 
     protected function getTableQueryStringIdentifier(): ?string

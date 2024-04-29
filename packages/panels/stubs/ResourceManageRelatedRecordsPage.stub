@@ -5,7 +5,7 @@ namespace {{ namespace }};
 use {{ resource }};
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
+use Filament\Schema\Schema;
 use {{ baseResourcePage }};
 use Filament\Tables;
 use Filament\Tables\Table;
