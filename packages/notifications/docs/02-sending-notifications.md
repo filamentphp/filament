@@ -45,7 +45,7 @@ Notification::make()
     ->send();
 ```
 
-The title text can contain HTML: `->title(str('Saved **successfully**')->markdown())`
+The title text can contain basic, safe HTML elements. To generate safe HTML with Markdown, you can use the [`Str::markdown()` helper](https://laravel.com/docs/strings#method-str-markdown): `title(Str::markdown('Saved **successfully**'))`
 
 Or with JavaScript:
 
@@ -209,7 +209,7 @@ Notification::make()
     ->send();
 ```
 
-The body text can contain HTML: `->body(str('Changes to the **post** have been saved.')->markdown())`
+The body text can contain basic, safe HTML elements. To generate safe HTML with Markdown, you can use the [`Str::markdown()` helper](https://laravel.com/docs/strings#method-str-markdown): `body(Str::markdown('Changes to the **post** have been saved.'))`
 
 Or with JavaScript:
 
