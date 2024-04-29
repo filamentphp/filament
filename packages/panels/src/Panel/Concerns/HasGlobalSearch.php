@@ -6,6 +6,8 @@ use Closure;
 use Exception;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Stringable;
 
 trait HasGlobalSearch
 {
@@ -17,6 +19,8 @@ trait HasGlobalSearch
     protected array $globalSearchKeyBindings = [];
 
     protected string | bool $globalSearchProvider = true;
+
+    protected Closure | string | bool $globalSearchSuffix = false;
 
     public function globalSearch(string | bool $provider = true): static
     {
@@ -46,6 +50,13 @@ trait HasGlobalSearch
         return $this;
     }
 
+    public function globalSearchSuffix(Closure | string | bool $suffix = true): static
+    {
+        $this->globalSearchSuffix = $suffix;
+
+        return $this;
+    }
+
     public function getGlobalSearchDebounce(): string
     {
         return $this->evaluate($this->globalSearchDebounce) ?? '500ms';
@@ -57,6 +68,55 @@ trait HasGlobalSearch
     public function getGlobalSearchKeyBindings(): array
     {
         return $this->globalSearchKeyBindings;
+    }
+
+    public function getGlobalSearchSuffix(): ?string
+    {
+        if (! $this->globalSearchSuffix) {
+            return null;
+        }
+
+        if (is_string($this->globalSearchSuffix)) {
+            return $this->globalSearchSuffix;
+        }
+
+        $userAgent = request()->userAgent();
+        $platform = match (true) {
+            str_contains($userAgent, 'Windows') => 'Windows',
+            str_contains($userAgent, 'Mac') => 'Mac',
+            str_contains($userAgent, 'Linux') => 'Linux',
+            default => 'Other',
+        };
+
+        if (is_callable($this->globalSearchSuffix)) {
+            return $this->evaluate($this->globalSearchSuffix, [
+                'platform' => $platform,
+            ]);
+        }
+
+        $keyBindings = $this->getGlobalSearchKeyBindings();
+
+        if (empty($keyBindings) || $platform === 'Other') {
+            return null;
+        }
+
+        return str(Arr::first($keyBindings))
+            ->when(
+                $platform === 'Windows',
+                fn (Stringable $str) => $str
+                    ->replace('option', 'alt')
+                    ->replace('command', 'meta')
+            )
+            ->when(
+                $platform === 'Mac',
+                fn (Stringable $str) => $str
+                    ->replace('alt', 'option')
+                    ->replace('meta', 'command')
+            )
+            ->replace('meta', 'win')
+            ->replace('command', '⌘')
+            ->upper()
+            ->toString();
     }
 
     public function getGlobalSearchProvider(): ?GlobalSearchProvider
