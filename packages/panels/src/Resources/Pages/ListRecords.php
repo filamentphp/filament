@@ -129,7 +129,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         }
 
         if ($resource::hasPage('create')) {
-            $action->url(fn (): string => $resource::getUrl('create'));
+            $action->url(fn (): string => $this->getResourceUrl('create'));
         }
     }
 
@@ -164,7 +164,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->icon(FilamentIcon::resolve('actions::edit-action') ?? 'heroicon-m-pencil-square');
 
         if ($resource::hasPage('edit')) {
-            $action->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]));
+            $action->url(fn (Model $record): string => $this->getResourceUrl('edit', ['record' => $record]));
         }
     }
 
@@ -199,7 +199,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->schema(fn (Schema $schema): Schema => $this->infolist($this->form($schema->columns(2))));
 
         if ($resource::hasPage('view')) {
-            $action->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]));
+            $action->url(fn (Model $record): string => $this->getResourceUrl('view', ['record' => $record]));
         }
     }
 
@@ -321,7 +321,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                         continue;
                     }
 
-                    return $resource::getUrl($action, ['record' => $record]);
+                    return $this->getResourceUrl($action, ['record' => $record]);
                 }
 
                 return null;

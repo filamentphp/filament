@@ -50,22 +50,19 @@ trait InteractsWithRecord
      */
     public function getBreadcrumbs(): array
     {
+        $breadcrumbs = parent::getBreadcrumbs();
+
         $resource = static::getResource();
-
-        $breadcrumbs = [
-            $resource::getUrl() => $resource::getBreadcrumb(),
-        ];
-
         $record = $this->getRecord();
 
         if ($record->exists && $resource::hasRecordTitle()) {
             if ($resource::hasPage('view') && $resource::canView($record)) {
                 $breadcrumbs[
-                    $resource::getUrl('view', ['record' => $record])
+                    $this->getResourceUrl('view')
                 ] = $this->getRecordTitle();
             } elseif ($resource::hasPage('edit') && $resource::canEdit($record)) {
                 $breadcrumbs[
-                    $resource::getUrl('edit', ['record' => $record])
+                    $this->getResourceUrl('edit')
                 ] = $this->getRecordTitle();
             } else {
                 $breadcrumbs[] = $this->getRecordTitle();
@@ -73,10 +70,6 @@ trait InteractsWithRecord
         }
 
         $breadcrumbs[] = $this->getBreadcrumb();
-
-        if (filled($cluster = static::getCluster())) {
-            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
-        }
 
         return $breadcrumbs;
     }

@@ -70,7 +70,6 @@
     @if (filled($activeManager) && isset($managers[$activeManager]))
         <div
             @if (count($managers) > 1)
-                id="relationManager{{ ucfirst($activeManager) }}"
                 role="tabpanel"
                 tabindex="0"
             @endif

@@ -9,6 +9,7 @@ use Filament\Pages\Page as BasePage;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Panel;
 use Filament\Resources\Pages\Concerns\CanAuthorizeResourceAccess;
+use Filament\Resources\Pages\Concerns\InteractsWithParentRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
@@ -16,12 +17,29 @@ use Illuminate\Support\Facades\Route as RouteFacade;
 abstract class Page extends BasePage
 {
     use CanAuthorizeResourceAccess;
+    use InteractsWithParentRecord;
 
     protected static ?string $breadcrumb = null;
 
     protected static string $resource;
 
     protected static bool $isDiscovered = false;
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public function getResourceUrl(?string $name = null, array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    {
+        if (method_exists($this, 'getRecord')) {
+            $parameters['record'] ??= $this->getRecord();
+        }
+
+        if ($parentResourceRegistration = static::getResource()::getParentResourceRegistration()) {
+            $parameters[$parentResourceRegistration->getParentRouteParameterName()] ??= $this->getParentRecord();
+        }
+
+        return static::getResource()::getUrl($name, $parameters, $isAbsolute, $panel, $tenant);
+    }
 
     public static function getRouteName(?string $panel = null): string
     {
@@ -112,17 +130,64 @@ abstract class Page extends BasePage
         return static::$breadcrumb ?? static::getTitle();
     }
 
+    public function hasResourceBreadcrumbs(): bool
+    {
+        return true;
+    }
+
     /**
      * @return array<string>
      */
     public function getBreadcrumbs(): array
     {
-        $resource = static::getResource();
+        $breadcrumbs = [];
 
-        $breadcrumbs = [
-            $resource::getUrl() => $resource::getBreadcrumb(),
-            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
-        ];
+        if ($this->hasResourceBreadcrumbs()) {
+            $resource = static::getResource();
+
+            $breadcrumbs[$this->getResourceUrl()] = $resource::getBreadcrumb();
+
+            $parentResourceRegistration = $resource::getParentResourceRegistration();
+            $parentResource = $parentResourceRegistration?->getParentResource();
+            $parentRecord = $this->getParentRecord();
+
+            while ($parentResourceRegistration && $parentRecord) {
+                $parentRecordTitle = $parentResource::hasRecordTitle() ?
+                    $parentResource::getRecordTitle($parentRecord) :
+                    $parentResource::getTitleCaseModelLabel();
+
+                if ($parentResource::hasPage('view') && $parentResource::canView($parentRecord)) {
+                    $breadcrumbs = [
+                        $parentResource::getUrl('view', ['record' => $parentRecord]) => $parentRecordTitle,
+                        ...$breadcrumbs,
+                    ];
+                } elseif ($parentResource::hasPage('edit') && $parentResource::canEdit($parentRecord)) {
+                    $breadcrumbs = [
+                        $parentResource::getUrl('edit', ['record' => $parentRecord]) => $parentRecordTitle,
+                        ...$breadcrumbs,
+                    ];
+                } else {
+                    $breadcrumbs = [
+                        $parentRecordTitle,
+                        ...$breadcrumbs,
+                    ];
+                }
+
+                $breadcrumbs = [
+                    $parentResource::getUrl(null, [
+                        'record' => $parentRecord,
+                    ]) => $parentResource::getBreadcrumb(),
+                    ...$breadcrumbs,
+                ];
+
+                $parentResourceRegistration = $parentResource::getParentResourceRegistration();
+
+                if ($parentResourceRegistration) {
+                    $parentResource = $parentResourceRegistration->getParentResource();
+                    $parentRecord = $parentRecord->{$parentResourceRegistration->getInverseRelationshipName()};
+                }
+            }
+        }
 
         if (filled($cluster = static::getCluster())) {
             return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);

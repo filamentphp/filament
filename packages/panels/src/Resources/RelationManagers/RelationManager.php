@@ -217,7 +217,17 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canCreate())
-            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
+
+        $relatedResource = static::getRelatedResource();
+
+        if ($relatedResource && $relatedResource::hasPage('create')) {
+            $action->url(fn (): string => $relatedResource::getUrl('create', [$relatedResource::getParentResourceRegistration()->getParentRouteParameterName() => $this->getOwnerRecord()]));
+        }
     }
 
     protected function configureDeleteAction(Actions\DeleteAction $action): void
@@ -242,7 +252,17 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canEdit($record))
-            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
+
+        $relatedResource = static::getRelatedResource();
+
+        if ($relatedResource && $relatedResource::hasPage('edit')) {
+            $action->url(fn (Model $record): string => $relatedResource::getUrl('edit', ['record' => $record]));
+        }
     }
 
     protected function configureForceDeleteAction(Actions\ForceDeleteAction $action): void
@@ -267,8 +287,22 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => $livewire->canView($record))
-            ->infolist(fn (Schema $infolist): Schema => $this->infolist($infolist->columns(2)))
-            ->form(fn (Schema $form): Schema => $this->form($form->columns(2)));
+            ->infolist(function (Schema $infolist): Schema {
+                $this->configureInfolist($infolist);
+
+                return $infolist;
+            })
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
+
+        $relatedResource = static::getRelatedResource();
+
+        if ($relatedResource && $relatedResource::hasPage('view')) {
+            $action->url(fn (Model $record): string => $relatedResource::getUrl('view', ['record' => $record]));
+        }
     }
 
     protected function configureTableBulkAction(BulkAction $action): void

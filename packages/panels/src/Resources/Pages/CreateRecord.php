@@ -173,6 +173,10 @@ class CreateRecord extends Page
             return $this->associateRecordWithTenant($record, $tenant);
         }
 
+        if ($parentRecord = $this->getParentRecord()) {
+            return $this->associateRecordWithParent($record, $parentRecord);
+        }
+
         $record->save();
 
         return $record;
@@ -189,6 +193,11 @@ class CreateRecord extends Page
         }
 
         return $relationship->save($record);
+    }
+
+    protected function associateRecordWithParent(Model $record, Model $parent): Model
+    {
+        return static::getResource()::getParentResourceRegistration()->getRelationship($parent)->save($record);
     }
 
     /**
@@ -238,7 +247,7 @@ class CreateRecord extends Page
     {
         return Action::make('cancel')
             ->label(__('filament-panels::resources/pages/create-record.form.actions.cancel.label'))
-            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? static::getResource()::getUrl()) . ')')
+            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? $this->getResourceUrl()) . ')')
             ->color('gray');
     }
 
@@ -280,14 +289,14 @@ class CreateRecord extends Page
         $resource = static::getResource();
 
         if ($resource::hasPage('view') && $resource::canView($this->getRecord())) {
-            return $resource::getUrl('view', ['record' => $this->getRecord(), ...$this->getRedirectUrlParameters()]);
+            return $this->getResourceUrl('view', $this->getRedirectUrlParameters());
         }
 
         if ($resource::hasPage('edit') && $resource::canEdit($this->getRecord())) {
-            return $resource::getUrl('edit', ['record' => $this->getRecord(), ...$this->getRedirectUrlParameters()]);
+            return $this->getResourceUrl('edit', $this->getRedirectUrlParameters());
         }
 
-        return $resource::getUrl('index');
+        return $this->getResourceUrl();
     }
 
     /**

@@ -284,7 +284,7 @@ class EditRecord extends Page
             ->form(fn (Schema $form): Schema => static::getResource()::form($form));
 
         if ($resource::hasPage('view')) {
-            $action->url(fn (): string => static::getResource()::getUrl('view', ['record' => $this->getRecord()]));
+            $action->url(fn (): string => $this->getResourceUrl('view'));
         }
     }
 
@@ -294,7 +294,7 @@ class EditRecord extends Page
 
         $action
             ->authorize($resource::canForceDelete($this->getRecord()))
-            ->successRedirectUrl($resource::getUrl('index'));
+            ->successRedirectUrl($this->getResourceUrl());
     }
 
     protected function configureReplicateAction(ReplicateAction $action): void
@@ -315,7 +315,7 @@ class EditRecord extends Page
 
         $action
             ->authorize($resource::canDelete($this->getRecord()))
-            ->successRedirectUrl($resource::getUrl('index'));
+            ->successRedirectUrl($this->getResourceUrl());
     }
 
     public function getTitle(): string | Htmlable
@@ -357,7 +357,7 @@ class EditRecord extends Page
     {
         return Action::make('cancel')
             ->label(__('filament-panels::resources/pages/edit-record.form.actions.cancel.label'))
-            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? static::getResource()::getUrl()) . ')')
+            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? $this->getResourceUrl()) . ')')
             ->color('gray');
     }
 
