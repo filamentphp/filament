@@ -184,7 +184,8 @@ class FilamentManager
         return $this->getCurrentPanel()->getGlobalSearchKeyBindings();
     }
 
-    public function getGlobalSearchSuffix(): ?string {
+    public function getGlobalSearchSuffix(): ?string
+    {
         return $this->getCurrentPanel()->getGlobalSearchSuffix();
     }
 
