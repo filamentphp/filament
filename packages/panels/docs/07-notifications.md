@@ -36,5 +36,13 @@ public function panel(Panel $panel): Panel
 Ensure that queue daemon is running for notifications to be processed.
 
 ```php
-php artisan queue:work
+# Detects code changes automatically.
+
+php artisan queue:listen
+
+or
+
+# Requires manual restart to detect code changes.
+
+php artisan queue:work 
 ```
