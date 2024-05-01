@@ -260,7 +260,7 @@ Here's a comprehensive guide on how to add custom plugins:
 
 ### Step 1: Create a Custom JavaScript File
 
-Let's start by creating a new JavaScript file where you will define your custom plugin. In this case, we'll call it `custom_chart_plugins.js`.
+Let's start by creating a new JavaScript file where you will define your custom plugin. In this case, we'll call it `custom-chart-plugins.js`.
 
 ### Step 2: Plugin Inclusion
 
@@ -288,7 +288,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/css/filament/admin/theme.css',
-                'resources/js/custom_chart_plugins.js' // Include the new file in the input array
+                'resources/js/custom-chart-plugins.js' // Include the new file in the input array
             ],
         }),
     ],
@@ -309,7 +309,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         FilamentAsset::register([
-            Js::make('custom_plugins', Vite::asset('resources/js/custom_chart_plugins.js'))->module(), // Register the new file
+            Js::make('custom-plugins', Vite::asset('resources/js/custom-chart-plugins.js'))->module(), // Register the new file
         ]);
     }
 }
