@@ -59,4 +59,5 @@ return [
     'logo' => [
         'alt' => ':name лого',
     ],
+    
 ];
