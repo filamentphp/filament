@@ -252,3 +252,68 @@ To disable this behavior, you may override the `$isLazy` property on the widget 
 ```php
 protected static bool $isLazy = true;
 ```
+
+## Chart.js Custom Plugins
+
+Chart.js offers a powerful plugin system that allows you to extend its functionality and create custom chart behaviors. 
+Here's a comprehensive guide on how to add custom plugins: 
+
+### Step 1: Create a Custom JavaScript File
+
+Let's start by creating a new JavaScript file where you will define your custom plugin. In this case, we'll call it `custom_chart_plugins.js`.
+
+### Step 2: Plugin Inclusion
+
+Include the custom plugin you want to use inside your JavaScript file like this:
+
+```javascript
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+window.customChartPlugins = [ChartDataLabels];
+
+```
+
+### Step 3: Adjust Vite Configuration
+
+Now, you need to ensure that Vite builds your new JavaScript file. Include this file in your Vite configuration (usually in vite.config.js). You can do this as follows:
+
+```javascript
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+                'resources/css/filament/admin/theme.css',
+                'resources/js/custom_chart_plugins.js' // Include the new file in the input array
+            ],
+        }),
+    ],
+});
+```
+
+### Step 4: Register JavaScript File in AppServiceProvider
+
+Now, ensure Filament is aware of your new file by registering it in the AppServiceProvider:
+
+```php
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Support\Facades\Vite;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        FilamentAsset::register([
+            Js::make('custom_plugins', Vite::asset('resources/js/custom_chart_plugins.js'))->module(), // Register the new file
+        ]);
+    }
+}
+```
+### Step 5: Build Your assets
+
+Finally, build your application by running `npm run build` in your terminal.

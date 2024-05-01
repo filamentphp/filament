@@ -81,10 +81,13 @@ export default function chart({ cachedData, options, type }) {
             options.scales.y.grid.color = gridColor
             options.scales.y.grid.drawBorder ??= false
 
+            const plugins = window.customChartPlugins ?? [];
+
             return new Chart(this.$refs.canvas, {
                 type: type,
                 data: data ?? cachedData,
                 options: options,
+                plugins: plugins,
             })
         },
 
