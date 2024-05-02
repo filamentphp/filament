@@ -108,7 +108,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             }
 
             if ($component->getConversion() && $media?->hasGeneratedConversion($component->getConversion())) {
-                $url ??= $media?->getUrl($component->getConversion());
+                $url ??= $media->getUrl($component->getConversion());
             }
 
             $url ??= $media?->getUrl();
