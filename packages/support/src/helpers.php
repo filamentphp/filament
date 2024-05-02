@@ -2,6 +2,7 @@
 
 namespace Filament\Support;
 
+use Filament\Support\Enums\Platform;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
@@ -217,5 +218,22 @@ if (! function_exists('Filament\Support\generate_search_term_expression')) {
         }
 
         return Str::lower($search);
+    }
+}
+
+if (! function_exists('Filament\Support\detect_platform')) {
+    /**
+     * Attempts to detect the platform from the user-agent.
+     */
+    function detect_platform(): Platform
+    {
+        $userAgent = request()->userAgent();
+
+        return match (true) {
+            str_contains($userAgent, 'Windows') => Platform::Windows,
+            str_contains($userAgent, 'Mac') => Platform::Mac,
+            str_contains($userAgent, 'Linux') => Platform::Linux,
+            default => Platform::Other,
+        };
     }
 }

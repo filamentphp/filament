@@ -193,13 +193,14 @@ For example, to provide a custom suffix for each platform on your own, you could
 
 ```php
 use Filament\Panel;
-use Filament\Enums\Platform;
+use Filament\Support\Enums\Platform;
+use function Filament\Support\detect_platform;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->globalSearchSuffix(fn(Platform $platform) => match($platform) {
+        ->globalSearchFieldSuffix(fn() => match(detect_platform()) {
             Platform::Windows, Platform::Linux => 'CTRL+K',
             Platform::Mac => '⌘K'
             default => null,

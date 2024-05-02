@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Enums;
+namespace Filament\Support\Enums;
 
 enum Platform: string
 {

@@ -4,9 +4,9 @@ namespace Filament\Panel\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Enums\Platform;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
+use Filament\Support\Enums\Platform;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Stringable;
 
@@ -105,16 +105,7 @@ trait HasGlobalSearch
 
     public function getGlobalSearchFieldSuffix(): ?string
     {
-        $userAgent = request()->userAgent();
-
-        return $this->evaluate($this->globalSearchFieldSuffix, [
-            'platform' => match (true) {
-                str_contains($userAgent, 'Windows') => Platform::Windows,
-                str_contains($userAgent, 'Mac') => Platform::Mac,
-                str_contains($userAgent, 'Linux') => Platform::Linux,
-                default => Platform::Other,
-            },
-        ]);
+        return $this->evaluate($this->globalSearchFieldSuffix);
     }
 
     public function getGlobalSearchProvider(): ?GlobalSearchProvider
