@@ -9,6 +9,7 @@ use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Support\Enums\Platform;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Stringable;
+use function Filament\Support\detect_platform;
 
 trait HasGlobalSearch
 {
@@ -60,7 +61,8 @@ trait HasGlobalSearch
 
     public function globalSearchFieldKeyBindingsSuffix(): static
     {
-        $this->globalSearchFieldSuffix(function (Platform $platform) {
+        $this->globalSearchFieldSuffix(function () {
+            $platform = detect_platform();
             $keyBindings = $this->getGlobalSearchKeyBindings();
 
             if (empty($keyBindings) || $platform === Platform::Other) {
