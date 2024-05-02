@@ -9,6 +9,7 @@ use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Support\Enums\Platform;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Stringable;
+
 use function Filament\Support\detect_platform;
 
 trait HasGlobalSearch
