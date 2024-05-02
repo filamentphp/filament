@@ -11,11 +11,7 @@ class RedirectToHomeController
     {
         $panel = Filament::getCurrentPanel();
 
-        $url = $panel->getUrl(Filament::getTenant());
-
-        if (blank($url)) {
-            abort(404);
-        }
+        abort_unless(blank($url = $panel->getUrl(Filament::getTenant())), 404);
 
         return redirect($url);
     }
