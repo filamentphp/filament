@@ -172,9 +172,9 @@ public function panel(Panel $panel): Panel
 ```
 
 ## Configuring the global search suffix
-Global search field by default doesn't include any suffix. If you would like to show for example the current key-binding, you may configure the suffix using the `globalSearchSuffix()` method in the [configuration](configuration).
+Global search field by default doesn't include any suffix. You may customize it using the `globalSearchFieldSuffix()` method in the [configuration](configuration).
 
-If no parameter is passed, filament will attempt to parse the user-agent to render the first key-binding set compatible with the user's OS:
+If you want to display the currently configured global search key binding in the suffix, you can use the `globalSearchFieldKeyBindingsSuffix()` method, which will display the first key-binding you have set as the suffix of the global search field:
 
 ```php
 use Filament\Panel;
@@ -183,22 +183,25 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->globalSearchSuffix();
+        ->globalSearchFieldKeyBindingsSuffix();
 }
 ```
 
-You can customize this behaviour by providing a string value yourself or a Closure and customize the appearance for each platform:
+To customize the suffix yourself, you can pass a string or a closure to the `globalSearchFieldSuffix` method.
+
+For example, to provide a custom suffix for each platform on your own, you could do:
 
 ```php
 use Filament\Panel;
+use Filament\Enums\Platform;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->globalSearchSuffix(fn(string $platform) => match($platform) {
-            'Windows'|'Linux' => 'CTRL+K',
-            'Mac' => '⌘K'
+        ->globalSearchSuffix(fn(Platform $platform) => match($platform) {
+            Platform::Windows, Platform::Linux => 'CTRL+K',
+            Platform::Mac => '⌘K'
             default => null,
         });
 }
