@@ -1,7 +1,7 @@
 @php
     $debounce = filament()->getGlobalSearchDebounce();
     $keyBindings = filament()->getGlobalSearchKeyBindings();
-    $suffix = filament()->getGlobalSearchSuffix();
+    $suffix = filament()->getGlobalSearchFieldSuffix();
 @endphp
 
 <div

@@ -4,6 +4,7 @@ namespace Filament\Panel\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Enums\Platform;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Illuminate\Support\Arr;
@@ -20,7 +21,7 @@ trait HasGlobalSearch
 
     protected string | bool $globalSearchProvider = true;
 
-    protected Closure | string | bool $globalSearchSuffix = false;
+    protected Closure | string | null $globalSearchFieldSuffix = null;
 
     public function globalSearch(string | bool $provider = true): static
     {
@@ -50,9 +51,41 @@ trait HasGlobalSearch
         return $this;
     }
 
-    public function globalSearchSuffix(Closure | string | bool $suffix = true): static
+    public function globalSearchFieldSuffix(Closure | string $suffix): static
     {
-        $this->globalSearchSuffix = $suffix;
+        $this->globalSearchFieldSuffix = $suffix;
+
+        return $this;
+    }
+
+    public function globalSearchFieldKeyBindingsSuffix(): static
+    {
+        $this->globalSearchFieldSuffix(function (Platform $platform) {
+            $keyBindings = $this->getGlobalSearchKeyBindings();
+
+            if (empty($keyBindings) || $platform === Platform::Other) {
+                return null;
+            }
+
+            return str(Arr::first($keyBindings))
+                ->when(
+                    value: $platform === Platform::Mac,
+                    callback: fn (Stringable $str) => $str
+                        ->replace('alt', '⌥')
+                        ->replace('option', '⌥')
+                        ->replace('meta', '⌘')
+                        ->replace('command', '⌘')
+                        ->replace('mod', '⌘')
+                        ->replace('ctrl', '⌃'),
+                    default: fn (Stringable $str) => $str
+                        ->replace('option', 'alt')
+                        ->replace('command', 'meta')
+                        ->replace('mod', 'ctrl')
+                )
+                ->replace('shift', '⇧')
+                ->upper()
+                ->toString();
+        });
 
         return $this;
     }
@@ -70,54 +103,18 @@ trait HasGlobalSearch
         return $this->globalSearchKeyBindings;
     }
 
-    public function getGlobalSearchSuffix(): ?string
+    public function getGlobalSearchFieldSuffix(): ?string
     {
-        if (! $this->globalSearchSuffix) {
-            return null;
-        }
-
-        if (is_string($this->globalSearchSuffix)) {
-            return $this->globalSearchSuffix;
-        }
-
         $userAgent = request()->userAgent();
-        $platform = match (true) {
-            str_contains($userAgent, 'Windows') => 'Windows',
-            str_contains($userAgent, 'Mac') => 'Mac',
-            str_contains($userAgent, 'Linux') => 'Linux',
-            default => 'Other',
-        };
 
-        if (is_callable($this->globalSearchSuffix)) {
-            return $this->evaluate($this->globalSearchSuffix, [
-                'platform' => $platform,
-            ]);
-        }
-
-        $keyBindings = $this->getGlobalSearchKeyBindings();
-
-        if (empty($keyBindings) || $platform === 'Other') {
-            return null;
-        }
-
-        return str(Arr::first($keyBindings))
-            ->when(
-                value: $platform === 'Mac',
-                callback: fn (Stringable $str) => $str
-                    ->replace('alt', '⌥')
-                    ->replace('option', '⌥')
-                    ->replace('meta', '⌘')
-                    ->replace('command', '⌘')
-                    ->replace('mod', '⌘')
-                    ->replace('ctrl', '⌃'),
-                default: fn (Stringable $str) => $str
-                    ->replace('option', 'alt')
-                    ->replace('command', 'meta')
-                    ->replace('mod', 'ctrl')
-            )
-            ->replace('shift', '⇧')
-            ->upper()
-            ->toString();
+        return $this->evaluate($this->globalSearchFieldSuffix, [
+            'platform' => match (true) {
+                str_contains($userAgent, 'Windows') => Platform::Windows,
+                str_contains($userAgent, 'Mac') => Platform::Mac,
+                str_contains($userAgent, 'Linux') => Platform::Linux,
+                default => Platform::Other,
+            },
+        ]);
     }
 
     public function getGlobalSearchProvider(): ?GlobalSearchProvider
