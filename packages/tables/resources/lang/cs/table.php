@@ -115,7 +115,7 @@ return [
             'apply' => [
                 'label' => 'Použít filtry',
             ],
-    
+
             'remove' => [
                 'label' => 'Odstranit filtr',
             ],

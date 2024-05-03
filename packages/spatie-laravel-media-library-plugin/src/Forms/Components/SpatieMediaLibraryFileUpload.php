@@ -107,16 +107,16 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 }
             }
 
-            if ($component->getConversion() && $media->hasGeneratedConversion($component->getConversion())) {
-                $url ??= $media?->getUrl($component->getConversion());
+            if ($component->getConversion() && $media?->hasGeneratedConversion($component->getConversion())) {
+                $url ??= $media->getUrl($component->getConversion());
             }
 
             $url ??= $media?->getUrl();
 
             return [
-                'name' => $media->getAttributeValue('name') ?? $media->getAttributeValue('file_name'),
-                'size' => $media->getAttributeValue('size'),
-                'type' => $media->getAttributeValue('mime_type'),
+                'name' => $media?->getAttributeValue('name') ?? $media?->getAttributeValue('file_name'),
+                'size' => $media?->getAttributeValue('size'),
+                'type' => $media?->getAttributeValue('mime_type'),
                 'url' => $url,
             ];
         });
