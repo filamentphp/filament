@@ -398,8 +398,8 @@ trait CanImportRecords
     {
         $fileHeader = fgets($resource);
 
-        // Encoding of a subset should be declared before the encoding of its superset
-        $encodingLists = [
+        // The encoding of a subset should be declared before the encoding of its superset.
+        $encodings = [
             'UTF-8',
             'SJIS-win',
             'EUC-KR',
@@ -410,7 +410,7 @@ trait CanImportRecords
             'EUC-JP',
         ];
 
-        foreach ($encodingLists as $encoding) {
+        foreach ($encodings as $encoding) {
             if (! mb_check_encoding($fileHeader, $encoding)) {
                 continue;
             }
