@@ -141,7 +141,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Registering global search keybindings
+## Registering global search key bindings
 
 The global search field can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](configuration):
 
@@ -168,5 +168,40 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->globalSearchDebounce('750ms');
+}
+```
+
+## Configuring the global search field suffix
+
+Global search field by default doesn't include any suffix. You may customize it using the `globalSearchFieldSuffix()` method in the [configuration](configuration).
+
+If you want to display the currently configured [global search key bindings](#registering-global-search-key-bindings) in the suffix, you can use the `globalSearchFieldKeyBindingSuffix()` method, which will display the first registered key binding as the suffix of the global search field:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->globalSearchFieldKeyBindingSuffix();
+}
+```
+
+To customize the suffix yourself, you can pass a string or function to the `globalSearchFieldSuffix()` method. For example, to provide a custom key binding suffix for each platform manually:
+
+```php
+use Filament\Panel;
+use Filament\Support\Enums\Platform;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->globalSearchFieldSuffix(fn (): ?string => match (Platform::detect()) {
+            Platform::Windows, Platform::Linux => 'CTRL+K',
+            Platform::Mac => '⌘K'
+            default => null,
+        });
 }
 ```

@@ -6,6 +6,9 @@ use Closure;
 use Exception;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
+use Filament\Support\Enums\Platform;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Stringable;
 
 trait HasGlobalSearch
 {
@@ -17,6 +20,8 @@ trait HasGlobalSearch
     protected array $globalSearchKeyBindings = [];
 
     protected string | bool $globalSearchProvider = true;
+
+    protected string | Closure | null $globalSearchFieldSuffix = null;
 
     public function globalSearch(string | bool $provider = true): static
     {
@@ -46,6 +51,49 @@ trait HasGlobalSearch
         return $this;
     }
 
+    public function globalSearchFieldSuffix(string | Closure | null $suffix): static
+    {
+        $this->globalSearchFieldSuffix = $suffix;
+
+        return $this;
+    }
+
+    public function globalSearchFieldKeyBindingSuffix(): static
+    {
+        $this->globalSearchFieldSuffix(function (): ?string {
+            $platform = Platform::detect();
+            $keyBindings = $this->getGlobalSearchKeyBindings();
+
+            if (! $keyBindings) {
+                return null;
+            }
+
+            if ($platform === Platform::Other) {
+                return null;
+            }
+
+            return (string) str(Arr::first($keyBindings))
+                ->when(
+                    $platform === Platform::Mac,
+                    fn (Stringable $string) => $string
+                        ->replace('alt', '⌥')
+                        ->replace('option', '⌥')
+                        ->replace('meta', '⌘')
+                        ->replace('command', '⌘')
+                        ->replace('mod', '⌘')
+                        ->replace('ctrl', '⌃'),
+                    fn (Stringable $string) => $string
+                        ->replace('option', 'alt')
+                        ->replace('command', 'meta')
+                        ->replace('mod', 'ctrl')
+                )
+                ->replace('shift', '⇧')
+                ->upper();
+        });
+
+        return $this;
+    }
+
     public function getGlobalSearchDebounce(): string
     {
         return $this->evaluate($this->globalSearchDebounce) ?? '500ms';
@@ -57,6 +105,11 @@ trait HasGlobalSearch
     public function getGlobalSearchKeyBindings(): array
     {
         return $this->globalSearchKeyBindings;
+    }
+
+    public function getGlobalSearchFieldSuffix(): ?string
+    {
+        return $this->evaluate($this->globalSearchFieldSuffix);
     }
 
     public function getGlobalSearchProvider(): ?GlobalSearchProvider
