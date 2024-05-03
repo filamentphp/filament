@@ -146,9 +146,7 @@
                 ->merge([
                     'title' => $label,
                 ], escape: true)
-                ->class([
-                    $buttonClasses,
-                ])
+                ->class([$buttonClasses])
                 ->style([$buttonStyles])
         }}
     >
@@ -212,9 +210,7 @@
                 ->merge([
                     'title' => $label,
                 ], escape: true)
-                ->class([
-                    $buttonClasses,
-                ])
+                ->class([$buttonClasses])
                 ->style([$buttonStyles])
         }}
     >
