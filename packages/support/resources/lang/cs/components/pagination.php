@@ -23,7 +23,7 @@ return [
         'first' => [
             'label' => 'První',
         ],
-    
+
         'go_to_page' => [
             'label' => 'Jít na stránku :page',
         ],
@@ -31,7 +31,7 @@ return [
         'last' => [
             'label' => 'Poslední',
         ],
-    
+
         'next' => [
             'label' => 'Další',
         ],

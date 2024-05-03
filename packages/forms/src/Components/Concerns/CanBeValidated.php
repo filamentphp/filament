@@ -433,7 +433,7 @@ trait CanBeValidated
         if ($rules instanceof Closure) {
             $this->rules = [
                 ...$this->rules,
-                [$rules, $condition]
+                [$rules, $condition],
             ];
 
             return $this;
@@ -678,7 +678,7 @@ trait CanBeValidated
 
                 continue;
             }
-            
+
             if (! $this->evaluate($condition)) {
                 continue;
             }
@@ -688,7 +688,7 @@ trait CanBeValidated
             if (is_array($rule)) {
                 $rules = [
                     ...$rules,
-                    ...$rule
+                    ...$rule,
                 ];
 
                 continue;
