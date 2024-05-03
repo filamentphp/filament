@@ -510,6 +510,7 @@
 
                                     $recordActionsClasses = \Illuminate\Support\Arr::toCssClasses([
                                         'md:ps-3' => (! $contentGrid),
+                                        'order-first' => $actionsPosition === ActionsPosition::BeforeColumns,
                                         'ps-3' => (! $contentGrid) && $hasItemBeforeRecordContent,
                                         'ps-4 sm:ps-6' => (! $contentGrid) && (! $hasItemBeforeRecordContent),
                                         'pe-3' => (! $contentGrid) && $hasItemAfterRecordContent,
