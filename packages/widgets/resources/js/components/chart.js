@@ -85,6 +85,7 @@ export default function chart({ cachedData, options, type }) {
                 type: type,
                 data: data ?? cachedData,
                 options: options,
+                plugins: window.filamentChartJsPlugins ?? [],
             })
         },
 
