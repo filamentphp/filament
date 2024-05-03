@@ -42,7 +42,7 @@
     }
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-70',
+        'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2',
         ...match ($size) {
             ActionSize::ExtraSmall => [
                 match ($iconSize) {
@@ -145,7 +145,10 @@
                 ->merge([
                     'title' => $label,
                 ], escape: true)
-                ->class([$buttonClasses])
+                ->class([
+                    $buttonClasses,
+                    'disabled:pointer-events-none disabled:opacity-70',
+                ])
                 ->style([$buttonStyles])
         }}
     >
@@ -209,7 +212,10 @@
                 ->merge([
                     'title' => $label,
                 ], escape: true)
-                ->class([$buttonClasses])
+                ->class([
+                    $buttonClasses,
+                    'pointer-events-none opacity-70' => $disabled,
+                ])
                 ->style([$buttonStyles])
         }}
     >
