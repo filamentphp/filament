@@ -10,8 +10,6 @@ use Filament\Support\Enums\Platform;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Stringable;
 
-use function Filament\Support\detect_platform;
-
 trait HasGlobalSearch
 {
     protected string | Closure | null $globalSearchDebounce = null;
@@ -23,7 +21,7 @@ trait HasGlobalSearch
 
     protected string | bool $globalSearchProvider = true;
 
-    protected Closure | string | null $globalSearchFieldSuffix = null;
+    protected string | Closure | null $globalSearchFieldSuffix = null;
 
     public function globalSearch(string | bool $provider = true): static
     {
@@ -53,7 +51,7 @@ trait HasGlobalSearch
         return $this;
     }
 
-    public function globalSearchFieldSuffix(Closure | string $suffix): static
+    public function globalSearchFieldSuffix(string | Closure | null $suffix): static
     {
         $this->globalSearchFieldSuffix = $suffix;
 
@@ -62,32 +60,35 @@ trait HasGlobalSearch
 
     public function globalSearchFieldKeyBindingsSuffix(): static
     {
-        $this->globalSearchFieldSuffix(function () {
-            $platform = detect_platform();
+        $this->globalSearchFieldSuffix(function (): ?string {
+            $platform = Platform::detect();
             $keyBindings = $this->getGlobalSearchKeyBindings();
 
-            if (empty($keyBindings) || $platform === Platform::Other) {
+            if (! $keyBindings) {
                 return null;
             }
 
-            return str(Arr::first($keyBindings))
+            if ($platform === Platform::Other) {
+                return null;
+            }
+
+            return (string) str(Arr::first($keyBindings))
                 ->when(
-                    value: $platform === Platform::Mac,
-                    callback: fn (Stringable $str) => $str
+                    $platform === Platform::Mac,
+                    fn (Stringable $str) => $str
                         ->replace('alt', '⌥')
                         ->replace('option', '⌥')
                         ->replace('meta', '⌘')
                         ->replace('command', '⌘')
                         ->replace('mod', '⌘')
                         ->replace('ctrl', '⌃'),
-                    default: fn (Stringable $str) => $str
+                    fn (Stringable $str) => $str
                         ->replace('option', 'alt')
                         ->replace('command', 'meta')
                         ->replace('mod', 'ctrl')
                 )
                 ->replace('shift', '⇧')
-                ->upper()
-                ->toString();
+                ->upper();
         });
 
         return $this;

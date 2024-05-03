@@ -2,13 +2,25 @@
 
 namespace Filament\Support\Enums;
 
-enum Platform: string
+enum Platform
 {
-    case Windows = 'windows';
+    case Windows;
 
-    case Linux = 'linux';
+    case Linux;
 
-    case Mac = 'mac';
+    case Mac;
 
-    case Other = 'other';
+    case Other;
+
+    public static function detect(): Platform
+    {
+        $userAgent = request()->userAgent();
+
+        return match (true) {
+            str_contains($userAgent, 'Windows') => self::Windows,
+            str_contains($userAgent, 'Mac') => self::Mac,
+            str_contains($userAgent, 'Linux') => self::Linux,
+            default => self::Other,
+        };
+    }
 }
