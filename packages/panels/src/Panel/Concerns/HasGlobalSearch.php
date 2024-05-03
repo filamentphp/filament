@@ -75,14 +75,14 @@ trait HasGlobalSearch
             return (string) str(Arr::first($keyBindings))
                 ->when(
                     $platform === Platform::Mac,
-                    fn (Stringable $str) => $str
+                    fn (Stringable $string) => $string
                         ->replace('alt', '⌥')
                         ->replace('option', '⌥')
                         ->replace('meta', '⌘')
                         ->replace('command', '⌘')
                         ->replace('mod', '⌘')
                         ->replace('ctrl', '⌃'),
-                    fn (Stringable $str) => $str
+                    fn (Stringable $string) => $string
                         ->replace('option', 'alt')
                         ->replace('command', 'meta')
                         ->replace('mod', 'ctrl')
