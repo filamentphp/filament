@@ -1,6 +1,7 @@
 @php
     $debounce = filament()->getGlobalSearchDebounce();
     $keyBindings = filament()->getGlobalSearchKeyBindings();
+    $suffix = filament()->getGlobalSearchFieldSuffix();
 @endphp
 
 <div
@@ -15,6 +16,7 @@
         inline-prefix
         prefix-icon="heroicon-m-magnifying-glass"
         prefix-icon-alias="panels::global-search.field"
+        :suffix="$suffix"
         wire:target="search"
     >
         <x-filament::input
