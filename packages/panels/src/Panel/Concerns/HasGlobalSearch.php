@@ -58,7 +58,7 @@ trait HasGlobalSearch
         return $this;
     }
 
-    public function globalSearchFieldKeyBindingsSuffix(): static
+    public function globalSearchFieldKeyBindingSuffix(): static
     {
         $this->globalSearchFieldSuffix(function (): ?string {
             $platform = Platform::detect();
