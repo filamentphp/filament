@@ -80,7 +80,7 @@ class Wizard extends Component
                         /** @var Step $currentStep */
                         $currentStep = $steps[$currentStepIndex];
 
-                        /** @var Step|null $nextStep */
+                        /** @var ?Step $nextStep */
                         $nextStep = $steps[$currentStepIndex + 1] ?? null;
 
                         try {
