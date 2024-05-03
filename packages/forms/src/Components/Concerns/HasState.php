@@ -269,6 +269,17 @@ trait HasState
         Arr::set($hydratedDefaultState, $statePath, $defaultState);
     }
 
+    public function fillStateWithDefaults(): void
+    {
+        if (! Arr::has((array) $this->getLivewire(), $this->getStatePath())) {
+            $this->state($this->defaultState);
+        }
+
+        foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
+            $container->fillStateWithDefaults();
+        }
+    }
+
     public function fillStateWithNull(): void
     {
         if (! Arr::has((array) $this->getLivewire(), $this->getStatePath())) {

@@ -87,7 +87,7 @@ class Wizard extends Component
                             $currentStep->callBeforeValidation();
                             $currentStep->getChildComponentContainer()->validate();
                             $currentStep->callAfterValidation();
-                            $nextStep?->fillStateWithNull();
+                            $nextStep?->fillStateWithDefaults();
                         } catch (Halt $exception) {
                             return;
                         }

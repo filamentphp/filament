@@ -204,6 +204,13 @@ trait HasState
         }
     }
 
+    public function fillStateWithDefaults(): void
+    {
+        foreach ($this->getComponents(withHidden: true) as $component) {
+            $component->fillStateWithDefaults();
+        }
+    }
+
     public function fillStateWithNull(): void
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
