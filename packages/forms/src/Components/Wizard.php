@@ -71,17 +71,23 @@ class Wizard extends Component
                     }
 
                     if (! $component->isSkippable()) {
-                        /** @var Step $currentStep */
-                        $currentStep = array_values(
+                        $steps = array_values(
                             $component
                                 ->getChildComponentContainer()
                                 ->getComponents()
-                        )[$currentStepIndex];
+                        );
+
+                        /** @var Step $currentStep */
+                        $currentStep = $steps[$currentStepIndex];
+
+                        /** @var ?Step $nextStep */
+                        $nextStep = $steps[$currentStepIndex + 1] ?? null;
 
                         try {
                             $currentStep->callBeforeValidation();
                             $currentStep->getChildComponentContainer()->validate();
                             $currentStep->callAfterValidation();
+                            $nextStep?->fillStateWithNull();
                         } catch (Halt $exception) {
                             return;
                         }
