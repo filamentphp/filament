@@ -253,7 +253,7 @@ To disable this behavior, you may override the `$isLazy` property on the widget 
 protected static bool $isLazy = true;
 ```
 
-## Installing custom Chart.js plugins
+## Using custom Chart.js plugins
 
 Chart.js offers a powerful plugin system that allows you to extend its functionality and create custom chart behaviors. This guide details how to use them in a chart widget.
 
