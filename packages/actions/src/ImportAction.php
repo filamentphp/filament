@@ -390,17 +390,22 @@ class ImportAction extends Action
 
     protected function detectCsvEncoding(mixed $resource): ?string
     {
-        $fileContents = stream_get_contents($resource, 1000);
+        $fileHeader = fgets($resource);
 
-        foreach ([
+        // The encoding of a subset should be declared before the encoding of its superset.
+        $encodings = [
             'UTF-8',
+            'SJIS-win',
+            'EUC-KR',
             'ISO-8859-1',
             'GB18030',
             'Windows-1251',
             'Windows-1252',
             'EUC-JP',
-        ] as $encoding) {
-            if (! mb_check_encoding($fileContents, $encoding)) {
+        ];
+
+        foreach ($encodings as $encoding) {
+            if (! mb_check_encoding($fileHeader, $encoding)) {
                 continue;
             }
 
