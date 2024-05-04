@@ -21,6 +21,7 @@ abstract class Resource
     use Resource\Concerns\BelongsToCluster;
     use Resource\Concerns\BelongsToParent;
     use Resource\Concerns\BelongsToTenant;
+    use Resource\Concerns\CanGenerateUrls;
     use Resource\Concerns\HasAuthorization;
     use Resource\Concerns\HasBreadcrumbs;
     use Resource\Concerns\HasGlobalSearch;

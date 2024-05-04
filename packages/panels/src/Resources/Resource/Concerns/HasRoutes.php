@@ -3,7 +3,6 @@
 namespace Filament\Resources\Resource\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Model;
@@ -57,73 +56,44 @@ trait HasRoutes
         return static::$recordRouteKeyName;
     }
 
-    public static function registerRoutes(Panel $panel): void
-    {
-        if ($parentResource = static::getParentResourceRegistration()) {
-            $parentResource->getParentResource()::registerNestedRoutes($panel, function () use ($panel, $parentResource) {
-                Route::name($parentResource->getRouteName() . '.')
-                    ->prefix('{' . $parentResource->getParentRouteParameterName() . '}/' . $parentResource->getSlug())
-                    ->group(function () use ($panel) {
-                        foreach (static::getPages() as $name => $page) {
-                            $page->registerRoute($panel)?->name($name);
-                        }
-                    });
-            });
-
-            return;
-        }
-
-        if (filled($cluster = static::getCluster())) {
-            Route::name($cluster::prependClusterRouteBaseName('resources.'))
-                ->prefix($cluster::prependClusterSlug(''))
-                ->group(fn () => static::routes($panel));
-
-            return;
-        }
-
-        Route::name('resources.')->group(fn () => static::routes($panel));
-    }
-
-    public static function routes(Panel $panel): void
+    public static function routes(Panel $panel, ?Closure $registerPages = null): void
     {
         Route::name(static::getRelativeRouteName() . '.')
             ->prefix(static::getRoutePrefix())
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->group(function () use ($panel) {
-                foreach (static::getPages() as $name => $page) {
-                    $page->registerRoute($panel)?->name($name);
-                }
-            });
+            ->group($registerPages);
     }
 
-    public static function registerNestedRoutes(Panel $panel, Closure $routes): void
+    public static function registerRoutes(Panel $panel, ?Closure $registerPages = null): void
     {
+        $registerPages ??= function () use ($panel) {
+            foreach (static::getPages() as $name => $page) {
+                $page->registerRoute($panel)?->name($name);
+            }
+        };
+
         if ($parentResource = static::getParentResourceRegistration()) {
-            $parentResource->getParentResource()::registerNestedRoutes($panel, function () use ($parentResource, $routes) {
+            $parentResource->getParentResource()::registerRoutes($panel, function () use ($parentResource, $registerPages) {
                 Route::name($parentResource->getRouteName() . '.')
                     ->prefix('{' . $parentResource->getParentRouteParameterName() . '}/' . $parentResource->getSlug())
-                    ->group($routes);
+                    ->group($registerPages);
             });
 
             return;
         }
 
-        $nestedRoutes = fn () => Route::name(static::getRelativeRouteName() . '.')
-            ->prefix(static::getRoutePrefix())
-            ->middleware(static::getRouteMiddleware($panel))
-            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->group($routes);
+        $registerRoutes = fn () => static::routes($panel, $registerPages);
 
         if (filled($cluster = static::getCluster())) {
             Route::name($cluster::prependClusterRouteBaseName('resources.'))
                 ->prefix($cluster::prependClusterSlug(''))
-                ->group($nestedRoutes);
+                ->group($registerRoutes);
 
             return;
         }
 
-        Route::name('resources.')->group($nestedRoutes);
+        Route::name('resources.')->group($registerRoutes);
     }
 
     public static function getRelativeRouteName(): string
@@ -179,83 +149,5 @@ trait HasRoutes
             ->explode('\\')
             ->map(fn (string $string) => str($string)->kebab()->slug())
             ->implode('/');
-    }
-
-    /**
-     * @param  array<mixed>  $parameters
-     */
-    public static function getUrl(?string $name = null, array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
-    {
-        $record = $parameters['record'] ?? null;
-        $parentResource = static::getParentResource();
-
-        while (filled($parentResource)) {
-            $record = $record?->{$parentResource->getInverseRelationshipName()};
-            $parameters[$parentResource->getParentRouteParameterName()] ??= $record;
-            $parameters['record'] ??= $record;
-
-            $parentResource = $parentResource->getParentResource()::getParentResource();
-        }
-
-        if (blank($name)) {
-            return static::getIndexUrl($parameters, $isAbsolute, $panel, $tenant);
-        }
-
-        if (blank($panel) || Filament::getPanel($panel)->hasTenancy()) {
-            $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
-        }
-
-        $routeBaseName = static::getRouteBaseName(panel: $panel);
-
-        return route("{$routeBaseName}.{$name}", $parameters, $isAbsolute);
-    }
-
-    /**
-     * @param  array<mixed>  $parameters
-     */
-    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
-    {
-        $parentResourceRegistration = static::getParentResource();
-
-        if ($parentResourceRegistration) {
-            $parentResource = $parentResourceRegistration->getParentResource();
-            $parentRouteParameterName = $parentResourceRegistration->getParentRouteParameterName();
-
-            $record = $parameters[$parentRouteParameterName] ?? null;
-            unset($parameters[$parentRouteParameterName]);
-
-            if ($parentResource::hasPage($relationshipPageName = $parentResourceRegistration->getRouteName())) {
-                return $parentResource::getUrl($relationshipPageName, [
-                    ...$parameters,
-                    'record' => $record,
-                ], $isAbsolute, $panel, $tenant);
-            }
-
-            if ($parentResource::hasPage('view')) {
-                return $parentResource::getUrl('view', [
-                    'activeRelationManager' => $parentResourceRegistration->getRelationshipName(),
-                    ...$parameters,
-                    'record' => $record,
-                ], $isAbsolute, $panel, $tenant);
-            }
-
-            if ($parentResource::hasPage('edit')) {
-                return $parentResource::getUrl('edit', [
-                    'activeRelationManager' => $parentResourceRegistration->getRelationshipName(),
-                    ...$parameters,
-                    'record' => $record,
-                ], $isAbsolute, $panel, $tenant);
-            }
-
-            if ($parentResource::hasPage('index')) {
-                return $parentResource::getUrl('index', $parameters, $isAbsolute, $panel, $tenant);
-            }
-        }
-
-        if (! static::hasPage('index')) {
-            throw new Exception('The resource [' . static::class . '] does not have an [index] page or define [getIndexUrl()] for alternative routing.');
-        }
-
-        return static::getUrl('index', $parameters, $isAbsolute, $panel, $tenant);
     }
 }
