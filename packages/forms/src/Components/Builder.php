@@ -589,7 +589,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
                 return $state[$arguments['item']]['data'];
             })
-            ->form(function(array $arguments, Builder $component) {
+            ->form(function (array $arguments, Builder $component) {
                 return $component->getChildComponentContainer($arguments['item'])
                     ->getComponents();
             })

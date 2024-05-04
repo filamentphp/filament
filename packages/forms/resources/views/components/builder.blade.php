@@ -214,7 +214,11 @@
                                     {{ $item->getParentComponent()->viewData($item->getRawState())->renderPreview() }}
                                 </div>
                                 @if (! $hasInteractiveBlockPreviews())
-                                    <div class="absolute inset-0 z-[1] cursor-pointer" role="button" x-on:click.stop="{{ '$wire.mountFormComponentAction(\'' . $statePath . '\', \'updateBlock\', { item: \'' . $uuid . '\' })' }}"></div>
+                                    <div
+                                        class="absolute inset-0 z-[1] cursor-pointer"
+                                        role="button"
+                                        x-on:click.stop="{{ '$wire.mountFormComponentAction(\'' . $statePath . '\', \'updateBlock\', { item: \'' . $uuid . '\' })' }}"
+                                    ></div>
                                 @endif
                             @else
                                 {{ $item }}
