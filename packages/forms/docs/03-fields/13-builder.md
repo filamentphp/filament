@@ -463,3 +463,47 @@ $state[Str::uuid()] = [
 // Set the new data for the builder
 $component->state($state);
 ```
+
+## Previewing blocks
+
+If you prefer to render block previews in the builder instead of the block's form, you can use `blockPreviews()`. This will render the block's `->view()` instead of the form. Block data will be available in the preview as it's corresponding variable name.
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\TextInput;
+
+Builder::make('content')
+    ->blockPreviews()
+    ->blocks([
+        Block::make('heading')
+            ->view('components.blocks.heading')
+            ->schema([
+                TextInput::make('text'),
+            ])
+]),
+```
+
+```blade
+{{-- components/blocks/heading.blade.php --}}
+@php
+    $text ??= 'Default text';
+@endphp
+
+<h1>{{ $text }}</h1>
+```
+
+### Block interactivity
+
+Since blocks are rendered blade views in the builder, things like links and buttons will be interactive. This is usually not the desired behavior, so the builder will prevent the block from being interactive by default. If you want to allow interactivity in the block preview you can pass the `interactive` argument to the `blockPreviews()` method.
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blockPreviews(interactive: true)
+    ->blocks([
+        //
+    ])
+]),
+```

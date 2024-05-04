@@ -50,6 +50,10 @@ return [
                 'label' => 'Expand all',
             ],
 
+            'update_block' => [
+                'label' => 'Update block',
+            ],
+
         ],
 
     ],

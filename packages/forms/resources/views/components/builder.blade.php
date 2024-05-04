@@ -5,6 +5,7 @@
     $blockPickerBlocks = $getBlockPickerBlocks();
     $blockPickerColumns = $getBlockPickerColumns();
     $blockPickerWidth = $getBlockPickerWidth();
+    $hasBlockPreviews = $hasBlockPreviews();
 
     $addAction = $getAction($getAddActionName());
     $addBetweenAction = $getAction($getAddBetweenActionName());
@@ -15,6 +16,7 @@
     $moveDownAction = $getAction($getMoveDownActionName());
     $moveUpAction = $getAction($getMoveUpActionName());
     $reorderAction = $getAction($getReorderActionName());
+    $updateBlockAction = $getAction($getUpdateBlockActionName());
     $extraItemActions = $getExtraItemActions();
 
     $isAddable = $isAddable();
@@ -141,7 +143,7 @@
                                     </h4>
                                 @endif
 
-                                @if ($isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
+                                @if ($isCloneable || $isDeletable || $isCollapsible || $hasBlockPreviews || count($visibleExtraItemActions))
                                     <ul
                                         class="ms-auto flex items-center gap-x-3"
                                     >
@@ -150,6 +152,12 @@
                                                 {{ $extraItemAction(['item' => $uuid]) }}
                                             </li>
                                         @endforeach
+
+                                        @if ($hasBlockPreviews)
+                                            <li x-on:click.stop>
+                                                {{ $updateBlockAction(['item' => $uuid]) }}
+                                            </li>
+                                        @endif
 
                                         @if ($isCloneable)
                                             <li x-on:click.stop>
@@ -191,9 +199,26 @@
 
                         <div
                             x-show="! isCollapsed"
-                            class="fi-fo-builder-item-content border-t border-gray-100 p-4 dark:border-white/10"
+                            @class([
+                                'fi-fo-builder-item-content relative border-t border-gray-100 dark:border-white/10',
+                                'p-4' => ! $hasBlockPreviews,
+                            ])
                         >
-                            {{ $item }}
+                            @if ($hasBlockPreviews)
+                                <div
+                                    @class([
+                                        'fi-fo-builder-item-preview',
+                                        'pointer-events-none' => ! $hasInteractiveBlockPreviews(),
+                                    ])
+                                >
+                                    {{ $item->getParentComponent()->viewData($item->getRawState())->renderPreview() }}
+                                </div>
+                                @if (! $hasInteractiveBlockPreviews())
+                                    <div class="absolute inset-0 z-[1] cursor-pointer" role="button" x-on:click.stop="{{ '$wire.mountFormComponentAction(\'' . $statePath . '\', \'updateBlock\', { item: \'' . $uuid . '\' })' }}"></div>
+                                @endif
+                            @else
+                                {{ $item }}
+                            @endif
                         </div>
                     </li>
 
