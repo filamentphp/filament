@@ -56,34 +56,34 @@ trait HasRoutes
         return static::$recordRouteKeyName;
     }
 
-    public static function routes(Panel $panel, ?Closure $registerPages = null): void
+    public static function routes(Panel $panel, ?Closure $registerPageRoutes = null): void
     {
         Route::name(static::getRelativeRouteName() . '.')
             ->prefix(static::getRoutePrefix())
             ->middleware(static::getRouteMiddleware($panel))
             ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->group($registerPages);
+            ->group($registerPageRoutes);
     }
 
-    public static function registerRoutes(Panel $panel, ?Closure $registerPages = null): void
+    public static function registerRoutes(Panel $panel, ?Closure $registerPageRoutes = null): void
     {
-        $registerPages ??= function () use ($panel) {
+        $registerPageRoutes ??= function () use ($panel) {
             foreach (static::getPages() as $name => $page) {
                 $page->registerRoute($panel)?->name($name);
             }
         };
 
         if ($parentResource = static::getParentResourceRegistration()) {
-            $parentResource->getParentResource()::registerRoutes($panel, function () use ($parentResource, $registerPages) {
+            $parentResource->getParentResource()::registerRoutes($panel, function () use ($parentResource, $registerPageRoutes) {
                 Route::name($parentResource->getRouteName() . '.')
                     ->prefix('{' . $parentResource->getParentRouteParameterName() . '}/' . $parentResource->getSlug())
-                    ->group($registerPages);
+                    ->group($registerPageRoutes);
             });
 
             return;
         }
 
-        $registerRoutes = fn () => static::routes($panel, $registerPages);
+        $registerRoutes = fn () => static::routes($panel, $registerPageRoutes);
 
         if (filled($cluster = static::getCluster())) {
             Route::name($cluster::prependClusterRouteBaseName('resources.'))
