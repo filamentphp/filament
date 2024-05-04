@@ -10,6 +10,8 @@
             'default' => $columnStart ?? null,
         ];
     }
+
+    $placeholderHeight = $getPlaceholderHeight() ?? '8rem'; // 8rem = h-32
 @endphp
 
 <x-filament::grid.column
@@ -27,5 +29,5 @@
     :twoXlStart="$columnStart['2xl'] ?? null"
     class="fi-loading-section"
 >
-    <x-filament::section class="h-32 animate-pulse" />
+    <x-filament::section class="animate-pulse" style="height: {{ $placeholderHeight }};" />
 </x-filament::grid.column>
