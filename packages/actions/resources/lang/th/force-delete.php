@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'ลบแล้ว',
+                'title' => 'ลบข้อมูลเรียบร้อย',
             ],
 
         ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'ลบแล้ว',
+                'title' => 'ลบข้อมูลเรียบร้อย',
             ],
 
         ],
