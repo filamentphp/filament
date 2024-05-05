@@ -87,7 +87,7 @@ class Login extends SimplePage
 
         session()->regenerate();
 
-        $this->postLoginHook($user)
+        $this->postLoginHook($user);
 
         return app(LoginResponse::class);
     }
