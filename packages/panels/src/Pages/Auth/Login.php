@@ -92,7 +92,7 @@ class Login extends SimplePage
         return app(LoginResponse::class);
     }
 
-    protected function postLoginHook(FilamentUser $user)
+    protected function postLoginHook(FilamentUser $user): void
     {
         // log a login event to your Analytics Events SaaS or to do something before the login response is returned
     }
