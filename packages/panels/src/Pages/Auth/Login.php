@@ -87,7 +87,14 @@ class Login extends SimplePage
 
         session()->regenerate();
 
+        $this->postLoginHook($user)
+
         return app(LoginResponse::class);
+    }
+
+    protected function postLoginHook(FilamentUser $user)
+    {
+        // log a login event to your Analytics Events SaaS or to do something before the login response is returned
     }
 
     protected function throwFailureValidationException(): never
