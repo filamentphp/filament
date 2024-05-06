@@ -17,7 +17,13 @@ trait CanBeLazy
 
     public function placeholder(): View
     {
-        return view('filament::components.loading-section', $this->getPlaceholderData());
+        return view(
+            'filament::components.loading-section',
+            [
+                'height' => $this->getPlaceholderHeight(),
+                ...$this->getPlaceholderData(),
+            ],
+        );
     }
 
     /**
