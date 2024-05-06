@@ -142,7 +142,7 @@ class ViewRecord extends Page
             ->form(fn (Schema $form): Schema => static::getResource()::form($form));
 
         if ($resource::hasPage('edit')) {
-            $action->url(fn (): string => static::getResource()::getUrl('edit', ['record' => $this->getRecord()]));
+            $action->url(fn (): string => $this->getResourceUrl('edit'));
         }
     }
 
@@ -152,7 +152,7 @@ class ViewRecord extends Page
 
         $action
             ->authorize($resource::canForceDelete($this->getRecord()))
-            ->successRedirectUrl($resource::getUrl('index'));
+            ->successRedirectUrl($this->getResourceUrl());
     }
 
     protected function configureReplicateAction(ReplicateAction $action): void
@@ -173,7 +173,7 @@ class ViewRecord extends Page
 
         $action
             ->authorize($resource::canDelete($this->getRecord()))
-            ->successRedirectUrl($resource::getUrl('index'));
+            ->successRedirectUrl($this->getResourceUrl());
     }
 
     public function getTitle(): string | Htmlable

@@ -217,6 +217,12 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
                 return $form;
             });
+
+        $relatedResource = static::getRelatedResource();
+
+        if ($relatedResource && $relatedResource::hasPage('create')) {
+            $action->url(fn (): string => $relatedResource::getUrl('create', [$relatedResource::getParentResourceRegistration()->getParentRouteParameterName() => $this->getOwnerRecord()]));
+        }
     }
 
     protected function configureDeleteAction(Actions\DeleteAction $action): void
@@ -246,6 +252,12 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
                 return $form;
             });
+
+        $relatedResource = static::getRelatedResource();
+
+        if ($relatedResource && $relatedResource::hasPage('edit')) {
+            $action->url(fn (Model $record): string => $relatedResource::getUrl('edit', ['record' => $record]));
+        }
     }
 
     protected function configureForceDeleteAction(Actions\ForceDeleteAction $action): void
@@ -280,6 +292,12 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
                 return $form;
             });
+
+        $relatedResource = static::getRelatedResource();
+
+        if ($relatedResource && $relatedResource::hasPage('view')) {
+            $action->url(fn (Model $record): string => $relatedResource::getUrl('view', ['record' => $record]));
+        }
     }
 
     protected function configureTableBulkAction(BulkAction $action): void

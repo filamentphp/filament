@@ -2,6 +2,12 @@
 
 namespace Filament\Resources;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Support\Str;
+
 class ParentResourceRegistration
 {
     public function __construct(
@@ -25,18 +31,43 @@ class ParentResourceRegistration
         return $this->parentResource;
     }
 
-    public function getChildResource(): ?string
+    public function getChildResource(): string
     {
         return $this->childResource;
     }
 
-    public function getRelationshipName(): ?string
+    public function getRelationship(Model $parentRecord): HasOneOrMany | BelongsToMany
+    {
+        return $parentRecord->{$this->getRelationshipName()}();
+    }
+
+    public function getInverseRelationship(Model $parentRecord): BelongsTo | BelongsToMany
+    {
+        return $parentRecord->{$this->getInverseRelationshipName()}();
+    }
+
+    public function getRelationshipName(): string
     {
         return $this->relationshipName;
     }
 
-    public function getInverseRelationshipName(): ?string
+    public function getInverseRelationshipName(): string
     {
         return $this->inverseRelationshipName;
+    }
+
+    public function getParentRouteParameterName(): string
+    {
+        return Str::kebab($this->inverseRelationshipName);
+    }
+
+    public function getSlug(): string
+    {
+        return Str::slug($this->relationshipName);
+    }
+
+    public function getRouteName(): string
+    {
+        return Str::kebab($this->relationshipName);
     }
 }

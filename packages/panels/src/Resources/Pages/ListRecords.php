@@ -124,12 +124,14 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
             ->schema(fn (Schema $schema): Schema => $this->form($schema->columns(2)));
 
-        if (($action instanceof CreateAction) && static::getResource()::isScopedToTenant()) {
+        if ($parentRecord = $this->getParentRecord()) {
+            $action->relationship(fn (): Relation => $resource::getParentResourceRegistration()->getRelationship($parentRecord));
+        } elseif (static::getResource()::isScopedToTenant()) {
             $action->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null);
         }
 
         if ($resource::hasPage('create')) {
-            $action->url(fn (): string => $resource::getUrl('create'));
+            $action->url(fn (): string => $this->getResourceUrl('create'));
         }
     }
 
@@ -164,7 +166,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->icon(FilamentIcon::resolve('actions::edit-action') ?? 'heroicon-m-pencil-square');
 
         if ($resource::hasPage('edit')) {
-            $action->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]));
+            $action->url(fn (Model $record): string => $this->getResourceUrl('edit', ['record' => $record]));
         }
     }
 
@@ -199,7 +201,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->schema(fn (Schema $schema): Schema => $this->infolist($this->form($schema->columns(2))));
 
         if ($resource::hasPage('view')) {
-            $action->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]));
+            $action->url(fn (Model $record): string => $this->getResourceUrl('view', ['record' => $record]));
         }
     }
 
@@ -256,6 +258,12 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         $table = $this->makeBaseTable()
             ->query(fn (): Builder => $this->getTableQuery())
+            ->when(
+                $this->getParentRecord(),
+                fn (Table $table, Model $parentRecord): Table => $table->modifyQueryUsing(
+                    fn (Builder $query) => static::getResource()::scopeEloquentQueryToParent($query, $parentRecord),
+                ),
+            )
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
             ->when($this->getModelLabel(), fn (Table $table, string $modelLabel): Table => $table->modelLabel($modelLabel))
             ->when($this->getPluralModelLabel(), fn (Table $table, string $pluralModelLabel): Table => $table->pluralModelLabel($pluralModelLabel))
@@ -320,7 +328,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                         continue;
                     }
 
-                    return $resource::getUrl($action, ['record' => $record]);
+                    return $this->getResourceUrl($action, ['record' => $record]);
                 }
 
                 return null;
