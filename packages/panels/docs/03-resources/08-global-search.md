@@ -200,7 +200,7 @@ public function panel(Panel $panel): Panel
         // ...
         ->globalSearchFieldSuffix(fn (): ?string => match (Platform::detect()) {
             Platform::Windows, Platform::Linux => 'CTRL+K',
-            Platform::Mac => '⌘K'
+            Platform::Mac => '⌘K',
             default => null,
         });
 }
