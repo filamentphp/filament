@@ -4,20 +4,20 @@ return [
 
     'single' => [
 
-        'label' => ':label ใหม่',
+        'label' => 'เพิ่ม:label',
 
         'modal' => [
 
-            'heading' => 'สร้าง :label',
+            'heading' => 'เพิ่ม:label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'สร้าง',
+                    'label' => 'บันทึก',
                 ],
 
                 'create_another' => [
-                    'label' => 'สร้างและสร้างอีก',
+                    'label' => 'บันทึกและเพิ่มอีกรายการ',
                 ],
 
             ],
@@ -27,7 +27,7 @@ return [
         'notifications' => [
 
             'created' => [
-                'title' => 'สร้างแล้ว',
+                'title' => 'บันทึกเรียบร้อย',
             ],
 
         ],

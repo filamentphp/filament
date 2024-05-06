@@ -12,6 +12,7 @@ use Filament\Pages\Page;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schema\Schema;
+use Filament\Support\Concerns\CanBeLazy;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -26,6 +27,7 @@ use function Filament\authorize;
 class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
 {
     use Actions\Concerns\InteractsWithActions;
+    use CanBeLazy;
     use Forms\Concerns\InteractsWithForms;
     use Infolists\Concerns\InteractsWithInfolists;
     use InteractsWithRelationshipTable {
@@ -84,8 +86,6 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     protected static ?string $badgeColor = null;
 
     protected static ?string $badgeTooltip = null;
-
-    protected static bool $isLazy = true;
 
     public function mount(): void
     {
@@ -547,10 +547,5 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         }
 
         return $properties;
-    }
-
-    public static function isLazy(): bool
-    {
-        return static::$isLazy;
     }
 }
