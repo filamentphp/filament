@@ -120,11 +120,6 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         ];
     }
 
-    public function placeholder(): View
-    {
-        return view('filament::components.loading-section');
-    }
-
     public function render(): View
     {
         return view(static::$view, $this->getViewData());

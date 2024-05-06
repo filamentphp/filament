@@ -11,7 +11,7 @@
         ];
     }
 
-    $placeholderHeight = $getPlaceholderHeight() ?? '8rem';
+    $height ??= '8rem';
 @endphp
 
 <x-filament::grid.column
@@ -31,6 +31,6 @@
 >
     <x-filament::section
         class="animate-pulse"
-        style="height: {{ $placeholderHeight }}"
+        style="height: {{ $height }}"
     />
 </x-filament::grid.column>
