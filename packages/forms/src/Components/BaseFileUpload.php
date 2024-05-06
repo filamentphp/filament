@@ -66,6 +66,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected ?Closure $getUploadedFileNameForStorageUsing = null;
 
+    protected ?Closure $getUploadedFileUrlUsing = null;
+
     protected ?Closure $getUploadedFileUsing = null;
 
     protected ?Closure $reorderUploadedFilesUsing = null;
@@ -137,6 +139,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return $files[0] ?? null;
         });
 
+        $this->getUploadedFileUrlUsing(static function ($file, $storage) {
+            return $storage->url($file);
+        });
+
         $this->getUploadedFileUsing(static function (BaseFileUpload $component, string $file, string | array | null $storedFileNames): ?array {
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
@@ -166,7 +172,10 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 }
             }
 
-            $url ??= $storage->url($file);
+            $url ??= $component->evaluate($component->getUploadedFileUrlUsing, [
+                'file' => $file,
+                'storage' => $storage,
+            ]);
 
             return [
                 'name' => ($component->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
@@ -836,6 +845,13 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this->evaluate($this->getUploadedFileNameForStorageUsing, [
             'file' => $file,
         ]);
+    }
+
+    public function getUploadedFileUrlUsing(Closure $callback): static
+    {
+        $this->getUploadedFileUrlUsing = $callback;
+
+        return $this;
     }
 
     /**

@@ -322,6 +322,19 @@ FileUpload::make('attachments')
     ->previewable(false)
 ```
 
+## Set a different base URL
+
+By default, uploaded files are served from the domain specified in the APP_URL set in your .env file. If your multitenant application uses subdomains, you can set the current subdomain URL using the `getUploadedFileUrlUsing' callback.
+
+```php
+Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->getUploadedFileUrlUsing(fn (string $file): string => url("/{$file}"))
+```
+
+> To correctly preview images and other files, FilePond requires files to be served from the same domain as the app, or the appropriate CORS headers need to be present. If you're hosting files on a separate CDN domain like S3, ensure that CORS headers are set up.
+
 ## Moving files instead of copying when the form is submitted
 
 By default, files are initially uploaded to Livewire's temporary storage directory, and then copied to the destination directory when the form is submitted. If you wish to move the files instead, providing that temporary uploads are stored on the same disk as permanent files, you can use the `moveFiles()` method:
