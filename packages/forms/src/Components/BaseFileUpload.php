@@ -139,7 +139,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return $files[0] ?? null;
         });
 
-        $this->getUploadedFileUrlUsing(static function ($file, $storage) {
+        $this->getUploadedFileUrlUsing(static function ($file, $storage): string {
             return $storage->url($file);
         });
 
@@ -847,7 +847,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         ]);
     }
 
-    public function getUploadedFileUrlUsing(Closure $callback): static
+    public function getUploadedFileUrlUsing(?Closure $callback): static
     {
         $this->getUploadedFileUrlUsing = $callback;
 

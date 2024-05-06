@@ -322,9 +322,9 @@ FileUpload::make('attachments')
     ->previewable(false)
 ```
 
-## Set a different base URL
+## Set a different base file URL
 
-By default, uploaded files are served from the domain specified in the APP_URL set in your .env file. If your multitenant application uses subdomains, you can set the current subdomain URL using the `getUploadedFileUrlUsing' callback.
+By default, uploaded files are served from the domain specified in the `APP_URL` `.env` value. This is because Filament uses the storage `url()` method to generate URLs for files. If your multi-tenant application uses the `public` storage disk as well as different subdomains for different tenants, you can set the current subdomain URL using the `getUploadedFileUrlUsing()` callback, calling Laravel's `url()` helper:
 
 ```php
 Filament\Forms\Components\FileUpload;
