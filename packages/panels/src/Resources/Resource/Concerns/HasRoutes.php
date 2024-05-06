@@ -25,10 +25,16 @@ trait HasRoutes
      */
     protected static string | array $withoutRouteMiddleware = [];
 
-    public static function resolveRecordRouteBinding(int | string $key): ?Model
+    public static function resolveRecordRouteBinding(int | string $key, ?Closure $modifyQuery = null): ?Model
     {
+        $query = static::getEloquentQuery();
+
+        if ($modifyQuery) {
+            $query = $modifyQuery($query) ?? $query;
+        }
+
         return app(static::getModel())
-            ->resolveRouteBindingQuery(static::getEloquentQuery(), $key, static::getRecordRouteKeyName())
+            ->resolveRouteBindingQuery($query, $key, static::getRecordRouteKeyName())
             ->first();
     }
 

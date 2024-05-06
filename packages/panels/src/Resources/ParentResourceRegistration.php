@@ -3,6 +3,7 @@
 namespace Filament\Resources;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Str;
@@ -38,6 +39,11 @@ class ParentResourceRegistration
     public function getRelationship(Model $parentRecord): HasOneOrMany | BelongsToMany
     {
         return $parentRecord->{$this->getRelationshipName()}();
+    }
+
+    public function getInverseRelationship(Model $parentRecord): BelongsTo | BelongsToMany
+    {
+        return $parentRecord->{$this->getInverseRelationshipName()}();
     }
 
     public function getRelationshipName(): string

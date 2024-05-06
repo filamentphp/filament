@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages\Concerns;
 
 use Filament\Actions\Action;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Attributes\Locked;
@@ -20,10 +21,23 @@ trait InteractsWithRecord
 
     protected function resolveRecord(int | string $key): Model
     {
-        $record = static::getResource()::resolveRecordRouteBinding($key);
+        $this->mountParentRecord();
+
+        $parentRecord = $this->getParentRecord();
+        $modifyQuery = null;
+
+        if ($parentRecord) {
+            $modifyQuery = fn (Builder $query) => static::getResource()::scopeEloquentQueryToParent($query, $parentRecord);
+        }
+
+        $record = static::getResource()::resolveRecordRouteBinding($key, $modifyQuery);
 
         if ($record === null) {
             throw (new ModelNotFoundException())->setModel($this->getModel(), [$key]);
+        }
+
+        if ($parentRecord) {
+            $record->setRelation(static::getResource()::getParentResourceRegistration()->getInverseRelationshipName(), $parentRecord);
         }
 
         return $record;

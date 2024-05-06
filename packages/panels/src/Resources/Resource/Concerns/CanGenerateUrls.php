@@ -14,14 +14,14 @@ trait CanGenerateUrls
     public static function getUrl(?string $name = null, array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
     {
         $record = $parameters['record'] ?? null;
-        $parentResource = static::getParentResource();
+        $parentResource = static::getParentResourceRegistration();
 
         while (filled($parentResource)) {
-            $record = $record?->{$parentResource->getInverseRelationshipName()};
+            $record = $parameters[$parentResource->getParentRouteParameterName()] ?? $record?->{$parentResource->getInverseRelationshipName()};
             $parameters[$parentResource->getParentRouteParameterName()] ??= $record;
             $parameters['record'] ??= $record;
 
-            $parentResource = $parentResource->getParentResource()::getParentResource();
+            $parentResource = $parentResource->getParentResource()::getParentResourceRegistration();
         }
 
         if (blank($name)) {

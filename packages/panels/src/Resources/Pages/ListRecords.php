@@ -258,6 +258,12 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         $table = $this->makeBaseTable()
             ->query(fn (): Builder => $this->getTableQuery())
+            ->when(
+                $this->getParentRecord(),
+                fn (Table $table, Model $parentRecord): Table => $table->modifyQueryUsing(
+                    fn (Builder $query) => static::getResource()::scopeEloquentQueryToParent($query, $parentRecord),
+                ),
+            )
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
             ->when($this->getModelLabel(), fn (Table $table, string $modelLabel): Table => $table->modelLabel($modelLabel))
             ->when($this->getPluralModelLabel(), fn (Table $table, string $pluralModelLabel): Table => $table->pluralModelLabel($pluralModelLabel))
