@@ -13,7 +13,7 @@ return [
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'ระเบียน',
+                    'label' => 'รายการ',
                 ],
 
             ],
@@ -25,7 +25,7 @@ return [
                 ],
 
                 'attach_another' => [
-                    'label' => 'แนบและแนบระเบียนอื่น',
+                    'label' => 'แนบและแนบรายการอื่น',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'attached' => [
-                'title' => 'แนบแล้ว',
+                'title' => 'บันทึกเรียบร้อย',
             ],
 
         ],

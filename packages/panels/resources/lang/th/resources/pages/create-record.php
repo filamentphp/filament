@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'สร้าง :label',
+    'title' => 'เพิ่ม:label',
 
-    'breadcrumb' => 'สร้าง',
+    'breadcrumb' => 'เพิ่ม',
 
     'form' => [
 
@@ -15,11 +15,11 @@ return [
             ],
 
             'create' => [
-                'label' => 'สร้าง',
+                'label' => 'บันทึก',
             ],
 
             'create_another' => [
-                'label' => 'สร้างและสร้างอีก',
+                'label' => 'บันทึกและเพิ่มอีกรายการ',
             ],
 
         ],
@@ -29,7 +29,7 @@ return [
     'notifications' => [
 
         'created' => [
-            'title' => 'สร้างแล้ว',
+            'title' => 'บันทึกเรียบร้อย',
         ],
 
     ],

@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'ลบ :label',
+            'heading' => 'ลบ:label',
 
             'actions' => [
 
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'ลบแล้ว',
+                'title' => 'ลบข้อมูลเรียบร้อย',
             ],
 
         ],
@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'ลบ :label ที่เลือก',
+            'heading' => 'ลบ:labelที่เลือก',
 
             'actions' => [
 
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'ลบแล้ว',
+                'title' => 'ลบข้อมูลเรียบร้อย',
             ],
 
         ],

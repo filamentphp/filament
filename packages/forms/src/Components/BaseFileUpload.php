@@ -834,7 +834,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return (bool) $this->evaluate($this->isMultiple);
     }
 
-    public function getUploadedFileNameForStorageUsing(Closure $callback): static
+    public function getUploadedFileNameForStorageUsing(?Closure $callback): static
     {
         $this->getUploadedFileNameForStorageUsing = $callback;
 

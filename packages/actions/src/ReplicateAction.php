@@ -68,7 +68,7 @@ class ReplicateAction extends Action
         $this->groupedIcon(FilamentIcon::resolve('actions::replicate-action.grouped') ?? 'heroicon-m-square-2-stack');
     }
 
-    public function beforeReplicaSaved(Closure $callback): static
+    public function beforeReplicaSaved(?Closure $callback): static
     {
         $this->beforeReplicaSaved = $callback;
 
@@ -85,7 +85,7 @@ class ReplicateAction extends Action
     /**
      * @deprecated Use `after()` instead.
      */
-    public function afterReplicaSaved(Closure $callback): static
+    public function afterReplicaSaved(?Closure $callback): static
     {
         $this->after($callback);
 

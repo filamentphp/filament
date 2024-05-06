@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'แก้ไข :label',
+    'title' => 'แก้ไข:label',
 
     'breadcrumb' => 'แก้ไข',
 
@@ -15,7 +15,7 @@ return [
             ],
 
             'save' => [
-                'label' => 'บันทึกการเปลี่ยนแปลง',
+                'label' => 'บันทึก',
             ],
 
         ],
@@ -33,7 +33,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'บันทึกแล้ว',
+            'title' => 'บันทึกข้อมูลเรียบร้อย',
         ],
 
     ],
