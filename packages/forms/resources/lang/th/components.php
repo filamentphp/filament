@@ -11,7 +11,7 @@ return [
             ],
 
             'add' => [
-                'label' => 'เพิ่มไปยัง :label',
+                'label' => 'เพิ่มไปยัง:label',
             ],
 
             'add_between' => [
@@ -27,11 +27,11 @@ return [
             ],
 
             'move_down' => [
-                'label' => 'ย้ายลง',
+                'label' => 'เลื่อนลง',
             ],
 
             'move_up' => [
-                'label' => 'ย้ายขึ้น',
+                'label' => 'เลื่อนขึ้น',
             ],
 
             'collapse' => [
@@ -154,12 +154,12 @@ return [
                 ],
 
                 'rotation' => [
-                    'label' => 'Rotation',
+                    'label' => 'หมุน',
                     'unit' => 'องศา',
                 ],
 
                 'width' => [
-                    'label' => 'Width',
+                    'label' => 'กว้าง',
                     'unit' => 'พิก',
                 ],
 
@@ -242,10 +242,10 @@ return [
             'italic' => 'ตัวเอียง',
             'link' => 'ลิงก์',
             'ordered_list' => 'รายการลําดับเลข',
-            'redo' => 'กลับคืนสู่ปัจจุบัน',
+            'redo' => 'ทำอีกครั้ง',
             'strike' => 'ขีดฆ่า',
             'table' => 'ตาราง',
-            'undo' => 'ย้อนกลับ',
+            'undo' => 'ยกเลิกทำ',
         ],
 
     ],
@@ -264,7 +264,7 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'เพิ่มไปยัง :label',
+                'label' => 'เพิ่มไปยัง:label',
             ],
             'add_between' => [
                 'label' => 'แทรกระหว่าง',
@@ -279,10 +279,10 @@ return [
                 'label' => 'ย้าย',
             ],
             'move_down' => [
-                'label' => 'ย้ายลง',
+                'label' => 'เลื่อนลง',
             ],
             'move_up' => [
-                'label' => 'ย้ายขึ้น',
+                'label' => 'เลื่อนขึ้น',
             ],
             'collapse' => [
                 'label' => 'ยุบ',
@@ -314,7 +314,7 @@ return [
 
                 'label' => 'URL',
 
-                'placeholder' => 'ป้อน URL',
+                'placeholder' => 'ระบุ URL',
 
             ],
 
@@ -348,7 +348,7 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'Create',
+                    'heading' => 'สร้าง',
 
                     'actions' => [
 
@@ -357,7 +357,7 @@ return [
                         ],
 
                         'create_another' => [
-                            'label' => 'สร้างและสร้างอีก',
+                            'label' => 'บันทึกและสร้างอีกรายการ',
                         ],
 
                     ],
@@ -397,7 +397,7 @@ return [
 
         'no_search_results_message' => 'ไม่มีตัวเลือกที่ตรงกับการค้นหา',
 
-        'placeholder' => 'เลือกตัวเลือก',
+        'placeholder' => 'เลือก',
 
         'searching_message' => 'กำลังค้นหา...',
 

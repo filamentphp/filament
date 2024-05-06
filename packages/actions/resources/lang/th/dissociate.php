@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'ยกเลิกการเชื่อมโยงแล้ว',
+                'title' => 'บันทึกเรียบร้อย',
             ],
 
         ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'ยกเลิกการเชื่อมโยงแล้ว',
+                'title' => 'บันทึกเรียบร้อย',
             ],
 
         ],

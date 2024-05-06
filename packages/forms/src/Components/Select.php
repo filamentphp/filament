@@ -245,7 +245,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
-    public function createOptionUsing(Closure $callback): static
+    public function createOptionUsing(?Closure $callback): static
     {
         $this->createOptionUsing = $callback;
 
@@ -391,7 +391,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
-    public function updateOptionUsing(Closure $callback): static
+    public function updateOptionUsing(?Closure $callback): static
     {
         $this->updateOptionUsing = $callback;
 

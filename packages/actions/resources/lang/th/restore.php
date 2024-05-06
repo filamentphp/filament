@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'กู้คืนแล้ว',
+                'title' => 'กู้คืนข้อมูลเรียบร้อย',
             ],
 
         ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'กู้คืนแล้ว',
+                'title' => 'กู้คืนข้อมูลเรียบร้อย',
             ],
 
         ],
