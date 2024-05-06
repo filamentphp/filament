@@ -49,7 +49,7 @@ protected function getStats(): array
             ->description('32k increase')
             ->descriptionIcon('heroicon-m-arrow-trending-up'),
         Stat::make('Bounce rate', '21%')
-            ->description('7% increase')
+            ->description('7% decrease')
             ->descriptionIcon('heroicon-m-arrow-trending-down'),
         Stat::make('Average time on page', '3:12')
             ->description('3% increase')
