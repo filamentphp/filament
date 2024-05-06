@@ -29,5 +29,8 @@
     :twoXlStart="$columnStart['2xl'] ?? null"
     class="fi-loading-section"
 >
-    <x-filament::section class="animate-pulse" style="height: {{ $placeholderHeight }}" />
+    <x-filament::section
+        class="animate-pulse"
+        style="height: {{ $placeholderHeight }}"
+    />
 </x-filament::grid.column>

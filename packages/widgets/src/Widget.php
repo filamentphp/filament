@@ -91,4 +91,18 @@ abstract class Widget extends Component
             'columnStart' => $this->getColumnStart(),
         ];
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getDefaultProperties(): array
+    {
+        $properties = [];
+
+        if (static::isLazy()) {
+            $properties['lazy'] = true;
+        }
+
+        return $properties;
+    }
 }

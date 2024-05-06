@@ -520,4 +520,18 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
                 fn (Table $table, ?Closure $using) => $table->recordUrl($using),
             );
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getDefaultProperties(): array
+    {
+        $properties = [];
+
+        if (static::isLazy()) {
+            $properties['lazy'] = true;
+        }
+
+        return $properties;
+    }
 }
