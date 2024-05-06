@@ -6,7 +6,9 @@ use Filament\Clusters\Cluster;
 
 trait BelongsToCluster
 {
-    /** @var class-string<Cluster> | null */
+    /**
+     * @var class-string<Cluster> | null
+     */
     protected static ?string $cluster = null;
 
     /**

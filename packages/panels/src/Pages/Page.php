@@ -22,7 +22,9 @@ abstract class Page extends BasePage
 
     protected static string $layout;
 
-    /** @var class-string<Cluster> | null */
+    /**
+     * @var class-string<Cluster> | null
+     */
     protected static ?string $cluster = null;
 
     protected static bool $isDiscovered = true;

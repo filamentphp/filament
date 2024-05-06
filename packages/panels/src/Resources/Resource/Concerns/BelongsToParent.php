@@ -2,7 +2,9 @@
 
 namespace Filament\Resources\Resource\Concerns;
 
+use Filament\Clusters\Cluster;
 use Filament\Resources\ParentResourceRegistration;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,9 +12,14 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 trait BelongsToParent
 {
+    /**
+     * @var class-string<Resource> | null
+     */
+    protected static ?string $parentResource = null;
+
     public static function getParentResource(): string | ParentResourceRegistration | null
     {
-        return null;
+        return static::$parentResource;
     }
 
     public static function asParent(): ParentResourceRegistration
