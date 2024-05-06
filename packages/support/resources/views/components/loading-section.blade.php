@@ -11,7 +11,7 @@
         ];
     }
 
-    $placeholderHeight = $getPlaceholderHeight() ?? '8rem'; // 8rem = h-32
+    $placeholderHeight = $getPlaceholderHeight() ?? '8rem';
 @endphp
 
 <x-filament::grid.column
