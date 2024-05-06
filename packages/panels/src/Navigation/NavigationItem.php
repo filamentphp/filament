@@ -121,7 +121,7 @@ class NavigationItem extends Component
         return $this;
     }
 
-    public function isActiveWhen(Closure $callback): static
+    public function isActiveWhen(?Closure $callback): static
     {
         $this->isActive = $callback;
 

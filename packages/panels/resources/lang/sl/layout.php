@@ -1,63 +1,63 @@
 <?php
 
-    return [
+return [
 
-        'direction' => 'ltr',
+    'direction' => 'ltr',
 
-        'actions' => [
+    'actions' => [
 
-            'billing' => [
-                'label' => 'Upravljanje naročnine',
+        'billing' => [
+            'label' => 'Upravljanje naročnine',
+        ],
+
+        'logout' => [
+            'label' => 'Odjava',
+        ],
+
+        'open_database_notifications' => [
+            'label' => 'Odpri obvestila',
+        ],
+
+        'open_user_menu' => [
+            'label' => 'Uporabniški meni',
+        ],
+
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Strni stranski meni',
             ],
 
-            'logout' => [
-                'label' => 'Odjava',
-            ],
-
-            'open_database_notifications' => [
-                'label' => 'Odpri obvestila',
-            ],
-
-            'open_user_menu' => [
-                'label' => 'Uporabniški meni',
-            ],
-
-            'sidebar' => [
-
-                'collapse' => [
-                    'label' => 'Strni stranski meni',
-                ],
-
-                'expand' => [
-                    'label' => 'Razširi stranski meni',
-                ],
-
-            ],
-
-            'theme_switcher' => [
-
-                'dark' => [
-                    'label' => 'Omogoči temno temo',
-                ],
-
-                'light' => [
-                    'label' => 'Omogoči svetlo temo',
-                ],
-
-                'system' => [
-                    'label' => 'Omogoči sistemsko temo',
-                ],
-
+            'expand' => [
+                'label' => 'Razširi stranski meni',
             ],
 
         ],
 
-        'avatar' => [
-            'alt' => 'Avatar uporabnika :name',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Omogoči temno temo',
+            ],
+
+            'light' => [
+                'label' => 'Omogoči svetlo temo',
+            ],
+
+            'system' => [
+                'label' => 'Omogoči sistemsko temo',
+            ],
+
         ],
 
-        'logo' => [
-            'alt' => 'Logotip :name',
-        ],
+    ],
 
-    ];
+    'avatar' => [
+        'alt' => 'Avatar uporabnika :name',
+    ],
+
+    'logo' => [
+        'alt' => 'Logotip :name',
+    ],
+
+];

@@ -1,28 +1,28 @@
 <?php
 
-    return [
+return [
 
-        'modal' => [
+    'modal' => [
 
-            'heading' => 'Obvestila',
+        'heading' => 'Obvestila',
 
-            'actions' => [
+        'actions' => [
 
-                'clear' => [
-                    'label' => 'Počisti',
-                ],
-
-                'mark_all_as_read' => [
-                    'label' => 'Označi vse kot prebrano',
-                ],
-
+            'clear' => [
+                'label' => 'Počisti',
             ],
 
-            'empty' => [
-                'heading' => 'Ni obvestil',
-                'description' => 'Prosimo, preverite ponovno kasneje.',
+            'mark_all_as_read' => [
+                'label' => 'Označi vse kot prebrano',
             ],
 
         ],
 
-    ];
+        'empty' => [
+            'heading' => 'Ni obvestil',
+            'description' => 'Prosimo, preverite ponovno kasneje.',
+        ],
+
+    ],
+
+];

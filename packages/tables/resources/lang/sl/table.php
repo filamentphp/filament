@@ -1,228 +1,228 @@
 <?php
 
-    return [
+return [
 
-        'column_toggle' => [
+    'column_toggle' => [
 
-            'heading' => 'Stolpci',
+        'heading' => 'Stolpci',
+
+    ],
+
+    'columns' => [
+
+        'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Pokaži :count manj',
+                'expand_list' => 'Pokaži :count več',
+            ],
+
+            'more_list_items' => 'in še :count več',
 
         ],
 
-        'columns' => [
+    ],
 
-            'text' => [
+    'fields' => [
 
-                'actions' => [
-                    'collapse_list' => 'Pokaži :count manj',
-                    'expand_list' => 'Pokaži :count več',
-                ],
+        'bulk_select_page' => [
+            'label' => 'Izberi/odznači vse elemente za skupinska dejanja.',
+        ],
 
-                'more_list_items' => 'in še :count več',
+        'bulk_select_record' => [
+            'label' => 'Izberi/odznači element :key za skupinska dejanja.',
+        ],
 
+        'bulk_select_group' => [
+            'label' => 'Izberi/odznači skupino :title za skupinska dejanja.',
+        ],
+
+        'search' => [
+            'label' => 'Išči',
+            'placeholder' => 'Išči',
+            'indicator' => 'Išči',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Povzetek',
+
+        'subheadings' => [
+            'all' => 'Vsi :label',
+            'group' => 'Povzetek :group',
+            'page' => 'Ta stran',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Povprečje',
+            ],
+
+            'count' => [
+                'label' => 'Število',
+            ],
+
+            'sum' => [
+                'label' => 'Vsota',
             ],
 
         ],
 
-        'fields' => [
+    ],
 
-            'bulk_select_page' => [
-                'label' => 'Izberi/odznači vse elemente za skupinska dejanja.',
-            ],
+    'actions' => [
 
-            'bulk_select_record' => [
-                'label' => 'Izberi/odznači element :key za skupinska dejanja.',
-            ],
-
-            'bulk_select_group' => [
-                'label' => 'Izberi/odznači skupino :title za skupinska dejanja.',
-            ],
-
-            'search' => [
-                'label' => 'Išči',
-                'placeholder' => 'Išči',
-                'indicator' => 'Išči',
-            ],
-
+        'disable_reordering' => [
+            'label' => 'Zaključi prerazporejanje zapisov',
         ],
 
-        'summary' => [
-
-            'heading' => 'Povzetek',
-
-            'subheadings' => [
-                'all' => 'Vsi :label',
-                'group' => 'Povzetek :group',
-                'page' => 'Ta stran',
-            ],
-
-            'summarizers' => [
-
-                'average' => [
-                    'label' => 'Povprečje',
-                ],
-
-                'count' => [
-                    'label' => 'Število',
-                ],
-
-                'sum' => [
-                    'label' => 'Vsota',
-                ],
-
-            ],
-
+        'enable_reordering' => [
+            'label' => 'Prerazporedi zapise',
         ],
+
+        'filter' => [
+            'label' => 'Filtriraj',
+        ],
+
+        'group' => [
+            'label' => 'Združi',
+        ],
+
+        'open_bulk_actions' => [
+            'label' => 'Skupinska dejanja',
+        ],
+
+        'toggle_columns' => [
+            'label' => 'Prikaži/skrij stolpce',
+        ],
+
+    ],
+
+    'empty' => [
+
+        'heading' => 'Ni :model',
+
+        'description' => 'Začnite z ustvarjanjem :model.',
+
+    ],
+
+    'filters' => [
 
         'actions' => [
 
-            'disable_reordering' => [
-                'label' => 'Zaključi prerazporejanje zapisov',
+            'apply' => [
+                'label' => 'Uporabi filtre',
             ],
 
-            'enable_reordering' => [
-                'label' => 'Prerazporedi zapise',
+            'remove' => [
+                'label' => 'Odstrani filter',
             ],
 
-            'filter' => [
-                'label' => 'Filtriraj',
+            'remove_all' => [
+                'label' => 'Odstrani vse filtre',
+                'tooltip' => 'Odstrani vse filtre',
             ],
+
+            'reset' => [
+                'label' => 'Ponastavi',
+            ],
+
+        ],
+
+        'heading' => 'Filtri',
+
+        'indicator' => 'Aktivni filtri',
+
+        'multi_select' => [
+            'placeholder' => 'Vsi',
+        ],
+
+        'select' => [
+            'placeholder' => 'Vsi',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Izbrisani zapisi',
+
+            'only_trashed' => 'Samo izbrisani zapisi',
+
+            'with_trashed' => 'Z izbrisanimi zapisi',
+
+            'without_trashed' => 'Brez izbrisanih zapisov',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
 
             'group' => [
-                'label' => 'Združi',
+                'label' => 'Združi po',
+                'placeholder' => 'Združi po',
             ],
 
-            'open_bulk_actions' => [
-                'label' => 'Skupinska dejanja',
-            ],
+            'direction' => [
 
-            'toggle_columns' => [
-                'label' => 'Prikaži/skrij stolpce',
-            ],
+                'label' => 'Smer združevanja',
 
-        ],
-
-        'empty' => [
-
-            'heading' => 'Ni :model',
-
-            'description' => 'Začnite z ustvarjanjem :model.',
-
-        ],
-
-        'filters' => [
-
-            'actions' => [
-
-                'apply' => [
-                    'label' => 'Uporabi filtre',
-                ],
-
-                'remove' => [
-                    'label' => 'Odstrani filter',
-                ],
-
-                'remove_all' => [
-                    'label' => 'Odstrani vse filtre',
-                    'tooltip' => 'Odstrani vse filtre',
-                ],
-
-                'reset' => [
-                    'label' => 'Ponastavi',
-                ],
-
-            ],
-
-            'heading' => 'Filtri',
-
-            'indicator' => 'Aktivni filtri',
-
-            'multi_select' => [
-                'placeholder' => 'Vsi',
-            ],
-
-            'select' => [
-                'placeholder' => 'Vsi',
-            ],
-
-            'trashed' => [
-
-                'label' => 'Izbrisani zapisi',
-
-                'only_trashed' => 'Samo izbrisani zapisi',
-
-                'with_trashed' => 'Z izbrisanimi zapisi',
-
-                'without_trashed' => 'Brez izbrisanih zapisov',
-
-            ],
-
-        ],
-
-        'grouping' => [
-
-            'fields' => [
-
-                'group' => [
-                    'label' => 'Združi po',
-                    'placeholder' => 'Združi po',
-                ],
-
-                'direction' => [
-
-                    'label' => 'Smer združevanja',
-
-                    'options' => [
-                        'asc' => 'Naraščajoče',
-                        'desc' => 'Padajoče',
-                    ],
-
+                'options' => [
+                    'asc' => 'Naraščajoče',
+                    'desc' => 'Padajoče',
                 ],
 
             ],
 
         ],
 
-        'reorder_indicator' => 'Povlecite in spustite zapise, da jih uredite po vrsti.',
+    ],
 
-        'selection_indicator' => [
+    'reorder_indicator' => 'Povlecite in spustite zapise, da jih uredite po vrsti.',
 
-            'selected_count' => '1 izbran zapis|2 izbrana zapisa|:count izbranih zapisov',
+    'selection_indicator' => [
 
-            'actions' => [
+        'selected_count' => '1 izbran zapis|2 izbrana zapisa|:count izbranih zapisov',
 
-                'select_all' => [
-                    'label' => 'Izberi vse :count',
-                ],
+        'actions' => [
 
-                'deselect_all' => [
-                    'label' => 'Odznači vse',
+            'select_all' => [
+                'label' => 'Izberi vse :count',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Odznači vse',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Razvrsti po',
+            ],
+
+            'direction' => [
+
+                'label' => 'Smer razvrščanja',
+
+                'options' => [
+                    'asc' => 'Naraščajoče',
+                    'desc' => 'Padajoče',
                 ],
 
             ],
 
         ],
 
-        'sorting' => [
+    ],
 
-            'fields' => [
-
-                'column' => [
-                    'label' => 'Razvrsti po',
-                ],
-
-                'direction' => [
-
-                    'label' => 'Smer razvrščanja',
-
-                    'options' => [
-                        'asc' => 'Naraščajoče',
-                        'desc' => 'Padajoče',
-                    ],
-
-                ],
-
-            ],
-
-        ],
-
-    ];
+];

@@ -1,37 +1,37 @@
 <?php
 
-    return [
+return [
 
-        'title' => 'Ustvari :label',
+    'title' => 'Ustvari :label',
 
-        'breadcrumb' => 'Ustvari',
+    'breadcrumb' => 'Ustvari',
 
-        'form' => [
+    'form' => [
 
-            'actions' => [
+        'actions' => [
 
-                'cancel' => [
-                    'label' => 'Prekliči',
-                ],
+            'cancel' => [
+                'label' => 'Prekliči',
+            ],
 
-                'create' => [
-                    'label' => 'Ustvari',
-                ],
+            'create' => [
+                'label' => 'Ustvari',
+            ],
 
-                'create_another' => [
-                    'label' => 'Ustvari in ustvari novega',
-                ],
-
+            'create_another' => [
+                'label' => 'Ustvari in ustvari novega',
             ],
 
         ],
 
-        'notifications' => [
+    ],
 
-            'created' => [
-                'title' => 'Ustvarjeno',
-            ],
+    'notifications' => [
 
+        'created' => [
+            'title' => 'Ustvarjeno',
         ],
 
-    ];
+    ],
+
+];

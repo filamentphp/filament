@@ -1,56 +1,56 @@
 <?php
 
-    return [
+return [
 
-        'title' => 'Registracija',
+    'title' => 'Registracija',
 
-        'heading' => 'Registracija',
+    'heading' => 'Registracija',
+
+    'actions' => [
+
+        'login' => [
+            'before' => 'ali',
+            'label' => 'prijavite se v svoj račun',
+        ],
+
+    ],
+
+    'form' => [
+
+        'email' => [
+            'label' => 'E-poštni naslov',
+        ],
+
+        'name' => [
+            'label' => 'Ime',
+        ],
+
+        'password' => [
+            'label' => 'Geslo',
+            'validation_attribute' => 'geslo',
+        ],
+
+        'password_confirmation' => [
+            'label' => 'Potrdite geslo',
+        ],
 
         'actions' => [
 
-            'login' => [
-                'before' => 'ali',
-                'label' => 'prijavite se v svoj račun',
+            'register' => [
+                'label' => 'Registracija',
             ],
 
         ],
 
-        'form' => [
+    ],
 
-            'email' => [
-                'label' => 'E-poštni naslov',
-            ],
+    'notifications' => [
 
-            'name' => [
-                'label' => 'Ime',
-            ],
-
-            'password' => [
-                'label' => 'Geslo',
-                'validation_attribute' => 'geslo',
-            ],
-
-            'password_confirmation' => [
-                'label' => 'Potrdite geslo',
-            ],
-
-            'actions' => [
-
-                'register' => [
-                    'label' => 'Registracija',
-                ],
-
-            ],
-
+        'throttled' => [
+            'title' => 'Preveč poskusov registracije',
+            'body' => 'Poskusite znova čez :seconds sekund.',
         ],
 
-        'notifications' => [
+    ],
 
-            'throttled' => [
-                'title' => 'Preveč poskusov registracije',
-                'body' => 'Poskusite znova čez :seconds sekund.',
-            ],
-
-        ],
-
-    ];
+];

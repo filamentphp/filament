@@ -1,42 +1,42 @@
 <?php
 
-    return [
+return [
 
-        'title' => 'Ponastavite svoje geslo',
+    'title' => 'Ponastavite svoje geslo',
 
-        'heading' => 'Ste pozabili geslo?',
+    'heading' => 'Ste pozabili geslo?',
+
+    'actions' => [
+
+        'login' => [
+            'label' => 'nazaj na prijavo',
+        ],
+
+    ],
+
+    'form' => [
+
+        'email' => [
+            'label' => 'E-poštni naslov',
+        ],
 
         'actions' => [
 
-            'login' => [
-                'label' => 'nazaj na prijavo',
+            'request' => [
+                'label' => 'Pošlji e-pošto',
             ],
 
         ],
 
-        'form' => [
+    ],
 
-            'email' => [
-                'label' => 'E-poštni naslov',
-            ],
+    'notifications' => [
 
-            'actions' => [
-
-                'request' => [
-                    'label' => 'Pošlji e-pošto',
-                ],
-
-            ],
-
+        'throttled' => [
+            'title' => 'Preveč zahtevkov',
+            'body' => 'Prosimo, poskusite znova čez :seconds sekund.',
         ],
 
-        'notifications' => [
+    ],
 
-            'throttled' => [
-                'title' => 'Preveč zahtevkov',
-                'body' => 'Prosimo, poskusite znova čez :seconds sekund.',
-            ],
-
-        ],
-
-    ];
+];

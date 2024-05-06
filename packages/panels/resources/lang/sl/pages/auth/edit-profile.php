@@ -1,51 +1,51 @@
 <?php
 
-    return [
+return [
 
-        'label' => 'Profil',
+    'label' => 'Profil',
 
-        'form' => [
+    'form' => [
 
-            'email' => [
-                'label' => 'E-poštni naslov',
-            ],
-
-            'name' => [
-                'label' => 'Ime',
-            ],
-
-            'password' => [
-                'label' => 'Novo geslo',
-            ],
-
-            'password_confirmation' => [
-                'label' => 'Potrdite novo geslo',
-            ],
-
-            'actions' => [
-
-                'save' => [
-                    'label' => 'Shrani spremembe',
-                ],
-
-            ],
-
+        'email' => [
+            'label' => 'E-poštni naslov',
         ],
 
-        'notifications' => [
+        'name' => [
+            'label' => 'Ime',
+        ],
 
-            'saved' => [
-                'title' => 'Shranjeno',
-            ],
+        'password' => [
+            'label' => 'Novo geslo',
+        ],
 
+        'password_confirmation' => [
+            'label' => 'Potrdite novo geslo',
         ],
 
         'actions' => [
 
-            'cancel' => [
-                'label' => 'Prekliči',
+            'save' => [
+                'label' => 'Shrani spremembe',
             ],
 
         ],
 
-    ];
+    ],
+
+    'notifications' => [
+
+        'saved' => [
+            'title' => 'Shranjeno',
+        ],
+
+    ],
+
+    'actions' => [
+
+        'cancel' => [
+            'label' => 'Prekliči',
+        ],
+
+    ],
+
+];
