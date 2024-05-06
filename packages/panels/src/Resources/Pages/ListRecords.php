@@ -125,7 +125,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->schema(fn (Schema $schema): Schema => $this->form($schema->columns(2)));
 
         if ($parentRecord = $this->getParentRecord()) {
-            $action->relationship($resource::getParentResourceRegistration()->getRelationship($parentRecord));
+            $action->relationship(fn (): Relation => $resource::getParentResourceRegistration()->getRelationship($parentRecord));
         } elseif (static::getResource()::isScopedToTenant()) {
             $action->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null);
         }
