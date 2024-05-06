@@ -18,7 +18,7 @@ class Wizard extends Component
 
     protected string | Htmlable | null $cancelAction = null;
 
-    protected bool | Closure $skippable = false;
+    protected bool | Closure $isSkippable = false;
 
     protected string | Closure | null $stepQueryStringKey = null;
 
@@ -193,7 +193,7 @@ class Wizard extends Component
 
     public function skippable(bool | Closure $condition = true): static
     {
-        $this->skippable = $condition;
+        $this->isSkippable = $condition;
 
         return $this;
     }
@@ -239,7 +239,7 @@ class Wizard extends Component
 
     public function isSkippable(): bool
     {
-        return (bool) $this->evaluate($this->skippable);
+        return (bool) $this->evaluate($this->isSkippable);
     }
 
     public function isStepPersistedInQueryString(): bool
