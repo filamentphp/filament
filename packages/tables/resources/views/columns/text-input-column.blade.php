@@ -3,7 +3,15 @@
 
     $isDisabled = $isDisabled();
     $state = $getState();
+    $isPrefixInline = $isPrefixInline();
+    $isSuffixInline = $isSuffixInline();
     $mask = $getMask();
+    $prefixActions = $getPrefixActions();
+    $prefixIcon = $getPrefixIcon();
+    $prefixLabel = $getPrefixLabel();
+    $suffixActions = $getSuffixActions();
+    $suffixIcon = $getSuffixIcon();
+    $suffixLabel = $getSuffixLabel();
 
     $alignment = $getAlignment() ?? Alignment::Start;
 
@@ -79,6 +87,16 @@
     <x-filament::input.wrapper
         :alpine-disabled="'isLoading || ' . \Illuminate\Support\Js::from($isDisabled)"
         alpine-valid="error === undefined"
+        :inline-prefix="$isPrefixInline"
+        :inline-suffix="$isSuffixInline"
+        :prefix="$prefixLabel"
+        :prefix-actions="$prefixActions"
+        :prefix-icon="$prefixIcon"
+        :prefix-icon-color="$getPrefixIconColor()"
+        :suffix="$suffixLabel"
+        :suffix-actions="$suffixActions"
+        :suffix-icon="$suffixIcon"
+        :suffix-icon-color="$getSuffixIconColor()"
         x-tooltip="
             error === undefined
                 ? false
@@ -104,6 +122,8 @@
                 \Filament\Support\prepare_inherited_attributes(
                     $getExtraInputAttributeBag()
                         ->merge([
+                            'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                            'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                             'x-on:change' . ($type === 'number' ? '.debounce.1s' : null) => '
                                 isLoading = true
 
