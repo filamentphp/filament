@@ -3,16 +3,17 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
-use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
-use Filament\Forms\Components\Concerns\HasInputMode;
-use Filament\Forms\Components\Concerns\HasStep;
 use Filament\Support\RawJs;
-use Filament\Tables\Columns\Contracts\Editable;
+use Filament\Forms\Components\Concerns\HasStep;
+use Filament\Tables\Columns\Contracts;
+use Filament\Forms\Components\Concerns\HasInputMode;
+use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 
-class TextInputColumn extends Column implements Editable
+class TextInputColumn extends Column implements Contracts\Editable, Contracts\HasAffixActions
 {
     use Concerns\CanBeValidated;
     use Concerns\CanUpdateState;
+    use Concerns\HasAffixes;
     use HasExtraInputAttributes;
     use HasInputMode;
     use HasStep;
