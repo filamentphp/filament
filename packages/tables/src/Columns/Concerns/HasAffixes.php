@@ -3,8 +3,8 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
-use Filament\Tables\Actions\Action;
 use Filament\Support\Enums\ActionSize;
+use Filament\Tables\Actions\Action;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 
