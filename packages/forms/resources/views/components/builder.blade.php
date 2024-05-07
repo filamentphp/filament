@@ -211,7 +211,7 @@
                                         'pointer-events-none' => ! $hasInteractiveBlockPreviews(),
                                     ])
                                 >
-                                    {{ $item->getParentComponent()->viewData($item->getRawState())->renderPreview() }}
+                                    {{ $item->getParentComponent()->viewData(['id' => $uuid, ...$item->getRawState()])->renderPreview() }}
                                 </div>
                                 @if (! $hasInteractiveBlockPreviews())
                                     <div
