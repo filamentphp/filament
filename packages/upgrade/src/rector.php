@@ -195,6 +195,13 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Notifications\\Actions\\Action' => 'Filament\\Actions\\Action',
             'Filament\\Notifications\\Actions\\ActionGroup' => 'Filament\\Actions\\ActionGroup',
             'Filament\\GlobalSearch\\Actions\\Action' => 'Filament\\Actions\\Action',
+            'Filament\\Support\\Concerns\\HasExtraSidebarAttributes' => 'Filament\\Navigation\\Concerns\\HasExtraSidebarAttributes',
+            'Filament\\Support\\Concerns\\HasExtraTopbarAttributes' => 'Filament\\Navigation\\Concerns\\HasExtraTopbarAttributes',
+            'Filament\\Support\\Concerns\\CanPersistTab' => 'Filament\\Schema\\Components\\Concerns\\CanPersistTab',
+            'Filament\\Support\\Concerns\\HasDescription' => 'Filament\\Schema\\Components\\Concerns\\HasDescription',
+            'Filament\\Support\\Concerns\\HasFooterActionsAlignment' => 'Filament\\Schema\\Components\\Concerns\\HasFooterActionsAlignment',
+            'Filament\\Support\\Concerns\\HasHeading' => 'Filament\\Schema\\Components\\Concerns\\HasHeading',
+            'Filament\\Support\\Concerns\\ResolvesDynamicLivewireProperties' => 'Filament\\Schema\\Concerns\\ResolvesDynamicLivewireProperties',
         ],
     );
 

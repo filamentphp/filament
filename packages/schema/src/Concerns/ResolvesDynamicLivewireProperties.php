@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support\Concerns;
+namespace Filament\Schema\Concerns;
 
 use Filament\Actions\Contracts\HasActions;
 use Filament\Schema\Contracts\HasSchemas;

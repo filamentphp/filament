@@ -4,7 +4,6 @@ namespace Filament\Schema\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Support\Concerns\HasFooterActionsAlignment;
 use Illuminate\Support\Arr;
 
 trait HasFooterActions

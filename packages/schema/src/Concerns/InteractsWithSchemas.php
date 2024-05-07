@@ -6,7 +6,6 @@ use Closure;
 use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Schema;
-use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;

@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Resource\Concerns;
 
-use Filament\Clusters\Cluster;
 use Filament\Resources\ParentResourceRegistration;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 trait BelongsToParent
 {
     /**
-     * @var class-string<Resource> | null
+     * @var class-string<resource>|null
      */
     protected static ?string $parentResource = null;
 

@@ -10,8 +10,8 @@ use Illuminate\Support\Str;
 class Tabs extends Component
 {
     use Concerns\CanBeContained;
-    use Concerns\CanPersistTab;
     use Concerns\HasExtraAlpineAttributes;
+    use \Filament\Schema\Components\Concerns\CanPersistTab;
 
     /**
      * @var view-string

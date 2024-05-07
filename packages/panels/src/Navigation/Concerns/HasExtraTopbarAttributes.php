@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support\Concerns;
+namespace Filament\Navigation\Concerns;
 
 use Closure;
 use Illuminate\View\ComponentAttributeBag;
