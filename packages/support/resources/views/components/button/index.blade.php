@@ -187,7 +187,7 @@
         x-data="{}"
     @endif
     @if ($keyBindings)
-        id=@js($keyBindingsAsString)
+        id="{{ $keyBindingsAsString }}"
         x-mousetrap.global.{{ $keyBindingsAsString }}="document.getElementById(@js($keyBindingsAsString)).click()"
     @endif
     @if ($hasTooltip)
