@@ -131,7 +131,7 @@ class EditRecord extends Page
         return $data;
     }
 
-    public function save(bool $shouldRedirect = true): void
+    public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
     {
         $this->authorizeAccess();
 
@@ -167,7 +167,9 @@ class EditRecord extends Page
 
         $this->rememberData();
 
-        $this->getSavedNotification()?->send();
+        if ($shouldSendSavedNotification) {
+            $this->getSavedNotification()?->send();
+        }
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
             $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));

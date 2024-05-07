@@ -22,10 +22,10 @@ Route::name('filament.')
             foreach ((empty($domains) ? [null] : $domains) as $domain) {
                 Route::domain($domain)
                     ->middleware($panel->getMiddleware())
-                    ->name("{$panelId}.")
+                    ->name("{$panelId}." . ((filled($domain) && (count($domains) > 1)) ? "{$domain}." : ''))
                     ->prefix($panel->getPath())
                     ->group(function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute) {
-                        if ($routes = $panel->getRoutes()) {
+                        foreach ($panel->getRoutes() as $routes) {
                             $routes($panel);
                         }
 
@@ -55,7 +55,7 @@ Route::name('filament.')
 
                         Route::middleware($panel->getAuthMiddleware())
                             ->group(function () use ($panel, $hasTenancy, $tenantDomain, $tenantRoutePrefix, $tenantSlugAttribute): void {
-                                if ($routes = $panel->getAuthenticatedRoutes()) {
+                                foreach ($panel->getAuthenticatedRoutes() as $routes) {
                                     $routes($panel);
                                 }
 
@@ -109,7 +109,7 @@ Route::name('filament.')
 
                                 $routeGroup
                                     ->group(function () use ($panel): void {
-                                        if ($routes = $panel->getAuthenticatedTenantRoutes()) {
+                                        foreach ($panel->getAuthenticatedTenantRoutes() as $routes) {
                                             $routes($panel);
                                         }
 
@@ -161,7 +161,7 @@ Route::name('filament.')
 
                             $routeGroup
                                 ->group(function () use ($panel): void {
-                                    if ($routes = $panel->getTenantRoutes()) {
+                                    foreach ($panel->getTenantRoutes() as $routes) {
                                         $routes($panel);
                                     }
                                 });

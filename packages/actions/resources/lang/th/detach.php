@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'แยก :label ออก',
+            'heading' => 'แยก:labelออก',
 
             'actions' => [
 
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'แยกออกแล้ว',
+                'title' => 'บันทึกเรียบร้อย',
             ],
 
         ],
@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'แยก :label ที่เลือกออก',
+            'heading' => 'แยก:labelที่เลือกออก',
 
             'actions' => [
 
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'แยกออกแล้ว',
+                'title' => 'บันทึกเรียบร้อย',
             ],
 
         ],

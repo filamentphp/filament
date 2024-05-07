@@ -15,7 +15,6 @@ use Filament\Pages\Concerns;
 use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -35,14 +34,14 @@ use function Filament\Support\is_app_url;
 class EditProfile extends Page
 {
     use Concerns\CanUseDatabaseTransactions;
+    use Concerns\HasMaxWidth;
+    use Concerns\HasTopbar;
     use Concerns\InteractsWithFormActions;
 
     /**
      * @var array<string, mixed> | null
      */
     public ?array $data = [];
-
-    protected ?string $maxWidth = null;
 
     protected static bool $isDiscovered = false;
 
@@ -358,12 +357,8 @@ class EditProfile extends Page
     protected function getLayoutData(): array
     {
         return [
+            'hasTopbar' => $this->hasTopbar(),
             'maxWidth' => $this->getMaxWidth(),
         ];
-    }
-
-    public function getMaxWidth(): MaxWidth | string | null
-    {
-        return $this->maxWidth;
     }
 }

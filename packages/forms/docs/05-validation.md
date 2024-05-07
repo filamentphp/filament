@@ -513,13 +513,13 @@ TextInput::make('slug')->rules([new Uppercase()])
 You may also use [closure rules](https://laravel.com/docs/validation#using-closures):
 
 ```php
+use Closure;
+
 TextInput::make('slug')->rules([
-    function () {
-        return function (string $attribute, $value, Closure $fail) {
-            if ($value === 'foo') {
-                $fail('The :attribute is invalid.');
-            }
-        };
+    fn (): Closure => function (string $attribute, $value, Closure $fail) {
+        if ($value === 'foo') {
+            $fail('The :attribute is invalid.');
+        }
     },
 ])
 ```

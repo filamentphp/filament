@@ -419,6 +419,31 @@ return [
         'placeholder' => 'Nový štítek',
     ],
 
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Skrýt heslo',
+            ],
+
+            'show_password' => [
+                'label' => 'Zobrazit heslo',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Ano',
+            'false' => 'Ne',
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [

@@ -6,6 +6,19 @@ return [
 
     'heading' => 'Přihlašte se k Vašemu účtu',
 
+    'actions' => [
+
+        'register' => [
+            'before' => 'nebo',
+            'label' => 'se zaregistrujte',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Zapomněli jste heslo?',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [
@@ -39,7 +52,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Příliš mnoho pokusů o přihlášení. Zkuste to znovu za :seconds vteřin.',
+            'title' => 'Příliš mnoho pokusů o přihlášení.',
+            'body' => 'Zkuste to znovu za :seconds vteřin.',
         ],
 
     ],

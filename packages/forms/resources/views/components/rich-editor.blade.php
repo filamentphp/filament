@@ -458,7 +458,8 @@
                                     name="href"
                                     placeholder="{{ __('filament-forms::components.rich_editor.dialogs.link.placeholder') }}"
                                     required
-                                    type="url"
+                                    type="text"
+                                    inputmode="url"
                                     class="trix-input trix-input--dialog"
                                 />
 

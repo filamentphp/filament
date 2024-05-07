@@ -18,7 +18,7 @@ class Wizard extends Component
 
     protected string | Htmlable | null $cancelAction = null;
 
-    protected bool | Closure $skippable = false;
+    protected bool | Closure $isSkippable = false;
 
     protected string | Closure | null $stepQueryStringKey = null;
 
@@ -71,17 +71,23 @@ class Wizard extends Component
                     }
 
                     if (! $component->isSkippable()) {
-                        /** @var Step $currentStep */
-                        $currentStep = array_values(
+                        $steps = array_values(
                             $component
                                 ->getChildComponentContainer()
                                 ->getComponents()
-                        )[$currentStepIndex];
+                        );
+
+                        /** @var Step $currentStep */
+                        $currentStep = $steps[$currentStepIndex];
+
+                        /** @var ?Step $nextStep */
+                        $nextStep = $steps[$currentStepIndex + 1] ?? null;
 
                         try {
                             $currentStep->callBeforeValidation();
                             $currentStep->getChildComponentContainer()->validate();
                             $currentStep->callAfterValidation();
+                            $nextStep?->fillStateWithNull();
                         } catch (Halt $exception) {
                             return;
                         }
@@ -187,7 +193,7 @@ class Wizard extends Component
 
     public function skippable(bool | Closure $condition = true): static
     {
-        $this->skippable = $condition;
+        $this->isSkippable = $condition;
 
         return $this;
     }
@@ -233,7 +239,7 @@ class Wizard extends Component
 
     public function isSkippable(): bool
     {
-        return (bool) $this->evaluate($this->skippable);
+        return (bool) $this->evaluate($this->isSkippable);
     }
 
     public function isStepPersistedInQueryString(): bool
