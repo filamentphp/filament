@@ -6,12 +6,23 @@ use Composer\InstalledVersions;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'make:filament-issue')]
+#[AsCommand(name: 'make:filament-issue', aliases: [
+    'filament:issue',
+    'filament:make-issue',
+])]
 class MakeIssueCommand extends Command
 {
     protected $signature = 'make:filament-issue';
 
     protected $description = 'Generates a link to the Filament issue page and pre-fills the version numbers.';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:issue',
+        'filament:make-issue',
+    ];
 
     public function handle(): void
     {

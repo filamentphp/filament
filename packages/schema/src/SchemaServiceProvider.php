@@ -12,7 +12,9 @@ class SchemaServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-schema')
-            ->hasCommands($this->getCommands())
+            ->hasCommands([
+                Commands\MakeLayoutComponentCommand::class,
+            ])
             ->hasTranslations()
             ->hasViews();
     }
@@ -26,32 +28,5 @@ class SchemaServiceProvider extends PackageServiceProvider
                 ], 'filament-stubs');
             }
         }
-    }
-
-    /**
-     * @return array<class-string>
-     */
-    protected function getCommands(): array
-    {
-        $commands = [
-            Commands\MakeLayoutComponentCommand::class,
-        ];
-
-        $aliases = [];
-
-        foreach ($commands as $command) {
-            $class = 'Filament\\Commands\\Aliases\\' . class_basename($command);
-
-            if (! class_exists($class)) {
-                continue;
-            }
-
-            $aliases[] = $class;
-        }
-
-        return [
-            ...$commands,
-            ...$aliases,
-        ];
     }
 }

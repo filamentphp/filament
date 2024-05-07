@@ -31,7 +31,7 @@ You may create your own custom component classes and views, which you can reuse 
 To create a custom column class and view, you may use the following command:
 
 ```bash
-php artisan make:form-layout Wizard
+php artisan make:filament-schema-layout Wizard
 ```
 
 This will create the following layout component class:

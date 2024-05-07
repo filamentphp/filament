@@ -2,6 +2,8 @@
 
 namespace Filament\Actions;
 
+use Filament\Actions\Commands\MakeExporterCommand;
+use Filament\Actions\Commands\MakeImporterCommand;
 use Filament\Actions\Testing\TestsActions;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
@@ -15,7 +17,10 @@ class ActionsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-actions')
-            ->hasCommands($this->getCommands())
+            ->hasCommands([
+                Commands\MakeExporterCommand::class,
+                Commands\MakeImporterCommand::class,
+            ])
             ->hasMigrations([
                 'create_imports_table',
                 'create_exports_table',
@@ -42,33 +47,5 @@ class ActionsServiceProvider extends PackageServiceProvider
         }
 
         Testable::mixin(new TestsActions());
-    }
-
-    /**
-     * @return array<class-string>
-     */
-    protected function getCommands(): array
-    {
-        $commands = [
-            Commands\MakeExporterCommand::class,
-            Commands\MakeImporterCommand::class,
-        ];
-
-        $aliases = [];
-
-        foreach ($commands as $command) {
-            $class = 'Filament\\Actions\\Commands\\Aliases\\' . class_basename($command);
-
-            if (! class_exists($class)) {
-                continue;
-            }
-
-            $aliases[] = $class;
-        }
-
-        return [
-            ...$commands,
-            ...$aliases,
-        ];
     }
 }

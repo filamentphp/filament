@@ -17,7 +17,10 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-resource')]
+#[AsCommand(name: 'make:filament-resource', aliases: [
+    'filament:make-resource',
+    'filament:resource',
+])]
 class MakeResourceCommand extends Command
 {
     use CanGenerateForms;
@@ -29,6 +32,14 @@ class MakeResourceCommand extends Command
     protected $description = 'Create a new Filament resource class and default page classes';
 
     protected $signature = 'make:filament-resource {name?} {--model-namespace=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--model} {--migration} {--factory} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:make-resource',
+        'filament:resource',
+    ];
 
     public function handle(): int
     {

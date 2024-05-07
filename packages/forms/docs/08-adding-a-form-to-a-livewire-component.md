@@ -286,7 +286,7 @@ public function createComment(): void
 It's advised that you learn how to set up a Livewire component with the Form Builder manually, but once you are confident, you can use the CLI to generate a form for you.
 
 ```bash
-php artisan make:livewire-form RegistrationForm
+php artisan make:filament-livewire-form RegistrationForm
 ```
 
 This will generate a new `app/Livewire/RegistrationForm.php` component, which you can customize.
@@ -298,7 +298,7 @@ Filament is also able to generate forms for a specific Eloquent model. These are
 When generating a form with the `make:livewire-form` command, it will ask for the name of the model:
 
 ```bash
-php artisan make:livewire-form Products/CreateProduct
+php artisan make:filament-livewire-form Products/CreateProduct
 ```
 
 #### Generating an edit form for an Eloquent record
@@ -306,7 +306,7 @@ php artisan make:livewire-form Products/CreateProduct
 By default, passing a model to the `make:livewire-form` command will result in a form that creates a new record in your database. If you pass the `--edit` flag to the command, it will generate an edit form for a specific record. This will automatically fill the form with the data from the record, and save the data back to the model when the form is submitted.
 
 ```bash
-php artisan make:livewire-form Products/EditProduct --edit
+php artisan make:filament-livewire-form Products/EditProduct --edit
 ```
 
 ### Automatically generating form schemas
@@ -314,5 +314,5 @@ php artisan make:livewire-form Products/EditProduct --edit
 Filament is also able to guess which form fields you want in the schema, based on the model's database columns. You can use the `--generate` flag when generating your form:
 
 ```bash
-php artisan make:livewire-form Products/CreateProduct --generate
+php artisan make:filament-livewire-form Products/CreateProduct --generate
 ```

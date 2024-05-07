@@ -18,7 +18,10 @@ class FormsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-forms')
-            ->hasCommands($this->getCommands())
+            ->hasCommands([
+                Commands\MakeFieldCommand::class,
+                Commands\MakeFormCommand::class,
+            ])
             ->hasTranslations()
             ->hasViews();
     }
@@ -48,33 +51,5 @@ class FormsServiceProvider extends PackageServiceProvider
 
         Testable::mixin(new TestsForms());
         Testable::mixin(new TestsFormComponentActions());
-    }
-
-    /**
-     * @return array<class-string>
-     */
-    protected function getCommands(): array
-    {
-        $commands = [
-            Commands\MakeFieldCommand::class,
-            Commands\MakeFormCommand::class,
-        ];
-
-        $aliases = [];
-
-        foreach ($commands as $command) {
-            $class = 'Filament\\Forms\\Commands\\Aliases\\' . class_basename($command);
-
-            if (! class_exists($class)) {
-                continue;
-            }
-
-            $aliases[] = $class;
-        }
-
-        return [
-            ...$commands,
-            ...$aliases,
-        ];
     }
 }

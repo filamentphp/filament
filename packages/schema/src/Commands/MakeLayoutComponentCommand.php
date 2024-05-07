@@ -9,14 +9,41 @@ use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:form-layout')]
+#[AsCommand(name: 'make:filament-schema-layout', aliases: [
+    'filament:layout',
+    'filament:form-layout',
+    'filament:infolist-layout',
+    'forms:layout',
+    'forms:make-layout',
+    'infolists:layout',
+    'infolists:make-layout',
+    'make:filament-layout',
+    'make:infolist-layout',
+    'make:form-layout',
+])]
 class MakeLayoutComponentCommand extends Command
 {
     use CanManipulateFiles;
 
-    protected $description = 'Create a new form layout component class and view';
+    protected $description = 'Create a new schema layout component class and view';
 
-    protected $signature = 'make:form-layout {name?} {--F|force}';
+    protected $signature = 'make:filament-schema-layout {name?} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:layout',
+        'filament:form-layout',
+        'filament:infolist-layout',
+        'forms:layout',
+        'forms:make-layout',
+        'infolists:layout',
+        'infolists:make-layout',
+        'make:filament-layout',
+        'make:infolist-layout',
+        'make:form-layout',
+    ];
 
     public function handle(): int
     {
@@ -35,14 +62,14 @@ class MakeLayoutComponentCommand extends Command
             '';
 
         $view = str($component)
-            ->prepend('forms\\components\\')
+            ->prepend('filament\\schema\\components\\')
             ->explode('\\')
             ->map(fn ($segment) => Str::kebab($segment))
             ->implode('.');
 
         $path = app_path(
             (string) str($component)
-                ->prepend('Forms\\Components\\')
+                ->prepend('Filament\\Schema\\Components\\')
                 ->replace('\\', '/')
                 ->append('.php'),
         );
@@ -61,7 +88,7 @@ class MakeLayoutComponentCommand extends Command
 
         $this->copyStubToApp('LayoutComponent', $path, [
             'class' => $componentClass,
-            'namespace' => 'App\\Forms\\Components' . ($componentNamespace !== '' ? "\\{$componentNamespace}" : ''),
+            'namespace' => 'App\\Filament\\Schema\\Components' . ($componentNamespace !== '' ? "\\{$componentNamespace}" : ''),
             'view' => $view,
         ]);
 
@@ -69,7 +96,7 @@ class MakeLayoutComponentCommand extends Command
             $this->copyStubToApp('LayoutComponentView', $viewPath);
         }
 
-        $this->components->info("Filament form layout component [{$path}] created successfully.");
+        $this->components->info("Filament schema layout component [{$path}] created successfully.");
 
         return static::SUCCESS;
     }

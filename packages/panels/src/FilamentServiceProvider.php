@@ -36,7 +36,17 @@ class FilamentServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-panels')
-            ->hasCommands($this->getCommands())
+            ->hasCommands([
+                Commands\CacheComponentsCommand::class,
+                Commands\ClearCachedComponentsCommand::class,
+                Commands\MakeClusterCommand::class,
+                Commands\MakePageCommand::class,
+                Commands\MakePanelCommand::class,
+                Commands\MakeRelationManagerCommand::class,
+                Commands\MakeResourceCommand::class,
+                Commands\MakeThemeCommand::class,
+                Commands\MakeUserCommand::class,
+            ])
             ->hasRoutes('web')
             ->hasTranslations()
             ->hasViews();
@@ -97,40 +107,5 @@ class FilamentServiceProvider extends PackageServiceProvider
                 ], 'filament-stubs');
             }
         }
-    }
-
-    /**
-     * @return array<class-string>
-     */
-    protected function getCommands(): array
-    {
-        $commands = [
-            Commands\CacheComponentsCommand::class,
-            Commands\ClearCachedComponentsCommand::class,
-            Commands\MakeClusterCommand::class,
-            Commands\MakePageCommand::class,
-            Commands\MakePanelCommand::class,
-            Commands\MakeRelationManagerCommand::class,
-            Commands\MakeResourceCommand::class,
-            Commands\MakeThemeCommand::class,
-            Commands\MakeUserCommand::class,
-        ];
-
-        $aliases = [];
-
-        foreach ($commands as $command) {
-            $class = 'Filament\\Commands\\Aliases\\' . class_basename($command);
-
-            if (! class_exists($class)) {
-                continue;
-            }
-
-            $aliases[] = $class;
-        }
-
-        return [
-            ...$commands,
-            ...$aliases,
-        ];
     }
 }
