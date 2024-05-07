@@ -1,4 +1,6 @@
 @php
+    use Filament\Forms\Components\Actions\Action;
+
     $containers = $getChildComponentContainers();
 
     $addAction = $getAction($getAddActionName());
@@ -7,6 +9,7 @@
     $moveDownAction = $getAction($getMoveDownActionName());
     $moveUpAction = $getAction($getMoveUpActionName());
     $reorderAction = $getAction($getReorderActionName());
+    $extraItemActions = $getExtraItemActions();
 
     $isAddable = $isAddable();
     $isCloneable = $isCloneable();
@@ -41,6 +44,12 @@
                     class="gap-4"
                 >
                     @foreach ($containers as $uuid => $item)
+                        @php
+                            $visibleExtraItemActions = array_filter(
+                                $extraItemActions,
+                                fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
+                            );
+                        @endphp
                         <li
                             wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
                             x-sortable-item="{{ $uuid }}"
@@ -50,8 +59,14 @@
                                 {{ $item }}
                             </div>
 
-                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $isCloneable || $isDeletable)
+                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $isCloneable || $isDeletable || filled($visibleExtraItemActions))
                                 <ul class="flex items-center gap-x-1">
+                                    @foreach ($visibleExtraItemActions as $extraItemAction)
+                                        <li x-on:click.stop>
+                                            {{ $extraItemAction(['item' => $uuid]) }}
+                                        </li>
+                                    @endforeach
+
                                     @if ($isReorderableWithDragAndDrop)
                                         <li x-sortable-handle>
                                             {{ $reorderAction }}
