@@ -82,10 +82,14 @@
                                 $extraItemActions,
                                 fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
                             );
-                            $cloneActionIsVisible = $isCloneable && $cloneAction(['item' => $uuid])->isVisible();
-                            $deleteActionIsVisible = $isDeletable && $deleteAction(['item' => $uuid])->isVisible();
-                            $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction(['item' => $uuid])->disabled($loop->last)->isVisible();
-                            $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction(['item' => $uuid])->disabled($loop->first)->isVisible();
+                            $cloneAction = $cloneAction(['item' => $uuid]);
+                            $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
+                            $deleteAction = $deleteAction(['item' => $uuid]);
+                            $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
+                            $moveDownAction = $moveDownAction(['item' => $uuid])->disabled($loop->last);
+                            $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
+                            $moveUpAction = $moveUpAction(['item' => $uuid])->disabled($loop->first);
+                            $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
                             $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                             $itemHasToolbar = $reorderActionIsVisible || $moveDownActionIsVisible || $moveUpActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions;
                         @endphp
@@ -128,14 +132,14 @@
                                                     x-on:click.stop
                                                     class="flex items-center justify-center"
                                                 >
-                                                    {{ $moveUpAction(['item' => $uuid])->disabled($loop->first) }}
+                                                    {{ $moveUpAction }}
                                                 </li>
 
                                                 <li
                                                     x-on:click.stop
                                                     class="flex items-center justify-center"
                                                 >
-                                                    {{ $moveDownAction(['item' => $uuid])->disabled($loop->last) }}
+                                                    {{ $moveDownAction }}
                                                 </li>
                                             @endif
                                         </ul>
@@ -164,13 +168,13 @@
 
                                             @if ($cloneActionIsVisible)
                                                 <li x-on:click.stop>
-                                                    {{ $cloneAction(['item' => $uuid]) }}
+                                                    {{ $cloneAction }}
                                                 </li>
                                             @endif
 
                                             @if ($deleteActionIsVisible)
                                                 <li x-on:click.stop>
-                                                    {{ $deleteAction(['item' => $uuid]) }}
+                                                    {{ $deleteAction }}
                                                 </li>
                                             @endif
 
