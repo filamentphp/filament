@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Resources\Pages;
+namespace Filament\Resources\Pages\Enums;
 
 enum ContentTabPosition: string
 {

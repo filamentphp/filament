@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Infolists\Components\TextEntry;
+namespace Filament\Infolists\Components\TextEntry\Enums;
 
 enum TextEntrySize
 {

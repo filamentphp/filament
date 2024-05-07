@@ -1,5 +1,5 @@
 @php
-    use Filament\Infolists\Components\TextEntry\TextEntrySize;
+    use Filament\Infolists\Components\TextEntry\Enums\TextEntrySize;
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;

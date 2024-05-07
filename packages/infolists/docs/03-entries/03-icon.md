@@ -50,7 +50,7 @@ The default icon size is `IconEntrySize::Large`, but you may customize the size 
 use Filament\Infolists\Components\IconEntry;
 
 IconEntry::make('status')
-    ->size(IconEntry\IconEntrySize::Medium)
+    ->size(IconEntry\Enums\IconEntrySize::Medium)
 ```
 
 <AutoScreenshot name="infolists/entries/icon/medium" alt="Medium-sized icon entry" version="3.x" />

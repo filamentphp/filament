@@ -202,6 +202,12 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Support\\Concerns\\HasFooterActionsAlignment' => 'Filament\\Schema\\Components\\Concerns\\HasFooterActionsAlignment',
             'Filament\\Support\\Concerns\\HasHeading' => 'Filament\\Schema\\Components\\Concerns\\HasHeading',
             'Filament\\Support\\Concerns\\ResolvesDynamicLivewireProperties' => 'Filament\\Schema\\Concerns\\ResolvesDynamicLivewireProperties',
+            'Filament\\Infolists\\Components\\IconEntry\\IconEntrySize' => 'Filament\\Infolists\\Components\\IconEntry\\Enums\\IconEntrySize',
+            'Filament\\Infolists\\Components\\TextEntry\\TextEntrySize' => 'Filament\\Infolists\\Components\\TextEntry\\Enums\\TextEntrySize',
+            'Filament\\Tables\\Columns\\IconColumn\\IconColumnSize' => 'Filament\\Tables\\Columns\\IconColumn\\Enums\\IconColumnSize',
+            'Filament\\Tables\\Columns\\TextColumn\\TextColumnSize' => 'Filament\\Tables\\Columns\\TextColumn\\Enums\\TextColumnSize',
+            'Filament\\Pages\\SubNavigationPosition' => 'Filament\\Pages\\Enums\\SubNavigationPosition',
+            'Filament\\Resources\\Pages\\ContentTabPosition' => 'Filament\\Resources\\Pages\\Enums\\ContentTabPosition',
         ],
     );
 

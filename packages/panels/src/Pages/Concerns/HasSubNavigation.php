@@ -4,8 +4,8 @@ namespace Filament\Pages\Concerns;
 
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
-use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page as ResourcePage;
 
 trait HasSubNavigation

@@ -3,7 +3,7 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Filament\Infolists\Components\TextEntry\TextEntrySize;
+use Filament\Infolists\Components\TextEntry\Enums\TextEntrySize;
 use Filament\Schema\Components\Contracts\HasAffixActions;
 use Filament\Support\Concerns\CanBeCopied;
 use Filament\Support\Concerns\HasLineClamp;

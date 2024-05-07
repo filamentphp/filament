@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Columns\IconColumn;
+namespace Filament\Tables\Columns\IconColumn\Enums;
 
 enum IconColumnSize
 {

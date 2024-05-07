@@ -429,7 +429,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->postsTable($table)
             ->columns([
                 TextColumn::make('title')
-                    ->size(TextColumn\TextColumnSize::Large),
+                    ->size(TextColumn\Enums\TextColumnSize::Large),
             ]);
     }
 
@@ -509,7 +509,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                         'reviewing' => 'heroicon-o-clock',
                         'published' => 'heroicon-o-check-circle',
                     })
-                    ->size(IconColumn\IconColumnSize::Medium),
+                    ->size(IconColumn\Enums\IconColumnSize::Medium),
             ]);
     }
 

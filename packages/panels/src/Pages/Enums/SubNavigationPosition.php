@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Pages;
+namespace Filament\Pages\Enums;
 
 enum SubNavigationPosition
 {

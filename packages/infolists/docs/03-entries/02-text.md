@@ -365,7 +365,7 @@ For instance, you may make the text larger using `size(TextEntrySize::Large)`:
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('title')
-    ->size(TextEntry\TextEntrySize::Large)
+    ->size(TextEntry\Enums\TextEntrySize::Large)
 ```
 
 <AutoScreenshot name="infolists/entries/text/large" alt="Text entry in a large font size" version="3.x" />

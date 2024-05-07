@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Columns\TextColumn;
+namespace Filament\Tables\Columns\TextColumn\Enums;
 
 enum TextColumnSize
 {

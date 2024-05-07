@@ -3,7 +3,7 @@
 ])
 
 @php
-    use Filament\Pages\SubNavigationPosition;
+    use Filament\Pages\Enums\SubNavigationPosition;
 
     $subNavigation = $this->getCachedSubNavigation();
     $subNavigationPosition = $this->getSubNavigationPosition();

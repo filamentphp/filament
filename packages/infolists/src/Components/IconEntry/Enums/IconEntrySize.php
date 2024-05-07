@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Infolists\Components\IconEntry;
+namespace Filament\Infolists\Components\IconEntry\Enums;
 
 enum IconEntrySize
 {

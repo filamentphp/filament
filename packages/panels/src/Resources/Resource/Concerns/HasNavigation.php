@@ -5,7 +5,7 @@ namespace Filament\Resources\Resource\Concerns;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
-use Filament\Pages\SubNavigationPosition;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 
