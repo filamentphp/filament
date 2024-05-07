@@ -59,7 +59,7 @@
                                 {{ $item }}
                             </div>
 
-                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $isCloneable || $isDeletable || filled($visibleExtraItemActions))
+                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $isCloneable || $isDeletable || $visibleExtraItemActions)
                                 <ul class="flex items-center gap-x-1">
                                     @foreach ($visibleExtraItemActions as $extraItemAction)
                                         <li x-on:click.stop>
