@@ -3,11 +3,10 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
-use Filament\Support\RawJs;
-use Filament\Forms\Components\Concerns\HasStep;
-use Filament\Tables\Columns\Contracts;
-use Filament\Forms\Components\Concerns\HasInputMode;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
+use Filament\Forms\Components\Concerns\HasInputMode;
+use Filament\Forms\Components\Concerns\HasStep;
+use Filament\Support\RawJs;
 
 class TextInputColumn extends Column implements Contracts\Editable, Contracts\HasAffixActions
 {
