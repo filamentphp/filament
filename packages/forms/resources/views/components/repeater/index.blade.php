@@ -79,7 +79,7 @@
                                 $extraItemActions,
                                 fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
                             );
-                            $itemHasToolbar = $isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions);
+                            $itemHasToolbar = $isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible || $visibleExtraItemActions;
                         @endphp
 
                         <li
@@ -144,7 +144,7 @@
                                         </h4>
                                     @endif
 
-                                    @if ($isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
+                                    @if ($isCloneable || $isDeletable || $isCollapsible || $visibleExtraItemActions)
                                         <ul
                                             class="ms-auto flex items-center gap-x-3"
                                         >

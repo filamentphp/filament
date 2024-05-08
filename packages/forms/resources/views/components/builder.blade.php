@@ -93,7 +93,7 @@
                         class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                         x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                     >
-                        @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $hasBlockLabels || $isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
+                        @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $hasBlockLabels || $isCloneable || $isDeletable || $isCollapsible || $visibleExtraItemActions)
                             <div
                                 @if ($isCollapsible)
                                     x-on:click.stop="isCollapsed = !isCollapsed"
@@ -141,7 +141,7 @@
                                     </h4>
                                 @endif
 
-                                @if ($isCloneable || $isDeletable || $isCollapsible || count($visibleExtraItemActions))
+                                @if ($isCloneable || $isDeletable || $isCollapsible || $visibleExtraItemActions)
                                     <ul
                                         class="ms-auto flex items-center gap-x-3"
                                     >
