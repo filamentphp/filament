@@ -49,6 +49,15 @@
                                 $extraItemActions,
                                 fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
                             );
+                            $cloneAction = $cloneAction(['item' => $uuid]);
+                            $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
+                            $deleteAction = $deleteAction(['item' => $uuid]);
+                            $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
+                            $moveDownAction = $moveDownAction(['item' => $uuid])->disabled($loop->last);
+                            $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
+                            $moveUpAction = $moveUpAction(['item' => $uuid])->disabled($loop->first);
+                            $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
+                            $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
                         @endphp
 
                         <li
@@ -60,25 +69,25 @@
                                 {{ $item }}
                             </div>
 
-                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $isCloneable || $isDeletable || $visibleExtraItemActions)
+                            @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $visibleExtraItemActions)
                                 <ul class="flex items-center gap-x-1">
-                                    @if ($isReorderableWithDragAndDrop)
+                                    @if ($reorderActionIsVisible)
                                         <li x-sortable-handle>
                                             {{ $reorderAction }}
                                         </li>
                                     @endif
 
-                                    @if ($isReorderableWithButtons)
+                                    @if ($moveUpActionIsVisible || $moveDownActionIsVisible)
                                         <li
                                             class="flex items-center justify-center"
                                         >
-                                            {{ $moveUpAction(['item' => $uuid])->disabled($loop->first) }}
+                                            {{ $moveUpAction }}
                                         </li>
 
                                         <li
                                             class="flex items-center justify-center"
                                         >
-                                            {{ $moveDownAction(['item' => $uuid])->disabled($loop->last) }}
+                                            {{ $moveDownAction }}
                                         </li>
                                     @endif
 
@@ -88,15 +97,15 @@
                                         </li>
                                     @endforeach
 
-                                    @if ($isCloneable)
+                                    @if ($cloneActionIsVisible)
                                         <li>
-                                            {{ $cloneAction(['item' => $uuid]) }}
+                                            {{ $cloneAction }}
                                         </li>
                                     @endif
 
-                                    @if ($isDeletable)
+                                    @if ($deleteActionIsVisible)
                                         <li>
-                                            {{ $deleteAction(['item' => $uuid]) }}
+                                            {{ $deleteAction }}
                                         </li>
                                     @endif
                                 </ul>
