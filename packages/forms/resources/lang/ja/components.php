@@ -419,6 +419,31 @@ return [
         'placeholder' => '新規タグ',
     ],
 
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'パスワードを非表示',
+            ],
+
+            'show_password' => [
+                'label' => 'パスワードを表示',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'はい',
+            'false' => 'いいえ',
+        ],
+
+    ],
+
     'wizard' => [
 
         'actions' => [

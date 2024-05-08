@@ -90,6 +90,7 @@ export default function markdownEditorFormComponent({
     maxHeight,
     minHeight,
     placeholder,
+    setUpUsing,
     state,
     translations,
     toolbarButtons,
@@ -210,6 +211,10 @@ export default function markdownEditorFormComponent({
 
                 Alpine.raw(this.editor).value(this.state ?? '')
             })
+
+            if (setUpUsing) {
+                setUpUsing(this)
+            }
         },
 
         destroy: function () {
