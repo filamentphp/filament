@@ -105,7 +105,7 @@
                             class="fi-fo-repeater-item divide-y divide-gray-100 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-white/5 dark:ring-white/10"
                             x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                         >
-                            @if ($reorderActionIsVisible || $moveDownActionIsVisible || $moveUpActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
+                            @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
                                 <div
                                     @if ($isCollapsible)
                                         x-on:click.stop="isCollapsed = !isCollapsed"
@@ -115,7 +115,7 @@
                                         'cursor-pointer select-none' => $isCollapsible,
                                     ])
                                 >
-                                    @if ($reorderActionIsVisible || $moveDownActionIsVisible || $moveUpActionIsVisible)
+                                    @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible)
                                         <ul class="flex items-center gap-x-3">
                                             @if ($reorderActionIsVisible)
                                                 <li
@@ -126,7 +126,7 @@
                                                 </li>
                                             @endif
 
-                                            @if ($moveDownActionIsVisible || $moveUpActionIsVisible)
+                                            @if ($moveUpActionIsVisible || $moveDownActionIsVisible)
                                                 <li
                                                     x-on:click.stop
                                                     class="flex items-center justify-center"

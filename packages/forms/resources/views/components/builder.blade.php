@@ -105,7 +105,7 @@
                         class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                         x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                     >
-                        @if ($reorderActionIsVisible || $moveDownActionIsVisible || $moveUpActionIsVisible || $hasBlockLabels || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
+                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockLabels || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
                             <div
                                 @if ($isCollapsible)
                                     x-on:click.stop="isCollapsed = !isCollapsed"
@@ -115,7 +115,7 @@
                                     'cursor-pointer select-none' => $isCollapsible,
                                 ])
                             >
-                                @if ($reorderActionIsVisible || $moveDownActionIsVisible || $moveUpActionIsVisible)
+                                @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible)
                                     <ul class="flex items-center gap-x-3">
                                         @if ($reorderActionIsVisible)
                                             <li
