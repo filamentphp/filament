@@ -4,11 +4,12 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Tables\Columns\Column;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 trait CanSortRecords
 {
-    protected ?string $defaultSortColumn = null;
+    protected string | Closure | null $defaultSortColumn = null;
 
     protected string | Closure | null $defaultSortDirection = null;
 
@@ -18,11 +19,7 @@ trait CanSortRecords
 
     public function defaultSort(string | Closure | null $column, string | Closure | null $direction = 'asc'): static
     {
-        if ($column instanceof Closure) {
-            $this->defaultSortQuery = $column;
-        } else {
-            $this->defaultSortColumn = $column;
-        }
+        $this->defaultSortColumn = $column;
 
         $this->defaultSortDirection = $direction;
 
@@ -57,7 +54,15 @@ trait CanSortRecords
 
     public function getDefaultSortColumn(): ?string
     {
-        return $this->defaultSortColumn;
+        $column = $this->evaluate($this->defaultSortColumn);
+
+        if (is_null($column) || $column instanceof Builder) {
+            $this->defaultSortQuery = $this->defaultSortColumn;
+
+            return null;
+        }
+
+        return $column;
     }
 
     public function getDefaultSortDirection(): ?string
