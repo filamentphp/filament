@@ -62,7 +62,11 @@ class ImportCsv implements ShouldQueue
         /** @var Authenticatable $user */
         $user = $this->import->user;
 
-        auth()->setUser($user);
+        if (method_exists(auth()->guard(), 'login')) {
+            auth()->login($user);
+        } else {
+            auth()->setUser($user);
+        }
 
         $exceptions = [];
 

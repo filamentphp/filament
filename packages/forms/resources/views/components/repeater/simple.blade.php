@@ -1,4 +1,6 @@
 @php
+    use Filament\Forms\Components\Actions\Action;
+
     $containers = $getChildComponentContainers();
 
     $addAction = $getAction($getAddActionName());
@@ -7,6 +9,7 @@
     $moveDownAction = $getAction($getMoveDownActionName());
     $moveUpAction = $getAction($getMoveUpActionName());
     $reorderAction = $getAction($getReorderActionName());
+    $extraItemActions = $getExtraItemActions();
 
     $isAddable = $isAddable();
     $isCloneable = $isCloneable();
@@ -42,6 +45,13 @@
                     class="gap-4"
                 >
                     @foreach ($containers as $uuid => $item)
+                        @php
+                            $visibleExtraItemActions = array_filter(
+                                $extraItemActions,
+                                fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
+                            );
+                        @endphp
+
                         <li
                             wire:key="{{ $item->getLivewireKey() }}.item"
                             x-sortable-item="{{ $uuid }}"
@@ -51,7 +61,7 @@
                                 {{ $item }}
                             </div>
 
-                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $isCloneable || $isDeletable)
+                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $isCloneable || $isDeletable || $visibleExtraItemActions)
                                 <ul class="flex items-center gap-x-1">
                                     @if ($isReorderableWithDragAndDrop)
                                         <li x-sortable-handle>
@@ -72,6 +82,12 @@
                                             {{ $moveDownAction(['item' => $uuid])->disabled($loop->last) }}
                                         </li>
                                     @endif
+
+                                    @foreach ($visibleExtraItemActions as $extraItemAction)
+                                        <li>
+                                            {{ $extraItemAction(['item' => $uuid]) }}
+                                        </li>
+                                    @endforeach
 
                                     @if ($isCloneable)
                                         <li>
