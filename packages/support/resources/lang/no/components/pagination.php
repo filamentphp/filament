@@ -22,8 +22,16 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'Første',
+        ],
+
         'go_to_page' => [
             'label' => 'Gå til side :page',
+        ],
+
+        'last' => [
+            'label' => 'Siste',
         ],
 
         'next' => [
