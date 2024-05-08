@@ -405,7 +405,7 @@ return [
 
         'max_items_message' => 'Bare :count kan velges.',
 
-        'no_search_results_message' => 'No alternativer matcher ditt søk.',
+        'no_search_results_message' => 'Ingen alternativer matcher ditt søk.',
 
         'placeholder' => 'Velg et alternativ',
 
