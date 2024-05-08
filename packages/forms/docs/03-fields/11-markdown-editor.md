@@ -66,3 +66,15 @@ MarkdownEditor::make('content')
     ->fileAttachmentsDirectory('attachments')
     ->fileAttachmentsVisibility('private')
 ```
+
+## Enabling language assistance
+
+You may enable language assistance in using a configuration method:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
+MarkdownEditor::make('content')->hasLanguageAssistance();
+```
+
+This will highlight complex sentences that may be simplified and phrases that may be improved (passive voice, verbosity etc.).
