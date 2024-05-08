@@ -90,11 +90,11 @@ export default function markdownEditorFormComponent({
     maxHeight,
     minHeight,
     placeholder,
+    setUpUsing,
     state,
     translations,
     toolbarButtons,
     uploadFileAttachmentUsing,
-    afterInit,
 }) {
     return {
         editor: null,
@@ -212,8 +212,8 @@ export default function markdownEditorFormComponent({
                 Alpine.raw(this.editor).value(this.state ?? '')
             })
 
-            if (afterInit) {
-                afterInit(this)
+            if (setUpUsing) {
+                setUpUsing(this)
             }
         },
 
