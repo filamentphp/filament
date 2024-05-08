@@ -224,7 +224,9 @@ export default function markdownEditorFormComponent({
 
                     return (...args) => {
                         clearTimeout(timer)
-                        timer = setTimeout(() => { func.apply(this, args); }, timeout)
+                        timer = setTimeout(() => {
+                            func.apply(this, args)
+                        }, timeout)
                     }
                 }
 
@@ -232,7 +234,7 @@ export default function markdownEditorFormComponent({
                     const indices = []
                     let i = -1
 
-                    while ((i = str.indexOf(val, i+1)) !== -1){
+                    while ((i = str.indexOf(val, i + 1)) !== -1) {
                         indices.push(i)
                     }
 
@@ -270,7 +272,10 @@ export default function markdownEditorFormComponent({
 
                         const sentences = getSentenceDifficulty(line.text)
                         const lineNumber = cm.getLineNumber(line)
-                        const lineElement = this.$refs.editor.parentNode.parentNode.querySelectorAll('.CodeMirror-line')[lineNumber]
+                        const lineElement =
+                            this.$refs.editor.parentNode.parentNode.querySelectorAll(
+                                '.CodeMirror-line',
+                            )[lineNumber]
 
                         for (let sentence of sentences) {
                             if (sentence.type === 'moderate') {
@@ -283,22 +288,36 @@ export default function markdownEditorFormComponent({
 
                             const sentenceText = sentence.text.trim()
 
-                            if (lineElement.innerText.indexOf(sentenceText) < 0) {
+                            if (
+                                lineElement.innerText.indexOf(sentenceText) < 0
+                            ) {
                                 continue
                             }
 
-                            const offset = lineElement.innerText.indexOf(sentenceText, sentenceOffset)
+                            const offset = lineElement.innerText.indexOf(
+                                sentenceText,
+                                sentenceOffset,
+                            )
 
                             const params = [
                                 {
                                     line: lineNumber,
-                                    ch: lineElement.innerText.indexOf(sentenceText, sentenceOffset),
-                                }, {
+                                    ch: lineElement.innerText.indexOf(
+                                        sentenceText,
+                                        sentenceOffset,
+                                    ),
+                                },
+                                {
                                     line: lineNumber,
-                                    ch: lineElement.innerText.indexOf(sentenceText, sentenceOffset) + sentenceText.length,
-                                }, {
+                                    ch:
+                                        lineElement.innerText.indexOf(
+                                            sentenceText,
+                                            sentenceOffset,
+                                        ) + sentenceText.length,
+                                },
+                                {
                                     className: `language-${sentence.type}-sentence`,
-                                }
+                                },
                             ]
 
                             sentenceOffset = offset + sentenceText.length
@@ -310,7 +329,7 @@ export default function markdownEditorFormComponent({
                                 ...getPassivePhrases(sentenceText),
                                 ...getComplexPhrases(sentenceText),
                                 ...getQualifiedPhrases(sentenceText),
-                            ];
+                            ]
 
                             for (let problem of problems) {
                                 if (problem.type === 'adverb') {
@@ -329,19 +348,24 @@ export default function markdownEditorFormComponent({
                                     this.qualifiedPhrases++
                                 }
 
-                                const indices = getAllIndices(lineElement.innerText.toLowerCase(), problem.text.toLowerCase());
+                                const indices = getAllIndices(
+                                    lineElement.innerText.toLowerCase(),
+                                    problem.text.toLowerCase(),
+                                )
 
                                 for (let index of indices) {
                                     const params = [
                                         {
                                             line: lineNumber,
                                             ch: index,
-                                        }, {
+                                        },
+                                        {
                                             line: lineNumber,
                                             ch: index + problem.text.length,
-                                        }, {
+                                        },
+                                        {
                                             className: `language-${problem.type}-phrase`,
-                                        }
+                                        },
                                     ]
 
                                     markers.push(cm.markText(...params))
