@@ -13,6 +13,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
     use Concerns\HasMinHeight;
     use Concerns\HasPlaceholder;
     use Concerns\InteractsWithToolbarButtons;
+    use Concerns\HasLanguageAssistance;
     use HasExtraAlpineAttributes;
 
     /**

@@ -296,3 +296,27 @@
 .EasyMDEContainer .editor-statusbar {
     @apply hidden;
 }
+
+.language-moderate-sentence {
+    background-color: #fef9c3;
+}
+
+.language-complex-sentence {
+    background-color: #fee2e2;
+}
+
+.language-adverb-phrase {
+    background-color: #e0f2fe;
+}
+
+.language-passive-phrase {
+    background-color: #dcfce7;
+}
+
+.language-complex-phrase {
+    background-color: #f3e8ff;
+}
+
+.language-qualified-phrase {
+    background-color: #f1f5f9;
+}
