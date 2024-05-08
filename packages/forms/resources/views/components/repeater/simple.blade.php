@@ -50,6 +50,7 @@
                                 fn (Action $action): bool => $action(['item' => $uuid])->isVisible(),
                             );
                         @endphp
+
                         <li
                             wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
                             x-sortable-item="{{ $uuid }}"
@@ -61,12 +62,6 @@
 
                             @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $isCloneable || $isDeletable || $visibleExtraItemActions)
                                 <ul class="flex items-center gap-x-1">
-                                    @foreach ($visibleExtraItemActions as $extraItemAction)
-                                        <li x-on:click.stop>
-                                            {{ $extraItemAction(['item' => $uuid]) }}
-                                        </li>
-                                    @endforeach
-
                                     @if ($isReorderableWithDragAndDrop)
                                         <li x-sortable-handle>
                                             {{ $reorderAction }}
@@ -86,6 +81,12 @@
                                             {{ $moveDownAction(['item' => $uuid])->disabled($loop->last) }}
                                         </li>
                                     @endif
+
+                                    @foreach ($visibleExtraItemActions as $extraItemAction)
+                                        <li>
+                                            {{ $extraItemAction(['item' => $uuid]) }}
+                                        </li>
+                                    @endforeach
 
                                     @if ($isCloneable)
                                         <li>
