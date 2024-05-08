@@ -213,7 +213,7 @@ export default function markdownEditorFormComponent({
             })
 
             if (afterInit) {
-                afterInit.apply(this)
+                afterInit(this)
             }
         },
 
