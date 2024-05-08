@@ -16,6 +16,7 @@
         "prettier": "npx prettier --write ."
     },
     "devDependencies": {
+        "@assertchris/ellison": "^1.0.2",
         "@awcodes/alpine-floating-ui": "^3.4.0",
         "@babel/runtime": "^7.15.3",
         "@danharrin/alpine-mousetrap": "^0.1.0",
