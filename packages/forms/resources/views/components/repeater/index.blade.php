@@ -91,7 +91,6 @@
                             $moveUpAction = $moveUpAction(['item' => $uuid])->disabled($loop->first);
                             $moveUpActionIsVisible = $isReorderableWithButtons && $moveUpAction->isVisible();
                             $reorderActionIsVisible = $isReorderableWithDragAndDrop && $reorderAction->isVisible();
-                            $itemHasToolbar = $reorderActionIsVisible || $moveDownActionIsVisible || $moveUpActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions;
                         @endphp
 
                         <li
@@ -106,7 +105,7 @@
                             class="fi-fo-repeater-item divide-y divide-gray-100 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-white/5 dark:ring-white/10"
                             x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                         >
-                            @if ($itemHasToolbar)
+                            @if ($reorderActionIsVisible || $moveDownActionIsVisible || $moveUpActionIsVisible || filled($itemLabel) || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
                                 <div
                                     @if ($isCollapsible)
                                         x-on:click.stop="isCollapsed = !isCollapsed"
