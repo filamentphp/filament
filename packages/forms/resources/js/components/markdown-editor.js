@@ -94,6 +94,7 @@ export default function markdownEditorFormComponent({
     translations,
     toolbarButtons,
     uploadFileAttachmentUsing,
+    afterInit,
 }) {
     return {
         editor: null,
@@ -210,6 +211,10 @@ export default function markdownEditorFormComponent({
 
                 Alpine.raw(this.editor).value(this.state ?? '')
             })
+
+            if (afterInit) {
+                afterInit.apply(this)
+            }
         },
 
         destroy: function () {
