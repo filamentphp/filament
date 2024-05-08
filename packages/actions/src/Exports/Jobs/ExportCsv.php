@@ -64,11 +64,7 @@ class ExportCsv implements ShouldQueue
         /** @var Authenticatable $user */
         $user = $this->export->user;
 
-        if (method_exists(auth()->guard(), 'login')) {
-            auth()->login($user);
-        } else {
-            auth()->setUser($user);
-        }
+        auth()->setUser($user);
 
         $exceptions = [];
 
