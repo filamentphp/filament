@@ -8,6 +8,7 @@
     'badge' => null,
     'badgeColor' => null,
     'badgeTooltip' => null,
+    'badgeIcon' => null,
     'href' => null,
     'icon' => null,
     'iconColor' => 'gray',
@@ -109,6 +110,7 @@
     @if (filled($badge))
         <x-filament::badge
             :color="$badgeColor"
+            :icon="$badgeIcon"
             size="sm"
             :tooltip="$badgeTooltip"
             class="w-max"
