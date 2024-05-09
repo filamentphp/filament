@@ -73,6 +73,8 @@ If you are using an enum for the options, you can use the [`HasIcon` interface](
 If you want a simple boolean toggle button group, with "Yes" and "No" options, you can use the `boolean()` method:
 
 ```php
+use Filament\Forms\Components\ToggleButtons;
+
 ToggleButtons::make('feedback')
     ->label('Like this post?')
     ->boolean()
@@ -87,6 +89,8 @@ The options will have [colors](#changing-the-color-of-option-buttons) and [icons
 You may wish to display the options `inline()` with each other:
 
 ```php
+use Filament\Forms\Components\ToggleButtons;
+
 ToggleButtons::make('feedback')
     ->label('Like this post?')
     ->boolean()
@@ -100,6 +104,8 @@ ToggleButtons::make('feedback')
 You may wish to group option buttons together so they are more compact, using the `grouped()` method. This also makes them appear horizontally inline with each other:
 
 ```php
+use Filament\Forms\Components\ToggleButtons;
+
 ToggleButtons::make('feedback')
     ->label('Like this post?')
     ->boolean()

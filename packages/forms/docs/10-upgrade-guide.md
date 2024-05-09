@@ -37,6 +37,14 @@ Please see the [Panel Builder](../panels/upgrade-guide#the-filament_filesystem_d
 
 ### Medium-impact changes
 
+#### The `Radio` `inline()` method behaviour
+
+In v3, the `inline()` method put the radio buttons inline with each other, and also inline with the label at the same time. This is inconsistent with other components.
+
+In v4, the `inline()` method now only puts the radio buttons inline with each other, and not with the label. If you want the radio buttons to be inline with the label, you can use the `inlineLabel()` method as well.
+
+If you were previously using `inline()->inlineLabel(false)` to achieve the v4 behaviour, you can now simply use `inline()`.
+
 ### Low-impact changes
 
 #### Overriding the `Field::make()`, `MorphToSelect::make()`, `Placeholder::make()`, or `Builder\Block::make()` methods

@@ -567,19 +567,6 @@ class FieldsDemo extends Component implements HasForms
                             ->default(true),
                     ]),
                 Group::make()
-                    ->id('inlineRadioUnderLabel')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
-                    ->schema([
-                        Radio::make('inlineRadioUnderLabel')
-                            ->label('Like this post?')
-                            ->boolean()
-                            ->inline()
-                            ->inlineLabel(false)
-                            ->default(true),
-                    ]),
-                Group::make()
                     ->id('disabledOptionRadio')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
