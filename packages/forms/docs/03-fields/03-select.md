@@ -229,7 +229,7 @@ Select::make('author_id')
     ->relationship(
         name: 'author',
         titleAttribute: 'name',
-        modifyQueryUsing: fn (Builder $query) => $query->withTrashed(),
+        modifyQueryUsing: fn (Builder $query, ?string $search = null) => $query->withTrashed(),
     )
 ```
 
