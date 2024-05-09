@@ -77,7 +77,11 @@
                 @endif
                 {{ $getExtraAlpineAttributeBag() }}
             >
-                <input id="trix-value-{{ $id }}" x-ref="trixValue" type="hidden" />
+                <input
+                    id="trix-value-{{ $id }}"
+                    x-ref="trixValue"
+                    type="hidden"
+                />
 
                 <trix-toolbar
                     id="trix-toolbar-{{ $id }}"

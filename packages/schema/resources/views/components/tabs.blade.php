@@ -90,6 +90,8 @@
                 :alpine-active="'tab === \'' . $tabKey . '\''"
                 :badge="$tab->getBadge()"
                 :badge-color="$tab->getBadgeColor()"
+                :badge-icon="$tab->getBadgeIcon()"
+                :badge-icon-position="$tab->getBadgeIconPosition()"
                 :icon="$tab->getIcon()"
                 :icon-position="$tab->getIconPosition()"
                 :x-on:click="'tab = \'' . $tabKey . '\''"

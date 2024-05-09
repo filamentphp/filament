@@ -30,9 +30,8 @@ Trix.config.textAttributes.underline = {
 
 Trix.Block.prototype.breaksOnReturn = function () {
     const lastAttribute = this.getLastAttribute()
-    const blockConfig = Trix.config.blockAttributes[
-        lastAttribute ? lastAttribute : 'default'
-    ]
+    const blockConfig =
+        Trix.config.blockAttributes[lastAttribute ? lastAttribute : 'default']
 
     return blockConfig?.breakOnReturn ?? false
 }
