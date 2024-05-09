@@ -3,6 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Filament\Support\Enums\IconPosition;
 
 trait HasBadge
 {
@@ -13,7 +14,9 @@ trait HasBadge
      */
     protected string | array | Closure | null $badgeColor = null;
 
-    protected string | array | Closure | null $badgeIcon = null;
+    protected string | Closure | null $badgeIcon = null;
+
+    protected IconPosition | string | Closure | null $badgeIconPosition = null;
 
     public function badge(string | int | float | Closure | null $badge = null): static
     {
@@ -45,9 +48,16 @@ trait HasBadge
         return $this;
     }
 
-    public function badgeIcon(string | null $icon): static
+    public function badgeIcon(string | Closure | null $icon): static
     {
         $this->badgeIcon = $icon;
+
+        return $this;
+    }
+
+    public function badgeIconPosition(IconPosition | string | Closure | null $position): static
+    {
+        $this->badgeIconPosition = $position;
 
         return $this;
     }
@@ -75,8 +85,13 @@ trait HasBadge
         return $this->evaluate($this->badgeColor);
     }
 
-    public function getBadgeIcon(): string | null
+    public function getBadgeIcon(): ?string
     {
         return $this->evaluate($this->badgeIcon);
+    }
+
+    public function getBadgeIconPosition(): IconPosition | string
+    {
+        return $this->evaluate($this->badgeIconPosition) ?? IconPosition::Before;
     }
 }
