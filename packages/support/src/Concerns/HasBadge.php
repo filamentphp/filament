@@ -13,6 +13,8 @@ trait HasBadge
      */
     protected string | array | Closure | null $badgeColor = null;
 
+    protected string | array | Closure | null $badgeIcon = null;
+
     public function badge(string | int | float | Closure | null $badge = null): static
     {
         if (func_num_args() === 0) {
@@ -43,6 +45,13 @@ trait HasBadge
         return $this;
     }
 
+    public function badgeIcon(string | null $icon): static
+    {
+        $this->badgeIcon = $icon;
+
+        return $this;
+    }
+
     /**
      * @deprecated Use `badgeColor()` instead.
      *
@@ -64,5 +73,10 @@ trait HasBadge
     public function getBadgeColor(): string | array | null
     {
         return $this->evaluate($this->badgeColor);
+    }
+
+    public function getBadgeIcon(): string | null
+    {
+        return $this->evaluate($this->badgeIcon);
     }
 }
