@@ -229,9 +229,11 @@ Select::make('author_id')
     ->relationship(
         name: 'author',
         titleAttribute: 'name',
-        modifyQueryUsing: fn (Builder $query, ?string $search = null) => $query->withTrashed(),
+        modifyQueryUsing: fn (Builder $query) => $query->withTrashed(),
     )
 ```
+
+If you would like to access the current search query in the `modifyQueryUsing` function, you can inject `$search`.
 
 ### Customizing the relationship option labels
 
