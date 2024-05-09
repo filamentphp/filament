@@ -43,6 +43,8 @@ In v3, the `inline()` method put the radio buttons inline with each other, and a
 
 In v4, the `inline()` method now only puts the radio buttons inline with each other, and not with the label. If you want the radio buttons to be inline with the label, you can use the `inlineLabel()` method as well.
 
+If you were previously using `inline()->inlineLabel(false)` to achieve the v4 behaviour, you can now simply use `inline()`.
+
 ### Low-impact changes
 
 #### Overriding the `Field::make()`, `MorphToSelect::make()`, `Placeholder::make()`, or `Builder\Block::make()` methods
