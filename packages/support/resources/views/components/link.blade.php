@@ -134,7 +134,8 @@
             x-data="{}"
         @endif
         @if ($keyBindings)
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+            x-bind:id="$id('key-bindings')"
+            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
         @endif
         @if ($hasTooltip)
             x-tooltip="{
@@ -181,7 +182,8 @@
             x-data="{}"
         @endif
         @if ($keyBindings)
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+            x-bind:id="$id('key-bindings')"
+            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
         @endif
         @if ($hasTooltip)
             x-tooltip="{
