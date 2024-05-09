@@ -19,6 +19,20 @@ public function infolist(Infolist $infolist): Infolist
 }
 ```
 
+If you're inside a [panel builder resource](../../panels/resources), the `infolist()` method should be static:
+
+```php
+use Filament\Infolists\Infolist;
+
+public static function infolist(Infolist $infolist): Infolist
+{
+    return $infolist
+        ->schema([
+            // ...
+        ]);
+}
+```
+
 Entries may be created using the static `make()` method, passing its unique name. You may use "dot notation" to access entries within relationships.
 
 ```php
