@@ -10,8 +10,21 @@ Entry classes can be found in the `Filament\Infolists\Components` namespace. You
 ```php
 use Filament\Infolists\Infolist;
 
-// use `public static function` in resources
 public function infolist(Infolist $infolist): Infolist
+{
+    return $infolist
+        ->schema([
+            // ...
+        ]);
+}
+```
+
+If you're inside a [panel builder resource](../../panels/resources), the `infolist()` method should be static:
+
+```php
+use Filament\Infolists\Infolist;
+
+public static function infolist(Infolist $infolist): Infolist
 {
     return $infolist
         ->schema([
