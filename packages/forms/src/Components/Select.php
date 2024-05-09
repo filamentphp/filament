@@ -717,6 +717,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
+                    'search' => $search,
                 ]) ?? $relationshipQuery;
             }
 

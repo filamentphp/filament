@@ -1,4 +1,4 @@
-import Trix from 'trix/dist/trix'
+import Trix from 'trix'
 
 Trix.config.blockAttributes.default.tagName = 'p'
 

@@ -233,6 +233,8 @@ Select::make('author_id')
     )
 ```
 
+If you would like to access the current search query in the `modifyQueryUsing` function, you can inject `$search`.
+
 ### Customizing the relationship option labels
 
 If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you could use a virtual column in your database migration:
