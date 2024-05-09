@@ -183,7 +183,7 @@
         x-data="{}"
     @endif
     @if ($keyBindings)
-        :id="$id('key-binding')"
+        :id="$id('key-bindings')"
         x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
     @endif
     @if ($hasTooltip)
