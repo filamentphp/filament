@@ -106,7 +106,7 @@ class Summarizer extends ViewComponent
         }
 
         $asName = (string) str($query->getModel()->getTable())->afterLast('.');
-        
+
         $query = DB::connection($query->getModel()->getConnectionName())
             ->table($query->toBase(), $asName);
 
