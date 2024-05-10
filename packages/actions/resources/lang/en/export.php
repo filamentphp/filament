@@ -67,7 +67,7 @@ return [
 
         'started' => [
             'title' => 'Export started',
-            'body' => 'Your export has begun and 1 row will be processed in the background.|Your export has begun and :count rows will be processed in the background.',
+            'body' => 'Your export has begun and 1 row will be processed in the background. You will receive a notification with the download link when it is complete.|Your export has begun and :count rows will be processed in the background. You will receive a notification with the download link when it is complete.',
         ],
 
     ],
