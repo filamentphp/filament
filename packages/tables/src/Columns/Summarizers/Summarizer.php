@@ -8,7 +8,6 @@ use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class Summarizer extends ViewComponent
 {
@@ -106,7 +105,8 @@ class Summarizer extends ViewComponent
                 );
         }
 
-        $asName = Str::afterLast($query->getModel()->getTable(), '.');
+        $asName = (string) str($query->getModel()->getTable())->afterLast('.');
+        
         $query = DB::connection($query->getModel()->getConnectionName())
             ->table($query->toBase(), $asName);
 
