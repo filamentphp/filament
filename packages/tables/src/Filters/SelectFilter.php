@@ -65,7 +65,7 @@ class SelectFilter extends BaseFilter
                         ->all();
                 } else {
                     $labels = collect($filter->getOptions())
-                        ->mapWithKeys(fn($label, $value) => is_array($label) ? $label : [$value => $label])
+                        ->mapWithKeys(fn ($label, $value) => is_array($label) ? $label : [$value => $label])
                         ->only($state['values'])
                         ->all();
                 }
@@ -100,7 +100,7 @@ class SelectFilter extends BaseFilter
                     ?->getAttributeValue($filter->getRelationshipTitleAttribute());
             } else {
                 $label = collect($filter->getOptions())
-                    ->mapWithKeys(fn($label, $value) => is_array($label) ? $label : [$value => $label])
+                    ->mapWithKeys(fn ($label, $value) => is_array($label) ? $label : [$value => $label])
                     ->get($state['value']);
             }
 
