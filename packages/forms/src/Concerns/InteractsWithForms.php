@@ -50,6 +50,9 @@ trait InteractsWithForms
         }
     }
 
+    /**
+     * @param  array<mixed>  $state
+     */
     public function fillFormDataForTesting(array $state = []): void
     {
         if (! app()->runningUnitTests()) {
@@ -73,6 +76,10 @@ trait InteractsWithForms
         }
     }
 
+    /**
+     * @param  array<mixed>  $target
+     * @param  array<mixed>  $state
+     */
     protected function unsetMissingNumericArrayKeys(array &$target, array $state): void
     {
         foreach ($target as $key => $value) {
