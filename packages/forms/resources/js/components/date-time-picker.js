@@ -501,6 +501,7 @@ const locales = {
     ms: require('dayjs/locale/ms'),
     my: require('dayjs/locale/my'),
     nl: require('dayjs/locale/nl'),
+    no: require('dayjs/locale/nb'),
     pl: require('dayjs/locale/pl'),
     pt_BR: require('dayjs/locale/pt-br'),
     pt_PT: require('dayjs/locale/pt'),

@@ -45,6 +45,32 @@ it('can automatically generate a slug from the title', function () {
 
 > If you have multiple forms on a Livewire component, you can specify which form you want to check using `assertFormSet([...], 'createPostForm')`.
 
+You may also find it useful to pass a function to the `assertFormSet()` method, which allows you to access the form `$state` and perform additional assertions:
+
+```php
+use Illuminate\Support\Str;
+use function Pest\Livewire\livewire;
+
+it('can automatically generate a slug from the title without any spaces', function () {
+    $title = fake()->sentence();
+
+    livewire(CreatePost::class)
+        ->fillForm([
+            'title' => $title,
+        ])
+        ->assertFormSet(function (array $state): array {
+            expect($state['slug'])
+                ->not->toContain(' ');
+                
+            return [
+                'slug' => Str::slug($title),
+            ];
+        });
+});
+```
+
+You can return an array from the function if you want Filament to continue to assert the form state after the function has been run.
+
 ## Validation
 
 Use `assertHasFormErrors()` to ensure that data is properly validated in a form:

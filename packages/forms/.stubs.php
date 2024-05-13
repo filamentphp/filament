@@ -6,9 +6,9 @@ namespace Livewire\Features\SupportTesting {
     use Closure;
 
     class Testable {
-        public function fillForm(array $state = [], string $formName = 'form'): static {}
+        public function fillForm(array | Closure $state = [], string $formName = 'form'): static {}
 
-        public function assertFormSet(array $state, string $formName = 'form'): static {}
+        public function assertFormSet(array | Closure $state, string $formName = 'form'): static {}
 
         public function assertHasFormErrors(array $keys = [], string $formName = 'form'): static {}
 
