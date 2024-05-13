@@ -7,6 +7,7 @@ use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Schema;
 use Filament\Support\Contracts\TranslatableContentDriver;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Renderless;
@@ -360,5 +361,50 @@ trait InteractsWithSchemas
         }
 
         return $attributes;
+    }
+
+    /**
+     * @param  array<mixed>  $state
+     */
+    public function fillFormDataForTesting(array $state = []): void
+    {
+        if (! app()->runningUnitTests()) {
+            return;
+        }
+
+        foreach (Arr::dot($state) as $statePath => $value) {
+            $this->updatingInteractsWithSchemas($statePath);
+
+            data_set($this, $statePath, $value);
+
+            $this->updatedInteractsWithSchemas($statePath);
+        }
+
+        foreach ($state as $statePath => $value) {
+            if (! is_array($value)) {
+                continue;
+            }
+
+            $this->unsetMissingNumericArrayKeys($this->{$statePath}, $value);
+        }
+    }
+
+    /**
+     * @param  array<mixed>  $target
+     * @param  array<mixed>  $state
+     */
+    protected function unsetMissingNumericArrayKeys(array &$target, array $state): void
+    {
+        foreach ($target as $key => $value) {
+            if (is_numeric($key) && (! array_key_exists($key, $state))) {
+                unset($target[$key]);
+
+                continue;
+            }
+
+            if (is_array($value) && is_array($state[$key] ?? null)) {
+                $this->unsetMissingNumericArrayKeys($target[$key], $state[$key]);
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
@@ -142,7 +142,7 @@ it('can remove items from a repeater', function () {
 
 class TestComponentWithRepeater extends Livewire
 {
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
