@@ -3,7 +3,6 @@
 namespace Filament\Tests\Panels\Fixtures\Resources;
 
 use Filament\Forms;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -37,15 +36,6 @@ class PostResource extends Resource
                 Forms\Components\TextInput::make('rating')
                     ->numeric()
                     ->required(),
-                Forms\Components\Repeater::make('quotes')
-                    ->dehydrated(false)
-                    ->itemLabel(function (array $state): ?string {
-                        return $state['author'];
-                    })
-                    ->schema([
-                        TextInput::make('title'),
-                        TextInput::make('author'),
-                    ]),
             ]);
     }
 
