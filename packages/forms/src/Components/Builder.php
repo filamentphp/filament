@@ -91,7 +91,11 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             $items = [];
 
             foreach ($state ?? [] as $itemData) {
-                $items[$component->generateUuid()] = $itemData;
+                if ($uuid = $component->generateUuid()) {
+                    $items[$uuid] = $itemData;
+                } else {
+                    $items[] = $itemData;
+                }
             }
 
             $component->state($items);
@@ -135,14 +139,22 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 $newUuid = $component->generateUuid();
 
                 $items = $component->getState();
-                $items[$newUuid] = [
-                    'type' => $arguments['block'],
-                    'data' => [],
-                ];
+
+                if ($newUuid) {
+                    $items[$newUuid] = [
+                        'type' => $arguments['block'],
+                        'data' => [],
+                    ];
+                } else {
+                    $items[] = [
+                        'type' => $arguments['block'],
+                        'data' => [],
+                    ];
+                }
 
                 $component->state($items);
 
-                $component->getChildComponentContainer($newUuid)->fill();
+                $component->getChildComponentContainer($newUuid ?? array_key_last($items))->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -180,24 +192,33 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             ->label(fn (Builder $component) => $component->getAddBetweenActionLabel())
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $newUuid = $component->generateUuid();
+                $newKey = $component->generateUuid();
 
                 $items = [];
 
-                foreach ($component->getState() ?? [] as $uuid => $item) {
-                    $items[$uuid] = $item;
+                foreach ($component->getState() ?? [] as $key => $item) {
+                    $items[$key] = $item;
 
-                    if ($uuid === $arguments['afterItem']) {
-                        $items[$newUuid] = [
-                            'type' => $arguments['block'],
-                            'data' => [],
-                        ];
+                    if ($key === $arguments['afterItem']) {
+                        if ($newKey) {
+                            $items[$newKey] = [
+                                'type' => $arguments['block'],
+                                'data' => [],
+                            ];
+                        } else {
+                            $items[] = [
+                                'type' => $arguments['block'],
+                                'data' => [],
+                            ];
+
+                            $newKey = array_key_last($items);
+                        }
                     }
                 }
 
                 $component->state($items);
 
-                $component->getChildComponentContainer($newUuid)->fill();
+                $component->getChildComponentContainer($newKey)->fill();
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -239,7 +260,12 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 $newUuid = $component->generateUuid();
 
                 $items = $component->getState();
-                $items[$newUuid] = $items[$arguments['item']];
+
+                if ($newUuid) {
+                    $items[$newUuid] = $items[$arguments['item']];
+                } else {
+                    $items[] = $items[$arguments['item']];
+                }
 
                 $component->state($items);
 

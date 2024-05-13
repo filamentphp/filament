@@ -38,7 +38,7 @@ it('can create', function () {
 });
 
 it('can validate input', function () {
-    $newData = Post::factory()->make();
+    Post::factory()->make();
 
     livewire(CreatePost::class)
         ->fillForm([
