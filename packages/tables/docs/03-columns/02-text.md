@@ -60,6 +60,8 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('price')->money('eur')
 ```
 
+Alternatively, you can set the default currency through the environment variable `DEFAULT_CURRENCY`.
+
 ## Limiting text length
 
 You may `limit()` the length of the cell's value:
