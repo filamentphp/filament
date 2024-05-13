@@ -3,15 +3,16 @@
 namespace Filament\Schema\Components;
 
 use Closure;
+use Filament\Schema\Components\Concerns\CanPersistTab;
 use Filament\Schema\Components\Tabs\Tab;
 use Filament\Support\Concerns;
 use Illuminate\Support\Str;
 
 class Tabs extends Component
 {
+    use CanPersistTab;
     use Concerns\CanBeContained;
     use Concerns\HasExtraAlpineAttributes;
-    use \Filament\Schema\Components\Concerns\CanPersistTab;
 
     /**
      * @var view-string
