@@ -21,6 +21,7 @@
     'labelSuffix' => null,
     'required' => null,
     'statePath' => null,
+    'extraFieldWrapperAttributes' => [],
 ])
 
 @php
@@ -49,7 +50,7 @@
     $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
 @endphp
 
-<div data-field-wrapper {{ $attributes->class(['fi-fo-field-wrp']) }}>
+<div data-field-wrapper {{ $attributes->class(['fi-fo-field-wrp'])->merge($extraFieldWrapperAttributes) }}>
     @if ($label && $labelSrOnly)
         <label for="{{ $id }}" class="sr-only">
             {{ $label }}
