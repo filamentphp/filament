@@ -209,6 +209,15 @@ TextInput::make('categories')
     ->extraInputAttributes(['width' => 200])
 ```
 
+Passing extra HTML attributes to the field wrapper:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('categories')
+    ->extraFieldWrapperAttributes(['class' => 'components-locked'])
+```
+
 ## Disabling a field
 
 You may disable a field to prevent it from being edited by the user:
