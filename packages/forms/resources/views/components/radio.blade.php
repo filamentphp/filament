@@ -6,7 +6,11 @@
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    :extraFieldWrapperAttributes="$getExtraFieldWrapperAttributes()"
+>
     <x-filament::grid
         :default="$getColumns('default')"
         :sm="$getColumns('sm')"

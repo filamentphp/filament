@@ -21,6 +21,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
     :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
+    :extraFieldWrapperAttributes="$getExtraFieldWrapperAttributes()"
 >
     <x-filament::input.wrapper
         :disabled="$isDisabled"

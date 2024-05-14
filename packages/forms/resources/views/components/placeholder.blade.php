@@ -11,6 +11,7 @@
     :hint-icon="$getHintIcon()"
     :hint-icon-tooltip="$getHintIconTooltip()"
     :state-path="$getStatePath()"
+    :extraFieldWrapperAttributes="$getExtraFieldWrapperAttributes()"
 >
     <div
         {{

@@ -6,7 +6,10 @@
     $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :field="$field"
+>
     <div
         x-data="{
             areAllCheckboxesChecked: false,

@@ -14,6 +14,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
     :has-inline-label="$hasInlineLabel"
+    :extraFieldWrapperAttributes="$getExtraFieldWrapperAttributes()"
 >
     <x-slot
         name="label"
