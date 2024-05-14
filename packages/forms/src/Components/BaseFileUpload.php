@@ -600,7 +600,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             $validator = Validator::make(
                 [$name => $files],
                 ["{$name}.*" => ['file', ...parent::getValidationRules()]],
-                [],
+                ["{$name}.*" => $this->getValidationMessages()],
                 ["{$name}.*" => $this->getValidationAttribute()],
             );
 
