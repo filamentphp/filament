@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 
 trait CanSortRecords
@@ -97,24 +98,24 @@ trait CanSortRecords
 
     protected function applyDefaultSortingToTableQuery(Builder $query): Builder
     {
-        $sortColumnName = $this->getTable()->getDefaultSortColumn();
+        $defaultSort = $this->getTable()->getDefaultSort();
         $sortDirection = ($this->getTable()->getDefaultSortDirection() ?? $this->tableSortDirection) === 'desc' ? 'desc' : 'asc';
 
         if (
-            $sortColumnName &&
-            ($sortColumn = $this->getTable()->getSortableVisibleColumn($sortColumnName))
+            is_string($defaultSort) &&
+            ($sortColumn = $this->getTable()->getSortableVisibleColumn($defaultSort))
         ) {
             $sortColumn->applySort($query, $sortDirection);
 
             return $query;
         }
 
-        if ($sortColumnName) {
-            return $query->orderBy($sortColumnName, $sortDirection);
+        if (is_string($defaultSort)) {
+            return $query->orderBy($defaultSort, $sortDirection);
         }
 
-        if ($sortQueryUsing = $this->getTable()->getDefaultSortQuery()) {
-            app()->call($sortQueryUsing, [
+        if ($defaultSort instanceof Closure) {
+            app()->call($defaultSort, [
                 'direction' => $sortDirection,
                 'query' => $query,
             ]);
