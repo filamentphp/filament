@@ -6,6 +6,7 @@
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
+    'badgeSize' => 'xs',
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -180,7 +181,7 @@
 
         @if (filled($badge))
             <div class="{{ $badgeContainerClasses }}">
-                <x-filament::badge :color="$badgeColor" size="xs">
+                <x-filament::badge :color="$badgeColor" :size="$badgeSize">
                     {{ $badge }}
                 </x-filament::badge>
             </div>
