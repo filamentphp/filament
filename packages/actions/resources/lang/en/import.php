@@ -72,6 +72,8 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'error',
         'system_error' => 'System error, please contact support.',
+        'empty_columns' => 'Spreadsheet contains duplicate empty column headers.',
+        'duplicate_columns' => 'Spreadsheet contains duplicate column headers - :columns.',
     ],
 
 ];
