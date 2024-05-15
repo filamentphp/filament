@@ -103,7 +103,7 @@ class ViewRecord extends Page
     /**
      * @param  array<string>  $attributes
      */
-    protected function refreshFormData(array $attributes): void
+    public function refreshFormData(array $attributes): void
     {
         $this->data = [
             ...$this->data,
