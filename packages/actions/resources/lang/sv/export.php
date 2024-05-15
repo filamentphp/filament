@@ -67,7 +67,7 @@ return [
 
         'started' => [
             'title' => 'Exporten startades',
-            'body' => 'Din export har börjat och 1 rad kommer att bearbetas i bakgrunden.|Din export har börjat och :count rader kommer att bearbetas i bakgrunden.',
+            'body' => 'Din export har börjat och 1 rad kommer att bearbetas i bakgrunden. Du får en notis med en nedladdningslänk när den är slutförd.|Din export har börjat och :count rader kommer att bearbetas i bakgrunden. Du får en notis med en nedladdningslänk när den är slutförd.',
         ],
 
     ],
