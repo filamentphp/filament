@@ -21,7 +21,6 @@
     'labelSuffix' => null,
     'required' => null,
     'statePath' => null,
-    'extraFieldWrapperAttributes' => [],
 ])
 
 @php
@@ -40,6 +39,7 @@
         $labelSrOnly ??= $field->isLabelHidden();
         $required ??= $field->isMarkedAsRequired();
         $statePath ??= $field->getStatePath();
+        $extraFieldWrapperAttributes ??= $field->getExtraFieldWrapperAttributes();
     }
 
     $hintActions = array_filter(
