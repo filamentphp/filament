@@ -60,7 +60,7 @@ export default function richEditorFormComponent({ state }) {
                     return
                 }
 
-                this.$refs.trixValue.value = this.state
+                this.$refs.trix.editor.loadHTML(this.state)
             })
         },
     }
