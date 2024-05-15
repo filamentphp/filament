@@ -185,8 +185,22 @@ trait CanImportRecords
                 $csvReader->setDelimiter($csvDelimiter);
             }
 
-            $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
-            $csvResults = Statement::create()->process($csvReader);
+            try {
+                $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
+                $csvResults = Statement::create()->process($csvReader);
+            } catch (SyntaxError $e) {
+                $columns = Arr::where($e->duplicateColumnNames(), fn(string $value): bool => $value !== '');
+
+                if(empty($columns)) {
+                    $message = __('filament-actions::import.failure_csv.empty_columns');
+                } else {
+                    $message = __('filament-actions::import.failure_csv.duplicate_columns', [
+                        'columns' => join(', ', $columns),
+                    ]);
+                }
+
+                throw ValidationException::withMessages(['mountedTableActionsData.0.file' => $message]);
+            }
 
             $totalRows = $csvResults->count();
             $maxRows = $action->getMaxRows() ?? $totalRows;
