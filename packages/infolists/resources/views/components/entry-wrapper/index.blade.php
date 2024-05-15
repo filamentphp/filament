@@ -40,6 +40,7 @@
         $statePath ??= $entry->getStatePath();
         $tooltip ??= $entry->getTooltip();
         $url ??= $entry->getUrl();
+        $extraEntryWrapperAttributes ??= $entry->getExtraEntryWrapperAttributes();
     }
 
     if (! $alignment instanceof Alignment) {
@@ -52,7 +53,7 @@
     );
 @endphp
 
-<div {{ $attributes->class(['fi-in-entry-wrp']) }}>
+<div {{ $attributes->class(['fi-in-entry-wrp'])->merge($extraEntryWrapperAttributes) }}>
     @if ($label && $labelSrOnly)
         <dt class="sr-only">
             {{ $label }}
