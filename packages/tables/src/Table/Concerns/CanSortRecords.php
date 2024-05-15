@@ -4,6 +4,7 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Tables\Columns\Column;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 trait CanSortRecords
@@ -49,15 +50,28 @@ trait CanSortRecords
         return $column;
     }
 
-    public function getDefaultSort(): Closure | string | null
+    public function getDefaultSort(Builder $query, string $sortDirection): Builder | string | null
     {
-        $defaultSort = $this->evaluate($this->defaultSort);
+        return $this->evaluate($this->defaultSort, [
+            'direction' => $sortDirection,
+            'query' => $query,
+        ]);
+    }
 
-        if (is_string($defaultSort)) {
-            return $defaultSort;
-        }
+    /**
+     * @deprecated Use `getDefaultSort()` instead.
+     */
+    public function getDefaultSortColumn(): ?string
+    {
+        return is_string($this->defaultSort) ? $this->defaultSort : null;
+    }
 
-        return $this->defaultSort;
+    /**
+     * @deprecated Use `getDefaultSort()` instead.
+     */
+    public function getDefaultSortQuery(): ?string
+    {
+        return ($this->defaultSort instanceof Closure) ? $this->defaultSort : null;
     }
 
     public function getDefaultSortDirection(): ?string
