@@ -69,7 +69,7 @@ trait CanSortRecords
     /**
      * @deprecated Use `getDefaultSort()` instead.
      */
-    public function getDefaultSortQuery(): ?string
+    public function getDefaultSortQuery(): ?Closure
     {
         return ($this->defaultSort instanceof Closure) ? $this->defaultSort : null;
     }
