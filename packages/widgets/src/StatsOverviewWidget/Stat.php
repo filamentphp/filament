@@ -153,7 +153,7 @@ class Stat extends Component implements Htmlable
     }
 
     /**
-     * @param  array<float> | null
+     * @param  array<float> | null  $chart
      */
     public function chart(?array $chart): static
     {
