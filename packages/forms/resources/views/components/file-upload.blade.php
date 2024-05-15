@@ -150,7 +150,7 @@
                 x-trap.noscroll="isEditorOpen"
                 x-on:keydown.escape.window="closeEditor"
                 @class([
-                    'fixed inset-0 isolate z-50 h-screen w-screen p-2 sm:p-10 md:p-20',
+                    'fixed inset-0 isolate z-50 h-[100dvh] w-screen p-2 sm:p-10 md:p-20',
                     'fi-fo-file-upload-circle-cropper' => $hasCircleCropper,
                 ])
             >
