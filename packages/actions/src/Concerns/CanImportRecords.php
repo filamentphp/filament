@@ -189,13 +189,13 @@ trait CanImportRecords
                 $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
                 $csvResults = Statement::create()->process($csvReader);
             } catch (SyntaxError $e) {
-                $columns = Arr::where($e->duplicateColumnNames(), fn(string $value): bool => $value !== '');
+                $columns = Arr::where($e->duplicateColumnNames(), fn (string $value): bool => $value !== '');
 
-                if(empty($columns)) {
+                if (empty($columns)) {
                     $message = __('filament-actions::import.failure_csv.empty_columns');
                 } else {
                     $message = __('filament-actions::import.failure_csv.duplicate_columns', [
-                        'columns' => join(', ', $columns),
+                        'columns' => implode(', ', $columns),
                     ]);
                 }
 
