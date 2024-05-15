@@ -22,7 +22,6 @@
     :component="$getFieldWrapperView()"
     :field="$field"
     :label-sr-only="$isLabelHidden()"
-    :extraFieldWrapperAttributes="$getExtraFieldWrapperAttributes()"
 >
     <div
         @if (FilamentView::hasSpaMode())

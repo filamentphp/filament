@@ -6,7 +6,6 @@
     :component="$getFieldWrapperView()"
     :field="$field"
     :inline-label-vertical-alignment="\Filament\Support\Enums\VerticalAlignment::Center"
-    :extraFieldWrapperAttributes="$getExtraFieldWrapperAttributes()"
 >
     @capture($content)
         <x-filament::input.checkbox
