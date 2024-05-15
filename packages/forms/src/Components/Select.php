@@ -993,7 +993,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
             $recordsToDetach = array_diff(
                 $relatedRecords
-                    ->pluck(($relationship instanceof BelongsToMany) ? $relationship->getRelatedKeyName() : $relationship->getRelated()->getKeyName())
+                    ->pluck($relationship->getRelatedKeyName())
                     ->map(static fn ($key): string => strval($key))
                     ->all(),
                 $state ?? [],
