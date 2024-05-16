@@ -25,6 +25,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected string | Closure | null $mediaName = null;
 
+    protected string | Closure | null $mediaClass = null;
+
     /**
      * @var array<string, mixed> | Closure | null
      */
@@ -161,7 +163,15 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, array $state): array {
             $uuids = array_filter(array_values($state));
 
-            $mediaClass = config('media-library.media_model', Media::class);
+            $mediaClass = $component->getMediaClass();
+
+            if (is_null($mediaClass) && method_exists($record, 'getMediaModel')) {
+                $mediaClass = $record->getMediaModel();
+            }
+
+            if (is_null($mediaClass)) {
+                $mediaClass = config('media-library.media_model', Media::class);
+            }
 
             $mappedIds = $mediaClass::query()->whereIn('uuid', $uuids)->pluck('id', 'uuid')->toArray();
 
@@ -358,5 +368,17 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this->evaluate($this->mediaName, [
             'file' => $file,
         ]);
+    }
+
+    public function mediaClass(string | Closure | null $mediaClass): static
+    {
+        $this->mediaClass = $mediaClass;
+
+        return $this;
+    }
+
+    public function getMediaClass(): ?string
+    {
+        return $this->evaluate($this->mediaClass);
     }
 }
