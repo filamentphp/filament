@@ -18,7 +18,6 @@ trait CanSortRecords
     public function defaultSort(string | Closure | null $column, string | Closure | null $direction = 'asc'): static
     {
         $this->defaultSort = $column;
-
         $this->defaultSortDirection = $direction;
 
         return $this;
@@ -50,10 +49,10 @@ trait CanSortRecords
         return $column;
     }
 
-    public function getDefaultSort(Builder $query, string $sortDirection): Builder | string | null
+    public function getDefaultSort(Builder $query, string $direction): string | Builder | null
     {
         return $this->evaluate($this->defaultSort, [
-            'direction' => $sortDirection,
+            'direction' => $direction,
             'query' => $query,
         ]);
     }
@@ -63,7 +62,11 @@ trait CanSortRecords
      */
     public function getDefaultSortColumn(): ?string
     {
-        return is_string($this->defaultSort) ? $this->defaultSort : null;
+        if (! is_string($this->defaultSort)) {
+            return null;
+        }
+
+        return $this->defaultSort;
     }
 
     /**
@@ -71,7 +74,11 @@ trait CanSortRecords
      */
     public function getDefaultSortQuery(): ?Closure
     {
-        return ($this->defaultSort instanceof Closure) ? $this->defaultSort : null;
+        if (! ($this->defaultSort instanceof Closure)) {
+            return null;
+        }
+
+        return $this->defaultSort;
     }
 
     public function getDefaultSortDirection(): ?string
