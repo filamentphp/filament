@@ -79,6 +79,7 @@ trait CanOpenModal
     protected bool | Closure | null $hasModalCloseButton = null;
 
     protected bool | Closure | null $isModalClosedByClickingAway = null;
+
     protected bool | Closure | null $isModalClosedByHittingEscape = null;
 
     protected string | Closure | null $modalIcon = null;

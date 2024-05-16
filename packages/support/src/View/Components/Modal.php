@@ -7,6 +7,7 @@ class Modal
     public static bool $hasCloseButton = true;
 
     public static bool $isClosedByClickingAway = true;
+
     public static bool $isClosedByHittingEscape = true;
 
     public static function closeButton(bool $condition = true): void
