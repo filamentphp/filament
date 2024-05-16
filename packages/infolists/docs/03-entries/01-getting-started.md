@@ -296,6 +296,15 @@ TextEntry::make('slug')
 
 These get merged onto the outer `<div>` element of each entry in that entry.
 
+You can also pass extra HTML attributes to the entry wrapper which surrounds the label, entry, and any other text:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('slug')
+    ->extraFieldWrapperAttributes(['class' => 'entry-locked'])
+```
+
 ## Global settings
 
 If you wish to change the default behaviour of all entries globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the entries using. For example, if you wish to make all `TextEntry` components [`words(10)`](text#limiting-word-count), you can do it like so:

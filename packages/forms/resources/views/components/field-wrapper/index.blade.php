@@ -49,7 +49,14 @@
     $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
 @endphp
 
-<div data-field-wrapper {{ $attributes->class(['fi-fo-field-wrp']) }}>
+<div
+    data-field-wrapper
+    {{
+        $attributes
+            ->merge($field?->getExtraFieldWrapperAttributes() ?? [])
+            ->class(['fi-fo-field-wrp'])
+    }}
+>
     @if ($label && $labelSrOnly)
         <label for="{{ $id }}" class="sr-only">
             {{ $label }}
