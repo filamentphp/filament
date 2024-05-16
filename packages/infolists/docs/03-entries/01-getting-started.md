@@ -296,7 +296,7 @@ TextEntry::make('slug')
 
 These get merged onto the outer `<div>` element of each entry in that entry.
 
-Passing extra HTML attributes to the entry wrapper:
+You can also pass extra HTML attributes to the entry wrapper which surrounds the label, entry, and any other text:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
