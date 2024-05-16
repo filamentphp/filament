@@ -2,7 +2,7 @@
     'dropdownOnDesktop' => false,
     'groups',
     'triggerAction',
-    'groupingDirectionVisible' => true,
+    'groupingDirectionHidden' => false,
 ])
 
 @php
@@ -72,23 +72,24 @@
                 </x-filament::input.wrapper>
             </label>
 
-            <label x-cloak x-show="group" class="grid gap-y-2">
-                <span class="{{ $labelClasses }}">
-                    {{ __('filament-tables::table.grouping.fields.direction.label') }}
-                </span>
+            @if ($groupingDirectionHidden)
+                <label x-cloak x-show="group" class="grid gap-y-2">
+                    <span class="{{ $labelClasses }}">
+                        {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                    </span>
+                        <x-filament::input.wrapper>
+                            <x-filament::input.select x-model="direction">
+                                <option value="asc">
+                                    {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                                </option>
 
-                <x-filament::input.wrapper>
-                    <x-filament::input.select x-model="direction">
-                        <option value="asc">
-                            {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
-                        </option>
-
-                        <option value="desc">
-                            {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                        </option>
-                    </x-filament::input.select>
-                </x-filament::input.wrapper>
-            </label>
+                                <option value="desc">
+                                    {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                                </option>
+                            </x-filament::input.select>
+                        </x-filament::input.wrapper>
+                </label>
+            @endif
         </div>
     </x-filament::dropdown>
 
@@ -117,25 +118,24 @@
                 </x-filament::input.wrapper>
             </label>
 
-            <label x-cloak x-show="group">
-                <span class="sr-only">
-                    {{ __('filament-tables::table.grouping.fields.direction.label') }}
-                </span>
+            @if ($groupingDirectionHidden)
+                <label x-cloak x-show="group">
+                    <span class="sr-only">
+                        {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                    </span>
+                        <x-filament::input.wrapper>
+                            <x-filament::input.select x-model="direction">
+                                <option value="asc">
+                                    {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                                </option>
 
-                @if ($groupingDirectionVisible)
-                    <x-filament::input.wrapper>
-                        <x-filament::input.select x-model="direction">
-                            <option value="asc">
-                                {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
-                            </option>
-
-                            <option value="desc">
-                                {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                            </option>
-                        </x-filament::input.select>
-                    </x-filament::input.wrapper>
-                @endif
-            </label>
+                                <option value="desc">
+                                    {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                                </option>
+                            </x-filament::input.select>
+                        </x-filament::input.wrapper>
+                </label>
+            @endif
         </div>
     @endif
 </div>

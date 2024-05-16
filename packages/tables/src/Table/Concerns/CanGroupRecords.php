@@ -58,7 +58,7 @@ trait CanGroupRecords
         return $this;
     }
 
-    public function groupingSortDirectionHidden(bool | Closure $condition = true): static
+    public function groupingDirectionHidden(bool | Closure $condition = true): static
     {
         $this->isGroupingDirectionHidden = $condition;
 
