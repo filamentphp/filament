@@ -8,6 +8,7 @@
     'ariaLabelledby' => null,
     'closeButton' => \Filament\Support\View\Components\Modal::$hasCloseButton,
     'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
+    'closeByHittingEscape' => \Filament\Support\View\Components\Modal::$isClosedByHittingEscape,
     'closeEventName' => 'close-modal',
     'description' => null,
     'displayClasses' => 'inline-block',
@@ -23,6 +24,7 @@
     'id' => null,
     'openEventName' => 'open-modal',
     'slideOver' => false,
+    'closeToAction' => true,
     'stickyFooter' => false,
     'stickyHeader' => false,
     'trigger' => null,
@@ -155,7 +157,10 @@
                             $watch('isOpen', () => (isShown = isOpen))
                         })
                     "
-                    x-on:keydown.window.escape="{{ $closeEventHandler }}"
+                    @if ($closeByHittingEscape)
+                        x-on:keydown.window.escape="{{ $closeEventHandler }}"
+                    @endif
+
                     x-show="isShown"
                     x-transition:enter="duration-300"
                     x-transition:leave="duration-300"
@@ -175,9 +180,10 @@
                         ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag())->class([
                             'fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                             'fi-modal-slide-over-window ms-auto overflow-y-auto' => $slideOver,
+                            'p-10 border border-red-300 shadow shadow-4xl' => $closeToAction,
                             // Using an arbitrary value instead of the h-dvh class that was added in Tailwind CSS v3.4.0
                             // to ensure compatibility with custom themes that may use an older version of Tailwind CSS.
-                            'h-[100dvh]' => $slideOver || ($width === MaxWidth::Screen),
+                            'h-[100dvh]' => ($slideOver || ($width === MaxWidth::Screen)) && !$closeToAction,
                             'mx-auto rounded-xl' => ! ($slideOver || ($width === MaxWidth::Screen)),
                             'hidden' => ! $visible,
                             match ($width) {
