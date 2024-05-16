@@ -3,7 +3,6 @@
 @endphp
 
 @props([
-    'extraAttributes' => null,
     'field' => null,
     'hasInlineLabel' => null,
     'hasNestedRecursiveValidationRules' => null,
@@ -26,7 +25,6 @@
 
 @php
     if ($field) {
-        $extraAttributes ??= $field->getExtraFieldWrapperAttributes();
         $hasInlineLabel ??= $field->hasInlineLabel();
         $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
         $helperText ??= $field->getHelperText();
@@ -55,7 +53,7 @@
     data-field-wrapper
     {{
         $attributes
-            ->merge($extraAttributes ?? [])
+            ->merge($field?->getExtraFieldWrapperAttributes() ?? [])
             ->class(['fi-fo-field-wrp'])
     }}
 >

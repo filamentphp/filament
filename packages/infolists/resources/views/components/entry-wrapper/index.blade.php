@@ -2,7 +2,6 @@
     'action' => null,
     'alignment' => null,
     'entry' => null,
-    'extraAttributes' => null,
     'hasInlineLabel' => null,
     'helperText' => null,
     'hint' => null,
@@ -27,7 +26,6 @@
     if ($entry) {
         $action ??= $entry->getAction();
         $alignment ??= $entry->getAlignment();
-        $extraAttributes ??= $entry->getExtraEntryWrapperAttributes();
         $hasInlineLabel ??= $entry->hasInlineLabel();
         $helperText ??= $entry->getHelperText();
         $hint ??= $entry->getHint();
@@ -57,7 +55,7 @@
 <div
     {{
         $attributes
-            ->merge($extraAttributes ?? [])
+            ->merge($entry?->getExtraEntryWrapperAttributes() ?? [])
             ->class(['fi-in-entry-wrp'])
     }}
 >
