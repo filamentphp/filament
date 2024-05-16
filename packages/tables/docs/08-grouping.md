@@ -323,6 +323,21 @@ public function table(Table $table): Table
 }
 ```
 
+## Hiding the grouping direction settings
+
+You can hide the grouping direction drop-down select interface using the `groupingDirectionHidden()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+		->defaultGroup('status');
+        ->groupingDirectionHidden();
+}
+```
+
 ## Hiding the grouping settings
 
 You can hide the grouping settings interface using the `groupingSettingsHidden()` method:
