@@ -18,7 +18,6 @@ class Component extends ViewComponent
     use Concerns\HasActions;
     use Concerns\HasChildComponents;
     use Concerns\HasEntryWrapper;
-    use Concerns\HasExtraEntryWrapperAttributes;
     use Concerns\HasId;
     use Concerns\HasInlineLabel;
     use Concerns\HasKey;

@@ -22,7 +22,6 @@ class Component extends ViewComponent
     use Concerns\Cloneable;
     use Concerns\HasActions;
     use Concerns\HasChildComponents;
-    use Concerns\HasExtraFieldWrapperAttributes;
     use Concerns\HasFieldWrapper;
     use Concerns\HasId;
     use Concerns\HasInlineLabel;
