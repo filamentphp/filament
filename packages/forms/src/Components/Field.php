@@ -11,6 +11,7 @@ class Field extends Component implements Contracts\HasValidationRules, HasHintAc
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeMarkedAsRequired;
     use Concerns\CanBeValidated;
+    use Concerns\HasExtraFieldWrapperAttributes;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;
