@@ -209,7 +209,7 @@ TextInput::make('categories')
     ->extraInputAttributes(['width' => 200])
 ```
 
-Passing extra HTML attributes to the field wrapper:
+You can also pass extra HTML attributes to the field wrapper which surrounds the label, entry, and any other text:
 
 ```php
 use Filament\Forms\Components\TextInput;
