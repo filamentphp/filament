@@ -15,7 +15,7 @@ return [
     ],
 
     'messages' => [
-        'notification_not_received' => 'Inte fått mejlmeddelandet vi skickade?',
+        'notification_not_received' => 'Inte fått mejlet vi skickade?',
         'notification_sent' => 'Vi skickade ett meddelande till :email med instruktioner på hur du verifierar din mejladress.',
     ],
 

@@ -31,13 +31,13 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')->required(),
+                TextInput::make('title')->required(),
                 Forms\Components\MarkdownEditor::make('content'),
                 Forms\Components\Select::make('author_id')
                     ->relationship('author', 'name')
                     ->required(),
                 Forms\Components\TagsInput::make('tags'),
-                Forms\Components\TextInput::make('rating')
+                TextInput::make('rating')
                     ->numeric()
                     ->required(),
             ]);

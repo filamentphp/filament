@@ -288,7 +288,7 @@ trait HasState
         }
 
         if (! $this->hasDefaultState()) {
-            $this->state(null);
+            $this->hasStatePath() && $this->state(null);
 
             return;
         }
