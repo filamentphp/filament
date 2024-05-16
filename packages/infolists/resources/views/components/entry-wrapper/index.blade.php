@@ -2,6 +2,7 @@
     'action' => null,
     'alignment' => null,
     'entry' => null,
+    'extraAttributes' => null,
     'hasInlineLabel' => null,
     'helperText' => null,
     'hint' => null,
@@ -26,6 +27,7 @@
     if ($entry) {
         $action ??= $entry->getAction();
         $alignment ??= $entry->getAlignment();
+        $extraAttributes ??= $entry->getExtraEntryWrapperAttributes();
         $hasInlineLabel ??= $entry->hasInlineLabel();
         $helperText ??= $entry->getHelperText();
         $hint ??= $entry->getHint();
@@ -40,7 +42,6 @@
         $statePath ??= $entry->getStatePath();
         $tooltip ??= $entry->getTooltip();
         $url ??= $entry->getUrl();
-        $extraEntryWrapperAttributes ??= $entry->getExtraEntryWrapperAttributes();
     }
 
     if (! $alignment instanceof Alignment) {
@@ -53,7 +54,13 @@
     );
 @endphp
 
-<div {{ $attributes->class(['fi-in-entry-wrp'])->merge($extraEntryWrapperAttributes) }}>
+<div
+    {{
+        $attributes
+            ->merge($extraAttributes ?? [])
+            ->class(['fi-in-entry-wrp'])
+    }}
+>
     @if ($label && $labelSrOnly)
         <dt class="sr-only">
             {{ $label }}

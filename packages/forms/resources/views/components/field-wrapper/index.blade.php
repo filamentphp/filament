@@ -3,6 +3,7 @@
 @endphp
 
 @props([
+    'extraAttributes' => null,
     'field' => null,
     'hasInlineLabel' => null,
     'hasNestedRecursiveValidationRules' => null,
@@ -25,6 +26,7 @@
 
 @php
     if ($field) {
+        $extraAttributes ??= $field->getExtraFieldWrapperAttributes();
         $hasInlineLabel ??= $field->hasInlineLabel();
         $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
         $helperText ??= $field->getHelperText();
@@ -39,7 +41,6 @@
         $labelSrOnly ??= $field->isLabelHidden();
         $required ??= $field->isMarkedAsRequired();
         $statePath ??= $field->getStatePath();
-        $extraFieldWrapperAttributes ??= $field->getExtraFieldWrapperAttributes();
     }
 
     $hintActions = array_filter(
@@ -50,7 +51,14 @@
     $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
 @endphp
 
-<div data-field-wrapper {{ $attributes->class(['fi-fo-field-wrp'])->merge($extraFieldWrapperAttributes) }}>
+<div
+    data-field-wrapper
+    {{
+        $attributes
+            ->merge($extraAttributes ?? [])
+            ->class(['fi-fo-field-wrp'])
+    }}
+>
     @if ($label && $labelSrOnly)
         <label for="{{ $id }}" class="sr-only">
             {{ $label }}
