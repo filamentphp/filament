@@ -103,6 +103,17 @@ class Summarizer extends ViewComponent
                         return $relatedQuery;
                     },
                 );
+        } elseif (str($attribute)->startsWith('pivot.')) {
+            // https://github.com/filamentphp/filament/issues/12501
+
+            $pivotAttribute = (string) str($attribute)
+                ->after('pivot.')
+                ->prepend('pivot_');
+
+            $isPivotAttributeSelected = collect($query->getQuery()->getColumns())
+                ->contains(fn (string $column): bool => str($column)->endsWith(" as {$pivotAttribute}"));
+
+            $attribute = $isPivotAttributeSelected ? $pivotAttribute : $attribute;
         }
 
         $asName = (string) str($query->getModel()->getTable())->afterLast('.');
