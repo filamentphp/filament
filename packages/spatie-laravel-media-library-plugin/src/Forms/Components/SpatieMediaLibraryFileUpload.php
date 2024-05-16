@@ -160,7 +160,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return $media->getAttributeValue('uuid');
         });
 
-        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, array $state): array {
+        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, array $state, ?Model $record): array {
             $uuids = array_filter(array_values($state));
 
             $mediaClass = $component->getMediaClass();
