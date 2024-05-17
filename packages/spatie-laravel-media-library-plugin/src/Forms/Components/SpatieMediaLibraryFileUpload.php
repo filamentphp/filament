@@ -158,10 +158,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return $media->getAttributeValue('uuid');
         });
 
-        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, array $state): array {
+        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, ?Model $record, array $state): array {
             $uuids = array_filter(array_values($state));
 
-            $mediaClass = config('media-library.media_model', Media::class);
+            $mediaClass = ($record && method_exists($record, 'getMediaModel')) ? $record->getMediaModel() : null;
+            $mediaClass ??= config('media-library.media_model', Media::class);
 
             $mappedIds = $mediaClass::query()->whereIn('uuid', $uuids)->pluck('id', 'uuid')->toArray();
 
