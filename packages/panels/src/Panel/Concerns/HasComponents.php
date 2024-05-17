@@ -495,6 +495,18 @@ trait HasComponents
                 $this->queueLivewireComponentForRegistration($loginRouteAction);
             }
 
+            if ($this->hasTenantRegistration() && is_subclass_of($tenantRegistrationComponent = $this->getTenantRegistrationPage(), Component::class)) {
+                $this->queueLivewireComponentForRegistration($tenantRegistrationComponent);
+            }
+
+            if ($this->hasTenantProfile() && is_subclass_of($tenantProfileComponent = $this->getTenantProfilePage(), Component::class)) {
+                $this->queueLivewireComponentForRegistration($tenantProfileComponent);
+            }
+
+            if ($this->hasProfile() && is_subclass_of($profilePageComponent = $this->getProfilePage(), Component::class)) {
+                $this->queueLivewireComponentForRegistration($profilePageComponent);
+            }
+
             if ($this->hasPasswordReset()) {
                 if (is_subclass_of($requestPasswordResetRouteAction = $this->getRequestPasswordResetRouteAction(), Component::class)) {
                     $this->queueLivewireComponentForRegistration($requestPasswordResetRouteAction);
