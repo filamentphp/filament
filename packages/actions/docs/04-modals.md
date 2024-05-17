@@ -506,9 +506,9 @@ use Filament\Support\View\Components\Modal;
 Modal::closedByClickingAway(false);
 ```
 
-## Closing the modal by hitting escape
+## Closing the modal by escaping
 
-By default, when you hit escape on a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closedByHittingEscape(false)` method:
+By default, when you press escape on a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closedByEscaping(false)` method:
 
 ```php
 Action::make('updateAuthor')
@@ -518,15 +518,15 @@ Action::make('updateAuthor')
     ->action(function (array $data): void {
         // ...
     })
-    ->closedByHittingEscape(false)
+    ->closedByEscaping(false)
 ```
 
-If you'd like to change the behaviour for all modals in the application, you can do so by calling `Modal::closedByHittingEscape()` inside a service provider or middleware:
+If you'd like to change the behaviour for all modals in the application, you can do so by calling `Modal::closedByEscaping()` inside a service provider or middleware:
 
 ```php
 use Filament\Support\View\Components\Modal;
 
-Modal::closedByHittingEscape(false);
+Modal::closedByEscaping(false);
 ```
 
 ## Hiding the modal close button

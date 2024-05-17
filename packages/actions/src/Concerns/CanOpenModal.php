@@ -80,7 +80,7 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalClosedByClickingAway = null;
 
-    protected bool | Closure | null $isModalClosedByHittingEscape = null;
+    protected bool | Closure | null $isModalClosedByEscaping = null;
 
     protected string | Closure | null $modalIcon = null;
 
@@ -96,9 +96,9 @@ trait CanOpenModal
         return $this;
     }
 
-    public function closeModalByHittingEscape(bool | Closure | null $condition = true): static
+    public function closeModalByEscaping(bool | Closure | null $condition = true): static
     {
-        $this->isModalClosedByHittingEscape = $condition;
+        $this->isModalClosedByEscaping = $condition;
 
         return $this;
     }
@@ -609,9 +609,9 @@ trait CanOpenModal
         return (bool) ($this->evaluate($this->isModalClosedByClickingAway) ?? Modal::$isClosedByClickingAway);
     }
 
-    public function isModalClosedByHittingEscape(): bool
+    public function isModalClosedByEscaping(): bool
     {
-        return (bool) ($this->evaluate($this->isModalClosedByHittingEscape) ?? Modal::$isClosedByHittingEscape);
+        return (bool) ($this->evaluate($this->isModalClosedByEscaping) ?? Modal::$isClosedByEscaping);
     }
 
     /**

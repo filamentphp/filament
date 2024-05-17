@@ -8,7 +8,7 @@ class Modal
 
     public static bool $isClosedByClickingAway = true;
 
-    public static bool $isClosedByHittingEscape = true;
+    public static bool $isClosedByEscaping = true;
 
     public static function closeButton(bool $condition = true): void
     {
@@ -20,8 +20,8 @@ class Modal
         static::$isClosedByClickingAway = $condition;
     }
 
-    public static function closedByHittingEscape(bool $condition = true): void
+    public static function closedByEscaping(bool $condition = true): void
     {
-        static::$isClosedByHittingEscape = $condition;
+        static::$isClosedByEscaping = $condition;
     }
 }
