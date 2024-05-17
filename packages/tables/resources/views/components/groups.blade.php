@@ -2,7 +2,7 @@
     'dropdownOnDesktop' => false,
     'groups',
     'triggerAction',
-    'groupingDirectionHidden' => false,
+    'direction' => false,
 ])
 
 @php
@@ -72,7 +72,7 @@
                 </x-filament::input.wrapper>
             </label>
 
-            @if ($groupingDirectionHidden)
+            @if (! $direction)
                 <label x-cloak x-show="group" class="grid gap-y-2">
                     <span class="{{ $labelClasses }}">
                         {{ __('filament-tables::table.grouping.fields.direction.label') }}
@@ -118,7 +118,7 @@
                 </x-filament::input.wrapper>
             </label>
 
-            @if ($groupingDirectionHidden)
+            @if (! $direction)
                 <label x-cloak x-show="group">
                     <span class="sr-only">
                         {{ __('filament-tables::table.grouping.fields.direction.label') }}

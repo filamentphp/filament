@@ -42,7 +42,7 @@
     $isReorderable = $isReorderable();
     $isReordering = $isReordering();
     $areGroupingSettingsVisible = (! $isReordering) && count($groups) && (! $areGroupingSettingsHidden());
-    $isGroupingDirectionHidden = (! $isGroupingDirectionHidden());
+    $isGroupingDirectionHidden = $isGroupingDirectionHidden();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
     $isSearchOnBlur = $isSearchOnBlur();
@@ -199,7 +199,7 @@
                             :dropdown-on-desktop="$areGroupingSettingsInDropdownOnDesktop()"
                             :groups="$groups"
                             :trigger-action="$getGroupRecordsTriggerAction()"
-                            :grouping-direction-hidden="$isGroupingDirectionHidden"
+                            :direction="$isGroupingDirectionHidden"
                         />
                     @endif
 
