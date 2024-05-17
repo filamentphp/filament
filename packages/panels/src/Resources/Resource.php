@@ -3,6 +3,7 @@
 namespace Filament\Resources;
 
 use Exception;
+use Closure;
 use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
@@ -824,7 +825,7 @@ abstract class Resource
         return static::$navigationLabel ?? static::getTitleCasePluralModelLabel();
     }
 
-    public static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): string | Closure | null
     {
         return null;
     }
