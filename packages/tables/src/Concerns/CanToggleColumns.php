@@ -62,7 +62,7 @@ trait CanToggleColumns
         $schema = [];
 
         foreach ($this->getTable()->getColumns() as $column) {
-            if (! $column->isToggleable()) {
+            if (! $column->isToggleable() || $column->isHidden()) {
                 continue;
             }
 

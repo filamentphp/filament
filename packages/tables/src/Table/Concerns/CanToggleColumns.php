@@ -107,7 +107,7 @@ trait CanToggleColumns
     public function hasToggleableColumns(): bool
     {
         foreach ($this->getColumns() as $column) {
-            if (! $column->isToggleable()) {
+            if (! $column->isToggleable() || $column->isHidden()) {
                 continue;
             }
 
