@@ -44,7 +44,7 @@
                 :id="$this->getId() . '.table.selection.indicator.record-count.' . $allSelectableRecordsCount"
                 tag="button"
                 :x-on:click="$selectAllRecordsAction"
-                :x-show="$allSelectableRecordsCount . ' !== ' . $selectedRecordsPropertyName . '.length'"
+                x-show="! areRecordsSelected(getRecordsOnPage())"
             >
                 {{ trans_choice('filament-tables::table.selection_indicator.actions.select_all.label', $allSelectableRecordsCount) }}
             </x-filament::link>
