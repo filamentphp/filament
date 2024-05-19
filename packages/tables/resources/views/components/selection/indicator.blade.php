@@ -5,6 +5,7 @@
     'selectAllRecordsAction' => 'selectAllRecords',
     'selectedRecordsCount',
     'selectedRecordsPropertyName' => 'selectedRecords',
+    'selectCurrentPageOnly' => false
 ])
 
 <div
@@ -40,13 +41,13 @@
 
         <div class="flex gap-x-3">
             <x-filament::link
-                {{-- Make sure the "show" state gets re-evaluated after a Livewire request: --}}
-                :wire:key="$this->getId() . 'table.select_all.link.' . Str::random()"
                 color="primary"
+                {{-- Make sure the "show" get re-evaluated after a Livewire request: --}}
+                :wire:key="$this->getId() . 'table.selection.indicator.link' . Str::random()"
                 :id="$this->getId() . '.table.selection.indicator.record-count.' . $allSelectableRecordsCount"
                 tag="button"
                 :x-on:click="$selectAllRecordsAction"
-                x-show="! areRecordsSelected(getRecordsOnPage())"
+                :x-show="$selectCurrentPageOnly ? '! areRecordsSelected(getRecordsOnPage())' : $allSelectableRecordsCount . ' !== ' . $selectedRecordsPropertyName . '.length'"
             >
                 {{ trans_choice('filament-tables::table.selection_indicator.actions.select_all.label', $allSelectableRecordsCount) }}
             </x-filament::link>
