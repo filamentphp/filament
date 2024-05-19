@@ -40,6 +40,8 @@
 
         <div class="flex gap-x-3">
             <x-filament::link
+                {{-- Make sure the "show" state gets re-evaluated after a Livewire request: --}}
+                :wire:key="$this->getId() . 'table.select_all.link.' . Str::random()"
                 color="primary"
                 :id="$this->getId() . '.table.selection.indicator.record-count.' . $allSelectableRecordsCount"
                 tag="button"
