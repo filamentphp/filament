@@ -58,6 +58,22 @@ protected function getStats(): array
 }
 ```
 
+The `descriptionIcon()` method also accepts a second parameter to specify the icon position. This parameter is part of `Filament\Support\Enums\IconPosition` and can be set to `Before` or `After`:
+
+```php
+use Filament\Support\Enums\IconPosition;
+
+protected function getStats(): array
+{
+    return [
+        Stat::make('Unique views', '192.1k')
+            ->description('32k increase')
+            ->descriptionIcon('heroicon-m-arrow-trending-up', IconPosition::Before),
+        // ...
+    ];
+}
+```
+
 ## Changing the color of the stat
 
 You may also give stats a `color()` (`danger`, `gray`, `info`, `primary`, `success` or `warning`):
