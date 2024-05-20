@@ -1,5 +1,5 @@
 @props([
-    'direction' => false,
+    'directionSetting' => false,
     'dropdownOnDesktop' => false,
     'groups',
     'triggerAction',
@@ -72,7 +72,7 @@
                 </x-filament::input.wrapper>
             </label>
 
-            @if (! $direction)
+            @if (! $directionSetting)
                 <label x-cloak x-show="group" class="grid gap-y-2">
                     <span class="{{ $labelClasses }}">
                         {{ __('filament-tables::table.grouping.fields.direction.label') }}
@@ -118,7 +118,7 @@
                 </x-filament::input.wrapper>
             </label>
 
-            @if (! $direction)
+            @if (! $directionSetting)
                 <label x-cloak x-show="group">
                     <span class="sr-only">
                         {{ __('filament-tables::table.grouping.fields.direction.label') }}
