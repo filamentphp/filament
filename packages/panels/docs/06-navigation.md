@@ -246,7 +246,7 @@ To register new navigation items, you can use the [configuration](configuration)
 ```php
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
-use Filament\Panel;
+use Filament\Panel;use function Filament\Support\original_request;
 
 public function panel(Panel $panel): Panel
 {
@@ -261,7 +261,7 @@ public function panel(Panel $panel): Panel
             NavigationItem::make('dashboard')
                 ->label(fn (): string => __('filament-panels::pages/dashboard.title'))
                 ->url(fn (): string => Dashboard::getUrl())
-                ->isActiveWhen(fn () => request()->routeIs('filament.admin.pages.dashboard')),
+                ->isActiveWhen(fn () => original_request()->routeIs('filament.admin.pages.dashboard')),
             // ...
         ]);
 }
@@ -328,7 +328,7 @@ use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
-use Filament\Panel;
+use Filament\Panel;use function Filament\Support\original_request;
 
 public function panel(Panel $panel): Panel
 {
@@ -338,7 +338,7 @@ public function panel(Panel $panel): Panel
             return $builder->items([
                 NavigationItem::make('Dashboard')
                     ->icon('heroicon-o-home')
-                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'))
+                    ->isActiveWhen(fn (): bool => original_request()->routeIs('filament.admin.pages.dashboard'))
                     ->url(fn (): string => Dashboard::getUrl()),
                 ...UserResource::getNavigationItems(),
                 ...Settings::getNavigationItems(),

@@ -25,7 +25,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Laravel\Octane\Events\RequestReceived;
+use Livewire\Livewire;
 use Livewire\Mechanisms\DataStore;
+use Livewire\Mechanisms\PersistentMiddleware\PersistentMiddleware;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
@@ -90,6 +92,21 @@ class SupportServiceProvider extends PackageServiceProvider
                     ->allowAttribute('style', allowedElements: '*')
                     ->withMaxInputLength(500000),
             ),
+        );
+
+        $this->app->scoped(
+            'originalRequest',
+            function () {
+                if (! Livewire::isLivewireRequest()) {
+                    return request();
+                }
+
+                $persistentMiddleware = app(PersistentMiddleware::class);
+                $request = invade($persistentMiddleware)->makeFakeRequest();
+                invade($persistentMiddleware)->getRouteFromRequest($request);
+
+                return $request;
+            },
         );
 
         $this->app->bind(DataStore::class, DataStoreOverride::class);

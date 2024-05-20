@@ -13,6 +13,7 @@ use Filament\Resources\Pages\Concerns\InteractsWithParentRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
+use function Filament\Support\original_request;
 
 abstract class Page extends BasePage
 {
@@ -59,7 +60,7 @@ abstract class Page extends BasePage
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
+                ->isActiveWhen(fn (): bool => original_request()->routeIs(static::getRouteName()))
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->url(static::getNavigationUrl($urlParameters)),
