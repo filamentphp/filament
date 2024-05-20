@@ -193,7 +193,7 @@
             <x-filament::icon
                 alias="badge.delete-button"
                 icon="heroicon-m-x-mark"
-                class="w-3.5 h-3.5"
+                class="h-3.5 w-3.5"
             />
 
             @if (filled($label = $deleteButton->attributes->get('label')))
