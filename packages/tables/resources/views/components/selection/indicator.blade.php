@@ -2,6 +2,7 @@
     'allSelectableRecordsCount',
     'deselectAllRecordsAction' => 'deselectAllRecords',
     'end' => null,
+    'page' => null,
     'selectAllRecordsAction' => 'selectAllRecords',
     'selectedRecordsCount',
     'selectedRecordsPropertyName' => 'selectedRecords',
@@ -42,12 +43,11 @@
         <div class="flex gap-x-3">
             <x-filament::link
                 color="primary"
-                {{-- Make sure the "show" get re-evaluated after a Livewire request: --}}
-                :wire:key="$this->getId() . 'table.selection.indicator.link' . Str::random()"
-                :id="$this->getId() . '.table.selection.indicator.record-count.' . $allSelectableRecordsCount"
                 tag="button"
                 :x-on:click="$selectAllRecordsAction"
                 :x-show="$selectCurrentPageOnly ? '! areRecordsSelected(getRecordsOnPage())' : $allSelectableRecordsCount . ' !== ' . $selectedRecordsPropertyName . '.length'"
+                {{-- Make sure the Alpine attributes get re-evaluated after a Livewire request: --}}
+                :wire:key="$this->getId() . 'table.selection.indicator.actions.select-all.' . $allSelectableRecordsCount . '.' . $page"
             >
                 {{ trans_choice('filament-tables::table.selection_indicator.actions.select_all.label', $allSelectableRecordsCount) }}
             </x-filament::link>
