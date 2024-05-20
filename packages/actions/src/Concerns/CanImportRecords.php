@@ -102,13 +102,9 @@ trait CanImportRecords
                             }
 
                             $columns = Arr::where($duplicates, fn (string $value): bool => $value !== '');
-                            if (empty($columns)) {
-                                $fail(__('filament-actions::import.modal.form.rules.empty_columns'));
-                            } else {
-                                $fail(__('filament-actions::import.modal.form.rules.duplicate_columns', [
-                                    'columns' => implode(', ', $columns),
-                                ]));
-                            }
+                            $fail(trans_choice('filament-actions::import.modal.form.rules.duplicate_columns', count($columns), [
+                                'columns' => implode(', ', $columns),
+                            ]));
                         },
                     ]),
                 ])

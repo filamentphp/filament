@@ -21,10 +21,10 @@ return [
             ],
 
             'rules' => [
-                'empty_columns' => 'Spreadsheet contains duplicate empty column headers.',
-                'duplicate_columns' => 'Spreadsheet contains duplicate column headers - :columns.',
+                'duplicate_columns' => '{0} Spreadsheet contains empty columns.
+                    |{1} Spreadsheet contains duplicate column header - :columns.
+                    |[2,*] Spreadsheet contains :count duplicate column headers - :columns.',
             ],
-
         ],
 
         'actions' => [
