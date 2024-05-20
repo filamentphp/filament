@@ -143,12 +143,20 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->url('https://filamentphp.com', true),
                 Tables\Actions\Action::make('urlNotInNewTab')
                     ->url('https://filamentphp.com'),
+                Tables\Actions\AttachAction::make(),
+                Tables\Actions\AttachAction::make('attachMultiple')
+                    ->multiple(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\DeleteAction::make('groupedDelete'),
+                    Tables\Actions\ForceDeleteAction::make('groupedForceDelete'),
+                    Tables\Actions\RestoreAction::make('groupedRestore'),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

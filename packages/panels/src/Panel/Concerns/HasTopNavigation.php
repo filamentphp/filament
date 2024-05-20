@@ -2,11 +2,13 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
+
 trait HasTopNavigation
 {
-    protected bool $hasTopNavigation = false;
+    protected bool | Closure $hasTopNavigation = false;
 
-    public function topNavigation(bool $condition = true): static
+    public function topNavigation(bool | Closure $condition = true): static
     {
         $this->hasTopNavigation = $condition;
 
@@ -15,6 +17,6 @@ trait HasTopNavigation
 
     public function hasTopNavigation(): bool
     {
-        return $this->hasTopNavigation;
+        return (bool) $this->evaluate($this->hasTopNavigation);
     }
 }

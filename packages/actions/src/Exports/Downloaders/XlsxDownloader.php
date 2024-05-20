@@ -18,7 +18,7 @@ class XlsxDownloader implements Downloader
         $directory = $export->getFileDirectory();
 
         if (! $disk->exists($directory)) {
-            abort(419);
+            abort(404);
         }
 
         $fileName = $export->file_name . '.xlsx';

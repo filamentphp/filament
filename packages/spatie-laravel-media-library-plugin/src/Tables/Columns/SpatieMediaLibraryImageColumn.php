@@ -3,22 +3,62 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\SpatieLaravelMediaLibraryPlugin\Collections\AllMediaCollections;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn
 {
-    protected string | Closure | null $collection = null;
+    protected string | AllMediaCollections | Closure | null $collection = null;
 
     protected string | Closure | null $conversion = null;
 
-    public function collection(string | Closure | null $collection): static
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->defaultImageUrl(function (SpatieMediaLibraryImageColumn $column, Model $record): ?string {
+            if ($column->hasRelationship($record)) {
+                $record = $column->getRelationshipResults($record);
+            }
+
+            $records = Arr::wrap($record);
+
+            $collection = $column->getCollection();
+
+            if (! is_string($collection)) {
+                $collection = 'default';
+            }
+
+            foreach ($records as $record) {
+                $url = $record->getFallbackMediaUrl($collection, $column->getConversion() ?? '');
+
+                if (blank($url)) {
+                    continue;
+                }
+
+                return $url;
+            }
+
+            return null;
+        });
+    }
+
+    public function collection(string | AllMediaCollections | Closure | null $collection): static
     {
         $this->collection = $collection;
+
+        return $this;
+    }
+
+    public function allCollections(): static
+    {
+        $this->collection(AllMediaCollections::make());
 
         return $this;
     }
@@ -30,9 +70,9 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $this;
     }
 
-    public function getCollection(): ?string
+    public function getCollection(): string | AllMediaCollections | null
     {
-        return $this->evaluate($this->collection) ?? 'default';
+        return $this->evaluate($this->collection);
     }
 
     public function getConversion(): ?string
@@ -94,11 +134,17 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 
         $state = [];
 
+        $collection = $this->getCollection() ?? 'default';
+
         foreach ($records as $record) {
             /** @var Model $record */
             $state = [
                 ...$state,
                 ...$record->getRelationValue('media')
+                    ->when(
+                        ! $collection instanceof AllMediaCollections,
+                        fn (MediaCollection $mediaCollection) => $mediaCollection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
+                    )
                     ->sortBy('order_column')
                     ->pluck('uuid')
                     ->all(),
@@ -115,15 +161,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         }
 
         /** @phpstan-ignore-next-line */
-        $modifyMediaQuery = fn (Builder | Relation $query) => $query
-            ->ordered()
-            ->when(
-                $this->getCollection(),
-                fn (Builder | Relation $query, string $collection) => $query->where(
-                    'collection_name',
-                    $collection,
-                ),
-            );
+        $modifyMediaQuery = fn (Builder | Relation $query) => $query->ordered();
 
         if ($this->hasRelationship($query->getModel())) {
             return $query->with([

@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Şifrenizi Sıfırlayın',
+    'title' => 'Şifrenizi sıfırlayın',
 
     'heading' => 'Şifrenizi mi unuttunuz?',
 

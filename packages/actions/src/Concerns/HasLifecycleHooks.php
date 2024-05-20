@@ -3,6 +3,9 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\Events\ActionCalled;
+use Filament\Actions\Events\ActionCalling;
+use Illuminate\Support\Facades\Event;
 
 trait HasLifecycleHooks
 {
@@ -18,42 +21,42 @@ trait HasLifecycleHooks
 
     protected ?Closure $afterFormValidated = null;
 
-    public function before(Closure $callback): static
+    public function before(?Closure $callback): static
     {
         $this->before = $callback;
 
         return $this;
     }
 
-    public function after(Closure $callback): static
+    public function after(?Closure $callback): static
     {
         $this->after = $callback;
 
         return $this;
     }
 
-    public function beforeFormFilled(Closure $callback): static
+    public function beforeFormFilled(?Closure $callback): static
     {
         $this->beforeFormFilled = $callback;
 
         return $this;
     }
 
-    public function afterFormFilled(Closure $callback): static
+    public function afterFormFilled(?Closure $callback): static
     {
         $this->afterFormFilled = $callback;
 
         return $this;
     }
 
-    public function beforeFormValidated(Closure $callback): static
+    public function beforeFormValidated(?Closure $callback): static
     {
         $this->beforeFormValidated = $callback;
 
         return $this;
     }
 
-    public function afterFormValidated(Closure $callback): static
+    public function afterFormValidated(?Closure $callback): static
     {
         $this->afterFormValidated = $callback;
 
@@ -62,12 +65,18 @@ trait HasLifecycleHooks
 
     public function callBefore(): mixed
     {
+        Event::dispatch(ActionCalling::class, $this);
+
         return $this->evaluate($this->before);
     }
 
     public function callAfter(): mixed
     {
-        return $this->evaluate($this->after);
+        try {
+            return $this->evaluate($this->after);
+        } finally {
+            Event::dispatch(ActionCalled::class, $this);
+        }
     }
 
     public function callBeforeFormFilled(): mixed

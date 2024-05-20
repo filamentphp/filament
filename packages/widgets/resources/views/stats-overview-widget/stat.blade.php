@@ -47,13 +47,15 @@
                 />
             @endif
 
-            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+            <span
+                class="fi-wi-stats-overview-stat-label text-sm font-medium text-gray-500 dark:text-gray-400"
+            >
                 {{ $getLabel() }}
             </span>
         </div>
 
         <div
-            class="text-3xl font-semibold tracking-tight text-gray-950 dark:text-white"
+            class="fi-wi-stats-overview-stat-value text-3xl font-semibold tracking-tight text-gray-950 dark:text-white"
         >
             {{ $getValue() }}
         </div>

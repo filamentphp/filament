@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Bekreft din e-post adresse',
+    'title' => 'Bekreft din e-postadresse',
 
-    'heading' => 'Bekreft din e-post adresse',
+    'heading' => 'Bekreft din e-postadresse',
 
     'actions' => [
 
@@ -16,7 +16,7 @@ return [
 
     'messages' => [
         'notification_not_received' => 'Ikke mottatt e-posten vi sendte?',
-        'notification_sent' => 'Vi har sendt e-post til :email med informasjon om hvordan du bekrefter din e-post adresse.',
+        'notification_sent' => 'Vi har sendt e-post til :email med informasjon om hvordan du bekrefter din e-postadresse.',
     ],
 
     'notifications' => [

@@ -17,9 +17,12 @@
                 :active="$activeTab === $tabKey"
                 :badge="$tab->getBadge()"
                 :badge-color="$tab->getBadgeColor()"
+                :badge-icon="$tab->getBadgeIcon()"
+                :badge-icon-position="$tab->getBadgeIconPosition()"
                 :icon="$tab->getIcon()"
                 :icon-position="$tab->getIconPosition()"
                 :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                :attributes="$tab->getExtraAttributeBag()"
             >
                 {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
             </x-filament::tabs.item>

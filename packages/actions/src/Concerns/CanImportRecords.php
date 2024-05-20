@@ -27,10 +27,14 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
+use Illuminate\Validation\ValidationException;
+use League\Csv\ByteSequence;
+use League\Csv\CharsetConverter;
 use League\Csv\Info;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
 use League\Csv\Writer;
+use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -47,6 +51,8 @@ trait CanImportRecords
     protected int | Closure $chunkSize = 100;
 
     protected int | Closure | null $maxRows = null;
+
+    protected int | Closure | null $headerOffset = null;
 
     protected string | Closure | null $csvDelimiter = null;
 
@@ -73,10 +79,19 @@ trait CanImportRecords
             FileUpload::make('file')
                 ->label(__('filament-actions::import.modal.form.file.label'))
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
-                ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain'])
-                ->afterStateUpdated(function (Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
+                ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
+                ->rule('extensions:csv,txt')
+                ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
                     if (! $state instanceof TemporaryUploadedFile) {
                         return;
+                    }
+
+                    try {
+                        $livewire->validateOnly($component->getStatePath());
+                    } catch (ValidationException $exception) {
+                        $component->state([]);
+
+                        throw $exception;
                     }
 
                     $csvStream = $this->getUploadedFileStream($state);
@@ -91,7 +106,7 @@ trait CanImportRecords
                         $csvReader->setDelimiter($csvDelimiter);
                     }
 
-                    $csvReader->setHeaderOffset(0);
+                    $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
 
                     $csvColumns = $csvReader->getHeader();
 
@@ -140,7 +155,7 @@ trait CanImportRecords
                         $csvReader->setDelimiter($csvDelimiter);
                     }
 
-                    $csvReader->setHeaderOffset(0);
+                    $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
 
                     $csvColumns = $csvReader->getHeader();
                     $csvColumnOptions = array_combine($csvColumns, $csvColumns);
@@ -170,7 +185,7 @@ trait CanImportRecords
                 $csvReader->setDelimiter($csvDelimiter);
             }
 
-            $csvReader->setHeaderOffset(0);
+            $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
             $csvResults = Statement::create()->process($csvReader);
 
             $totalRows = $csvResults->count();
@@ -301,6 +316,7 @@ trait CanImportRecords
                     $columns = $this->getImporter()::getColumns();
 
                     $csv = Writer::createFromFileObject(new SplTempFileObject());
+                    $csv->setOutputBOM(ByteSequence::BOM_UTF8);
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter())) {
                         $csv->setDelimiter($csvDelimiter);
@@ -347,21 +363,62 @@ trait CanImportRecords
     {
         $filePath = $file->getRealPath();
 
-        if (config('filament.default_filesystem_disk') !== 's3') {
-            return fopen($filePath, mode: 'r');
+        if (config('filesystems.disks.' . config('filament.default_filesystem_disk') . '.driver') !== 's3') {
+            $resource = fopen($filePath, mode: 'r');
+        } else {
+            /** @var AwsS3V3Adapter $s3Adapter */
+            $s3Adapter = Storage::disk('s3')->getAdapter();
+
+            invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
+            $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
+
+            $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
+                's3' => [
+                    'seekable' => true,
+                ],
+            ]));
         }
 
-        /** @var AwsS3V3Adapter $s3Adapter */
-        $s3Adapter = Storage::disk('s3')->getAdapter();
+        $encoding = $this->detectCsvEncoding($resource);
 
-        invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-        $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
+        if (filled($encoding)) {
+            CharsetConverter::register();
 
-        return fopen($fileS3Path, mode: 'r', context: stream_context_create([
-            's3' => [
-                'seekable' => true,
-            ],
-        ]));
+            stream_filter_append(
+                $resource,
+                CharsetConverter::getFiltername($encoding, 'utf-8'),
+                STREAM_FILTER_READ
+            );
+        }
+
+        return $resource;
+    }
+
+    protected function detectCsvEncoding(mixed $resource): ?string
+    {
+        $fileHeader = fgets($resource);
+
+        // The encoding of a subset should be declared before the encoding of its superset.
+        $encodings = [
+            'UTF-8',
+            'SJIS-win',
+            'EUC-KR',
+            'ISO-8859-1',
+            'GB18030',
+            'Windows-1251',
+            'Windows-1252',
+            'EUC-JP',
+        ];
+
+        foreach ($encodings as $encoding) {
+            if (! mb_check_encoding($fileHeader, $encoding)) {
+                continue;
+            }
+
+            return $encoding;
+        }
+
+        return null;
     }
 
     public static function getDefaultName(): ?string
@@ -403,6 +460,13 @@ trait CanImportRecords
         return $this;
     }
 
+    public function headerOffset(int | Closure | null $offset): static
+    {
+        $this->headerOffset = $offset;
+
+        return $this;
+    }
+
     public function csvDelimiter(string | Closure | null $delimiter): static
     {
         $this->csvDelimiter = $delimiter;
@@ -434,6 +498,11 @@ trait CanImportRecords
     public function getMaxRows(): ?int
     {
         return $this->evaluate($this->maxRows);
+    }
+
+    public function getHeaderOffset(): ?int
+    {
+        return $this->evaluate($this->headerOffset);
     }
 
     public function getCsvDelimiter(?CsvReader $reader = null): ?string

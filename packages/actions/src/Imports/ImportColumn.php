@@ -531,7 +531,7 @@ class ImportColumn extends Component
 
     protected function castNumericStateItem(mixed $state): int | float
     {
-        $state = floatval(preg_replace('/[^0-9.]/', '', $state));
+        $state = floatval(preg_replace('/[^0-9.-]/', '', $state));
 
         $decimalPlaces = $this->getDecimalPlaces();
 

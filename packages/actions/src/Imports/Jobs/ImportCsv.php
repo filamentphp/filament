@@ -4,6 +4,7 @@ namespace Filament\Actions\Imports\Jobs;
 
 use Carbon\CarbonInterface;
 use Exception;
+use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\FailedImportRow;
 use Filament\Actions\Imports\Models\Import;
@@ -61,7 +62,11 @@ class ImportCsv implements ShouldQueue
         /** @var Authenticatable $user */
         $user = $this->import->user;
 
-        auth()->login($user);
+        if (method_exists(auth()->guard(), 'login')) {
+            auth()->login($user);
+        } else {
+            auth()->setUser($user);
+        }
 
         $exceptions = [];
 
@@ -78,6 +83,8 @@ class ImportCsv implements ShouldQueue
             try {
                 DB::transaction(fn () => ($this->importer)($row));
                 $successfulRows++;
+            } catch (RowImportFailedException $exception) {
+                $this->logFailedRow($row, $exception->getMessage());
             } catch (ValidationException $exception) {
                 $this->logFailedRow($row, collect($exception->errors())->flatten()->implode(' '));
             } catch (Throwable $exception) {

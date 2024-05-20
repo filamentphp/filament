@@ -147,6 +147,44 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Disabling SPA navigation for specific URLs
+
+By default, when enabling SPA mode, any URL that lives on the same domain as the current request will be navigated to using Livewire's [`wire:navigate`](https://livewire.laravel.com/docs/navigate) feature. If you want to disable this for specific URLs, you can use the `spaUrlExceptions()` method:
+
+```php
+use App\Filament\Resources\PostResource;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->spa()
+        ->spaUrlExceptions(fn (): array => [
+            url('/admin'),
+            PostResource::getUrl(),
+        ]);
+}
+```
+
+> In this example, we are using [`getUrl()`](/resources/getting-started#generating-urls-to-resource-pages) on a resource to get the URL to the resource's index page. This feature requires the panel to already be registered though, and the configuration is too early in the request lifecycle to do that. You can use a function to return the URLs instead, which will be resolved when the panel has been registered.
+
+These URLs need to exactly match the URL that the user is navigating to, including the domain and protocol. If you'd like to use a pattern to match multiple URLs, you can use an asterisk (`*`) as a wildcard character:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->spa()
+        ->spaUrlExceptions([
+            '*/admin/posts/*',
+        ]);
+}
+```
+
 ## Unsaved changes alerts
 
 You may alert users if they attempt to navigate away from a page without saving their changes. This is applied on [Create](resources/creating-records) and [Edit](resources/editing-records) pages of a resource, as well as any open action modals. To enable this feature, you can use the `unsavedChangesAlerts()` method:
@@ -162,7 +200,64 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-> Please note: this feature is not compatible with [SPA mode](#spa-mode).
+## Enabling database transactions
+
+By default, Filament does not wrap operations in database transactions, and allows the user to enable this themselves when they have tested to ensure that their operations are safe to be wrapped in a transaction. However, you can enable database transactions at once for all operations by using the `databaseTransactions()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->databaseTransactions();
+}
+```
+
+For any actions you do not want to be wrapped in a transaction, you can use the `databaseTransaction(false)` method:
+
+```php
+CreateAction::make()
+    ->databaseTransaction(false)
+```
+
+And for any pages like [Create resource](resources/creating-records) and [Edit resource](resources/editing-records), you can define the `$hasDatabaseTransactions` property to `false` on the page class:
+
+```php
+use Filament\Resources\Pages\CreateRecord;
+
+class CreatePost extends CreateRecord
+{
+    protected ?bool $hasDatabaseTransactions = false;
+    
+    // ...
+}
+```
+
+### Opting in to database transactions for specific actions and pages
+
+Instead of enabling database transactions everywhere and opting out of them for specific actions and pages, you can opt in to database transactions for specific actions and pages.
+
+For actions, you can use the `databaseTransaction()` method:
+
+```php
+CreateAction::make()
+    ->databaseTransaction()
+```
+
+For pages like [Create resource](resources/creating-records) and [Edit resource](resources/editing-records), you can define the `$hasDatabaseTransactions` property to `true` on the page class:
+
+```php
+use Filament\Resources\Pages\CreateRecord;
+
+class CreatePost extends CreateRecord
+{
+    protected ?bool $hasDatabaseTransactions = true;
+    
+    // ...
+}
+```
 
 ## Registering assets for a panel
 
@@ -245,5 +340,20 @@ public function panel(Panel $panel): Panel
         ->authMiddleware([
             // ...
         ], isPersistent: true);
+}
+```
+
+## Disabling broadcasting
+
+By default, Laravel Echo will automatically connect for every panel, if credentials have been set up in the [published `config/filament.php` configuration file](installation#publishing-configuration). To disable this automatic connection in a panel, you can use the `broadcasting(false)` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->broadcasting(false);
 }
 ```

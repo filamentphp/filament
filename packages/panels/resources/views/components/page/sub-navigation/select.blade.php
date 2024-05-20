@@ -6,12 +6,12 @@
     wire:ignore
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
-            ->class(['md:hidden'])
+            ->class(['fi-page-sub-navigation-select md:hidden'])
     "
 >
     <x-filament::input.select
         x-data="{}"
-        x-on:change="window.location = $event.target.value"
+        x-on:change="window.location.href = $event.target.value"
     >
         @foreach ($navigation as $navigationGroup)
             @capture($options)

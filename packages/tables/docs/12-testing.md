@@ -4,7 +4,7 @@ title: Testing
 
 ## Overview
 
-All examples in this guide will be written using [Pest](https://pestphp.com). However, you can easily adapt this to PHPUnit.
+All examples in this guide will be written using [Pest](https://pestphp.com). To use Pest's Livewire plugin for testing, you can follow the installation instructions in the Pest documentation on plugins: [Livewire plugin for Pest](https://pestphp.com/docs/plugins#livewire). However, you can easily adapt this to PHPUnit.
 
 Since the Table Builder works on Livewire components, you can use the [Livewire testing helpers](https://livewire.laravel.com/docs/testing). However, we have many custom testing helpers that you can use for tables:
 
@@ -36,7 +36,7 @@ it('cannot display trashed posts by default', function () {
 });
 ```
 
-> If your table uses pagination, `assertCanSeeTableRecords()` will only check for records on the first page. To switch page, call `set('page', 2)`.
+> If your table uses pagination, `assertCanSeeTableRecords()` will only check for records on the first page. To switch page, call `call('gotoPage', 2)`.
 
 > If your table uses `deferLoading()`, you should call `loadTable()` before `assertCanSeeTableRecords()`.
 
@@ -171,7 +171,7 @@ use function Pest\Livewire\livewire;
 
 it('has an author column', function () {
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableColumnExists(`author`);
+        ->assertTableColumnExists('author');
 });
 ```
 
@@ -200,8 +200,8 @@ use function Pest\Livewire\livewire;
 
 it('shows the correct columns', function () {
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableColumnVisible(`created_at`)
-        ->assertTableColumnHidden(`author`);
+        ->assertTableColumnVisible('created_at')
+        ->assertTableColumnHidden('author');
 });
 ```
 
@@ -241,7 +241,7 @@ it('displays author in red', function () {
 
 ### Select Columns
 
-If you have a select column, you can ensure it has the correct options with `assertSelectColumnHasOptions()` and `assertSelectColumnDoesNotHaveOptions()`:
+If you have a select column, you can ensure it has the correct options with `assertTableSelectColumnHasOptions()` and `assertTableSelectColumnDoesNotHaveOptions()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -250,8 +250,8 @@ it('has the correct statuses', function () {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
-        ->assertSelectColumnHasOptions('status', ['unpublished' => 'Unpublished', 'published' => 'Published'], $post)
-        ->assertSelectColumnDoesNotHaveOptions('status', ['archived' => 'Archived'], $post);
+        ->assertTableSelectColumnHasOptions('status', ['unpublished' => 'Unpublished', 'published' => 'Published'], $post)
+        ->assertTableSelectColumnDoesNotHaveOptions('status', ['archived' => 'Archived'], $post);
 });
 ```
 
@@ -300,7 +300,7 @@ To reset all filters to their original state, call `resetTableFilters()`:
 ```php
 use function Pest\Livewire\livewire;
 
-it('can reset table filters`', function () {
+it('can reset table filters', function () {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)

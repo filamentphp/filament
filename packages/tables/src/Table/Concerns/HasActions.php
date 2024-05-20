@@ -3,10 +3,12 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Actions\Contracts\HasRecord;
 use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Enums\ActionsPosition;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
@@ -23,7 +25,7 @@ trait HasActions
      */
     protected array $flatActions = [];
 
-    protected string | Closure | null $actionsColumnLabel = null;
+    protected string | Htmlable | Closure | null $actionsColumnLabel = null;
 
     protected string | Closure | null $actionsAlignment = null;
 
@@ -76,7 +78,7 @@ trait HasActions
         return $this;
     }
 
-    public function actionsColumnLabel(string | Closure | null $label): static
+    public function actionsColumnLabel(string | Htmlable | Closure | null $label): static
     {
         $this->actionsColumnLabel = $label;
 
@@ -127,6 +129,10 @@ trait HasActions
 
         if (! $action) {
             return null;
+        }
+
+        if (($actionGroup = $action->getGroup()) instanceof HasRecord) {
+            $actionGroup->record($mountedRecord);
         }
 
         return $this->getMountableModalActionFromAction(
@@ -236,7 +242,7 @@ trait HasActions
         return $this->evaluate($this->actionsAlignment);
     }
 
-    public function getActionsColumnLabel(): ?string
+    public function getActionsColumnLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->actionsColumnLabel);
     }

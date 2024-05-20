@@ -19,6 +19,20 @@ public function infolist(Infolist $infolist): Infolist
 }
 ```
 
+If you're inside a [panel builder resource](../../panels/resources), the `infolist()` method should be static:
+
+```php
+use Filament\Infolists\Infolist;
+
+public static function infolist(Infolist $infolist): Infolist
+{
+    return $infolist
+        ->schema([
+            // ...
+        ]);
+}
+```
+
 Entries may be created using the static `make()` method, passing its unique name. You may use "dot notation" to access entries within relationships.
 
 ```php
@@ -281,6 +295,15 @@ TextEntry::make('slug')
 ```
 
 These get merged onto the outer `<div>` element of each entry in that entry.
+
+You can also pass extra HTML attributes to the entry wrapper which surrounds the label, entry, and any other text:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('slug')
+    ->extraFieldWrapperAttributes(['class' => 'entry-locked'])
+```
 
 ## Global settings
 

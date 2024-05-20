@@ -7,6 +7,7 @@
 >
     @capture($form)
         <x-filament-panels::form
+            id="form"
             :wire:key="$this->getId() . '.forms.' . $this->getFormStatePath()"
             wire:submit="save"
         >
@@ -33,6 +34,8 @@
             :active-locale="isset($activeLocale) ? $activeLocale : null"
             :active-manager="$this->activeRelationManager ?? ($hasCombinedRelationManagerTabsWithContent ? null : array_key_first($relationManagers))"
             :content-tab-label="$this->getContentTabLabel()"
+            :content-tab-icon="$this->getContentTabIcon()"
+            :content-tab-position="$this->getContentTabPosition()"
             :managers="$relationManagers"
             :owner-record="$record"
             :page-class="static::class"

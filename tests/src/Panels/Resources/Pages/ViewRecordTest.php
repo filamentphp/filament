@@ -2,6 +2,7 @@
 
 use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
+use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ViewPost;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Support\Str;
 
@@ -18,7 +19,7 @@ it('can render page', function () {
 it('can retrieve data', function () {
     $post = Post::factory()->create();
 
-    livewire(PostResource\Pages\ViewPost::class, [
+    livewire(ViewPost::class, [
         'record' => $post->getKey(),
     ])
         ->assertFormSet([
@@ -32,7 +33,7 @@ it('can retrieve data', function () {
 it('can refresh data', function () {
     $post = Post::factory()->create();
 
-    $page = livewire(PostResource\Pages\ViewPost::class, [
+    $page = livewire(ViewPost::class, [
         'record' => $post->getKey(),
     ]);
 

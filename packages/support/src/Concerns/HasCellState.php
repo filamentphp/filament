@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
 trait HasCellState
 {
@@ -257,7 +258,7 @@ trait HasCellState
                 ->when(
                     ($relationship instanceof BelongsTo ||
                         $relationship instanceof BelongsToMany ||
-                        $relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough),
+                        $relationship instanceof BelongsToThrough),
                     fn (Stringable $name) => $name->plural(),
                 )
                 ->camel();

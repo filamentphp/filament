@@ -242,6 +242,47 @@ class LayoutDemo extends Component implements HasForms
                             ->statePath('wizardIcons'),
                     ]),
                 Group::make()
+                    ->id('wizardCompletedIcons')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Wizard::make([
+                            Wizard\Step::make('Order')
+                                ->icon('heroicon-m-shopping-bag')
+                                ->completedIcon('heroicon-m-hand-thumb-up'),
+                            Wizard\Step::make('Delivery')
+                                ->icon('heroicon-m-truck')
+                                ->completedIcon('heroicon-m-hand-thumb-up'),
+                            Wizard\Step::make('Billing')
+                                ->icon('heroicon-m-credit-card')
+                                ->completedIcon('heroicon-m-hand-thumb-up')
+                                ->schema([
+                                    Repeater::make('items')
+                                        ->hiddenLabel()
+                                        ->schema([
+                                            Select::make('product')
+                                                ->options([
+                                                    'tshirt' => 'Filament t-shirt',
+                                                ]),
+                                            TextInput::make('quantity'),
+                                        ])
+                                        ->columns(2)
+                                        ->reorderable(false)
+                                        ->addActionLabel('Add to order')
+                                        ->default([
+                                            [
+                                                'product' => 'tshirt',
+                                                'quantity' => 3,
+                                            ],
+                                        ]),
+                                    Textarea::make('specialOrderNotes'),
+                                ]),
+                        ])
+                            ->startOnStep(3)
+                            ->statePath('wizardCompletedIcons'),
+                    ]),
+                Group::make()
                     ->id('wizardDescriptions')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
@@ -311,6 +352,33 @@ class LayoutDemo extends Component implements HasForms
                         Section::make('Rate limiting')
                             ->description('Prevent abuse by limiting the number of requests per period')
                             ->headerActions([
+                                Action::make('test'),
+                            ])
+                            ->statePath('section')
+                            ->schema([
+                                TextInput::make('hits')
+                                    ->default(30),
+                                Select::make('period')
+                                    ->default('hour')
+                                    ->options([
+                                        'hour' => 'Hour',
+                                    ]),
+                                TextInput::make('maximum')
+                                    ->default(100),
+                                Textarea::make('notes')
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns(3),
+                    ]),
+                Group::make()
+                    ->id('sectionFooterActions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Section::make('Rate limiting')
+                            ->description('Prevent abuse by limiting the number of requests per period')
+                            ->footerActions([
                                 Action::make('test'),
                             ])
                             ->statePath('section')

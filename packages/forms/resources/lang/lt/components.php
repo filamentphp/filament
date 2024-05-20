@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Redaguoti SVG failų nerekomenduojama, kadangi tai gali įtakoti kokybės praradimą keičiant mastelį.\n Ar tikrai norite tęsti?',
+                    'disabled' => 'SVG failų redagavimas išjungtas, kadangi tai gali įtakoti kokybės praradimą keičiant mastelį.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -221,6 +230,15 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Taip',
+            'false' => 'Ne',
+        ],
+
+    ],
+
     'markdown_editor' => [
 
         'toolbar_buttons' => [
@@ -247,6 +265,10 @@ return [
 
             'add' => [
                 'label' => 'Pridėti prie :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Pridėti tarp',
             ],
 
             'delete' => [
@@ -395,6 +417,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Nauja žyma',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Slėpti slaptažodį',
+            ],
+
+            'show_password' => [
+                'label' => 'Rodyti slaptažodį',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Taip',
+            'false' => 'Ne',
+        ],
+
     ],
 
     'wizard' => [

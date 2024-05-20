@@ -105,11 +105,15 @@ trait CanExportRecords
         ]);
 
         $this->action(function (ExportAction | ExportTableAction | ExportTableBulkAction $action, array $data, Component $livewire) {
+            $exporter = $action->getExporter();
+
             if ($livewire instanceof HasTable) {
-                $query = $livewire->getFilteredSortedTableQuery();
+                $query = $livewire->getTableQueryForExport();
             } else {
-                $query = $action->getExporter()::getModel()::query();
+                $query = $exporter::getModel()::query();
             }
+
+            $query = $exporter::modifyQuery($query);
 
             if ($this->modifyQueryUsing) {
                 $query = $this->evaluate($this->modifyQueryUsing, [
@@ -151,14 +155,14 @@ trait CanExportRecords
                     ->mapWithKeys(fn (array $column, string $columnName): array => [$columnName => $column['label']])
                     ->all();
             } else {
-                $columnMap = collect($action->getExporter()::getColumns())
+                $columnMap = collect($exporter::getColumns())
                     ->mapWithKeys(fn (ExportColumn $column): array => [$column->getName() => $column->getLabel()])
                     ->all();
             }
 
             $export = app(Export::class);
             $export->user()->associate($user);
-            $export->exporter = $action->getExporter();
+            $export->exporter = $exporter;
             $export->total_rows = $totalRows;
 
             $exporter = $export->getExporter(
@@ -176,7 +180,6 @@ trait CanExportRecords
             $hasCsv = in_array(ExportFormat::Csv, $formats);
             $hasXlsx = in_array(ExportFormat::Xlsx, $formats);
 
-            $query->withoutEagerLoads();
             $serializedQuery = EloquentSerializeFacade::serialize($query);
 
             $job = $action->getJob();

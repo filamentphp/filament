@@ -20,7 +20,7 @@ class TestsForms
 {
     public function fillForm(): Closure
     {
-        return function (array $state = [], string $formName = 'form'): static {
+        return function (array | Closure $state = [], string $formName = 'form'): static {
             /** @phpstan-ignore-next-line  */
             $this->assertFormExists($formName);
 
@@ -31,9 +31,21 @@ class TestsForms
 
             $formStatePath = $form->getStatePath();
 
-            foreach (Arr::dot($state, prepend: filled($formStatePath) ? "{$formStatePath}." : '') as $key => $value) {
-                $this->set($key, $value);
+            if ($state instanceof Closure) {
+                $state = $state($form->getRawState());
             }
+
+            if (is_array($state)) {
+                $state = Arr::undot($state);
+
+                if (filled($formStatePath)) {
+                    $state = Arr::undot([$formStatePath => $state]);
+                }
+
+                $this->call('fillFormDataForTesting', $state);
+            }
+
+            $this->refresh();
 
             return $this;
         };
@@ -41,7 +53,7 @@ class TestsForms
 
     public function assertFormSet(): Closure
     {
-        return function (array $state, string $formName = 'form'): static {
+        return function (array | Closure $state, string $formName = 'form'): static {
             /** @phpstan-ignore-next-line  */
             $this->assertFormExists($formName);
 
@@ -52,8 +64,14 @@ class TestsForms
 
             $formStatePath = $form->getStatePath();
 
-            foreach (Arr::dot($state, prepend: filled($formStatePath) ? "{$formStatePath}." : '') as $key => $value) {
-                $this->assertSet($key, $value);
+            if ($state instanceof Closure) {
+                $state = $state($form->getRawState());
+            }
+
+            if (is_array($state)) {
+                foreach (Arr::dot($state, prepend: filled($formStatePath) ? "{$formStatePath}." : '') as $key => $value) {
+                    $this->assertSet($key, $value);
+                }
             }
 
             return $this;

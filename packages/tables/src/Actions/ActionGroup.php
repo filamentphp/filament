@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
-use Closure;
+use Exception;
 use Filament\Actions\ActionGroup as BaseActionGroup;
 use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\HasRecord;
@@ -17,32 +17,28 @@ class ActionGroup extends BaseActionGroup implements HasRecord, HasTable
 {
     use InteractsWithRecord;
 
-    public function record(Model | Closure | null $record): static
+    protected Table $table;
+
+    public function table(Table $table): static
     {
-        $this->record = $record;
-
-        foreach ($this->actions as $action) {
-            if (! $action instanceof HasRecord) {
-                continue;
-            }
-
-            $action->record($record);
-        }
+        $this->table = $table;
 
         return $this;
     }
 
-    public function table(Table $table): static
+    public function getTable(): Table
     {
-        foreach ($this->actions as $action) {
-            if (! $action instanceof HasTable) {
-                continue;
-            }
-
-            $action->table($table);
+        if (isset($this->table)) {
+            return $this->table;
         }
 
-        return $this;
+        $group = $this->getGroup();
+
+        if (! ($group instanceof HasTable)) {
+            throw new Exception('This action does not belong to a table.');
+        }
+
+        return $group->getTable();
     }
 
     /**

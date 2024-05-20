@@ -10,9 +10,6 @@ Filament requires the following to run:
 - Laravel v10.0+
 - Livewire v3.0+
 
-> **Livewire v3 is recently released!**<br />
-> The Livewire team have done a great job in making it stable, but it was a complete rewrite of Livewire v2. You may encounter issues, so we recommend testing your application thoroughly before using Filament v3 in production.
-
 ## Installation
 
 > If you are upgrading from Filament v2, please review the [upgrade guide](upgrade-guide).
@@ -121,6 +118,8 @@ Since this package depends on other Filament packages, you can publish the langu
 php artisan vendor:publish --tag=filament-actions-translations
 
 php artisan vendor:publish --tag=filament-forms-translations
+
+php artisan vendor:publish --tag=filament-infolists-translations
 
 php artisan vendor:publish --tag=filament-notifications-translations
 

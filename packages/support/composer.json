@@ -10,16 +10,18 @@
     "require": {
         "php": "^8.1",
         "blade-ui-kit/blade-heroicons": "^2.2.1",
+        "doctrine/dbal": "^3.2",
         "ext-intl": "*",
         "illuminate/contracts": "^10.45|^11.0",
         "illuminate/support": "^10.45|^11.0",
         "illuminate/view": "^10.45|^11.0",
-        "livewire/livewire": "^3.2.3",
+        "livewire/livewire": "^3.4.10",
         "ryangjchandler/blade-capture-directive": "^0.2|^0.3|^1.0",
         "spatie/color": "^1.5",
         "spatie/invade": "^1.0|^2.0",
         "spatie/laravel-package-tools": "^1.9",
-        "symfony/html-sanitizer": "^6.1"
+        "symfony/html-sanitizer": "^6.1|^7.0",
+        "symfony/console": "^6.0|^7.0"
     },
     "autoload": {
         "files": [

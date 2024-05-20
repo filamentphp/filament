@@ -12,10 +12,12 @@ use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
+#[AsCommand(name: 'make:filament-resource')]
 class MakeResourceCommand extends Command
 {
     use CanGenerateForms;
@@ -26,7 +28,7 @@ class MakeResourceCommand extends Command
 
     protected $description = 'Create a new Filament resource class and default page classes';
 
-    protected $signature = 'make:filament-resource {name?} {--model-namespace=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--F|force}';
+    protected $signature = 'make:filament-resource {name?} {--model-namespace=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--model} {--migration} {--factory} {--F|force}';
 
     public function handle(): int
     {
@@ -47,11 +49,36 @@ class MakeResourceCommand extends Command
             $model = 'Resource';
         }
 
+        $modelNamespace = $this->option('model-namespace') ?? 'App\\Models';
+
+        if ($this->option('model')) {
+            $this->callSilently('make:model', [
+                'name' => "{$modelNamespace}\\{$model}",
+            ]);
+        }
+
+        if ($this->option('migration')) {
+            $table = (string) str($model)
+                ->classBasename()
+                ->pluralStudly()
+                ->snake();
+
+            $this->call('make:migration', [
+                'name' => "create_{$table}_table",
+                '--create' => $table,
+            ]);
+        }
+
+        if ($this->option('factory')) {
+            $this->callSilently('make:factory', [
+                'name' => $model,
+            ]);
+        }
+
         $modelClass = (string) str($model)->afterLast('\\');
         $modelSubNamespace = str($model)->contains('\\') ?
             (string) str($model)->beforeLast('\\') :
             '';
-        $modelNamespace = $this->option('model-namespace') ?? 'App\\Models';
         $pluralModelClass = (string) str($modelClass)->pluralStudly();
         $needsAlias = $modelClass === 'Record';
 

@@ -119,7 +119,7 @@ By default, your app's locale will be used to format the money suitably. If you 
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('price')
-    ->money(currency: 'EUR', locale: 'nl')
+    ->money('EUR', locale: 'nl')
 ```
 
 Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
@@ -257,6 +257,29 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('description')
     ->html()
+```
+
+If you use this method, then the HTML will be sanitized to remove any potentially unsafe content before it is rendered. If you'd like to opt out of this behavior, you can wrap the HTML in an `HtmlString` object by formatting it:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\HtmlString;
+
+TextEntry::make('description')
+    ->formatStateUsing(fn (string $state): HtmlString => new HtmlString($state))
+```
+
+Or, you can return a `view()` object from the `formatStateUsing()` method, which will also not be sanitized:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Contracts\View\View;
+
+TextEntry::make('description')
+    ->formatStateUsing(fn (string $state): View => view(
+        'filament.infolists.components.description-entry-content',
+        ['state' => $state],
+    ))
 ```
 
 ### Rendering Markdown as HTML

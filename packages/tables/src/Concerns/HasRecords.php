@@ -60,6 +60,17 @@ trait HasRecords
         return $query;
     }
 
+    public function getTableQueryForExport(): Builder
+    {
+        $query = $this->getTable()->getQuery();
+
+        $this->applyFiltersToTableQuery($query);
+        $this->applySearchToTableQuery($query);
+        $this->applySortingToTableQuery($query);
+
+        return $query;
+    }
+
     protected function hydratePivotRelationForTableRecords(Collection | Paginator | CursorPaginator $records): Collection | Paginator | CursorPaginator
     {
         $table = $this->getTable();

@@ -32,11 +32,19 @@ trait CanBeToggled
 
     public function isToggleable(): bool
     {
+        if ($this->isHidden()) {
+            return false;
+        }
+
         return (bool) $this->evaluate($this->isToggleable);
     }
 
     public function isToggledHidden(): bool
     {
+        if (! $this->isToggleable()) {
+            return false;
+        }
+
         return $this->getTable()->getLivewire()->isTableColumnToggledHidden($this->getName());
     }
 }

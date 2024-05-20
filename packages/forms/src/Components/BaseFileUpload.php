@@ -16,8 +16,9 @@ use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Throwable;
 
-class BaseFileUpload extends Field
+class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasUploadingMessage;
 
     /**
@@ -211,11 +212,15 @@ class BaseFileUpload extends Field
 
     protected function callAfterStateUpdatedHook(Closure $hook): void
     {
-        $state = $this->getState();
+        /** @var array<string | TemporaryUploadedFile> $state */
+        $state = $this->getState() ?? [];
+
+        /** @var array<string | TemporaryUploadedFile> $oldState */
+        $oldState = $this->getOldState() ?? [];
 
         $this->evaluate($hook, [
-            'state' => $this->isMultiple() ? $state : Arr::first($state ?? []),
-            'old' => $this->isMultiple() ? $this->getOldState() : Arr::first($this->getOldState() ?? []),
+            'state' => $this->isMultiple() ? $state : Arr::first($state),
+            'old' => $this->isMultiple() ? $oldState : Arr::first($oldState),
         ]);
     }
 
@@ -595,7 +600,7 @@ class BaseFileUpload extends Field
             $validator = Validator::make(
                 [$name => $files],
                 ["{$name}.*" => ['file', ...parent::getValidationRules()]],
-                [],
+                ["{$name}.*" => $this->getValidationMessages()],
                 ["{$name}.*" => $this->getValidationAttribute()],
             );
 
@@ -819,7 +824,7 @@ class BaseFileUpload extends Field
         return (bool) $this->evaluate($this->isMultiple);
     }
 
-    public function getUploadedFileNameForStorageUsing(Closure $callback): static
+    public function getUploadedFileNameForStorageUsing(?Closure $callback): static
     {
         $this->getUploadedFileNameForStorageUsing = $callback;
 

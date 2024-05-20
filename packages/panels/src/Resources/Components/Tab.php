@@ -5,12 +5,14 @@ namespace Filament\Resources\Components;
 use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasBadge;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
 use Illuminate\Database\Eloquent\Builder;
 
 class Tab extends Component
 {
     use HasBadge;
+    use HasExtraAttributes;
     use HasIcon;
 
     protected string | Closure | null $label = null;
@@ -37,14 +39,14 @@ class Tab extends Component
         return $this;
     }
 
-    public function query(Closure $callback): static
+    public function query(?Closure $callback): static
     {
         $this->modifyQueryUsing($callback);
 
         return $this;
     }
 
-    public function modifyQueryUsing(Closure $callback): static
+    public function modifyQueryUsing(?Closure $callback): static
     {
         $this->modifyQueryUsing = $callback;
 

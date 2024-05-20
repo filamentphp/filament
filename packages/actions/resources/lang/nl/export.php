@@ -67,7 +67,7 @@ return [
 
         'started' => [
             'title' => 'Exporteren gestart',
-            'body' => 'Je export is begonnen en 1 rij wordt op de achtergrond verwerkt.|Je export is begonnen en :count rijen worden op de achtergrond verwerkt.',
+            'body' => 'Je export is begonnen en 1 rij wordt op de achtergrond verwerkt. Je ontvangt een melding met de downloadlink wanneer deze is voltooid.|Je export is begonnen en :count rijen worden op de achtergrond verwerkt. Je ontvangt een melding met de downloadlink wanneer deze is voltooid.',
         ],
 
     ],

@@ -2,6 +2,7 @@
 
 use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
+use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\CreatePost;
 use Filament\Tests\Panels\Resources\TestCase;
 
 use function Filament\Tests\livewire;
@@ -16,7 +17,7 @@ it('can render page', function () {
 it('can create', function () {
     $newData = Post::factory()->make();
 
-    livewire(PostResource\Pages\CreatePost::class)
+    livewire(CreatePost::class)
         ->fillForm([
             'author_id' => $newData->author->getKey(),
             'content' => $newData->content,
@@ -37,9 +38,9 @@ it('can create', function () {
 });
 
 it('can validate input', function () {
-    $newData = Post::factory()->make();
+    Post::factory()->make();
 
-    livewire(PostResource\Pages\CreatePost::class)
+    livewire(CreatePost::class)
         ->fillForm([
             'title' => null,
         ])

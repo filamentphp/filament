@@ -23,9 +23,12 @@
                 ax-load="visible"
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
                 x-data="markdownEditorFormComponent({
+                            canAttachFiles: @js($hasToolbarButton('attachFiles')),
                             isLiveDebounced: @js($isLiveDebounced()),
                             isLiveOnBlur: @js($isLiveOnBlur()),
                             liveDebounce: @js($getNormalizedLiveDebounce()),
+                            maxHeight: @js($getMaxHeight()),
+                            minHeight: @js($getMinHeight()),
                             placeholder: @js($getPlaceholder()),
                             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                             toolbarButtons: @js($getToolbarButtons()),

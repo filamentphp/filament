@@ -567,7 +567,7 @@ public function form(Form $form): Form
 
 ##### Casting the price to an integer
 
-Filament stores currency values as integers (not floats) to avoid rounding and precision issues — a widely-accepted approach in the Laravel community. However, this requires creating a cast in Laravel that transforms the float into an integer when retrieved and back to an integer when stored in the database. Use the following artisan command to create the cast:
+Filament stores currency values as integers (not floats) to avoid rounding and precision issues — a widely-accepted approach in the Laravel community. However, this requires creating a cast in Laravel that transforms the integer into a float when retrieved and back to an integer when stored in the database. Use the following artisan command to create the cast:
 
 ```bash
 php artisan make:cast MoneyCast

@@ -12,13 +12,13 @@ use Illuminate\Support\Collection;
 
 class SpatieTagsColumn extends TextColumn
 {
-    protected string | Closure | AllTagTypes | null $type;
+    protected string | AllTagTypes | Closure | null $type;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->type(new AllTagTypes());
+        $this->type(AllTagTypes::make());
 
         $this->badge();
     }
@@ -67,7 +67,7 @@ class SpatieTagsColumn extends TextColumn
         return array_unique($state);
     }
 
-    public function type(string | Closure | AllTagTypes | null $type): static
+    public function type(string | AllTagTypes | Closure | null $type): static
     {
         $this->type = $type;
 
