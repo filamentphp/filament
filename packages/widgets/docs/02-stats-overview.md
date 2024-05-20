@@ -42,6 +42,8 @@ Now, check out your widget in the dashboard.
 You may add a `description()` to provide additional information, along with a `descriptionIcon()`:
 
 ```php
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
 protected function getStats(): array
 {
     return [
@@ -58,20 +60,15 @@ protected function getStats(): array
 }
 ```
 
-The `descriptionIcon()` method also accepts a second parameter to specify the icon position. This parameter is part of `Filament\Support\Enums\IconPosition` and can be set to `Before` or `After`:
+The `descriptionIcon()` method also accepts a second parameter to put the icon before the description instead of after it:
 
 ```php
 use Filament\Support\Enums\IconPosition;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
-protected function getStats(): array
-{
-    return [
-        Stat::make('Unique views', '192.1k')
-            ->description('32k increase')
-            ->descriptionIcon('heroicon-m-arrow-trending-up', IconPosition::Before),
-        // ...
-    ];
-}
+Stat::make('Unique views', '192.1k')
+    ->description('32k increase')
+    ->descriptionIcon('heroicon-m-arrow-trending-up', IconPosition::Before)
 ```
 
 ## Changing the color of the stat
