@@ -505,8 +505,20 @@ trait HasComponents
                 }
             }
 
+            if ($this->hasProfile() && is_subclass_of($profilePageComponent = $this->getProfilePage(), Component::class)) {
+                $this->queueLivewireComponentForRegistration($profilePageComponent);
+            }
+
             if ($this->hasRegistration() && is_subclass_of($registrationRouteAction = $this->getRegistrationRouteAction(), Component::class)) {
                 $this->queueLivewireComponentForRegistration($registrationRouteAction);
+            }
+
+            if ($this->hasTenantRegistration() && is_subclass_of($tenantRegistrationComponent = $this->getTenantRegistrationPage(), Component::class)) {
+                $this->queueLivewireComponentForRegistration($tenantRegistrationComponent);
+            }
+
+            if ($this->hasTenantProfile() && is_subclass_of($tenantProfileComponent = $this->getTenantProfilePage(), Component::class)) {
+                $this->queueLivewireComponentForRegistration($tenantProfileComponent);
             }
 
             foreach ($this->getResources() as $resource) {

@@ -42,10 +42,12 @@
     $isReorderable = $isReorderable();
     $isReordering = $isReordering();
     $areGroupingSettingsVisible = (! $isReordering) && count($groups) && (! $areGroupingSettingsHidden());
+    $isGroupingDirectionSettingHidden = $isGroupingDirectionSettingHidden();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
     $isSearchOnBlur = $isSearchOnBlur();
     $isSelectionEnabled = $isSelectionEnabled() && (! $isGroupsOnly);
+    $selectsCurrentPageOnly = $selectsCurrentPageOnly();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
     $isLoaded = $isLoaded();
@@ -195,6 +197,7 @@
 
                     @if ($areGroupingSettingsVisible)
                         <x-filament-tables::groups
+                            :direction-setting="$isGroupingDirectionSettingHidden"
                             :dropdown-on-desktop="$areGroupingSettingsInDropdownOnDesktop()"
                             :groups="$groups"
                             :trigger-action="$getGroupRecordsTriggerAction()"
@@ -257,6 +260,8 @@
             <x-filament-tables::selection.indicator
                 :all-selectable-records-count="$allSelectableRecordsCount"
                 :colspan="$columnsCount"
+                :page="$this->getTablePage()"
+                :select-current-page-only="$selectsCurrentPageOnly"
                 x-bind:hidden="! selectedRecords.length"
                 x-show="selectedRecords.length"
             />
@@ -293,7 +298,7 @@
                             @if ($isSelectionEnabled && (! $isReordering))
                                 <x-filament-tables::selection.checkbox
                                     {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
-                                    :wire:key="$this->getId() . '.table.bulk_select_page.checkbox.' . Str::random()"
+                                    :wire:key="$this->getId() . '.table.bulk-select-page.checkbox.' . Str::random()"
                                     :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                     x-bind:checked="
                                         const recordsOnPage = getRecordsOnPage()
@@ -780,7 +785,7 @@
                                 <x-filament-tables::selection.cell tag="th">
                                     <x-filament-tables::selection.checkbox
                                         {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
-                                        :wire:key="$this->getId() . '.table.bulk_select_page.checkbox.' . Str::random()"
+                                        :wire:key="$this->getId() . '.table.bulk-select-page.checkbox.' . Str::random()"
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
                                             const recordsOnPage = getRecordsOnPage()
@@ -857,7 +862,7 @@
                                 <x-filament-tables::selection.cell tag="th">
                                     <x-filament-tables::selection.checkbox
                                         {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
-                                        :wire:key="$this->getId() . '.table.bulk_select_page.checkbox.' . Str::random()"
+                                        :wire:key="$this->getId() . '.table.bulk-select-page.checkbox.' . Str::random()"
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
                                             const recordsOnPage = getRecordsOnPage()
