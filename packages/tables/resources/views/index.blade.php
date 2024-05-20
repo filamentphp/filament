@@ -196,10 +196,10 @@
 
                     @if ($areGroupingSettingsVisible)
                         <x-filament-tables::groups
+                            :direction="$isGroupingDirectionHidden"
                             :dropdown-on-desktop="$areGroupingSettingsInDropdownOnDesktop()"
                             :groups="$groups"
                             :trigger-action="$getGroupRecordsTriggerAction()"
-                            :direction="$isGroupingDirectionHidden"
                         />
                     @endif
 
