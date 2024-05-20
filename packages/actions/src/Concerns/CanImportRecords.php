@@ -84,7 +84,7 @@ trait CanImportRecords
                 ->rule('extensions:csv,txt')
                 ->rules([
                     'extensions:csv,txt',
-                    File::types(['csv','txt'])->rules([
+                    File::types(['csv', 'txt'])->rules([
                         function (string $attribute, mixed $value, Closure $fail) use ($action) {
                             $csvStream = $this->getUploadedFileStream($value);
                             $csvReader = CsvReader::createFromStream($csvStream);
