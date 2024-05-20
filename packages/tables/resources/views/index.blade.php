@@ -259,6 +259,7 @@
                 :all-selectable-records-count="$allSelectableRecordsCount"
                 :select-current-page-only="$selectsCurrentPageOnly"
                 :colspan="$columnsCount"
+                :page="$this->getTablePage()"
                 x-bind:hidden="! selectedRecords.length"
                 x-show="selectedRecords.length"
             />
