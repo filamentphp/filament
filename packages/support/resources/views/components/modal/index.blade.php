@@ -8,6 +8,7 @@
     'ariaLabelledby' => null,
     'closeButton' => \Filament\Support\View\Components\Modal::$hasCloseButton,
     'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
+    'closeByEscaping' => \Filament\Support\View\Components\Modal::$isClosedByEscaping,
     'closeEventName' => 'close-modal',
     'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
@@ -158,7 +159,9 @@
                             $watch('isOpen', () => (isShown = isOpen))
                         })
                     "
-                    x-on:keydown.window.escape="{{ $closeEventHandler }}"
+                    @if ($closeByEscaping)
+                        x-on:keydown.window.escape="{{ $closeEventHandler }}"
+                    @endif
                     x-show="isShown"
                     x-transition:enter="duration-300"
                     x-transition:leave="duration-300"

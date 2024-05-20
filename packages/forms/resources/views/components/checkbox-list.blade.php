@@ -123,7 +123,7 @@
                     <span
                         x-show="! areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $getLivewireKey() }}.actions.select_all"
+                        wire:key="{{ $getLivewireKey() }}.actions.select-all"
                     >
                         {{ $getAction('selectAll') }}
                     </span>
@@ -131,7 +131,7 @@
                     <span
                         x-show="areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $getLivewireKey() }}.actions.deselect_all"
+                        wire:key="{{ $getLivewireKey() }}.actions.deselect-all"
                     >
                         {{ $getAction('deselectAll') }}
                     </span>

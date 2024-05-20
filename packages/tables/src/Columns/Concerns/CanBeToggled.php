@@ -32,6 +32,10 @@ trait CanBeToggled
 
     public function isToggleable(): bool
     {
+        if ($this->isHidden()) {
+            return false;
+        }
+
         return (bool) $this->evaluate($this->isToggleable);
     }
 
