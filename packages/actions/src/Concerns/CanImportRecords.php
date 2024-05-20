@@ -87,7 +87,6 @@ trait CanImportRecords
                         function (string $attribute, mixed $value, Closure $fail) use ($action) {
                             $csvStream = $this->getUploadedFileStream($value);
                             $csvReader = CsvReader::createFromStream($csvStream);
-
                             $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
                             $csvColumns = $csvReader->getHeader();
 
@@ -98,16 +97,17 @@ trait CanImportRecords
                                 }
                             }
 
-                            if (! empty($duplicates)) {
-                                $columns = Arr::where($duplicates, fn (string $value): bool => $value !== '');
+                            if (empty($duplicates)) {
+                                return;
+                            }
 
-                                if (empty($columns)) {
-                                    $fail(__('filament-actions::import.failure_csv.empty_columns'));
-                                } else {
-                                    $fail(__('filament-actions::import.failure_csv.duplicate_columns', [
-                                        'columns' => implode(', ', $columns),
-                                    ]));
-                                }
+                            $columns = Arr::where($duplicates, fn (string $value): bool => $value !== '');
+                            if (empty($columns)) {
+                                $fail(__('filament-actions::import.modal.form.rules.empty_columns'));
+                            } else {
+                                $fail(__('filament-actions::import.modal.form.rules.duplicate_columns', [
+                                    'columns' => implode(', ', $columns),
+                                ]));
                             }
                         },
                     ]),
