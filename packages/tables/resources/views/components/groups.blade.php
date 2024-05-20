@@ -1,8 +1,8 @@
 @props([
+    'direction' => false,
     'dropdownOnDesktop' => false,
     'groups',
     'triggerAction',
-    'direction' => false,
 ])
 
 @php
