@@ -1,7 +1,7 @@
 @props([
     'key',
+    'page' => null,
     'title',
-    'page' => null
 ])
 
 {{-- format-ignore-start --}}
