@@ -9,6 +9,7 @@
     'deleteButton' => null,
     'disabled' => false,
     'form' => null,
+    'formId' => null,
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
@@ -17,6 +18,7 @@
     'keyBindings' => null,
     'loadingIndicator' => true,
     'size' => ActionSize::Medium,
+    'spaMode' => null,
     'tag' => 'span',
     'target' => null,
     'tooltip' => null,
@@ -73,13 +75,14 @@
 
 <{{ $tag }}
     @if ($tag === 'a')
-        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
     @endif
     @if ($keyBindings || $hasTooltip)
         x-data="{}"
     @endif
     @if ($keyBindings)
-        x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+        x-bind:id="$id('key-bindings')"
+        x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
     @endif
     @if ($hasTooltip)
         x-tooltip="{
@@ -91,6 +94,7 @@
         $attributes
             ->merge([
                 'disabled' => $disabled,
+                'form' => $tag === 'button' ? $formId : null,
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
@@ -189,7 +193,7 @@
             <x-filament::icon
                 alias="badge.delete-button"
                 icon="heroicon-m-x-mark"
-                class="h-3.5 w-3.5"
+                class="w-3.5 h-3.5"
             />
 
             @if (filled($label = $deleteButton->attributes->get('label')))
