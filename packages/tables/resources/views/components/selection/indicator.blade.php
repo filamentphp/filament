@@ -4,9 +4,9 @@
     'end' => null,
     'page' => null,
     'selectAllRecordsAction' => 'selectAllRecords',
+    'selectCurrentPageOnly' => false,
     'selectedRecordsCount',
     'selectedRecordsPropertyName' => 'selectedRecords',
-    'selectCurrentPageOnly' => false
 ])
 
 <div
