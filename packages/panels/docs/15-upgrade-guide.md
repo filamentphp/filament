@@ -60,3 +60,7 @@ protected MaxWidth | string | null $maxContentWidth = null;
 ```
 
 ### Low-impact changes
+
+#### Nepalese translations
+
+The Nepalese translations have been moved from `np` to `ne`, which appears to be the more commonly used language code for the language within the Laravel community.
