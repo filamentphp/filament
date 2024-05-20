@@ -74,7 +74,21 @@ class Message extends Model
 
 By default, a random file name will be generated for newly-uploaded files. This is to ensure that there are never any conflicts with existing files.
 
+### Security implications of controlling file names
+
+Before using the `preserveFilenames()` or `getUploadedFileNameForStorageUsing()` methods, please be aware of the security implications. If you allow users to upload files with their own file names, there are ways that they can exploit this to upload malicious files. **This applies even if you use the [`acceptedFileTypes()`](#file-type-validation) method** to restrict the types of files that can be uploaded, since it uses Laravel's `mimetypes` rule which does not validate the extension of the file, only its mime type, which could be manipulated.
+
+This is specifically an issue with the `getClientOriginalName()` method on the `TemporaryUploadedFile` object, which the `preserveFilenames()` method uses. By default, Livewire generates a random file name for each file uploaded, and uses the mime type of the file to determine the file extension.
+
+Using these methods **with the `local` or `public` filesystem disks** will make your app vulnerable to remote code execution if the attacker uploads a PHP file with a deceptive mime type. **Using an S3 disk protects you from this specific attack vector**, as S3 will not execute PHP files in the same way that your server might when serving files from local storage.
+
+If you are using the `local` or `public` disk, you should consider using the [`storeFileNamesIn()` method](#storing-original-file-names-independently) to store the original file names in a separate column in your database, and keep the randomly generated file names in the file system. This way, you can still display the original file names to users, while keeping the file system secure.
+
+On top of this security issue, you should also be aware that allowing users to upload files with their own file names can lead to conflicts with existing files, and can make it difficult to manage your storage. Users could upload files with the same name and overwrite the other's content if you do not scope them to a specific directory, so these features should in all cases only be accessible to trusted users.
+
 ### Preserving original file names
+
+> Important: Before using this feature, please ensure that you have read the [security implications](#security-implications-of-controlling-file-names).
 
 To preserve the original filenames of the uploaded files, use the `preserveFilenames()` method:
 
@@ -86,6 +100,8 @@ FileUpload::make('attachment')
 ```
 
 ### Generating custom file names
+
+> Important: Before using this feature, please ensure that you have read the [security implications](#security-implications-of-controlling-file-names).
 
 You may completely customize how file names are generated using the `getUploadedFileNameForStorageUsing()` method, and returning a string from the closure based on the `$file` that was uploaded:
 
