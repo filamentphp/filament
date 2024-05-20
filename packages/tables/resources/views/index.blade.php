@@ -257,9 +257,9 @@
         @elseif ($isSelectionEnabled && $isLoaded)
             <x-filament-tables::selection.indicator
                 :all-selectable-records-count="$allSelectableRecordsCount"
-                :select-current-page-only="$selectsCurrentPageOnly"
                 :colspan="$columnsCount"
                 :page="$this->getTablePage()"
+                :select-current-page-only="$selectsCurrentPageOnly"
                 x-bind:hidden="! selectedRecords.length"
                 x-show="selectedRecords.length"
             />
