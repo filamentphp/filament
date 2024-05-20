@@ -46,7 +46,7 @@
     $isGlobalSearchVisible = $isSearchable();
     $isSearchOnBlur = $isSearchOnBlur();
     $isSelectionEnabled = $isSelectionEnabled() && (! $isGroupsOnly);
-    $isSelectCurrentPageOnly = $selectsCurrentPageOnly();
+    $selectsCurrentPageOnly = $selectsCurrentPageOnly();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
     $isLoaded = $isLoaded();
@@ -257,7 +257,7 @@
         @elseif ($isSelectionEnabled && $isLoaded)
             <x-filament-tables::selection.indicator
                 :all-selectable-records-count="$allSelectableRecordsCount"
-                :select-current-page-only="$isSelectCurrentPageOnly"
+                :select-current-page-only="$selectsCurrentPageOnly"
                 :colspan="$columnsCount"
                 x-bind:hidden="! selectedRecords.length"
                 x-show="selectedRecords.length"
