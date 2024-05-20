@@ -68,6 +68,7 @@
     $columnsCount = count($columns);
     $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
     $toggleColumnsTriggerAction = $getToggleColumnsTriggerAction();
+    $page = $this->getTablePage();
 
     if (count($actions) && (! $isReordering)) {
         $columnsCount++;
@@ -260,7 +261,7 @@
             <x-filament-tables::selection.indicator
                 :all-selectable-records-count="$allSelectableRecordsCount"
                 :colspan="$columnsCount"
-                :page="$this->getTablePage()"
+                :page="$page"
                 :select-current-page-only="$selectsCurrentPageOnly"
                 x-bind:hidden="! selectedRecords.length"
                 x-show="selectedRecords.length"
@@ -459,6 +460,7 @@
                                         <x-slot name="start">
                                             <div class="px-3">
                                                 <x-filament-tables::selection.group-checkbox
+                                                    :page="$page"
                                                     :key="$recordGroupKey"
                                                     :title="$recordGroupTitle"
                                                 />
@@ -999,6 +1001,7 @@
 
                                             <x-filament-tables::selection.group-cell>
                                                 <x-filament-tables::selection.group-checkbox
+                                                    :page="$page"
                                                     :key="$recordGroupKey"
                                                     :title="$recordGroupTitle"
                                                 />
@@ -1020,6 +1023,7 @@
                                         @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                             <x-filament-tables::selection.group-cell>
                                                 <x-filament-tables::selection.group-checkbox
+                                                    :page="$page"
                                                     :key="$recordGroupKey"
                                                     :title="$recordGroupTitle"
                                                 />
