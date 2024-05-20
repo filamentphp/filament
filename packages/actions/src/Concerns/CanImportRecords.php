@@ -27,13 +27,13 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
+use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\ValidationException;
 use League\Csv\ByteSequence;
 use League\Csv\CharsetConverter;
 use League\Csv\Info;
 use League\Csv\Reader as CsvReader;
 use League\Csv\Statement;
-use League\Csv\SyntaxError;
 use League\Csv\Writer;
 use Livewire\Component;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
@@ -82,6 +82,37 @@ trait CanImportRecords
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
                 ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
                 ->rule('extensions:csv,txt')
+                ->rules([
+                    'extensions:csv,txt',
+                    File::types(['csv','txt'])->rules([
+                        function (string $attribute, mixed $value, Closure $fail) use ($action) {
+                            $csvStream = $this->getUploadedFileStream($value);
+                            $csvReader = CsvReader::createFromStream($csvStream);
+
+                            $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
+                            $csvColumns = $csvReader->getHeader();
+
+                            $duplicates = [];
+                            foreach (array_count_values($csvColumns) as $value => $count) {
+                                if ($count > 1) {
+                                    $duplicates[] = $value;
+                                }
+                            }
+
+                            if (! empty($duplicates)) {
+                                $columns = Arr::where($duplicates, fn (string $value): bool => $value !== '');
+
+                                if (empty($columns)) {
+                                    $fail(__('filament-actions::import.failure_csv.empty_columns'));
+                                } else {
+                                    $fail(__('filament-actions::import.failure_csv.duplicate_columns', [
+                                        'columns' => implode(', ', $columns),
+                                    ]));
+                                }
+                            }
+                        },
+                    ]),
+                ])
                 ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
                     if (! $state instanceof TemporaryUploadedFile) {
                         return;
@@ -186,22 +217,8 @@ trait CanImportRecords
                 $csvReader->setDelimiter($csvDelimiter);
             }
 
-            try {
-                $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
-                $csvResults = Statement::create()->process($csvReader);
-            } catch (SyntaxError $e) {
-                $columns = Arr::where($e->duplicateColumnNames(), fn (string $value): bool => $value !== '');
-
-                if (empty($columns)) {
-                    $message = __('filament-actions::import.failure_csv.empty_columns');
-                } else {
-                    $message = __('filament-actions::import.failure_csv.duplicate_columns', [
-                        'columns' => implode(', ', $columns),
-                    ]);
-                }
-
-                throw ValidationException::withMessages(['mountedTableActionsData.0.file' => $message]);
-            }
+            $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
+            $csvResults = Statement::create()->process($csvReader);
 
             $totalRows = $csvResults->count();
             $maxRows = $action->getMaxRows() ?? $totalRows;
