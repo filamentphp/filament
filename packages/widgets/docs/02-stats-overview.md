@@ -76,6 +76,8 @@ Stat::make('Unique views', '192.1k')
 You may also give stats a `color()` (`danger`, `gray`, `info`, `primary`, `success` or `warning`):
 
 ```php
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
 protected function getStats(): array
 {
     return [
@@ -100,6 +102,8 @@ protected function getStats(): array
 You may also pass extra HTML attributes to stats using `extraAttributes()`:
 
 ```php
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
 protected function getStats(): array
 {
     return [
@@ -121,6 +125,8 @@ In this example, we are deliberately escaping the `$` in `$dispatch()` since thi
 You may also add or chain a `chart()` to each stat to provide historical data. The `chart()` method accepts an array of data points to plot:
 
 ```php
+use Filament\Widgets\StatsOverviewWidget\Stat;
+
 protected function getStats(): array
 {
     return [
