@@ -1082,7 +1082,6 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         if (
             $this->getModelInstance()->relationLoaded($relationshipName) &&
             (! $this->modifyRelationshipQueryUsing)
-
         ) {
             return $this->cachedExistingRecords = $this->getRecord()->getRelationValue($relationshipName)
                 ->when(filled($orderColumn), fn (Collection $records) => $records->sortBy($orderColumn))
