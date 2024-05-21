@@ -86,24 +86,39 @@ trait CanImportRecords
                     File::types(['csv', 'txt'])->rules([
                         function (string $attribute, mixed $value, Closure $fail) use ($action) {
                             $csvStream = $this->getUploadedFileStream($value);
-                            $csvReader = CsvReader::createFromStream($csvStream);
-                            $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
-                            $csvColumns = $csvReader->getHeader();
 
-                            $duplicates = [];
-                            foreach (array_count_values($csvColumns) as $value => $count) {
-                                if ($count > 1) {
-                                    $duplicates[] = $value;
-                                }
-                            }
-
-                            if (empty($duplicates)) {
+                            if (! $csvStream) {
                                 return;
                             }
 
-                            $columns = Arr::where($duplicates, fn (string $value): bool => $value !== '');
-                            $fail(trans_choice('filament-actions::import.modal.form.rules.duplicate_columns', count($columns), [
-                                'columns' => implode(', ', $columns),
+                            $csvReader = CsvReader::createFromStream($csvStream);
+
+                            if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
+                                $csvReader->setDelimiter($csvDelimiter);
+                            }
+
+                            $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
+
+                            $csvColumns = $csvReader->getHeader();
+
+                            $duplicateCsvColumns = [];
+
+                            foreach (array_count_values($csvColumns) as $header => $count) {
+                                if ($count <= 1) {
+                                    continue;
+                                }
+
+                                $duplicateCsvColumns[] = $header;
+                            }
+
+                            if (empty($duplicateCsvColumns)) {
+                                return;
+                            }
+
+                            $filledDuplicateCsvColumns = array_filter($duplicateCsvColumns, fn ($value): bool => filled($value));
+
+                            $fail(trans_choice('filament-actions::import.modal.form.file.rules.duplicate_columns', count($filledDuplicateCsvColumns), [
+                                'columns' => implode(', ', $filledDuplicateCsvColumns),
                             ]));
                         },
                     ]),
