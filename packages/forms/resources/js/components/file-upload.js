@@ -717,6 +717,7 @@ export default function fileUploadFormComponent({
 
 import ar from 'filepond/locale/ar-ar'
 import ca from 'filepond/locale/ca-ca'
+import ckb from 'filepond/locale/ku-ckb'
 import cs from 'filepond/locale/cs-cz'
 import da from 'filepond/locale/da-dk'
 import de from 'filepond/locale/de-de'
@@ -745,6 +746,7 @@ import zh_TW from 'filepond/locale/zh-tw'
 const locales = {
     ar,
     ca,
+    ckb,
     cs,
     da,
     de,
