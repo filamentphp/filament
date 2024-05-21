@@ -124,7 +124,7 @@
                     <span class="sr-only">
                         {{ __('filament-tables::table.grouping.fields.direction.label') }}
                     </span>
-                    
+
                     <x-filament::input.wrapper>
                         <x-filament::input.select x-model="direction">
                             <option value="asc">
