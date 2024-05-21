@@ -11,15 +11,21 @@ return [
         'form' => [
 
             'file' => [
+
                 'label' => 'File',
+
                 'placeholder' => 'Upload a CSV file',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} The file must not contain more than one empty column header.|{1,*} The file must not contain duplicate column headers: :columns.',
+                ],
+
             ],
 
             'columns' => [
                 'label' => 'Columns',
                 'placeholder' => 'Select a column',
             ],
-
         ],
 
         'actions' => [

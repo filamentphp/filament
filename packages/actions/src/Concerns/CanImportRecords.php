@@ -27,6 +27,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
+use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\ValidationException;
 use League\Csv\ByteSequence;
 use League\Csv\CharsetConverter;
@@ -80,7 +81,48 @@ trait CanImportRecords
                 ->label(__('filament-actions::import.modal.form.file.label'))
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
                 ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
-                ->rule('extensions:csv,txt')
+                ->rules([
+                    'extensions:csv,txt',
+                    File::types(['csv', 'txt'])->rules([
+                        function (string $attribute, mixed $value, Closure $fail) use ($action) {
+                            $csvStream = $this->getUploadedFileStream($value);
+
+                            if (! $csvStream) {
+                                return;
+                            }
+
+                            $csvReader = CsvReader::createFromStream($csvStream);
+
+                            if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
+                                $csvReader->setDelimiter($csvDelimiter);
+                            }
+
+                            $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
+
+                            $csvColumns = $csvReader->getHeader();
+
+                            $duplicateCsvColumns = [];
+
+                            foreach (array_count_values($csvColumns) as $header => $count) {
+                                if ($count <= 1) {
+                                    continue;
+                                }
+
+                                $duplicateCsvColumns[] = $header;
+                            }
+
+                            if (empty($duplicateCsvColumns)) {
+                                return;
+                            }
+
+                            $filledDuplicateCsvColumns = array_filter($duplicateCsvColumns, fn ($value): bool => filled($value));
+
+                            $fail(trans_choice('filament-actions::import.modal.form.file.rules.duplicate_columns', count($filledDuplicateCsvColumns), [
+                                'columns' => implode(', ', $filledDuplicateCsvColumns),
+                            ]));
+                        },
+                    ]),
+                ])
                 ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
                     if (! $state instanceof TemporaryUploadedFile) {
                         return;
