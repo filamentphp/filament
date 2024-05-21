@@ -26,6 +26,7 @@ return [
                 'label' => 'Columns',
                 'placeholder' => 'Select a column',
             ],
+
         ],
 
         'actions' => [
