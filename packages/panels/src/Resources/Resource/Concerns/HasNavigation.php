@@ -8,6 +8,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+
 use function Filament\Support\original_request;
 
 trait HasNavigation

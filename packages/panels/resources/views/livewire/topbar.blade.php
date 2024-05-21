@@ -1,3 +1,1 @@
-<x-filament-panels::topbar
-    :navigation="filament()->getNavigation()"
-/>
+<x-filament-panels::topbar :navigation="filament()->getNavigation()" />

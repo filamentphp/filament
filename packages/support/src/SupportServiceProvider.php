@@ -102,7 +102,11 @@ class SupportServiceProvider extends PackageServiceProvider
                 }
 
                 $persistentMiddleware = app(PersistentMiddleware::class);
+
+                /** @phpstan-ignore-next-line */
                 $request = invade($persistentMiddleware)->makeFakeRequest();
+
+                /** @phpstan-ignore-next-line */
                 invade($persistentMiddleware)->getRouteFromRequest($request);
 
                 return $request;
