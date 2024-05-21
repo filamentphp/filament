@@ -80,7 +80,11 @@
                 @endif
                 {{ $getExtraAlpineAttributeBag() }}
             >
-                <input id="trix-value-{{ $id }}" type="hidden" />
+                <input
+                    id="trix-value-{{ $id }}"
+                    x-ref="trixValue"
+                    type="hidden"
+                />
 
                 <trix-toolbar
                     id="trix-toolbar-{{ $id }}"
@@ -458,7 +462,8 @@
                                     name="href"
                                     placeholder="{{ __('filament-forms::components.rich_editor.dialogs.link.placeholder') }}"
                                     required
-                                    type="url"
+                                    type="text"
+                                    inputmode="url"
                                     class="trix-input trix-input--dialog"
                                 />
 

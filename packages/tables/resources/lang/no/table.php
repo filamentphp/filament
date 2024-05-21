@@ -13,8 +13,8 @@ return [
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'Vis :count til',
-                'expand_list' => 'Vis :count mindre',
+                'collapse_list' => 'Vis :count mindre',
+                'expand_list' => 'Vis :count til',
             ],
 
             'more_list_items' => 'og :count til',

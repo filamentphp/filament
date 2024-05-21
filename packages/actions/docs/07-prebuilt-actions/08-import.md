@@ -90,7 +90,7 @@ To define the columns that can be imported, you need to override the `getColumns
 ```php
 use Filament\Actions\Imports\ImportColumn;
 
-public function getColumns(): array
+public static function getColumns(): array
 {
     return [
         ImportColumn::make('name')

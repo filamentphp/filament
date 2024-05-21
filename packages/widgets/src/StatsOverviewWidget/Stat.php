@@ -13,7 +13,7 @@ use Illuminate\View\ComponentAttributeBag;
 class Stat extends Component implements Htmlable
 {
     /**
-     * @var array<string, mixed> | null
+     * @var array<float> | null
      */
     protected ?array $chart = null;
 
@@ -153,7 +153,7 @@ class Stat extends Component implements Htmlable
     }
 
     /**
-     * @param  array<int> | null  $chart
+     * @param  array<float> | null  $chart
      */
     public function chart(?array $chart): static
     {
@@ -187,7 +187,7 @@ class Stat extends Component implements Htmlable
     }
 
     /**
-     * @return array<string, mixed> | null
+     * @return array<float> | null
      */
     public function getChart(): ?array
     {

@@ -10,6 +10,7 @@ use Illuminate\Contracts\Support\Htmlable;
 class Entry extends Component implements HasHintActions
 {
     use Concerns\CanOpenUrl;
+    use Concerns\HasExtraEntryWrapperAttributes;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;

@@ -83,12 +83,14 @@ CodeMirror.commands.shiftTabAndUnindentMarkdownList = function (codemirror) {
 }
 
 export default function markdownEditorFormComponent({
+    canAttachFiles,
     isLiveDebounced,
     isLiveOnBlur,
     liveDebounce,
     maxHeight,
     minHeight,
     placeholder,
+    setUpUsing,
     state,
     translations,
     toolbarButtons,
@@ -125,7 +127,7 @@ export default function markdownEditorFormComponent({
                     },
                 ],
                 toolbar: this.getToolbar(),
-                uploadImage: true,
+                uploadImage: canAttachFiles,
             })
 
             this.editor.codemirror.setOption(
@@ -209,6 +211,10 @@ export default function markdownEditorFormComponent({
 
                 Alpine.raw(this.editor).value(this.state ?? '')
             })
+
+            if (setUpUsing) {
+                setUpUsing(this)
+            }
         },
 
         destroy: function () {

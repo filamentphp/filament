@@ -119,6 +119,8 @@ php artisan vendor:publish --tag=filament-actions-translations
 
 php artisan vendor:publish --tag=filament-forms-translations
 
+php artisan vendor:publish --tag=filament-infolists-translations
+
 php artisan vendor:publish --tag=filament-notifications-translations
 
 php artisan vendor:publish --tag=filament-tables-translations

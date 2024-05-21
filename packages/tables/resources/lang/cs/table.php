@@ -112,6 +112,10 @@ return [
 
         'actions' => [
 
+            'apply' => [
+                'label' => 'Použít filtry',
+            ],
+
             'remove' => [
                 'label' => 'Odstranit filtr',
             ],
