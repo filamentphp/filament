@@ -334,7 +334,7 @@ trait CanImportRecords
                                     ->markAsRead(),
                             ]),
                         )
-                        ->sendToDatabase($import->user);
+                        ->sendToDatabase($import->user, true);
                 })
                 ->dispatch();
 
