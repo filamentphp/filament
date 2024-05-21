@@ -9,17 +9,21 @@ trait HasPreview
 {
     protected string | Closure | null $preview = null;
 
-    public function preview(string | Closure $preview): static
+    public function preview(string | Closure | null $preview): static
     {
         $this->preview = $preview;
 
         return $this;
     }
 
-    public function renderPreview(): View
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public function renderPreview(array $data): View
     {
-        $this->view($this->evaluate($this->preview));
-
-        return $this->render();
+        return view(
+            $this->evaluate($this->preview),
+            $data,
+        );
     }
 }
