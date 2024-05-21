@@ -21,42 +21,42 @@ trait HasLifecycleHooks
 
     protected ?Closure $afterFormValidated = null;
 
-    public function before(Closure $callback): static
+    public function before(?Closure $callback): static
     {
         $this->before = $callback;
 
         return $this;
     }
 
-    public function after(Closure $callback): static
+    public function after(?Closure $callback): static
     {
         $this->after = $callback;
 
         return $this;
     }
 
-    public function beforeFormFilled(Closure $callback): static
+    public function beforeFormFilled(?Closure $callback): static
     {
         $this->beforeFormFilled = $callback;
 
         return $this;
     }
 
-    public function afterFormFilled(Closure $callback): static
+    public function afterFormFilled(?Closure $callback): static
     {
         $this->afterFormFilled = $callback;
 
         return $this;
     }
 
-    public function beforeFormValidated(Closure $callback): static
+    public function beforeFormValidated(?Closure $callback): static
     {
         $this->beforeFormValidated = $callback;
 
         return $this;
     }
 
-    public function afterFormValidated(Closure $callback): static
+    public function afterFormValidated(?Closure $callback): static
     {
         $this->afterFormValidated = $callback;
 

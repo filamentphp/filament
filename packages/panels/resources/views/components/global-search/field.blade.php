@@ -13,10 +13,11 @@
     </label>
 
     <x-filament::input.wrapper
-        inline-prefix
         prefix-icon="heroicon-m-magnifying-glass"
         prefix-icon-alias="panels::global-search.field"
+        inline-prefix
         :suffix="$suffix"
+        inline-suffix
         wire:target="search"
     >
         <x-filament::input

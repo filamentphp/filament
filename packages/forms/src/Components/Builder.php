@@ -74,7 +74,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
     protected ?Closure $modifyExpandAllActionUsing = null;
 
-    protected ?Closure $modifyUpdateBlockActionUsing = null;
+    protected ?Closure $modifyEditActionUsing = null;
 
     protected string | Closure | null $labelBetweenItems = null;
 
@@ -97,7 +97,11 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             $items = [];
 
             foreach ($state ?? [] as $itemData) {
-                $items[$component->generateUuid()] = $itemData;
+                if ($uuid = $component->generateUuid()) {
+                    $items[$uuid] = $itemData;
+                } else {
+                    $items[] = $itemData;
+                }
             }
 
             $component->state($items);
@@ -110,12 +114,12 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             fn (Builder $component): Action => $component->getCollapseAction(),
             fn (Builder $component): Action => $component->getCollapseAllAction(),
             fn (Builder $component): Action => $component->getDeleteAction(),
+            fn (Builder $component): Action => $component->getEditAction(),
             fn (Builder $component): Action => $component->getExpandAction(),
             fn (Builder $component): Action => $component->getExpandAllAction(),
             fn (Builder $component): Action => $component->getMoveDownAction(),
             fn (Builder $component): Action => $component->getMoveUpAction(),
             fn (Builder $component): Action => $component->getReorderAction(),
-            fn (Builder $component): Action => $component->getUpdateBlockAction(),
         ]);
 
         $this->mutateDehydratedStateUsing(static function (?array $state): array {
@@ -149,14 +153,22 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 $newUuid = $component->generateUuid();
 
                 $items = $component->getState();
-                $items[$newUuid] = [
-                    'type' => $arguments['block'],
-                    'data' => $data,
-                ];
+
+                if ($newUuid) {
+                    $items[$newUuid] = [
+                        'type' => $arguments['block'],
+                        'data' => $data,
+                    ];
+                } else {
+                    $items[] = [
+                        'type' => $arguments['block'],
+                        'data' => $data,
+                    ];
+                }
 
                 $component->state($items);
 
-                $component->getChildComponentContainer($newUuid)->fill($data);
+                $component->getChildComponentContainer($newUuid ?? array_key_last($items))->fill(filled($data) ? $data : null);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -201,24 +213,33 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 return null;
             })
             ->action(function (array $arguments, Builder $component, array $data = []): void {
-                $newUuid = $component->generateUuid();
+                $newKey = $component->generateUuid();
 
                 $items = [];
 
-                foreach ($component->getState() ?? [] as $uuid => $item) {
-                    $items[$uuid] = $item;
+                foreach ($component->getState() ?? [] as $key => $item) {
+                    $items[$key] = $item;
 
-                    if ($uuid === $arguments['afterItem']) {
-                        $items[$newUuid] = [
-                            'type' => $arguments['block'],
-                            'data' => $data,
-                        ];
+                    if ($key === $arguments['afterItem']) {
+                        if ($newKey) {
+                            $items[$newKey] = [
+                                'type' => $arguments['block'],
+                                'data' => $data,
+                            ];
+                        } else {
+                            $items[] = [
+                                'type' => $arguments['block'],
+                                'data' => $data,
+                            ];
+
+                            $newKey = array_key_last($items);
+                        }
                     }
                 }
 
                 $component->state($items);
 
-                $component->getChildComponentContainer($newUuid)->fill($data);
+                $component->getChildComponentContainer($newKey)->fill(filled($data) ? $data : null);
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
@@ -260,7 +281,12 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 $newUuid = $component->generateUuid();
 
                 $items = $component->getState();
-                $items[$newUuid] = $items[$arguments['item']];
+
+                if ($newUuid) {
+                    $items[$newUuid] = $items[$arguments['item']];
+                } else {
+                    $items[] = $items[$arguments['item']];
+                }
 
                 $component->state($items);
 
@@ -579,9 +605,9 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
         return 'expandAll';
     }
 
-    public function getUpdateBlockAction(): Action
+    public function getEditAction(): Action
     {
-        $action = Action::make($this->getUpdateBlockActionName())
+        $action = Action::make($this->getEditActionName())
             ->label(__('filament-forms::components.builder.actions.update_block.label'))
             ->color('gray')
             ->fillForm(function (array $arguments, Builder $component) {
@@ -609,8 +635,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             ->size(ActionSize::Small)
             ->visible(fn (Builder $component): bool => $component->hasBlockPreviews());
 
-        if ($this->modifyUpdateBlockActionUsing) {
-            $action = $this->evaluate($this->modifyUpdateBlockActionUsing, [
+        if ($this->modifyEditActionUsing) {
+            $action = $this->evaluate($this->modifyEditActionUsing, [
                 'action' => $action,
             ]) ?? $action;
         }
@@ -618,16 +644,16 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
         return $action;
     }
 
-    public function updateBlockAction(?Closure $callback): static
+    public function editAction(?Closure $callback): static
     {
-        $this->modifyUpdateBlockActionUsing = $callback;
+        $this->modifyEditActionUsing = $callback;
 
         return $this;
     }
 
-    public function getUpdateBlockActionName(): string
+    public function getEditActionName(): string
     {
-        return 'updateBlock';
+        return 'edit';
     }
 
     public function truncateBlockLabel(bool | Closure $condition = true): static

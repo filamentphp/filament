@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'replicated' => [
-                'title' => 'ทำซ้ำแล้ว',
+                'title' => 'ทำซ้ำเรียบร้อยแล้ว',
             ],
 
         ],

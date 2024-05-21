@@ -64,7 +64,10 @@ class SelectFilter extends BaseFilter
                         ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
                         ->all();
                 } else {
-                    $labels = Arr::only($filter->getOptions(), $state['values']);
+                    $labels = collect($filter->getOptions())
+                        ->mapWithKeys(fn (string | array $label, string $value): array => is_array($label) ? $label : [$value => $label])
+                        ->only($state['values'])
+                        ->all();
                 }
 
                 if (! count($labels)) {
@@ -96,7 +99,9 @@ class SelectFilter extends BaseFilter
                     ->first()
                     ?->getAttributeValue($filter->getRelationshipTitleAttribute());
             } else {
-                $label = $filter->getOptions()[$state['value']] ?? null;
+                $label = collect($filter->getOptions())
+                    ->mapWithKeys(fn (string | array $label, string $value): array => is_array($label) ? $label : [$value => $label])
+                    ->get($state['value']);
             }
 
             if (blank($label)) {

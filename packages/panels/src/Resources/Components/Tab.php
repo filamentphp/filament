@@ -39,14 +39,14 @@ class Tab extends Component
         return $this;
     }
 
-    public function query(Closure $callback): static
+    public function query(?Closure $callback): static
     {
         $this->modifyQueryUsing($callback);
 
         return $this;
     }
 
-    public function modifyQueryUsing(Closure $callback): static
+    public function modifyQueryUsing(?Closure $callback): static
     {
         $this->modifyQueryUsing = $callback;
 

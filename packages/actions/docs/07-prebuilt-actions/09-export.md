@@ -95,7 +95,7 @@ To define the columns that can be exported, you need to override the `getColumns
 ```php
 use Filament\Actions\Exports\ExportColumn;
 
-public function getColumns(): array
+public static function getColumns(): array
 {
     return [
         ExportColumn::make('name'),

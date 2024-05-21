@@ -11,8 +11,15 @@ return [
         'form' => [
 
             'file' => [
+
                 'label' => 'Bestand',
+
                 'placeholder' => 'Upload een CSV-bestand',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} Het bestand mag niet meer dan één lege kolomkop bevatten.|{1,*} Het bestand mag geen dubbele kolomkoppen bevatten: :columns.',
+                ],
+
             ],
 
             'columns' => [

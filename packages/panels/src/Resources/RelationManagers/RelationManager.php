@@ -12,6 +12,7 @@ use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Concerns\CanBeLazy;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -27,6 +28,7 @@ use function Filament\authorize;
 class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
 {
     use Actions\Concerns\InteractsWithActions;
+    use CanBeLazy;
     use Forms\Concerns\InteractsWithForms;
     use Infolists\Concerns\InteractsWithInfolists;
     use InteractsWithRelationshipTable {
@@ -86,8 +88,6 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
     protected static ?string $badgeTooltip = null;
 
-    protected static bool $isLazy = true;
-
     public function mount(): void
     {
         $this->loadDefaultActiveTab();
@@ -118,11 +118,6 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
             static::class,
             $this->getPageClass(),
         ];
-    }
-
-    public function placeholder(): View
-    {
-        return view('filament::components.loading-section');
     }
 
     public function render(): View
@@ -533,10 +528,5 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         }
 
         return $properties;
-    }
-
-    public static function isLazy(): bool
-    {
-        return static::$isLazy;
     }
 }

@@ -15,6 +15,24 @@ return [
 
         ],
 
+        'key_value' => [
+
+            'columns' => [
+
+                'key' => [
+                    'label' => 'キー',
+                ],
+
+                'value' => [
+                    'label' => '値',
+                ],
+
+            ],
+
+            'placeholder' => 'エントリがありません',
+
+        ],
+
     ],
 
 ];

@@ -64,7 +64,7 @@ trait CanReplicateRecords
         });
     }
 
-    public function beforeReplicaSaved(Closure $callback): static
+    public function beforeReplicaSaved(?Closure $callback): static
     {
         $this->beforeReplicaSaved = $callback;
 
@@ -81,7 +81,7 @@ trait CanReplicateRecords
     /**
      * @deprecated Use `after()` instead.
      */
-    public function afterReplicaSaved(Closure $callback): static
+    public function afterReplicaSaved(?Closure $callback): static
     {
         $this->after($callback);
 
