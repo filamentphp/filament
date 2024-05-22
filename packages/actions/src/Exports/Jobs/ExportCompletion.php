@@ -74,6 +74,6 @@ class ExportCompletion implements ShouldQueue
                     $this->formats,
                 )),
             )
-            ->sendToDatabase($this->export->user);
+            ->sendToDatabase($this->export->user, isEventDispatched: true);
     }
 }
