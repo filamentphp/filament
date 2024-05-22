@@ -154,7 +154,7 @@ If you open the `PatientResource.php` file, there's a `form()` method with an em
 
 #### "Name" text input
 
-Filament bundles a large selection of [form fields](../forms/fields/getting-started). Let's start with a simple [text input field](../forms/fields/text-input):
+Filament bundles a large selection of [form fields](../forms/fields/getting-started#available-fields). Let's start with a simple [text input field](../forms/fields/text-input):
 
 ```php
 use Filament\Forms;
@@ -342,7 +342,7 @@ Open the `PatientResource.php` file. You should see a `table()` method with an e
 
 #### Adding text columns
 
-Filament bundles a large selection of [table columns](../tables/columns). Let's use a simple [text column](../tables/columns/text) for all the fields in the `patients` table:
+Filament bundles a large selection of [table columns](../tables/columns#available-columns). Let's use a simple [text column](../tables/columns/text) for all the fields in the `patients` table:
 
 ```php
 use Filament\Tables;
@@ -364,7 +364,7 @@ public static function table(Table $table): Table
 
 ##### Making columns searchable
 
-The ability to [search](/tables/columns/getting-started#searching) for patients directly in the table would be helpful as a veterinary practice grows. You can make columns searchable by chaining the `searchable()` method to the column. Let's make the patient's name and owner's name searchable.
+The ability to [search](../tables/columns/getting-started#searching) for patients directly in the table would be helpful as a veterinary practice grows. You can make columns searchable by chaining the `searchable()` method to the column. Let's make the patient's name and owner's name searchable.
 
 ```php
 use Filament\Tables;
@@ -415,7 +415,7 @@ This will add a sort icon button to the column header. Clicking it will sort the
 
 Although you can make the `type` field searchable, making it filterable is a much better user experience.
 
-Filament tables can have [filters](../tables/filters/getting-started), which are components that reduce the number of records in a table by adding a scope to the Eloquent query. Filters can even contain custom form components, making them a potent tool for building interfaces.
+Filament tables can have [filters](../tables/filters/getting-started#available-filters), which are components that reduce the number of records in a table by adding a scope to the Eloquent query. Filters can even contain custom form components, making them a potent tool for building interfaces.
 
 Filament includes a prebuilt [`SelectFilter`](../tables/filters/select) that you can add to the table's `filters()`:
 
