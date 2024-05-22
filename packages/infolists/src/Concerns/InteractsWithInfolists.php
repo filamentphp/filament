@@ -109,12 +109,14 @@ trait InteractsWithInfolists
             if ($this->mountedInfolistActionHasForm(mountedAction: $action)) {
                 $action->callBeforeFormValidated();
 
-                $action->formData($form->getState());
+                $action->formData(
+                    $form->getState(afterValidate: function () use ($action) {
+                        $action->callAfterFormValidated();
 
-                $action->callAfterFormValidated();
+                        $action->callBefore();
+                    }),
+                );
             }
-
-            $action->callBefore();
 
             $result = $action->call([
                 'form' => $form,
