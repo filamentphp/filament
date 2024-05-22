@@ -729,6 +729,7 @@ import fr from 'filepond/locale/fr-fr'
 import hu from 'filepond/locale/hu-hu'
 import id from 'filepond/locale/id-id'
 import it from 'filepond/locale/it-it'
+import km from 'filepond/locale/km-km'
 import nl from 'filepond/locale/nl-nl'
 import no from 'filepond/locale/no_nb'
 import pl from 'filepond/locale/pl-pl'
@@ -758,6 +759,7 @@ const locales = {
     hu,
     id,
     it,
+    km,
     nl,
     no,
     pl,
