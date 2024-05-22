@@ -333,7 +333,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-		->defaultGroup('status');
+		->defaultGroup('status')
         ->groupingSettingsHidden();
 }
 ```
@@ -348,7 +348,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-		->defaultGroup('status');
+		->defaultGroup('status')
         ->groupingDirectionSettingHidden();
 }
 ```
