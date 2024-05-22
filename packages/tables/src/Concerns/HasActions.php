@@ -106,6 +106,8 @@ trait HasActions
                         $action->callBefore();
                     }),
                 );
+            } else {
+                $action->callBefore();
             }
 
             $result = $action->call([

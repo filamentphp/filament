@@ -91,6 +91,8 @@ trait InteractsWithActions
                         $action->callBefore();
                     }),
                 );
+            } else {
+                $action->callBefore();
             }
 
             $result = $action->call([

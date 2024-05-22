@@ -77,6 +77,8 @@ trait HasBulkActions
                         $action->callBefore();
                     }),
                 );
+            } else {
+                $action->callBefore();
             }
 
             $result = $action->call([

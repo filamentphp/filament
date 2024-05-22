@@ -116,6 +116,8 @@ trait InteractsWithInfolists
                         $action->callBefore();
                     }),
                 );
+            } else {
+                $action->callBefore();
             }
 
             $result = $action->call([
