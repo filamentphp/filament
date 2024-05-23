@@ -5,6 +5,7 @@
     'recordAction' => null,
     'recordKey' => null,
     'recordUrl' => null,
+    'shouldOpenRecordUrlInNewTab' => false,
 ])
 
 @php
@@ -49,7 +50,7 @@
 >
     @if (($url || ($recordUrl && $action === null)) && (! $isClickDisabled))
         <a
-            {{ \Filament\Support\generate_href_html($url ?: $recordUrl, $shouldOpenUrlInNewTab) }}
+            {{ \Filament\Support\generate_href_html($url ?: $recordUrl, $url ? $shouldOpenUrlInNewTab : $shouldOpenRecordUrlInNewTab) }}
             class="{{ $columnClasses }}"
         >
             {{ $slot }}
