@@ -36,7 +36,9 @@
         },
 
         scrollToTop: function () {
-            this.$root.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            $nextTick(() =>
+                this.$root.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            )
         },
 
         autofocusFields: function () {
