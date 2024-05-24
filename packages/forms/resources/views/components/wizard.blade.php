@@ -37,7 +37,7 @@
 
         scrollToTop: function () {
             $nextTick(() =>
-                this.$root.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                this.$root.scrollIntoView({ behavior: 'smooth', block: 'start' }),
             )
         },
 
