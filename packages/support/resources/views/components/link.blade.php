@@ -118,7 +118,7 @@
         'fi-btn-badge-ctn absolute start-full z-[1] -translate-y-1/2 top-0  w-max -translate-x-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2',
         match ($badgeSize) {
             'xs' => '-mt-1',
-            'md' => '-mt-1.5',
+            'sm' => '-mt-1.5',
             default => '-mt-2'
         }
     ]);
