@@ -27,6 +27,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\ValidationException;
 use League\Csv\ByteSequence;
@@ -423,13 +424,17 @@ trait CanImportRecords
 
         $inputEncoding = $this->detectCsvEncoding($resource);
         $outputEncoding = 'UTF-8';
-        if (filled($inputEncoding) && $inputEncoding !== $outputEncoding) {
+        
+        if (
+            filled($inputEncoding) &&
+            (Str::lower($inputEncoding) !== Str::lower($outputEncoding))
+        ) {
             CharsetConverter::register();
 
             stream_filter_append(
                 $resource,
                 CharsetConverter::getFiltername($inputEncoding, $outputEncoding),
-                STREAM_FILTER_READ
+                STREAM_FILTER_READ,
             );
         }
 
