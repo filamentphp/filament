@@ -251,7 +251,7 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
         return $this->getOptionLabelFromRecordUsing !== null;
     }
 
-    public function getOptionLabelFromRecord(Model $record): string
+    public function getOptionLabelFromRecord(Model $record): string | Htmlable
     {
         return $this->evaluate(
             $this->getOptionLabelFromRecordUsing,
