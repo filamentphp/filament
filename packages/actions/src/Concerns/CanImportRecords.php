@@ -424,7 +424,7 @@ trait CanImportRecords
 
         $inputEncoding = $this->detectCsvEncoding($resource);
         $outputEncoding = 'UTF-8';
-        
+
         if (
             filled($inputEncoding) &&
             (Str::lower($inputEncoding) !== Str::lower($outputEncoding))
