@@ -602,9 +602,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             $validator = Validator::make(
                 [$name => $files],
                 ["{$name}.*" => ['file', ...parent::getValidationRules()]],
-                $validationMessages
-                    ? ["{$name}.*" => $validationMessages]
-                    : [],
+                $validationMessages ? ["{$name}.*" => $validationMessages] : [],
                 ["{$name}.*" => $this->getValidationAttribute()],
             );
 
