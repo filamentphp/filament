@@ -421,14 +421,14 @@ trait CanImportRecords
             ]));
         }
 
-        $encoding = $this->detectCsvEncoding($resource);
-
-        if (filled($encoding)) {
+        $inputEncoding = $this->detectCsvEncoding($resource);
+        $outputEncoding = 'UTF-8';
+        if (filled($inputEncoding) && $inputEncoding !== $outputEncoding) {
             CharsetConverter::register();
 
             stream_filter_append(
                 $resource,
-                CharsetConverter::getFiltername($encoding, 'utf-8'),
+                CharsetConverter::getFiltername($inputEncoding, $outputEncoding),
                 STREAM_FILTER_READ
             );
         }
