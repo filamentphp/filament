@@ -836,6 +836,8 @@ trait CanBeValidated
 
             if (is_array($stateValues)) {
                 $stateValues = implode(',', $stateValues);
+            } elseif (is_bool($stateValues)) {
+                $stateValues = $stateValues ? 'true' : 'false';
             }
 
             return "{$rule}:{$statePath},{$stateValues}";
