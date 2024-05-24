@@ -77,17 +77,18 @@
                     <span class="{{ $labelClasses }}">
                         {{ __('filament-tables::table.grouping.fields.direction.label') }}
                     </span>
-                        <x-filament::input.wrapper>
-                            <x-filament::input.select x-model="direction">
-                                <option value="asc">
-                                    {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
-                                </option>
 
-                                <option value="desc">
-                                    {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                                </option>
-                            </x-filament::input.select>
-                        </x-filament::input.wrapper>
+                    <x-filament::input.wrapper>
+                        <x-filament::input.select x-model="direction">
+                            <option value="asc">
+                                {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                            </option>
+
+                            <option value="desc">
+                                {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                            </option>
+                        </x-filament::input.select>
+                    </x-filament::input.wrapper>
                 </label>
             @endif
         </div>
@@ -123,17 +124,18 @@
                     <span class="sr-only">
                         {{ __('filament-tables::table.grouping.fields.direction.label') }}
                     </span>
-                        <x-filament::input.wrapper>
-                            <x-filament::input.select x-model="direction">
-                                <option value="asc">
-                                    {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
-                                </option>
 
-                                <option value="desc">
-                                    {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                                </option>
-                            </x-filament::input.select>
-                        </x-filament::input.wrapper>
+                    <x-filament::input.wrapper>
+                        <x-filament::input.select x-model="direction">
+                            <option value="asc">
+                                {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                            </option>
+
+                            <option value="desc">
+                                {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                            </option>
+                        </x-filament::input.select>
+                    </x-filament::input.wrapper>
                 </label>
             @endif
         </div>
