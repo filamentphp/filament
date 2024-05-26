@@ -57,6 +57,7 @@ class KeyValue extends Field
 
         $this->dehydrateStateUsing(static function (?array $state) {
             return collect($state ?? [])
+                ->mapWithKeys(static fn ($state) => [$state['key'] => $state['value']])
                 ->filter(static fn (?string $value, ?string $key): bool => filled($key))
                 ->map(static fn (?string $value): ?string => filled($value) ? $value : null)
                 ->all();
