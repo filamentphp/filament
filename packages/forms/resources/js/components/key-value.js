@@ -78,7 +78,6 @@ export default function keyValueFormComponent({ state }) {
                 return
             }
 
-
             this.rows = Alpine.raw(this.state)
         },
 
