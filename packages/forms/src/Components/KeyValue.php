@@ -55,6 +55,19 @@ class KeyValue extends Field
 
         $this->default([]);
 
+        $this->afterStateHydrated(static function (KeyValue $component, $state): void {
+            if (blank($state)) {
+                $component->state([]);
+
+                return;
+            }
+
+            $component->state(collect($state)
+                ->map(fn ($value, $key) => ['key' => $key, 'value' => $value])
+                ->values()
+                ->toArray());
+        });
+
         $this->dehydrateStateUsing(static function (?array $state) {
             return collect($state ?? [])
                 ->mapWithKeys(static fn ($state) => [$state['key'] => $state['value']])

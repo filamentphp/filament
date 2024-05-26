@@ -74,16 +74,8 @@ export default function keyValueFormComponent({ state }) {
                 return
             }
 
-            let rows = []
 
-            for (let [key, value] of Object.entries(this.state ?? {})) {
-                rows.push({
-                    key,
-                    value,
-                })
-            }
-
-            this.rows = rows
+            this.rows = Alpine.raw(this.state)
         },
 
         updateState: function () {
