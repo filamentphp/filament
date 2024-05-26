@@ -96,7 +96,7 @@ export default function keyValueFormComponent({ state }) {
 
                 state.push({
                     key: row.key,
-                    value: row.value
+                    value: row.value,
                 })
             })
 
