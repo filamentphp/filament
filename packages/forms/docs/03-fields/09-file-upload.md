@@ -249,7 +249,7 @@ This is perfectly accompanied by the [`avatar()` method](#avatar-mode), which re
 
 ### Cropping and resizing images without the editor
 
-Filepond allows you to crop and resize images before they are uploaded, without the need for a separate editor. You can customize this behaviour using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods. `imageResizeMode()` should be set for these methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
+Filepond allows you to crop and resize images before they are uploaded, without the need for a separate editor. You can customize this behavior using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods. `imageResizeMode()` should be set for these methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -366,7 +366,7 @@ Please be aware that images, video and audio files will not show the stored file
 
 ## Orienting images from their EXIF data
 
-By default, FilePond will automatically orient images based on their EXIF data. If you wish to disable this behaviour, you can use the `orientImagesFromExif(false)` method:
+By default, FilePond will automatically orient images based on their EXIF data. If you wish to disable this behavior, you can use the `orientImagesFromExif(false)` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;

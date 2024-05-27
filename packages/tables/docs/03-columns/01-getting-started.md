@@ -255,7 +255,7 @@ public static function table(Table $table): Table
 
 ### Searching when the input is blurred
 
-Instead of automatically reloading the table contents while the user is typing their search, which is affected by the [debounce](#customizing-the-table-search-debounce) of the search field, you may change the behaviour so that the table is only searched when the user blurs the input (tabs or clicks out of it), using the `searchOnBlur()` method:
+Instead of automatically reloading the table contents while the user is typing their search, which is affected by the [debounce](#customizing-the-table-search-debounce) of the search field, you may change the behavior so that the table is only searched when the user blurs the input (tabs or clicks out of it), using the `searchOnBlur()` method:
 
 ```php
 use Filament\Tables\Table;
@@ -294,7 +294,7 @@ When a cell is clicked, you may run an "action", or open a URL.
 
 ### Running actions
 
-To run an action, you may use the `action()` method, passing a callback or the name of a Livewire method to run. Each method accepts a `$record` parameter which you may use to customize the behaviour of the action:
+To run an action, you may use the `action()` method, passing a callback or the name of a Livewire method to run. Each method accepts a `$record` parameter which you may use to customize the behavior of the action:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -607,7 +607,7 @@ These get merged onto the outer `<div>` element of each cell in that column.
 
 ## Global settings
 
-If you wish to change the default behaviour of all columns globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the columns using. For example, if you wish to make all columns [`searchable()`](#searching) and [`toggleable()`](#toggling-column-visibility), you can do it like so:
+If you wish to change the default behavior of all columns globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the columns using. For example, if you wish to make all columns [`searchable()`](#searching) and [`toggleable()`](#toggling-column-visibility), you can do it like so:
 
 ```php
 use Filament\Tables\Columns\Column;

@@ -498,7 +498,7 @@ Action::make('updateAuthor')
     ->closeModalByClickingAway(false)
 ```
 
-If you'd like to change the behaviour for all modals in the application, you can do so by calling `Modal::closedByClickingAway()` inside a service provider or middleware:
+If you'd like to change the behavior for all modals in the application, you can do so by calling `Modal::closedByClickingAway()` inside a service provider or middleware:
 
 ```php
 use Filament\Support\View\Components\Modal;
@@ -521,7 +521,7 @@ Action::make('updateAuthor')
     ->closedByEscaping(false)
 ```
 
-If you'd like to change the behaviour for all modals in the application, you can do so by calling `Modal::closedByEscaping()` inside a service provider or middleware:
+If you'd like to change the behavior for all modals in the application, you can do so by calling `Modal::closedByEscaping()` inside a service provider or middleware:
 
 ```php
 use Filament\Support\View\Components\Modal;
