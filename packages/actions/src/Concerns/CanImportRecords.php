@@ -273,12 +273,12 @@ trait CanImportRecords
             $import->unsetRelation('user');
 
             $importJobs = collect($importChunks)
-                ->map(fn (array $importChunk): object => new ($job)(
-                    $import,
-                    rows: base64_encode(serialize($importChunk)),
-                    columnMap: $data['columnMap'],
-                    options: $options,
-                ));
+                ->map(fn (array $importChunk): object => app($job, [
+                    'import' => $import,
+                    'rows' => base64_encode(serialize($importChunk)),
+                    'columnMap' => $data['columnMap'],
+                    'options' => $options,
+                ]));
 
             $importer = $import->getImporter(
                 columnMap: $data['columnMap'],
