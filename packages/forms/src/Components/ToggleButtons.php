@@ -18,20 +18,26 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
 
     public const GROUPED_VIEW = 'filament-forms::components.toggle-buttons.grouped';
 
-    protected bool | Closure $isMultiple = false;
+    protected bool|Closure $isMultiple = false;
 
     /**
      * @var view-string
      */
     protected string $view = 'filament-forms::components.toggle-buttons.index';
 
-    protected bool | Closure $isInline = false;
+    protected bool|Closure $isInline = false;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->default(fn (ToggleButtons $component): mixed => $component->isMultiple() ? [] : null);
+        $this->afterStateHydrated(static function (ToggleButtons $component, $state): void {
+            if ($component->isMultiple && is_null($state)) {
+                $component->state([]);
+            }
+        });
+
+        $this->default(fn(ToggleButtons $component): mixed => $component->isMultiple() ? [] : null);
     }
 
     public function grouped(): static
@@ -59,7 +65,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
         return $this;
     }
 
-    public function inline(bool | Closure $condition = true): static
+    public function inline(bool|Closure $condition = true): static
     {
         $this->isInline = $condition;
 
@@ -68,10 +74,10 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
 
     public function isInline(): bool
     {
-        return (bool) $this->evaluate($this->isInline);
+        return (bool)$this->evaluate($this->isInline);
     }
 
-    public function multiple(bool | Closure $condition = true): static
+    public function multiple(bool|Closure $condition = true): static
     {
         $this->isMultiple = $condition;
 
@@ -80,7 +86,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
 
     public function isMultiple(): bool
     {
-        return (bool) $this->evaluate($this->isMultiple);
+        return (bool)$this->evaluate($this->isMultiple);
     }
 
     public function getDefaultState(): mixed
