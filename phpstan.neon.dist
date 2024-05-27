@@ -18,5 +18,5 @@ parameters:
             message: "#^Parameter \\#1 \\$value of method Filament\\\\Support\\\\Components\\\\Component\\:\\:evaluate\\(\\) expects \\(callable\\(\\)\\: \\(string\\|null\\)\\)\\|string\\|null, Closure\\(Filament\\\\Forms\\\\Get\\)\\: \\(string\\|null\\) given\\.$#"
             count: 1
             path: packages/forms/src/Components/MorphToSelect.php
-
-    checkGenericClassInNonGenericObjectType: false
+        -
+            identifier: missingType.generics
