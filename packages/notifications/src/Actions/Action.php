@@ -3,13 +3,12 @@
 namespace Filament\Notifications\Actions;
 
 use Closure;
-use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\StaticAction;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
 
-class Action extends StaticAction implements Arrayable, Groupable
+class Action extends StaticAction implements Arrayable
 {
     protected string $viewIdentifier = 'action';
 

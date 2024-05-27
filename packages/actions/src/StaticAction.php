@@ -11,7 +11,7 @@ use Filament\Support\Concerns\HasIcon;
 use Illuminate\Support\Js;
 use Illuminate\Support\Traits\Conditionable;
 
-class StaticAction extends ViewComponent
+class StaticAction extends ViewComponent implements Contracts\Groupable
 {
     use Concerns\BelongsToGroup;
     use Concerns\CanBeDisabled;
