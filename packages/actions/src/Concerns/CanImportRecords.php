@@ -58,7 +58,7 @@ trait CanImportRecords
 
     protected string | Closure | null $csvDelimiter = null;
 
-    protected array | Closure $fileRules = [];
+    protected array $fileRules = [];
 
     /**
      * @var array<string, mixed> | Closure
