@@ -123,6 +123,7 @@ trait CanImportRecords
                             ]));
                         },
                     ]),
+                    $this->customValidation(),
                 ])
                 ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
                     if (! $state instanceof TemporaryUploadedFile) {
@@ -584,5 +585,10 @@ trait CanImportRecords
     public function getOptions(): array
     {
         return $this->evaluate($this->options);
+    }
+
+    protected function customValidation(): mixed
+    {
+        return null;
     }
 }
