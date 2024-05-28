@@ -593,6 +593,9 @@ trait CanImportRecords
         return $this->evaluate($this->options);
     }
 
+    /**
+     * @param  array<string, mixed>
+     */
     public function fileRules(array $rule): static
     {
         $this->fileRules = $rule;
@@ -600,6 +603,9 @@ trait CanImportRecords
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getFileRules(): array
     {
         return $this->evaluate($this->fileRules);
