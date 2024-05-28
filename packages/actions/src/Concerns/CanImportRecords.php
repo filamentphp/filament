@@ -63,6 +63,11 @@ trait CanImportRecords
      */
     protected array | Closure $options = [];
 
+    /**
+     * @var array<string, mixed>
+     */
+    protected array $fileRules = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -82,48 +87,53 @@ trait CanImportRecords
                 ->label(__('filament-actions::import.modal.form.file.label'))
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
                 ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
-                ->rules([
-                    'extensions:csv,txt',
-                    File::types(['csv', 'txt'])->rules([
-                        function (string $attribute, mixed $value, Closure $fail) use ($action) {
-                            $csvStream = $this->getUploadedFileStream($value);
+                ->rules(
+                    array_merge(
+                        [
+                            'extensions:csv,txt',
+                            File::types(['csv', 'txt'])->rules([
+                                function (string $attribute, mixed $value, Closure $fail) use ($action) {
+                                    $csvStream = $this->getUploadedFileStream($value);
 
-                            if (! $csvStream) {
-                                return;
-                            }
+                                    if (! $csvStream) {
+                                        return;
+                                    }
 
-                            $csvReader = CsvReader::createFromStream($csvStream);
+                                    $csvReader = CsvReader::createFromStream($csvStream);
 
-                            if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
-                                $csvReader->setDelimiter($csvDelimiter);
-                            }
+                                    if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
+                                        $csvReader->setDelimiter($csvDelimiter);
+                                    }
 
-                            $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
+                                    $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
 
-                            $csvColumns = $csvReader->getHeader();
+                                    $csvColumns = $csvReader->getHeader();
 
-                            $duplicateCsvColumns = [];
+                                    $duplicateCsvColumns = [];
 
-                            foreach (array_count_values($csvColumns) as $header => $count) {
-                                if ($count <= 1) {
-                                    continue;
-                                }
+                                    foreach (array_count_values($csvColumns) as $header => $count) {
+                                        if ($count <= 1) {
+                                            continue;
+                                        }
 
-                                $duplicateCsvColumns[] = $header;
-                            }
+                                        $duplicateCsvColumns[] = $header;
+                                    }
 
-                            if (empty($duplicateCsvColumns)) {
-                                return;
-                            }
+                                    if (empty($duplicateCsvColumns)) {
+                                        return;
+                                    }
 
-                            $filledDuplicateCsvColumns = array_filter($duplicateCsvColumns, fn ($value): bool => filled($value));
+                                    $filledDuplicateCsvColumns = array_filter($duplicateCsvColumns, fn ($value): bool => filled($value));
 
-                            $fail(trans_choice('filament-actions::import.modal.form.file.rules.duplicate_columns', count($filledDuplicateCsvColumns), [
-                                'columns' => implode(', ', $filledDuplicateCsvColumns),
-                            ]));
-                        },
-                    ]),
-                ])
+                                    $fail(trans_choice('filament-actions::import.modal.form.file.rules.duplicate_columns', count($filledDuplicateCsvColumns), [
+                                        'columns' => implode(', ', $filledDuplicateCsvColumns),
+                                    ]));
+                                },
+                            ]),
+                        ],
+                        $this->getFileRules()
+                    )
+                )
                 ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
                     if (! $state instanceof TemporaryUploadedFile) {
                         return;
@@ -584,5 +594,23 @@ trait CanImportRecords
     public function getOptions(): array
     {
         return $this->evaluate($this->options);
+    }
+
+    /**
+     * @param  array<string, mixed> $rule
+     */
+    public function fileRules(array $rule): static
+    {
+        $this->fileRules = $rule;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getFileRules(): array
+    {
+        return $this->evaluate($this->fileRules);
     }
 }
