@@ -707,6 +707,28 @@ ImportColumn::make('name')
     ->validationAttribute('full name')
 ```
 
+## Customizing Import File Validation
+You can create a class that extends ImportAction to add custom validation for the import file.
+
+```php
+use Filament\Actions\ImportAction;
+
+class ProductImportAction extends ImportAction
+{
+    protected function customValidation(): mixed
+    {
+        return 'max:100';
+    }
+}
+```
+
+```php
+use App\Filament\ProductImportAction;
+
+ProductImportAction::make()
+    ->importer(ProductImporter::class)
+```
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code at various points within an importer's lifecycle, like before a record is saved. To set up a hook, create a protected method on the importer class with the name of the hook:
