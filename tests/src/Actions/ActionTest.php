@@ -302,3 +302,14 @@ it('will assert that a notification was not sent', function () {
         ->callAction('shows-notification-with-id')
         ->assertNotNotified('A notification');
 });
+
+it('can access form data in before hook', function () {
+    livewire(Actions::class)
+        ->callAction('before-hook-data', data: [
+            'payload' => $payload = Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertDispatched('before-hook-called', data: [
+            'payload' => $payload,
+        ]);
+});

@@ -91,6 +91,12 @@ class Actions extends Page
                         ->success()
                         ->send();
                 }),
+            Action::make('before-hook-data')
+                ->form([
+                    TextInput::make('payload')->required(),
+                ])->before(function (Action $action) {
+                    $this->dispatch('before-hook-called', data: $action->getFormData());
+                }),
         ];
     }
 }
