@@ -42,6 +42,12 @@ return [
 
             'title' => 'Importación completada',
 
+            'titles' => [
+                'success' => 'Importación completada',
+                'warning' => 'La importación está parcialmente completada',
+                'danger' => 'Importación no completada',
+            ],
+
             'actions' => [
 
                 'download_failed_rows_csv' => [

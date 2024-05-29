@@ -46,6 +46,12 @@ return [
 
             'title' => 'Export completed',
 
+            'titles' => [
+                'success' => 'Export completed',
+                'warning' => 'Export is partially completed',
+                'danger' => 'Export not completed',
+            ],
+
             'actions' => [
 
                 'download_csv' => [

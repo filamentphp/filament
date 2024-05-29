@@ -46,6 +46,12 @@ return [
 
             'title' => 'Esportazione completata',
 
+            'titles' => [
+                'success' => 'Esportazione completata',
+                'warning' => 'Lesportazione è parzialmente completata',
+                'danger' => 'Esportazione non completata',
+            ],
+
             'actions' => [
 
                 'download_csv' => [
