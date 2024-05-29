@@ -65,13 +65,13 @@ trait HasFormComponentActions
             if ($this->mountedFormComponentActionHasForm(mountedAction: $action)) {
                 $action->callBeforeFormValidated();
 
-                $action->formData(
-                    $form->getState(afterValidate: function () use ($action) {
-                        $action->callAfterFormValidated();
+                $form->getState(afterValidate: function (array $state) use ($action) {
+                    $action->callAfterFormValidated();
 
-                        $action->callBefore();
-                    }),
-                );
+                    $action->formData($state);
+
+                    $action->callBefore();
+                });
             } else {
                 $action->callBefore();
             }
