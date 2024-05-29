@@ -707,23 +707,20 @@ ImportColumn::make('name')
     ->validationAttribute('full name')
 ```
 
-## Customizing Import File Validation
+## Customizing import file validation
 
-You can add the `fileRules()` method to implement validation for file uploads.
+You can add new [Laravel validation rules](https://laravel.com/docs/validation#available-validation-rules) for the import file using the `fileRules()` method:
 
 ```php
+use Illuminate\Validation\Rules\File;
+
 ImportAction::make()
     ->importer(ProductImporter::class)
-    ->fileRules(
-        [
-            'max:1024',
-
-            // or 
-
-            File::types(['csv', 'text'])
-                ->max(1024),
-        ]
-    ),
+    ->fileRules([
+        'max:1024',
+        // or
+        File::types(['csv', 'txt'])->max(1024),
+    ]),
 ```
 
 ## Lifecycle hooks
