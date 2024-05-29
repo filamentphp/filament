@@ -98,7 +98,7 @@ $recipient->notify(
 );
 ```
 
-> Database notifications dispatched with `sendToDatabase` and `toDatabase` are queued. Ensure your queue is running to receive notifications dispatched in these ways.
+> Laravel sends database notifications using the queue. Ensure your queue is running in order to receive the notifications.
 
 Alternatively, use a traditional [Laravel notification class](https://laravel.com/docs/notifications#generating-notifications) by returning the notification from the `toDatabase()` method:
 
