@@ -707,6 +707,22 @@ ImportColumn::make('name')
     ->validationAttribute('full name')
 ```
 
+## Customizing import file validation
+
+You can add new [Laravel validation rules](https://laravel.com/docs/validation#available-validation-rules) for the import file using the `fileRules()` method:
+
+```php
+use Illuminate\Validation\Rules\File;
+
+ImportAction::make()
+    ->importer(ProductImporter::class)
+    ->fileRules([
+        'max:1024',
+        // or
+        File::types(['csv', 'txt'])->max(1024),
+    ]),
+```
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code at various points within an importer's lifecycle, like before a record is saved. To set up a hook, create a protected method on the importer class with the name of the hook:
