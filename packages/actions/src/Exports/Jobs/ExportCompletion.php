@@ -53,19 +53,18 @@ class ExportCompletion implements ShouldQueue
         $failedRowsCount = $this->export->getFailedRowsCount();
 
         Notification::make()
-            ->title(__('filament-actions::export.notifications.completed.title'))
             ->body($this->exporter::getCompletedNotificationBody($this->export))
             ->when(
                 ! $failedRowsCount,
-                fn (Notification $notification) => $notification->success(),
+                fn (Notification $notification) => $notification->title(__('filament-actions::export.notifications.completed.titles.success'))->success(),
             )
             ->when(
                 $failedRowsCount && ($failedRowsCount < $this->export->total_rows),
-                fn (Notification $notification) => $notification->warning(),
+                fn (Notification $notification) => $notification->title(__('filament-actions::export.notifications.completed.titles.warning'))->warning(),
             )
             ->when(
                 $failedRowsCount === $this->export->total_rows,
-                fn (Notification $notification) => $notification->danger(),
+                fn (Notification $notification) => $notification->title(__('filament-actions::export.notifications.completed.titles.danger'))->danger(),
             )
             ->when(
                 $failedRowsCount < $this->export->total_rows,
