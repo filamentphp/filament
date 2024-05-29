@@ -3,7 +3,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'flex',
+                'fi-ta-split flex',
                 match ($getFromBreakpoint()) {
                     'sm' => 'flex-col gap-2 sm:flex-row sm:items-center sm:gap-3',
                     'md' => 'flex-col gap-2 md:flex-row md:items-center md:gap-3',
