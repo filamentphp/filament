@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications;
 
+use Filament\Facades\Filament;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Actions\ActionGroup;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
@@ -178,6 +179,10 @@ class Notification extends ViewComponent implements Arrayable
     {
         if (! is_iterable($users)) {
             $users = [$users];
+        }
+
+        if (is_bool(Filament::broadcastEnabled())) {
+            $isEventDispatched = Filament::broadcastEnabled();
         }
 
         foreach ($users as $user) {

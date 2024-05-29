@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool arePasswordsRevealable()
  * @method static StatefulGuard auth()
  * @method static void bootCurrentPanel()
+ * @method static ?bool broadcastEnabled()
  * @method static array<NavigationGroup> buildNavigation()
  * @method static void currentDomain(?string $domain)
  * @method static string getAuthGuard()

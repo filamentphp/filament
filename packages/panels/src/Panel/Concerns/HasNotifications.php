@@ -10,9 +10,12 @@ trait HasNotifications
 
     protected string | Closure | null $databaseNotificationsPolling = '30s';
 
-    public function databaseNotifications(bool | Closure $condition = true): static
+    protected null | bool | Closure $broadcastEnabled = null;
+
+    public function databaseNotifications(bool | Closure $condition = true, bool | Closure $broadcastEnabled = false): static
     {
         $this->hasDatabaseNotifications = $condition;
+        $this->broadcastEnabled = $broadcastEnabled;
 
         return $this;
     }
@@ -32,5 +35,10 @@ trait HasNotifications
     public function getDatabaseNotificationsPollingInterval(): ?string
     {
         return $this->evaluate($this->databaseNotificationsPolling);
+    }
+
+    public function broadcastEnabled(): ?bool
+    {
+        return $this->evaluate($this->broadcastEnabled);
     }
 }

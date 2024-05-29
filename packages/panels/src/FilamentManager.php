@@ -67,6 +67,11 @@ class FilamentManager
         $this->isCurrentPanelBooted = true;
     }
 
+    public function broadcastEnabled(): ?bool
+    {
+        return $this->getCurrentPanel()->broadcastEnabled();
+    }
+
     /**
      * @return array<NavigationGroup>
      */
