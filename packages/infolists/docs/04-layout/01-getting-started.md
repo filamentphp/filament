@@ -6,7 +6,7 @@ title: Getting started
 
 Infolists are not limited to just displaying entries. You can also use "layout components" to organize them into an infinitely nestable structure.
 
-Layout component classes can be found in the `Filament\Infolists\Components` namespace. They reside within the schema of your infolist, alongside any [entries](entries/getting-started).
+Layout component classes can be found in the `Filament\Infolists\Components` namespace. They reside within the schema of your infolist, alongside any [entries](../entries/getting-started).
 
 Components may be created using the static `make()` method. Usually, you will then define the child component `schema()` to display inside:
 
