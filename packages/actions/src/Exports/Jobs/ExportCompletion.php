@@ -5,6 +5,7 @@ namespace Filament\Actions\Exports\Jobs;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
+use Filament\Facades\Filament;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
@@ -74,6 +75,6 @@ class ExportCompletion implements ShouldQueue
                     $this->formats,
                 )),
             )
-            ->sendToDatabase($this->export->user, isEventDispatched: true);
+            ->sendToDatabase($this->export->user, isEventDispatched: Filament::broadcastEnabled());
     }
 }

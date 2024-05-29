@@ -9,6 +9,7 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Jobs\ImportCsv;
 use Filament\Actions\Imports\Models\Import;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
@@ -299,7 +300,7 @@ trait CanImportRecords
                                     ->markAsRead(),
                             ]),
                         )
-                        ->sendToDatabase($import->user, isEventDispatched: true);
+                        ->sendToDatabase($import->user, isEventDispatched: Filament::broadcastEnabled());
                 })
                 ->dispatch();
 
