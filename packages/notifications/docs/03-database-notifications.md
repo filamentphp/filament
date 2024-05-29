@@ -66,7 +66,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-To notify the front end via [broadcast](https://laravel.com/docs/broadcasting), you can set `broadcastEnabled` to true.
+To notify the front end via [broadcast](https://laravel.com/docs/broadcasting), you can set `broadcastEnabled` to true. The default is false:
+
 ```php
 use Filament\Panel;
 
