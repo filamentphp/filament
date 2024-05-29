@@ -10,6 +10,8 @@ class Modal
 
     public static bool $isClosedByEscaping = true;
 
+    public static bool $autofocusOnOpen = true;
+
     public static function closeButton(bool $condition = true): void
     {
         static::$hasCloseButton = $condition;
@@ -23,5 +25,10 @@ class Modal
     public static function closedByEscaping(bool $condition = true): void
     {
         static::$isClosedByEscaping = $condition;
+    }
+
+    public static function autofocuces(bool $condition = true): void
+    {
+        static::$autofocusOnOpen = $condition;
     }
 }

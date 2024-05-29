@@ -204,3 +204,13 @@ By default, modals have a close button in the top right corner. You can remove t
     {{-- Modal content --}}
 </x-filament::modal>
 ```
+
+## Disable autofocus on modal open
+
+By default, modals will autofocus on the first focusable element when opened. If you wish to disable this behavior for the modal you can use the `autofocus` attribute:
+
+```blade
+<x-filament::modal :autofocus="false">
+    {{-- Modal content --}}
+</x-filament::modal>
+```

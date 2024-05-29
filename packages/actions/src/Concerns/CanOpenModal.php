@@ -82,6 +82,8 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalClosedByEscaping = null;
 
+    protected bool | Closure | null $autofocusOnOpen = null;
+
     protected string | Closure | null $modalIcon = null;
 
     /**
@@ -125,6 +127,13 @@ trait CanOpenModal
     public function modalCloseButton(bool | Closure | null $condition = true): static
     {
         $this->hasModalCloseButton = $condition;
+
+        return $this;
+    }
+
+    public function modalAutofocus(bool | Closure | null $condition = true): static
+    {
+        $this->autofocusOnOpen = $condition;
 
         return $this;
     }
@@ -612,6 +621,11 @@ trait CanOpenModal
     public function isModalClosedByEscaping(): bool
     {
         return (bool) ($this->evaluate($this->isModalClosedByEscaping) ?? Modal::$isClosedByEscaping);
+    }
+
+    public function autofocusOnOpen(): bool
+    {
+        return $this->evaluate($this->autofocusOnOpen) ?? Modal::$autofocusOnOpen;
     }
 
     /**
