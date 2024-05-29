@@ -26,7 +26,7 @@ export default (Alpine) => {
                 notification.duration !== 'persistent'
             ) {
                 setTimeout(() => {
-                    if (! this.$el.matches(':hover')) {
+                    if (!this.$el.matches(':hover')) {
                         this.close()
                         return
                     }
