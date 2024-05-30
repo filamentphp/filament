@@ -22,9 +22,13 @@
             <link rel="icon" href="{{ $favicon }}" />
         @endif
 
+        @php
+            $title = strip_tags(($livewire ?? null)?->getTitle() ?? '');
+            $brandName = strip_tags(filament()->getBrandName());
+        @endphp
+
         <title>
-            {{ filled($title = strip_tags(($livewire ?? null)?->getTitle() ?? '')) ? "{$title} - " : null }}
-            {{ strip_tags(filament()->getBrandName()) }}
+            {{ (filled($title) ? "{$title} - " : null) }} {{ $brandName }}
         </title>
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::STYLES_BEFORE, scopes: $livewire->getRenderHookScopes()) }}
