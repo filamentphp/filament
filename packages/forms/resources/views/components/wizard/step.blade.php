@@ -8,7 +8,7 @@
         'mt-6' => ! $isContained,
     ]);
 
-    $inactiveStepClasses = 'invisible h-0 overflow-y-hidden p-0';
+    $inactiveStepClasses = 'absolute h-0 overflow-hidden p-0';
 @endphp
 
 <div
