@@ -552,9 +552,9 @@ use Filament\Support\View\Components\Modal;
 Modal::closeButton(false);
 ```
 
-## Disable autofocus on modal open
+## Preventing the modal from autofocusing
 
-By default, modals will autofocus on the first focusable element when opened. If you wish to disable this behavior for the modal you can use the `modalAutofocus(false)` method:
+By default, modals will autofocus on the first focusable element when opened. If you wish to disable this behavior, you can use the `modalAutofocus(false)` method:
 
 ```php
 Action::make('updateAuthor')
