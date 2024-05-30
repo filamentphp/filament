@@ -991,12 +991,14 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             /** @var Collection $relatedRecords */
             $relatedRecords = $relationship->getResults();
 
+            $state = Arr::wrap($state ?? []);
+
             $recordsToDetach = array_diff(
                 $relatedRecords
                     ->pluck($relationship->getRelatedKeyName())
                     ->map(static fn ($key): string => strval($key))
                     ->all(),
-                $state ?? [],
+                $state,
             );
 
             if (count($recordsToDetach) > 0) {
@@ -1006,12 +1008,12 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $pivotData = $component->getPivotData();
 
             if ($pivotData === []) {
-                $relationship->sync($state ?? [], detaching: false);
+                $relationship->sync($state, detaching: false);
 
                 return;
             }
 
-            $relationship->syncWithPivotValues($state ?? [], $pivotData, detaching: false);
+            $relationship->syncWithPivotValues($state, $pivotData, detaching: false);
         });
 
         $this->createOptionUsing(static function (Select $component, array $data, Form $form) {
