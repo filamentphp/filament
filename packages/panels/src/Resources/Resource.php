@@ -494,7 +494,7 @@ abstract class Resource
             return static::getModelLabel();
         }
 
-        return Str::ucwords(static::getModelLabel());
+        return Str::title(static::getModelLabel());
     }
 
     public static function getModel(): string
@@ -539,7 +539,7 @@ abstract class Resource
             return static::getPluralModelLabel();
         }
 
-        return Str::ucwords(static::getPluralModelLabel());
+        return Str::title(static::getPluralModelLabel());
     }
 
     public static function titleCaseModelLabel(bool $condition = true): void
