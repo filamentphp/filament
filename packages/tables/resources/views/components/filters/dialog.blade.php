@@ -15,7 +15,7 @@
 @if (($layout === FiltersLayout::Modal) || $triggerAction->isModalSlideOver())
     <x-filament::modal
         :alignment="$triggerAction->getModalAlignment()"
-        :autofocus="$triggerAction->isAutofocused()"
+        :autofocus="$triggerAction->isModalAutofocused()"
         :close-button="$triggerAction->hasModalCloseButton()"
         :close-by-clicking-away="$triggerAction->isModalClosedByClickingAway()"
         :close-by-escaping="$triggerAction?->isModalClosedByEscaping()"
