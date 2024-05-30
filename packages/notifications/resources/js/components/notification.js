@@ -28,6 +28,7 @@ export default (Alpine) => {
                 setTimeout(() => {
                     if (!this.$el.matches(':hover')) {
                         this.close()
+
                         return
                     }
 
