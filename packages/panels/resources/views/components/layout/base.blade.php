@@ -28,7 +28,7 @@
         @endphp
 
         <title>
-            {{ (filled($title) ? "{$title} - " : null) }} {{ $brandName }}
+            {{ filled($title) ? "{$title} - " : null }} {{ $brandName }}
         </title>
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::STYLES_BEFORE, scopes: $livewire->getRenderHookScopes()) }}
