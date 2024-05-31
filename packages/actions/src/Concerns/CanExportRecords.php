@@ -219,14 +219,13 @@ trait CanExportRecords
                         fn (PendingBatch $batch) => $batch->name($jobBatchName),
                     )
                     ->allowFailures(),
-                ...(($hasXlsx && (! $hasCsv)) ? [$makeCreateXlsxFileJob()] : []),
+                ...($hasXlsx ? [$makeCreateXlsxFileJob()] : []),
                 app(ExportCompletion::class, [
                     'export' => $export,
                     'columnMap' => $columnMap,
                     'formats' => $formats,
                     'options' => $options,
                 ]),
-                ...(($hasXlsx && $hasCsv) ? [$makeCreateXlsxFileJob()] : []),
             ])
                 ->when(
                     filled($jobQueue),
