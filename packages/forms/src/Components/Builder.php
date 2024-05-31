@@ -156,8 +156,6 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
                 $component->getChildComponentContainer($newUuid ?? array_key_last($items))->fill();
 
-                $component->collapsed(false, shouldMakeComponentCollapsible: false);
-
                 $component->callAfterStateUpdated();
             })
             ->livewireClickHandlerEnabled(false)
@@ -220,8 +218,6 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
                 $component->getChildComponentContainer($newKey)->fill();
 
-                $component->collapsed(false, shouldMakeComponentCollapsible: false);
-
                 $component->callAfterStateUpdated();
             })
             ->livewireClickHandlerEnabled(false)
@@ -268,8 +264,6 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 }
 
                 $component->state($items);
-
-                $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
             })
