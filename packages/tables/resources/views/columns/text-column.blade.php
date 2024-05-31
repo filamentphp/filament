@@ -82,7 +82,6 @@
                 'list-inside list-disc' => $isBulleted,
                 'gap-1.5' => $isBadge,
                 'flex-wrap' => $isBadge && (! $isListWithLineBreaks),
-                'whitespace-normal' => $canWrap,
                 match ($alignment) {
                     Alignment::Start => 'text-start',
                     Alignment::Center => 'text-center',
@@ -211,6 +210,7 @@
                                         'fi-ta-text-item-label',
                                         'group-hover/item:underline group-focus-visible/item:underline' => $url,
                                         'line-clamp-[--line-clamp]' => $lineClamp,
+                                        'whitespace-normal' => $canWrap,
                                         match ($size) {
                                             TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
                                             TextColumnSize::Small, 'sm', null => 'text-sm leading-6',
