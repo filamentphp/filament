@@ -28,7 +28,7 @@ You may change how many grid columns are used to display widgets.
 You may override the `getHeaderWidgetsColumns()` or `getFooterWidgetsColumns()` methods to return a number of grid columns to use:
 
 ```php
-protected function getHeaderWidgetsColumns(): int | array
+public function getHeaderWidgetsColumns(): int | array
 {
     return 3;
 }
