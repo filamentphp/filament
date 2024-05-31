@@ -250,6 +250,11 @@ abstract class Importer
 
     abstract public static function getCompletedNotificationBody(Import $import): string;
 
+    public static function getCompletedNotificationTitle(Import $import): ?string
+    {
+        return null;
+    }
+
     /**
      * @return array<int, object>
      */
