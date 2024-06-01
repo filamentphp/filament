@@ -4,7 +4,7 @@ return [
 
     'label' => 'Pagination navigation',
 
-    'overview' => '{1} Duke shfaqur 1 rezultat|[2,*] Duke shfaqur :first në :last nga :rezultatet totale',
+    'overview' => '{1} Duke shfaqur 1 rezultat|[2,*] Duke shfaqur :first deri në :last rezultate nga :total ne total',
 
     'fields' => [
 
