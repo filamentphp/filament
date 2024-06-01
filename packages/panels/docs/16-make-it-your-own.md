@@ -12,36 +12,3 @@ php artisan vendor:publish --tag=filament-stubs
 ```
 
 This will publish the stubs to the `stubs\filament` directory in your application's root. From there, you can modify the stubs to fit your needs and whenever you run any `make` command, Filament will use your custom stubs.
-
-The following files will be published:
-
-- Cluster.stub
-- Column.stub
-- ColumnView.stub
-- CreateForm.stub
-- CustomResourcePage.stub
-- EditForm.stub
-- Exporter.stub
-- Field.stub
-- FieldView.stub
-- Form.stub
-- FormView.stub
-- Importer.stub
-- LayoutComponent.stub
-- LayoutComponentView.stub
-- Page.stub
-- PageView.stub
-- RelationManager.stub
-- Resource.stub
-- ResourceEditPage.stub
-- ResourceListPage.stub
-- ResourceManagePage.stub
-- ResourceManageRelatedRecordsPage.stub
-- ResourcePage.stub
-- ResourceViewPage.stub
-- SettingsPage.stub
-- Table.stub
-- TableView.stub
-- ThemeCss.stub
-- ThemePostcssConfig.stub
-- ThemeTailwindConfig.stub
