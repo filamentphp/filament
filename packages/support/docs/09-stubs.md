@@ -1,5 +1,5 @@
 ---
-title: Make it your own (using custom stubs)
+title: Stubs
 ---
 
 # Publishing stubs
