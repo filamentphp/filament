@@ -302,7 +302,7 @@ You can also pass extra HTML attributes to the entry wrapper which surrounds the
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('slug')
-    ->extraFieldWrapperAttributes(['class' => 'entry-locked'])
+    ->extraEntryWrapperAttributes(['class' => 'entry-locked'])
 ```
 
 ## Global settings
