@@ -53,7 +53,7 @@ class Login extends SimplePage
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
-            $this->rateLimitNotification($exception);
+            $this->getRateLimitedNotification($exception)?->send();
 
             return null;
         }
@@ -80,19 +80,37 @@ class Login extends SimplePage
         return app(LoginResponse::class);
     }
 
-    protected function rateLimitNotification(TooManyRequestsException $exception): void
+    protected function getRateLimitedNotification(TooManyRequestsException $exception): ?Notification
     {
-        Notification::make()
-            ->title(__('filament-panels::pages/auth/login.notifications.throttled.title', [
+        $title = $this->getRateLimitedNotificationTitle($exception);
+        $body = $this->getRateLimitedNotificationBody($exception);
+
+        if (blank($title) && blank($body)) {
+            return null;
+        }
+
+        return Notification::make()
+            ->title($title)
+            ->body($body)
+            ->danger();
+    }
+
+    protected function getRateLimitedNotificationTitle(TooManyRequestsException $exception): ?string
+    {
+        return __('filament-panels::pages/auth/login.notifications.throttled.title', [
+            'seconds' => $exception->secondsUntilAvailable,
+            'minutes' => $exception->minutesUntilAvailable,
+        ]);
+    }
+
+    protected function getRateLimitedNotificationBody(TooManyRequestsException $exception): ?string
+    {
+        return array_key_exists('body', __('filament-panels::pages/auth/login.notifications.throttled') ?: [])
+            ? __('filament-panels::pages/auth/login.notifications.throttled.body', [
                 'seconds' => $exception->secondsUntilAvailable,
-                'minutes' => ceil($exception->secondsUntilAvailable / 60),
-            ]))
-            ->body(array_key_exists('body', __('filament-panels::pages/auth/login.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/login.notifications.throttled.body', [
-                'seconds' => $exception->secondsUntilAvailable,
-                'minutes' => ceil($exception->secondsUntilAvailable / 60),
-            ]) : null)
-            ->danger()
-            ->send();
+                'minutes' => $exception->minutesUntilAvailable,
+            ])
+            : null;
     }
 
     protected function throwFailureValidationException(): never
