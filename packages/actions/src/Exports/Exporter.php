@@ -74,6 +74,11 @@ abstract class Exporter
 
     abstract public static function getCompletedNotificationBody(Export $export): string;
 
+    public static function getCompletedNotificationTitle(Export $export): string
+    {
+        return __('filament-actions::export.notifications.completed.title');
+    }
+
     /**
      * @return array<int, object>
      */
