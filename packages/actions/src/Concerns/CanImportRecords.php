@@ -273,7 +273,7 @@ trait CanImportRecords
                     $failedRowsCount = $import->getFailedRowsCount();
 
                     Notification::make()
-                        ->title($import->importer::getCompletedNotificationTitle($import) ?? __('filament-actions::import.notifications.completed.title'))
+                        ->title($import->importer::getCompletedNotificationTitle($import))
                         ->body($import->importer::getCompletedNotificationBody($import))
                         ->when(
                             ! $failedRowsCount,
