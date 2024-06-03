@@ -82,35 +82,16 @@ class Login extends SimplePage
 
     protected function getRateLimitedNotification(TooManyRequestsException $exception): ?Notification
     {
-        $title = $this->getRateLimitedNotificationTitle($exception);
-        $body = $this->getRateLimitedNotificationBody($exception);
-
-        if (blank($title) && blank($body)) {
-            return null;
-        }
-
         return Notification::make()
-            ->title($title)
-            ->body($body)
-            ->danger();
-    }
-
-    protected function getRateLimitedNotificationTitle(TooManyRequestsException $exception): ?string
-    {
-        return __('filament-panels::pages/auth/login.notifications.throttled.title', [
-            'seconds' => $exception->secondsUntilAvailable,
-            'minutes' => $exception->minutesUntilAvailable,
-        ]);
-    }
-
-    protected function getRateLimitedNotificationBody(TooManyRequestsException $exception): ?string
-    {
-        return array_key_exists('body', __('filament-panels::pages/auth/login.notifications.throttled') ?: [])
-            ? __('filament-panels::pages/auth/login.notifications.throttled.body', [
+            ->title(__('filament-panels::pages/auth/login.notifications.throttled.title', [
                 'seconds' => $exception->secondsUntilAvailable,
                 'minutes' => $exception->minutesUntilAvailable,
-            ])
-            : null;
+            ]))
+            ->body(array_key_exists('body', __('filament-panels::pages/auth/login.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/login.notifications.throttled.body', [
+                'seconds' => $exception->secondsUntilAvailable,
+                'minutes' => $exception->minutesUntilAvailable,
+            ]) : null)
+            ->danger();
     }
 
     protected function throwFailureValidationException(): never
