@@ -27,7 +27,7 @@ If you are missing a channel for your language, please let us know and we will c
 
 You can also reach out to us on our [GitHub community forum](https://github.com/filamentphp/filament/discussions). Where our community members and maintainers are happy to help you out.
 
-Of course, you are free to open an [issue](https://github.com/filamentphp/filament/discussions/new/choose) if you find a bug or have a [feature request](https://filamentphp.com/docs/3.x/support/contributing#development-of-new-features). If you don't want to wait, until a community member has addressed your issue, you can directly **fast track your issue** by [sponsoring]() Filament or directly use the [funding]() options provided on the issue page itself.
+Of course, you are free to open an [issue](https://github.com/filamentphp/filament/discussions/new/choose) if you find a bug or have a [feature request](https://filamentphp.com/docs/3.x/support/contributing#development-of-new-features). If you don't want to wait, until a community member has addressed your issue, you can directly **fast track your issue** by [sponsoring](https://github.com/filamentphp/filament?sponsor=1) Filament or directly use the [funding](https://github.com/filamentphp/filament/issues?q=is%3Aopen+is%3Aissue+label%3Afund) options provided on the issue page itself.
 
 ## Professional Support & Consulting (paid)
 
