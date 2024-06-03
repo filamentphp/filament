@@ -183,6 +183,11 @@ trait InteractsWithTable
         $this->shouldMountInteractsWithTable = true;
     }
 
+    public function updatedPaginators($page, $pageName): void
+    {
+        $this->dispatch('updatedPaginators', $page, $pageName);
+    }
+
     public function table(Table $table): Table
     {
         return $table
