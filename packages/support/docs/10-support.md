@@ -47,3 +47,7 @@ Additionally on laracasts you can find two excellent courses about Filament:
 ## Google
 
 Since we make use of [AnswerOverflow](https://www.answeroverflow.com/c/883083792112300104), you are mainly one google search away from finding an answer to your question or at least a hint on how to solve your problem.
+
+## Helping others
+
+We would like to encourage you to join any of the above platforms and help yourself and our community out. Additionally, we would like to encourage you to [contribute](https://filamentphp.com/docs/3.x/support/contributing) to Filament itself. We are always looking for new contributors to help us improve Filament.
