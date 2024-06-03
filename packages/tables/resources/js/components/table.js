@@ -8,6 +8,8 @@ export default function table() {
 
         shouldCheckUniqueSelection: true,
 
+        lastCheckedRecord: null,
+
         init: function () {
             this.$wire.$on('deselectAllTableRecords', () =>
                 this.deselectAllRecords(),
@@ -23,6 +25,13 @@ export default function table() {
                 this.selectedRecords = [...new Set(this.selectedRecords)]
 
                 this.shouldCheckUniqueSelection = false
+            })
+
+            // Initialize checkboxes with event listener
+            this.$nextTick(() => this.initializeCheckboxes())
+
+            this.$wire.$on('updatedPaginators', () => {
+                this.$nextTick(() => this.initializeCheckboxes())
             })
         },
 
@@ -157,5 +166,39 @@ export default function table() {
         resetCollapsedGroups: function () {
             this.collapsedGroups = []
         },
+
+        initializeCheckboxes: function () {
+            let checkboxes = this.$root?.getElementsByClassName("fi-ta-record-checkbox") ?? [];
+            for (let checkbox of checkboxes) {
+                checkbox.removeEventListener('click', this.handleCheckboxClick); // Remove existing listener to avoid duplicates
+                checkbox.addEventListener('click', (event) => this.handleCheckboxClick(event, checkbox));
+            }
+        },
+
+        handleCheckboxClick: function (event, checkbox) {
+            if (!this.lastChecked) {
+                this.lastChecked = checkbox;
+                return;
+            }
+
+            if (event.shiftKey) {
+                let checkboxes = Array.from(this.$root?.getElementsByClassName("fi-ta-record-checkbox") ?? []);
+                let start = checkboxes.indexOf(this.lastChecked);
+                let end = checkboxes.indexOf(checkbox);
+
+                let range = [start, end].sort((a, b) => a - b);
+                for (let i = range[0]; i <= range[1]; i++) {
+                    checkboxes[i].checked = checkbox.checked;
+                    let value = checkboxes[i].value;
+                    if (checkbox.checked) {
+                        this.selectRecords([value]);
+                    } else {
+                        this.deselectRecords([value]);
+                    }
+                }
+            }
+
+            this.lastChecked = checkbox;
+        }
     }
 }
