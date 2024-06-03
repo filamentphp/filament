@@ -135,6 +135,15 @@ EditAction::make()
     ->successNotification(null)
 ```
 
+## Remove the Edit Button on Trash Table
+
+You may remove the edit button action on recycle bin/trash, like this:
+
+```php
+EditAction::make()
+    ->hidden(fn (UsersRecord $record): bool => $record->trashed())
+```
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code at various points within the action's lifecycle, like before a form is saved.
