@@ -168,37 +168,45 @@ export default function table() {
         },
 
         initializeCheckboxes: function () {
-            let checkboxes = this.$root?.getElementsByClassName("fi-ta-record-checkbox") ?? [];
+            let checkboxes =
+                this.$root?.getElementsByClassName('fi-ta-record-checkbox') ??
+                []
             for (let checkbox of checkboxes) {
-                checkbox.removeEventListener('click', this.handleCheckboxClick); // Remove existing listener to avoid duplicates
-                checkbox.addEventListener('click', (event) => this.handleCheckboxClick(event, checkbox));
+                checkbox.removeEventListener('click', this.handleCheckboxClick) // Remove existing listener to avoid duplicates
+                checkbox.addEventListener('click', (event) =>
+                    this.handleCheckboxClick(event, checkbox),
+                )
             }
         },
 
         handleCheckboxClick: function (event, checkbox) {
             if (!this.lastChecked) {
-                this.lastChecked = checkbox;
-                return;
+                this.lastChecked = checkbox
+                return
             }
 
             if (event.shiftKey) {
-                let checkboxes = Array.from(this.$root?.getElementsByClassName("fi-ta-record-checkbox") ?? []);
-                let start = checkboxes.indexOf(this.lastChecked);
-                let end = checkboxes.indexOf(checkbox);
+                let checkboxes = Array.from(
+                    this.$root?.getElementsByClassName(
+                        'fi-ta-record-checkbox',
+                    ) ?? [],
+                )
+                let start = checkboxes.indexOf(this.lastChecked)
+                let end = checkboxes.indexOf(checkbox)
 
-                let range = [start, end].sort((a, b) => a - b);
+                let range = [start, end].sort((a, b) => a - b)
                 for (let i = range[0]; i <= range[1]; i++) {
-                    checkboxes[i].checked = checkbox.checked;
-                    let value = checkboxes[i].value;
+                    checkboxes[i].checked = checkbox.checked
+                    let value = checkboxes[i].value
                     if (checkbox.checked) {
-                        this.selectRecords([value]);
+                        this.selectRecords([value])
                     } else {
-                        this.deselectRecords([value]);
+                        this.deselectRecords([value])
                     }
                 }
             }
 
-            this.lastChecked = checkbox;
-        }
+            this.lastChecked = checkbox
+        },
     }
 }
