@@ -25,7 +25,7 @@ If you are missing a channel for your language, please let us know and we will c
 
 ## GitHub (mostly free)
 
-You can also reach out to us on our GitHub community section. We are always happy to help you with any questions you may have.
+You can also reach out to us on our [GitHub community forum](https://github.com/filamentphp/filament/discussions). Where our community members and maintainers are happy to help you out.
 
 Of course, you are free to open an [issue](https://github.com/filamentphp/filament/discussions/new/choose) if you find a bug or have a [feature request](https://filamentphp.com/docs/3.x/support/contributing#development-of-new-features). If you don't want to wait, until a community member has addressed your issue, you can directly **fast track your issue** by [sponsoring]() Filament or directly use the [funding]() options provided on the issue page itself.
 
@@ -37,6 +37,12 @@ More information can be found on our [consulting page](https://filamentphp.com/c
 ## Laracasts 
 
 [Laracasts](https://laracasts.com/) has a dedicated [Filament help section](https://laracasts.com/discuss/channels/filament) where you can ask questions and get help from their community.
+Additionally on laracasts you can find two excellent courses about Filament:
+
+- [Build Advanced Components for Filament](https://laracasts.com/series/build-advanced-components-for-filament) by the founder of Filament.
+- [Rapid Laravel Apps With Filament](https://laracasts.com/series/rapid-laravel-development-with-filament)
+
+> *An active subscription may be required to access these courses.
 
 ## Google
 
