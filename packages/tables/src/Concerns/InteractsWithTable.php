@@ -259,7 +259,7 @@ trait InteractsWithTable
     public function getIdentifiedTableQueryStringPropertyNameFor(string $property): string
     {
         if (filled($identifier = $this->getTable()->getQueryStringIdentifier())) {
-            return $identifier.ucfirst($property);
+            return $identifier . ucfirst($property);
         }
 
         return $property;
@@ -292,7 +292,7 @@ trait InteractsWithTable
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    protected function getTableQuery(): Builder|Relation|null
+    protected function getTableQuery(): Builder | Relation | null
     {
         return null;
     }
