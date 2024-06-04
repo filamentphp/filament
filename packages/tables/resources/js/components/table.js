@@ -29,8 +29,10 @@ export default function table() {
 
             this.$nextTick(() => this.initializeCheckboxes())
 
-            this.$wire.$on('tableUpdated', () => {
-                this.$nextTick(() => this.initializeCheckboxes())
+            Livewire.hook('element.init', ({ component }) => {
+                if (component.id === this.$wire.id) {
+                    this.initializeCheckboxes()
+                }
             })
         },
 
@@ -167,6 +169,7 @@ export default function table() {
         },
 
         initializeCheckboxes: function () {
+
             let checkboxes =
                 this.$root?.getElementsByClassName('fi-ta-record-checkbox') ??
                 []

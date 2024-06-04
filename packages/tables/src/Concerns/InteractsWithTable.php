@@ -183,16 +183,6 @@ trait InteractsWithTable
         $this->shouldMountInteractsWithTable = true;
     }
 
-    public function updated(): void
-    {
-        $this->dispatch('tableUpdated', livewireId: $this->getId());
-    }
-
-    public function updatedPaginators(): void
-    {
-        $this->dispatch('tableUpdated', livewireId: $this->getId());
-    }
-
     public function table(Table $table): Table
     {
         return $table
