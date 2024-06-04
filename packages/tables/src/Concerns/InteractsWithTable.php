@@ -183,9 +183,14 @@ trait InteractsWithTable
         $this->shouldMountInteractsWithTable = true;
     }
 
-    public function updatedPaginators($page, $pageName): void
+    public function updated(): void
     {
-        $this->dispatch('updatedPaginators', $page, $pageName);
+        $this->dispatch('tableUpdated', livewireId: $this->getId());
+    }
+
+    public function updatedPaginators(): void
+    {
+        $this->dispatch('tableUpdated', livewireId: $this->getId());
     }
 
     public function table(Table $table): Table
@@ -254,7 +259,7 @@ trait InteractsWithTable
     public function getIdentifiedTableQueryStringPropertyNameFor(string $property): string
     {
         if (filled($identifier = $this->getTable()->getQueryStringIdentifier())) {
-            return $identifier . ucfirst($property);
+            return $identifier.ucfirst($property);
         }
 
         return $property;
@@ -287,7 +292,7 @@ trait InteractsWithTable
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    protected function getTableQuery(): Builder | Relation | null
+    protected function getTableQuery(): Builder|Relation|null
     {
         return null;
     }

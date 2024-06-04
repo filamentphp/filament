@@ -27,10 +27,9 @@ export default function table() {
                 this.shouldCheckUniqueSelection = false
             })
 
-            // Initialize checkboxes with event listener
             this.$nextTick(() => this.initializeCheckboxes())
 
-            this.$wire.$on('updatedPaginators', () => {
+            this.$wire.$on('tableUpdated', () => {
                 this.$nextTick(() => this.initializeCheckboxes())
             })
         },
@@ -191,6 +190,12 @@ export default function table() {
                         'fi-ta-record-checkbox',
                     ) ?? [],
                 )
+
+                if (!checkboxes.includes(this.lastChecked)) {
+                    this.lastChecked = checkbox
+                    return
+                }
+
                 let start = checkboxes.indexOf(this.lastChecked)
                 let end = checkboxes.indexOf(checkbox)
 
