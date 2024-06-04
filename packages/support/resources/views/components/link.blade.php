@@ -49,9 +49,9 @@
         'fi-link group/link relative inline-flex items-center justify-center outline-none',
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
-        "fi-size-{$size->value}" => $size instanceof ActionSize,
+        ($size instanceof ActionSize) ? "fi-size-{$size->value}" : null,
         // @deprecated `fi-link-size-*` has been replaced by `fi-size-*`.
-        "fi-link-size-{$size->value}" => $size instanceof ActionSize,
+        ($size instanceof ActionSize) ? "fi-link-size-{$size->value}" : null,
         match ($size) {
             ActionSize::ExtraSmall => 'gap-1',
             ActionSize::Small => 'gap-1',
