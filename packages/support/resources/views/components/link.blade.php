@@ -36,8 +36,6 @@
         $size = filled($size) ? (ActionSize::tryFrom($size) ?? $size) : null;
     }
 
-    $sizeClassSuffix = $size instanceof ActionSize ? $size->value : null;
-
     $iconSize ??= match ($size) {
         ActionSize::ExtraSmall, ActionSize::Small => IconSize::Small,
         default => IconSize::Medium,
@@ -51,9 +49,9 @@
         'fi-link group/link relative inline-flex items-center justify-center outline-none',
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
-        $sizeClassSuffix ? "fi-size-{$size->value}" : null,
+        ($size instanceof ActionSize) ? "fi-size-{$size->value}" : null,
         // @deprecated `fi-link-size-*` has been replaced by `fi-size-*`.
-        $sizeClassSuffix ? "fi-link-size-{$size->value}" : null,
+        ($size instanceof ActionSize) ? "fi-link-size-{$size->value}" : null,
         match ($size) {
             ActionSize::ExtraSmall => 'gap-1',
             ActionSize::Small => 'gap-1',

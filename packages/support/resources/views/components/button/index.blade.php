@@ -39,8 +39,6 @@
         $size = filled($size) ? (ActionSize::tryFrom($size) ?? $size) : null;
     }
 
-    $sizeClassSuffix = $size instanceof ActionSize ? $size->value : null;
-
     $iconSize ??= match ($size) {
         ActionSize::ExtraSmall, ActionSize::Small => IconSize::Small,
         default => IconSize::Medium,
@@ -64,9 +62,9 @@
             // @deprecated `fi-btn-color-*` has been replaced by `fi-color-*` and `fi-color-custom`.
             is_string($color) ? "fi-btn-color-{$color}" : null,
             is_string($color) ? "fi-color-{$color}" : null,
-            $sizeClassSuffix ? "fi-size-{$sizeClassSuffix}" : null,
+            ($size instanceof ActionSize) ? "fi-size-{$size->value}" : null,
             // @deprecated `fi-btn-size-*` has been replaced by `fi-size-*`.
-            $sizeClassSuffix ? "fi-btn-size-{$sizeClassSuffix}" : null,
+            ($size instanceof ActionSize) ? "fi-btn-size-{$size->value}" : null,
             match ($size) {
                 ActionSize::ExtraSmall => 'gap-1 px-2 py-1.5 text-xs',
                 ActionSize::Small => 'gap-1 px-2.5 py-1.5 text-sm',
