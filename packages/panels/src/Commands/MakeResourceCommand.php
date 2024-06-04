@@ -12,6 +12,7 @@ use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\select;
@@ -82,13 +83,18 @@ class MakeResourceCommand extends Command
         $pluralModelClass = (string) str($modelClass)->pluralStudly();
         $needsAlias = $modelClass === 'Record';
 
-        $panel = $this->option('panel');
+        $panelOption = Str::lcfirst($this->option('panel'));
 
-        if ($panel) {
-            $panel = Filament::getPanel($panel);
+        if ($panelOption) {
+            $panel = Filament::getPanel($panelOption);
+
+            if ($panel->getId() !== $panelOption) {
+                $this->components->error("Panel [{$panelOption}] not found.");
+                return static::INVALID;
+            }
         }
 
-        if (! $panel) {
+        if (! $panelOption) {
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
