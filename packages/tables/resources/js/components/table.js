@@ -169,7 +169,6 @@ export default function table() {
         },
 
         initializeCheckboxes: function () {
-
             let checkboxes =
                 this.$root?.getElementsByClassName('fi-ta-record-checkbox') ??
                 []
@@ -203,14 +202,17 @@ export default function table() {
                 let end = checkboxes.indexOf(checkbox)
 
                 let range = [start, end].sort((a, b) => a - b)
+                let values = []
+
                 for (let i = range[0]; i <= range[1]; i++) {
                     checkboxes[i].checked = checkbox.checked
-                    let value = checkboxes[i].value
-                    if (checkbox.checked) {
-                        this.selectRecords([value])
-                    } else {
-                        this.deselectRecords([value])
-                    }
+                    values.push(checkboxes[i].value)
+                }
+
+                if (checkbox.checked) {
+                    this.selectRecords(values)
+                } else {
+                    this.deselectRecords(values)
                 }
             }
 
