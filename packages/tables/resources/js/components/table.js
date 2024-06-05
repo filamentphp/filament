@@ -169,20 +169,24 @@ export default function table() {
         },
 
         watchForCheckboxClicks: function () {
-            let checkboxes = this.$root?.getElementsByClassName('fi-ta-record-checkbox') ?? []
-            
+            let checkboxes =
+                this.$root?.getElementsByClassName('fi-ta-record-checkbox') ??
+                []
+
             for (let checkbox of checkboxes) {
                 // Remove existing listener to avoid duplicates
                 checkbox.removeEventListener('click', this.handleCheckboxClick)
-                
-                checkbox.addEventListener('click', (event) => this.handleCheckboxClick(event, checkbox))
+
+                checkbox.addEventListener('click', (event) =>
+                    this.handleCheckboxClick(event, checkbox),
+                )
             }
         },
 
         handleCheckboxClick: function (event, checkbox) {
-            if (! this.lastChecked) {
+            if (!this.lastChecked) {
                 this.lastChecked = checkbox
-                
+
                 return
             }
 
@@ -193,9 +197,9 @@ export default function table() {
                     ) ?? [],
                 )
 
-                if (! checkboxes.includes(this.lastChecked)) {
+                if (!checkboxes.includes(this.lastChecked)) {
                     this.lastChecked = checkbox
-                    
+
                     return
                 }
 
@@ -207,7 +211,7 @@ export default function table() {
 
                 for (let i = range[0]; i <= range[1]; i++) {
                     checkboxes[i].checked = checkbox.checked
-                    
+
                     values.push(checkboxes[i].value)
                 }
 
