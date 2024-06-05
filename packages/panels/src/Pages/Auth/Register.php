@@ -65,17 +65,7 @@ class Register extends SimplePage
         try {
             $this->rateLimit(2);
         } catch (TooManyRequestsException $exception) {
-            Notification::make()
-                ->title(__('filament-panels::pages/auth/register.notifications.throttled.title', [
-                    'seconds' => $exception->secondsUntilAvailable,
-                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
-                ]))
-                ->body(array_key_exists('body', __('filament-panels::pages/auth/register.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/register.notifications.throttled.body', [
-                    'seconds' => $exception->secondsUntilAvailable,
-                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
-                ]) : null)
-                ->danger()
-                ->send();
+            $this->getRateLimitedNotification($exception)?->send();
 
             return null;
         }
@@ -109,6 +99,20 @@ class Register extends SimplePage
         session()->regenerate();
 
         return app(RegistrationResponse::class);
+    }
+
+    protected function getRateLimitedNotification(TooManyRequestsException $exception): ?Notification
+    {
+        return Notification::make()
+            ->title(__('filament-panels::pages/auth/register.notifications.throttled.title', [
+                'seconds' => $exception->secondsUntilAvailable,
+                'minutes' => $exception->minutesUntilAvailable,
+            ]))
+            ->body(array_key_exists('body', __('filament-panels::pages/auth/register.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/register.notifications.throttled.body', [
+                'seconds' => $exception->secondsUntilAvailable,
+                'minutes' => $exception->minutesUntilAvailable,
+            ]) : null)
+            ->danger();
     }
 
     /**
