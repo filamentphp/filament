@@ -49,10 +49,10 @@ class PanelRegistry
      */
     public function get(?string $id = null, bool $isStrict = true): Panel
     {
-        return $this->findPanel($id, $isStrict) ?? $this->getDefault();
+        return $this->find($id, $isStrict) ?? $this->getDefault();
     }
 
-    protected function findPanel(?string $id = null, bool $isStrict = true): ?Panel
+    protected function find(?string $id = null, bool $isStrict = true): ?Panel
     {
         if ($id === null) {
             return null;
@@ -62,15 +62,17 @@ class PanelRegistry
             return $this->panels[$id] ?? null;
         }
 
-        $sanitizedPanels = [];
+        $normalize = fn (string $panelId): string => (string) str($panelId)
+            ->lower()
+            ->replace(['-', '_'], '');
+
+        $panels = [];
+        
         foreach ($this->panels as $key => $panel) {
-            $sanitizedKey = strtolower(str_replace(['-', '_'], '', $key));
-            $sanitizedPanels[$sanitizedKey] = $panel;
+            $panels[$normalize($key)] = $panel;
         }
 
-        $sanitizedId = strtolower(str_replace(['-', '_'], '', $id));
-
-        return $sanitizedPanels[$sanitizedId] ?? null;
+        return $panels[$normalize($id)] ?? null;
     }
 
     /**
