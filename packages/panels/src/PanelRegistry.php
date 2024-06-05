@@ -44,9 +44,33 @@ class PanelRegistry
         );
     }
 
-    public function get(?string $id = null): Panel
+    /**
+     * @throws NoDefaultPanelSetException
+     */
+    public function get(?string $id = null, bool $isStrict = true): Panel
     {
-        return $this->panels[$id] ?? $this->getDefault();
+        return $this->findPanel($id, $isStrict) ?? $this->getDefault();
+    }
+
+    protected function findPanel(?string $id = null, bool $isStrict = true): ?Panel
+    {
+        if ($id === null) {
+            return null;
+        }
+
+        if ($isStrict) {
+            return $this->panels[$id] ?? null;
+        }
+
+        $sanitizedPanels = [];
+        foreach ($this->panels as $key => $panel) {
+            $sanitizedKey = strtolower(str_replace(['-', '_'], '', $key));
+            $sanitizedPanels[$sanitizedKey] = $panel;
+        }
+
+        $sanitizedId = strtolower(str_replace(['-', '_'], '', $id));
+
+        return $sanitizedPanels[$sanitizedId] ?? null;
     }
 
     /**
