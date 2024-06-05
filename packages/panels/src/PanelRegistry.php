@@ -67,7 +67,7 @@ class PanelRegistry
             ->replace(['-', '_'], '');
 
         $panels = [];
-        
+
         foreach ($this->panels as $key => $panel) {
             $panels[$normalize($key)] = $panel;
         }
