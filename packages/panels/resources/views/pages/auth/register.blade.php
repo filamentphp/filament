@@ -9,7 +9,7 @@
 
     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::AUTH_REGISTER_FORM_BEFORE, scopes: $this->getRenderHookScopes()) }}
 
-    <x-filament-panels::form wire:submit="register">
+    <x-filament-panels::form id="form" wire:submit="register">
         {{ $this->form }}
 
         <x-filament-panels::form.actions
