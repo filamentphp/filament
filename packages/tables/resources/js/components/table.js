@@ -27,11 +27,11 @@ export default function table() {
                 this.shouldCheckUniqueSelection = false
             })
 
-            this.$nextTick(() => this.initializeCheckboxes())
+            this.$nextTick(() => this.watchForCheckboxClicks())
 
             Livewire.hook('element.init', ({ component }) => {
                 if (component.id === this.$wire.id) {
-                    this.initializeCheckboxes()
+                    this.watchForCheckboxClicks()
                 }
             })
         },
@@ -168,21 +168,21 @@ export default function table() {
             this.collapsedGroups = []
         },
 
-        initializeCheckboxes: function () {
-            let checkboxes =
-                this.$root?.getElementsByClassName('fi-ta-record-checkbox') ??
-                []
+        watchForCheckboxClicks: function () {
+            let checkboxes = this.$root?.getElementsByClassName('fi-ta-record-checkbox') ?? []
+            
             for (let checkbox of checkboxes) {
-                checkbox.removeEventListener('click', this.handleCheckboxClick) // Remove existing listener to avoid duplicates
-                checkbox.addEventListener('click', (event) =>
-                    this.handleCheckboxClick(event, checkbox),
-                )
+                // Remove existing listener to avoid duplicates
+                checkbox.removeEventListener('click', this.handleCheckboxClick)
+                
+                checkbox.addEventListener('click', (event) => this.handleCheckboxClick(event, checkbox))
             }
         },
 
         handleCheckboxClick: function (event, checkbox) {
-            if (!this.lastChecked) {
+            if (! this.lastChecked) {
                 this.lastChecked = checkbox
+                
                 return
             }
 
@@ -193,8 +193,9 @@ export default function table() {
                     ) ?? [],
                 )
 
-                if (!checkboxes.includes(this.lastChecked)) {
+                if (! checkboxes.includes(this.lastChecked)) {
                     this.lastChecked = checkbox
+                    
                     return
                 }
 
@@ -206,6 +207,7 @@ export default function table() {
 
                 for (let i = range[0]; i <= range[1]; i++) {
                     checkboxes[i].checked = checkbox.checked
+                    
                     values.push(checkboxes[i].value)
                 }
 
