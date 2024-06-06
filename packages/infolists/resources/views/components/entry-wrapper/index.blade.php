@@ -123,6 +123,7 @@
                         Alignment::Right => 'text-right',
                         default => $alignment,
                     },
+                    'min-w-0',
                 ])
             >
                 @if ($url)
