@@ -77,7 +77,7 @@
                                 '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
                             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
                             isAutofocused: @js($isAutofocused()),
-                            locale: @js(app()->getLocale()),
+                            locale: @js($getLocale()),
                             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
                             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                         })"

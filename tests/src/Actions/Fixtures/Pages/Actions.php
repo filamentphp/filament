@@ -27,6 +27,13 @@ class Actions extends Page
                 ->action(function (array $data) {
                     $this->dispatch('data-called', data: $data);
                 }),
+            Action::make('before-hook-data')
+                ->form([
+                    TextInput::make('payload')->required(),
+                ])
+                ->before(function (Action $action) {
+                    $this->dispatch('before-hook-called', data: $action->getFormData());
+                }),
             Action::make('arguments')
                 ->requiresConfirmation()
                 ->action(function (array $arguments) {

@@ -179,17 +179,21 @@ trait InteractsWithActions
             if ($this->mountedActionHasSchema(mountedAction: $action)) {
                 $action->callBeforeFormValidated();
 
-                $schemaState = [
-                    ...$schemaState,
-                    ...$schema->getState(),
-                ];
+                $schema->getState(afterValidate: function (array $state) use ($action, $schemaState) {
+                    $action->callAfterFormValidated();
 
-                $action->callAfterFormValidated();
+                    $action->formData([
+                        ...$schemaState,
+                        ...$state,
+                    ]);
+
+                    $action->callBefore();
+                });
+            } else {
+                $action->formData($schemaState);
+
+                $action->callBefore();
             }
-
-            $action->formData($schemaState);
-
-            $action->callBefore();
 
             $result = $action->call([
                 'form' => $schema,

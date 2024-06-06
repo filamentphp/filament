@@ -56,7 +56,7 @@ class MakeThemeCommand extends Command
         $panel = $this->argument('panel');
 
         if ($panel) {
-            $panel = Filament::getPanel($panel);
+            $panel = Filament::getPanel($panel, isStrict: false);
         }
 
         if (! $panel) {

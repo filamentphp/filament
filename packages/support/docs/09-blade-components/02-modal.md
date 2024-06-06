@@ -195,12 +195,32 @@ By default, when you click away from a modal, it will close itself. If you wish 
 </x-filament::modal>
 ```
 
+## Closing the modal by escaping
+
+By default, when you press escape on a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `close-by-escaping` attribute:
+
+```blade
+<x-filament::modal :close-by-escaping="false">
+    {{-- Modal content --}}
+</x-filament::modal>
+```
+
 ## Hiding the modal close button
 
 By default, modals have a close button in the top right corner. You can remove the close button from the modal by using the `close-button` attribute:
 
 ```blade
 <x-filament::modal :close-button="false">
+    {{-- Modal content --}}
+</x-filament::modal>
+```
+
+## Preventing the modal from autofocusing
+
+By default, modals will autofocus on the first focusable element when opened. If you wish to disable this behavior, you can use the `autofocus` attribute:
+
+```blade
+<x-filament::modal :autofocus="false">
     {{-- Modal content --}}
 </x-filament::modal>
 ```

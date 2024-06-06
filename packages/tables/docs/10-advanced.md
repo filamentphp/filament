@@ -128,6 +128,18 @@ public function table(Table $table): Table
 
 In this example, clicking on each post will take you to the `posts.edit` route.
 
+You may also open the URL in a new tab:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->openRecordUrlInNewTab();
+}
+```
+
 If you'd like to [override the URL](columns/getting-started#opening-urls) for a specific column, or instead [run an action](columns/getting-started#running-actions) when a column is clicked, see the [columns documentation](columns/getting-started#opening-urls).
 
 ## Reordering records

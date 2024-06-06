@@ -6,6 +6,7 @@
 @props([
     'alignment' => Alignment::Start,
     'ariaLabelledby' => null,
+    'autofocus' => \Filament\Support\View\Components\Modal::$isAutofocused,
     'closeButton' => \Filament\Support\View\Components\Modal::$hasCloseButton,
     'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
     'closeByEscaping' => \Filament\Support\View\Components\Modal::$isClosedByEscaping,
@@ -98,7 +99,7 @@
         x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === '{{ $id }}') && isOpen) closeQuietly()"
         x-on:{{ $openEventName }}.window="if (($event.detail.id === '{{ $id }}') && (! isOpen)) open()"
     @endif
-    x-trap.noscroll="isOpen"
+    x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     x-bind:class="{
         'fi-modal-open': isOpen,
     }"

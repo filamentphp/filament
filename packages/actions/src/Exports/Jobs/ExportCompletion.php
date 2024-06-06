@@ -53,7 +53,7 @@ class ExportCompletion implements ShouldQueue
         $failedRowsCount = $this->export->getFailedRowsCount();
 
         Notification::make()
-            ->title(__('filament-actions::export.notifications.completed.title'))
+            ->title($this->exporter::getCompletedNotificationTitle($this->export))
             ->body($this->exporter::getCompletedNotificationBody($this->export))
             ->when(
                 ! $failedRowsCount,
@@ -74,6 +74,6 @@ class ExportCompletion implements ShouldQueue
                     $this->formats,
                 )),
             )
-            ->sendToDatabase($this->export->user);
+            ->sendToDatabase($this->export->user, isEventDispatched: true);
     }
 }

@@ -302,12 +302,12 @@ You can also pass extra HTML attributes to the entry wrapper which surrounds the
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('slug')
-    ->extraFieldWrapperAttributes(['class' => 'entry-locked'])
+    ->extraEntryWrapperAttributes(['class' => 'entry-locked'])
 ```
 
 ## Global settings
 
-If you wish to change the default behaviour of all entries globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the entries using. For example, if you wish to make all `TextEntry` components [`words(10)`](text#limiting-word-count), you can do it like so:
+If you wish to change the default behavior of all entries globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the entries using. For example, if you wish to make all `TextEntry` components [`words(10)`](text#limiting-word-count), you can do it like so:
 
 ```php
 use Filament\Infolists\Components\TextEntry;

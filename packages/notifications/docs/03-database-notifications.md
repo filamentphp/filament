@@ -23,7 +23,7 @@ php artisan notifications:table
 
 ## Rendering the database notifications modal
 
-> If you want to add database notifications to a panel, [follow this part of the guide](#adding-database-notifications-to-a-panel).
+> If you want to add database notifications to a panel, [follow this part of the guide](#adding-the-database-notifications-modal-to-a-panel).
 
 If you'd like to render the database notifications modal outside of the [Panel Builder](../panels), you'll need to add a new Livewire component to your Blade layout:
 
@@ -97,6 +97,8 @@ $recipient->notify(
         ->toDatabase(),
 );
 ```
+
+> Laravel sends database notifications using the queue. Ensure your queue is running in order to receive the notifications.
 
 Alternatively, use a traditional [Laravel notification class](https://laravel.com/docs/notifications#generating-notifications) by returning the notification from the `toDatabase()` method:
 

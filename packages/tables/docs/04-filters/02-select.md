@@ -39,7 +39,7 @@ SelectFilter::make('status')
 
 ## Multi-select filters
 
-These allow the user to select multiple options to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using. When the user selects multiple options, the table will be filtered to show records that match any of the selected options. You can enable this behaviour using the `multiple()` method:
+These allow the user to select multiple options to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using. When the user selects multiple options, the table will be filtered to show records that match any of the selected options. You can enable this behavior using the `multiple()` method:
 
 ```php
 use Filament\Tables\Filters\SelectFilter;

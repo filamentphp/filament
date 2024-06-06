@@ -175,7 +175,7 @@ export default function markdownEditorFormComponent({
                         }
                     }
                 } catch (error) {
-                    // Revert to original behaviour.
+                    // Revert to original behavior.
                 }
             })
 

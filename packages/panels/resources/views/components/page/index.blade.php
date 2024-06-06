@@ -57,7 +57,7 @@
             @class([
                 'flex flex-col gap-8' => $subNavigation,
                 match ($subNavigationPosition) {
-                    SubNavigationPosition::Start, SubNavigationPosition::End => 'md:flex-row',
+                    SubNavigationPosition::Start, SubNavigationPosition::End => 'md:flex-row md:items-start',
                     default => null,
                 } => $subNavigation,
                 'h-full' => $fullHeight,
