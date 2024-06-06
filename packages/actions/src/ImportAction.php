@@ -23,6 +23,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\ValidationException;
 use League\Csv\ByteSequence;
@@ -58,6 +59,11 @@ class ImportAction extends Action
      */
     protected array | Closure $options = [];
 
+    /**
+     * @var array<string | array<mixed> | Closure>
+     */
+    protected array $fileValidationRules = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -77,48 +83,7 @@ class ImportAction extends Action
                 ->label(__('filament-actions::import.modal.form.file.label'))
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
                 ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
-                ->rules([
-                    'extensions:csv,txt',
-                    File::types(['csv', 'txt'])->rules([
-                        function (string $attribute, mixed $value, Closure $fail) use ($action) {
-                            $csvStream = $this->getUploadedFileStream($value);
-
-                            if (! $csvStream) {
-                                return;
-                            }
-
-                            $csvReader = CsvReader::createFromStream($csvStream);
-
-                            if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
-                                $csvReader->setDelimiter($csvDelimiter);
-                            }
-
-                            $csvReader->setHeaderOffset($action->getHeaderOffset() ?? 0);
-
-                            $csvColumns = $csvReader->getHeader();
-
-                            $duplicateCsvColumns = [];
-
-                            foreach (array_count_values($csvColumns) as $header => $count) {
-                                if ($count <= 1) {
-                                    continue;
-                                }
-
-                                $duplicateCsvColumns[] = $header;
-                            }
-
-                            if (empty($duplicateCsvColumns)) {
-                                return;
-                            }
-
-                            $filledDuplicateCsvColumns = array_filter($duplicateCsvColumns, fn ($value): bool => filled($value));
-
-                            $fail(trans_choice('filament-actions::import.modal.form.file.rules.duplicate_columns', count($filledDuplicateCsvColumns), [
-                                'columns' => implode(', ', $filledDuplicateCsvColumns),
-                            ]));
-                        },
-                    ]),
-                ])
+                ->rules($action->getFileValidationRules())
                 ->afterStateUpdated(function (FileUpload $component, Component $livewire, Set $set, ?TemporaryUploadedFile $state) use ($action) {
                     if (! $state instanceof TemporaryUploadedFile) {
                         return;
@@ -268,12 +233,12 @@ class ImportAction extends Action
             $import->unsetRelation('user');
 
             $importJobs = collect($importChunks)
-                ->map(fn (array $importChunk): object => new ($job)(
-                    $import,
-                    rows: base64_encode(serialize($importChunk)),
-                    columnMap: $data['columnMap'],
-                    options: $options,
-                ));
+                ->map(fn (array $importChunk): object => app($job, [
+                    'import' => $import,
+                    'rows' => base64_encode(serialize($importChunk)),
+                    'columnMap' => $data['columnMap'],
+                    'options' => $options,
+                ]));
 
             $importer = $import->getImporter(
                 columnMap: $data['columnMap'],
@@ -304,7 +269,7 @@ class ImportAction extends Action
                     $failedRowsCount = $import->getFailedRowsCount();
 
                     Notification::make()
-                        ->title(__('filament-actions::import.notifications.completed.title'))
+                        ->title($import->importer::getCompletedNotificationTitle($import))
                         ->body($import->importer::getCompletedNotificationBody($import))
                         ->when(
                             ! $failedRowsCount,
@@ -330,7 +295,7 @@ class ImportAction extends Action
                                     ->markAsRead(),
                             ]),
                         )
-                        ->sendToDatabase($import->user);
+                        ->sendToDatabase($import->user, isEventDispatched: true);
                 })
                 ->dispatch();
 
@@ -415,15 +380,19 @@ class ImportAction extends Action
             ]));
         }
 
-        $encoding = $this->detectCsvEncoding($resource);
+        $inputEncoding = $this->detectCsvEncoding($resource);
+        $outputEncoding = 'UTF-8';
 
-        if (filled($encoding)) {
+        if (
+            filled($inputEncoding) &&
+            (Str::lower($inputEncoding) !== Str::lower($outputEncoding))
+        ) {
             CharsetConverter::register();
 
             stream_filter_append(
                 $resource,
-                CharsetConverter::getFiltername($encoding, 'utf-8'),
-                STREAM_FILTER_READ
+                CharsetConverter::getFiltername($inputEncoding, $outputEncoding),
+                STREAM_FILTER_READ,
             );
         }
 
@@ -573,5 +542,82 @@ class ImportAction extends Action
     public function getOptions(): array
     {
         return $this->evaluate($this->options);
+    }
+
+    /**
+     * @param  string | array<mixed> | Closure  $rules
+     */
+    public function fileRules(string | array | Closure $rules): static
+    {
+        $this->fileValidationRules = [
+            ...$this->fileValidationRules,
+            $rules,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public function getFileValidationRules(): array
+    {
+        $fileRules = [
+            'extensions:csv,txt',
+            File::types(['csv', 'txt'])->rules([
+                function (string $attribute, mixed $value, Closure $fail) {
+                    $csvStream = $this->getUploadedFileStream($value);
+
+                    if (! $csvStream) {
+                        return;
+                    }
+
+                    $csvReader = CsvReader::createFromStream($csvStream);
+
+                    if (filled($csvDelimiter = $this->getCsvDelimiter($csvReader))) {
+                        $csvReader->setDelimiter($csvDelimiter);
+                    }
+
+                    $csvReader->setHeaderOffset($this->getHeaderOffset() ?? 0);
+
+                    $csvColumns = $csvReader->getHeader();
+
+                    $duplicateCsvColumns = [];
+
+                    foreach (array_count_values($csvColumns) as $header => $count) {
+                        if ($count <= 1) {
+                            continue;
+                        }
+
+                        $duplicateCsvColumns[] = $header;
+                    }
+
+                    if (empty($duplicateCsvColumns)) {
+                        return;
+                    }
+
+                    $filledDuplicateCsvColumns = array_filter($duplicateCsvColumns, fn ($value): bool => filled($value));
+
+                    $fail(trans_choice('filament-actions::import.modal.form.file.rules.duplicate_columns', count($filledDuplicateCsvColumns), [
+                        'columns' => implode(', ', $filledDuplicateCsvColumns),
+                    ]));
+                },
+            ]),
+        ];
+
+        foreach ($this->fileValidationRules as $rules) {
+            $rules = $this->evaluate($rules);
+
+            if (is_string($rules)) {
+                $rules = explode('|', $rules);
+            }
+
+            $fileRules = [
+                ...$fileRules,
+                ...$rules,
+            ];
+        }
+
+        return $fileRules;
     }
 }
