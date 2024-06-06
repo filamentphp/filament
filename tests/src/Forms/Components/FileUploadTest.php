@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
@@ -30,7 +30,7 @@ it('UploadedFile should be converted to TemporaryUploadedFile', function () {
 
 class TestComponentWithFileUpload extends Livewire
 {
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
