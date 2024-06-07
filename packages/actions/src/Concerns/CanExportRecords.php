@@ -198,14 +198,14 @@ trait CanExportRecords
             ]);
 
             Bus::chain([
-                Bus::batch([new $job(
-                    $export,
-                    query: $serializedQuery,
-                    columnMap: $columnMap,
-                    options: $options,
-                    chunkSize: $action->getChunkSize(),
-                    records: $action instanceof ExportTableBulkAction ? $action->getRecords()->all() : null,
-                )])
+                Bus::batch([app($job, [
+                    'export' => $export,
+                    'query' => $serializedQuery,
+                    'columnMap' => $columnMap,
+                    'options' => $options,
+                    'chunkSize' => $action->getChunkSize(),
+                    'records' => $action instanceof ExportTableBulkAction ? $action->getRecords()->all() : null,
+                ])])
                     ->when(
                         filled($jobQueue),
                         fn (PendingBatch $batch) => $batch->onQueue($jobQueue),

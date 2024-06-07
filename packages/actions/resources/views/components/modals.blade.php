@@ -6,6 +6,7 @@
 
         <x-filament::modal
             :alignment="$action?->getModalAlignment()"
+            :autofocus="$action?->isModalAutofocused()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             :close-by-escaping="$action?->isModalClosedByEscaping()"
@@ -67,6 +68,7 @@
 
         <x-filament::modal
             :alignment="$action?->getModalAlignment()"
+            :autofocus="$action?->isModalAutofocused()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             :close-by-escaping="$action?->isModalClosedByEscaping()"
@@ -122,6 +124,7 @@
 
         <x-filament::modal
             :alignment="$action?->getModalAlignment()"
+            :autofocus="$action?->isModalAutofocused()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             :close-by-escaping="$action?->isModalClosedByEscaping()"
@@ -183,6 +186,7 @@
 
         <x-filament::modal
             :alignment="$action?->getModalAlignment()"
+            :autofocus="$action?->isModalAutofocused()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             :close-by-escaping="$action?->isModalClosedByEscaping()"
@@ -244,6 +248,7 @@
     <form wire:submit.prevent="callMountedFormComponentAction">
         <x-filament::modal
             :alignment="$action?->getModalAlignment()"
+            :autofocus="$action?->isModalAutofocused()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             :close-by-escaping="$action?->isModalClosedByEscaping()"

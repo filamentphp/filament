@@ -85,6 +85,17 @@ DatePicker::make('date_of_birth')
 
 <AutoScreenshot name="forms/fields/date-time-picker/display-format" alt="Date time picker with custom display format" version="3.x" />
 
+You may also configure the locale that is used when rendering the display, if you want to use different locale from your app config. For this, you can use the `locale()` method:
+
+```php
+use Filament\Forms\Components\DatePicker;
+
+DatePicker::make('date_of_birth')
+    ->native(false)
+    ->displayFormat('d F Y')
+    ->locale('fr')
+```
+
 ### Configuring the time input intervals
 
 You may customize the input interval for increasing/decreasing the hours/minutes /seconds using the `hoursStep()` , `minutesStep()` or `secondsStep()` methods:

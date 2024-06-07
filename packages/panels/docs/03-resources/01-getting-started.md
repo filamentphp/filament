@@ -273,7 +273,7 @@ public static function getPluralModelLabel(): string
 
 By default, Filament will automatically capitalize each word in the model label, for some parts of the UI. For example, in page titles, the navigation menu, and the breadcrumbs.
 
-If you want to disable this behaviour for a resource, you can set `$hasTitleCaseModelLabel` in the resource:
+If you want to disable this behavior for a resource, you can set `$hasTitleCaseModelLabel` in the resource:
 
 ```php
 protected static bool $hasTitleCaseModelLabel = false;

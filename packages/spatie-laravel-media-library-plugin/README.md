@@ -66,9 +66,9 @@ The base file upload component also has configuration options for setting the `d
 
 ### Reordering files
 
-In addition to the behaviour of the normal file upload, Spatie's Media Library also allows users to reorder files.
+In addition to the behavior of the normal file upload, Spatie's Media Library also allows users to reorder files.
 
-To enable this behaviour, use the `reorderable()` method:
+To enable this behavior, use the `reorderable()` method:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;

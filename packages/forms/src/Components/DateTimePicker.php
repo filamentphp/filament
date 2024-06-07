@@ -51,6 +51,8 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
 
     protected string | Closure | null $timezone = null;
 
+    protected string | Closure | null $locale = null;
+
     /**
      * @var array<DateTime | string> | Closure
      */
@@ -259,6 +261,13 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
         return $this;
     }
 
+    public function locale(string | Closure | null $locale): static
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
     public function weekStartsOnMonday(): static
     {
         $this->firstDayOfWeek(1);
@@ -422,6 +431,11 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
     public function getTimezone(): string
     {
         return $this->evaluate($this->timezone) ?? config('app.timezone');
+    }
+
+    public function getLocale(): string
+    {
+        return $this->evaluate($this->locale) ?? config('app.locale');
     }
 
     public function hasDate(): bool
