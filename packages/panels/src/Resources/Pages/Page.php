@@ -9,6 +9,7 @@ use Filament\Pages\Page as BasePage;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Panel;
 use Filament\Resources\Pages\Concerns\CanAuthorizeResourceAccess;
+use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
@@ -147,13 +148,16 @@ abstract class Page extends BasePage
         return parent::canAccess();
     }
 
+    /**
+     * @return class-string<Model>
+     */
     public function getModel(): string
     {
         return static::getResource()::getModel();
     }
 
     /**
-     * @return class-string
+     * @return class-string<Resource>
      */
     public static function getResource(): string
     {
