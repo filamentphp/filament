@@ -208,7 +208,7 @@ use Filament\Forms\Components\Component;
 
 use function Pest\Livewire\livewire;
 
-test('section has title' function () {
+test('comments section exists' function () {
     livewire(EditPost::class)
         ->assertFormComponentExists('comments');
 })
@@ -231,7 +231,7 @@ use Filament\Forms\Components\Component;
 
 use function Pest\Livewire\livewire;
 
-test('section has title' function () {
+test('comments section has title' function () {
     livewire(EditPost::class)
         ->assertFormComponentExists(
             'comments-section',
