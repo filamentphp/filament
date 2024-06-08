@@ -169,7 +169,7 @@ class TestsForms
         return function (string $componentName, string | Closure $formName = 'form', ?Closure $checkComponentUsing = null): static {
             if ($formName instanceof Closure) {
                 $checkComponentUsing = $formName;
-                $formName            = 'form';
+                $formName = 'form';
             }
 
             /** @phpstan-ignore-next-line  */
