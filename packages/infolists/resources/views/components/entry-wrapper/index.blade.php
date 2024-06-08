@@ -101,7 +101,7 @@
 
         <div
             @class([
-                'grid gap-y-2',
+                'grid auto-cols-fr gap-y-2',
                 'sm:col-span-2' => $hasInlineLabel,
             ])
         >

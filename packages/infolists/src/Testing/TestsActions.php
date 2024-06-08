@@ -172,7 +172,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -193,7 +193,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -214,7 +214,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -235,7 +235,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -256,7 +256,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -277,7 +277,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -298,7 +298,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -319,7 +319,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -340,7 +340,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -363,7 +363,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -386,7 +386,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -407,7 +407,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -428,7 +428,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
@@ -449,7 +449,7 @@ class TestsActions
             $this->assertInfolistActionExists($component, $name, $infolistName);
 
             /** @phpstan-ignore-next-line */
-            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name);
+            [$component, $action] = $this->getNestedInfolistActionComponentAndName($component, $name, $infolistName);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::wrap($name));
