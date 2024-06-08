@@ -7,6 +7,7 @@
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
+    'badgeSize' => 'xs',
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -47,7 +48,6 @@
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-link group/link relative inline-flex items-center justify-center outline-none',
-        'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         ($size instanceof ActionSize) ? "fi-size-{$size->value}" : null,
         // @deprecated `fi-link-size-*` has been replaced by `fi-size-*`.
@@ -114,7 +114,7 @@
         ) => $color !== 'gray',
     ]);
 
-    $badgeContainerClasses = 'fi-link-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2';
+    $badgeContainerClasses = 'fi-link-badge-ctn absolute start-full top-0 z-[1] w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/4';
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
@@ -169,7 +169,7 @@
 
         @if (filled($badge))
             <div class="{{ $badgeContainerClasses }}">
-                <x-filament::badge :color="$badgeColor" size="xs">
+                <x-filament::badge :color="$badgeColor" :size="$badgeSize">
                     {{ $badge }}
                 </x-filament::badge>
             </div>
@@ -277,7 +277,7 @@
 
         @if (filled($badge))
             <div class="{{ $badgeContainerClasses }}">
-                <x-filament::badge :color="$badgeColor" size="xs">
+                <x-filament::badge :color="$badgeColor" :size="$badgeSize">
                     {{ $badge }}
                 </x-filament::badge>
             </div>
