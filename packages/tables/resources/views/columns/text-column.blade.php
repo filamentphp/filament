@@ -209,8 +209,8 @@
                                     @class([
                                         'fi-ta-text-item-label',
                                         'group-hover/item:underline group-focus-visible/item:underline' => $url,
-                                        'line-clamp-[--line-clamp]' => $lineClamp,
                                         'whitespace-normal' => $canWrap,
+                                        'line-clamp-[--line-clamp]' => $lineClamp,
                                         match ($size) {
                                             TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
                                             TextColumnSize::Small, 'sm', null => 'text-sm leading-6',
