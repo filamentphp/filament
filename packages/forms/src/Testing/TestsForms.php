@@ -164,6 +164,43 @@ class TestsForms
         };
     }
 
+    public function assertFormComponentExists(): Closure
+    {
+        return function (string $componentName, string | Closure $formName = 'form', ?Closure $checkComponentUsing = null): static {
+            if ($formName instanceof Closure) {
+                $checkComponentUsing = $formName;
+                $formName            = 'form';
+            }
+
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormExists($formName);
+
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            $foo = $form->getFlatComponentsByKey(withHidden: true);
+            /** @var ?Component $component */
+            $component = $form->getFlatComponentsByKey(withHidden: true)[$componentName] ?? null;
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertInstanceOf(
+                Component::class,
+                $component,
+                "Failed asserting that a field with the name [{$componentName}] exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
+            );
+
+            if ($checkComponentUsing) {
+                Assert::assertTrue(
+                    $checkComponentUsing($component),
+                    "Failed asserting that a field with the name [{$componentName}] and provided configuration exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
+                );
+            }
+
+            return $this;
+        };
+    }
+
     public function assertFormFieldExists(): Closure
     {
         return function (string $fieldName, string | Closure $formName = 'form', ?Closure $checkFieldUsing = null): static {
