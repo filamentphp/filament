@@ -114,14 +114,7 @@
         ) => $color !== 'gray',
     ]);
 
-    $badgeContainerClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-link-badge-ctn absolute start-full z-[1] -translate-y-1/2 top-0  w-max -translate-x-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2',
-        match ($badgeSize) {
-            'xs' => '-mt-1',
-            'sm' => '-mt-1.5',
-            default => '-mt-2'
-        },
-    ]);
+    $badgeContainerClasses = 'fi-link-badge-ctn absolute start-full top-0 z-[1] w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/4';
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
