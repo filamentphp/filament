@@ -124,8 +124,7 @@
         '[:checked+*>&]:text-white' => $tag === 'label',
     ]);
 
-    $badgeContainerClasses = 'fi-btn-badge-ctn absolute start-full z-[1] -translate-y-1/2 -ms-0.5 top-0 w-max -translate-x-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2';
-
+    $badgeContainerClasses = 'fi-btn-badge-ctn absolute start-full top-0 z-[1] -ms-0.5 w-max -translate-x-1/2 -translate-y-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-label',

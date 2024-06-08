@@ -120,7 +120,7 @@
             'xs' => '-mt-1',
             'sm' => '-mt-1.5',
             default => '-mt-2'
-        }
+        },
     ]);
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
