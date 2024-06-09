@@ -332,7 +332,7 @@ class ImportColumn extends Component
                     return;
                 }
 
-                $fail(__('validation.exists', ['attribute' => $attribute]));
+                $fail('validation.exists')->translate();
             };
         }
 

@@ -53,7 +53,7 @@ Split::make([
 
 A `Split` component is used to wrap around columns, and allow them to stack on mobile.
 
-By default, columns within a split will appear aside each other all the time. However, you may choose a responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) where this behaviour starts `from()`. Before this point, the columns will stack on top of each other:
+By default, columns within a split will appear aside each other all the time. However, you may choose a responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) where this behavior starts `from()`. Before this point, the columns will stack on top of each other:
 
 ```php
 use Filament\Support\Enums\FontWeight;

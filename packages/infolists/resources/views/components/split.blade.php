@@ -13,7 +13,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'flex gap-6',
+                'fi-in-split flex gap-6',
                 match ($getFromBreakpoint()) {
                     'sm' => 'flex-col sm:flex-row ' . match ($verticalAlignment) {
                         VerticalAlignment::Center => 'sm:items-center',

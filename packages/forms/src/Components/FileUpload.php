@@ -469,7 +469,7 @@ class FileUpload extends BaseFileUpload
             ->filter(fn (float | string | false $ratio): bool => $ratio !== false)
             ->when(
                 fn (Collection $ratios): bool => $ratios->count() < 2,
-                fn (Collection $ratios): Collection => $ratios->take(0),
+                fn (Collection $ratios) => $ratios->take(0),
             )
             ->all();
     }

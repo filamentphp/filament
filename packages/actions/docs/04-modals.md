@@ -498,7 +498,7 @@ Action::make('updateAuthor')
     ->closeModalByClickingAway(false)
 ```
 
-If you'd like to change the behaviour for all modals in the application, you can do so by calling `Modal::closedByClickingAway()` inside a service provider or middleware:
+If you'd like to change the behavior for all modals in the application, you can do so by calling `Modal::closedByClickingAway()` inside a service provider or middleware:
 
 ```php
 use Filament\Support\View\Components\Modal;
@@ -521,7 +521,7 @@ Action::make('updateAuthor')
     ->closedByEscaping(false)
 ```
 
-If you'd like to change the behaviour for all modals in the application, you can do so by calling `Modal::closedByEscaping()` inside a service provider or middleware:
+If you'd like to change the behavior for all modals in the application, you can do so by calling `Modal::closedByEscaping()` inside a service provider or middleware:
 
 ```php
 use Filament\Support\View\Components\Modal;
@@ -550,6 +550,29 @@ If you'd like to hide the close button for all modals in the application, you ca
 use Filament\Support\View\Components\Modal;
 
 Modal::closeButton(false);
+```
+
+## Preventing the modal from autofocusing
+
+By default, modals will autofocus on the first focusable element when opened. If you wish to disable this behavior, you can use the `modalAutofocus(false)` method:
+
+```php
+Action::make('updateAuthor')
+    ->form([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->modalAutofocus(false)
+```
+
+If you'd like to disable autofocus for all modals in the application, you can do so by calling `Modal::autofocus(false)` inside a service provider or middleware:
+
+```php
+use Filament\Support\View\Components\Modal;
+
+Modal::autofocus(false);
 ```
 
 ## Optimizing modal configuration methods

@@ -7,7 +7,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 You may allow users to group table rows together using a common attribute. This is useful for displaying lots of data in a more organized way.
 
-Groups can be set up using the name of the attribute to group by (e.g. `'status'`), or a `Group` object which allows you to customize the behaviour of that grouping (e.g. `Group::make('status')->collapsible()`).
+Groups can be set up using the name of the attribute to group by (e.g. `'status'`), or a `Group` object which allows you to customize the behavior of that grouping (e.g. `Group::make('status')->collapsible()`).
 
 ## Grouping rows by default
 
@@ -229,7 +229,7 @@ public function table(Table $table): Table
 }
 ```
 
-## Customizing the Eloquent query ordering behaviour
+## Customizing the Eloquent query ordering behavior
 
 Some features require the table to be able to order an Eloquent query according to a group. You can customize how we do this using the `orderQueryUsing()` method on a `Group` object:
 
@@ -248,7 +248,7 @@ public function table(Table $table): Table
 }
 ```
 
-## Customizing the Eloquent query scoping behaviour
+## Customizing the Eloquent query scoping behavior
 
 Some features require the table to be able to scope an Eloquent query according to a group. You can customize how we do this using the `scopeQueryByKeyUsing()` method on a `Group` object:
 
@@ -266,7 +266,7 @@ public function table(Table $table): Table
 }
 ```
 
-## Customizing the Eloquent query grouping behaviour
+## Customizing the Eloquent query grouping behavior
 
 Some features require the table to be able to group an Eloquent query according to a group. You can customize how we do this using the `groupQueryUsing()` method on a `Group` object:
 
@@ -333,7 +333,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-		->defaultGroup('status');
+		->defaultGroup('status')
         ->groupingSettingsHidden();
 }
 ```
@@ -348,7 +348,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-		->defaultGroup('status');
+		->defaultGroup('status')
         ->groupingDirectionSettingHidden();
 }
 ```

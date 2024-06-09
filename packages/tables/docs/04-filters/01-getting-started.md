@@ -170,7 +170,7 @@ public function table(Table $table): Table
 
 ## Deselecting records when filters change
 
-By default, all records will be deselected when the filters change. Using the `deselectAllRecordsWhenFiltered(false)` method, you can disable this behaviour:
+By default, all records will be deselected when the filters change. Using the `deselectAllRecordsWhenFiltered(false)` method, you can disable this behavior:
 
 ```php
 use Filament\Tables\Table;

@@ -280,7 +280,7 @@ It's important to initialise the array if it has not been already, before pushin
 
 You can push as many plugins to the `filamentChartJsPlugins` array as you would like to install, you do not need a separate file to import each plugin.
 
-### Step 3: Complile the JavaScript file with Vite
+### Step 3: Compile the JavaScript file with Vite
 
 Now, you need to build the JavaScript file with Vite, or your bundler of choice. Include the file in your Vite configuration (usually `vite.config.js`). For example:
 

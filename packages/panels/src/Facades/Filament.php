@@ -63,7 +63,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array<string | int, NavigationGroup | string> getNavigationGroups()
  * @method static array<NavigationItem> getNavigationItems()
  * @method static array getPages()
- * @method static Panel getPanel(?string $id = null)
+ * @method static Panel getPanel(?string $id = null, bool $isStrict = true)
  * @method static array<string, Panel> getPanels()
  * @method static Plugin getPlugin(string $id)
  * @method static string | null getProfileUrl(array $parameters = [])

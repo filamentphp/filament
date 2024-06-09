@@ -57,7 +57,7 @@ class SpatieTagsInput extends TagsInput
 
     /**
      * Syncs tags with the record without taking types into account. This avoids recreating existing tags with an empty type.
-     * Spatie's `HasTags` trait does not have functionality for this behaviour.
+     * Spatie's `HasTags` trait does not have functionality for this behavior.
      *
      * @param  array<string>  $state
      */

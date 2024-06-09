@@ -35,6 +35,17 @@ it('can validate an action\'s data', function () {
         ->assertNotDispatched('data-called');
 });
 
+it('can access form data in before hook', function () {
+    livewire(Actions::class)
+        ->callAction('before-hook-data', data: [
+            'payload' => $payload = Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertDispatched('before-hook-called', data: [
+            'payload' => $payload,
+        ]);
+});
+
 it('can set default action data when mounted', function () {
     livewire(Actions::class)
         ->mountAction('data')

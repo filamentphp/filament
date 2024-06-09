@@ -145,7 +145,7 @@ The Heroicons library has been updated to v2. This means that any icons you use 
 
 #### Date-time pickers
 
-The date-time picker form field now uses the browser's native date picker by default. It usually has a better UX than the old date picker, but you may notice features missing, bad browser compatibility, or behavioural bugs. If you want to revert to the old date picker, you can use the `native(false)` method:
+The date-time picker form field now uses the browser's native date picker by default. It usually has a better UX than the old date picker, but you may notice features missing, bad browser compatibility, or behavioral bugs. If you want to revert to the old date picker, you can use the `native(false)` method:
 
 ```php
 use Filament\Forms\Components\DateTimePicker;
