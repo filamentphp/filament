@@ -671,6 +671,21 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+If you want to register middleware, which is only called during persistence and subsequent Livewire AJAX requests, you can use the persistentMiddleware method. This middleware will not be run on the initial page load but will be called on subsequent Livewire AJAX requests:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->persistentMiddleware([
+            // ...
+        ]);
+}
+```
+
 ## Adding a tenant route prefix
 
 By default the URL structure will put the tenant ID or slug immediately after the panel path. If you wish to prefix it with another URL segment, use the `tenantRoutePrefix()` method:
