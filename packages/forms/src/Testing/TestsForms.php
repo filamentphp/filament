@@ -4,6 +4,7 @@ namespace Filament\Forms\Testing;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;
@@ -159,6 +160,42 @@ class TestsForms
                 $form,
                 "Failed asserting that a form with the name [{$name}] exists on the [{$livewireClass}] component."
             );
+
+            return $this;
+        };
+    }
+
+    public function assertFormComponentExists(): Closure
+    {
+        return function (string $componentKey, string | Closure $formName = 'form', ?Closure $checkComponentUsing = null): static {
+            if ($formName instanceof Closure) {
+                $checkComponentUsing = $formName;
+                $formName = 'form';
+            }
+
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormExists($formName);
+
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            /** @var ?Component $component */
+            $component = $form->getFlatComponentsByKey(withHidden: true)[$componentKey] ?? null;
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertInstanceOf(
+                Component::class,
+                $component,
+                "Failed asserting that a component with the key [{$componentKey}] exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
+            );
+
+            if ($checkComponentUsing) {
+                Assert::assertTrue(
+                    $checkComponentUsing($component),
+                    "Failed asserting that a component with the key [{$componentKey}] and provided configuration exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
+                );
+            }
 
             return $this;
         };
