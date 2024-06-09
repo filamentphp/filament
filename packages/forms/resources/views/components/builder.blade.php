@@ -6,6 +6,7 @@
     $blockPickerColumns = $getBlockPickerColumns();
     $blockPickerWidth = $getBlockPickerWidth();
     $hasBlockPreviews = $hasBlockPreviews();
+    $hasInteractiveBlockPreviews = $hasInteractiveBlockPreviews();
 
     $addAction = $getAction($getAddActionName());
     $addBetweenAction = $getAction($getAddBetweenActionName());
@@ -222,13 +223,13 @@
                                 <div
                                     @class([
                                         'fi-fo-builder-item-preview',
-                                        'pointer-events-none' => ! $hasInteractiveBlockPreviews(),
+                                        'pointer-events-none' => ! $hasInteractiveBlockPreviews,
                                     ])
                                 >
                                     {{ $item->getParentComponent()->renderPreview($item->getRawState()) }}
                                 </div>
 
-                                @if (! $hasInteractiveBlockPreviews())
+                                @if ($editActionIsVisible && (! $hasInteractiveBlockPreviews))
                                     <div
                                         class="absolute inset-0 z-[1] cursor-pointer"
                                         role="button"

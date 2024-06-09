@@ -643,7 +643,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             ->iconButton()
             ->icon('heroicon-s-cog-6-tooth')
             ->size(ActionSize::Small)
-            ->visible(fn (Builder $component): bool => $component->hasBlockPreviews());
+            ->visible(fn (Builder $component): bool => (! $component->isDisabled()) && $component->hasBlockPreviews());
 
         if ($this->modifyEditActionUsing) {
             $action = $this->evaluate($this->modifyEditActionUsing, [
