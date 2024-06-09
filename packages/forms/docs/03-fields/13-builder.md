@@ -501,7 +501,7 @@ Since blocks are rendered blade views in the builder, things like links and butt
 use Filament\Forms\Components\Builder;
 
 Builder::make('content')
-    ->blockPreviews(interactive: true)
+    ->blockPreviews(areInteractive: true)
     ->blocks([
         //
     ])

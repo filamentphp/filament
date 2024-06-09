@@ -141,6 +141,10 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         $action = Action::make($this->getAddActionName())
             ->label(fn (Builder $component) => $component->getAddActionLabel())
+            ->modalHeading(fn (Builder $component) => __('filament-forms::components.builder.actions.add.modal.heading', [
+                'label' => $component->getLabel(),
+            ]))
+            ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add.modal.actions.add.label'))
             ->color('gray')
             ->form(function (array $arguments, Builder $component): ?array {
                 if ($component->hasBlockPreviews()) {
@@ -204,6 +208,10 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         $action = Action::make($this->getAddBetweenActionName())
             ->label(fn (Builder $component) => $component->getAddBetweenActionLabel())
+            ->modalHeading(fn (Builder $component) => __('filament-forms::components.builder.actions.add_between.modal.heading', [
+                'label' => $component->getLabel(),
+            ]))
+            ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add_between.modal.actions.add.label'))
             ->color('gray')
             ->form(function (array $arguments, Builder $component): ?array {
                 if ($component->hasBlockPreviews()) {
@@ -608,7 +616,9 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     public function getEditAction(): Action
     {
         $action = Action::make($this->getEditActionName())
-            ->label(__('filament-forms::components.builder.actions.update_block.label'))
+            ->label(__('filament-forms::components.builder.actions.edit.label'))
+            ->modalHeading(__('filament-forms::components.builder.actions.edit.modal.heading'))
+            ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.edit.modal.actions.save.label'))
             ->color('gray')
             ->fillForm(function (array $arguments, Builder $component) {
                 $state = $component->getState();
@@ -814,10 +824,10 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
         return $this;
     }
 
-    public function blockPreviews(bool | Closure $condition = true, bool | Closure $interactive = false): static
+    public function blockPreviews(bool | Closure $condition = true, bool | Closure $areInteractive = false): static
     {
         $this->hasBlockPreviews = $condition;
-        $this->hasInteractiveBlockPreviews = $interactive;
+        $this->hasInteractiveBlockPreviews = $areInteractive;
 
         return $this;
     }
