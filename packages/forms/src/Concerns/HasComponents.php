@@ -88,7 +88,7 @@ trait HasComponents
             }
 
             $carry[$componentKey] = $component;
-            
+
             return $carry;
         }, initial: []);
     }
