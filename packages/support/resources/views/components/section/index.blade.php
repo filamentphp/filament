@@ -173,7 +173,7 @@
                 x-cloak
             @endif
             x-bind:class="{
-                'absolute invisible h-0 overflow-hidden border-none': isCollapsed,
+                'invisible absolute h-0 overflow-hidden border-none': isCollapsed,
             }"
         @endif
         @class([
