@@ -258,7 +258,7 @@ use App\Models\Author;
 use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('author')
-    ->relationship(resolveUsing: function (array $state): ?Author {
+    ->relationship(resolveUsing: function (string $state): ?Author {
         return Author::query()
             ->where('email', $state)
             ->orWhere('username', $state)
@@ -273,7 +273,7 @@ use App\Models\Author;
 use Filament\Actions\Imports\ImportColumn;
 
 ImportColumn::make('author')
-    ->relationship(resolveUsing: function (array $state): ?Author {
+    ->relationship(resolveUsing: function (string $state): ?Author {
         if (filter_var($state, FILTER_VALIDATE_EMAIL)) {
             return 'email';
         }
