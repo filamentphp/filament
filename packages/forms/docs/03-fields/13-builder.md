@@ -466,7 +466,7 @@ $component->state($state);
 
 ## Previewing blocks
 
-If you prefer to render block previews in the builder instead of the block's form, you can use `blockPreviews()`. This will render the block's `->view()` instead of the form. Block data will be available in the preview as it's corresponding variable name.
+If you prefer to render read-only previews in the builder instead of the blocks' forms, you can use the `blockPreviews()` method. This will render each block's `preview()` instead of the form. Block data will be passed to the preview Blade view in a variable with the same name:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -477,25 +477,25 @@ Builder::make('content')
     ->blockPreviews()
     ->blocks([
         Block::make('heading')
-            ->view('components.blocks.heading')
             ->schema([
-                TextInput::make('text'),
+                TextInput::make('text')
+                    ->placeholder('Default heading'),
             ])
-]),
+            ->preview('filament.content.blocks-previews.heading'),
+    ])
 ```
+
+In `/resources/views/filament/content/block-previews/heading.blade.php`, you can access the block data like so:
 
 ```blade
-{{-- components/blocks/heading.blade.php --}}
-@php
-    $text ??= 'Default text';
-@endphp
-
-<h1>{{ $text }}</h1>
+<h1>
+    {{ $text ?? 'Default heading' }}
+</h1>
 ```
 
-### Block interactivity
+### Interactive block previews
 
-Since blocks are rendered blade views in the builder, things like links and buttons will be interactive. This is usually not the desired behavior, so the builder will prevent the block from being interactive by default. If you want to allow interactivity in the block preview you can pass the `interactive` argument to the `blockPreviews()` method.
+By default, preview content is not interactive, and clicking it will open the Edit modal for that block to manage its settings. If you have links and buttons that you'd like to remain interactive in the block previews, you can use the `areInteractive: true` argument of the `blockPreviews()` method:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -505,7 +505,6 @@ Builder::make('content')
     ->blocks([
         //
     ])
-]),
 ```
 
 ## Testing builders
