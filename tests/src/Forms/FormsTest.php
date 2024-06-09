@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
@@ -89,6 +90,15 @@ it('can have visible fields on multiple forms', function () {
         ->assertFormFieldIsVisible('visible', 'barForm');
 });
 
+it('has layout components', function () {
+    livewire(TestComponentWithForm::class)
+        ->assertFormComponentExists('section')
+        ->assertFormComponentExists('nested.section')
+        ->assertFormComponentExists('nested.section', function (Section $section): bool {
+            return $section->getHeading() === 'I am nested';
+        });
+});
+
 class TestComponentWithForm extends Livewire
 {
     public function form(Schema $form): Schema
@@ -108,6 +118,13 @@ class TestComponentWithForm extends Livewire
                     ->hidden(),
 
                 TextInput::make('visible'),
+
+                Section::make()
+                    ->key('section')
+                    ->schema([
+                        Section::make('I am nested')
+                            ->key('nested.section'),
+                    ]),
             ]);
     }
 

@@ -25,6 +25,8 @@ namespace Livewire\Features\SupportTesting {
         public function assertFormFieldIsHidden(string $fieldName, string $formName = 'form'): static {}
 
         public function assertFormFieldIsVisible(string $fieldName, string $formName = 'form'): static {}
+
+        public function assertFormComponentExists(string $componentKey, string | Closure $formName = 'form', ?Closure $checkComponentUsing = null): static {}
     }
 
 }
