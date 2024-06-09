@@ -147,6 +147,9 @@ abstract class Page extends BasePage
         return parent::canAccess();
     }
 
+    /**
+     * @return class-string<Model>
+     */
     public function getModel(): string
     {
         return static::getResource()::getModel();
