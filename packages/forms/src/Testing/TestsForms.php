@@ -3,11 +3,11 @@
 namespace Filament\Forms\Testing;
 
 use Closure;
-use Filament\Schema\Schema;
-use Filament\Schema\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
@@ -180,7 +180,7 @@ class TestsForms
             $form = $this->instance()->{$formName};
 
             /** @var ?Component $component */
-            $component = $form->getFlatComponentsByKey(withHidden: true)[$componentKey] ?? null;
+            $component = $form->getFlatComponents(withHidden: true)[$componentKey] ?? null;
 
             $livewireClass = $this->instance()::class;
 
