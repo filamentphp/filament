@@ -464,6 +464,49 @@ $state[Str::uuid()] = [
 $component->state($state);
 ```
 
+## Previewing blocks
+
+If you prefer to render read-only previews in the builder instead of the blocks' forms, you can use the `blockPreviews()` method. This will render each block's `preview()` instead of the form. Block data will be passed to the preview Blade view in a variable with the same name:
+
+```php
+use Filament\Forms\Components\Builder;
+use Filament\Forms\Components\Builder\Block;
+use Filament\Forms\Components\TextInput;
+
+Builder::make('content')
+    ->blockPreviews()
+    ->blocks([
+        Block::make('heading')
+            ->schema([
+                TextInput::make('text')
+                    ->placeholder('Default heading'),
+            ])
+            ->preview('filament.content.blocks-previews.heading'),
+    ])
+```
+
+In `/resources/views/filament/content/block-previews/heading.blade.php`, you can access the block data like so:
+
+```blade
+<h1>
+    {{ $text ?? 'Default heading' }}
+</h1>
+```
+
+### Interactive block previews
+
+By default, preview content is not interactive, and clicking it will open the Edit modal for that block to manage its settings. If you have links and buttons that you'd like to remain interactive in the block previews, you can use the `areInteractive: true` argument of the `blockPreviews()` method:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blockPreviews(areInteractive: true)
+    ->blocks([
+        //
+    ])
+```
+
 ## Testing builders
 
 Internally, builders generate UUIDs for items to keep track of them in the Livewire HTML easier. This means that when you are testing a form with a builder, you need to ensure that the UUIDs are consistent between the form and the test. This can be tricky, and if you don't do it correctly, your tests can fail as the tests are expecting a UUID, not a numeric key.

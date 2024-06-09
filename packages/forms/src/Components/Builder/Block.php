@@ -12,6 +12,7 @@ class Block extends Component
     use Concerns\HasName {
         getLabel as getDefaultLabel;
     }
+    use Concerns\HasPreview;
 
     protected string | Closure | null $icon = null;
 
