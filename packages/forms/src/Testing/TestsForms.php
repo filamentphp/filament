@@ -167,7 +167,7 @@ class TestsForms
 
     public function assertFormComponentExists(): Closure
     {
-        return function (string $componentName, string | Closure $formName = 'form', ?Closure $checkComponentUsing = null): static {
+        return function (string $componentKey, string | Closure $formName = 'form', ?Closure $checkComponentUsing = null): static {
             if ($formName instanceof Closure) {
                 $checkComponentUsing = $formName;
                 $formName = 'form';
@@ -179,22 +179,21 @@ class TestsForms
             /** @var ComponentContainer $form */
             $form = $this->instance()->{$formName};
 
-            $foo = $form->getFlatComponentsByKey(withHidden: true);
             /** @var ?Component $component */
-            $component = $form->getFlatComponentsByKey(withHidden: true)[$componentName] ?? null;
+            $component = $form->getFlatComponentsByKey(withHidden: true)[$componentKey] ?? null;
 
             $livewireClass = $this->instance()::class;
 
             Assert::assertInstanceOf(
                 Component::class,
                 $component,
-                "Failed asserting that a field with the name [{$componentName}] exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
+                "Failed asserting that a component with the key [{$componentKey}] exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
             );
 
             if ($checkComponentUsing) {
                 Assert::assertTrue(
                     $checkComponentUsing($component),
-                    "Failed asserting that a field with the name [{$componentName}] and provided configuration exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
+                    "Failed asserting that a component with the key [{$componentKey}] and provided configuration exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
                 );
             }
 
