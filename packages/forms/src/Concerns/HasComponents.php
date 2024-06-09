@@ -74,28 +74,27 @@ trait HasComponents
     }
 
     /**
-     * @return array<Component>
+     * @return array<string, Component>
      */
-    public function getFlatComponentsByKey(bool $withHidden = false, bool $withAbsolutePathKeys = false): array
+    public function getFlatComponentsByKey(bool $withHidden = false): array
     {
         $statePath = $this->getStatePath();
 
-        return collect($this->getFlatComponents($withHidden))
-            ->filter(fn (Component $component) => $component->getKey() ?? $component->getId())
-            ->mapWithKeys(static function (Component $component) use ($statePath, $withAbsolutePathKeys): array {
-                $componentKey = $component->getKey() ?? $component->getId();
+        return array_reduce($this->getFlatComponents($withHidden), function (array $carry, Component $component): array {
+            $componentKey = $component->getKey();
 
-                if ((! $withAbsolutePathKeys) && filled($statePath)) {
-                    $componentKey = (string) str($componentKey)->after("{$statePath}.");
-                }
+            if (blank($componentKey)) {
+                return $carry;
+            }
 
-                return [$componentKey => $component];
-            })
-            ->all();
+            $carry[$componentKey] = $component;
+            
+            return $carry;
+        }, initial: []);
     }
 
     /**
-     * @return array<Field>
+     * @return array<string, Field>
      */
     public function getFlatFields(bool $withHidden = false, bool $withAbsolutePathKeys = false): array
     {
