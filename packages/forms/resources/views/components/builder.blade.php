@@ -5,11 +5,14 @@
     $blockPickerBlocks = $getBlockPickerBlocks();
     $blockPickerColumns = $getBlockPickerColumns();
     $blockPickerWidth = $getBlockPickerWidth();
+    $hasBlockPreviews = $hasBlockPreviews();
+    $hasInteractiveBlockPreviews = $hasInteractiveBlockPreviews();
 
     $addAction = $getAction($getAddActionName());
     $addBetweenAction = $getAction($getAddBetweenActionName());
     $cloneAction = $getAction($getCloneActionName());
     $collapseAllAction = $getAction($getCollapseAllActionName());
+    $editAction = $getAction($getEditActionName());
     $expandAllAction = $getAction($getExpandAllActionName());
     $deleteAction = $getAction($getDeleteActionName());
     $moveDownAction = $getAction($getMoveDownActionName());
@@ -87,6 +90,8 @@
                         $cloneActionIsVisible = $isCloneable && $cloneAction->isVisible();
                         $deleteAction = $deleteAction(['item' => $uuid]);
                         $deleteActionIsVisible = $isDeletable && $deleteAction->isVisible();
+                        $editAction = $editAction(['item' => $uuid]);
+                        $editActionIsVisible = $hasBlockPreviews && $editAction->isVisible();
                         $moveDownAction = $moveDownAction(['item' => $uuid])->disabled($loop->last);
                         $moveDownActionIsVisible = $isReorderableWithButtons && $moveDownAction->isVisible();
                         $moveUpAction = $moveUpAction(['item' => $uuid])->disabled($loop->first);
@@ -106,7 +111,7 @@
                         class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                         x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                     >
-                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockLabels || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
+                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
                             <div
                                 @if ($isCollapsible)
                                     x-on:click.stop="isCollapsed = !isCollapsed"
@@ -154,7 +159,7 @@
                                     </h4>
                                 @endif
 
-                                @if ($cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
+                                @if ($editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
                                     <ul
                                         class="ms-auto flex items-center gap-x-3"
                                     >
@@ -163,6 +168,12 @@
                                                 {{ $extraItemAction(['item' => $uuid]) }}
                                             </li>
                                         @endforeach
+
+                                        @if ($editActionIsVisible)
+                                            <li x-on:click.stop>
+                                                {{ $editAction }}
+                                            </li>
+                                        @endif
 
                                         @if ($cloneActionIsVisible)
                                             <li x-on:click.stop>
@@ -204,9 +215,31 @@
 
                         <div
                             x-show="! isCollapsed"
-                            class="fi-fo-builder-item-content border-t border-gray-100 p-4 dark:border-white/10"
+                            @class([
+                                'fi-fo-builder-item-content relative border-t border-gray-100 dark:border-white/10',
+                                'p-4' => ! $hasBlockPreviews,
+                            ])
                         >
-                            {{ $item }}
+                            @if ($hasBlockPreviews)
+                                <div
+                                    @class([
+                                        'fi-fo-builder-item-preview',
+                                        'pointer-events-none' => ! $hasInteractiveBlockPreviews,
+                                    ])
+                                >
+                                    {{ $item->getParentComponent()->renderPreview($item->getRawState()) }}
+                                </div>
+
+                                @if ($editActionIsVisible && (! $hasInteractiveBlockPreviews))
+                                    <div
+                                        class="absolute inset-0 z-[1] cursor-pointer"
+                                        role="button"
+                                        x-on:click.stop="{{ '$wire.mountFormComponentAction(\'' . $statePath . '\', \'edit\', { item: \'' . $uuid . '\' })' }}"
+                                    ></div>
+                                @endif
+                            @else
+                                {{ $item }}
+                            @endif
                         </div>
                     </li>
 

@@ -771,7 +771,7 @@ Select::make('author_id')
     ->relationship(
         name: 'author',
         titleAttribute: 'name',
-        modifyQueryUsing: fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant())),
+        modifyQueryUsing: fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
     );
 ```
 
