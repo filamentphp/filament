@@ -122,7 +122,7 @@ class ImportColumn extends Component
     }
 
     /**
-     * @param  array<mixed>  $rules
+     * @param  array<mixed>  $examples
      */
     public function examples(array $examples): static
     {
