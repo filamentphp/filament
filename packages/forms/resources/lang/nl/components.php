@@ -11,15 +11,67 @@ return [
             ],
 
             'add' => [
+
                 'label' => 'Toevoegen aan :label',
+
+                'modal' => [
+
+                    'heading' => 'Toevoegen aan :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Toevoegen',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'add_between' => [
+
                 'label' => 'Invoegen',
+
+                'modal' => [
+
+                    'heading' => 'Toevoegen aan :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Toevoegen',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'delete' => [
                 'label' => 'Verwijderen',
+            ],
+
+            'edit' => [
+
+                'label' => 'Bewerken',
+
+                'modal' => [
+
+                    'heading' => 'Blok bewerken',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Wijzigingen opslaan',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
