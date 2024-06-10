@@ -73,21 +73,21 @@ trait HasActions
 
         $action = $actions[$name] ?? null;
 
-        if (!$action) {
+        if (! $action) {
             return null;
         }
 
         foreach ($modalActionNames ?? [] as $modalActionName) {
             $action = $action->getMountableModalAction($modalActionName);
 
-            if (!$action) {
+            if (! $action) {
                 return null;
             }
 
             $name = $modalActionName;
         }
 
-        if (!$action instanceof Action) {
+        if (! $action instanceof Action) {
             return null;
         }
 
