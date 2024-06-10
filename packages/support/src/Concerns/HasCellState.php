@@ -60,6 +60,13 @@ trait HasCellState
         return $this;
     }
 
+    public function defaultToNA(): static
+    {
+        $this->defaultState = 'N/A';
+
+        return $this;
+    }
+
     public function isDistinctList(): bool
     {
         return (bool) $this->evaluate($this->isDistinctList);
