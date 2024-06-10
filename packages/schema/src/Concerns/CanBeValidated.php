@@ -15,7 +15,7 @@ trait CanBeValidated
         $attributes = [];
 
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->isHiddenAndNotDehydrated()) {
+            if ($component->isHiddenAndNotDehydratedWhenHidden()) {
                 continue;
             }
 
@@ -46,7 +46,7 @@ trait CanBeValidated
         $messages = [];
 
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->isHiddenAndNotDehydrated()) {
+            if ($component->isHiddenAndNotDehydratedWhenHidden()) {
                 continue;
             }
 
@@ -77,7 +77,7 @@ trait CanBeValidated
         $rules = [];
 
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->isHiddenAndNotDehydrated()) {
+            if ($component->isNeitherDehydratedNorValidated()) {
                 continue;
             }
 
@@ -107,7 +107,7 @@ trait CanBeValidated
     {
         if (! count(array_filter(
             $this->getComponents(withHidden: true),
-            fn (Component $component): bool => ! $component->isHiddenAndNotDehydrated(),
+            fn (Component $component): bool => ! $component->isHiddenAndNotDehydratedWhenHidden(),
         ))) {
             return [];
         }
