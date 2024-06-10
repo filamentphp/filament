@@ -117,7 +117,7 @@ trait HasState
     public function dehydrateState(array &$state = [], bool $isDehydrated = true): array
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->isHiddenAndNotDehydrated()) {
+            if ($component->isHiddenAndNotDehydratedWhenHidden()) {
                 continue;
             }
 
@@ -134,7 +134,7 @@ trait HasState
     public function mutateDehydratedState(array &$state = []): array
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->isHiddenAndNotDehydrated()) {
+            if ($component->isHiddenAndNotDehydratedWhenHidden()) {
                 continue;
             }
 
@@ -177,7 +177,7 @@ trait HasState
     public function mutateStateForValidation(array &$state = []): array
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->isHiddenAndNotDehydrated()) {
+            if ($component->isHiddenAndNotDehydratedWhenHidden()) {
                 continue;
             }
 

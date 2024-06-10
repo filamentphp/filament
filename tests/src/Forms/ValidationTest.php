@@ -75,6 +75,48 @@ test('fields can be conditionally validated', function () {
     }
 });
 
+test('fields are validated if they are not dehydrated', function () {
+    $rules = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Field(Str::random()))
+                ->required()
+                ->dehydrated(false),
+        ])
+        ->getValidationRules();
+
+    expect($rules)
+        ->not->toBeEmpty();
+});
+
+test('fields are not validated if they are not dehydrated and configured as such', function () {
+    $rules = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Field(Str::random()))
+                ->required()
+                ->dehydrated(false)
+                ->validatedWhenNotDehydrated(false),
+        ])
+        ->getValidationRules();
+
+    expect($rules)
+        ->toBeEmpty();
+
+    $rules = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Field(Str::random()))
+                ->required()
+                ->dehydrated()
+                ->validatedWhenNotDehydrated(false),
+        ])
+        ->getValidationRules();
+
+    expect($rules)
+        ->not->toBeEmpty();
+});
+
 test('fields can be required if', function () {
     $rules = [];
     $errors = [];

@@ -601,3 +601,16 @@ Page::$reportValidationErrorUsing = function (ValidationException $exception) {
         ->send();
 };
 ```
+
+## Disabling validation when fields are not dehydrated
+
+When a field is not dehydrated, it is still validated. To disable validation for fields that are not dehydrated, use the `validatedWhenNotDehydrated()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->required()
+    ->dehydrated(false)
+    ->validatedWhenNotDehydrated(false)
+```
