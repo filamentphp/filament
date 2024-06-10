@@ -1,4 +1,5 @@
 /.idea
+/.phpunit.cache
 /build
 /coverage
 /node_modules
