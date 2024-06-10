@@ -52,7 +52,7 @@ trait CanFormatState
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $summarizer->evaluate($locale));
+            return Number::currency($state, $currency, $summarizer->evaluate($locale) ?? config('app.locale'));
         });
 
         return $this;
@@ -85,7 +85,7 @@ trait CanFormatState
                 );
             }
 
-            return Number::format($state, $decimalPlaces, $summarizer->evaluate($maxDecimalPlaces), locale: $summarizer->evaluate($locale));
+            return Number::format($state, $decimalPlaces, $summarizer->evaluate($maxDecimalPlaces), locale: $summarizer->evaluate($locale) ?? config('app.locale'));
         });
 
         return $this;
