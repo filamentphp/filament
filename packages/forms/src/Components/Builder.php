@@ -654,6 +654,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
                 $component->getChildComponentContainer($arguments['item'])->fill($data);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->icon('heroicon-s-cog-6-tooth')
