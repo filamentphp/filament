@@ -53,6 +53,9 @@ class ImportColumn extends Component
 
     protected mixed $example = null;
 
+    /**
+     * @var array<mixed>
+     */
     protected array $examples = [];
 
     protected string | Closure | null $exampleHeader = null;
@@ -118,6 +121,9 @@ class ImportColumn extends Component
         return $this;
     }
 
+    /**
+     * @param  array<mixed>  $rules
+     */
     public function examples(array $examples): static
     {
         $this->examples = $examples;
@@ -446,6 +452,9 @@ class ImportColumn extends Component
         return $this->evaluate($this->example);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getExamples(): array
     {
         return array_merge([$this->evaluate($this->example)], $this->examples);
