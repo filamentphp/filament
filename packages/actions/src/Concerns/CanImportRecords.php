@@ -334,17 +334,35 @@ trait CanImportRecords
                         $columns,
                     ));
 
-                    $example = array_map(
-                        fn (ImportColumn $column) => $column->getExample(),
+                    /*
+                    Сount the number of lines in the file.
+                    It should be equal to the largest number of examples in the columns.
+                    */
+                    $rowsCount = 0;
+                    array_map(
+                        function (ImportColumn $column) use (&$rowsCount) {
+                            $rowsCount = count($column->getExamples()) > $rowsCount ? count($column->getExamples()) : $rowsCount;
+                        },
                         $columns,
                     );
 
-                    if (array_filter(
-                        $example,
-                        fn ($value): bool => filled($value),
-                    )) {
-                        $csv->insertOne($example);
+                    /*
+                    Get an array of “examples” in which the number of elements
+                    is equal to the number of lines in the file.
+                    */
+                    $examples = [];
+                    foreach ($columns as $column) {
+                        $columnExamples = $column->getExamples();
+
+                        for($i = 0; $i < $rowsCount; $i++) {
+                            $examples[$i][] = $columnExamples[$i] ?? '';
+                        }
                     }
+
+                    /*
+                    Filling out the file
+                    */
+                    $csv->insertAll($examples);
 
                     return response()->streamDownload(function () use ($csv) {
                         echo $csv->toString();

@@ -53,6 +53,8 @@ class ImportColumn extends Component
 
     protected mixed $example = null;
 
+    protected array $examples = [];
+
     protected string | Closure | null $exampleHeader = null;
 
     protected string | Closure | null $relationship = null;
@@ -112,6 +114,13 @@ class ImportColumn extends Component
     public function example(mixed $example): static
     {
         $this->example = $example;
+
+        return $this;
+    }
+
+    public function examples(array $examples): static
+    {
+        $this->examples = $examples;
 
         return $this;
     }
@@ -435,6 +444,11 @@ class ImportColumn extends Component
     public function getExample(): mixed
     {
         return $this->evaluate($this->example);
+    }
+
+    public function getExamples(): array
+    {
+        return array_merge([$this->evaluate($this->example)], $this->examples);
     }
 
     /**
