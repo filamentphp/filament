@@ -118,7 +118,7 @@ trait CanFormatState
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $component->evaluate($locale));
+            return Number::currency($state, $currency, $component->evaluate($locale) ?? config('app.locale'));
         });
 
         return $this;
@@ -153,7 +153,7 @@ trait CanFormatState
                 );
             }
 
-            return Number::format($state, $decimalPlaces, $component->evaluate($maxDecimalPlaces), $component->evaluate($locale));
+            return Number::format($state, $decimalPlaces, $component->evaluate($maxDecimalPlaces), $component->evaluate($locale) ?? config('app.locale'));
         });
 
         return $this;
