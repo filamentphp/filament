@@ -8,12 +8,12 @@ class ActionContainer extends Component
 {
     protected string $view = 'filament-infolists::components.actions.action-container';
 
-    final public function __construct(Action $action)
+    final public function __construct(Action | ActionGroup $action)
     {
         $this->action($action);
     }
 
-    public static function make(Action $action): static
+    public static function make(Action | ActionGroup $action): static
     {
         $static = app(static::class, ['action' => $action]);
         $static->configure();
