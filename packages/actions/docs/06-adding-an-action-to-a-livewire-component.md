@@ -239,7 +239,7 @@ If the first action is canceled, the second one is not opened. If the second act
 
 ## Programmatically triggering actions
 
-Sometimes you may need to trigger an action via other means besides a button, link, or key binding, especially when integrating with other JS packages. This can be accomplished with the `mountAction` method. Here is an example of a simple delete
+Sometimes you may need to trigger an action via other means besides a button, link, or key binding, especially when integrating with other JS packages. This can be accomplished with the `mountAction` method. Here is an example of a simple test action.
 
 ```PHP
 <?php
