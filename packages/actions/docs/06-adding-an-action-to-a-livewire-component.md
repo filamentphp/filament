@@ -236,3 +236,56 @@ public function publishAction(): Action
 Now, when the first action is submitted, the second action will open in its place. The [arguments](#passing-action-arguments) that were originally passed to the first action get passed to the second action, so you can use them to persist data between requests.
 
 If the first action is canceled, the second one is not opened. If the second action is canceled, the first one has already run and cannot be cancelled.
+
+## Programmatically triggering actions
+
+Sometimes you may need to trigger an action via other means besides a button, link, or key binding, especially when integrating with other JS packages. This can be accomplished with the `mountAction` method. Here is an example of a simple delete
+
+```PHP
+<?php
+
+namespace App\Filament\Pages;
+
+use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Pages\Page;
+
+class TestPage extends Page implements HasActions
+{
+    use InteractsWithActions;
+
+    protected static ?string $navigationLabel = 'Test Page';
+
+    protected static string $view = 'filament.pages.test-page';
+
+    public function testAction(): Action
+    {
+        return Action::make('test')
+            ->action(function (array $arguments) {
+                dd('test action called with id: '.$arguments['id']);
+            });
+    }
+}
+
+```
+
+And this is how you can trigger that action from within a script block or from a custom HTML element.
+
+```HTML
+<div>
+    <button wire:click="mountAction('test', {id: '123'})">Button 1</button>
+    <button id="custom-button-from-library">Button 2</button>
+</div>
+
+@script
+    <script>
+     document.getElementById("custom-button-from-library").addEventListener("click",function(){
+        $wire.mountAction("test", {id: '345'})
+     })   
+    </script>
+@endscript
+
+```
+
+
