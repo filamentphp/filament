@@ -13,7 +13,8 @@ export default function table() {
         livewireId: null,
 
         init: function () {
-            this.livewireId = this.$root.closest('[wire\\:id]').attributes['wire:id'].value
+            this.livewireId =
+                this.$root.closest('[wire\\:id]').attributes['wire:id'].value
 
             this.$wire.$on('deselectAllTableRecords', () =>
                 this.deselectAllRecords(),

@@ -494,7 +494,9 @@
                                 x-bind:class="{
                                     'hidden':
                                         {{ $group?->isCollapsible() ? 'true' : 'false' }} &&
-                                        isGroupCollapsed({{ \Illuminate\Support\Js::from($recordGroupTitle) }}),
+                                        isGroupCollapsed(
+                                            {{ \Illuminate\Support\Js::from($recordGroupTitle) }},
+                                        ),
                                     {{ ($contentGrid ? '\'bg-gray-50 dark:bg-white/10 dark:ring-white/20\'' : '\'bg-gray-50 dark:bg-white/5 before:absolute before:start-0 before:inset-y-0 before:w-0.5 before:bg-primary-600 dark:before:bg-primary-500\'') . ': isRecordSelected(\'' . $recordKey . '\')' }},
                                     {{ $contentGrid ? '\'bg-white dark:bg-white/5 dark:ring-white/10\': ! isRecordSelected(\'' . $recordKey . '\')' : '\'\':\'\'' }},
                                 }"
