@@ -10,7 +10,11 @@ export default function table() {
 
         lastCheckedRecord: null,
 
+        livewireId: null,
+
         init: function () {
+            this.livewireId = this.$root.closest('[wire\\:id]').attributes['wire:id'].value
+
             this.$wire.$on('deselectAllTableRecords', () =>
                 this.deselectAllRecords(),
             )
@@ -30,7 +34,7 @@ export default function table() {
             this.$nextTick(() => this.watchForCheckboxClicks())
 
             Livewire.hook('element.init', ({ component }) => {
-                if (component.id === this.$wire.id) {
+                if (component.id === this.livewireId) {
                     this.watchForCheckboxClicks()
                 }
             })
