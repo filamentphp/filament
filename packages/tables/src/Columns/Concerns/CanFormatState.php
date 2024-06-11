@@ -82,7 +82,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function since(?string $timezone = null): static
+    public function since(?string $timezone = null, ?string $tooltipFormat = null): static
     {
         $this->isDateTime = true;
 
@@ -95,6 +95,18 @@ trait CanFormatState
                 ->setTimezone($timezone ?? $column->getTimezone())
                 ->diffForHumans();
         });
+
+        if (filled($tooltipFormat)) {
+            $this->tooltip(static function (TextColumn $column, $state) use ($tooltipFormat, $timezone): ?string {
+                if (blank($state)) {
+                    return null;
+                }
+
+                return Carbon::parse($state)
+                    ->setTimezone($timezone ?? $column->getTimezone())
+                    ->translatedFormat($tooltipFormat);
+            });
+        }
 
         return $this;
     }
