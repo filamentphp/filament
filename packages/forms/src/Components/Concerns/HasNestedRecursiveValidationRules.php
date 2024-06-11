@@ -45,4 +45,11 @@ trait HasNestedRecursiveValidationRules
 
         return $rules;
     }
+
+    public function dehydrateValidationAttributes(array &$attributes): void
+    {
+        parent::dehydrateValidationAttributes($attributes);
+
+        $attributes["{$this->getStatePath()}.*"] = $this->getValidationAttribute();
+    }
 }
