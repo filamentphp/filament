@@ -31,7 +31,7 @@ it('has fields', function () {
         });
 });
 
-it ('does not have fields', function () {
+it('does not have fields', function () {
     livewire(TestComponentWithForm::class)
         ->assertFormFieldDoesNotExist('not-such-field');
 });
@@ -104,7 +104,7 @@ it('has layout components', function () {
         });
 });
 
-it ('does not have layout components', function () {
+it('does not have layout components', function () {
     livewire(TestComponentWithForm::class)
         ->assertFormComponentDoesNotExist('no-such-section');
 });
