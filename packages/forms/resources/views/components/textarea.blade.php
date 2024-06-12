@@ -46,7 +46,6 @@
                 x-on:input="onResize()"
                 x-on:resize.window="onResize()"
             @endif
-            x-on:mouseup="onResize()"
             x-bind:style="{ height }"
             {{ $getExtraAlpineAttributeBag() }}
             {{
