@@ -99,6 +99,56 @@ trait CanFormatState
         return $this;
     }
 
+    public function dateTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Table::$defaultDateDisplayFormat;
+
+        $this->tooltip(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $column->getTimezone())
+                ->translatedFormat($format);
+        });
+
+        return $this;
+    }
+
+    public function dateTimeTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Table::$defaultDateTimeDisplayFormat;
+
+        $this->dateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function timeTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Table::$defaultTimeDisplayFormat;
+
+        $this->dateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function sinceTooltip(?string $timezone = null): static
+    {
+        $this->tooltip(static function (TextColumn $column, $state) use ($timezone): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $column->getTimezone())
+                ->diffForHumans();
+        });
+
+        return $this;
+    }
+
     public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
     {
         $this->isMoney = true;
