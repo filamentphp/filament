@@ -48,6 +48,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
 
     protected bool | Closure $hasBlockNumbers = true;
 
+    protected bool | Closure $hasBlockIcons = false;
+
     protected bool | Closure $hasBlockPreviews = false;
 
     protected bool | Closure $hasInteractiveBlockPreviews = false;
@@ -824,6 +826,13 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
         return $this;
     }
 
+    public function blockIcons(bool | Closure $condition = true): static
+    {
+        $this->hasBlockIcons = $condition;
+
+        return $this;
+    }
+
     public function blockPreviews(bool | Closure $condition = true, bool | Closure $areInteractive = false): static
     {
         $this->hasBlockPreviews = $condition;
@@ -936,6 +945,11 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     public function hasBlockNumbers(): bool
     {
         return (bool) $this->evaluate($this->hasBlockNumbers);
+    }
+
+    public function hasBlockIcons(): bool
+    {
+        return (bool) $this->evaluate($this->hasBlockIcons);
     }
 
     public function hasBlockPreviews(): bool

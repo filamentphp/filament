@@ -36,19 +36,10 @@
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div
         x-data="{}"
-        {{
-            $attributes
-                ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-builder grid gap-y-4'])
-        }}
+        {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['fi-fo-builder grid gap-y-4']) }}
     >
         @if ($collapseAllActionIsVisible || $expandAllActionIsVisible)
-            <div
-                @class([
-                    'flex gap-x-3',
-                    'hidden' => count($containers) < 2,
-                ])
-            >
+            <div @class(['flex gap-x-3', 'hidden' => count($containers) < 2])>
                 @if ($collapseAllActionIsVisible)
                     <span
                         x-on:click="$dispatch('builder-collapse', '{{ $statePath }}')"
@@ -77,6 +68,7 @@
                 @php
                     $hasBlockLabels = $hasBlockLabels();
                     $hasBlockNumbers = $hasBlockNumbers();
+                    $hasBlockIcons = $hasBlockIcons();
                 @endphp
 
                 @foreach ($containers as $uuid => $item)
@@ -110,11 +102,17 @@
                         class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                         x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                     >
-                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
+                        @if ($reorderActionIsVisible ||
+                             $moveUpActionIsVisible ||
+                             $moveDownActionIsVisible ||
+                             $hasBlockLabels ||
+                             $editActionIsVisible ||
+                             $cloneActionIsVisible ||
+                             $deleteActionIsVisible ||
+                             $isCollapsible ||
+                             $visibleExtraItemActions)
                             <div
-                                @if ($isCollapsible)
-                                    x-on:click.stop="isCollapsed = !isCollapsed"
-                                @endif
+                                @if ($isCollapsible) x-on:click.stop="isCollapsed = !isCollapsed" @endif
                                 @class([
                                     'fi-fo-builder-item-header flex items-center gap-x-3 overflow-hidden px-4 py-3',
                                     'cursor-pointer select-none' => $isCollapsible,
@@ -143,6 +141,13 @@
                                     </ul>
                                 @endif
 
+                                @if ($hasBlockIcons)
+                                    <x-filament::icon
+                                        icon="{{ $item->getParentComponent()->getIcon($item->getRawState(), $uuid) }}"
+                                        class="fi-fo-builder-item-header-icon h-5 w-5 text-gray-400 dark:text-gray-500"
+                                    ></x-filament::icon>
+                                @endif
+
                                 @if ($hasBlockLabels)
                                     <h4
                                         @class([
@@ -158,7 +163,11 @@
                                     </h4>
                                 @endif
 
-                                @if ($editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
+                                @if ($editActionIsVisible ||
+                                     $cloneActionIsVisible ||
+                                     $deleteActionIsVisible ||
+                                     $isCollapsible ||
+                                     $visibleExtraItemActions)
                                     <ul
                                         class="ms-auto flex items-center gap-x-3"
                                     >
@@ -229,7 +238,7 @@
                                     {{ $item->getParentComponent()->renderPreview($item->getRawState()) }}
                                 </div>
 
-                                @if ($editActionIsVisible && (! $hasInteractiveBlockPreviews))
+                                @if ($editActionIsVisible && ! $hasInteractiveBlockPreviews)
                                     <div
                                         class="absolute inset-0 z-[1] cursor-pointer"
                                         role="button"
