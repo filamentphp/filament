@@ -144,9 +144,13 @@
                                     </ul>
                                 @endif
 
-                                @if ($hasBlockIcons)
+                                @php
+                                  $blockIcon = $item->getParentComponent()->getIcon($item->getRawState(), $uuid);    
+                                @endphp
+
+                                @if ($hasBlockIcons && $blockIcon)
                                     <x-filament::icon
-                                        icon="{{ $item->getParentComponent()->getIcon($item->getRawState(), $uuid) }}"
+                                        icon="{{ $blockIcon }}"
                                         class="fi-fo-builder-item-header-icon h-5 w-5 text-gray-400 dark:text-gray-500"
                                     ></x-filament::icon>
                                 @endif
