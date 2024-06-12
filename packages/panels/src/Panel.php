@@ -46,7 +46,10 @@ class Panel extends Component
 
     protected bool $isDefault = false;
 
-    protected ?Closure $bootUsing = null;
+    /**
+     * @var array<array-key, Closure>
+     */
+    protected array $bootUsingCallbacks = [];
 
     public static function make(): static
     {
@@ -98,14 +101,14 @@ class Panel extends Component
             $plugin->boot($this);
         }
 
-        if ($callback = $this->bootUsing) {
+        foreach ($this->bootUsingCallbacks as $callback) {
             $callback($this);
         }
     }
 
     public function bootUsing(?Closure $callback): static
     {
-        $this->bootUsing = $callback;
+        $this->bootUsingCallbacks[] = $callback;
 
         return $this;
     }
