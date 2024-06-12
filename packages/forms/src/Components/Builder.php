@@ -178,7 +178,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                     'label' => $component->getLabel(),
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add.modal.actions.add.label'))
-                ->form(function (array $arguments, Builder $component): ?array {
+                ->form(function (array $arguments, Builder $component): array {
                     return $component->getBlock($arguments['block'])->getChildComponents();
                 });
         }
@@ -253,7 +253,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                     'label' => $component->getLabel(),
                 ]))
                 ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add_between.modal.actions.add.label'))
-                ->form(function (array $arguments, Builder $component): ?array {
+                ->form(function (array $arguments, Builder $component): array {
                     return $component->getBlock($arguments['block'])->getChildComponents();
                 });
         }
@@ -1011,7 +1011,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     /**
      * @return array<string, int | string | null> | int | string | null
      */
-    public function getBlockPickerColumns(string $breakpoint = null): array | int | string | null
+    public function getBlockPickerColumns(?string $breakpoint = null): array | int | string | null
     {
         $columns = $this->blockPickerColumns ?? [
             'default' => 1,
