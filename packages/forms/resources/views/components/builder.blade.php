@@ -145,7 +145,7 @@
                                 @endif
 
                                 @php
-                                  $blockIcon = $item->getParentComponent()->getIcon($item->getRawState(), $uuid);    
+                                    $blockIcon = $item->getParentComponent()->getIcon($item->getRawState(), $uuid);
                                 @endphp
 
                                 @if ($hasBlockIcons && $blockIcon)
