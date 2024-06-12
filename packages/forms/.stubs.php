@@ -32,14 +32,6 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertFormComponentDoesNotExist(string $componentKey, string $formName = 'form'): static {}
 
-        public function assertFormComponentIsDisabled(string $componentKey, string $formName = 'form'): static {}
-
-        public function assertFormComponentIsEnabled(string $componentKey, string $formName = 'form'): static {}
-
-        public function assertFormComponentIsHidden(string $componentKey, string $formName = 'form'): static {}
-
-        public function assertFormComponentIsVisible(string $componentKey, string $formName = 'form'): static {}
-
         public function mountFormComponentAction(string | array $component, string | array $name, array $arguments = [], string $formName = 'form'): static {}
 
         public function unmountFormComponentAction(): static {}

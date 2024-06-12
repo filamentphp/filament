@@ -244,7 +244,7 @@ it('does not have a conditional component', function () {
 });
 ```
 
-To check if the component exists and passes a given truth test, you can pass a function to the second argument of `assertFormComponentExists()`, returning true or false if the component passes the test or not:
+To check if the component exists and passes a given truth test, you can pass a function to the second argument of `assertFormComponentExists()`, returning true or false if the component passes the test or not.:
 
 ```php
 use Filament\Forms\Components\Component;
@@ -262,51 +262,27 @@ test('comments section has heading' function () {
 });
 ```
 
-### Hidden components
-
-To ensure that a component is visible, pass the name to `assertFormComponentIsVisible()`:
+If you want more informative test results output, you can embed an assertion within your truthy callback:
 
 ```php
+use Filament\Forms\Components\Component;
+use Illuminate\Testing\Assert;
+
 use function Pest\Livewire\livewire;
 
-test('comments-section is visible', function () {
-    livewire(CreatePost::class)
-        ->assertFormComponentIsVisible('comments-section');
-});
-```
-
-Or to ensure that a component is hidden you can pass the name to `assertFormComponentIsHidden()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-test('comments-section is hidden', function () {
-    livewire(CreatePost::class)
-        ->assertFormComponentIsHidden('comments-section');
-});
-```
-
-### Disabled components
-
-To ensure that a component is enabled, pass the name to `assertFormComponentIsEnabled()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-test('comments-section is enabled', function () {
-    livewire(CreatePost::class)
-        ->assertFormComponentIsEnabled('comments-section');
-});
-```
-
-Or to ensure that a component is disabled you can pass the name to `assertFormComponentIsDisabled()`:
-
-```php
-use function Pest\Livewire\livewire;
-
-test('comments-section is disabled', function () {
-    livewire(CreatePost::class)
-        ->assertFormComponentIsDisabled('comments-section');
+test('comments section is enabled' function () {
+    livewire(EditPost::class)
+        ->assertFormComponentExists(
+            'comments-section',
+            function (Component $component): bool {
+                Assert::assertTrue(
+                    $component->isEnabled(),
+                    'Failed asserting that comments-section is enabled'
+                );
+                
+                return true;
+            },
+        );
 });
 ```
 
