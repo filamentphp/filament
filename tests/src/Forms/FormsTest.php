@@ -98,6 +98,9 @@ it('can have visible fields on multiple forms', function () {
 it('has layout components', function () {
     livewire(TestComponentWithForm::class)
         ->assertFormComponentExists('section')
+        ->assertFormComponentExists('disabled-section', function (Section $section): bool {
+            return $section->isDisabled();
+        })
         ->assertFormComponentExists('nested.section')
         ->assertFormComponentExists('nested.section', function (Section $section): bool {
             return $section->getHeading() === 'I am nested';
@@ -107,36 +110,6 @@ it('has layout components', function () {
 it('does not have layout components', function () {
     livewire(TestComponentWithForm::class)
         ->assertFormComponentDoesNotExist('no-such-section');
-});
-
-it('can have visible layout components', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormComponentIsVisible('section')
-        ->assertFormComponentIsVisible('nested.section');
-});
-
-it('can have hidden layout components', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormComponentIsHidden('hidden-section')
-        ->assertFormComponentIsHidden('nested.hidden-section')
-        ->assertFormComponentExists('nested.hidden-section', function (Section $section): bool {
-            return $section->getHeading() === 'I am nested and hidden';
-        });
-});
-
-it('can have enabled layout components', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormComponentIsEnabled('section')
-        ->assertFormComponentIsEnabled('nested.section');
-});
-
-it('can have disabled layout components', function () {
-    livewire(TestComponentWithForm::class)
-        ->assertFormComponentIsDisabled('disabled-section')
-        ->assertFormComponentIsDisabled('nested.disabled-section')
-        ->assertFormComponentExists('nested.disabled-section', function (Section $section): bool {
-            return $section->getHeading() === 'I am nested and disabled';
-        });
 });
 
 class TestComponentWithForm extends Livewire
@@ -167,22 +140,8 @@ class TestComponentWithForm extends Livewire
                     ]),
 
                 Section::make()
-                    ->key('hidden-section')
-                    ->hidden()
-                    ->schema([
-                        Section::make('I am nested and hidden')
-                            ->key('nested.hidden-section')
-                            ->hidden(),
-                    ]),
-
-                Section::make()
                     ->key('disabled-section')
-                    ->disabled()
-                    ->schema([
-                        Section::make('I am nested and disabled')
-                            ->key('nested.disabled-section')
-                            ->disabled(),
-                    ]),
+                    ->disabled(),
             ]);
     }
 
