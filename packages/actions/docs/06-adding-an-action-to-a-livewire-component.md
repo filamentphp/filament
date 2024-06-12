@@ -239,53 +239,31 @@ If the first action is canceled, the second one is not opened. If the second act
 
 ## Programmatically triggering actions
 
-Sometimes you may need to trigger an action via other means besides a button, link, or key binding, especially when integrating with other JS packages. This can be accomplished with the `mountAction` method. Here is an example of a simple test action.
+Sometimes you may need to trigger an action without the user clicking on the built-in trigger button, especially from JavaScript. Here is an example action which could be registered on a Livewire component:
 
-```PHP
-<?php
-
-namespace App\Filament\Pages;
-
+```php
 use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
-use Filament\Pages\Page;
 
-class TestPage extends Page implements HasActions
+public function testAction(): Action
 {
-    use InteractsWithActions;
-
-    protected static ?string $navigationLabel = 'Test Page';
-
-    protected static string $view = 'filament.pages.test-page';
-
-    public function testAction(): Action
-    {
-        return Action::make('test')
-            ->action(function (array $arguments) {
-                dd('test action called with id: '.$arguments['id']);
-            });
-    }
+    return Action::make('test')
+        ->requiresConfirmation()
+        ->action(function (array $arguments) {
+            dd('Test action called', $arguments);
+        });
 }
-
 ```
 
-And this is how you can trigger that action from within a script block or from a custom HTML element.
+You can trigger that action from a click in your HTML using the `wire:click` attribute, calling the `mountAction()` method and optionally passing in any arguments that you want to be available:
 
-```HTML
-<div>
-    <button wire:click="mountAction('test', {id: '123'})">Button 1</button>
-    <button id="custom-button-from-library">Button 2</button>
-</div>
-
-@script
-    <script>
-     document.getElementById("custom-button-from-library").addEventListener("click",function(){
-        $wire.mountAction("test", {id: '345'})
-     })   
-    </script>
-@endscript
-
+```blade
+<button wire:click="mountAction('test', { id: 12345 })">
+    Button
+</button>
 ```
 
+To trigger that action from JavaScript, you can use the [`$wire` utility](https://livewire.laravel.com/docs/alpine#controlling-livewire-from-alpine-using-wire), passing in the same arguments:
 
+```js
+$wire.mountAction('test', { id: 12345 })
+```
