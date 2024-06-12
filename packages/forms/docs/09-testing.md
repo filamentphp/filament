@@ -145,6 +145,17 @@ it('has a title field', function () {
 });
 ```
 
+To assert that a form does not have a given field, pass the field name to `assertFormFieldDoesNotExist()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('does not have a conditional field', function () {
+    livewire(CreatePost::class)
+        ->assertFormFieldDoesNotExist('no-such-field');
+});
+```
+
 > If you have multiple forms on a Livewire component, you can specify which form you want to check for the existence of the field like `assertFormFieldExists('title', 'createPostForm')`.
 
 ### Hidden fields
@@ -222,6 +233,17 @@ test('comments section exists' function () {
 });
 ```
 
+To assert that a form does not have a given component, pass the component key to `assertFormComponentDoesNotExist()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('does not have a conditional component', function () {
+    livewire(CreatePost::class)
+        ->assertFormComponentDoesNotExist('no-such-section');
+});
+```
+
 To check if the component exists and passes a given truth test, you can pass a function to the second argument of `assertFormComponentExists()`, returning true or false if the component passes the test or not:
 
 ```php
@@ -237,6 +259,54 @@ test('comments section has heading' function () {
                 return $component->getHeading() === 'Comments';
             },
         );
+});
+```
+
+### Hidden components
+
+To ensure that a component is visible, pass the name to `assertFormComponentIsVisible()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+test('comments-section is visible', function () {
+    livewire(CreatePost::class)
+        ->assertFormComponentIsVisible('comments-section');
+});
+```
+
+Or to ensure that a component is hidden you can pass the name to `assertFormComponentIsHidden()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+test('comments-section is hidden', function () {
+    livewire(CreatePost::class)
+        ->assertFormComponentIsHidden('comments-section');
+});
+```
+
+### Disabled components
+
+To ensure that a component is enabled, pass the name to `assertFormComponentIsEnabled()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+test('comments-section is enabled', function () {
+    livewire(CreatePost::class)
+        ->assertFormComponentIsEnabled('comments-section');
+});
+```
+
+Or to ensure that a component is disabled you can pass the name to `assertFormComponentIsDisabled()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+test('comments-section is disabled', function () {
+    livewire(CreatePost::class)
+        ->assertFormComponentIsDisabled('comments-section');
 });
 ```
 
