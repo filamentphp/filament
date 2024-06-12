@@ -201,6 +201,128 @@ class TestsForms
         };
     }
 
+    public function assertFormComponentDoesNotExist(): Closure
+    {
+        return function (string $componentKey, string $formName = 'form'): static {
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            $components = $form->getFlatComponentsByKey(withHidden: true);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertArrayNotHasKey(
+                $componentKey,
+                $components,
+                "Failed asserting that a component with the key [{$componentKey}] does not exist on the form named [{$formName}] on the [{$livewireClass}] component."
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertFormComponentIsDisabled(): Closure
+    {
+        return function (string $componentKey, string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormComponentExists($componentKey, $formName);
+
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            /** @var ?Component $component */
+            $component = $form->getFlatComponentsByKey(withHidden: true)[$componentKey] ?? null;
+
+            $livewireClass = $this->instance()::class;
+
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormComponentExists($componentKey, $formName, function (Component $component) use ($componentKey, $formName, $livewireClass): bool {
+                Assert::assertTrue(
+                    $component->isDisabled(),
+                    "Failed asserting that a component with the key [{$componentKey}] is disabled on the form named [{$formName}] on the [{$livewireClass}] component."
+                );
+
+                return true;
+            });
+
+            return $this;
+        };
+    }
+
+    public function assertFormComponentIsEnabled(): Closure
+    {
+        return function (string $componentKey, string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormComponentExists($componentKey, $formName);
+
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            /** @var ?Component $component */
+            $component = $form->getFlatComponentsByKey(withHidden: true)[$componentKey] ?? null;
+
+            $livewireClass = $this->instance()::class;
+
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormComponentExists($componentKey, $formName, function (Component $component) use ($componentKey, $formName, $livewireClass): bool {
+                Assert::assertTrue(
+                    $component->isEnabled(),
+                    "Failed asserting that a component with the key [{$componentKey}] is enabled on the form named [{$formName}] on the [{$livewireClass}] component."
+                );
+
+                return true;
+            });
+
+            return $this;
+        };
+    }
+
+    public function assertFormComponentIsHidden(): Closure
+    {
+        return function (string $componentKey, string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormComponentExists($componentKey, $formName);
+
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            $components = $form->getFlatComponentsByKey(withHidden: false);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertArrayNotHasKey(
+                $componentKey,
+                $components,
+                "Failed asserting that a component with the key [{$componentKey}] is hidden on the form named [{$formName}] on the [{$livewireClass}] component."
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertFormComponentIsVisible(): Closure
+    {
+        return function (string $componentKey, string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormComponentExists($componentKey, $formName);
+
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            $components = $form->getFlatComponentsByKey(withHidden: false);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertArrayHasKey(
+                $componentKey,
+                $components,
+                "Failed asserting that a component with the key [{$componentKey}] is visible on the form named [{$formName}] on the [{$livewireClass}] component."
+            );
+
+            return $this;
+        };
+    }
+
     public function assertFormFieldExists(): Closure
     {
         return function (string $fieldName, string | Closure $formName = 'form', ?Closure $checkFieldUsing = null): static {
@@ -232,6 +354,26 @@ class TestsForms
                     "Failed asserting that a field with the name [{$fieldName}] and provided configuration exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
                 );
             }
+
+            return $this;
+        };
+    }
+
+    public function assertFormFieldDoesNotExist(): Closure
+    {
+        return function (string $fieldName, string $formName = 'form'): static {
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            $fields = $form->getFlatFields(withHidden: false);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertArrayNotHasKey(
+                $fieldName,
+                $fields,
+                "Failed asserting that a field with the name [{$fieldName}] does not exist on the form named [{$formName}] on the [{$livewireClass}] component."
+            );
 
             return $this;
         };
