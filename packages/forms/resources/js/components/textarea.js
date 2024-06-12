@@ -29,6 +29,7 @@ export default function textareaFormComponent({ initialHeight }) {
             const observer = new ResizeObserver(() => {
                 this.height = this.$el.style.height;
             });
+            
             observer.observe(this.$el);
         },
     }
