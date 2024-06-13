@@ -204,10 +204,10 @@ class TestsForms
     public function assertFormComponentDoesNotExist(): Closure
     {
         return function (string $componentKey, string $formName = 'form'): static {
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$formName};
 
-            $components = $form->getFlatComponentsByKey(withHidden: true);
+            $components = $form->getFlatComponents(withHidden: true);
 
             $livewireClass = $this->instance()::class;
 
@@ -260,7 +260,7 @@ class TestsForms
     public function assertFormFieldDoesNotExist(): Closure
     {
         return function (string $fieldName, string $formName = 'form'): static {
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$formName};
 
             $fields = $form->getFlatFields(withHidden: false);

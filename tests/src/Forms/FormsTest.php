@@ -31,6 +31,11 @@ it('has fields', function () {
         });
 });
 
+it('does not have fields', function () {
+    livewire(TestComponentWithForm::class)
+        ->assertFormFieldDoesNotExist('not-such-field');
+});
+
 it('has fields on multiple forms', function () {
     livewire(TestComponentWithMultipleForms::class)
         ->assertFormFieldExists('title', 'fooForm')
@@ -97,6 +102,11 @@ it('has layout components', function () {
         ->assertFormComponentExists('section.nested.section', function (Section $section): bool {
             return $section->getHeading() === 'I am nested';
         });
+});
+
+it('does not have layout components', function () {
+    livewire(TestComponentWithForm::class)
+        ->assertFormComponentDoesNotExist('no-such-section');
 });
 
 class TestComponentWithForm extends Livewire
