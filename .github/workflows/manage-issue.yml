@@ -11,7 +11,7 @@ jobs:
       - uses: actions/github-script@v3
         with:
           script: |
-            const URL_REGEXP = /### Reproduction repository[\r\n]+([^#]+)###/m
+            const URL_REGEXP = /### Reproduction repository \(issue will be closed if this is not valid\)[\r\n]+([^#]+)###/m
             const REPRO_STEPS_REGEXP = /### Steps to reproduce[\r\n]+([^#]+)###/m
             const LABEL_NEEDS_MORE_INFORMATION = 'needs more info'
             const LABEL_UNCONFIRMED = 'unconfirmed'
