@@ -494,7 +494,7 @@ ImportColumn::make('sku')
     ->example('ABC123')
 ```
 
-Or you can add multiple example rows to the CSV using the `examples()` method:
+Or if you want to add more than one example row, you can pass array to `examples()` method:
 
 ```php
 use Filament\Actions\Imports\ImportColumn;
