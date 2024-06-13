@@ -141,9 +141,9 @@ Builder\Block::make('paragraph')
 
 <AutoScreenshot name="forms/fields/builder/icons" alt="Builder with block icons in the dropdown" version="3.x" />
 
-### Enable block icons in header
+### Adding icons to the header of blocks
 
-By default, items in the builder don't have an icon next to the label. You may enable this using the `blockIcons(true)` method:
+By default, blocks in the builder don't have an icon next to the header label, just in the dropdown to add new blocks. You may enable this using the `blockIcons()` method:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -152,10 +152,8 @@ Builder::make('content')
     ->blocks([
         // ...
     ])
-    ->blockIcons(true)
+    ->blockIcons()
 ```
-
-This will automatically pull in the icon set for the `Builder\Block`.
 
 ## Adding items
 
