@@ -2,6 +2,7 @@
 
 namespace Filament\Schema\Components\Utilities;
 
+use Exception;
 use Filament\Schema\Components\Component;
 
 class Get
@@ -11,13 +12,18 @@ class Get
     ) {
     }
 
-    public function __invoke(string | Component $path, bool $isAbsolute = false): mixed
+    public function __invoke(string | Component $key, bool $isAbsolute = false): mixed
     {
+        $key = $this->component->resolveRelativeKey($key);
+
         $livewire = $this->component->getLivewire();
 
-        return data_get(
-            $livewire,
-            $this->component->resolveRelativeStatePath($path, $isAbsolute)
-        );
+        $component = $livewire->getSchemaComponent($key);
+
+        if (! $component) {
+            throw new Exception("Component with key [{$key}] not found on Livewire component[" . $livewire::class . '].');
+        }
+
+        return $component->getState();
     }
 }

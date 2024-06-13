@@ -8,6 +8,9 @@ use Filament\Actions\Action;
 use Filament\Schema\Components\Attributes\Exposed;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Contracts\HasAffixActions;
+use Filament\Schema\Components\StateCasts\Contracts\StateCast;
+use Filament\Schema\Components\StateCasts\EnumArrayStateCast;
+use Filament\Schema\Components\StateCasts\EnumStateCast;
 use Filament\Schema\Schema;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentIcon;
@@ -1274,6 +1277,20 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             'filament-forms::select.refreshSelectedOptionLabel',
             livewireId: $livewire->getId(),
             statePath: $this->getStatePath(),
+        );
+    }
+
+    public function getEnumDefaultStateCast(): ?StateCast
+    {
+        $enum = $this->getEnum();
+
+        if (blank($enum)) {
+            return null;
+        }
+
+        return app(
+            $this->isMultiple() ? EnumArrayStateCast::class : EnumStateCast::class,
+            ['enum' => $enum],
         );
     }
 }

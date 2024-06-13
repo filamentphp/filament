@@ -257,7 +257,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
         $record
             ->getMedia($this->getCollection() ?? 'default')
-            ->whereNotIn('uuid', array_keys($this->getState() ?? []))
+            ->whereNotIn('uuid', array_keys($this->getRawState() ?? []))
             ->when($this->hasMediaFilter(), fn (Collection $media): Collection => $this->filterMedia($media))
             ->each(fn (Media $media) => $media->delete());
     }

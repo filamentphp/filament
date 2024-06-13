@@ -4,6 +4,9 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Schema\Components\StateCasts\Contracts\StateCast;
+use Filament\Schema\Components\StateCasts\EnumArrayStateCast;
+use Filament\Schema\Components\StateCasts\EnumStateCast;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Htmlable;
@@ -304,5 +307,19 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
     public function isBulkToggleable(): bool
     {
         return (bool) $this->evaluate($this->isBulkToggleable);
+    }
+
+    public function getEnumDefaultStateCast(): ?StateCast
+    {
+        $enum = $this->getEnum();
+
+        if (blank($enum)) {
+            return null;
+        }
+
+        return app(
+            EnumArrayStateCast::class,
+            ['enum' => $enum],
+        );
     }
 }

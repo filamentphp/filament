@@ -140,17 +140,6 @@ trait CanBeValidated
         return $this;
     }
 
-    public function enum(string | Closure $enum): static
-    {
-        $this->rule(static function (Field $component) use ($enum) {
-            $enum = $component->evaluate($enum);
-
-            return new Enum($enum);
-        }, static fn (Field $component): bool => filled($component->evaluate($enum)));
-
-        return $this;
-    }
-
     public function exists(string | Closure | null $table = null, string | Closure | null $column = null, ?Closure $modifyRuleUsing = null): static
     {
         $this->rule(static function (Field $component, ?string $model) use ($column, $modifyRuleUsing, $table) {
@@ -671,6 +660,7 @@ trait CanBeValidated
         $rules = [
             $this->getRequiredValidationRule(),
             ...($this instanceof CanBeLengthConstrained ? $this->getLengthValidationRules() : []),
+            ...(filled($enum = $this->getEnum()) ? [new Enum($enum)] : []),
         ];
 
         if (filled($regexPattern = $this->getRegexPattern())) {

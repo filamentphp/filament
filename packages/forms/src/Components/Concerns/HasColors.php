@@ -44,8 +44,8 @@ trait HasColors
         }
 
         if (
-            is_string($this->options) &&
-            enum_exists($enum = $this->options) &&
+            blank($colors) &&
+            filled($enum = $this->getEnum()) &&
             is_a($enum, ColorInterface::class, allow_string: true)
         ) {
             return array_reduce($enum::cases(), function (array $carry, ColorInterface & UnitEnum $case): array {

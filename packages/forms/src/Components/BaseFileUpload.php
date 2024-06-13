@@ -78,16 +78,16 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     {
         parent::setUp();
 
-        $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $state): void {
-            if (blank($state)) {
-                $component->state([]);
+        $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $rawState): void {
+            if (blank($rawState)) {
+                $component->rawState([]);
 
                 return;
             }
 
             $shouldFetchFileInformation = $component->shouldFetchFileInformation();
 
-            $files = collect(Arr::wrap($state))
+            $files = collect(Arr::wrap($rawState))
                 ->filter(static function (string $file) use ($component, $shouldFetchFileInformation): bool {
                     if (blank($file)) {
                         return false;
@@ -106,31 +106,31 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 ->mapWithKeys(static fn (string $file): array => [((string) Str::uuid()) => $file])
                 ->all();
 
-            $component->state($files);
+            $component->rawState($files);
         });
 
-        $this->afterStateUpdated(static function (BaseFileUpload $component, $state) {
-            if ($state instanceof TemporaryUploadedFile) {
+        $this->afterStateUpdated(static function (BaseFileUpload $component, $rawState) {
+            if ($rawState instanceof TemporaryUploadedFile) {
                 return;
             }
 
-            if (blank($state)) {
+            if (blank($rawState)) {
                 return;
             }
 
-            if (is_array($state)) {
+            if (is_array($rawState)) {
                 return;
             }
 
-            $component->state([(string) Str::uuid() => $state]);
+            $component->rawState([(string) Str::uuid() => $rawState]);
         });
 
         $this->beforeStateDehydrated(static function (BaseFileUpload $component): void {
             $component->saveUploadedFiles();
         });
 
-        $this->dehydrateStateUsing(static function (BaseFileUpload $component, ?array $state): string | array | null | TemporaryUploadedFile {
-            $files = array_values($state ?? []);
+        $this->dehydrateStateUsing(static function (BaseFileUpload $component, ?array $rawState): string | array | null | TemporaryUploadedFile {
+            $files = array_values($rawState ?? []);
 
             if ($component->isMultiple()) {
                 return $files;
@@ -210,20 +210,6 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
                 $component->getDiskName(),
             );
         });
-    }
-
-    protected function callAfterStateUpdatedHook(Closure $hook): void
-    {
-        /** @var array<string | TemporaryUploadedFile> $state */
-        $state = $this->getState() ?? [];
-
-        /** @var array<string | TemporaryUploadedFile> $oldState */
-        $oldState = $this->getOldState() ?? [];
-
-        $this->evaluate($hook, [
-            'state' => $this->isMultiple() ? $state : Arr::first($state),
-            'old' => $this->isMultiple() ? $oldState : Arr::first($oldState),
-        ]);
     }
 
     /**
@@ -645,7 +631,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     #[Renderless]
     public function removeUploadedFile(string $fileKey): string | TemporaryUploadedFile | null
     {
-        $files = $this->getState();
+        $files = $this->getRawState();
         $file = $files[$fileKey] ?? null;
 
         if (! $file) {
@@ -660,7 +646,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
         unset($files[$fileKey]);
 
-        $this->state($files);
+        $this->rawState($files);
 
         return $file;
     }
@@ -703,11 +689,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
         $fileKeys = array_flip($fileKeys);
 
-        $state = collect($this->getState())
+        $rawState = collect($this->getRawState())
             ->sortBy(static fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
             ->all();
 
-        $this->state($state);
+        $this->rawState($rawState);
     }
 
     /**
@@ -719,7 +705,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     {
         $urls = [];
 
-        foreach ($this->getState() ?? [] as $fileKey => $file) {
+        foreach ($this->getRawState() ?? [] as $fileKey => $file) {
             if ($file instanceof TemporaryUploadedFile) {
                 $urls[$fileKey] = null;
 
@@ -743,8 +729,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     public function saveUploadedFiles(): void
     {
-        if (blank($this->getState())) {
-            $this->state([]);
+        if (blank($this->getRawState())) {
+            $this->rawState([]);
 
             return;
         }
@@ -753,7 +739,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             return;
         }
 
-        $state = array_filter(array_map(function (TemporaryUploadedFile | string $file) {
+        $rawState = array_filter(array_map(function (TemporaryUploadedFile | string $file) {
             if (! $file instanceof TemporaryUploadedFile) {
                 return $file;
             }
@@ -779,15 +765,15 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
             $file->delete();
 
             return $storedFile;
-        }, Arr::wrap($this->getState())));
+        }, Arr::wrap($this->getRawState())));
 
         if ($this->isReorderable && ($callback = $this->reorderUploadedFilesUsing)) {
-            $state = $this->evaluate($callback, [
-                'state' => $state,
+            $rawState = $this->evaluate($callback, [
+                'state' => $rawState,
             ]);
         }
 
-        $this->state($state);
+        $this->rawState($rawState);
     }
 
     public function storeFileName(string $file, string $fileName): void
@@ -817,18 +803,18 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
      */
     public function getStoredFileNames(): string | array | null
     {
-        $state = null;
+        $rawState = null;
         $statePath = $this->fileNamesStatePath;
 
         if (filled($statePath)) {
-            $state = $this->evaluate(fn (Get $get) => $get($statePath));
+            $rawState = $this->makeGetUtility()($statePath);
         }
 
-        if (blank($state) && $this->isMultiple()) {
+        if (blank($rawState) && $this->isMultiple()) {
             return [];
         }
 
-        return $state;
+        return $rawState;
     }
 
     public function isMultiple(): bool

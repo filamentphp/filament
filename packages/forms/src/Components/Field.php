@@ -5,12 +5,16 @@ namespace Filament\Forms\Components;
 use Exception;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Contracts\HasHintActions;
+use Filament\Schema\Components\StateCasts\Contracts\StateCast;
+use Filament\Schema\Components\StateCasts\EnumArrayStateCast;
+use Filament\Schema\Components\StateCasts\EnumStateCast;
 
 class Field extends Component implements Contracts\HasValidationRules, HasHintActions
 {
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeMarkedAsRequired;
     use Concerns\CanBeValidated;
+    use Concerns\HasEnum;
     use Concerns\HasExtraFieldWrapperAttributes;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
@@ -43,5 +47,33 @@ class Field extends Component implements Contracts\HasValidationRules, HasHintAc
     public static function getDefaultName(): ?string
     {
         return null;
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        $casts = parent::getDefaultStateCasts();
+
+        if ($enumStateCast = $this->getEnumDefaultStateCast()) {
+            $casts[] = $enumStateCast;
+        }
+
+        return $casts;
+    }
+
+    public function getEnumDefaultStateCast(): ?StateCast
+    {
+        $enum = $this->getEnum();
+
+        if (blank($enum)) {
+            return null;
+        }
+
+        return app(
+            EnumStateCast::class,
+            ['enum' => $enum],
+        );
     }
 }
