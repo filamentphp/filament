@@ -236,3 +236,34 @@ public function publishAction(): Action
 Now, when the first action is submitted, the second action will open in its place. The [arguments](#passing-action-arguments) that were originally passed to the first action get passed to the second action, so you can use them to persist data between requests.
 
 If the first action is canceled, the second one is not opened. If the second action is canceled, the first one has already run and cannot be cancelled.
+
+## Programmatically triggering actions
+
+Sometimes you may need to trigger an action without the user clicking on the built-in trigger button, especially from JavaScript. Here is an example action which could be registered on a Livewire component:
+
+```php
+use Filament\Actions\Action;
+
+public function testAction(): Action
+{
+    return Action::make('test')
+        ->requiresConfirmation()
+        ->action(function (array $arguments) {
+            dd('Test action called', $arguments);
+        });
+}
+```
+
+You can trigger that action from a click in your HTML using the `wire:click` attribute, calling the `mountAction()` method and optionally passing in any arguments that you want to be available:
+
+```blade
+<button wire:click="mountAction('test', { id: 12345 })">
+    Button
+</button>
+```
+
+To trigger that action from JavaScript, you can use the [`$wire` utility](https://livewire.laravel.com/docs/alpine#controlling-livewire-from-alpine-using-wire), passing in the same arguments:
+
+```js
+$wire.mountAction('test', { id: 12345 })
+```

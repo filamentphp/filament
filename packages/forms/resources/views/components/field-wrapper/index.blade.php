@@ -77,7 +77,9 @@
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon || count($hintActions))
             <div
                 @class([
-                    'flex items-center justify-between gap-x-3',
+                    'flex items-center gap-x-3',
+                    'justify-between' => (! $labelSrOnly) || $labelPrefix || $labelSuffix,
+                    'justify-end' => $labelSrOnly && ! ($labelPrefix || $labelSuffix),
                     ($label instanceof \Illuminate\View\ComponentSlot) ? $label->attributes->get('class') : null,
                 ])
             >
