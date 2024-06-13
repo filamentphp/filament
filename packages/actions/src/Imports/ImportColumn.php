@@ -115,6 +115,8 @@ class ImportColumn extends Component
     public function example(mixed $example): static
     {
         $this->examples($example);
+
+        return $this;
     }
 
     /**

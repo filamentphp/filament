@@ -336,7 +336,7 @@ trait CanImportRecords
 
                     $rowsCount = array_reduce(
                         $columns,
-                        function ($maxCount, ImportColumn $column) {
+                        function (?int $maxCount, ImportColumn $column) {
                             return max($maxCount, count($column->getExamples()));
                         },
                         0
