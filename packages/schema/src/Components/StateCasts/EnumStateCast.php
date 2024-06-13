@@ -8,12 +8,11 @@ use Filament\Schema\Components\StateCasts\Contracts\StateCast;
 class EnumStateCast implements StateCast
 {
     /**
-     * @param class-string<BackedEnum> $enum
+     * @param  class-string<BackedEnum>  $enum
      */
     public function __construct(
         protected string $enum,
-    )
-    {
+    ) {
     }
 
     public function get(mixed $state): ?BackedEnum

@@ -8,14 +8,16 @@ use Filament\Schema\Components\StateCasts\Contracts\StateCast;
 class EnumArrayStateCast implements StateCast
 {
     /**
-     * @param class-string<BackedEnum> $enum
+     * @param  class-string<BackedEnum>  $enum
      */
     public function __construct(
         protected string $enum,
-    )
-    {
+    ) {
     }
 
+    /**
+     * @return array<BackedEnum>
+     */
     public function get(mixed $state): array
     {
         if (blank($state)) {
@@ -47,6 +49,9 @@ class EnumArrayStateCast implements StateCast
         );
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function set(mixed $state): array
     {
         if (blank($state)) {
