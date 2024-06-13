@@ -5,7 +5,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
@@ -171,10 +170,5 @@ class TestComponentWithRepeater extends Livewire
                     ]),
             ])
             ->statePath('data');
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
     }
 }

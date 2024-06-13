@@ -4,7 +4,6 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\UploadedFile;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
@@ -38,10 +37,5 @@ class TestComponentWithFileUpload extends Livewire
                 FileUpload::make('multiple-files')->multiple(),
             ])
             ->statePath('data');
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
     }
 }

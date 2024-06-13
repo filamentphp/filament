@@ -5,7 +5,6 @@ use Filament\Schema\Components\Section;
 use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
-use Illuminate\Contracts\View\View;
 
 use function Filament\Tests\livewire;
 
@@ -127,11 +126,6 @@ class TestComponentWithForm extends Livewire
                     ]),
             ]);
     }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
-    }
 }
 
 class TestComponentWithMultipleForms extends Livewire
@@ -179,10 +173,5 @@ class TestComponentWithMultipleForms extends Livewire
 
             TextInput::make('visible'),
         ];
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
     }
 }

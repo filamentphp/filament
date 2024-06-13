@@ -1,12 +1,15 @@
 <?php
 
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\TextInput;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Section;
 use Filament\Schema\Components\Utilities\Get;
 use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
@@ -686,4 +689,134 @@ test('parent sibling state can be retrieved absolutely from another component', 
 
     expect($placeholder)
         ->getContent()->toBe($state);
+});
+
+test('components can set their own state after they are hydrated', function () {
+    livewire(new class extends Livewire
+    {
+        public function form(Schema $form): Schema
+        {
+            return $form
+                ->schema([
+                    TextInput::make('foo')
+                        ->afterStateHydrated(fn (TextInput $component) => $component->state('bar')),
+                ])
+                ->statePath('data');
+        }
+    })
+        ->assertFormSet([
+            'foo' => 'bar',
+        ]);
+});
+
+test('components can set their own state after they are updated', function () {
+    livewire(new class extends Livewire
+    {
+        public function form(Schema $form): Schema
+        {
+            return $form
+                ->schema([
+                    TextInput::make('foo')
+                        ->afterStateUpdated(fn (TextInput $component) => $component->state('bar')),
+                ])
+                ->statePath('data');
+        }
+    })
+        ->fillForm([
+            'foo' => 'baz',
+        ])
+        ->assertFormSet([
+            'foo' => 'bar',
+        ]);
+});
+
+test('components can inject their own state after they are updated', function () {
+    livewire(new class extends Livewire
+    {
+        public function form(Schema $form): Schema
+        {
+            return $form
+                ->schema([
+                    TextInput::make('foo')
+                        ->afterStateUpdated(fn (TextInput $component, $state) => $component->state(strrev($state))),
+                ])
+                ->statePath('data');
+        }
+    })
+        ->fillForm([
+            'foo' => $state = Str::random(),
+        ])
+        ->assertFormSet([
+            'foo' => strrev($state),
+        ]);
+});
+
+test('components can get their own state from the component object', function () {
+    livewire(new class extends Livewire
+    {
+        public function form(Schema $form): Schema
+        {
+            return $form
+                ->schema([
+                    TextInput::make('foo')
+                        ->afterStateUpdated(fn (TextInput $component) => $component->state(strrev($component->getState()))),
+                ])
+                ->statePath('data');
+        }
+    })
+        ->fillForm([
+            'foo' => $state = Str::random(),
+        ])
+        ->assertFormSet([
+            'foo' => strrev($state),
+        ]);
+});
+
+test('layout components can get their state from the component object', function () {
+    livewire(new class extends Livewire
+    {
+        public function form(Schema $form): Schema
+        {
+            return $form
+                ->schema([
+                    Section::make(fn (Section $component) => 'Heading ' . ($component->getState()['foo'] ?? null))
+                        ->schema([
+                            TextInput::make('foo'),
+                        ]),
+                ])
+                ->statePath('data');
+        }
+    })
+        ->fillForm([
+            'foo' => $state = Str::random(),
+        ])
+        ->assertSeeText('Heading ' . $state);
+});
+
+test('components can inject their old state after it is updated', function () {
+    livewire(new class extends Livewire
+    {
+        public $storedOldState = null;
+
+        public function form(Schema $form): Schema
+        {
+            return $form
+                ->schema([
+                    TextInput::make('foo')
+                        ->afterStateUpdated(fn ($old) => $this->storedOldState = $old),
+                ])
+                ->statePath('data');
+        }
+    })
+        ->fillForm([
+            'foo' => $oldState = Str::random(),
+        ])
+        ->assertSet('storedOldState', null)
+        ->fillForm([
+            'foo' => $state = Str::random(),
+        ])
+        ->assertSet('storedOldState', $oldState)
+        ->assertFormSet([
+            'foo' => $state,
+        ]);
 });
