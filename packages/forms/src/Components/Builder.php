@@ -141,18 +141,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         $action = Action::make($this->getAddActionName())
             ->label(fn (Builder $component) => $component->getAddActionLabel())
-            ->modalHeading(fn (Builder $component) => __('filament-forms::components.builder.actions.add.modal.heading', [
-                'label' => $component->getLabel(),
-            ]))
-            ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add.modal.actions.add.label'))
             ->color('gray')
-            ->form(function (array $arguments, Builder $component): ?array {
-                if ($component->hasBlockPreviews()) {
-                    return $component->getBlock($arguments['block'])->getChildComponents();
-                }
-
-                return null;
-            })
             ->action(function (array $arguments, Builder $component, array $data = []): void {
                 $newUuid = $component->generateUuid();
 
@@ -183,6 +172,17 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             ->size(ActionSize::Small)
             ->visible(fn (Builder $component): bool => $component->isAddable());
 
+        if ($this->hasBlockPreviews()) {
+            $action
+                ->modalHeading(fn (Builder $component) => __('filament-forms::components.builder.actions.add.modal.heading', [
+                    'label' => $component->getLabel(),
+                ]))
+                ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add.modal.actions.add.label'))
+                ->form(function (array $arguments, Builder $component): array {
+                    return $component->getBlock($arguments['block'])->getChildComponents();
+                });
+        }
+
         if ($this->modifyAddActionUsing) {
             $action = $this->evaluate($this->modifyAddActionUsing, [
                 'action' => $action,
@@ -208,18 +208,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
     {
         $action = Action::make($this->getAddBetweenActionName())
             ->label(fn (Builder $component) => $component->getAddBetweenActionLabel())
-            ->modalHeading(fn (Builder $component) => __('filament-forms::components.builder.actions.add_between.modal.heading', [
-                'label' => $component->getLabel(),
-            ]))
-            ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add_between.modal.actions.add.label'))
             ->color('gray')
-            ->form(function (array $arguments, Builder $component): ?array {
-                if ($component->hasBlockPreviews()) {
-                    return $component->getBlock($arguments['block'])->getChildComponents();
-                }
-
-                return null;
-            })
             ->action(function (array $arguments, Builder $component, array $data = []): void {
                 $newKey = $component->generateUuid();
 
@@ -257,6 +246,17 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
             ->button()
             ->size(ActionSize::Small)
             ->visible(fn (Builder $component): bool => $component->isAddable());
+
+        if ($this->hasBlockPreviews()) {
+            $action
+                ->modalHeading(fn (Builder $component) => __('filament-forms::components.builder.actions.add_between.modal.heading', [
+                    'label' => $component->getLabel(),
+                ]))
+                ->modalSubmitActionLabel(__('filament-forms::components.builder.actions.add_between.modal.actions.add.label'))
+                ->form(function (array $arguments, Builder $component): array {
+                    return $component->getBlock($arguments['block'])->getChildComponents();
+                });
+        }
 
         if ($this->modifyAddBetweenActionUsing) {
             $action = $this->evaluate($this->modifyAddBetweenActionUsing, [
