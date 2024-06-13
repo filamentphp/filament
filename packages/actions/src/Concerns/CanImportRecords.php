@@ -338,7 +338,8 @@ trait CanImportRecords
                         $columns,
                         function ($maxCount, ImportColumn $column) {
                             return max($maxCount, count($column->getExamples()));
-                        }
+                        },
+                        0
                     );
 
                     $examples = [];
