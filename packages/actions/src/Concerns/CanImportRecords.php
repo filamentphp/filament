@@ -334,22 +334,13 @@ trait CanImportRecords
                         $columns,
                     ));
 
-                    /*
-                    Сount the number of lines in the file.
-                    It should be equal to the largest number of examples in the columns.
-                    */
-                    $rowsCount = 0;
-                    array_map(
-                        function (ImportColumn $column) use (&$rowsCount) {
-                            $rowsCount = count($column->getExamples()) > $rowsCount ? count($column->getExamples()) : $rowsCount;
-                        },
+                    $rowsCount = array_reduce(
                         $columns,
+                        function ($maxCount, ImportColumn $column) {
+                            return max($maxCount, count($column->getExamples()));
+                        }
                     );
 
-                    /*
-                    Get an array of “examples” in which the number of elements
-                    is equal to the number of lines in the file.
-                    */
                     $examples = [];
                     foreach ($columns as $column) {
                         $columnExamples = $column->getExamples();
@@ -359,9 +350,6 @@ trait CanImportRecords
                         }
                     }
 
-                    /*
-                    Filling out the file
-                    */
                     $csv->insertAll($examples);
 
                     return response()->streamDownload(function () use ($csv) {

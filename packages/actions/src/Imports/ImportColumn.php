@@ -51,12 +51,10 @@ class ImportColumn extends Component
 
     protected ?Importer $importer = null;
 
-    protected mixed $example = null;
-
     /**
-     * @var array<mixed>
+     * @var array<mixed> | Closure
      */
-    protected array $examples = [];
+    protected array | Closure $examples = [];
 
     protected string | Closure | null $exampleHeader = null;
 
@@ -116,16 +114,18 @@ class ImportColumn extends Component
 
     public function example(mixed $example): static
     {
-        $this->example = $example;
-
-        return $this;
+        $this->examples($example);
     }
 
     /**
-     * @param  array<mixed>  $examples
+     * @param mixed $examples
      */
-    public function examples(array $examples): static
+    public function examples(mixed $examples): static
     {
+        if (!is_array($examples) && !$examples instanceof Closure) {
+            $examples = Arr::wrap($examples);
+        }
+
         $this->examples = $examples;
 
         return $this;
@@ -447,9 +447,12 @@ class ImportColumn extends Component
         return $this->importer;
     }
 
+    /**
+     * @deprecated Use `getExamples()` instead.
+     */
     public function getExample(): mixed
     {
-        return $this->evaluate($this->example);
+        return Arr::first($this->getExamples());
     }
 
     /**
@@ -457,7 +460,7 @@ class ImportColumn extends Component
      */
     public function getExamples(): array
     {
-        return array_merge([$this->evaluate($this->example)], $this->examples);
+        return Arr::wrap($this->evaluate($this->examples));
     }
 
     /**
