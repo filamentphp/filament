@@ -244,7 +244,7 @@ it('does not have a conditional component', function () {
 });
 ```
 
-To check if the component exists and passes a given truth test, you can pass a function to the second argument of `assertFormComponentExists()`, returning true or false if the component passes the test or not.:
+To check if the component exists and passes a given truth test, you can pass a function to the second argument of `assertFormComponentExists()`, returning true or false if the component passes the test or not:
 
 ```php
 use Filament\Forms\Components\Component;
@@ -262,7 +262,7 @@ test('comments section has heading' function () {
 });
 ```
 
-If you want more informative test results output, you can embed an assertion within your truthy callback:
+If you want more informative test results, you can embed an assertion within your truth test callback:
 
 ```php
 use Filament\Forms\Components\Component;
@@ -277,7 +277,7 @@ test('comments section is enabled' function () {
             function (Component $component): bool {
                 Assert::assertTrue(
                     $component->isEnabled(),
-                    'Failed asserting that comments-section is enabled'
+                    'Failed asserting that comments-section is enabled.',
                 );
                 
                 return true;
