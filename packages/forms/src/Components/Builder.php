@@ -51,6 +51,8 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 
     protected bool | Closure $hasBlockNumbers = true;
 
+    protected bool | Closure $hasBlockIcons = false;
+
     protected bool | Closure $hasBlockPreviews = false;
 
     protected bool | Closure $hasInteractiveBlockPreviews = false;
@@ -841,6 +843,13 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
         return $this;
     }
 
+    public function blockIcons(bool | Closure $condition = true): static
+    {
+        $this->hasBlockIcons = $condition;
+
+        return $this;
+    }
+
     public function blockPreviews(bool | Closure $condition = true, bool | Closure $areInteractive = false): static
     {
         $this->hasBlockPreviews = $condition;
@@ -953,6 +962,11 @@ class Builder extends Field implements CanConcealComponents, HasExtraItemActions
     public function hasBlockNumbers(): bool
     {
         return (bool) $this->evaluate($this->hasBlockNumbers);
+    }
+
+    public function hasBlockIcons(): bool
+    {
+        return (bool) $this->evaluate($this->hasBlockIcons);
     }
 
     public function hasBlockPreviews(): bool
