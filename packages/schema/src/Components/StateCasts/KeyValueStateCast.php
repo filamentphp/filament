@@ -24,7 +24,13 @@ class KeyValueStateCast implements StateCast
             return $state;
         }
 
-        return Arr::pluck($state, 'value', 'key');
+        $state = Arr::pluck($state, 'value', 'key');
+
+        if (array_key_exists('', $state)) {
+            unset($state['']);
+        }
+
+        return $state;
     }
 
     /**
@@ -42,6 +48,10 @@ class KeyValueStateCast implements StateCast
 
         if (is_array($state[array_key_first($state)])) {
             return $state;
+        }
+
+        if (array_key_exists('', $state)) {
+            unset($state['']);
         }
 
         return array_map(

@@ -295,6 +295,17 @@ trait HasState
             $container->hydrateState($hydratedDefaultState, $andCallHydrationHooks);
         }
 
+        $rawState = $this->getRawState();
+        $originalRawState = $rawState;
+
+        foreach ($this->getStateCasts() as $stateCast) {
+            $rawState = $stateCast->set($rawState);
+        }
+
+        if ($rawState !== $originalRawState) {
+            $this->rawState($rawState);
+        }
+
         if ($andCallHydrationHooks) {
             $this->callAfterStateHydrated();
         }
