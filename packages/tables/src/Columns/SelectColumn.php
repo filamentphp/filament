@@ -2,9 +2,9 @@
 
 namespace Filament\Tables\Columns;
 
-use Filament\Forms\Components\Concerns\HasEnum;
 use Filament\Forms\Components\Concerns\CanDisableOptions;
 use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
+use Filament\Forms\Components\Concerns\HasEnum;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Tables\Columns\Contracts\Editable;

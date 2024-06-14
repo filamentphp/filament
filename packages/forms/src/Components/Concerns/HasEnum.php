@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use UnitEnum;
 
 trait HasEnum
 {
@@ -15,6 +16,9 @@ trait HasEnum
         return $this;
     }
 
+    /**
+     * @return ?class-string<UnitEnum>
+     */
     public function getEnum(): ?string
     {
         return $this->evaluate($this->enum);

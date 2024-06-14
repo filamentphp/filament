@@ -6,7 +6,6 @@ use Exception;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Contracts\HasHintActions;
 use Filament\Schema\Components\StateCasts\Contracts\StateCast;
-use Filament\Schema\Components\StateCasts\EnumArrayStateCast;
 use Filament\Schema\Components\StateCasts\EnumStateCast;
 
 class Field extends Component implements Contracts\HasValidationRules, HasHintActions

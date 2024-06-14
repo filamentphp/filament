@@ -2,7 +2,6 @@
 
 namespace Filament\Schema\Components\Utilities;
 
-use Exception;
 use Filament\Schema\Components\Component;
 
 class Set
@@ -14,19 +13,23 @@ class Set
 
     public function __invoke(string | Component $key, mixed $state, bool $isAbsolute = false): mixed
     {
-        $key = $this->component->resolveRelativeKey($key);
-
         $livewire = $this->component->getLivewire();
 
-        $component = $livewire->getSchemaComponent($key);
-
-        if (! $component) {
-            throw new Exception("Component with key [{$key}] not found on Livewire component[" . $livewire::class . '].');
-        }
+        $component = $livewire->getSchemaComponent(
+            $this->component->resolveRelativeKey($key),
+        );
 
         $state = $this->component->evaluate($state);
 
-        $component->state($state);
+        if ($component) {
+            $component->state($state);
+        } else {
+            data_set(
+                $livewire,
+                $this->component->resolveRelativeStatePath($key, $isAbsolute),
+                $state,
+            );
+        }
 
         return $state;
     }

@@ -373,10 +373,9 @@ class KeyValue extends Field
 
     public function getDefaultStateCasts(): array
     {
-        $casts = parent::getDefaultStateCasts();
-
-        $casts[] = app(KeyValueStateCast::class);
-
-        return $casts;
+        return [
+            ...parent::getDefaultStateCasts(),
+            app(KeyValueStateCast::class),
+        ];
     }
 }
