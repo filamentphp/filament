@@ -5,6 +5,7 @@ namespace Filament\Schema\Components\Concerns;
 use Closure;
 use Filament\Infolists\Components\Entry;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Components\StateCasts\Contracts\StateCast;
 use Filament\Schema\Components\Utilities\Get;
 use Filament\Schema\Components\Utilities\Set;
 use Illuminate\Contracts\Support\Arrayable;
@@ -67,6 +68,40 @@ trait HasState
 
     protected bool | Closure $isDistinctList = false;
 
+    /**
+     * @var array<StateCast | Closure>
+     */
+    protected array $stateCasts = [];
+
+    public function stateCast(StateCast | Closure $cast): static
+    {
+        $this->stateCasts[] = $cast;
+
+        return $this;
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getStateCasts(): array
+    {
+        $casts = $this->getDefaultStateCasts();
+
+        foreach ($this->stateCasts as $cast) {
+            $casts[] = $this->evaluate($cast);
+        }
+
+        return $casts;
+    }
+
+    /**
+     * @return array<StateCast>
+     */
+    public function getDefaultStateCasts(): array
+    {
+        return [];
+    }
+
     public function afterStateHydrated(?Closure $callback): static
     {
         $this->afterStateHydrated = $callback;
@@ -106,17 +141,7 @@ trait HasState
 
     public function callAfterStateUpdated(): static
     {
-        foreach ($this->afterStateUpdated as $callback) {
-            $runId = spl_object_id($callback) . md5(json_encode($this->getState()));
-
-            if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $runId)) {
-                continue;
-            }
-
-            $this->callAfterStateUpdatedHook($callback);
-
-            store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
-        }
+        $this->callAfterStateUpdatedHooks();
 
         if ($this->isPartiallyRenderedAfterStateUpdated()) {
             $this->partiallyRender();
@@ -135,10 +160,28 @@ trait HasState
         return $this;
     }
 
+    public function callAfterStateUpdatedHooks(): static
+    {
+        foreach ($this->afterStateUpdated as $callback) {
+            $runId = spl_object_id($callback) . md5(json_encode($this->getState()));
+
+            if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $runId)) {
+                continue;
+            }
+
+            $this->callAfterStateUpdatedHook($callback);
+
+            store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
+        }
+
+        return $this;
+    }
+
     protected function callAfterStateUpdatedHook(Closure $hook): void
     {
         $this->evaluate($hook, [
             'old' => $this->getOldState(),
+            'oldRaw' => $this->getOldRawState(),
         ]);
     }
 
@@ -257,6 +300,17 @@ trait HasState
 
         foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
             $container->hydrateState($hydratedDefaultState, $andCallHydrationHooks);
+        }
+
+        $rawState = $this->getRawState();
+        $originalRawState = $rawState;
+
+        foreach ($this->getStateCasts() as $stateCast) {
+            $rawState = $stateCast->set($rawState);
+        }
+
+        if ($rawState !== $originalRawState) {
+            $this->rawState($rawState);
         }
 
         if ($andCallHydrationHooks) {
@@ -397,6 +451,17 @@ trait HasState
 
     public function state(mixed $state): static
     {
+        foreach (array_reverse($this->getStateCasts()) as $stateCast) {
+            $state = $stateCast->set($state);
+        }
+
+        $this->rawState($state);
+
+        return $this;
+    }
+
+    public function rawState(mixed $state): static
+    {
         $livewire = $this->getLivewire();
 
         data_set($livewire, $this->getStatePath(), $this->evaluate($state));
@@ -417,6 +482,25 @@ trait HasState
     }
 
     public function getOldState(): mixed
+    {
+        if (! Livewire::isLivewireRequest()) {
+            return null;
+        }
+
+        $state = $this->getOldRawState();
+
+        if (blank($state)) {
+            return null;
+        }
+
+        foreach ($this->getStateCasts() as $stateCast) {
+            $state = $stateCast->get($state);
+        }
+
+        return $state;
+    }
+
+    public function getOldRawState(): mixed
     {
         if (! Livewire::isLivewireRequest()) {
             return null;
@@ -503,12 +587,12 @@ trait HasState
 
     public function makeGetUtility(): Get
     {
-        return new Get($this);
+        return app(Get::class, ['component' => $this]);
     }
 
     public function makeSetUtility(): Set
     {
-        return new Set($this);
+        return app(Set::class, ['component' => $this]);
     }
 
     /**
@@ -643,14 +727,21 @@ trait HasState
 
     public function getState(): mixed
     {
-        $state = data_get($this->getLivewire(), $this->getStatePath());
+        $state = $this->getRawState();
 
-        if (is_array($state)) {
-            return $state;
+        foreach ($this->getStateCasts() as $stateCast) {
+            $state = $stateCast->get($state);
         }
 
-        if (blank($state)) {
-            return null;
+        return $state;
+    }
+
+    public function getRawState(): mixed
+    {
+        $state = data_get($this->getLivewire(), $this->getStatePath());
+
+        if ((! is_array($state)) && blank($state)) {
+            $state = null;
         }
 
         return $state;
