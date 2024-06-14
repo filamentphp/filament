@@ -119,12 +119,12 @@ class ImportColumn extends Component
         return $this;
     }
 
-    /**
-     * @param mixed $examples
-     */
     public function examples(mixed $examples): static
     {
-        if (!is_array($examples) && !$examples instanceof Closure) {
+        if (
+            (! is_array($examples)) &&
+            (! $examples instanceof Closure)
+        ) {
             $examples = Arr::wrap($examples);
         }
 

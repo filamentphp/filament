@@ -494,7 +494,7 @@ ImportColumn::make('sku')
     ->example('ABC123')
 ```
 
-Or if you want to add more than one example row, you can pass array to `examples()` method:
+Or if you want to add more than one example row, you can pass an array to the `examples()` method:
 
 ```php
 use Filament\Actions\Imports\ImportColumn;
