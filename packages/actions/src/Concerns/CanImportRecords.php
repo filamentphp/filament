@@ -334,17 +334,26 @@ trait CanImportRecords
                         $columns,
                     ));
 
-                    $example = array_map(
-                        fn (ImportColumn $column) => $column->getExample(),
+                    $columnExamples = array_map(
+                        fn (ImportColumn $column): array => $column->getExamples(),
                         $columns,
                     );
 
-                    if (array_filter(
-                        $example,
-                        fn ($value): bool => filled($value),
-                    )) {
-                        $csv->insertOne($example);
+                    $exampleRowsCount = array_reduce(
+                        $columnExamples,
+                        fn (int $count, array $exampleData): int => max($count, count($exampleData)),
+                        initial: 0,
+                    );
+
+                    $exampleRows = [];
+
+                    foreach ($columnExamples as $exampleData) {
+                        for ($i = 0; $i < $exampleRowsCount; $i++) {
+                            $exampleRows[$i][] = $exampleData[$i] ?? '';
+                        }
                     }
+
+                    $csv->insertAll($exampleRows);
 
                     return response()->streamDownload(function () use ($csv) {
                         echo $csv->toString();
