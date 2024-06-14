@@ -156,7 +156,18 @@ function (Set $set) {
 }
 ```
 
-When this function is run, the state of the `title` field will be updated, and the form will re-render with the new title. This is useful inside the [`afterStateUpdated`](#field-updates) method.
+When this function is run, the state of the `title` field will be updated, and the form will re-render with the new title. This is useful inside the [`afterStateUpdated()`](#field-updates) method.
+
+By default, the [`afterStateUpdated()`](#field-updates) method of the field you set is not called when you use `$set()`. If you wish to call it, you can pass `shouldCallUpdatedHooks: true` as an argument:
+
+```php
+use Filament\Schema\Components\Utilities\Set;
+
+function (Set $set) {
+    $set('title', 'Blog Post', shouldCallUpdatedHooks: true);
+    //...
+}
+```
 
 ### Injecting the current form operation
 

@@ -35,6 +35,31 @@ it('can set the value of a field', function () {
         ]);
 });
 
+it('can set the value of a field and call its updated hook', function () {
+    livewire(new class extends Livewire
+    {
+        public function form(Schema $form): Schema
+        {
+            return $form
+                ->schema([
+                    TextInput::make('foo')
+                        ->afterStateUpdated(fn (Set $set) => $set('baz', 'qux')),
+                    TextInput::make('bar')
+                        ->live()
+                        ->afterStateUpdated(fn (Set $set, $state) => $set('foo', $state, shouldCallUpdatedHooks: true)),
+                ])
+                ->statePath('data');
+        }
+    })
+        ->fillForm([
+            'bar' => $bar = Str::random(),
+        ])
+        ->assertFormSet([
+            'foo' => $bar,
+            'baz' => 'qux',
+        ]);
+});
+
 it('can set the value of a nested field', function () {
     livewire(new class extends Livewire
     {

@@ -141,17 +141,7 @@ trait HasState
 
     public function callAfterStateUpdated(): static
     {
-        foreach ($this->afterStateUpdated as $callback) {
-            $runId = spl_object_id($callback) . md5(json_encode($this->getState()));
-
-            if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $runId)) {
-                continue;
-            }
-
-            $this->callAfterStateUpdatedHook($callback);
-
-            store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
-        }
+        $this->callAfterStateUpdatedHooks();
 
         if ($this->isPartiallyRenderedAfterStateUpdated()) {
             $this->partiallyRender();
@@ -165,6 +155,23 @@ trait HasState
 
         if ($this->isRenderlessAfterStateUpdated()) {
             $this->skipRender();
+        }
+
+        return $this;
+    }
+
+    public function callAfterStateUpdatedHooks(): static
+    {
+        foreach ($this->afterStateUpdated as $callback) {
+            $runId = spl_object_id($callback) . md5(json_encode($this->getState()));
+
+            if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $runId)) {
+                continue;
+            }
+
+            $this->callAfterStateUpdatedHook($callback);
+
+            store($this)->push('executedAfterStateUpdatedCallbacks', value: $runId, iKey: $runId);
         }
 
         return $this;

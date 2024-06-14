@@ -11,7 +11,7 @@ class Set
     ) {
     }
 
-    public function __invoke(string | Component $key, mixed $state, bool $isAbsolute = false): mixed
+    public function __invoke(string | Component $key, mixed $state, bool $isAbsolute = false, bool $shouldCallUpdatedHooks = false): mixed
     {
         $livewire = $this->component->getLivewire();
 
@@ -23,6 +23,7 @@ class Set
 
         if ($component) {
             $component->state($state);
+            $shouldCallUpdatedHooks && $component->callAfterStateUpdatedHooks();
         } else {
             data_set(
                 $livewire,
