@@ -54,7 +54,7 @@ export default function richEditorFormComponent({ state }) {
 
         init: function () {
             this.$refs.trixValue.value = this.state
-            this.$refs.trix.editor?.loadHTML(this.state)
+            this.$refs.trix.editor?.loadHTML(this.state ?? '')
 
             this.$watch('state', () => {
                 if (document.activeElement === this.$refs.trix) {
@@ -62,7 +62,7 @@ export default function richEditorFormComponent({ state }) {
                 }
 
                 this.$refs.trixValue.value = this.state
-                this.$refs.trix.editor?.loadHTML(this.state)
+                this.$refs.trix.editor?.loadHTML(this.state ?? '')
             })
         },
     }
