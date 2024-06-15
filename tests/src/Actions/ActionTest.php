@@ -174,11 +174,11 @@ it('can get the raw data from parent actions', function () {
         ->setActionData([
             'foo' => $foo = Str::random(),
         ])
-        ->mountAction('parent.manuallyRegisteredModal')
+        ->mountAction('manuallyRegisteredModal')
         ->setActionData([
             'bar' => $bar = Str::random(),
         ])
-        ->callAction('parent.manuallyRegisteredModal.testData', [
+        ->callAction('testData', [
             'baz' => $baz = Str::random(),
         ])
         ->assertDispatched('data-test-called', foo: $foo, bar: $bar, baz: $baz);
