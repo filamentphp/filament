@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\In;
 use Illuminate\Validation\Rules\Unique;
 
 trait CanBeValidated
@@ -20,6 +22,9 @@ trait CanBeValidated
 
     protected string | Closure | null $regexPattern = null;
 
+    /**
+     * @var array<string> | Arrayable | string | Closure | null
+     */
     protected array | Arrayable | string | Closure | null $inValidationRuleValues = null;
 
     /**
@@ -656,6 +661,21 @@ trait CanBeValidated
         return array_filter($messages);
     }
 
+    public function getInValidationRule(): In | Enum | null
+    {
+        $values = $this->getInValidationRuleValues();
+
+        if ($values !== null) {
+            return Rule::in($values);
+        }
+
+        if (filled($enum = $this->getEnum())) {
+            return Rule::enum($enum);
+        }
+
+        return null;
+    }
+
     /**
      * @return ?array<string>
      */
@@ -687,13 +707,7 @@ trait CanBeValidated
         $rules = [
             $this->getRequiredValidationRule(),
             ...($this instanceof CanBeLengthConstrained ? $this->getLengthValidationRules() : []),
-            ...(filled($enum = $this->getEnum()) ? [Rule::enum($enum)] : []),
-            ...(
-                (! $this->hasInValidationOnMultipleValues()) &&
-                (
-                    filled($inValidationRuleValues = $this->getInValidationRuleValues())
-                ) ? [Rule::in($inValidationRuleValues)] : []
-            ),
+            ...(($inRule = $this->getInValidationRule()) ? [$inRule] : []),
         ];
 
         if (filled($regexPattern = $this->getRegexPattern())) {

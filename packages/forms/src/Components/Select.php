@@ -1300,12 +1300,8 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     {
         $values = parent::getInValidationRuleValues();
 
-        if (filled($values)) {
+        if ($values !== null) {
             return $values;
-        }
-
-        if (filled($this->getEnum())) {
-            return null;
         }
 
         if ($this->isMultiple()) {

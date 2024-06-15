@@ -130,12 +130,8 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
     {
         $values = parent::getInValidationRuleValues();
 
-        if (filled($values)) {
+        if ($values !== null) {
             return $values;
-        }
-
-        if (filled($this->getEnum())) {
-            return null;
         }
 
         return array_keys($this->getEnabledOptions());
