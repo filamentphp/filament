@@ -31,6 +31,32 @@ After upgrading the dependency via Composer, you should execute `php artisan fil
 
 ### High-impact changes
 
+#### The `all` pagination page option is not available for tables by default
+
+The `all` pagination page method is now not available for tables by default. If you want to use it on a table, you can add it to the configuration:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->paginated([5, 10, 25, 50, 'all']);
+}
+```
+
+Be aware when using `all` as it will cause performance issues when dealing with a large number of records.
+
+Alternatively, you can do it for all tables at once using a global setting in the `boot()` method of a service provider:
+
+```php
+use Filament\Tables\Table;
+
+Table::configureUsing(function (Table $table): void {
+    $table->paginationPageOptions([5, 10, 25, 50, 'all']);
+});
+```
+
 #### The `FILAMENT_FILESYSTEM_DISK` environment variable
 
 Please see the [Panel Builder](../panels/upgrade-guide#the-filament_filesystem_disk-environment-variable) upgrade guide for information about this change.
