@@ -83,6 +83,28 @@ class Actions extends Page
                             TextInput::make('bar')
                                 ->required(),
                         ])
+                        ->registerModalActions([
+                            Action::make('testData')
+                                ->schema([
+                                    TextInput::make('baz')
+                                        ->required(),
+                                ])
+                                ->action(fn (array $mountedActions) => $this->dispatch(
+                                    'data-test-called',
+                                    foo: $mountedActions[0]->getRawFormData()['foo'],
+                                    bar: $mountedActions[1]->getRawFormData()['bar'],
+                                    baz: $mountedActions[2]->getRawFormData()['baz'],
+                                )),
+                            Action::make('testArguments')
+                                ->action(function (array $mountedActions, Action $action) {
+                                    $this->dispatch(
+                                        'arguments-test-called',
+                                        foo: $mountedActions[0]->getArguments()['foo'],
+                                        bar: $mountedActions[1]->getArguments()['bar'],
+                                        baz: $mountedActions[2]->getArguments()['baz'],
+                                    );
+                                }),
+                        ])
                         ->action(fn () => null),
                 ]),
             Action::make('halt')

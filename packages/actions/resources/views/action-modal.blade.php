@@ -13,7 +13,7 @@
         :heading="$action->getModalHeading()"
         :icon="$action->getModalIcon()"
         :icon-color="$action->getModalIconColor()"
-        :id="'fi-' . $this->getId() . '-action-' . $actionNestingIndex"
+        :id="'fi-' . $this->getId() . '-action-' . $action->getNestingIndex()"
         :slide-over="$action->isModalSlideOver()"
         :sticky-footer="$action->isModalFooterSticky()"
         :sticky-header="$action->isModalHeaderSticky()"

@@ -26,6 +26,8 @@ class TestsActions
     public function mountAction(): Closure
     {
         return function (string | TestAction | array $actions, array $arguments = []): static {
+            $initialMountedActionsCount = count($this->instance()->mountedActions);
+
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedActions($actions, $arguments);
@@ -45,7 +47,7 @@ class TestsActions
 
             $this->assertDispatched('sync-action-modals', id: $this->instance()->getId(), newActionNestingIndex: array_key_last($this->instance()->mountedActions));
 
-            if (! count($this->instance()->mountedActions)) {
+            if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count($actions))) {
                 return $this;
             }
 
@@ -90,13 +92,19 @@ class TestsActions
     public function callAction(): Closure
     {
         return function (string | TestAction | array $actions, array $data = [], array $arguments = []): static {
+            $initialMountedActionsCount = count($this->instance()->mountedActions);
+
             /** @phpstan-ignore-next-line */
             $this->assertActionVisible($actions);
 
             /** @phpstan-ignore-next-line */
             $this->mountAction($actions, $arguments);
 
-            if (! $this->instance()->getMountedAction()) {
+            /** @var array<array<string, mixed>> $actions */
+            /** @phpstan-ignore-next-line */
+            $actions = $this->parseNestedActions($actions, $arguments);
+
+            if (count($this->instance()->mountedActions) !== ($initialMountedActionsCount + count($actions))) {
                 return $this;
             }
 
@@ -140,7 +148,10 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedActions($actions);
 
-            $action = $this->instance()->getAction($actions);
+            $action = $this->instance()->getAction([
+                ...$this->instance()->mountedActions,
+                ...$actions,
+            ]);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', Arr::pluck($actions, 'name'));
@@ -404,9 +415,6 @@ class TestsActions
                 return $this;
             }
 
-            /** @phpstan-ignore-next-line */
-            $this->assertActionExists($actions);
-
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedActions($actions);
@@ -444,9 +452,6 @@ class TestsActions
 
                 return $this;
             }
-
-            /** @phpstan-ignore-next-line */
-            $this->assertActionExists($actions);
 
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */

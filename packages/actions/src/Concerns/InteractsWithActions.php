@@ -377,16 +377,20 @@ trait InteractsWithActions
             }
 
             if (filled($action['context']['schemaComponent'] ?? null)) {
-                $resolvedActions[] = $this->resolveSchemaComponentAction($action, $resolvedActions);
+                $resolvedAction = $this->resolveSchemaComponentAction($action, $resolvedActions);
             } elseif ($this instanceof HasTable && filled($action['context']['table'] ?? null)) {
-                $resolvedActions[] = $this->resolveTableAction($action, $resolvedActions);
+                $resolvedAction = $this->resolveTableAction($action, $resolvedActions);
             } else {
-                $resolvedActions[] = $this->resolveAction($action, $resolvedActions);
+                $resolvedAction = $this->resolveAction($action, $resolvedActions);
             }
+
+            $resolvedAction->nestingIndex($actionNestingIndex);
+
+            $resolvedActions[] = $resolvedAction;
 
             $this->cacheSchema(
                 "mountedActionSchema{$actionNestingIndex}",
-                $this->getMountedActionSchema($actionNestingIndex, Arr::last($resolvedActions)),
+                $this->getMountedActionSchema($actionNestingIndex, $resolvedAction),
             );
         }
 
@@ -432,13 +436,6 @@ trait InteractsWithActions
             $this->cacheAction($resolvedAction);
         }
 
-        if (
-            (($actionArguments = ($action['arguments'] ?? null)) !== null) &&
-            (! $resolvedAction->hasArguments())
-        ) {
-            $resolvedAction->arguments($actionArguments);
-        }
-
         return $resolvedAction;
     }
 
@@ -467,13 +464,6 @@ trait InteractsWithActions
             $resolvedAction->getGroup()?->record($record);
         }
 
-        if (
-            (($actionArguments = ($action['arguments'] ?? null)) !== null) &&
-            (! $resolvedAction->hasArguments())
-        ) {
-            $resolvedAction->arguments($actionArguments);
-        }
-
         return $resolvedAction;
     }
 
@@ -499,7 +489,7 @@ trait InteractsWithActions
             throw new ActionNotResolvableException("Action [{$action['name']}] not found on schema component [{$action['context']['schemaComponent']}].");
         }
 
-        return $componentAction->arguments($action['arguments'] ?? []);
+        return $componentAction;
     }
 
     /**
@@ -522,25 +512,11 @@ trait InteractsWithActions
     {
         $mountedActions = $this->mountedActions;
 
-        if (
-            (($actionArguments = array_shift($mountedActions)['arguments'] ?? null) !== null) &&
-            (! $action->hasArguments())
-        ) {
-            $action->arguments($actionArguments);
-        }
-
         foreach ($modalActionNames as $modalActionName) {
             $action = $action->getMountableModalAction($modalActionName);
 
             if (! $action) {
                 return null;
-            }
-
-            if (
-                (($actionArguments = array_shift($mountedActions)['arguments'] ?? null) !== null) &&
-                (! $action->hasArguments())
-            ) {
-                $action->arguments($actionArguments);
             }
         }
 

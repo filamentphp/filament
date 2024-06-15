@@ -59,8 +59,8 @@
                 syncActionModals($event.detail.newActionNestingIndex)
         "
     >
-        @foreach ($this->getMountedActions() as $actionNestingIndex => $action)
-            {{ $action->toModalHtmlable($actionNestingIndex) }}
+        @foreach ($this->getMountedActions() as $action)
+            {{ $action->toModalHtmlable() }}
         @endforeach
     </div>
 
