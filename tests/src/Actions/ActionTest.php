@@ -168,7 +168,7 @@ it('can mount a nested action with nested arguments', function () {
         ]);
 });
 
-it('can get the data from parent action', function () {
+it('can get the raw data from parent actions', function () {
     livewire(Actions::class)
         ->mountAction('parent')
         ->setActionData([
@@ -178,10 +178,26 @@ it('can get the data from parent action', function () {
         ->setActionData([
             'bar' => $bar = Str::random(),
         ])
-        ->callAction('parent.manuallyRegisteredModal.nested', [
+        ->callAction('parent.manuallyRegisteredModal.testData', [
             'baz' => $baz = Str::random(),
         ])
-        ->assertDispatched('nested-called', foo: $foo, bar: $bar, baz: $baz);
+        ->assertDispatched('data-test-called', foo: $foo, bar: $bar, baz: $baz);
+});
+
+it('can get the arguments from parent actions', function () {
+    livewire(Actions::class)
+        ->callAction([
+            TestAction::make('parent')->arguments([
+                'foo' => $foo = Str::random(),
+            ]),
+            TestAction::make('manuallyRegisteredModal')->arguments([
+                'bar' => $bar = Str::random(),
+            ]),
+            TestAction::make('testArguments')->arguments([
+                'baz' => $baz = Str::random(),
+            ]),
+        ])
+        ->assertDispatched('arguments-test-called', foo: $foo, bar: $bar, baz: $baz);
 });
 
 it('can call an action with arguments', function () {

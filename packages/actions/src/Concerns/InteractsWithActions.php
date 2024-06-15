@@ -436,13 +436,6 @@ trait InteractsWithActions
             $this->cacheAction($resolvedAction);
         }
 
-        if (
-            (($actionArguments = ($action['arguments'] ?? null)) !== null) &&
-            (! $resolvedAction->hasArguments())
-        ) {
-            $resolvedAction->arguments($actionArguments);
-        }
-
         return $resolvedAction;
     }
 
@@ -471,13 +464,6 @@ trait InteractsWithActions
             $resolvedAction->getGroup()?->record($record);
         }
 
-        if (
-            (($actionArguments = ($action['arguments'] ?? null)) !== null) &&
-            (! $resolvedAction->hasArguments())
-        ) {
-            $resolvedAction->arguments($actionArguments);
-        }
-
         return $resolvedAction;
     }
 
@@ -503,7 +489,7 @@ trait InteractsWithActions
             throw new ActionNotResolvableException("Action [{$action['name']}] not found on schema component [{$action['context']['schemaComponent']}].");
         }
 
-        return $componentAction->arguments($action['arguments'] ?? []);
+        return $componentAction;
     }
 
     /**
@@ -526,25 +512,11 @@ trait InteractsWithActions
     {
         $mountedActions = $this->mountedActions;
 
-        if (
-            (($actionArguments = array_shift($mountedActions)['arguments'] ?? null) !== null) &&
-            (! $action->hasArguments())
-        ) {
-            $action->arguments($actionArguments);
-        }
-
         foreach ($modalActionNames as $modalActionName) {
             $action = $action->getMountableModalAction($modalActionName);
 
             if (! $action) {
                 return null;
-            }
-
-            if (
-                (($actionArguments = array_shift($mountedActions)['arguments'] ?? null) !== null) &&
-                (! $action->hasArguments())
-            ) {
-                $action->arguments($actionArguments);
             }
         }
 

@@ -45,7 +45,7 @@ class TestsActions
 
             $this->assertDispatched('sync-action-modals', id: $this->instance()->getId(), newActionNestingIndex: array_key_last($this->instance()->mountedActions));
 
-            if (! count($this->instance()->mountedActions)) {
+            if (count($this->instance()->mountedActions) < count($actions)) {
                 return $this;
             }
 
@@ -96,7 +96,11 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $this->mountAction($actions, $arguments);
 
-            if (! $this->instance()->getMountedAction()) {
+            /** @var array<array<string, mixed>> $actions */
+            /** @phpstan-ignore-next-line */
+            $actions = $this->parseNestedActions($actions, $arguments);
+
+            if (count($this->instance()->mountedActions) < count($actions)) {
                 return $this;
             }
 

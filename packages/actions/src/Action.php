@@ -3,7 +3,6 @@
 namespace Filament\Actions;
 
 use Closure;
-use Exception;
 use Filament\Notifications\Notification;
 use Filament\Schema\Components\Actions\ActionContainer;
 use Filament\Schema\Components\Actions\ActionContainer as InfolistActionContainer;
