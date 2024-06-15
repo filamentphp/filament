@@ -241,7 +241,7 @@ abstract class Page extends BasePage
         ];
     }
 
-    public function getSubNavigationPosition(): SubNavigationPosition
+    public static function getSubNavigationPosition(): SubNavigationPosition
     {
         return static::getResource()::getSubNavigationPosition();
     }

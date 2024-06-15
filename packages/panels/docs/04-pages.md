@@ -332,6 +332,16 @@ Settings::getUrl(panel: 'marketing');
 
 You may want to add a common sub-navigation to multiple pages, to allow users to quickly navigate between them. You can do this by defining a [cluster](clusters). Clusters can also contain [resources](resources), and you can switch between multiple pages or resources within a cluster.
 
+## Setting the sub-navigation position
+
+The sub-navigation is rendered at the start of the page by default. You may change the position for a page by setting the `$subNavigationPosition` property on the page. The value may be `SubNavigationPosition::Start`, `SubNavigationPosition::End`, or `SubNavigationPosition::Top` to render the sub-navigation as tabs:
+
+```php
+use Filament\Pages\Enums\SubNavigationPosition;
+
+protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
+```
+
 ## Adding extra attributes to the body tag of a page
 
 You may wish to add extra attributes to the `<body>` tag of a page. To do this, you can set an array of attributes in `$extraBodyAttributes`:

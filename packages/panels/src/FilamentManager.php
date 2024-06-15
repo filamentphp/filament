@@ -17,6 +17,7 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentAsset;
@@ -202,6 +203,11 @@ class FilamentManager
     public function getId(): ?string
     {
         return $this->getCurrentPanel()?->getId();
+    }
+
+    public function getSubNavigationPosition(): SubNavigationPosition
+    {
+        return $this->getCurrentPanel()?->getSubNavigationPosition();
     }
 
     /**

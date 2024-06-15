@@ -1,18 +1,15 @@
 <?php
 
-// use Filament\Upgrade\Rector;
+use Filament\Upgrade\Rector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
 
 return static function (RectorConfig $rectorConfig): void {
-    // $rectorConfig->rules([
-    //     Rector\FixGetSetClosureTypesRector::class,
-    //     Rector\MoveImportedClassesRector::class,
-    //     Rector\SecondaryToGrayColorRector::class,
-    //     Rector\SimpleMethodChangesRector::class,
-    //     Rector\SimplePropertyChangesRector::class,
-    // ]);
+    $rectorConfig->rules([
+        Rector\SimpleMethodChangesRector::class,
+        Rector\SimplePropertyChangesRector::class,
+    ]);
 
     $rectorConfig->ruleWithConfiguration(
         RenameClassRector::class,

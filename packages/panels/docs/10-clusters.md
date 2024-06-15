@@ -86,3 +86,13 @@ When using clusters, it is recommended that you move all of your resources and p
 This is a recommendation, not a requirement. You can structure your panel however you like, as long as the resources and pages in your cluster use the [`$cluster`](#adding-resources-and-pages-to-a-cluster) property. This is just a suggestion to help you keep your panel organized.
 
 When a cluster exists in your panel, and you generate new resources or pages with the `make:filament-resource` or `make:filament-page` commands, you will be asked if you want to create them inside a cluster directory, according to these guidelines. If you choose to, then Filament will also assign the correct `$cluster` property to the resource or page class for you. If you do not, you will need to [define the `$cluster` property](#adding-resources-and-pages-to-a-cluster) yourself.
+
+## Setting the sub-navigation position for all pages in a cluster
+
+The sub-navigation is rendered at the start of each page by default. It can be customized per-page, but you can also customize it for the entire cluster at once by setting the `$subNavigationPosition` property. The value may be `SubNavigationPosition::Start`, `SubNavigationPosition::End`, or `SubNavigationPosition::Top` to render the sub-navigation as tabs:
+
+```php
+use Filament\Pages\Enums\SubNavigationPosition;
+
+protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
+```

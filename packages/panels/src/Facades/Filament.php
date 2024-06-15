@@ -12,6 +12,7 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Panel;
 use Filament\PanelRegistry;
 use Filament\Support\Assets\Theme;
@@ -72,6 +73,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = [])
  * @method static array getResources()
  * @method static string getSidebarWidth()
+ * @method static SubNavigationPosition getSubNavigationPosition()
  * @method static Model | null getTenant()
  * @method static string | null getTenantAvatarUrl(Model $tenant)
  * @method static BillingProvider | null getTenantBillingProvider()
