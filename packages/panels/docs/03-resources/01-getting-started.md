@@ -514,14 +514,14 @@ Each item in the sub-navigation can be customized using the [same navigation met
 
 > If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../pages), you might be looking for [clusters](../clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
 
-### Sub-navigation position
+### Setting the sub-navigation position for a resource
 
-The sub-navigation is rendered at the start of the page by default. You may change the position by setting the `$subNavigationPosition` property on the resource. The value may be `SubNavigationPosition::Start`, `SubNavigationPosition::End`, or `SubNavigationPosition::Top` to render the sub-navigation as tabs:
+The sub-navigation is rendered at the start of the page by default. You may change the position for all pages in a resource by setting the `$subNavigationPosition` property on the resource. The value may be `SubNavigationPosition::Start`, `SubNavigationPosition::End`, or `SubNavigationPosition::Top` to render the sub-navigation as tabs:
 
 ```php
 use Filament\Pages\Enums\SubNavigationPosition;
 
-protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
+protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
 
 ## Deleting resource pages

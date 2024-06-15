@@ -13,7 +13,7 @@ use function Filament\Support\original_request;
 
 trait HasNavigation
 {
-    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
+    protected static ?SubNavigationPosition $subNavigationPosition = null;
 
     protected static bool $shouldRegisterNavigation = true;
 
@@ -78,7 +78,15 @@ trait HasNavigation
 
     public static function getSubNavigationPosition(): SubNavigationPosition
     {
-        return static::$subNavigationPosition;
+        if (filled(static::$subNavigationPosition)) {
+            return static::$subNavigationPosition;
+        }
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::getSubNavigationPosition();
+        }
+
+        return Filament::getSubNavigationPosition();
     }
 
     public static function getNavigationGroup(): ?string

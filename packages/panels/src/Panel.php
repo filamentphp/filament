@@ -37,6 +37,7 @@ class Panel extends Component
     use Panel\Concerns\HasRoutes;
     use Panel\Concerns\HasSidebar;
     use Panel\Concerns\HasSpaMode;
+    use Panel\Concerns\HasSubNavigation;
     use Panel\Concerns\HasTenancy;
     use Panel\Concerns\HasTheme;
     use Panel\Concerns\HasTopbar;
