@@ -22,6 +22,8 @@ class CreateAction extends Action
 
     protected bool | Closure $canCreateAnother = true;
 
+    protected ?Closure $preserveFormDataWhenCreatingAnotherUsing = null;
+
     protected ?Closure $getRelationshipUsing = null;
 
     public static function getDefaultName(): ?string
@@ -53,6 +55,12 @@ class CreateAction extends Action
         $this->record(null);
 
         $this->action(function (array $arguments, Schema $form): void {
+            if ($arguments['another'] ?? false) {
+                $preserveRawState = $this->evaluate($this->preserveFormDataWhenCreatingAnotherUsing, [
+                    'data' => $form->getRawState(),
+                ]) ?? [];
+            }
+
             $model = $this->getModel();
 
             $record = $this->process(function (array $data, HasActions & HasSchemas $livewire, ?Table $table) use ($model): Model {
@@ -109,6 +117,11 @@ class CreateAction extends Action
 
                 $form->fill();
 
+                $form->rawState([
+                    ...$form->getRawState(),
+                    ...$preserveRawState ?? [],
+                ]);
+
                 $this->halt();
 
                 return;
@@ -116,6 +129,18 @@ class CreateAction extends Action
 
             $this->success();
         });
+    }
+
+    /**
+     * @param  array<string>  $fields
+     */
+    public function preserveFormDataWhenCreatingAnother(array | Closure | null $fields): static
+    {
+        $this->preserveFormDataWhenCreatingAnotherUsing = is_array($fields) ?
+            fn (array $data): array => Arr::only($data, $fields) :
+            $fields;
+
+        return $this;
     }
 
     public function relationship(?Closure $relationship): static
