@@ -7,14 +7,19 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Attributes\Locked;
+use Livewire\Livewire;
 
 trait InteractsWithParentRecord
 {
     #[Locked]
     public ?Model $parentRecord = null;
 
-    public function mountInteractsWithParentRecord(): void
+    public function bootInteractsWithParentRecord(): void
     {
+        if (Livewire::isLivewireRequest()) {
+            return;
+        }
+
         $this->mountParentRecord();
     }
 
