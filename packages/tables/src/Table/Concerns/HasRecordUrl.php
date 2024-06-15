@@ -43,17 +43,20 @@ trait HasRecordUrl
         );
     }
 
-    public function shouldOpenRecordUrlInNewTab(Model $record): bool
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function shouldOpenRecordUrlInNewTab(Model | array $record): bool
     {
         return (bool) $this->evaluate(
             $this->shouldOpenRecordUrlInNewTab,
             namedInjections: [
                 'record' => $record,
             ],
-            typedInjections: [
+            typedInjections: ($record instanceof Model) ? [
                 Model::class => $record,
                 $record::class => $record,
-            ],
+            ] : [],
         );
     }
 }
