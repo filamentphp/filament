@@ -122,4 +122,23 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
             ['enum' => $enum],
         );
     }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getInValidationRuleValues(): ?array
+    {
+        $values = parent::getInValidationRuleValues();
+
+        if ($values !== null) {
+            return $values;
+        }
+
+        return array_keys($this->getEnabledOptions());
+    }
+
+    public function hasInValidationOnMultipleValues(): bool
+    {
+        return $this->isMultiple();
+    }
 }

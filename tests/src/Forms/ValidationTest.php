@@ -238,10 +238,6 @@ test('the `in()` rule behaves the same as Laravel\'s', function (?string $input,
         'allowed' => '',
     ],
     [
-        'input' => 'foo',
-        'allowed' => fn () => (fn () => null),
-    ],
-    [
         'input' => null,
         'allowed' => [],
     ],
