@@ -168,6 +168,22 @@ it('can mount a nested action with nested arguments', function () {
         ]);
 });
 
+it('can get the data from parent action', function () {
+    livewire(Actions::class)
+        ->mountAction('parent')
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->mountAction('parent.manuallyRegisteredModal')
+        ->setActionData([
+            'bar' => $bar = Str::random(),
+        ])
+        ->callAction('parent.manuallyRegisteredModal.nested', [
+            'baz' => $baz = Str::random(),
+        ])
+        ->assertDispatched('nested-called', foo: $foo, bar: $bar, baz: $baz);
+});
+
 it('can call an action with arguments', function () {
     livewire(Actions::class)
         ->callAction('arguments', arguments: [

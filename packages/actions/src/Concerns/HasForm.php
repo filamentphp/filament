@@ -92,6 +92,14 @@ trait HasForm
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function getRawFormData(): array
+    {
+        return $this->getLivewire()->mountedActions[$this->getNestingIndex()]['data'] ?? [];
+    }
+
+    /**
      * @deprecated Use `isSchemaDisabled()` instead.
      */
     public function isFormDisabled(): bool

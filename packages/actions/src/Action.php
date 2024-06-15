@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Closure;
+use Exception;
 use Filament\Notifications\Notification;
 use Filament\Schema\Components\Actions\ActionContainer;
 use Filament\Schema\Components\Actions\ActionContainer as InfolistActionContainer;
@@ -93,6 +94,8 @@ class Action extends ViewComponent implements Arrayable
     protected bool | Closure $shouldMarkAsRead = false;
 
     protected bool | Closure $shouldMarkAsUnread = false;
+
+    protected ?int $nestingIndex = null;
 
     final public function __construct(?string $name)
     {
@@ -431,6 +434,7 @@ class Action extends ViewComponent implements Arrayable
             'get' => [$this->getSchemaComponent()->makeGetUtility()],
             'livewire' => [$this->getLivewire()],
             'model' => [$this->getModel() ?? $this->getSchemaComponent()?->getModel()],
+            'mountedActions' => [$this->getLivewire()->getMountedActions()],
             'record' => [$this->getRecord() ?? $this->getSchemaComponent()?->getRecord()],
             'records', 'selectedRecords' => [$this->getSelectedRecords()],
             'set' => [$this->getSchemaComponent()->makeSetUtility()],
@@ -566,18 +570,29 @@ class Action extends ViewComponent implements Arrayable
         return (bool) $this->evaluate($this->shouldMarkAsUnread);
     }
 
-    public function renderModal(int $actionNestingIndex): View
+    public function nestingIndex(?int $index): static
+    {
+        $this->nestingIndex = $index;
+
+        return $this;
+    }
+
+    public function getNestingIndex(): ?int
+    {
+        return $this->nestingIndex;
+    }
+
+    public function renderModal(): View
     {
         return view('filament-actions::action-modal', [
             'action' => $this,
-            'actionNestingIndex' => $actionNestingIndex,
         ]);
     }
 
-    public function toModalHtmlable(int $actionNestingIndex): Htmlable
+    public function toModalHtmlable(): Htmlable
     {
-        return new HtmlString(Utils::insertAttributesIntoHtmlRoot($this->renderModal($actionNestingIndex)->render(), [
-            'wire:partial' => "action-modals.{$actionNestingIndex}",
+        return new HtmlString(Utils::insertAttributesIntoHtmlRoot($this->renderModal()->render(), [
+            'wire:partial' => "action-modals.{$this->getNestingIndex()}",
         ]));
     }
 }

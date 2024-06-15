@@ -377,16 +377,20 @@ trait InteractsWithActions
             }
 
             if (filled($action['context']['schemaComponent'] ?? null)) {
-                $resolvedActions[] = $this->resolveSchemaComponentAction($action, $resolvedActions);
+                $resolvedAction = $this->resolveSchemaComponentAction($action, $resolvedActions);
             } elseif ($this instanceof HasTable && filled($action['context']['table'] ?? null)) {
-                $resolvedActions[] = $this->resolveTableAction($action, $resolvedActions);
+                $resolvedAction = $this->resolveTableAction($action, $resolvedActions);
             } else {
-                $resolvedActions[] = $this->resolveAction($action, $resolvedActions);
+                $resolvedAction = $this->resolveAction($action, $resolvedActions);
             }
+
+            $resolvedAction->nestingIndex($actionNestingIndex);
+
+            $resolvedActions[] = $resolvedAction;
 
             $this->cacheSchema(
                 "mountedActionSchema{$actionNestingIndex}",
-                $this->getMountedActionSchema($actionNestingIndex, Arr::last($resolvedActions)),
+                $this->getMountedActionSchema($actionNestingIndex, $resolvedAction),
             );
         }
 

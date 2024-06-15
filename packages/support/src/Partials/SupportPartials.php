@@ -144,10 +144,10 @@ class SupportPartials extends ComponentHook
                 return $partials;
             });
         } elseif ($this->shouldRenderMountedActionOnly()) {
-            $actionNestingIndex = array_key_last($this->component->mountedActions);
+            $action = $this->component->getMountedAction();
 
             $renderAndQueuePartials(fn (): array => [
-                "action-modals.{$actionNestingIndex}" => $this->component->getMountedAction()->renderModal($actionNestingIndex),
+                "action-modals.{$action->getNestingIndex()}" => $action->renderModal(),
             ]);
         }
 

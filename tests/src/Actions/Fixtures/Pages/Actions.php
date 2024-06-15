@@ -83,6 +83,19 @@ class Actions extends Page
                             TextInput::make('bar')
                                 ->required(),
                         ])
+                        ->registerModalActions([
+                            Action::make('nested')
+                                ->schema([
+                                    TextInput::make('baz')
+                                        ->required(),
+                                ])
+                                ->action(fn (array $mountedActions) => $this->dispatch(
+                                    'nested-called',
+                                    foo: $mountedActions[0]->getRawFormData()['foo'],
+                                    bar: $mountedActions[1]->getRawFormData()['bar'],
+                                    baz: $mountedActions[2]->getRawFormData()['baz'],
+                                )),
+                        ])
                         ->action(fn () => null),
                 ]),
             Action::make('halt')
