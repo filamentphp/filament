@@ -96,6 +96,47 @@ protected function getCreatedNotification(): ?Notification
 }
 ```
 
+## Creating another record
+
+### Disabling create another
+
+To disable the "create and create another" feature, define the `$canCreateAnother` property as `false` on the Create page class:
+
+```php
+protected bool $canCreateAnother = false;
+```
+
+Alternatively, if you'd like to specify a dynamic condition when the feature is disabled, you may override the `canCreateAnother()` method on the Create page class:
+
+```php
+protected function canCreateAnother(): bool
+{
+    return false;
+}
+```
+
+### Preserving data when creating another
+
+By default, when the user uses the "create and create another" feature, all the form data is cleared so the user can start fresh. If you'd like to preserve some of the data in the form, you may override the `preserveFormDataWhenCreatingAnother()` method on the Create page class, and return the part of the `$data` array that you'd like to keep:
+
+```php
+use Illuminate\Support\Arr;
+
+protected function preserveFormDataWhenCreatingAnother(array $data): array
+{
+    return Arr::only($data, ['is_admin', 'organization']);
+}
+```
+
+To preserve all the data, return the entire `$data` array:
+
+```php
+protected function preserveFormDataWhenCreatingAnother(array $data): array
+{
+    return $data;
+}
+```
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the Create page class with the name of the hook:

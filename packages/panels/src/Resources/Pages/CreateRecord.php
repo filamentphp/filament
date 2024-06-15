@@ -77,6 +77,10 @@ class CreateRecord extends Page
     {
         $this->authorizeAccess();
 
+        if ($another) {
+            $preserveRawState = $this->preserveFormDataWhenCreatingAnother($this->form->getRawState());
+        }
+
         try {
             $this->beginDatabaseTransaction();
 
@@ -120,12 +124,26 @@ class CreateRecord extends Page
 
             $this->fillForm();
 
+            $this->form->rawState([
+                ...$this->form->getRawState(),
+                ...$preserveRawState,
+            ]);
+
             return;
         }
 
         $redirectUrl = $this->getRedirectUrl();
 
         $this->redirect($redirectUrl, navigate: FilamentView::hasSpaMode() && is_app_url($redirectUrl));
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function preserveFormDataWhenCreatingAnother(array $data): array
+    {
+        return [];
     }
 
     protected function getCreatedNotification(): ?Notification
@@ -216,7 +234,7 @@ class CreateRecord extends Page
     {
         return [
             $this->getCreateFormAction(),
-            ...(static::canCreateAnother() ? [$this->getCreateAnotherFormAction()] : []),
+            ...($this->canCreateAnother() ? [$this->getCreateAnotherFormAction()] : []),
             $this->getCancelFormAction(),
         ];
     }
@@ -312,7 +330,7 @@ class CreateRecord extends Page
         return $this->getModel();
     }
 
-    public static function canCreateAnother(): bool
+    public function canCreateAnother(): bool
     {
         return static::$canCreateAnother;
     }

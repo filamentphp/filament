@@ -230,11 +230,38 @@ CreateAction::make()
     ->skippableSteps()
 ```
 
-## Disabling create another
+## Creating another record
+
+### Disabling create another
 
 If you'd like to remove the "create another" button from the modal, you can use the `createAnother(false)` method:
 
 ```php
 CreateAction::make()
     ->createAnother(false)
+```
+
+### Preserving data when creating another
+
+By default, when the user uses the "create and create another" feature, all the form data is cleared so the user can start fresh. If you'd like to preserve some of the data in the form, you may use the `preserveFormDataWhenCreatingAnother()` method, passing an array of fields to preserve:
+
+```php
+CreateAction::make()
+    ->preserveFormDataWhenCreatingAnother(['is_admin', 'organization'])
+```
+
+Alternatively, you can define a function that returns an array of the `$data` to preserve:
+
+```php
+use Illuminate\Support\Arr;
+
+CreateAction::make()
+    ->preserveFormDataWhenCreatingAnother(fn (array $data): array => Arr::only($data, ['is_admin', 'organization']))
+```
+
+To preserve all the data, return the entire `$data` array:
+
+```php
+CreateAction::make()
+    ->preserveFormDataWhenCreatingAnother(fn (array $data): array => $data)
 ```
