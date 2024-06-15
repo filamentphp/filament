@@ -148,6 +148,7 @@
                                 @if ($hasToolbarButton('underline'))
                                     <x-filament-forms::rich-editor.toolbar.button
                                         data-trix-attribute="underline"
+                                        data-trix-key="u"
                                         title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.underline') }}"
                                         tabindex="-1"
                                     >
@@ -172,6 +173,7 @@
                                 @if ($hasToolbarButton('strike'))
                                     <x-filament-forms::rich-editor.toolbar.button
                                         data-trix-attribute="strike"
+                                        data-trix-key="s"
                                         title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.strike') }}"
                                         tabindex="-1"
                                     >
