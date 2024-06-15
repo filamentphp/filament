@@ -33,6 +33,24 @@ trait HasState
     }
 
     /**
+     * @param  array<string, mixed>  $state
+     */
+    public function rawState(array $state): static
+    {
+        $livewire = $this->getLivewire();
+
+        if ($statePath = $this->getStatePath()) {
+            data_set($livewire, $statePath, $state);
+        } else {
+            foreach ($state as $key => $value) {
+                data_set($livewire, $key, $value);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @param  array<string, mixed> | null  $state
      */
     public function constantState(?array $state): static
@@ -219,15 +237,7 @@ trait HasState
         if ($state === null) {
             $hydratedDefaultState = [];
         } else {
-            $livewire = $this->getLivewire();
-
-            if ($statePath = $this->getStatePath()) {
-                data_set($livewire, $statePath, $state);
-            } else {
-                foreach ($state as $key => $value) {
-                    data_set($livewire, $key, $value);
-                }
-            }
+            $this->rawState($state);
         }
 
         $this->hydrateState($hydratedDefaultState, $andCallHydrationHooks);

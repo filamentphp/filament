@@ -3,6 +3,7 @@
 namespace Filament\Upgrade\Rector;
 
 use Closure;
+use Filament\Resources\Pages\CreateRecord;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Name;
@@ -37,6 +38,17 @@ class SimpleMethodChangesRector extends AbstractRector
                 'changes' => [
                     'getSubNavigationPosition' => function (ClassMethod $node) {
                         $node->flags &= Modifiers::STATIC;
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    CreateRecord::class,
+                ],
+                'classIdentifier' => 'extends',
+                'changes' => [
+                    'canCreateAnother' => function (ClassMethod $node) {
+                        $node->flags &= ~Modifiers::STATIC;
                     },
                 ],
             ],
