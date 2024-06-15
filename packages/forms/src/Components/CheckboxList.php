@@ -321,4 +321,27 @@ class CheckboxList extends Field implements Contracts\CanDisableOptions, Contrac
             ['enum' => $enum],
         );
     }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getInValidationRuleValues(): ?array
+    {
+        $values = parent::getInValidationRuleValues();
+
+        if (filled($values)) {
+            return $values;
+        }
+
+        if (filled($this->getEnum())) {
+            return null;
+        }
+
+        return array_keys($this->getEnabledOptions());
+    }
+
+    public function hasInValidationOnMultipleValues(): bool
+    {
+        return true;
+    }
 }

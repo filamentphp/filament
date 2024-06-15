@@ -46,7 +46,7 @@ class SelectColumn extends Column implements Editable
             ...$this->baseGetRules(),
             ...(filled($enum = $this->getEnum()) ?
                 [new Enum($enum)] :
-                Rule::in(array_keys($this->getOptions()))),
+                Rule::in(array_keys($this->getEnabledOptions()))),
         ];
     }
 }

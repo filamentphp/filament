@@ -58,4 +58,22 @@ class Radio extends Field implements Contracts\CanDisableOptions
 
         return $state;
     }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getInValidationRuleValues(): ?array
+    {
+        $values = parent::getInValidationRuleValues();
+
+        if (filled($values)) {
+            return $values;
+        }
+
+        if (filled($this->getEnum())) {
+            return null;
+        }
+
+        return array_keys($this->getEnabledOptions());
+    }
 }

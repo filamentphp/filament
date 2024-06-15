@@ -28,8 +28,6 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Exists;
 use Livewire\Attributes\Renderless;
 use Livewire\Component as LivewireComponent;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -92,9 +90,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     protected bool | Closure $isMultiple = false;
 
-    protected ?Closure $getOptionLabelUsing = null;
+    protected Closure $getOptionLabelUsing;
 
-    protected ?Closure $getOptionLabelsUsing = null;
+    protected Closure $getOptionLabelsUsing;
 
     protected ?Closure $getSearchResultsUsing = null;
 
@@ -155,7 +153,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             }
 
             if (! array_key_exists($value, $options)) {
-                return $value;
+                return null;
             }
 
             return $options[$value];
@@ -181,7 +179,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                     continue 2;
                 }
 
-                $labels[$value] = $options[$value] ?? $value;
+                $labels[$value] = $options[$value] ?? null;
             }
 
             return $labels;
@@ -497,7 +495,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->editOptionModalHeading);
     }
 
-    public function getOptionLabelUsing(?Closure $callback): static
+    public function getOptionLabelUsing(Closure $callback): static
     {
         $this->getOptionLabelUsing = $callback;
 
@@ -511,7 +509,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this;
     }
 
-    public function getOptionLabelsUsing(?Closure $callback): static
+    public function getOptionLabelsUsing(Closure $callback): static
     {
         $this->getOptionLabelsUsing = $callback;
 
@@ -583,17 +581,27 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
     #[Exposed]
     #[Renderless]
-    public function getOptionLabel(): ?string
+    public function getOptionLabel(bool $withDefault = true): ?string
     {
-        return $this->evaluate($this->getOptionLabelUsing, [
-            'value' => fn (): mixed => $this->getState(),
+        $state = null;
+
+        $label = $this->evaluate($this->getOptionLabelUsing, [
+            'value' => function () use (&$state): mixed {
+                return $state = $this->getState();
+            },
         ]);
+
+        if ($withDefault) {
+            $label ??= ($state ?? $this->getState());
+        }
+
+        return $label;
     }
 
     /**
      * @return array<string>
      */
-    public function getOptionLabels(): array
+    public function getOptionLabels(bool $withDefaults = true): array
     {
         $labels = $this->evaluate($this->getOptionLabelsUsing, [
             'values' => fn (): array => $this->getState(),
@@ -601,6 +609,20 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         if ($labels instanceof Arrayable) {
             $labels = $labels->toArray();
+        }
+
+        foreach ($labels as $value => $label) {
+            if (filled($label)) {
+                continue;
+            }
+
+            if ($withDefaults) {
+                $labels[$value] = $value;
+
+                continue;
+            }
+
+            unset($labels[$value]);
         }
 
         return $labels;
@@ -945,29 +967,6 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 ->toArray();
         });
 
-        $this->rule(
-            static function (Select $component): Exists {
-                $relationship = $component->getRelationship();
-
-                return Rule::exists(
-                    $relationship->getModel()::class,
-                    $component->getQualifiedRelatedKeyNameForRelationship($relationship),
-                );
-            },
-            static function (Select $component): bool {
-                $relationship = $component->getRelationship();
-
-                if (! (
-                    $relationship instanceof BelongsTo ||
-                    $relationship instanceof BelongsToThrough
-                )) {
-                    return false;
-                }
-
-                return ! $component->isMultiple();
-            },
-        );
-
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) use ($modifyQueryUsing) {
             $relationship = $component->getRelationship();
 
@@ -1292,5 +1291,32 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             $this->isMultiple() ? EnumArrayStateCast::class : EnumStateCast::class,
             ['enum' => $enum],
         );
+    }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getInValidationRuleValues(): ?array
+    {
+        $values = parent::getInValidationRuleValues();
+
+        if (filled($values)) {
+            return $values;
+        }
+
+        if (filled($this->getEnum())) {
+            return null;
+        }
+
+        if ($this->isMultiple()) {
+            return array_keys($this->getOptionLabels(withDefaults: false));
+        }
+
+        return blank($this->getOptionLabel(withDefault: false)) ? [] : null;
+    }
+
+    public function hasInValidationOnMultipleValues(): bool
+    {
+        return $this->isMultiple();
     }
 }
