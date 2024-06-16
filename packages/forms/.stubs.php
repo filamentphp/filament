@@ -85,6 +85,8 @@ namespace Livewire\Features\SupportTesting {
         public function getNestedFormComponentActionComponentAndName(string | array $component, string | array $name, string $formName = 'form'): static {}
 
         public function parseNestedFormComponentActionComponentAndName(string | array $component, string | array $name, string $formName = 'form'): static {}
+
+        public function nextFormWizardStep(int $currentStep = 0, string $formName = 'form'): static {}
     }
 
 }
