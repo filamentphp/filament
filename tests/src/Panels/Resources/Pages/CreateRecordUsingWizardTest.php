@@ -9,7 +9,6 @@ uses(TestCase::class);
 
 it('moves to next wizard step', function () {
     livewire(CreatePostUsingWizard::class)
-        ->fillForm(['title' => null])
         ->nextFormWizardStep()
         ->assertHasErrors(['data.title'])
         ->assertHasNoErrors(['data.content'])
