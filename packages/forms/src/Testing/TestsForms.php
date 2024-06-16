@@ -361,4 +361,22 @@ class TestsForms
             return $this;
         };
     }
+
+    public function nextFormWizardStep(): Closure
+    {
+        return function (int $currentStep = 0, string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormExists($formName);
+
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            $this->call('dispatchFormEvent', 'wizard::nextStep', $form->getStatePath(), $currentStep);
+            $this->refresh();
+
+            return $this;
+        };
+    }
+
+
 }
