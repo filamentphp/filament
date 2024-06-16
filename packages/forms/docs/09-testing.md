@@ -549,7 +549,7 @@ it('links to the correct Filament sites', function () {
 
 ### Wizard
 
-You call a wizard's step, use `nextFormWizardStep()`
+To call a wizard's step, use `nextFormWizardStep()`
 
 ```php
 use function Pest\Livewire\livewire;
