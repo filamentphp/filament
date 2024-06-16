@@ -15,6 +15,10 @@ trait CanBeHidden
 
     protected bool | Closure $isVisible = true;
 
+    protected string | Closure | null $visibleJs = null;
+
+    protected string | Closure | null $hiddenJs = null;
+
     public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
@@ -132,5 +136,29 @@ trait CanBeHidden
     public function isVisible(): bool
     {
         return ! $this->isHidden();
+    }
+
+    public function visibleJs(string | Closure | null $condition): static
+    {
+        $this->visibleJs = $condition;
+
+        return $this;
+    }
+
+    public function hiddenJs(string | Closure | null $condition): static
+    {
+        $this->hiddenJs = $condition;
+
+        return $this;
+    }
+
+    public function getVisibleJs(): ?string
+    {
+        return $this->evaluate($this->visibleJs);
+    }
+
+    public function getHiddenJs(): ?string
+    {
+        return $this->evaluate($this->hiddenJs);
     }
 }

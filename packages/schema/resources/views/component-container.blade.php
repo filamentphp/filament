@@ -6,38 +6,8 @@
 @endphp
 
 <x-filament::grid
-    :x-data="$isRoot ? '{}' : null"
-    :x-on:form-validation-error.window="
-        $isRoot ? ('if ($event.detail.livewireId !== ' . Js::from($this->getId()) . ') {
-                return
-            }
-
-            $nextTick(() => {
-                let error = $el.querySelector(\'[data-validation-error]\')
-
-                if (! error) {
-                    return
-                }
-
-                let elementToExpand = error
-
-                while (elementToExpand) {
-                    elementToExpand.dispatchEvent(new CustomEvent(\'expand\'))
-
-                    elementToExpand = elementToExpand.parentNode
-                }
-
-                setTimeout(
-                    () =>
-                        error.closest(\'[data-field-wrapper]\').scrollIntoView({
-                            behavior: \'smooth\',
-                            block: \'start\',
-                            inline: \'start\',
-                        }),
-                    200,
-                )
-        })') : null
-    "
+    :x-data="$isRoot ? ('filamentSchema({ livewireId: ' . Js::from($this->getId()) . ' })') : null"
+    :x-on:form-validation-error.window="$isRoot ? 'handleFormValidationError' : null"
     :default="$getColumns('default')"
     :sm="$getColumns('sm')"
     :md="$getColumns('md')"
@@ -62,6 +32,22 @@
              * don't consume grid space.
              */
             $isHidden = $schemaComponent->isHidden();
+
+            $hiddenJs = $schemaComponent->getHiddenJs();
+            $visibleJs = $schemaComponent->getVisibleJs();
+
+            $jsStatePath = Js::from($schemaComponent->getStatePath());
+            $jsContainerStatePath = Js::from($schemaComponent->getContainer()->getStatePath());
+
+            $getUtilities = fn (): string => <<<JS
+                            {
+                                \$get: getGetUtility({$jsContainerStatePath}),
+                                get \$state() {
+                                    return \$wire.\$get({$jsStatePath})
+                                },
+                                \$statePath: {$jsStatePath},
+                            }
+                        JS;
         @endphp
 
         <x-filament::grid.column
@@ -97,7 +83,33 @@
             ])
         >
             @if (! $isHidden)
-                {{ $schemaComponent }}
+                @if (blank($hiddenJs) && blank($visibleJs))
+                    {{ $schemaComponent }}
+                @elseif (filled($hiddenJs) && blank($visibleJs))
+                    <div
+                        x-data="{{ $getUtilities() }}"
+                        x-show="! {{ $hiddenJs }}"
+                        x-cloak
+                    >
+                        {{ $schemaComponent }}
+                    </div>
+                @elseif (blank($hiddenJs) && filled($visibleJs))
+                    <div
+                        x-data="{{ $getUtilities() }}"
+                        x-show="{{ $visibleJs }}"
+                        x-cloak
+                    >
+                        {{ $schemaComponent }}
+                    </div>
+                @else
+                    <div
+                        x-data="{{ $getUtilities() }}"
+                        x-show="! {{ $hiddenJs }} && {{ $visibleJs }}"
+                        x-cloak
+                    >
+                        {{ $schemaComponent }}
+                    </div>
+                @endif
             @endif
         </x-filament::grid.column>
     @endforeach
