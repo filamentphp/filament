@@ -112,6 +112,19 @@ it('does not have layout components', function () {
         ->assertFormComponentDoesNotExist('no-such-section');
 });
 
+it('can go to next wizard step on multiple forms', function () {
+    livewire(TestComponentWithMultipleWizardForms::class)
+        ->assertHasNoErrors()
+        ->nextFormWizardStep(formName: 'fooForm')
+        ->assertHasErrors(['fooData.title'])
+        ->assertHasNoErrors(['barData.title'])
+        ->nextFormWizardStep(currentStep: 1, formName: 'barForm')
+        ->assertHasNoErrors(['barData.title'])
+        ->assertHasErrors(['barData.content'])
+        ->assertHasNoErrors(['fooData.content']);
+});
+
+
 class TestComponentWithForm extends Livewire
 {
     public function form(Form $form): Form
@@ -195,6 +208,60 @@ class TestComponentWithMultipleForms extends Livewire
                 ->hidden(),
 
             TextInput::make('visible'),
+        ];
+    }
+
+    public function render(): View
+    {
+        return view('forms.fixtures.form');
+    }
+}
+
+
+class TestComponentWithMultipleWizardForms extends Livewire
+{
+    public $fooData;
+    public $barData;
+
+    public function mount(): void
+    {
+        $this->fooForm->fill();
+        $this->barForm->fill();
+    }
+
+    protected function getForms(): array
+    {
+        return [
+            'fooForm',
+            'barForm',
+        ];
+    }
+
+    public function fooForm(Form $form): Form
+    {
+        return $form
+            ->schema($this->getSchemaForForms())
+            ->statePath('fooData');
+    }
+
+    public function barForm(Form $form): Form
+    {
+        return $form
+            ->schema($this->getSchemaForForms())
+            ->statePath('barData');
+    }
+
+    protected function getSchemaForForms(): array
+    {
+        return [
+            \Filament\Forms\Components\Wizard::make([
+                \Filament\Forms\Components\Wizard\Step::make('step 1')->schema([
+                    TextInput::make('title')->required(),
+                ]),
+                \Filament\Forms\Components\Wizard\Step::make('step 2')->schema([
+                    TextInput::make('content')->required(),
+                ])
+            ])
         ];
     }
 
