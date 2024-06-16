@@ -3,13 +3,14 @@
 namespace Filament\Panel\Concerns;
 
 use Filament\FontProviders\BunnyFontProvider;
+use Filament\FontProviders\LocalFontProvider;
 use Illuminate\Contracts\Support\Htmlable;
 
 trait HasFont
 {
     protected ?string $fontFamily = null;
 
-    protected string $fontProvider = BunnyFontProvider::class;
+    protected ?string $fontProvider = null;
 
     protected ?string $fontUrl = null;
 
@@ -27,7 +28,12 @@ trait HasFont
 
     public function getFontFamily(): string
     {
-        return $this->fontFamily ?? 'Inter';
+        return $this->fontFamily ?? 'Inter Variable';
+    }
+
+    public function hasCustomFontFamily(): bool
+    {
+        return $this->fontFamily !== null;
     }
 
     public function getFontHtml(): Htmlable
@@ -40,7 +46,7 @@ trait HasFont
 
     public function getFontProvider(): string
     {
-        return $this->fontProvider;
+        return $this->fontProvider ?? (($this->hasCustomFontFamily()) ? BunnyFontProvider::class : LocalFontProvider::class);
     }
 
     public function getFontUrl(): ?string

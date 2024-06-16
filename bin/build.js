@@ -105,6 +105,13 @@ compile({
     outfile: `./packages/panels/dist/echo.js`,
 })
 
+compile({
+    ...defaultOptions,
+    platform: 'browser',
+    entryPoints: [`./packages/panels/resources/js/fonts/inter.js`],
+    outfile: `./packages/panels/dist/fonts/inter/index.js`,
+})
+
 const formComponents = [
     'color-picker',
     'date-time-picker',
