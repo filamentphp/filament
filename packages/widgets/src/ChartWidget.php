@@ -2,13 +2,16 @@
 
 namespace Filament\Widgets;
 
+use Filament\Schema\Concerns\InteractsWithSchemas;
+use Filament\Schema\Contracts\HasSchemas;
 use Filament\Support\RawJs;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Attributes\Locked;
 
-abstract class ChartWidget extends Widget
+abstract class ChartWidget extends Widget implements HasSchemas
 {
     use Concerns\CanPoll;
+    use InteractsWithSchemas;
 
     /**
      * @var array<string, mixed> | null
@@ -40,6 +43,10 @@ abstract class ChartWidget extends Widget
 
     public function mount(): void
     {
+        if (method_exists($this, 'getFiltersSchema')) {
+            $this->getFiltersSchema()->fill();
+        }
+
         $this->dataChecksum = $this->generateDataChecksum();
     }
 
