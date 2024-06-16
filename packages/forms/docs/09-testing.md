@@ -546,3 +546,42 @@ it('links to the correct Filament sites', function () {
         ->assertFormComponentActionShouldNotOpenUrlInNewTab('customer_id', 'github');
 });
 ```
+
+### Wizard
+
+You call a wizard's step, use `nextFormWizardStep()`
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to next wizard step', function () {
+    livewire(CreatePostUsingWizard::class)
+        ->nextFormWizardStep()
+        ->assertHasFormErrors(['title']);
+});
+```
+
+For the subsequent steps you can pass a specific step's index (starts from 0 as the first step)
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to the wizards second step', function () {
+    livewire(CreatePostUsingWizard::class)
+        ->nextFormWizardStep(currentStep: 1)
+        ->assertHasFormErrors(['content']);
+});
+```
+
+If you have multiple forms on in a page, you may inform the form name as a parameter
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to the wizards second step but just for fooForm', function () {
+    livewire(CreatePostUsingWizard::class)
+        ->nextFormWizardStep(currentStep: 1, formName: 'fooForm')
+        ->assertHasFormErrors(['content'], 'fooForm')
+        ->assertHasNoFormErrors(['content'], 'barForm');
+});
+```
