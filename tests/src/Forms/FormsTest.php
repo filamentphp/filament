@@ -31,6 +31,11 @@ it('has fields', function () {
         });
 });
 
+it('does not have fields', function () {
+    livewire(TestComponentWithForm::class)
+        ->assertFormFieldDoesNotExist('not-such-field');
+});
+
 it('has fields on multiple forms', function () {
     livewire(TestComponentWithMultipleForms::class)
         ->assertFormFieldExists('title', 'fooForm')
@@ -93,10 +98,18 @@ it('can have visible fields on multiple forms', function () {
 it('has layout components', function () {
     livewire(TestComponentWithForm::class)
         ->assertFormComponentExists('section')
+        ->assertFormComponentExists('disabled-section', function (Section $section): bool {
+            return $section->isDisabled();
+        })
         ->assertFormComponentExists('nested.section')
         ->assertFormComponentExists('nested.section', function (Section $section): bool {
             return $section->getHeading() === 'I am nested';
         });
+});
+
+it('does not have layout components', function () {
+    livewire(TestComponentWithForm::class)
+        ->assertFormComponentDoesNotExist('no-such-section');
 });
 
 class TestComponentWithForm extends Livewire
@@ -125,6 +138,10 @@ class TestComponentWithForm extends Livewire
                         Section::make('I am nested')
                             ->key('nested.section'),
                     ]),
+
+                Section::make()
+                    ->key('disabled-section')
+                    ->disabled(),
             ]);
     }
 

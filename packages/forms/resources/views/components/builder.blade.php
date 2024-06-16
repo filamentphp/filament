@@ -76,6 +76,7 @@
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
+                    $hasBlockIcons = $hasBlockIcons();
                     $hasBlockNumbers = $hasBlockNumbers();
                 @endphp
 
@@ -110,7 +111,7 @@
                         class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                         x-bind:class="{ 'fi-collapsed overflow-hidden': isCollapsed }"
                     >
-                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
+                        @if ($reorderActionIsVisible || $moveUpActionIsVisible || $moveDownActionIsVisible || $hasBlockIcons || $hasBlockLabels || $editActionIsVisible || $cloneActionIsVisible || $deleteActionIsVisible || $isCollapsible || $visibleExtraItemActions)
                             <div
                                 @if ($isCollapsible)
                                     x-on:click.stop="isCollapsed = !isCollapsed"
@@ -141,6 +142,17 @@
                                             </li>
                                         @endif
                                     </ul>
+                                @endif
+
+                                @php
+                                    $blockIcon = $item->getParentComponent()->getIcon($item->getRawState(), $uuid);
+                                @endphp
+
+                                @if ($hasBlockIcons && filled($blockIcon))
+                                    <x-filament::icon
+                                        :icon="$blockIcon"
+                                        class="fi-fo-builder-item-header-icon h-5 w-5 text-gray-400 dark:text-gray-500"
+                                    />
                                 @endif
 
                                 @if ($hasBlockLabels)

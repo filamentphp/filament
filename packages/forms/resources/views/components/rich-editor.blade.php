@@ -104,7 +104,6 @@
                                         data-trix-key="b"
                                         title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.bold') }}"
                                         tabindex="-1"
-                                        title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.bold') }}"
                                     >
                                         <svg
                                             class="-mx-4 h-4 dark:fill-current"
@@ -152,6 +151,7 @@
                                 @if ($hasToolbarButton('underline'))
                                     <x-filament-forms::rich-editor.toolbar.button
                                         data-trix-attribute="underline"
+                                        data-trix-key="u"
                                         title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.underline') }}"
                                         tabindex="-1"
                                     >
@@ -176,6 +176,7 @@
                                 @if ($hasToolbarButton('strike'))
                                     <x-filament-forms::rich-editor.toolbar.button
                                         data-trix-attribute="strike"
+                                        data-trix-key="s"
                                         title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.strike') }}"
                                         tabindex="-1"
                                     >

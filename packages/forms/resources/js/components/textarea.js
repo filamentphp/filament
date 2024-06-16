@@ -1,14 +1,45 @@
 export default function textareaFormComponent({ initialHeight }) {
     return {
+        height: initialHeight + 'rem',
+
         init: function () {
-            this.render()
+            this.setInitialHeight()
+            this.setUpResizeObserver()
         },
 
-        render: function () {
-            if (this.$el.scrollHeight > 0) {
-                this.$el.style.height = initialHeight + 'rem'
-                this.$el.style.height = this.$el.scrollHeight + 'px'
+        setInitialHeight: function () {
+            this.height = initialHeight + 'rem'
+
+            if (this.$el.scrollHeight <= 0) {
+                return
             }
+
+            this.$el.style.height = this.height
+        },
+
+        resize: function () {
+            this.setInitialHeight()
+
+            if (this.$el.scrollHeight <= 0) {
+                return
+            }
+
+            const newHeight = this.$el.scrollHeight + 'px'
+
+            if (this.height === newHeight) {
+                return
+            }
+
+            this.height = newHeight
+            this.$el.style.height = this.height
+        },
+
+        setUpResizeObserver: function () {
+            const observer = new ResizeObserver(() => {
+                this.height = this.$el.style.height
+            })
+
+            observer.observe(this.$el)
         },
     }
 }

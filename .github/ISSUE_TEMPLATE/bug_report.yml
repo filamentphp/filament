@@ -89,7 +89,7 @@ body:
   - type: input
     id: reproduction
     attributes:
-      label: Reproduction repository
+      label: Reproduction repository (issue will be closed if this is not valid)
       description: The URL of a public GitHub repository which reproduces the problem. **Please do not link to your actual project**, what we need instead is a _minimal_ reproduction in a fresh project without any unnecessary code. This means it doesn\'t matter if your real project is private / confidential, since we want a link to a separate, isolated reproduction. This allows us to fix the problem much quicker. **This issue will be automatically closed and not reviewed if this is missing. Please make sure to format the URL starting with `https://github.com` - only repositories hosted on GitHub are accepted.** [Need a headstart? We have a template Filament project for you.](https://filament-issue.unitedbycode.com)
     validations:
       required: true

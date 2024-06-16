@@ -77,7 +77,9 @@
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon || count($hintActions))
             <div
                 @class([
-                    'flex items-center justify-between gap-x-3',
+                    'flex items-center gap-x-3',
+                    'justify-between' => (! $labelSrOnly) || $labelPrefix || $labelSuffix,
+                    'justify-end' => $labelSrOnly && ! ($labelPrefix || $labelSuffix),
                     ($label instanceof \Illuminate\View\ComponentSlot) ? $label->attributes->get('class') : null,
                 ])
             >
@@ -113,7 +115,7 @@
         @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || filled($helperText))
             <div
                 @class([
-                    'grid gap-y-2',
+                    'grid auto-cols-fr gap-y-2',
                     'sm:col-span-2' => $hasInlineLabel,
                 ])
             >

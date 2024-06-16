@@ -201,6 +201,26 @@ class TestsForms
         };
     }
 
+    public function assertFormComponentDoesNotExist(): Closure
+    {
+        return function (string $componentKey, string $formName = 'form'): static {
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            $components = $form->getFlatComponentsByKey(withHidden: true);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertArrayNotHasKey(
+                $componentKey,
+                $components,
+                "Failed asserting that a component with the key [{$componentKey}] does not exist on the form named [{$formName}] on the [{$livewireClass}] component."
+            );
+
+            return $this;
+        };
+    }
+
     public function assertFormFieldExists(): Closure
     {
         return function (string $fieldName, string | Closure $formName = 'form', ?Closure $checkFieldUsing = null): static {
@@ -232,6 +252,26 @@ class TestsForms
                     "Failed asserting that a field with the name [{$fieldName}] and provided configuration exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
                 );
             }
+
+            return $this;
+        };
+    }
+
+    public function assertFormFieldDoesNotExist(): Closure
+    {
+        return function (string $fieldName, string $formName = 'form'): static {
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            $fields = $form->getFlatFields(withHidden: false);
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertArrayNotHasKey(
+                $fieldName,
+                $fields,
+                "Failed asserting that a field with the name [{$fieldName}] does not exist on the form named [{$formName}] on the [{$livewireClass}] component."
+            );
 
             return $this;
         };
