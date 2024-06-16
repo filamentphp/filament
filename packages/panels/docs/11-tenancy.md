@@ -24,7 +24,7 @@ class Post extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('team', function (Builder $query) {
-            if (auth()->check()) {
+            if (auth()->hasUser()) {
                 $query->where('team_id', auth()->user()->team_id);
                 // or with a `team` relationship defined:
                 $query->whereBelongsTo(auth()->user()->team);
@@ -41,7 +41,7 @@ class PostObserver
 {
     public function creating(Post $post): void
     {
-        if (auth()->check()) {
+        if (auth()->hasUser()) {
             $post->team_id = auth()->user()->team_id;
             // or with a `team` relationship defined:
             $post->team()->associate(auth()->user()->team);
