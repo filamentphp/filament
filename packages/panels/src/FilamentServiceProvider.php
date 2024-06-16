@@ -19,6 +19,7 @@ use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Http\Responses\Auth\PasswordResetResponse;
 use Filament\Http\Responses\Auth\RegistrationResponse;
 use Filament\Navigation\NavigationManager;
+use Filament\Support\Assets\Font;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
@@ -83,6 +84,7 @@ class FilamentServiceProvider extends PackageServiceProvider
         ]);
 
         FilamentAsset::register([
+            Font::make('inter', __DIR__ . '/../dist/fonts/inter'),
             Js::make('app', __DIR__ . '/../dist/index.js')->core(),
             Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
             Theme::make('app', __DIR__ . '/../dist/theme.css'),

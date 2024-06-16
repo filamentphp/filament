@@ -19,6 +19,7 @@
         "@awcodes/alpine-floating-ui": "^3.4.0",
         "@babel/runtime": "^7.15.3",
         "@danharrin/alpine-mousetrap": "^0.1.6",
+        "@fontsource-variable/inter": "^5.0.18",
         "@ryangjchandler/alpine-tooltip": "^2.0",
         "@tailwindcss/forms": "^0.5.3",
         "@tailwindcss/typography": "^0.5.9",
