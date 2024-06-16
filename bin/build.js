@@ -73,7 +73,14 @@ const defaultOptions = {
     ],
 }
 
-const corePackages = ['forms', 'notifications', 'panels', 'support', 'tables']
+const corePackages = [
+    'forms',
+    'notifications',
+    'panels',
+    'schema',
+    'support',
+    'tables',
+]
 
 corePackages.forEach((packageName) => {
     compile({
