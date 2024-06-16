@@ -9,24 +9,42 @@
 
 <x-filament-widgets::widget class="fi-wi-chart">
     <x-filament::section :description="$description" :heading="$heading">
-        @if ($filters)
+        @if ($filters || method_exists($this, 'getFiltersSchema'))
             <x-slot name="headerEnd">
-                <x-filament::input.wrapper
-                    inline-prefix
-                    wire:target="filter"
-                    class="w-max sm:-my-2"
-                >
-                    <x-filament::input.select
+                @if ($filters)
+                    <x-filament::input.wrapper
                         inline-prefix
-                        wire:model.live="filter"
+                        wire:target="filter"
+                        class="w-max sm:-my-2"
                     >
-                        @foreach ($filters as $value => $label)
-                            <option value="{{ $value }}">
-                                {{ $label }}
-                            </option>
-                        @endforeach
-                    </x-filament::input.select>
-                </x-filament::input.wrapper>
+                        <x-filament::input.select
+                            inline-prefix
+                            wire:model.live="filter"
+                        >
+                            @foreach ($filters as $value => $label)
+                                <option value="{{ $value }}">
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </x-filament::input.select>
+                    </x-filament::input.wrapper>
+                @endif
+
+                @if (method_exists($this, 'getFiltersSchema'))
+                    <x-filament::dropdown
+                        placement="bottom-end"
+                        shift
+                        width="xs"
+                    >
+                        <x-slot name="trigger">
+                            {{ $this->getFiltersTriggerAction() }}
+                        </x-slot>
+
+                        <div class="p-6">
+                            {{ $this->getFiltersSchema() }}
+                        </div>
+                    </x-filament::dropdown>
+                @endif
             </x-slot>
         @endif
 
