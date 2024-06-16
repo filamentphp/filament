@@ -114,16 +114,18 @@ it('does not have layout components', function () {
 
 it('can go to next wizard step on multiple forms', function () {
     livewire(TestComponentWithMultipleWizardForms::class)
-        ->assertHasNoErrors()
-        ->nextFormWizardStep(formName: 'fooForm')
-        ->assertHasErrors(['fooData.title'])
-        ->assertHasNoErrors(['barData.title'])
-        ->nextFormWizardStep(currentStep: 1, formName: 'barForm')
-        ->assertHasNoErrors(['barData.title'])
-        ->assertHasErrors(['barData.content'])
-        ->assertHasNoErrors(['fooData.content']);
-});
+        ->assertHasNoFormErrors(formName: 'fooForm')
+        ->assertHasNoFormErrors(formName: 'barForm')
 
+        ->nextFormWizardStep(formName: 'fooForm')
+        ->assertHasFormErrors(['title'], 'fooForm')
+        ->assertHasNoFormErrors(['title'], 'barForm')
+
+        ->nextFormWizardStep(currentStep: 1, formName: 'barForm')
+        ->assertHasNoFormErrors(['title'], 'barForm')
+        ->assertHasFormErrors(['content'], 'barForm')
+        ->assertHasNoFormErrors(['content'], 'fooForm');
+});
 
 class TestComponentWithForm extends Livewire
 {
@@ -217,10 +219,10 @@ class TestComponentWithMultipleForms extends Livewire
     }
 }
 
-
 class TestComponentWithMultipleWizardForms extends Livewire
 {
     public $fooData;
+
     public $barData;
 
     public function mount(): void
@@ -260,8 +262,8 @@ class TestComponentWithMultipleWizardForms extends Livewire
                 ]),
                 \Filament\Forms\Components\Wizard\Step::make('step 2')->schema([
                     TextInput::make('content')->required(),
-                ])
-            ])
+                ]),
+            ]),
         ];
     }
 
