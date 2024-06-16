@@ -377,6 +377,4 @@ class TestsForms
             return $this;
         };
     }
-
-
 }
