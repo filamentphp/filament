@@ -13,6 +13,7 @@ use Filament\Schema\Components\Concerns\CanSpanColumns;
 use Filament\Schema\Components\Concerns\Cloneable;
 use Filament\Schema\Components\Concerns\HasActions;
 use Filament\Schema\Components\Concerns\HasChildComponents;
+use Filament\Schema\Components\Concerns\HasDecorations;
 use Filament\Schema\Components\Concerns\HasEntryWrapper;
 use Filament\Schema\Components\Concerns\HasFieldWrapper;
 use Filament\Schema\Components\Concerns\HasId;
@@ -45,6 +46,7 @@ class Component extends ViewComponent
     use HasActions;
     use HasChildComponents;
     use HasColumns;
+    use HasDecorations;
     use HasEntryWrapper;
     use HasExtraAttributes;
     use HasFieldWrapper;

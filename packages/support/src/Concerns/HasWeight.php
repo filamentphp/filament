@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Columns\Concerns;
+namespace Filament\Support\Concerns;
 
 use Closure;
 use Filament\Support\Enums\FontWeight;
@@ -16,7 +16,7 @@ trait HasWeight
         return $this;
     }
 
-    public function getWeight(mixed $state): FontWeight | string | null
+    public function getWeight(mixed $state = null): FontWeight | string | null
     {
         return $this->evaluate($this->weight, [
             'state' => $state,

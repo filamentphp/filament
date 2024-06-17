@@ -6,7 +6,9 @@ use Closure;
 use Filament\Infolists\Components\TextEntry\Enums\TextEntrySize;
 use Filament\Schema\Components\Contracts\HasAffixActions;
 use Filament\Support\Concerns\CanBeCopied;
+use Filament\Support\Concerns\HasFontFamily;
 use Filament\Support\Concerns\HasLineClamp;
+use Filament\Support\Concerns\HasWeight;
 
 class TextEntry extends Entry implements HasAffixActions
 {
@@ -14,11 +16,11 @@ class TextEntry extends Entry implements HasAffixActions
     use Concerns\CanFormatState;
     use Concerns\HasAffixes;
     use Concerns\HasColor;
-    use Concerns\HasFontFamily;
     use Concerns\HasIcon;
     use Concerns\HasIconColor;
-    use Concerns\HasWeight;
+    use HasFontFamily;
     use HasLineClamp;
+    use HasWeight;
 
     /**
      * @var view-string

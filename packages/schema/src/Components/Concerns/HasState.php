@@ -318,13 +318,6 @@ trait HasState
         }
     }
 
-    public function fill(): void
-    {
-        $defaults = [];
-
-        $this->hydrateDefaultState($defaults);
-    }
-
     /**
      * @param  array<string, mixed> | null  $hydratedDefaultState
      */

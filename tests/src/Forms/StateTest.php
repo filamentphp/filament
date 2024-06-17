@@ -617,7 +617,7 @@ test('sibling nested state can be retrieved relatively from another component', 
 });
 
 test('parent sibling state can be retrieved relatively from another component', function () {
-    Schema::make(Livewire::make())
+    Schema::make($lw = Livewire::make())
         ->statePath('data')
         ->components([
             (new Component())

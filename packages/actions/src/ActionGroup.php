@@ -8,6 +8,7 @@ use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
+use Filament\Support\Concerns\HasTooltip;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
@@ -26,13 +27,13 @@ class ActionGroup extends ViewComponent implements Arrayable
     use Concerns\HasGroupedIcon;
     use Concerns\HasLabel;
     use Concerns\HasSize;
-    use Concerns\HasTooltip;
     use HasBadge;
     use HasColor;
     use HasExtraAttributes;
     use HasIcon {
         HasIcon::getIcon as getBaseIcon;
     }
+    use HasTooltip;
     use InteractsWithRecord;
 
     public const BADGE_VIEW = 'filament-actions::badge-group';

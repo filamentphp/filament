@@ -4,6 +4,7 @@ namespace Filament\Schema\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Infolists\Components\Entry;
 use Filament\Support\Partials\SupportPartials;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -255,6 +256,10 @@ trait HasState
     public function hydrateState(?array &$hydratedDefaultState, bool $andCallHydrationHooks = true): void
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
+            if ($component instanceof Entry) {
+                continue;
+            }
+
             $component->hydrateState($hydratedDefaultState, $andCallHydrationHooks);
         }
     }

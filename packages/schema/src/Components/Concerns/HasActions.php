@@ -8,7 +8,6 @@ use Filament\Schema\Components\Contracts\HasAffixActions;
 use Filament\Schema\Components\Contracts\HasExtraItemActions;
 use Filament\Schema\Components\Contracts\HasFooterActions;
 use Filament\Schema\Components\Contracts\HasHeaderActions;
-use Filament\Schema\Components\Contracts\HasHintActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
@@ -110,7 +109,7 @@ trait HasActions
      */
     public function cacheActions(): array
     {
-        $this->cachedActions = [];
+        $this->cachedActions = $this->getDecorationActions();
 
         if ($this instanceof HasAffixActions) {
             $this->cachedActions = [
@@ -138,13 +137,6 @@ trait HasActions
             $this->cachedActions = [
                 ...$this->cachedActions,
                 ...$this->getHeaderActions(),
-            ];
-        }
-
-        if ($this instanceof HasHintActions) {
-            $this->cachedActions = [
-                ...$this->cachedActions,
-                ...$this->getHintActions(),
             ];
         }
 
