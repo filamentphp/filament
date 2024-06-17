@@ -21,6 +21,14 @@ protected function setUp(): void
 }
 ```
 
+### Setting the current panel
+
+If you have multiple panels, you might need to set the current panel for your tests. Filament does this in a middleware when you access the panel through a request. So, if you're not making a request in your test (testing the livewire component directly for example) you have to set the current panel manually:
+
+```php
+Filament::setCurrentPanel(Filament::getPanel('id'));
+```
+
 ## Resources
 
 ### Pages
