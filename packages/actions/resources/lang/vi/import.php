@@ -17,7 +17,7 @@ return [
                 'placeholder' => 'Tải lên tệp CSV',
 
                 'rules' => [
-                    'duplicate_columns' => '{0} The file must not contain more than one empty column header.|{1,*} The file must not contain duplicate column headers: :columns.',
+                    'duplicate_columns' => '{0} Tệp không được chứa nhiều hơn một tiêu đề cột trống.|{1,*} Tệp không được chứa các tiêu đề cột trùng lặp: :columns.',
                 ],
 
             ],
