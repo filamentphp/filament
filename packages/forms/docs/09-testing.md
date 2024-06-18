@@ -286,6 +286,45 @@ test('comments section is enabled' function () {
 });
 ```
 
+### Wizard
+
+To call a wizard's next step, use the `nextFormWizardStep()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to next wizard step', function () {
+    livewire(CreatePostUsingWizard::class)
+        ->nextFormWizardStep()
+        ->assertHasFormErrors(['title']);
+});
+```
+
+For the subsequent steps you can pass a specific step's index to `currentStep`, which starts from 0 as the first step:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to the wizards second step', function () {
+    livewire(CreatePostUsingWizard::class)
+        ->nextFormWizardStep(currentStep: 1)
+        ->assertHasFormErrors(['content']);
+});
+```
+
+If you have multiple forms on the Livewire component, you may pass the form name as an argument:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to the wizards second step but just for fooForm', function () {
+    livewire(CreatePostUsingWizard::class)
+        ->nextFormWizardStep(currentStep: 1, formName: 'fooForm')
+        ->assertHasFormErrors(['content'], 'fooForm')
+        ->assertHasNoFormErrors(['content'], 'barForm');
+});
+```
+
 ## Actions
 
 You can call an action by passing its form component name, and then the name of the action to `callFormComponentAction()`:
@@ -544,44 +583,5 @@ it('links to the correct Filament sites', function () {
         ->assertFormComponentActionDoesNotHaveUrl('customer_id', 'filament', 'https://github.com/filamentphp/filament')
         ->assertFormComponentActionShouldOpenUrlInNewTab('customer_id', 'filament')
         ->assertFormComponentActionShouldNotOpenUrlInNewTab('customer_id', 'github');
-});
-```
-
-### Wizard
-
-To call a wizard's next step, use `nextFormWizardStep()`
-
-```php
-use function Pest\Livewire\livewire;
-
-it('moves to next wizard step', function () {
-    livewire(CreatePostUsingWizard::class)
-        ->nextFormWizardStep()
-        ->assertHasFormErrors(['title']);
-});
-```
-
-For the subsequent steps you can pass a specific step's index (starts from 0 as the first step)
-
-```php
-use function Pest\Livewire\livewire;
-
-it('moves to the wizards second step', function () {
-    livewire(CreatePostUsingWizard::class)
-        ->nextFormWizardStep(currentStep: 1)
-        ->assertHasFormErrors(['content']);
-});
-```
-
-If you have multiple forms on in a page, you may inform the form name as a parameter
-
-```php
-use function Pest\Livewire\livewire;
-
-it('moves to the wizards second step but just for fooForm', function () {
-    livewire(CreatePostUsingWizard::class)
-        ->nextFormWizardStep(currentStep: 1, formName: 'fooForm')
-        ->assertHasFormErrors(['content'], 'fooForm')
-        ->assertHasNoFormErrors(['content'], 'barForm');
 });
 ```
