@@ -21,12 +21,16 @@ protected function setUp(): void
 }
 ```
 
-### Setting the current panel
+### Testing multiple panels
 
-If you have multiple panels, you might need to set the current panel for your tests. Filament does this in a middleware when you access the panel through a request. So, if you're not making a request in your test (testing the livewire component directly for example) you have to set the current panel manually:
+If you have multiple panels and you would like to test a non-default panel, you will need to tell Filament which panel you are testing. This can be done in the `setUp()` method of the test case, or you can do it at the start of a particular test. Filament usually does this in a middleware when you access the panel through a request, so if you're not making a request in your test like when testing a Livewire component, you need to set the current panel manually:
 
 ```php
-Filament::setCurrentPanel(Filament::getPanel('id'));
+use Filament\Facades\Filament;
+
+Filament::setCurrentPanel(
+    Filament::getPanel('app'), // Where `app` is the ID of the panel you want to test
+);
 ```
 
 ## Resources
