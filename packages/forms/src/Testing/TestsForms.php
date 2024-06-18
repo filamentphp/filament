@@ -412,7 +412,6 @@ class TestsForms
             $form = $this->instance()->{$formName};
 
             $this->call('dispatchFormEvent', 'wizard::nextStep', $form->getStatePath(), $currentStep);
-            $this->refresh();
 
             return $this;
         };
