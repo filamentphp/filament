@@ -29,7 +29,7 @@ If you have multiple panels and you would like to test a non-default panel, you 
 use Filament\Facades\Filament;
 
 Filament::setCurrentPanel(
-    Filament::getPanel('app'), // Where `app` is the ID of the panel you want to test
+    Filament::getPanel('app'), // Where `app` is the ID of the panel you want to test.
 );
 ```
 
