@@ -288,14 +288,26 @@ test('comments section is enabled' function () {
 
 ### Wizard
 
-To call a wizard's next step, use the `nextFormWizardStep()` method:
+To call a wizard's next step, use the `goToNextWizardStep()` method:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('moves to next wizard step', function () {
     livewire(CreatePostUsingWizard::class)
-        ->nextFormWizardStep()
+        ->goToNextWizardStep()
+        ->assertHasFormErrors(['title']);
+});
+```
+
+You can also go to the previous step by calling `goToPreviousWizardStep()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to next wizard step', function () {
+    livewire(CreatePostUsingWizard::class)
+        ->goToPreviousWizardStep()
         ->assertHasFormErrors(['title']);
 });
 ```
@@ -319,7 +331,7 @@ use function Pest\Livewire\livewire;
 
 it('moves to next wizard step only for fooForm', function () {
     livewire(CreatePostUsingWizard::class)
-        ->nextFormWizardStep(formName: 'fooForm')
+        ->goToNextWizardStep(formName: 'fooForm')
         ->assertHasFormErrors(['title'], formName: 'fooForm');
 });
 ```
