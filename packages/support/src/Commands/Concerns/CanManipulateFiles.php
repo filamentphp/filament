@@ -19,7 +19,7 @@ trait CanManipulateFiles
                 continue;
             }
 
-            if (! confirm(basename($path)) . ' already exists, do you want to overwrite it?')) {
+            if (! confirm(basename($path) . ' already exists, do you want to overwrite it?')) {
                 $this->components->error("{$path} already exists, aborting.");
 
                 return true;
