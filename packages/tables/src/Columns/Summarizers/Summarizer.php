@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 class Summarizer extends ViewComponent
 {
     use Concerns\BelongsToColumn;
+    use Concerns\CanBeHidden;
     use Concerns\CanFormatState;
     use Concerns\HasLabel;
     use Concerns\InteractsWithTableQuery;

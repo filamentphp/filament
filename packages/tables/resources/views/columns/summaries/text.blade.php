@@ -1,3 +1,4 @@
+@if($isVisible())
 <div
     {{
         $attributes
@@ -15,3 +16,4 @@
         {{ $formatState($getState()) }}
     </span>
 </div>
+@endif

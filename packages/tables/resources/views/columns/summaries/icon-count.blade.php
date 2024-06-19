@@ -1,3 +1,4 @@
+@if($isVisible())
 <div
     {{
         $attributes
@@ -52,3 +53,4 @@
         </div>
     @endif
 </div>
+@endif
