@@ -45,7 +45,7 @@ The Panel Builder comes with a level of inbuilt support for real-time broadcast 
 php artisan vendor:publish --tag=filament-config
 ```
 
-4. Edit the configuration at `config/filament.php` and uncomment the `broadcasting` section - ensuring the settings are correctly configured according to your broadcasting installation.
+4. Edit the configuration at `config/filament.php` and uncomment the `broadcasting.echo` section - ensuring the settings are correctly configured according to your broadcasting installation.
 5. Ensure the [relevant `VITE_*` entries](https://laravel.com/docs/11.x/broadcasting#client-pusher-channels) exist in your `.env` file.
 6. Clear relevant caches with `php artisan route:clear` and `php artisan config:clear` to ensure your new configuration takes effect.
 7. Rebuild your javascript and publish assets:
