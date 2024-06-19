@@ -3,6 +3,7 @@
 namespace Filament\Schema\Components\Decorations;
 
 use Closure;
+use Filament\Schema\Components\Component;
 use Filament\Schema\JsContent;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasFontFamily;
@@ -10,7 +11,7 @@ use Filament\Support\Concerns\HasTooltip;
 use Filament\Support\Concerns\HasWeight;
 use Illuminate\Contracts\Support\Htmlable;
 
-class TextDecoration extends Decoration
+class TextDecoration extends Component
 {
     use HasColor;
     use HasFontFamily;

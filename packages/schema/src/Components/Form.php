@@ -9,7 +9,6 @@ use Filament\Schema\Components\Concerns\HasFooterActions;
 use Filament\Schema\Components\Concerns\HasHeaderActions;
 use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schema\Components\Contracts\ExposesStateToActionData;
-use Filament\Schema\Components\Decorations\Decoration;
 use Filament\Schema\Components\Decorations\Layouts\AlignDecorations;
 use Filament\Schema\Components\Decorations\Layouts\DecorationsLayout;
 
@@ -81,9 +80,9 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Co
     }
 
     /**
-     * @param  array<Decoration | Action> | DecorationsLayout | Decoration | Action | string | Closure | null  $decorations
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
      */
-    public function header(array | DecorationsLayout | Decoration | Action | string | Closure | null $decorations): static
+    public function header(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
         $this->decorations(
             self::HEADER_DECORATIONS,
@@ -95,9 +94,9 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Co
     }
 
     /**
-     * @param  array<Decoration | Action> | DecorationsLayout | Decoration | Action | string | Closure | null  $decorations
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
      */
-    public function footer(array | DecorationsLayout | Decoration | Action | string | Closure | null $decorations): static
+    public function footer(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
         $this->decorations(self::FOOTER_DECORATIONS, $decorations);
 

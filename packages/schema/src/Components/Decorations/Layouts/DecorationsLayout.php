@@ -5,7 +5,6 @@ namespace Filament\Schema\Components\Decorations\Layouts;
 use Filament\Actions\Action;
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Concerns\BelongsToContainer;
-use Filament\Schema\Components\Decorations\Decoration;
 use Filament\Support\Components\ViewComponent;
 
 abstract class DecorationsLayout extends ViewComponent
@@ -20,8 +19,8 @@ abstract class DecorationsLayout extends ViewComponent
     abstract public function getActions(): array;
 
     /**
-     * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
-     * @return array<string, Decoration | Action | array<Decoration | Action>>
+     * @param  array<Component | Action | array<Component | Action>>  $decorations
+     * @return array<string, Component | Action | array<Component | Action>>
      */
     protected function extractActionsFromDecorations(array $decorations): array
     {
@@ -48,14 +47,14 @@ abstract class DecorationsLayout extends ViewComponent
     }
 
     /**
-     * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
-     * @return array<Decoration | Action | array<Decoration | Action>>
+     * @param  array<Component | Action | array<Component | Action>>  $decorations
+     * @return array<Component | Action | array<Component | Action>>
      */
     protected function prepareDecorations(array $decorations): array
     {
         return array_reduce(
             $decorations,
-            function (array $carry, Decoration | Action | array $decoration): array {
+            function (array $carry, Component | Action | array $decoration): array {
                 if ($decoration instanceof Action && (! $decoration->isVisible())) {
                     return $carry;
                 }

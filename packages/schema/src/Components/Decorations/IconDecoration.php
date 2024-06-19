@@ -3,10 +3,11 @@
 namespace Filament\Schema\Components\Decorations;
 
 use Closure;
+use Filament\Schema\Components\Component;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasTooltip;
 
-class IconDecoration extends Decoration
+class IconDecoration extends Component
 {
     use HasColor;
     use HasTooltip;

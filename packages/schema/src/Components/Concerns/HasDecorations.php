@@ -4,7 +4,7 @@ namespace Filament\Schema\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Schema\Components\Decorations\Decoration;
+use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Decorations\Layouts\AlignDecorations;
 use Filament\Schema\Components\Decorations\Layouts\DecorationsLayout;
 use Filament\Schema\Components\Decorations\TextDecoration;
@@ -14,7 +14,7 @@ use Illuminate\Support\Arr;
 trait HasDecorations
 {
     /**
-     * @var array<string, array{array<Decoration | Action> | DecorationsLayout | Decoration | Action | string | Closure, class-string<DecorationsLayout>}>
+     * @var array<string, array{array<Component | Action> | DecorationsLayout | Component | Action | string | Closure, class-string<DecorationsLayout>}>
      */
     protected array $decorations = [];
 
@@ -29,9 +29,9 @@ trait HasDecorations
     protected ?array $cachedDecorationActions = null;
 
     /**
-     * @param  array<Decoration | Action> | DecorationsLayout | Decoration | Action | string | Closure | null  $decorations
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
      */
-    public function decorations(string $position, array | DecorationsLayout | Decoration | Action | string | Closure | null $decorations, ?Closure $makeDefaultLayoutUsing = null): static
+    public function decorations(string $position, array | DecorationsLayout | Component | Action | string | Closure | null $decorations, ?Closure $makeDefaultLayoutUsing = null): static
     {
         if (blank($decorations)) {
             unset($this->decorations[$position]);

@@ -13,7 +13,6 @@ use Filament\Schema\Components\Concerns\HasHeaderActions;
 use Filament\Schema\Components\Concerns\HasHeading;
 use Filament\Schema\Components\Contracts\CanConcealComponents;
 use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
-use Filament\Schema\Components\Decorations\Decoration;
 use Filament\Schema\Components\Decorations\Layouts\AlignDecorations;
 use Filament\Schema\Components\Decorations\Layouts\DecorationsLayout;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
@@ -123,9 +122,9 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
     }
 
     /**
-     * @param  array<Decoration | Action> | DecorationsLayout | Decoration | Action | string | Closure | null  $decorations
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
      */
-    public function afterHeader(array | DecorationsLayout | Decoration | Action | string | Closure | null $decorations): static
+    public function afterHeader(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
         $this->decorations(
             self::AFTER_HEADER_DECORATIONS,
@@ -137,9 +136,9 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
     }
 
     /**
-     * @param  array<Decoration | Action> | DecorationsLayout | Decoration | Action | string | Closure | null  $decorations
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
      */
-    public function footer(array | DecorationsLayout | Decoration | Action | string | Closure | null $decorations): static
+    public function footer(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
         $this->decorations(self::FOOTER_DECORATIONS, $decorations);
 
