@@ -117,11 +117,12 @@ it('can go to next wizard step on multiple forms', function () {
         ->assertHasNoFormErrors(formName: 'fooForm')
         ->assertHasNoFormErrors(formName: 'barForm')
 
-        ->nextFormWizardStep(formName: 'fooForm')
+        ->assertWizardStepExists(2, 'fooForm')
+        ->goToWizardStep(2, formName: 'fooForm')
         ->assertHasFormErrors(['title'], 'fooForm')
         ->assertHasNoFormErrors(['title'], 'barForm')
 
-        ->nextFormWizardStep(currentStep: 1, formName: 'barForm')
+        ->goToWizardStep(-1, formName: 'barForm')
         ->assertHasNoFormErrors(['title'], 'barForm')
         ->assertHasFormErrors(['content'], 'barForm')
         ->assertHasNoFormErrors(['content'], 'fooForm');
