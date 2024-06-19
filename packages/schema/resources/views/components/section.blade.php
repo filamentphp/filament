@@ -3,15 +3,14 @@
 @endphp
 
 <x-filament::section
+    :after-header="$getDecorations($schemaComponent::AFTER_HEADER_DECORATIONS)"
     :aside="$isAside"
     :collapsed="$isCollapsed()"
     :collapsible="$isCollapsible() && (! $isAside)"
     :compact="$isCompact()"
     :content-before="$isFormBefore()"
     :description="$getDescription()"
-    :footer-actions="$getFooterActions()"
-    :footer-actions-alignment="$getFooterActionsAlignment()"
-    :header-actions="$getHeaderActions()"
+    :footer="$getDecorations($schemaComponent::FOOTER_DECORATIONS)"
     :heading="$getHeading()"
     :icon="$getIcon()"
     :icon-color="$getIconColor()"

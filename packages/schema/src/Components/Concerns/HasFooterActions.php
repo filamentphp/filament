@@ -4,21 +4,31 @@ namespace Filament\Schema\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Illuminate\Support\Arr;
+use Filament\Schema\Components\Decorations\Layouts\AlignDecorations;
+use Filament\Schema\Components\Section;
+use Filament\Support\Enums\Alignment;
 
 trait HasFooterActions
 {
     use HasFooterActionsAlignment;
 
     /**
-     * @var array<Action> | null
-     */
-    protected ?array $cachedFooterActions = null;
-
-    /**
      * @var array<Action | Closure>
      */
     protected array $footerActions = [];
+
+    protected function setUpFooterActions(): void
+    {
+        $this->footer(function (Section $component): AlignDecorations {
+            $actions = $component->getFooterActions();
+            $alignment = $component->getFooterActionsAlignment();
+
+            return match ($alignment) {
+                Alignment::End, Alignment::Right => AlignDecorations::end($actions),
+                default => AlignDecorations::start($actions),
+            };
+        });
+    }
 
     /**
      * @param  array<Action | Closure>  $actions
@@ -38,22 +48,6 @@ trait HasFooterActions
      */
     public function getFooterActions(): array
     {
-        return $this->cachedFooterActions ?? $this->cacheFooterActions();
-    }
-
-    /**
-     * @return array<Action>
-     */
-    public function cacheFooterActions(): array
-    {
-        $this->cachedFooterActions = [];
-
-        foreach ($this->footerActions as $footerAction) {
-            foreach (Arr::wrap($this->evaluate($footerAction)) as $action) {
-                $this->cachedFooterActions[$action->getName()] = $this->prepareAction($action);
-            }
-        }
-
-        return $this->cachedFooterActions;
+        return $this->footerActions;
     }
 }

@@ -4,10 +4,7 @@ namespace Filament\Schema\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Schema\Components\Contracts\HasAffixActions;
 use Filament\Schema\Components\Contracts\HasExtraItemActions;
-use Filament\Schema\Components\Contracts\HasFooterActions;
-use Filament\Schema\Components\Contracts\HasHeaderActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
@@ -123,20 +120,6 @@ trait HasActions
             $this->cachedActions = [
                 ...$this->cachedActions,
                 ...$this->getExtraItemActions(),
-            ];
-        }
-
-        if ($this instanceof HasFooterActions) {
-            $this->cachedActions = [
-                ...$this->cachedActions,
-                ...$this->getFooterActions(),
-            ];
-        }
-
-        if ($this instanceof HasHeaderActions) {
-            $this->cachedActions = [
-                ...$this->cachedActions,
-                ...$this->getHeaderActions(),
             ];
         }
 

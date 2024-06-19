@@ -16,26 +16,55 @@ abstract class Layout extends ViewComponent
     abstract public function hasDecorations(): bool;
 
     /**
-     * @param  array<Decoration | Action>  $decorations
-     * @return array<Decoration | Action>
+     * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
+     * @return array<Decoration | Action | array<Decoration | Action>>
      */
     protected function extractActionsFromDecorations(array $decorations): array
     {
-        return array_filter(
-            $decorations,
-            fn (Decoration | Action $decoration): bool => $decoration instanceof Action,
-        );
+        $actions = [];
+
+        foreach ($decorations as $decoration) {
+            if (is_array($decoration)) {
+                $actions = [
+                    ...$actions,
+                    ...$this->extractActionsFromDecorations($decoration),
+                ];
+
+                continue;
+            }
+
+            if (! ($decoration instanceof Action)) {
+                continue;
+            }
+
+            $actions[] = $decoration;
+        }
+
+        return $actions;
     }
 
     /**
-     * @param  array<Decoration | Action>  $decorations
-     * @return array<Decoration | Action>
+     * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
+     * @return array<Decoration | Action | array<Decoration | Action>>
      */
     protected function filterHiddenActionsFromDecorations(array $decorations): array
     {
-        return array_filter(
+        return array_reduce(
             $decorations,
-            fn (Decoration | Action $decoration): bool => (! ($decoration instanceof Action)) || $decoration->isVisible(),
+            function (array $carry, Decoration | Action | array $decoration): array {
+                if ($decoration instanceof Action && (! $decoration->isVisible())) {
+                    return $carry;
+                }
+
+                if (is_array($decoration)) {
+                    $carry[] = $this->filterHiddenActionsFromDecorations($decoration);
+                } else {
+                    $carry[] = $decoration;
+                }
+
+                return $carry;
+            },
+            initial: [],
         );
     }
 }

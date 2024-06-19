@@ -4,106 +4,80 @@ namespace Filament\Schema\Components\Decorations\Layouts;
 
 use Filament\Actions\Action;
 use Filament\Schema\Components\Decorations\Decoration;
+use Filament\Support\Concerns\HasAlignment;
+use Filament\Support\Enums\Alignment;
 
 class AlignDecorations extends Layout
 {
+    use HasAlignment;
+
     protected string $view = 'filament-schema::components.decorations.layouts.align-decorations';
 
     /**
-     * @var array<Decoration | Action>
+     * @var array<Decoration | Action | array<Decoration | Action>>
      */
-    protected array $startDecorations = [];
+    protected array $decorations = [];
 
     /**
-     * @var array<Decoration | Action>
-     */
-    protected array $endDecorations = [];
-
-    /**
-     * @param  array<Decoration | Action>  $decorations
+     * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
      */
     public static function start(array $decorations): static
     {
         $static = app(static::class);
         $static->configure();
-        $static->startDecorations($decorations);
+        $static->decorations($decorations);
+        $static->alignment(Alignment::Start);
 
         return $static;
     }
 
     /**
-     * @param  array<Decoration | Action>  $decorations
+     * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
      */
     public static function end(array $decorations): static
     {
         $static = app(static::class);
         $static->configure();
-        $static->endDecorations($decorations);
+        $static->decorations($decorations);
+        $static->alignment(Alignment::End);
 
         return $static;
     }
 
     /**
-     * @param  array<Decoration | Action>  $startDecorations
-     * @param  array<Decoration | Action>  $endDecorations
+     * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
      */
-    public static function between(array $startDecorations, array $endDecorations): static
+    public static function between(array $decorations): static
     {
         $static = app(static::class);
         $static->configure();
-        $static->startDecorations($startDecorations);
-        $static->endDecorations($endDecorations);
+        $static->decorations($decorations);
+        $static->alignment(Alignment::Between);
 
         return $static;
     }
 
     public function hasDecorations(): bool
     {
-        if (count($this->getStartDecorations())) {
-            return true;
-        }
-
-        if (count($this->getEndDecorations())) {
-            return true;
-        }
-
-        return false;
+        return count($this->getDecorations());
     }
 
     /**
-     * @param  array<Decoration | Action>  $decorations
+     * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
      */
-    public function startDecorations(array $decorations): static
+    public function decorations(array $decorations): static
     {
-        $this->startDecorations = $decorations;
+        $this->decorations = $decorations;
 
         return $this;
     }
 
     /**
-     * @param  array<Decoration | Action>  $decorations
+     * @return array<Decoration | Action | array<Decoration | Action>>
      */
-    public function endDecorations(array $decorations): static
+    public function getDecorations(): array
     {
-        $this->endDecorations = $decorations;
-
-        return $this;
-    }
-
-    /**
-     * @return array<Decoration | Action>
-     */
-    public function getStartDecorations(): array
-    {
-        return $this->filterHiddenActionsFromDecorations($this->startDecorations);
-    }
-
-    /**
-     * @return array<Decoration | Action>
-     */
-    public function getEndDecorations(): array
-    {
-        return $this->filterHiddenActionsFromDecorations($this->endDecorations);
+        return $this->filterHiddenActionsFromDecorations($this->decorations);
     }
 
     /**
@@ -111,9 +85,6 @@ class AlignDecorations extends Layout
      */
     public function getActions(): array
     {
-        return [
-            ...$this->extractActionsFromDecorations($this->getStartDecorations()),
-            ...$this->extractActionsFromDecorations($this->getEndDecorations()),
-        ];
+        return $this->extractActionsFromDecorations($this->getDecorations());
     }
 }

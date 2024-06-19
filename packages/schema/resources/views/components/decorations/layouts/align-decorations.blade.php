@@ -1,38 +1,31 @@
 @php
-    $startDecorations = $getStartDecorations();
-    $endDecorations = $getEndDecorations();
+    use Filament\Support\Enums\Alignment;
 
-    $isBetween = $startDecorations && $endDecorations;
+    $alignment = $getAlignment();
+    $decorations = $getDecorations();
 @endphp
 
 <div
     @class([
-        'flex grow flex-wrap items-center gap-x-3',
-        'gap-y-1' => ! $isBetween,
-        'justify-start' => (! $isBetween) && $startDecorations,
-        'justify-end' => (! $isBetween) && $endDecorations,
-        'justify-between' => $isBetween,
+        'flex grow flex-wrap items-center gap-3',
+        match ($alignment) {
+            Alignment::Start, Alignment::Left => 'justify-start',
+            Alignment::Center => 'justify-center',
+            Alignment::End, Alignment::Right => 'justify-end',
+            Alignment::Between, Alignment::Justify => 'justify-between',
+            default => $alignment,
+        },
     ])
 >
-    @if ($isBetween)
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-            @foreach ($startDecorations as $decoration)
-                {{ $decoration }}
-            @endforeach
-        </div>
-
-        <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-            @foreach ($endDecorations as $decoration)
-                {{ $decoration }}
-            @endforeach
-        </div>
-    @elseif ($startDecorations)
-        @foreach ($startDecorations as $decoration)
+    @foreach ($decorations as $decoration)
+        @if (is_array($decoration))
+            <div class="flex flex-wrap items-center gap-3">
+                @foreach ($decoration as $groupedDecoration)
+                    {{ $groupedDecoration }}
+                @endforeach
+            </div>
+        @else
             {{ $decoration }}
-        @endforeach
-    @elseif ($endDecorations)
-        @foreach ($endDecorations as $decoration)
-            {{ $decoration }}
-        @endforeach
-    @endif
+        @endif
+    @endforeach
 </div>

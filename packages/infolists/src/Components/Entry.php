@@ -26,21 +26,21 @@ class Entry extends Component
 
     protected string $viewIdentifier = 'entry';
 
-    const ABOVE_LABEL_DECORATION = 'above_label';
+    const ABOVE_LABEL_DECORATIONS = 'above_label';
 
-    const BELOW_LABEL_DECORATION = 'below_label';
+    const BELOW_LABEL_DECORATIONS = 'below_label';
 
-    const BEFORE_LABEL_DECORATION = 'before_label';
+    const BEFORE_LABEL_DECORATIONS = 'before_label';
 
-    const AFTER_LABEL_DECORATION = 'after_label';
+    const AFTER_LABEL_DECORATIONS = 'after_label';
 
-    const ABOVE_CONTENT_DECORATION = 'above_content';
+    const ABOVE_CONTENT_DECORATIONS = 'above_content';
 
-    const BELOW_CONTENT_DECORATION = 'below_content';
+    const BELOW_CONTENT_DECORATIONS = 'below_content';
 
-    const BEFORE_CONTENT_DECORATION = 'before_content';
+    const BEFORE_CONTENT_DECORATIONS = 'before_content';
 
-    const AFTER_CONTENT_DECORATION = 'after_content';
+    const AFTER_CONTENT_DECORATIONS = 'after_content';
 
     final public function __construct(string $name)
     {
@@ -106,7 +106,7 @@ class Entry extends Component
      */
     public function aboveLabel(array | Layout | Decoration | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::ABOVE_LABEL_DECORATION, $decorations);
+        $this->decorations(self::ABOVE_LABEL_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -116,7 +116,7 @@ class Entry extends Component
      */
     public function belowLabel(array | Layout | Decoration | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BELOW_LABEL_DECORATION, $decorations);
+        $this->decorations(self::BELOW_LABEL_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -126,7 +126,7 @@ class Entry extends Component
      */
     public function beforeLabel(array | Layout | Decoration | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BEFORE_LABEL_DECORATION, $decorations);
+        $this->decorations(self::BEFORE_LABEL_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -136,7 +136,7 @@ class Entry extends Component
      */
     public function afterLabel(array | Layout | Decoration | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::AFTER_LABEL_DECORATION, $decorations);
+        $this->decorations(self::AFTER_LABEL_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -146,7 +146,7 @@ class Entry extends Component
      */
     public function aboveContent(array | Layout | Decoration | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::ABOVE_CONTENT_DECORATION, $decorations);
+        $this->decorations(self::ABOVE_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -156,7 +156,7 @@ class Entry extends Component
      */
     public function belowContent(array | Layout | Decoration | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BELOW_CONTENT_DECORATION, $decorations);
+        $this->decorations(self::BELOW_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -166,7 +166,7 @@ class Entry extends Component
      */
     public function beforeContent(array | Layout | Decoration | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BEFORE_CONTENT_DECORATION, $decorations);
+        $this->decorations(self::BEFORE_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -176,7 +176,7 @@ class Entry extends Component
      */
     public function afterContent(array | Layout | Decoration | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::AFTER_CONTENT_DECORATION, $decorations);
+        $this->decorations(self::AFTER_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }

@@ -3,6 +3,7 @@
 namespace Filament\Schema\Components\Decorations;
 
 use Closure;
+use Filament\Schema\JsContent;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasFontFamily;
 use Filament\Support\Concerns\HasTooltip;
@@ -43,6 +44,13 @@ class TextDecoration extends Decoration
     public function content(string | Htmlable | Closure $content): static
     {
         $this->content = $content;
+
+        return $this;
+    }
+
+    public function js(): static
+    {
+        $this->content(JsContent::make($this->getContent()));
 
         return $this;
     }

@@ -34,10 +34,10 @@
         $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
     }
 
-    $beforeLabelDecorations = $entry?->getDecorations($entry::BEFORE_LABEL_DECORATION);
-    $afterLabelDecorations = $entry?->getDecorations($entry::AFTER_LABEL_DECORATION);
-    $beforeContentDecorations = $entry?->getDecorations($entry::BEFORE_CONTENT_DECORATION);
-    $afterContentDecorations = $entry?->getDecorations($entry::AFTER_CONTENT_DECORATION);
+    $beforeLabelDecorations = $entry?->getDecorations($entry::BEFORE_LABEL_DECORATIONS);
+    $afterLabelDecorations = $entry?->getDecorations($entry::AFTER_LABEL_DECORATIONS);
+    $beforeContentDecorations = $entry?->getDecorations($entry::BEFORE_CONTENT_DECORATIONS);
+    $afterContentDecorations = $entry?->getDecorations($entry::AFTER_CONTENT_DECORATIONS);
 @endphp
 
 <div
@@ -59,7 +59,7 @@
             'sm:grid-cols-3 sm:items-start sm:gap-x-4' => $hasInlineLabel,
         ])
     >
-        {{ $entry?->getDecorations($entry::ABOVE_LABEL_DECORATION) }}
+        {{ $entry?->getDecorations($entry::ABOVE_LABEL_DECORATIONS) }}
 
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $beforeLabelDecorations || $afterLabelDecorations)
             <div
@@ -87,7 +87,7 @@
             </div>
         @endif
 
-        {{ $entry?->getDecorations($entry::BELOW_LABEL_DECORATION) }}
+        {{ $entry?->getDecorations($entry::BELOW_LABEL_DECORATIONS) }}
 
         <div
             @class([
@@ -95,7 +95,7 @@
                 'sm:col-span-2' => $hasInlineLabel,
             ])
         >
-            {{ $entry?->getDecorations($entry::ABOVE_CONTENT_DECORATION) }}
+            {{ $entry?->getDecorations($entry::ABOVE_CONTENT_DECORATIONS) }}
 
             @capture($content)
                 <dd
@@ -159,7 +159,7 @@
                 {{ $content() }}
             @endif
 
-            {{ $entry?->getDecorations($entry::BELOW_CONTENT_DECORATION) }}
+            {{ $entry?->getDecorations($entry::BELOW_CONTENT_DECORATIONS) }}
         </div>
     </div>
 </div>

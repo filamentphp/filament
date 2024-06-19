@@ -29,14 +29,14 @@
         $statePath ??= $field->getStatePath();
     }
 
-    $beforeLabelDecorations = $field?->getDecorations($field::BEFORE_LABEL_DECORATION);
-    $afterLabelDecorations = $field?->getDecorations($field::AFTER_LABEL_DECORATION);
-    $aboveContentDecorations = $field?->getDecorations($field::ABOVE_CONTENT_DECORATION);
-    $belowContentDecorations = $field?->getDecorations($field::BELOW_CONTENT_DECORATION);
-    $beforeContentDecorations = $field?->getDecorations($field::BEFORE_CONTENT_DECORATION);
-    $afterContentDecorations = $field?->getDecorations($field::AFTER_CONTENT_DECORATION);
-    $aboveErrorMessageDecorations = $field?->getDecorations($field::ABOVE_ERROR_MESSAGE_DECORATION);
-    $belowErrorMessageDecorations = $field?->getDecorations($field::BELOW_ERROR_MESSAGE_DECORATION);
+    $beforeLabelDecorations = $field?->getDecorations($field::BEFORE_LABEL_DECORATIONS);
+    $afterLabelDecorations = $field?->getDecorations($field::AFTER_LABEL_DECORATIONS);
+    $aboveContentDecorations = $field?->getDecorations($field::ABOVE_CONTENT_DECORATIONS);
+    $belowContentDecorations = $field?->getDecorations($field::BELOW_CONTENT_DECORATIONS);
+    $beforeContentDecorations = $field?->getDecorations($field::BEFORE_CONTENT_DECORATIONS);
+    $afterContentDecorations = $field?->getDecorations($field::AFTER_CONTENT_DECORATIONS);
+    $aboveErrorMessageDecorations = $field?->getDecorations($field::ABOVE_ERROR_MESSAGE_DECORATIONS);
+    $belowErrorMessageDecorations = $field?->getDecorations($field::BELOW_ERROR_MESSAGE_DECORATIONS);
 
     $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
 @endphp
@@ -66,7 +66,7 @@
             } => $hasInlineLabel,
         ])
     >
-        {{ $field?->getDecorations($field::ABOVE_LABEL_DECORATION) }}
+        {{ $field?->getDecorations($field::ABOVE_LABEL_DECORATIONS) }}
 
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $beforeLabelDecorations || $afterLabelDecorations)
             <div
@@ -97,7 +97,7 @@
             </div>
         @endif
 
-        {{ $field?->getDecorations($field::BELOW_LABEL_DECORATION) }}
+        {{ $field?->getDecorations($field::BELOW_LABEL_DECORATIONS) }}
 
         @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || $aboveContentDecorations || $belowContentDecorations || $beforeContentDecorations || $afterContentDecorations || $aboveErrorMessageDecorations || $belowErrorMessageDecorations)
             <div

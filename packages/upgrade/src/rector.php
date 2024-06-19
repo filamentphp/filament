@@ -138,8 +138,6 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Infolists\\Components\\Concerns\\HasState' => 'Filament\\Schema\\Components\\Concerns\\HasState',
             'Filament\\Infolists\\Components\\Concerns\\CanGetStateFromRelationships' => 'Filament\\Schema\\Components\\Concerns\\CanGetStateFromRelationships',
             'Filament\\Infolists\\Components\\Contracts\\HasAffixActions' => 'Filament\\Schema\\Components\\Contracts\\HasAffixActions',
-            'Filament\\Infolists\\Components\\Contracts\\HasFooterActions' => 'Filament\\Schema\\Components\\Contracts\\HasFooterActions',
-            'Filament\\Infolists\\Components\\Contracts\\HasHeaderActions' => 'Filament\\Schema\\Components\\Contracts\\HasHeaderActions',
             'Filament\\Forms\\Components\\Contracts\\HasAffixActions' => 'Filament\\Schema\\Components\\Contracts\\HasAffixActions',
             'Filament\\Forms\\Components\\Contracts\\HasExtraItemActions' => 'Filament\\Schema\\Components\\Contracts\\HasExtraItemActions',
             'Filament\\Infolists\\Commands\\MakeLayoutComponentCommand' => 'Filament\\Schema\\Commands\\MakeLayoutComponentCommand',

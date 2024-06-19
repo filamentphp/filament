@@ -10,7 +10,7 @@ use Filament\Schema\Components\Concerns\HasHeaderActions;
 use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schema\Components\Contracts\ExposesStateToActionData;
 
-class Form extends Component implements CanEntangleWithSingularRelationships, Contracts\HasFooterActions, Contracts\HasHeaderActions, ExposesStateToActionData
+class Form extends Component implements CanEntangleWithSingularRelationships, ExposesStateToActionData
 {
     use EntanglesStateWithSingularRelationship;
     use HasFooterActions;

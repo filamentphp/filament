@@ -61,6 +61,8 @@ class Component extends ViewComponent
 
     protected string $evaluationIdentifier = 'component';
 
+    protected string $viewIdentifier = 'schemaComponent';
+
     /**
      * @return array<mixed>
      */

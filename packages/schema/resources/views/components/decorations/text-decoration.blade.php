@@ -1,8 +1,10 @@
 @php
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
+    use Filament\Support\RawJs;
 
     $color = $getColor();
+    $content = $getContent();
     $weight = $getWeight();
     $fontFamily = $getFontFamily();
 @endphp
@@ -41,5 +43,5 @@
         ),
     ])
 >
-    {{ $getContent() }}
+    {{ $content }}
 </span>
