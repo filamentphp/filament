@@ -15,18 +15,17 @@ trait CanManipulateFiles
     protected function checkForCollision(array $paths): bool
     {
         foreach ($paths as $path) {
-            $path = basename($path);
             if (! $this->fileExists($path)) {
                 continue;
             }
 
-            if (! confirm($path) . ' already exists, do you want to overwrite it?')) {
+            if (! confirm(basename($path)) . ' already exists, do you want to overwrite it?')) {
                 $this->components->error("{$path} already exists, aborting.");
 
                 return true;
             }
 
-            unlink($path);
+            unlink(basename($path));
         }
 
         return false;
