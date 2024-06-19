@@ -4,6 +4,7 @@ namespace Filament\Schema\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Schema\Components\Contracts\HasAffixActions;
 use Filament\Schema\Components\Contracts\HasExtraItemActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
