@@ -312,18 +312,6 @@ it('moves to the wizards second step', function () {
 });
 ```
 
-If you want to go to a specific step, use `goToWizardStep`, the `assertWizardCurrentStepIs` method can ensure you are on the desired step:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('moves to the wizards second step', function () {
-    livewire(CreatePostUsingWizard::class)
-        ->goToWizardStep(2)
-        ->assertWizardCurrentStepIs(2);
-});
-```
-
 If you have multiple forms on a single component, any of the wizard test helpers can accept a formName parameter:
 
 ```php
