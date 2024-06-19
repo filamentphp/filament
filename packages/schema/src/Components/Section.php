@@ -22,7 +22,7 @@ use Filament\Support\Concerns\HasIconColor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
-class Section extends Component implements CanConcealComponents, CanEntangleWithSingularRelationships
+class Section extends Component implements CanConcealComponents, CanEntangleWithSingularRelationships, Contracts\HasFooterActions, Contracts\HasHeaderActions
 {
     use CanBeCollapsed;
     use CanBeCompacted;
@@ -89,7 +89,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
             return Str::slug($heading);
         });
 
-        $this->setUpHeaderActions();
+        $this->afterHeader(fn (Section $component): array => $component->getHeaderActions());
         $this->setUpFooterActions();
     }
 

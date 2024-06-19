@@ -5,7 +5,6 @@ namespace Filament\Schema\Components\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Schema\Components\Decorations\Layouts\AlignDecorations;
-use Filament\Schema\Components\Section;
 use Filament\Support\Enums\Alignment;
 
 trait HasFooterActions
@@ -19,7 +18,7 @@ trait HasFooterActions
 
     protected function setUpFooterActions(): void
     {
-        $this->footer(function (Section $component): AlignDecorations {
+        $this->footer(function (\Filament\Schema\Components\Contracts\HasFooterActions $component): AlignDecorations {
             $actions = $component->getFooterActions();
             $alignment = $component->getFooterActionsAlignment();
 

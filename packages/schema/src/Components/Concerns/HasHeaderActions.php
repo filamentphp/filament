@@ -4,7 +4,6 @@ namespace Filament\Schema\Components\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Schema\Components\Section;
 use Illuminate\Support\Arr;
 
 trait HasHeaderActions
@@ -18,11 +17,6 @@ trait HasHeaderActions
      * @var array<Action | Closure>
      */
     protected array $headerActions = [];
-
-    protected function setUpHeaderActions(): void
-    {
-        $this->afterHeader(fn (Section $component): array => $component->getHeaderActions());
-    }
 
     /**
      * @param  array<Action | Closure>  $actions

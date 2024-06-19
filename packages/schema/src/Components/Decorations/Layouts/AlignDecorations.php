@@ -59,7 +59,7 @@ class AlignDecorations extends Layout
 
     public function hasDecorations(): bool
     {
-        return count($this->getDecorations());
+        return count($this->getDecorations()) > 0;
     }
 
     /**
