@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Columns\Concerns;
+namespace Filament\Support\Concerns;
 
 use Closure;
 use Filament\Support\Enums\FontFamily;
@@ -16,7 +16,7 @@ trait HasFontFamily
         return $this;
     }
 
-    public function getFontFamily(mixed $state): FontFamily | string | null
+    public function getFontFamily(mixed $state = null): FontFamily | string | null
     {
         return $this->evaluate($this->fontFamily, [
             'state' => $state,

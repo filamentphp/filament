@@ -11,6 +11,7 @@ use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
+use Filament\Support\Concerns\HasTooltip;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Support\Arrayable;
@@ -62,13 +63,13 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\HasParentActions;
     use Concerns\HasSchema;
     use Concerns\HasSize;
-    use Concerns\HasTooltip;
     use Concerns\HasWizard;
     use Concerns\InteractsWithRecord;
     use HasBadge;
     use HasColor;
     use HasExtraAttributes;
     use HasIcon;
+    use HasTooltip;
 
     protected bool | Closure $isBulk = false;
 

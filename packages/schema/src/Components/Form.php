@@ -9,6 +9,8 @@ use Filament\Schema\Components\Concerns\HasFooterActions;
 use Filament\Schema\Components\Concerns\HasHeaderActions;
 use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schema\Components\Contracts\ExposesStateToActionData;
+use Filament\Schema\Components\Decorations\Layouts\AlignDecorations;
+use Filament\Schema\Components\Decorations\Layouts\DecorationsLayout;
 
 class Form extends Component implements CanEntangleWithSingularRelationships, Contracts\HasFooterActions, Contracts\HasHeaderActions, ExposesStateToActionData
 {
@@ -22,6 +24,10 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Co
     protected string $view = 'filament-schema::components.form';
 
     protected string | Closure | null $livewireSubmitHandler = null;
+
+    const HEADER_DECORATIONS = 'header';
+
+    const FOOTER_DECORATIONS = 'footer';
 
     /**
      * @param  array<Component> | Closure  $schema
@@ -40,6 +46,14 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Co
         $static->configure();
 
         return $static;
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->header(fn (Form $component): array => $component->getHeaderActions());
+        $this->setUpFooterActions();
     }
 
     public function action(Action | Closure | null $action): static
@@ -63,5 +77,29 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Co
     public function getLivewireSubmitHandler(): ?string
     {
         return $this->evaluate($this->livewireSubmitHandler) ?? $this->action?->getLivewireClickHandler();
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function header(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(
+            self::HEADER_DECORATIONS,
+            $decorations,
+            makeDefaultLayoutUsing: fn (array $decorations): AlignDecorations => AlignDecorations::end($decorations),
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function footer(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(self::FOOTER_DECORATIONS, $decorations);
+
+        return $this;
     }
 }

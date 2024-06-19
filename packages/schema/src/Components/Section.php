@@ -3,6 +3,7 @@
 namespace Filament\Schema\Components;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Schema\Components\Concerns\CanBeCollapsed;
 use Filament\Schema\Components\Concerns\CanBeCompacted;
 use Filament\Schema\Components\Concerns\EntanglesStateWithSingularRelationship;
@@ -12,6 +13,8 @@ use Filament\Schema\Components\Concerns\HasHeaderActions;
 use Filament\Schema\Components\Concerns\HasHeading;
 use Filament\Schema\Components\Contracts\CanConcealComponents;
 use Filament\Schema\Components\Contracts\CanEntangleWithSingularRelationships;
+use Filament\Schema\Components\Decorations\Layouts\AlignDecorations;
+use Filament\Schema\Components\Decorations\Layouts\DecorationsLayout;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasIconColor;
@@ -39,6 +42,10 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
     protected bool | Closure | null $isAside = null;
 
     protected bool | Closure $isFormBefore = false;
+
+    const AFTER_HEADER_DECORATIONS = 'after_header';
+
+    const FOOTER_DECORATIONS = 'footer';
 
     /**
      * @param  string | array<Component> | Htmlable | Closure | null  $heading
@@ -80,6 +87,9 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
 
             return Str::slug($heading);
         });
+
+        $this->afterHeader(fn (Section $component): array => $component->getHeaderActions());
+        $this->setUpFooterActions();
     }
 
     public function aside(bool | Closure | null $condition = true): static
@@ -109,5 +119,29 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
     public function isFormBefore(): bool
     {
         return (bool) $this->evaluate($this->isFormBefore);
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function afterHeader(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(
+            self::AFTER_HEADER_DECORATIONS,
+            $decorations,
+            makeDefaultLayoutUsing: fn (array $decorations): AlignDecorations => AlignDecorations::end($decorations),
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function footer(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(self::FOOTER_DECORATIONS, $decorations);
+
+        return $this;
     }
 }

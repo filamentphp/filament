@@ -28,6 +28,11 @@ trait HasState
      */
     protected array $afterStateUpdated = [];
 
+    /**
+     * @var array<string | Closure>
+     */
+    protected array $afterStateUpdatedJs = [];
+
     protected ?Closure $beforeStateDehydrated = null;
 
     protected mixed $defaultState = null;
@@ -118,7 +123,26 @@ trait HasState
 
     public function afterStateUpdated(?Closure $callback): static
     {
+        if (blank($callback)) {
+            $this->afterStateUpdated = [];
+
+            return $this;
+        }
+
         $this->afterStateUpdated[] = $callback;
+
+        return $this;
+    }
+
+    public function afterStateUpdatedJs(string | Closure | null $js): static
+    {
+        if (blank($js)) {
+            $this->afterStateUpdatedJs = [];
+
+            return $this;
+        }
+
+        $this->afterStateUpdatedJs[] = $js;
 
         return $this;
     }
@@ -316,13 +340,6 @@ trait HasState
         if ($andCallHydrationHooks) {
             $this->callAfterStateHydrated();
         }
-    }
-
-    public function fill(): void
-    {
-        $defaults = [];
-
-        $this->hydrateDefaultState($defaults);
     }
 
     /**
@@ -536,6 +553,28 @@ trait HasState
         }
 
         return $this->cachedAbsoluteStatePath = implode('.', $pathComponents);
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getAfterStateUpdatedJs(): array
+    {
+        return array_reduce(
+            $this->afterStateUpdatedJs,
+            function (array $carry, string | Closure $js): array {
+                $js = $this->evaluate($js);
+
+                if (blank($js)) {
+                    return $carry;
+                }
+
+                $carry[] = $js;
+
+                return $carry;
+            },
+            initial: [],
+        );
     }
 
     public function hasStatePath(): bool

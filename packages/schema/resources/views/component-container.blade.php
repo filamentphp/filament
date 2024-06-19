@@ -35,19 +35,6 @@
 
             $hiddenJs = $schemaComponent->getHiddenJs();
             $visibleJs = $schemaComponent->getVisibleJs();
-
-            $jsStatePath = Js::from($schemaComponent->getStatePath());
-            $jsContainerStatePath = Js::from($schemaComponent->getContainer()->getStatePath());
-
-            $getUtilities = fn (): string => <<<JS
-                            {
-                                \$get: getGetUtility({$jsContainerStatePath}),
-                                get \$state() {
-                                    return \$wire.\$get({$jsStatePath})
-                                },
-                                \$statePath: {$jsStatePath},
-                            }
-                        JS;
         @endphp
 
         <x-filament::grid.column
@@ -83,33 +70,35 @@
             ])
         >
             @if (! $isHidden)
-                @if (blank($hiddenJs) && blank($visibleJs))
+                <div
+                    x-data="{
+                        $statePath:
+                            {{ $jsStatePath = Js::from($schemaComponent->getStatePath()) }},
+                        get $get() {
+                            return makeGetUtility(@js($schemaComponent->getContainer()->getStatePath()))
+                        },
+                        get $set() {
+                            return makeSetUtility(@js($schemaComponent->getContainer()->getStatePath()), @js($schemaComponent->isLive()))
+                        },
+                        get $state() {
+                            return $wire.$get({{ $jsStatePath }})
+                        },
+                    }"
+                    @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
+                        {{-- format-ignore-start --}}x-init="@foreach ($afterStateUpdatedJs as $js) $wire.$watch({{ $jsStatePath }}, ($state, $old) => eval(@js($js))); @endforeach"{{-- format-ignore-end --}}
+                    @endif
+                    @if (filled($xShow = match ([filled($hiddenJs), filled($visibleJs)]) {
+                             [true, true] => "(! {$hiddenJs}) && ({$visibleJs})",
+                             [true, false] => "! {$hiddenJs}",
+                             [false, true] => $visibleJs,
+                             default => null,
+                         }))
+                        x-show="{{ $xShow }}"
+                        x-cloak
+                    @endif
+                >
                     {{ $schemaComponent }}
-                @elseif (filled($hiddenJs) && blank($visibleJs))
-                    <div
-                        x-data="{{ $getUtilities() }}"
-                        x-show="! {{ $hiddenJs }}"
-                        x-cloak
-                    >
-                        {{ $schemaComponent }}
-                    </div>
-                @elseif (blank($hiddenJs) && filled($visibleJs))
-                    <div
-                        x-data="{{ $getUtilities() }}"
-                        x-show="{{ $visibleJs }}"
-                        x-cloak
-                    >
-                        {{ $schemaComponent }}
-                    </div>
-                @else
-                    <div
-                        x-data="{{ $getUtilities() }}"
-                        x-show="! {{ $hiddenJs }} && {{ $visibleJs }}"
-                        x-cloak
-                    >
-                        {{ $schemaComponent }}
-                    </div>
-                @endif
+                </div>
             @endif
         </x-filament::grid.column>
     @endforeach

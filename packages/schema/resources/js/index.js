@@ -1,35 +1,61 @@
 document.addEventListener('alpine:init', () => {
     window.Alpine.data('filamentSchema', ({ livewireId }) => ({
-        getGetUtility: function (containerPath) {
+        makeGetUtility: function (containerPath) {
             return (path, isAbsolute) => {
-                let containerPathCopy = containerPath
-
-                if (path.startsWith('/')) {
-                    isAbsolute = true
-                    path = path.slice(1)
-                }
-
-                if (isAbsolute) {
-                    return this.$wire.$get(path)
-                }
-
-                while (path.startsWith('../')) {
-                    containerPathCopy = containerPathCopy.includes('.')
-                        ? containerPathCopy.slice(
-                              0,
-                              containerPathCopy.lastIndexOf('.'),
-                          )
-                        : null
-
-                    path = path.slice(3)
-                }
-
-                if (['', null, undefined].includes(containerPathCopy)) {
-                    return path
-                }
-
-                return this.$wire.$get(`${containerPathCopy}.${path}`)
+                return this.$wire.$get(
+                    this.resolveRelativeStatePath(
+                        containerPath,
+                        path,
+                        isAbsolute,
+                    ),
+                )
             }
+        },
+
+        makeSetUtility: function (containerPath, isComponentLive) {
+            return (path, state, isAbsolute, isLive = null) => {
+                isLive ??= isComponentLive
+
+                return this.$wire.$set(
+                    this.resolveRelativeStatePath(
+                        containerPath,
+                        path,
+                        isAbsolute,
+                    ),
+                    state,
+                    isLive,
+                )
+            }
+        },
+
+        resolveRelativeStatePath: function (containerPath, path, isAbsolute) {
+            let containerPathCopy = containerPath
+
+            if (path.startsWith('/')) {
+                isAbsolute = true
+                path = path.slice(1)
+            }
+
+            if (isAbsolute) {
+                return path
+            }
+
+            while (path.startsWith('../')) {
+                containerPathCopy = containerPathCopy.includes('.')
+                    ? containerPathCopy.slice(
+                          0,
+                          containerPathCopy.lastIndexOf('.'),
+                      )
+                    : null
+
+                path = path.slice(3)
+            }
+
+            if (['', null, undefined].includes(containerPathCopy)) {
+                return path
+            }
+
+            return `${containerPathCopy}.${path}`
         },
 
         handleFormValidationError: function (event) {

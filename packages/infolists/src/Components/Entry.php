@@ -2,25 +2,44 @@
 
 namespace Filament\Infolists\Components;
 
+use Closure;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Schema\Components\Component;
-use Filament\Schema\Components\Contracts\HasHintActions;
+use Filament\Schema\Components\Decorations\Layouts\DecorationsLayout;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasPlaceholder;
+use Filament\Support\Concerns\HasTooltip;
 use Illuminate\Contracts\Support\Htmlable;
 
-class Entry extends Component implements HasHintActions
+class Entry extends Component
 {
     use Concerns\CanOpenUrl;
     use Concerns\HasExtraEntryWrapperAttributes;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;
-    use Concerns\HasTooltip;
     use HasAlignment;
     use HasPlaceholder;
+    use HasTooltip;
 
     protected string $viewIdentifier = 'entry';
+
+    const ABOVE_LABEL_DECORATIONS = 'above_label';
+
+    const BELOW_LABEL_DECORATIONS = 'below_label';
+
+    const BEFORE_LABEL_DECORATIONS = 'before_label';
+
+    const AFTER_LABEL_DECORATIONS = 'after_label';
+
+    const ABOVE_CONTENT_DECORATIONS = 'above_content';
+
+    const BELOW_CONTENT_DECORATIONS = 'below_content';
+
+    const BEFORE_CONTENT_DECORATIONS = 'before_content';
+
+    const AFTER_CONTENT_DECORATIONS = 'after_content';
 
     final public function __construct(string $name)
     {
@@ -42,6 +61,13 @@ class Entry extends Component implements HasHintActions
         $static->configure();
 
         return $static;
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->setUpHint();
     }
 
     public static function getDefaultName(): ?string
@@ -70,6 +96,86 @@ class Entry extends Component implements HasHintActions
     public function state(mixed $state): static
     {
         $this->constantState($state);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function aboveLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(self::ABOVE_LABEL_DECORATIONS, $decorations);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function belowLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(self::BELOW_LABEL_DECORATIONS, $decorations);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function beforeLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(self::BEFORE_LABEL_DECORATIONS, $decorations);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function afterLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(self::AFTER_LABEL_DECORATIONS, $decorations);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function aboveContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(self::ABOVE_CONTENT_DECORATIONS, $decorations);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function belowContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(self::BELOW_CONTENT_DECORATIONS, $decorations);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function beforeContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(self::BEFORE_CONTENT_DECORATIONS, $decorations);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component | Action> | DecorationsLayout | Component | Action | string | Closure | null  $decorations
+     */
+    public function afterContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
+    {
+        $this->decorations(self::AFTER_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }
