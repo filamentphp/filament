@@ -60,6 +60,8 @@ class Wizard extends Component
     {
         parent::setUp();
 
+        $this->currentStepIndex = $this->getStartStep() - 1;
+
         $this->registerActions([
             fn (Wizard $component): Action => $component->getNextAction(),
             fn (Wizard $component): Action => $component->getPreviousAction(),
