@@ -75,12 +75,20 @@
                         $statePath:
                             {{ $jsStatePath = Js::from($schemaComponent->getStatePath()) }},
                         get $get() {
-                            return getGetUtility(@js($schemaComponent->getContainer()->getStatePath()))
+                            return makeGetUtility(@js($schemaComponent->getContainer()->getStatePath()))
+                        },
+                        get $set() {
+                            return makeSetUtility(@js($schemaComponent->getContainer()->getStatePath()), @js($schemaComponent->isLive()))
                         },
                         get $state() {
                             return $wire.$get({{ $jsStatePath }})
                         },
                     }"
+                    @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
+                        x-init="@foreach ($afterStateUpdatedJs as $js)
+                     $wire.$watch({{ $jsStatePath }}, ($state, $old) => eval(@js($js))); @endforeach
+                    "
+                    @endif
                     @if (filled($xShow = match ([filled($hiddenJs), filled($visibleJs)]) {
                              [true, true] => "(! {$hiddenJs}) && ({$visibleJs})",
                              [true, false] => "! {$hiddenJs}",

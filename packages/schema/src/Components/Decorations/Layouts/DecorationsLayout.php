@@ -3,21 +3,25 @@
 namespace Filament\Schema\Components\Decorations\Layouts;
 
 use Filament\Actions\Action;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Concerns\BelongsToContainer;
 use Filament\Schema\Components\Decorations\Decoration;
 use Filament\Support\Components\ViewComponent;
 
-abstract class Layout extends ViewComponent
+abstract class DecorationsLayout extends ViewComponent
 {
-    /**
-     * @return array<Action>
-     */
-    abstract public function getActions(): array;
+    use BelongsToContainer;
 
     abstract public function hasDecorations(): bool;
 
     /**
+     * @return array<string, Action>
+     */
+    abstract public function getActions(): array;
+
+    /**
      * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
-     * @return array<Decoration | Action | array<Decoration | Action>>
+     * @return array<string, Decoration | Action | array<Decoration | Action>>
      */
     protected function extractActionsFromDecorations(array $decorations): array
     {
@@ -37,7 +41,7 @@ abstract class Layout extends ViewComponent
                 continue;
             }
 
-            $actions[] = $decoration;
+            $actions[$decoration->getName()] = $decoration;
         }
 
         return $actions;
@@ -47,7 +51,7 @@ abstract class Layout extends ViewComponent
      * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
      * @return array<Decoration | Action | array<Decoration | Action>>
      */
-    protected function filterHiddenActionsFromDecorations(array $decorations): array
+    protected function prepareDecorations(array $decorations): array
     {
         return array_reduce(
             $decorations,
@@ -57,8 +61,12 @@ abstract class Layout extends ViewComponent
                 }
 
                 if (is_array($decoration)) {
-                    $carry[] = $this->filterHiddenActionsFromDecorations($decoration);
+                    $carry[] = $this->prepareDecorations($decoration);
                 } else {
+                    if ($decoration instanceof Component) {
+                        $decoration->container($this->getContainer());
+                    }
+
                     $carry[] = $decoration;
                 }
 

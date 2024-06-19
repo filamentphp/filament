@@ -2,8 +2,8 @@
 
 namespace Filament\Schema\Components\Decorations;
 
-use Filament\Support\Components\ViewComponent;
+use Filament\Schema\Components\Component;
 
-class Decoration extends ViewComponent
+class Decoration extends Component
 {
 }

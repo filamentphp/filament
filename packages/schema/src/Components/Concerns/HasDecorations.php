@@ -6,7 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Schema\Components\Decorations\Decoration;
 use Filament\Schema\Components\Decorations\Layouts\AlignDecorations;
-use Filament\Schema\Components\Decorations\Layouts\Layout;
+use Filament\Schema\Components\Decorations\Layouts\DecorationsLayout;
 use Filament\Schema\Components\Decorations\TextDecoration;
 use Filament\Support\Enums\ActionSize;
 use Illuminate\Support\Arr;
@@ -14,12 +14,12 @@ use Illuminate\Support\Arr;
 trait HasDecorations
 {
     /**
-     * @var array<string, array{array<Decoration | Action> | Layout | Decoration | Action | string | Closure, class-string<Layout>}>
+     * @var array<string, array{array<Decoration | Action> | DecorationsLayout | Decoration | Action | string | Closure, class-string<DecorationsLayout>}>
      */
     protected array $decorations = [];
 
     /**
-     * @var array<string, Layout> | null
+     * @var array<string, DecorationsLayout> | null
      */
     protected ?array $cachedDecorations = null;
 
@@ -29,9 +29,9 @@ trait HasDecorations
     protected ?array $cachedDecorationActions = null;
 
     /**
-     * @param  array<Decoration | Action> | Layout | Decoration | Action | string | Closure | null  $decorations
+     * @param  array<Decoration | Action> | DecorationsLayout | Decoration | Action | string | Closure | null  $decorations
      */
-    public function decorations(string $position, array | Layout | Decoration | Action | string | Closure | null $decorations, ?Closure $makeDefaultLayoutUsing = null): static
+    public function decorations(string $position, array | DecorationsLayout | Decoration | Action | string | Closure | null $decorations, ?Closure $makeDefaultLayoutUsing = null): static
     {
         if (blank($decorations)) {
             unset($this->decorations[$position]);
@@ -44,13 +44,13 @@ trait HasDecorations
         return $this;
     }
 
-    public function getDecorations(string $position): ?Layout
+    public function getDecorations(string $position): ?DecorationsLayout
     {
         return ($this->cachedDecorations ?? $this->cacheDecorations())[$position] ?? null;
     }
 
     /**
-     * @return array<Layout>
+     * @return array<DecorationsLayout>
      */
     public function cacheDecorations(): array
     {
@@ -59,13 +59,13 @@ trait HasDecorations
         foreach ($this->decorations as $position => [$decorations, $makeDefaultLayout]) {
             $decorations = $this->evaluate($decorations);
 
-            if ($decorations instanceof Layout && $decorations->hasDecorations()) {
-                $this->cachedDecorations[$position] = $decorations;
+            if ($decorations instanceof DecorationsLayout) {
+                $this->prepareDecorationLayout($decorations);
 
-                continue;
-            }
+                if ($decorations->hasDecorations()) {
+                    $this->cachedDecorations[$position] = $decorations;
+                }
 
-            if ($decorations instanceof Layout) {
                 continue;
             }
 
@@ -85,9 +85,9 @@ trait HasDecorations
                     AlignDecorations::start($decorations);
             }
 
-            if ($decorations->hasDecorations()) {
-                $this->cachedDecorations[$position] = $decorations;
+            $this->prepareDecorationLayout($decorations);
 
+            if (! $decorations->hasDecorations()) {
                 continue;
             }
 
@@ -97,6 +97,11 @@ trait HasDecorations
         $this->cacheDecorationActions();
 
         return $this->cachedDecorations;
+    }
+
+    protected function prepareDecorationLayout(DecorationsLayout $layout): DecorationsLayout
+    {
+        return $layout->container($this->getChildComponentContainer());
     }
 
     /**

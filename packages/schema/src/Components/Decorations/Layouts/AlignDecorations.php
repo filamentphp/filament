@@ -7,28 +7,44 @@ use Filament\Schema\Components\Decorations\Decoration;
 use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Enums\Alignment;
 
-class AlignDecorations extends Layout
+class AlignDecorations extends DecorationsLayout
 {
     use HasAlignment;
 
     protected string $view = 'filament-schema::components.decorations.layouts.align-decorations';
 
     /**
-     * @var array<Decoration | Action | array<Decoration | Action>>
+     * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
      */
-    protected array $decorations = [];
+    public function __construct(
+        protected array $decorations,
+        Alignment $alignment,
+    ) {
+        $this->alignment($alignment);
+    }
+
+    /**
+     * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
+     */
+    public static function make(
+        Alignment $alignment,
+        array $decorations = [],
+    ): static {
+        $static = app(static::class, [
+            'alignment' => $alignment,
+            'decorations' => $decorations,
+        ]);
+        $static->configure();
+
+        return $static;
+    }
 
     /**
      * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
      */
     public static function start(array $decorations): static
     {
-        $static = app(static::class);
-        $static->configure();
-        $static->decorations($decorations);
-        $static->alignment(Alignment::Start);
-
-        return $static;
+        return static::make(Alignment::Start, $decorations);
     }
 
     /**
@@ -36,12 +52,7 @@ class AlignDecorations extends Layout
      */
     public static function end(array $decorations): static
     {
-        $static = app(static::class);
-        $static->configure();
-        $static->decorations($decorations);
-        $static->alignment(Alignment::End);
-
-        return $static;
+        return static::make(Alignment::End, $decorations);
     }
 
     /**
@@ -49,12 +60,7 @@ class AlignDecorations extends Layout
      */
     public static function between(array $decorations): static
     {
-        $static = app(static::class);
-        $static->configure();
-        $static->decorations($decorations);
-        $static->alignment(Alignment::Between);
-
-        return $static;
+        return static::make(Alignment::Between, $decorations);
     }
 
     public function hasDecorations(): bool
@@ -63,25 +69,15 @@ class AlignDecorations extends Layout
     }
 
     /**
-     * @param  array<Decoration | Action | array<Decoration | Action>>  $decorations
-     */
-    public function decorations(array $decorations): static
-    {
-        $this->decorations = $decorations;
-
-        return $this;
-    }
-
-    /**
      * @return array<Decoration | Action | array<Decoration | Action>>
      */
     public function getDecorations(): array
     {
-        return $this->filterHiddenActionsFromDecorations($this->decorations);
+        return $this->prepareDecorations($this->decorations);
     }
 
     /**
-     * @return array<Action>
+     * @return array<string, Action>
      */
     public function getActions(): array
     {
