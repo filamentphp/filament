@@ -300,28 +300,39 @@ it('moves to next wizard step', function () {
 });
 ```
 
-For the subsequent steps you can pass a specific step's index to `currentStep`, which starts from 0 as the first step:
+If you want to go to a specific step, use `goToWizardStep`, the `assertWizardCurrentStepIs` method can ensure you are on the desired step:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('moves to the wizards second step', function () {
     livewire(CreatePostUsingWizard::class)
-        ->nextFormWizardStep(currentStep: 1)
-        ->assertHasFormErrors(['content']);
+        ->goToWizardStep(2)
+        ->assertWizardCurrentStepIs(2);
 });
 ```
 
-If you have multiple forms on the Livewire component, you may pass the form name as an argument:
+If you want to go to a specific step, use `goToWizardStep`, the `assertWizardCurrentStepIs` method can ensure you are on the desired step:
 
 ```php
 use function Pest\Livewire\livewire;
 
-it('moves to the wizards second step but just for fooForm', function () {
+it('moves to the wizards second step', function () {
     livewire(CreatePostUsingWizard::class)
-        ->nextFormWizardStep(currentStep: 1, formName: 'fooForm')
-        ->assertHasFormErrors(['content'], 'fooForm')
-        ->assertHasNoFormErrors(['content'], 'barForm');
+        ->goToWizardStep(2)
+        ->assertWizardCurrentStepIs(2);
+});
+```
+
+If you have multiple forms on a single component, any of the wizard test helpers can accept a formName parameter:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to next wizard step only for fooForm', function () {
+    livewire(CreatePostUsingWizard::class)
+        ->nextFormWizardStep(formName: 'fooForm')
+        ->assertHasFormErrors(['title'], formName: 'fooForm');
 });
 ```
 
