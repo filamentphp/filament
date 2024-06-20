@@ -332,6 +332,20 @@ TextColumn::make('name')
 
 The callback has access to the database `$query` builder instance to perform calculations with. It should return the value to display in the table.
 
+## Hiding the summary
+
+To hide a summary conditionally, you may use the `hidden()` method:
+
+```php
+use Filament\Tables\Columns\Summarizers\Summarizer;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+
+TextColumn::make('name')
+    ->summarize(Summarizer::make()
+        ->hidden(fn(Builder $query): bool => $query->count() == 0))
+```
+
 ## Summarising groups of rows
 
 You can use summaries with [groups](grouping) to display a summary of the records inside a group. This works automatically if you choose to add a summariser to a column in a grouped table.
