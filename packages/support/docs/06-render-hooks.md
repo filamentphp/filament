@@ -83,6 +83,8 @@ FilamentView::registerRenderHook(
 - `PanelsRenderHook::SCRIPTS_BEFORE` - Before scripts are defined
 - `PanelsRenderHook::SIDEBAR_NAV_END` - In the [sidebar](../panels/navigation), before `</nav>`
 - `PanelsRenderHook::SIDEBAR_NAV_START` - In the [sidebar](../panels/navigation), after `<nav>`
+- `PanelsRenderHook::SIMPLE_PAGE_START` - Start of the page content container, also [can be scoped](#scoping-render-hooks) to the page class
+- `PanelsRenderHook::SIMPLE_PAGE_END` - End of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIDEBAR_FOOTER` - Pinned to the bottom of the sidebar, below the content
 - `PanelsRenderHook::STYLES_AFTER` - After styles are defined
 - `PanelsRenderHook::STYLES_BEFORE` - Before styles are defined
