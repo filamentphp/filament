@@ -161,8 +161,8 @@ class MakeRelationManagerCommand extends Command
             $modifyQueryUsing .= PHP_EOL . '    SoftDeletingScope::class,';
             $modifyQueryUsing .= PHP_EOL . ']))';
 
-            $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
             $tableBulkActions[] = 'Tables\Actions\ForceDeleteBulkAction::make(),';
+            $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
         }
 
         $tableBulkActions = implode(PHP_EOL, $tableBulkActions);

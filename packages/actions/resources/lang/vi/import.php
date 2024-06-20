@@ -11,8 +11,15 @@ return [
         'form' => [
 
             'file' => [
+
                 'label' => 'Tệp',
+
                 'placeholder' => 'Tải lên tệp CSV',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} Tệp không được chứa nhiều hơn một tiêu đề cột trống.|{1,*} Tệp không được chứa các tiêu đề cột trùng lặp: :columns.',
+                ],
+
             ],
 
             'columns' => [
