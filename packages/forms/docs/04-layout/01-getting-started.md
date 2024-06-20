@@ -57,7 +57,7 @@ Section::make()
 You can pass extra HTML attributes to the component, which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:
 
 ```php
-use Filament\Forms\Components\Group;
+use Filament\Forms\Components\Section;
 
 Section::make()
     ->extraAttributes(['class' => 'custom-section-style'])
