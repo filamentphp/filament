@@ -87,10 +87,10 @@ class PanelsRenderHook
     const SIDEBAR_NAV_START = 'panels::sidebar.nav.start';
 
     const SIDEBAR_FOOTER = 'panels::sidebar.footer';
-	
-	const SIMPLE_PAGE_END = 'panels::simple-page.end';
-	
-	const SIMPLE_PAGE_START = 'panels::simple-page.start';
+
+    const SIMPLE_PAGE_END = 'panels::simple-page.end';
+
+    const SIMPLE_PAGE_START = 'panels::simple-page.start';
 
     const STYLES_AFTER = 'panels::styles.after';
 
