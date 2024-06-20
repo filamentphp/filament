@@ -413,7 +413,7 @@ class TestsForms
             $form = $this->instance()->{$formName};
 
             /**
-             * @var $wizard Wizard
+             * @var Wizard $wizard
              */
             $wizard = $form->getComponent(fn ($component) => $component instanceof Wizard);
             Assert::assertTrue(count($wizard->getChildComponents()) >= $step, "Wizard does not have a step $step");
@@ -432,7 +432,7 @@ class TestsForms
             $form = $this->instance()->{$formName};
 
             /**
-             * @var $wizard Wizard
+             * @var Wizard $wizard
              */
             $wizard = $form->getComponent(fn ($component) => $component instanceof Wizard);
             Assert::assertEquals(
@@ -455,7 +455,7 @@ class TestsForms
             $form = $this->instance()->{$formName};
 
             /**
-             * @var $wizardComponent Wizard
+             * @var Wizard $wizardComponent
              */
             $wizardComponent = $form->getComponent(fn ($component) => $component instanceof Wizard);
             if ($desiredStep === -1) {
@@ -479,11 +479,12 @@ class TestsForms
             $form = $this->instance()->{$formName};
 
             /**
-             * @var $wizardComponent Wizard
+             * @var Wizard $wizardComponent
              */
             $wizardComponent = $form->getComponent(fn ($component) => $component instanceof Wizard);
             $nextStep = $wizardComponent->getCurrentStepIndex() + 2;
 
+            /** @phpstan-ignore-next-line  */
             return $this->goToWizardStep($nextStep, $formName);
         };
     }
@@ -498,7 +499,7 @@ class TestsForms
             $form = $this->instance()->{$formName};
 
             /**
-             * @var $wizardComponent Wizard
+             * @var Wizard $wizardComponent
              */
             $wizardComponent = $form->getComponent(fn ($component) => $component instanceof Wizard);
             $previousStepIndex = $wizardComponent->getCurrentStepIndex() - 1;
