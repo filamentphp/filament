@@ -14,6 +14,11 @@ trait HasComponents
     protected array | Closure $components = [];
 
     /**
+     * @var array<string, array<Component>>
+     */
+    protected array $cachedFlatComponents = [];
+
+    /**
      * @param  array<Component> | Closure  $components
      */
     public function components(array | Closure $components): static
@@ -51,13 +56,35 @@ trait HasComponents
     }
 
     /**
+     * Get flat list of components, optionally including hidden ones.
+     *
+     * @param  bool  $withHidden
+     *
      * @return array<Component>
      */
     public function getFlatComponents(bool $withHidden = false): array
     {
+        $cacheKey = $withHidden ? 'with_hidden' : 'without_hidden';
+
+        if ( ! isset($this->cachedFlatComponents[$cacheKey])) {
+            $this->cachedFlatComponents[$cacheKey] = $this->computeFlatComponents($withHidden);
+        }
+
+        return $this->cachedFlatComponents[$cacheKey];
+    }
+
+    /**
+     * Recursively compute flat list of components.
+     *
+     * @param  bool  $withHidden
+     *
+     * @return array<Component>
+     */
+    private function computeFlatComponents(bool $withHidden): array
+    {
         return array_reduce(
             $this->getComponents($withHidden),
-            function (array $carry, Component $component) use ($withHidden): array {
+            static function (array $carry, Component $component) use ($withHidden): array {
                 $carry[] = $component;
 
                 foreach ($component->getChildComponentContainers($withHidden) as $childComponentContainer) {
