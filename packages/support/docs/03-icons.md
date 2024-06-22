@@ -33,7 +33,7 @@ use Filament\Support\Facades\FilamentIcon;
 
 FilamentIcon::register([
     'panels::topbar.global-search.field' => 'fas-magnifying-glass',
-    'panels::sidebar.group.collapse-button' => view('icons.chevron-up'),
+    'panels::sidebar.group.collapse-button' => new HtmlString(view('icons.chevron-up')->render()),
 ]);
 ```
 
