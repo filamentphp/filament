@@ -15,7 +15,7 @@ return [
             'label' => 'Groupes',
 
             'block' => [
-                'label' => 'Groupe (et)',
+                'label' => 'Groupe (OR)',
                 'or' => 'OU',
             ],
 
