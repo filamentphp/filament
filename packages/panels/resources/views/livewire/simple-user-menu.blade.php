@@ -1,5 +1,5 @@
 <div>
-    <x-filament-panels::topbar />
+    <x-filament-panels::user-menu />
 
     <x-filament-actions::modals />
 </div>

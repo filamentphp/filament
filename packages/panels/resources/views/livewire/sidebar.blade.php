@@ -1,4 +1,5 @@
-<x-filament-panels::sidebar
-    :navigation="filament()->getNavigation()"
-    class="fi-main-sidebar"
-/>
+<div>
+    <x-filament-panels::sidebar class="fi-main-sidebar" />
+
+    <x-filament-actions::modals />
+</div>

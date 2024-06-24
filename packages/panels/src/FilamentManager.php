@@ -4,6 +4,7 @@ namespace Filament;
 
 use Closure;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\Events\ServingFilament;
@@ -387,7 +388,7 @@ class FilamentManager
     }
 
     /**
-     * @return array<MenuItem>
+     * @return array<Action>
      */
     public function getTenantMenuItems(): array
     {
@@ -485,7 +486,7 @@ class FilamentManager
     }
 
     /**
-     * @return array<MenuItem>
+     * @return array<Action>
      */
     public function getUserMenuItems(): array
     {
