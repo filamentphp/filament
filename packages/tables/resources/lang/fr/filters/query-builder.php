@@ -15,8 +15,8 @@ return [
             'label' => 'Groupes',
 
             'block' => [
-                'label' => 'Disjonction (OR)',
-                'or' => 'OR',
+                'label' => 'Groupe (OR)',
+                'or' => 'OU',
             ],
 
         ],
@@ -26,7 +26,7 @@ return [
             'label' => 'Règles',
 
             'item' => [
-                'and' => 'AND',
+                'and' => 'ET',
             ],
 
         ],
@@ -36,8 +36,8 @@ return [
     'no_rules' => '(Aucune règle)',
 
     'item_separators' => [
-        'and' => 'AND',
-        'or' => 'OR',
+        'and' => 'ET',
+        'or' => 'OU',
     ],
 
     'operators' => [
@@ -79,13 +79,13 @@ return [
             'is_after' => [
 
                 'label' => [
-                    'direct' => 'Est après',
-                    'inverse' => 'N\'est pas après',
+                    'direct' => 'Est après le',
+                    'inverse' => 'N\'est pas après le',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute est après :date',
-                    'inverse' => ':attribute n\'est pas après :date',
+                    'direct' => ':attribute est après le :date',
+                    'inverse' => ':attribute n\'est pas après le :date',
                 ],
 
             ],
@@ -93,13 +93,13 @@ return [
             'is_before' => [
 
                 'label' => [
-                    'direct' => 'Est avant',
-                    'inverse' => 'N\'est pas avant',
+                    'direct' => 'Est avant le',
+                    'inverse' => 'N\'est pas avant le',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute est avant :date',
-                    'inverse' => ':attribute n\'est pas avant :date',
+                    'direct' => ':attribute est avant le :date',
+                    'inverse' => ':attribute n\'est pas avant le :date',
                 ],
 
             ],
@@ -107,13 +107,13 @@ return [
             'is_date' => [
 
                 'label' => [
-                    'direct' => 'Est une date',
-                    'inverse' => 'N\'est pas une date',
+                    'direct' => 'Est le (date)',
+                    'inverse' => 'N\'est pas le (date)',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute est :date',
-                    'inverse' => ':attribute n\'est pas :date',
+                    'direct' => ':attribute est le :date',
+                    'inverse' => ':attribute n\'est pas le :date',
                 ],
 
             ],
@@ -121,13 +121,13 @@ return [
             'is_month' => [
 
                 'label' => [
-                    'direct' => 'Est un mois',
-                    'inverse' => 'N\'est pas un mois',
+                    'direct' => 'Est durant le mois de',
+                    'inverse' => 'N\'est pas durant le mois de',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute est :month',
-                    'inverse' => ':attribute n\'est pas :month',
+                    'direct' => ':attribute est en :month',
+                    'inverse' => ':attribute n\'est pas en :month',
                 ],
 
             ],
@@ -135,13 +135,13 @@ return [
             'is_year' => [
 
                 'label' => [
-                    'direct' => 'Est une année',
-                    'inverse' => 'N\'est pas une année',
+                    'direct' => 'Est durant l\'année',
+                    'inverse' => 'N\'est pas durant l\'année',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute est :year',
-                    'inverse' => ':attribute n\'est pas :year',
+                    'direct' => ':attribute est en :year',
+                    'inverse' => ':attribute n\'est pas en :year',
                 ],
 
             ],
