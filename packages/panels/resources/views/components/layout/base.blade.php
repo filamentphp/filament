@@ -57,10 +57,14 @@
 
         {{ filament()->getTheme()->getHtml() }}
         {{ filament()->getFontHtml() }}
+        {{ filament()->getMonoFontHtml() }}
+        {{ filament()->getSerifFontHtml() }}
 
         <style>
             :root {
                 --font-family: '{!! filament()->getFontFamily() !!}';
+                --mono-font-family: '{!! filament()->getMonoFontFamily() !!}';
+                --serif-font-family: '{!! filament()->getSerifFontFamily() !!}';
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
                 --default-theme-mode: {{ filament()->getDefaultThemeMode()->value }};
