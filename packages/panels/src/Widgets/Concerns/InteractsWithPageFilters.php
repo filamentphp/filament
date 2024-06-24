@@ -2,7 +2,6 @@
 
 namespace Filament\Widgets\Concerns;
 
-use Livewire\Attributes\Computed;
 use Livewire\Attributes\Reactive;
 
 trait InteractsWithPageFilters
