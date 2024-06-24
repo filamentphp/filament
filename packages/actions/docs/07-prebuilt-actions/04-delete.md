@@ -16,7 +16,10 @@ DeleteAction::make()
 If you want to delete table rows, you can use the `Filament\Tables\Actions\DeleteAction` instead, or `Filament\Tables\Actions\DeleteBulkAction` to delete multiple at once:
 
 ```php
-use Filament\Actions\BulkActionGroup;use Filament\Actions\DeleteAction;use Filament\Actions\DeleteBulkAction;use Filament\Tables\Table;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {

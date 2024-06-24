@@ -73,7 +73,8 @@ You can pass data to the infolist in two ways:
 Either pass an Eloquent model instance to the `record()` method of the infolist, to automatically map all the model attributes and relationships to the entries in the infolist's schema:
 
 ```php
-use Filament\Infolists\Components\TextEntry;use Filament\Schema\Schema;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schema\Schema;
 
 public function productInfolist(Schema $infolist): Schema
 {
@@ -90,7 +91,8 @@ public function productInfolist(Schema $infolist): Schema
 Alternatively, you can pass an array of data to the `state()` method of the infolist, to manually map the data to the entries in the infolist's schema:
 
 ```php
-use Filament\Infolists\Components\TextEntry;use Filament\Schema\Schema;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schema\Schema;
 
 public function productInfolist(Schema $infolist): Schema
 {

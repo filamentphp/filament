@@ -41,7 +41,8 @@ Sections can have actions in their [header](#adding-actions-to-the-sections-head
 You may add [actions](../actions) to the section's header using the `headerActions()` method:
 
 ```php
-use Filament\Actions\Action;use Filament\Schema\Components\Section;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Section;
 
 Section::make('Rate limiting')
     ->headerActions([
@@ -64,7 +65,8 @@ Section::make('Rate limiting')
 In addition to [header actions](#adding-an-icon-to-the-sections-header), you may add [actions](../actions) to the section's footer using the `footerActions()` method:
 
 ```php
-use Filament\Actions\Action;use Filament\Schema\Components\Section;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Section;
 
 Section::make('Rate limiting')
     ->schema([
@@ -87,7 +89,9 @@ Section::make('Rate limiting')
 Footer actions are aligned to the inline start by default. You may customize the alignment using the `footerActionsAlignment()` method:
 
 ```php
-use Filament\Actions\Action;use Filament\Schema\Components\Section;use Filament\Support\Enums\Alignment;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Section;
+use Filament\Support\Enums\Alignment;
 
 Section::make('Rate limiting')
     ->schema([

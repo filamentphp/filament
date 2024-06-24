@@ -36,7 +36,10 @@ From a UX perspective, this solution is only suitable if your related model only
 All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), etc.) have a [`relationship()` method](../../forms/advanced#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
-use Filament\Forms\Components\FileUpload;use Filament\Forms\Components\Textarea;use Filament\Forms\Components\TextInput;use Filament\Schema\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schema\Components\Fieldset;
 
 Fieldset::make('Metadata')
     ->relationship('metadata')
@@ -73,7 +76,10 @@ php artisan make:filament-relation-manager CategoryResource posts title
 This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](getting-started#resource-forms) and [table](getting-started#resource-tables) for your relation manager:
 
 ```php
-use Filament\Forms;use Filament\Schema\Schema;use Filament\Tables;use Filament\Tables\Table;
+use Filament\Forms;
+use Filament\Schema\Schema;
+use Filament\Tables;
+use Filament\Tables\Table;
 
 public function form(Schema $form): Schema
 {
@@ -192,7 +198,8 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 For `BelongsToMany` and `MorphToMany` relationships, you may also add pivot table attributes. For example, if you have a `TeamsRelationManager` for your `UserResource`, and you want to add the `role` pivot attribute to the create form, you can use:
 
 ```php
-use Filament\Forms;use Filament\Schema\Schema;
+use Filament\Forms;
+use Filament\Schema\Schema;
 
 public function form(Schema $form): Schema
 {
@@ -218,7 +225,8 @@ To learn how to customize the `CreateAction`, including mutating the form data, 
 For `BelongsToMany` and `MorphToMany` relationships, you may also edit pivot table attributes. For example, if you have a `TeamsRelationManager` for your `UserResource`, and you want to add the `role` pivot attribute to the edit form, you can use:
 
 ```php
-use Filament\Forms;use Filament\Schema\Schema;
+use Filament\Forms;
+use Filament\Schema\Schema;
 
 public function form(Schema $form): Schema
 {
@@ -291,7 +299,8 @@ AttachAction::make()
 When you attach record with the `Attach` button, you may wish to define a custom form to add pivot attributes to the relationship:
 
 ```php
-use Filament\Actions\AttachAction;use Filament\Forms;
+use Filament\Actions\AttachAction;
+use Filament\Forms;
 
 AttachAction::make()
     ->form(fn (AttachAction $action): array => [
@@ -309,7 +318,8 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 You may want to scope the options available to `AttachAction`:
 
 ```php
-use Filament\Actions\AttachAction;use Illuminate\Database\Eloquent\Builder;
+use Filament\Actions\AttachAction;
+use Illuminate\Database\Eloquent\Builder;
 
 AttachAction::make()
     ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
@@ -342,7 +352,8 @@ AttachAction::make()
 You may customize the select field object that is used during attachment by passing a function to the `recordSelect()` method:
 
 ```php
-use Filament\Actions\AttachAction;use Filament\Forms\Components\Select;
+use Filament\Actions\AttachAction;
+use Filament\Forms\Components\Select;
 
 AttachAction::make()
     ->recordSelect(
@@ -420,7 +431,8 @@ AssociateAction::make()
 You may want to scope the options available to `AssociateAction`:
 
 ```php
-use Filament\Actions\AssociateAction;use Illuminate\Database\Eloquent\Builder;
+use Filament\Actions\AssociateAction;
+use Illuminate\Database\Eloquent\Builder;
 
 AssociateAction::make()
     ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user()))
@@ -453,7 +465,8 @@ AssociateAction::make()
 You may customize the select field object that is used during association by passing a function to the `recordSelect()` method:
 
 ```php
-use Filament\Actions\AssociateAction;use Filament\Forms\Components\Select;
+use Filament\Actions\AssociateAction;
+use Filament\Forms\Components\Select;
 
 AssociateAction::make()
     ->recordSelect(
@@ -498,7 +511,10 @@ php artisan make:filament-relation-manager CategoryResource posts title --soft-d
 Alternatively, you may add soft deleting functionality to an existing relation manager:
 
 ```php
-use Filament\Tables;use Filament\Tables\Table;use Illuminate\Database\Eloquent\Builder;use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 public function table(Table $table): Table
 {
@@ -579,7 +595,9 @@ $this->getOwnerRecord()
 However, if you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#form-component-utility-injection) to access the `$livewire` instance:
 
 ```php
-use Filament\Forms;use Filament\Resources\RelationManagers\RelationManager;use Filament\Schema\Schema;
+use Filament\Forms;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schema\Schema;
 
 public function form(Schema $form): Schema
 {
@@ -760,7 +778,9 @@ RelationGroup::make('Contacts', [
 You may decide that you want a resource's form and table to be identical to a relation manager's, and subsequently want to reuse the code you previously wrote. This is easy, by calling the `form()` and `table()` methods of the resource from the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\PostResource;use Filament\Schema\Schema;use Filament\Tables\Table;
+use App\Filament\Resources\Blog\PostResource;
+use Filament\Schema\Schema;
+use Filament\Tables\Table;
 
 public function form(Schema $form): Schema
 {
@@ -829,7 +849,8 @@ public function table(Table $table): Table
 It is probably also useful to provide extra configuration on the relation manager if you wanted to add a header action to [create](#creating-related-records), [attach](#attaching-and-detaching-records), or [associate](#associating-and-dissociating-records) records in the relation manager:
 
 ```php
-use App\Filament\Resources\Blog\PostResource;use Filament\Tables\Table;
+use App\Filament\Resources\Blog\PostResource;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
@@ -924,7 +945,8 @@ public function table(Table $table): Table
 If you're using `recordTitle()`, and you have an [associate action](#associating-and-dissociating-records) or [attach action](#attaching-and-detaching-records), you will also want to specify search columns for those actions:
 
 ```php
-use Filament\Actions\AssociateAction;use Filament\Actions\AttachAction;
+use Filament\Actions\AssociateAction;
+use Filament\Actions\AttachAction;
 
 AssociateAction::make()
     ->recordSelectSearchColumns(['title', 'id']);

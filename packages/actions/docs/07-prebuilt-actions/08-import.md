@@ -39,7 +39,9 @@ ImportAction::make()
 If you want to add this action to the header of a table instead, you can use `Filament\Tables\Actions\ImportAction`:
 
 ```php
-use App\Filament\Imports\ProductImporter;use Filament\Actions\ImportAction;use Filament\Tables\Table;
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\ImportAction;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {

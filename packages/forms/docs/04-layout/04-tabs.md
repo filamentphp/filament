@@ -79,7 +79,8 @@ Tabs::make('Tabs')
 The icon of the tab may be positioned before or after the label using the `iconPosition()` method:
 
 ```php
-use Filament\Schema\Components\Tabs;use Filament\Support\Enums\IconPosition;
+use Filament\Schema\Components\Tabs;
+use Filament\Support\Enums\IconPosition;
 
 Tabs::make('Tabs')
     ->tabs([

@@ -19,7 +19,10 @@ Alternatively, you may add soft deleting functionality to an existing resource.
 Firstly, you must update the resource:
 
 ```php
-use Filament\Tables;use Filament\Tables\Table;use Illuminate\Database\Eloquent\Builder;use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 public static function table(Table $table): Table
 {

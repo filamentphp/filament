@@ -128,7 +128,10 @@ Next, we'll need to create our component. Create a new file at `src/Heading.php`
 ```php
 namespace Awcodes\Headings;
 
-use Closure;use Filament\Schema\Components\Component;use Filament\Support\Colors\Color;use Filament\Support\Concerns\HasColor;
+use Closure;
+use Filament\Schema\Components\Component;
+use Filament\Support\Colors\Color;
+use Filament\Support\Concerns\HasColor;
 
 class Heading extends Component
 {

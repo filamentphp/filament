@@ -16,7 +16,8 @@ ReplicateAction::make()
 If you want to replicate table rows, you can use the `Filament\Tables\Actions\ReplicateAction` instead:
 
 ```php
-use Filament\Actions\ReplicateAction;use Filament\Tables\Table;
+use Filament\Actions\ReplicateAction;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
@@ -119,7 +120,9 @@ ReplicateAction::make()
 At any time, you may call `$action->halt()` from inside a lifecycle hook, which will halt the entire replication process:
 
 ```php
-use App\Models\Post;use Filament\Actions\Action;use Filament\Notifications\Notification;
+use App\Models\Post;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 
 ReplicateAction::make()
     ->before(function (ReplicateAction $action, Post $record) {

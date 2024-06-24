@@ -54,7 +54,9 @@ Action::make('updateAuthor')
 You may fill the form with existing data, using the `fillForm()` method:
 
 ```php
-use App\Models\Post;use App\Models\User;use Filament\Forms\Components\Select;
+use App\Models\Post;
+use App\Models\User;
+use Filament\Forms\Components\Select;
 
 Action::make('updateAuthor')
     ->fillForm(fn (Post $record): array => [
@@ -77,7 +79,10 @@ Action::make('updateAuthor')
 You may create a [multistep form wizard](../forms/layout/wizard) inside a modal. Instead of using a `form()`, define a `steps()` array and pass your `Step` objects:
 
 ```php
-use Filament\Forms\Components\MarkdownEditor;use Filament\Forms\Components\TextInput;use Filament\Forms\Components\Toggle;use Filament\Schema\Components\Wizard\Step;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schema\Components\Wizard\Step;
 
 Action::make('create')
     ->steps([

@@ -205,7 +205,8 @@ public function table(Table $table): Table
 To customize the reordering trigger button, you may use the `reorderRecordsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
 
 ```php
-use Filament\Actions\Action;use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {

@@ -12,7 +12,8 @@ Filament's forms can use [Actions](../actions). They are buttons that can be add
 Action objects inside a form component are instances of `Filament/Forms/Components/Actions/Action`. You must pass a unique name to the action's `make()` method, which is used to identify it amongst others internally within Filament. You can [customize the trigger button](../actions/trigger-button) of an action, and even [open a modal](../actions/modals) with little effort:
 
 ```php
-use App\Actions\ResetStars;use Filament\Actions\Action;
+use App\Actions\ResetStars;
+use Filament\Actions\Action;
 
 Action::make('resetStars')
     ->icon('heroicon-m-x-mark')
@@ -35,7 +36,9 @@ Certain fields support "affix actions", which are buttons that can be placed bef
 To define an affix action, you can pass it to either `prefixAction()` or `suffixAction()`:
 
 ```php
-use Filament\Actions\Action;use Filament\Schema\Components\Utilities\Set;use Filament\Forms\Components\TextInput;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Utilities\Set;
+use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')
     ->prefix('€')
@@ -58,7 +61,8 @@ Notice `$set` and `$state` injected into the `action()` function in this example
 You may pass multiple affix actions to a field by passing them in an array to either `prefixActions()` or `suffixActions()`. Either method can be used, or both at once, Filament will render all the registered actions in order:
 
 ```php
-use Filament\Actions\Action;use Filament\Forms\Components\TextInput;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')
     ->prefix('€')
@@ -78,7 +82,9 @@ TextInput::make('cost')
 All fields support "hint actions", which are rendered aside the field's [hint](fields/getting-started#adding-a-hint-next-to-the-label). To add a hint action to a field, you may pass it to `hintAction()`:
 
 ```php
-use Filament\Actions\Action;use Filament\Schema\Components\Utilities\Set;use Filament\Forms\Components\TextInput;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Utilities\Set;
+use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')
     ->prefix('€')
@@ -101,7 +107,8 @@ Notice `$set` and `$state` injected into the `action()` function in this example
 You may pass multiple hint actions to a field by passing them in an array to `hintActions()`. Filament will render all the registered actions in order:
 
 ```php
-use Filament\Actions\Action;use Filament\Forms\Components\TextInput;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')
     ->prefix('€')
@@ -117,7 +124,9 @@ TextInput::make('cost')
 If you wish to render an action within a custom form component, `ViewField` object, or `View` component object, you may do so using the `registerActions()` method:
 
 ```php
-use Filament\Actions\Action;use Filament\Schema\Components\Utilities\Set;use Filament\Forms\Components\ViewField;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Utilities\Set;
+use Filament\Forms\Components\ViewField;
 
 ViewField::make('rating')
     ->view('filament.forms.components.range-slider')
@@ -147,7 +156,10 @@ Now, to render the action in the view of the custom component, you need to call 
 You may use an `Actions` component to render a set of actions anywhere in the form, avoiding the need to register them to any particular component:
 
 ```php
-use App\Actions\ResetStars;use App\Actions\Star;use Filament\Actions\Action;use Filament\Schema\Components\Actions;
+use App\Actions\ResetStars;
+use App\Actions\Star;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Actions;
 
 Actions::make([
     Action::make('star')
@@ -187,7 +199,8 @@ Actions::make([
 Independent form actions are aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `alignment()`:
 
 ```php
-use Filament\Schema\Components\Actions;use Filament\Support\Enums\Alignment;
+use Filament\Schema\Components\Actions;
+use Filament\Support\Enums\Alignment;
 
 Actions::make([
     // ...
@@ -201,7 +214,8 @@ Actions::make([
 Independent form actions are vertically aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `verticalAlignment()`:
 
 ```php
-use Filament\Schema\Components\Actions;use Filament\Support\Enums\VerticalAlignment;
+use Filament\Schema\Components\Actions;
+use Filament\Support\Enums\VerticalAlignment;
 
 Actions::make([
     // ...
@@ -215,7 +229,8 @@ Actions::make([
 If an action is attached to a form component, the `action()` function is able to [inject utilities](advanced#form-component-utility-injection) directly from that form component. For instance, you can inject [`$set`](advanced#injecting-a-function-to-set-the-state-of-another-field) and [`$state`](advanced#injecting-the-current-state-of-a-field):
 
 ```php
-use Filament\Actions\Action;use Filament\Schema\Components\Utilities\Set;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Utilities\Set;
 
 Action::make('copyCostToPrice')
     ->icon('heroicon-m-clipboard')

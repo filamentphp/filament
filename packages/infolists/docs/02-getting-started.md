@@ -55,7 +55,8 @@ You can learn more about columns and spans in the [layout documentation](layout/
 The Infolist Builder allows you to use [layout components](layout/getting-started#available-layout-components) inside the schema array to control how entries are displayed. `Section` is a layout component, and it allows you to add a heading and description to a set of entries. It can also allow entries inside it to collapse, which saves space in long infolists.
 
 ```php
-use Filament\Infolists\Components\TextEntry;use Filament\Schema\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schema\Components\Section;
 
 [
     TextEntry::make('title'),
@@ -74,7 +75,9 @@ use Filament\Infolists\Components\TextEntry;use Filament\Schema\Components\Secti
 In this example, you can see how the `Section` component has its own `schema()` method. You can use this to nest other entries and layout components inside:
 
 ```php
-use Filament\Infolists\Components\ImageEntry;use Filament\Infolists\Components\TextEntry;use Filament\Schema\Components\Section;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schema\Components\Section;
 
 Section::make('Media')
     ->description('Images used in the page layout.')

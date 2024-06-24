@@ -310,7 +310,8 @@ TextColumn::make('title')
 You may open [action modals](../actions#modals) by passing in an `Action` object to the `action()` method:
 
 ```php
-use Filament\Actions\Action;use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->action(
@@ -412,7 +413,8 @@ TextColumn::make('id')
 To customize the toggle dropdown trigger button, you may use the `toggleColumnsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
 
 ```php
-use Filament\Actions\Action;use Filament\Tables\Table;
+use Filament\Actions\Action;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {

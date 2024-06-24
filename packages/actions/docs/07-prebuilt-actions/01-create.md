@@ -23,7 +23,9 @@ CreateAction::make()
 If you want to add this action to the header of a table instead, you can use `Filament\Tables\Actions\CreateAction`:
 
 ```php
-use Filament\Actions\CreateAction;use Filament\Forms\Components\TextInput;use Filament\Tables\Table;
+use Filament\Actions\CreateAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
@@ -153,7 +155,9 @@ CreateAction::make()
 At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire creation process:
 
 ```php
-use App\Models\Post;use Filament\Actions\Action;use Filament\Notifications\Notification;
+use App\Models\Post;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 
 CreateAction::make()
     ->before(function (CreateAction $action, Post $record) {
@@ -186,7 +190,10 @@ $action->cancel();
 You may easily transform the creation process into a multistep wizard. Instead of using a `form()`, define a `steps()` array and pass your `Step` objects:
 
 ```php
-use Filament\Forms\Components\MarkdownEditor;use Filament\Forms\Components\TextInput;use Filament\Forms\Components\Toggle;use Filament\Schema\Components\Wizard\Step;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schema\Components\Wizard\Step;
 
 CreateAction::make()
     ->steps([

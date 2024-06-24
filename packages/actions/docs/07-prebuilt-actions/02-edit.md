@@ -23,7 +23,9 @@ EditAction::make()
 If you want to edit table rows, you can use the `Filament\Tables\Actions\EditAction` instead:
 
 ```php
-use Filament\Actions\EditAction;use Filament\Forms\Components\TextInput;use Filament\Tables\Table;
+use Filament\Actions\EditAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
@@ -166,7 +168,10 @@ EditAction::make()
 At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire saving process:
 
 ```php
-use App\Models\Post;use Filament\Actions\Action;use Filament\Actions\EditAction;use Filament\Notifications\Notification;
+use App\Models\Post;
+use Filament\Actions\Action;
+use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 
 EditAction::make()
     ->before(function (EditAction $action, Post $record) {

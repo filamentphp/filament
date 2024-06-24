@@ -118,7 +118,11 @@ Firstly, you must [replace the original Dashboard page](#customizing-the-dashboa
 Now, in your new `app/Filament/Pages/Dashboard.php` file, you may add the `HasFiltersForm` trait, and add the `filtersForm()` method to return form components:
 
 ```php
-use Filament\Forms\Components\DatePicker;use Filament\Pages\Dashboard as BaseDashboard;use Filament\Pages\Dashboard\Concerns\HasFiltersForm;use Filament\Schema\Components\Section;use Filament\Schema\Schema;
+use Filament\Forms\Components\DatePicker;
+use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
+use Filament\Schema\Components\Section;
+use Filament\Schema\Schema;
 
 class Dashboard extends BaseDashboard
 {
@@ -185,7 +189,10 @@ Alternatively, you can swap out the filters form for an action modal, that can b
 To use an action modal instead of a filters form, you can use the `HasFiltersAction` trait instead of `HasFiltersForm`. Then, register the `FilterAction` class as an action in `getHeaderActions()`:
 
 ```php
-use Filament\Forms\Components\DatePicker;use Filament\Pages\Dashboard as BaseDashboard;use Filament\Pages\Dashboard\Actions\FilterAction;use Filament\Pages\Dashboard\Concerns\HasFiltersAction;
+use Filament\Forms\Components\DatePicker;
+use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Pages\Dashboard\Actions\FilterAction;
+use Filament\Pages\Dashboard\Concerns\HasFiltersAction;
 
 class Dashboard extends BaseDashboard
 {

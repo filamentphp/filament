@@ -198,7 +198,8 @@ Alternatively, if you're creating records in a modal action, check out the [Acti
 At any time, you may call `$this->halt()` from inside a lifecycle hook or mutation method, which will halt the entire creation process:
 
 ```php
-use Filament\Actions\Action;use Filament\Notifications\Notification;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
 
 protected function beforeCreate(): void
 {
@@ -256,7 +257,10 @@ class CreateCategory extends CreateRecord
 Inside the `getSteps()` array, return your [wizard steps](../../forms/layout/wizard):
 
 ```php
-use Filament\Forms\Components\MarkdownEditor;use Filament\Forms\Components\TextInput;use Filament\Forms\Components\Toggle;use Filament\Schema\Components\Wizard\Step;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schema\Components\Wizard\Step;
 
 protected function getSteps(): array
 {
@@ -308,7 +312,9 @@ public function hasSkippableSteps(): bool
 If you'd like to reduce the amount of repetition between the resource form and wizard steps, it's a good idea to extract public static resource functions for your fields, where you can easily retrieve an instance of a field from the resource or the wizard:
 
 ```php
-use Filament\Forms;use Filament\Resources\Resource;use Filament\Schema\Schema;
+use Filament\Forms;
+use Filament\Resources\Resource;
+use Filament\Schema\Schema;
 
 class CategoryResource extends Resource
 {

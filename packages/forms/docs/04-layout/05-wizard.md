@@ -35,7 +35,8 @@ Wizard::make([
 You may use the `submitAction()` method to render submit button HTML or a view at the end of the wizard, on the last step. This provides a clearer UX than displaying a submit button below the wizard at all times:
 
 ```php
-use Filament\Schema\Components\Wizard;use Illuminate\Support\HtmlString;
+use Filament\Schema\Components\Wizard;
+use Illuminate\Support\HtmlString;
 
 Wizard::make([
     // ...
@@ -49,7 +50,9 @@ Wizard::make([
 Alternatively, you can use the built-in Filament button Blade component:
 
 ```php
-use Filament\Schema\Components\Wizard;use Illuminate\Support\Facades\Blade;use Illuminate\Support\HtmlString;
+use Filament\Schema\Components\Wizard;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 
 Wizard::make([
     // ...
@@ -183,7 +186,8 @@ Wizard\Step::make('Order')
 Inside `afterValidation()` or `beforeValidation()`, you may throw `Filament\Support\Exceptions\Halt`, which will prevent the wizard from loading the next step:
 
 ```php
-use Filament\Schema\Components\Wizard;use Filament\Support\Exceptions\Halt;
+use Filament\Schema\Components\Wizard;
+use Filament\Support\Exceptions\Halt;
 
 Wizard\Step::make('Order')
     ->afterValidation(function () {
@@ -225,7 +229,8 @@ This component uses action objects for easy customization of buttons within it. 
 Here is an example of how you might customize an action:
 
 ```php
-use Filament\Actions\Action;use Filament\Schema\Components\Wizard;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Wizard;
 
 Wizard::make([
     // ...

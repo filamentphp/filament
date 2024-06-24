@@ -32,7 +32,8 @@ We pass an array to `columns()` as we want to specify different numbers of colum
 Inside the section, we have a [text input](../fields/text-input). Since text inputs are form components and all form components have a `columnSpan()` method, we can use it to specify how many columns the text input should fill. On devices smaller than the `sm` breakpoint, we want the text input to fill 1 column, which is default. On devices larger than the `sm` breakpoint, we want the text input to fill 2 columns. On devices larger than the `xl` breakpoint, we want the text input to fill 3 columns. On devices larger than the `2xl` breakpoint, we want the text input to fill 4 columns.
 
 ```php
-use Filament\Forms\Components\TextInput;use Filament\Schema\Components\Section;
+use Filament\Forms\Components\TextInput;
+use Filament\Schema\Components\Section;
 
 Section::make()
     ->columns([

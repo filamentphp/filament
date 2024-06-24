@@ -246,7 +246,8 @@ To register new navigation items, you can use the [configuration](configuration)
 ```php
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
-use Filament\Panel;use function Filament\Support\original_request;
+use Filament\Panel;
+use function Filament\Support\original_request;
 
 public function panel(Panel $panel): Panel
 {
@@ -328,7 +329,8 @@ use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
-use Filament\Panel;use function Filament\Support\original_request;
+use Filament\Panel;
+use function Filament\Support\original_request;
 
 public function panel(Panel $panel): Panel
 {

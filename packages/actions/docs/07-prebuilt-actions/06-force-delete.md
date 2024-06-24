@@ -16,7 +16,10 @@ ForceDeleteAction::make()
 If you want to force-delete table rows, you can use the `Filament\Tables\Actions\ForceDeleteAction` instead, or `Filament\Tables\Actions\ForceDeleteBulkAction` to force-delete multiple at once:
 
 ```php
-use Filament\Actions\BulkActionGroup;use Filament\Actions\ForceDeleteAction;use Filament\Actions\ForceDeleteBulkAction;use Filament\Tables\Table;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {

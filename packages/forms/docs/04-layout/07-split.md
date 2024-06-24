@@ -8,7 +8,11 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 The `Split` component allows you to define layouts with flexible widths, using flexbox.
 
 ```php
-use Filament\Forms\Components\Textarea;use Filament\Forms\Components\TextInput;use Filament\Forms\Components\Toggle;use Filament\Schema\Components\Section;use Filament\Schema\Components\Split;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schema\Components\Section;
+use Filament\Schema\Components\Split;
 
 Split::make([
     Section::make([

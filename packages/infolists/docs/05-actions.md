@@ -12,7 +12,8 @@ Filament's infolists can use [Actions](../actions). They are buttons that can be
 Action objects inside an infolist component are instances of `Filament/Infolists/Components/Actions/Action`. You must pass a unique name to the action's `make()` method, which is used to identify it amongst others internally within Filament. You can [customize the trigger button](../actions/trigger-button) of an action, and even [open a modal](../actions/modals) with little effort:
 
 ```php
-use App\Actions\ResetStars;use Filament\Actions\Action;
+use App\Actions\ResetStars;
+use Filament\Actions\Action;
 
 Action::make('resetStars')
     ->icon('heroicon-m-x-mark')
@@ -32,7 +33,9 @@ Certain entries support "affix actions", which are buttons that can be placed be
 To define an affix action, you can pass it to either `prefixAction()` or `suffixAction()`:
 
 ```php
-use App\Models\Product;use Filament\Actions\Action;use Filament\Infolists\Components\TextEntry;
+use App\Models\Product;
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('cost')
     ->prefix('€')
@@ -54,7 +57,8 @@ TextEntry::make('cost')
 You may pass multiple affix actions to an entry by passing them in an array to either `prefixActions()` or `suffixActions()`. Either method can be used, or both at once, Filament will render all the registered actions in order:
 
 ```php
-use Filament\Actions\Action;use Filament\Infolists\Components\TextEntry;
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('cost')
     ->prefix('€')
@@ -74,7 +78,9 @@ TextEntry::make('cost')
 All entries support "hint actions", which are rendered aside the entry's [hint](entries/getting-started#adding-a-hint-next-to-the-label). To add a hint action to a entry, you may pass it to `hintAction()`:
 
 ```php
-use App\Models\Product;use Filament\Actions\Action;use Filament\Infolists\Components\TextEntry;
+use App\Models\Product;
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('cost')
     ->prefix('€')
@@ -96,7 +102,8 @@ TextEntry::make('cost')
 You may pass multiple hint actions to a entry by passing them in an array to `hintActions()`. Filament will render all the registered actions in order:
 
 ```php
-use Filament\Actions\Action;use Filament\Infolists\Components\TextEntry;
+use Filament\Actions\Action;
+use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('cost')
     ->prefix('€')
@@ -112,7 +119,11 @@ TextEntry::make('cost')
 If you wish to render an action within a custom infolist component, `ViewEntry` object, or `View` component object, you may do so using the `registerActions()` method:
 
 ```php
-use App\Models\Post;use Filament\Actions\Action;use Filament\Forms\Components\TextInput;use Filament\Infolists\Components\ViewEntry;use Filament\Infolists\Set;
+use App\Models\Post;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\ViewEntry;
+use Filament\Infolists\Set;
 
 ViewEntry::make('status')
     ->view('filament.infolists.entries.status-switcher')
@@ -144,7 +155,10 @@ Now, to render the action in the view of the custom component, you need to call 
 You may use an `Actions` component to render a set of actions anywhere in the form, avoiding the need to register them to any particular component:
 
 ```php
-use App\Actions\ResetStars;use App\Actions\Star;use Filament\Actions\Action;use Filament\Schema\Components\Actions;
+use App\Actions\ResetStars;
+use App\Actions\Star;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Actions;
 
 Actions::make([
     Action::make('star')
@@ -184,7 +198,8 @@ Actions::make([
 Independent infolist actions are aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `alignment()`:
 
 ```php
-use Filament\Schema\Components\Actions;use Filament\Support\Enums\Alignment;
+use Filament\Schema\Components\Actions;
+use Filament\Support\Enums\Alignment;
 
 Actions::make([
     // ...
@@ -198,7 +213,8 @@ Actions::make([
 Independent infolist actions are vertically aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `verticalAlignment()`:
 
 ```php
-use Filament\Schema\Components\Actions;use Filament\Support\Enums\VerticalAlignment;
+use Filament\Schema\Components\Actions;
+use Filament\Support\Enums\VerticalAlignment;
 
 Actions::make([
     // ...

@@ -165,7 +165,8 @@ This field uses action objects for easy customization of buttons within it. You 
 Here is an example of how you might customize an action:
 
 ```php
-use Filament\Actions\Action;use Filament\Forms\Components\KeyValue;
+use Filament\Actions\Action;
+use Filament\Forms\Components\KeyValue;
 
 KeyValue::make('meta')
     ->deleteAction(
