@@ -37,6 +37,7 @@ class Action extends ViewComponent implements Arrayable
     use Concerns\CanBeLabeledFrom;
     use Concerns\CanBeMounted;
     use Concerns\CanBeOutlined;
+    use Concerns\CanBeSorted;
     use Concerns\CanCallParentAction;
     use Concerns\CanClose;
     use Concerns\CanDeselectRecordsAfterCompletion;
@@ -159,6 +160,7 @@ class Action extends ViewComponent implements Arrayable
             'shouldMarkAsRead' => $this->shouldMarkAsRead(),
             'shouldMarkAsUnread' => $this->shouldMarkAsUnread(),
             'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
+            'shouldPostToUrl' => $this->shouldPostToUrl(),
             'size' => $this->getSize(),
             'tooltip' => $this->getTooltip(),
             'url' => $this->getUrl(),
@@ -201,6 +203,7 @@ class Action extends ViewComponent implements Arrayable
         $static->markAsRead($data['shouldMarkAsRead'] ?? false);
         $static->markAsUnread($data['shouldMarkAsUnread'] ?? false);
         $static->outlined($data['isOutlined'] ?? false);
+        $static->postToUrl($data['shouldPostToUrl'] ?? false);
         $static->url($data['url'] ?? null, $data['shouldOpenUrlInNewTab'] ?? false);
         $static->tooltip($data['tooltip'] ?? null);
 

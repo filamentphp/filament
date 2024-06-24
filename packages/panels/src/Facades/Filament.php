@@ -3,13 +3,13 @@
 namespace Filament\Facades;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Billing\Providers\Contracts\Provider as BillingProvider;
 use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasTenants;
-use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
@@ -78,7 +78,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getTenantAvatarUrl(Model $tenant)
  * @method static BillingProvider | null getTenantBillingProvider()
  * @method static string | null getTenantBillingUrl(array $parameters = [], Model | null $tenant = null)
- * @method static array<MenuItem> getTenantMenuItems()
+ * @method static array<Action> getTenantMenuItems()
  * @method static string | null getTenantModel()
  * @method static string getTenantName(Model $tenant)
  * @method static string getTenantOwnershipRelationshipName()
@@ -90,7 +90,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static ThemeMode getDefaultThemeMode()
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
  * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)
- * @method static array<MenuItem> getUserMenuItems()
+ * @method static array<Action> getUserMenuItems()
  * @method static string getUserName(Model | Authenticatable $user)
  * @method static array<Model> getUserTenants(HasTenants | Model | Authenticatable $user)
  * @method static string | null getUrl(Model | null $tenant = null)

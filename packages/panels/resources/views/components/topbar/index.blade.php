@@ -1,7 +1,3 @@
-@props([
-    'navigation',
-])
-
 <div
     {{
         $attributes->class([
@@ -63,7 +59,7 @@
 
             @if (filament()->hasNavigation())
                 <ul class="me-4 hidden items-center gap-x-4 lg:flex">
-                    @foreach ($navigation as $group)
+                    @foreach (filament()->getNavigation() as $group)
                         @if ($groupLabel = $group->getLabel())
                             <x-filament::dropdown
                                 placement="bottom-start"
