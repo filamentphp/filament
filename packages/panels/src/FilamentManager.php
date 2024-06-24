@@ -158,9 +158,29 @@ class FilamentManager
         return $this->getCurrentPanel()->getFontFamily();
     }
 
+    public function getMonoFontFamily(): string
+    {
+        return $this->getCurrentPanel()->getMonoFontFamily();
+    }
+
+    public function getSerifFontFamily(): string
+    {
+        return $this->getCurrentPanel()->getSerifFontFamily();
+    }
+
     public function getFontHtml(): Htmlable
     {
         return $this->getCurrentPanel()->getFontHtml();
+    }
+
+    public function getMonoFontHtml(): Htmlable
+    {
+        return $this->getCurrentPanel()->getMonoFontHtml();
+    }
+
+    public function getSerifFontHtml(): Htmlable
+    {
+        return $this->getCurrentPanel()->getSerifFontHtml();
     }
 
     public function getFontProvider(): string
@@ -168,9 +188,29 @@ class FilamentManager
         return $this->getCurrentPanel()->getFontProvider();
     }
 
+    public function getMonoFontProvider(): string
+    {
+        return $this->getCurrentPanel()->getMonoFontProvider();
+    }
+
+    public function getSerifFontProvider(): string
+    {
+        return $this->getCurrentPanel()->getSerifFontProvider();
+    }
+
     public function getFontUrl(): ?string
     {
         return $this->getCurrentPanel()->getFontUrl();
+    }
+
+    public function getMonoFontUrl(): ?string
+    {
+        return $this->getCurrentPanel()->getMonoFontUrl();
+    }
+
+    public function getSerifFontUrl(): ?string
+    {
+        return $this->getCurrentPanel()->getSerifFontUrl();
     }
 
     public function getGlobalSearchDebounce(): string
