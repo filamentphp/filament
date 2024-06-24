@@ -110,6 +110,10 @@ All these render hooks [can be scoped](#scoping-render-hooks) to any table Livew
 
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER` - After the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE` - Before the "select all" and "deselect all" action buttons in the selection indicator bar
+- `TablesRenderHook::HEADER_AFTER` - After the header container
+- `TablesRenderHook::HEADER_BEFORE` - Before the header container
+- `TablesRenderHook::TOOLBAR_AFTER` - After the toolbar container
+- `TablesRenderHook::TOOLBAR_BEFORE` - Before the toolbar container
 - `TablesRenderHook::TOOLBAR_END` - The end of the toolbar
 - `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER` - After the [grouping](../tables/grouping) selector
 - `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE` - Before the [grouping](../tables/grouping) selector
