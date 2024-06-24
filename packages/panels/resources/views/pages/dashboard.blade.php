@@ -7,7 +7,7 @@
         :columns="$this->getColumns()"
         :data="
             [
-                ...(property_exists($this, 'filters') ? ['filters' => $this->filters] : []),
+                ...(property_exists($this, 'filters') ? ['pageFilters' => $this->filters] : []),
                 ...$this->getWidgetData(),
             ]
         "
