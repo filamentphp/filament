@@ -73,6 +73,10 @@ Ideally, you should avoid overriding the `make()` method altogether as there are
 
 In v3, the `Illuminate\Auth\Events\Login` event was fired from the import and export jobs, to set the current user. This is no longer the case in v4: the user is authenticated, but that event is not fired, to avoid running any listeners that should only run for actual user logins.
 
+#### The European Portuguese translations
+
+The European Portuguese translations have been moved from `pt_PT` to `pt`, which appears to be the more commonly used language code for the language within the Laravel community.
+
 #### Nepalese translations
 
 The Nepalese translations have been moved from `np` to `ne`, which appears to be the more commonly used language code for the language within the Laravel community.

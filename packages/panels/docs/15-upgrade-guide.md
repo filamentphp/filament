@@ -61,6 +61,10 @@ protected MaxWidth | string | null $maxContentWidth = null;
 
 ### Low-impact changes
 
+#### The European Portuguese translations
+
+The European Portuguese translations have been moved from `pt_PT` to `pt`, which appears to be the more commonly used language code for the language within the Laravel community.
+
 #### Nepalese translations
 
 The Nepalese translations have been moved from `np` to `ne`, which appears to be the more commonly used language code for the language within the Laravel community.
