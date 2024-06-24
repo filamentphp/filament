@@ -252,20 +252,4 @@ return [
         'placeholder' => 'Tag newydd',
     ],
 
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Yn ôl',
-            ],
-
-            'next_step' => [
-                'label' => 'Nesaf',
-            ],
-
-        ],
-
-    ],
-
 ];

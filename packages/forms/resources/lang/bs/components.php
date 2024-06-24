@@ -252,20 +252,4 @@ return [
         'placeholder' => 'Nova oznaka',
     ],
 
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Nazad',
-            ],
-
-            'next_step' => [
-                'label' => 'Dalje',
-            ],
-
-        ],
-
-    ],
-
 ];

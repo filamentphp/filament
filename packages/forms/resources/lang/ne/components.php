@@ -397,20 +397,4 @@ return [
         'placeholder' => 'नयाँ ट्याग',
     ],
 
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'पछाडि',
-            ],
-
-            'next_step' => [
-                'label' => 'अर्को',
-            ],
-
-        ],
-
-    ],
-
 ];
