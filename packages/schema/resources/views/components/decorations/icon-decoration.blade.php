@@ -4,7 +4,6 @@
 @endphp
 
 <x-filament::icon
-    x-data="{}"
     :icon="$getIcon()"
     :x-tooltip="filled($tooltip) ? '{ content: ' . \Illuminate\Support\Js::from($tooltip) . ', theme: $store.theme }' : null"
     @class([

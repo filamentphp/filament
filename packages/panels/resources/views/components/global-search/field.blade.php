@@ -28,7 +28,6 @@
             wire:key="global-search.field.input"
             x-bind:id="$id('input')"
             x-on:keydown.down.prevent.stop="$dispatch('focus-first-global-search-result')"
-            x-data="{}"
             :attributes="
                 \Filament\Support\prepare_inherited_attributes(
                     new \Illuminate\View\ComponentAttributeBag([

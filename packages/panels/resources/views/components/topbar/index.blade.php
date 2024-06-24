@@ -19,7 +19,6 @@
                 icon-size="lg"
                 :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                 x-cloak
-                x-data="{}"
                 x-on:click="$store.sidebar.open()"
                 x-show="! $store.sidebar.isOpen"
                 @class([
@@ -35,7 +34,6 @@
                 icon-size="lg"
                 :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
                 x-cloak
-                x-data="{}"
                 x-on:click="$store.sidebar.close()"
                 x-show="$store.sidebar.isOpen"
                 class="fi-topbar-close-sidebar-btn lg:hidden"

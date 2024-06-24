@@ -6,7 +6,6 @@
 
 {{-- format-ignore-start --}}
 <aside
-    x-data="{}"
     @if (filament()->isSidebarCollapsibleOnDesktop() && (! filament()->hasTopNavigation()))
         x-cloak
         x-bind:class="
@@ -68,7 +67,6 @@
                     icon-size="lg"
                     :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                     x-cloak
-                    x-data="{}"
                     x-on:click="$store.sidebar.open()"
                     x-show="! $store.sidebar.isOpen"
                     class="mx-auto"
@@ -84,7 +82,6 @@
                     icon-size="lg"
                     :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
                     x-cloak
-                    x-data="{}"
                     x-on:click="$store.sidebar.close()"
                     x-show="$store.sidebar.isOpen"
                     class="ms-auto hidden lg:flex"

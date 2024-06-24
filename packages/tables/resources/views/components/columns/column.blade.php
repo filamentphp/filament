@@ -40,7 +40,6 @@
 
 <div
     @if (filled($tooltip))
-        x-data="{}"
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,

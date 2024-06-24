@@ -29,7 +29,6 @@
 
                 <div
                     @if ($itemIsCopyable)
-                        x-data="{}"
                         x-on:click="
                             window.navigator.clipboard.writeText(@js($copyableState))
                             $tooltip(@js($copyMessage), {
