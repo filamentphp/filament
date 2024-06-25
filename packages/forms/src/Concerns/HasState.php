@@ -280,7 +280,7 @@ trait HasState
         if (! $isAbsolute) {
             return $this->statePath ?? '';
         }
-        
+
         if (isset($this->cachedAbsoluteStatePath)) {
             return $this->cachedAbsoluteStatePath;
         }
