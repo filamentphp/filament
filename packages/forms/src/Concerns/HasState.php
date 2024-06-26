@@ -287,7 +287,7 @@ trait HasState
 
         $pathComponents = [];
 
-        if ($isAbsolute && $parentComponentStatePath = $this->getParentComponent()?->getStatePath()) {
+        if ($parentComponentStatePath = $this->getParentComponent()?->getStatePath()) {
             $pathComponents[] = $parentComponentStatePath;
         }
 
