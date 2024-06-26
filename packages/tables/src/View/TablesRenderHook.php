@@ -13,7 +13,7 @@ class TablesRenderHook
     const HEADER_BEFORE = 'tables::header.before';
 
     const TOOLBAR_AFTER = 'tables::toolbar.after';
-    
+
     const TOOLBAR_BEFORE = 'tables::toolbar.before';
 
     const TOOLBAR_END = 'tables::toolbar.end';
