@@ -325,6 +325,18 @@ You can find out more about [asset registration](../support/assets), and even [r
 ## Empty state
 
 The chart's "empty state" is rendered when there are is no data to display.
+By default, the chart will not display this by itself. You have to figure out when to display it and simply call `$this->empty()` from another method of a Chart Widget.
+Usually, you would call this method from the `getData()` method, when there is no data to display.
+
+```php
+protected function getData(): array
+{
+    ...
+    if ($noData) {
+        $this->empty();
+    }
+}
+```
 
 ## Setting the empty state heading
 
