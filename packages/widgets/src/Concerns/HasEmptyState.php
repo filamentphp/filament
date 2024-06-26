@@ -2,13 +2,13 @@
 
 namespace Filament\Widgets\Concerns;
 
-use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Support\Facades\FilamentIcon;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Support\Concerns\EvaluatesClosures;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
-use Closure;
 
 trait HasEmptyState
 {
