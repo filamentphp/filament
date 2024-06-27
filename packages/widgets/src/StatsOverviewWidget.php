@@ -35,6 +35,11 @@ class StatsOverviewWidget extends Widget
         return 4;
     }
 
+    protected function getColumnBreakpoint(): int
+    {
+        return 3;
+    }
+
     /**
      * @return array<Stat>
      */
