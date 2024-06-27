@@ -414,6 +414,28 @@ new FilamentNotification()
     .send()
 ```
 
+## Close notification
+
+You can close a notification automatically by dispatching a browser event on the window called `close-notification`.
+
+```php
+use Filament\Notifications\Notification;
+
+Notification::make('custom')
+    ->persistent()
+    ->send()
+```
+
+Close from within Livewire page
+```php
+$this->dispatch('close-notification', id: 'custom');
+```
+
+Or frontend Alpine.js
+```blade
+<button x-on:click="$dispatch('close-notification', { id: 'custom' })">Close Notification</button>
+```
+
 ## Using the JavaScript objects
 
 The JavaScript objects (`FilamentNotification` and `FilamentNotificationAction`) are assigned to `window.FilamentNotification` and `window.FilamentNotificationAction`, so they are available in on-page scripts.
