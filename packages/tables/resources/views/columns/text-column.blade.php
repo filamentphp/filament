@@ -178,10 +178,15 @@
                         ])
                     >
                         @if ($isBadge)
+                            @php
+                                $badgeTooltip = $getBadgeTooltip($state);
+                            @endphp
+
                             <x-filament::badge
                                 :color="$color"
                                 :icon="$icon"
                                 :icon-position="$iconPosition"
+                                :tooltip="$badgeTooltip"
                             >
                                 {{ $formattedState }}
                             </x-filament::badge>
