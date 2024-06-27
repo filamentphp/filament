@@ -9,7 +9,7 @@ trait HasBadge
 {
     protected bool | Closure $isBadge = false;
 
-    protected string | bool | Closure | null $badgeTooltip = null;
+    protected string | bool | Closure | null $badgeTooltip = false;
 
     public function badge(bool | Closure $condition = true): static
     {
