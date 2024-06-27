@@ -103,6 +103,7 @@
                 ->class([
                     'fi-body',
                     'fi-panel-' . filament()->getId(),
+                    'fi-url-' . Str::slug(str_replace('/', '-', Request::path())),
                     'min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white',
                 ]) }}
     >
