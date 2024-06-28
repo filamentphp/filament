@@ -192,7 +192,7 @@ class TestsColumns
 
             Assert::assertTrue(
                 $state == $value,
-                message: "Failed asserting that a table column with name [{$name}] has value of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+                message: "Failed asserting that a table column with name [{$name}] has value of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component. Current value: [{$state}]",
             );
 
             return $this;
@@ -252,8 +252,8 @@ class TestsColumns
             $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
-                $column->formatState($column->getState()) == $value,
-                message: "Failed asserting that a table column with name [{$name}] has a formatted state of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+                ($formattedState = $column->formatState($column->getState())) == $value,
+                message: "Failed asserting that a table column with name [{$name}] has a formatted state of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component. Current value: [{$formattedState}]",
             );
 
             return $this;
