@@ -20,24 +20,24 @@ class StatsOverviewWidget extends Widget
      */
     protected static string $view = 'filament-widgets::stats-overview-widget';
 
-    protected function getColumns(): int
+//    protected function getColumns(): int
+//    {
+//        $count = count($this->getCachedStats());
+//
+//        if ($count < 3) {
+//            return 3;
+//        }
+//
+//        if (($count % 3) !== 1) {
+//            return 3;
+//        }
+//
+//        return 4;
+//    }
+
+    protected function getColumns(): array
     {
-        $count = count($this->getCachedStats());
-
-        if ($count < 3) {
-            return 3;
-        }
-
-        if (($count % 3) !== 1) {
-            return 3;
-        }
-
-        return 4;
-    }
-
-    protected function getColumnBreakpoint(): int
-    {
-        return 3;
+        return [];
     }
 
     /**

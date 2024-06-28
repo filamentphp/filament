@@ -165,3 +165,25 @@ To disable this behavior, you may override the `$isLazy` property on the widget 
 ```php
 protected static bool $isLazy = false;
 ```
+
+## Changing columns layout
+
+If you have multiple Stats widgets, by default, they will appear 3 per row.
+
+You can change this for different screen size using the `getColumns()` method in your Stat 
+widget class:
+
+```php
+protected function getColumns(): array
+{
+    return [
+        'sm' => 1,
+        'md' => 2,
+        'lg' => 2,
+        'xl' => 3,
+        '2xl' => 3,
+    ];
+}
+```
+
+It is not necessary to provide values for all screens. If you want, you may alter only the number of grid columns for md or lg screens.
