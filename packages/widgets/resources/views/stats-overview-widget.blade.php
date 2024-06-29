@@ -1,10 +1,10 @@
 @php
     $columns = $this->getColumns();
-    $sm = $columns['sm'] ?? 1;
-    $md = $columns['md'] ?? 2;
-    $lg = $columns['lg'] ?? 3;
-    $xl = $columns['xl'] ?? 4;
-    $twoxl = $columns['2xl'] ?? 5;
+    $sm = $columns['sm'] ?? null;
+    $md = $columns['md'] ?? null;
+    $lg = $columns['lg'] ?? null;
+    $xl = $columns['xl'] ?? null;
+    $twoxl = $columns['2xl'] ?? null;
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-stats-overview">

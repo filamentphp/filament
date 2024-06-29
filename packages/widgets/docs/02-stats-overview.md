@@ -171,7 +171,7 @@ protected static bool $isLazy = false;
 If you have multiple Stats widgets, by default, they will appear 3 per row.
 
 You can change this for different screen size using the `getColumns()` method in your Stat 
-widget class:
+widget class like this:
 
 ```php
 protected function getColumns(): array
