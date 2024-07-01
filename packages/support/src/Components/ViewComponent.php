@@ -80,7 +80,7 @@ abstract class ViewComponent extends Component implements Htmlable
     /**
      * @return view-string
      */
-    public function getView(): string
+    public function getView(): ?string
     {
         if (isset($this->view)) {
             return $this->view;
