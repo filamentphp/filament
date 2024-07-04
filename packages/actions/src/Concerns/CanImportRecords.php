@@ -117,7 +117,7 @@ trait CanImportRecords
 
                     $csvColumns = $csvReader->getHeader();
 
-                    $lowercaseCsvColumnValues = array_map('strtolower', $csvColumns);
+                    $lowercaseCsvColumnValues = array_map(fn (string $column): string => Str::lower($column), $csvColumns);
                     $lowercaseCsvColumnKeys = array_combine(
                         $lowercaseCsvColumnValues,
                         $csvColumns,
