@@ -2,26 +2,28 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
+
 trait HasSidebar
 {
     protected string $sidebarWidth = '20rem';
 
     protected string $collapsedSidebarWidth = '4.5rem';
 
-    protected bool $isSidebarCollapsibleOnDesktop = false;
+    protected Closure | bool $isSidebarCollapsibleOnDesktop = false;
 
-    protected bool $isSidebarFullyCollapsibleOnDesktop = false;
+    protected Closure | bool $isSidebarFullyCollapsibleOnDesktop = false;
 
     protected bool $hasCollapsibleNavigationGroups = true;
 
-    public function sidebarCollapsibleOnDesktop(bool $condition = true): static
+    public function sidebarCollapsibleOnDesktop(Closure | bool $condition = true): static
     {
         $this->isSidebarCollapsibleOnDesktop = $condition;
 
         return $this;
     }
 
-    public function sidebarFullyCollapsibleOnDesktop(bool $condition = true): static
+    public function sidebarFullyCollapsibleOnDesktop(Closure | bool $condition = true): static
     {
         $this->isSidebarFullyCollapsibleOnDesktop = $condition;
 
@@ -61,12 +63,12 @@ trait HasSidebar
 
     public function isSidebarCollapsibleOnDesktop(): bool
     {
-        return $this->isSidebarCollapsibleOnDesktop;
+        return $this->evaluate($this->isSidebarCollapsibleOnDesktop);
     }
 
     public function isSidebarFullyCollapsibleOnDesktop(): bool
     {
-        return $this->isSidebarFullyCollapsibleOnDesktop;
+        return $this->evaluate($this->isSidebarFullyCollapsibleOnDesktop);
     }
 
     public function hasCollapsibleNavigationGroups(): bool
