@@ -349,6 +349,36 @@ Builder\Block::make('heading')
     ->maxItems(1)
 ```
 
+## Using `$get()` to access parent field values
+
+All form components are able to [use `$get()` and `$set()`](../advanced) to access another field's value. However, you might experience unexpected behavior when using this inside the builder's schema.
+
+This is because `$get()` and `$set()`, by default, are scoped to the current builder item. This means that you are able to interact with another field inside that builder item easily without knowing which builder item the current form component belongs to.
+
+The consequence of this is that you may be confused when you are unable to interact with a field outside the builder. We use `../` syntax to solve this problem - `$get('../../parent_field_name')`.
+
+Consider your form has this data structure:
+
+```php
+[
+    'client_id' => 1,
+
+    'builder' => [
+        'item1' => [
+            'service_id' => 2,
+        ],
+    ],
+]
+```
+
+You are trying to retrieve the value of `client_id` from inside the repeater item.
+
+`$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('builder.item1.client_id')`.
+
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('builder.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
+
+The special case of `./` will return the full data array for the current builder item.
+
 ## Builder validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to builders.
