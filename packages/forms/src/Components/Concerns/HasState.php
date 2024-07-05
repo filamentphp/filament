@@ -489,7 +489,7 @@ trait HasState
             return $path;
         }
 
-        return "{$containerPath}.{$path}";
+        return $path === './' ? $containerPath : "{$containerPath}.{$path}";
     }
 
     protected function flushCachedAbsoluteStatePath(): void
