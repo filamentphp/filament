@@ -371,9 +371,9 @@ Consider your form has this data structure:
 ]
 ```
 
-You are trying to retrieve the value of `client_id` from inside the builder item.
+You are trying to retrieve the value of `client_id` from inside the repeater item.
 
-`$get()` is relative to the current builder item, so `$get('client_id')` is looking for `$get('builder.item1.client_id')`.
+`$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('builder.item1.client_id')`.
 
 You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('builder.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
 
