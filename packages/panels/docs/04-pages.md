@@ -54,6 +54,23 @@ protected function getHeaderActions(): array
 }
 ```
 
+### Default action
+
+You can also easily trigger an action to be launched when a page loads. Just add a method that returns your action and then set the `$defaultAction` property to the name of that action:
+
+```php
+use Filament\Actions\Action;
+
+public $defaultAction = 'onboardingAction';
+
+public function onboardingAction(): Action
+{
+    return Action::make('onboardingAction')
+        ->modalHeading('Welcome')
+        ->visible(fn () => ! auth()->user()->isOnBoarded());
+}
+```
+
 ### Refreshing form data
 
 If you're using actions on an [Edit](resources/editing-records) or [View](resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
