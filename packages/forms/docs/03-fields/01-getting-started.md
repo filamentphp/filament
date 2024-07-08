@@ -189,6 +189,17 @@ TextInput::make('name')
     ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Need some more information?')
 ```
 
+#### Changing tab index for a hint icon
+
+Additionally, you can change `tabindex` for a hint icon, using the `tabIndex` parameter of `hintIcon()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Need some more information?', tabIndex: -1)
+```
+
 ## Adding extra HTML attributes
 
 You can pass extra HTML attributes to the field, which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:
