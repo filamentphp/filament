@@ -3,7 +3,7 @@
     'color' => 'gray',
     'icon' => null,
     'tooltip' => null,
-    'tabindex' => null
+    'tabindex' => null,
 ])
 
 <div
