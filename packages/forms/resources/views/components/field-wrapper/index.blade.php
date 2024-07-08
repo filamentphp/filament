@@ -11,6 +11,7 @@
     'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'hintIconTabIndex' => null,
     'hintIconTooltip' => null,
     'id' => null,
     'inlineLabelVerticalAlignment' => VerticalAlignment::Start,
@@ -32,6 +33,7 @@
         $hintActions ??= $field->getHintActions();
         $hintColor ??= $field->getHintColor();
         $hintIcon ??= $field->getHintIcon();
+        $hintIconTabIndex ??= $field->getHintIconTabIndex();
         $hintIconTooltip ??= $field->getHintIconTooltip();
         $id ??= $field->getId();
         $isDisabled ??= $field->isDisabled();
@@ -105,6 +107,7 @@
                         :color="$hintColor"
                         :icon="$hintIcon"
                         :tooltip="$hintIconTooltip"
+                        :tabindex="$hintIconTabIndex"
                     >
                         {{ $hint }}
                     </x-filament-forms::field-wrapper.hint>

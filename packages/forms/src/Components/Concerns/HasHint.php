@@ -31,6 +31,8 @@ trait HasHint
 
     protected string | Closure | null $hintIconTooltip = null;
 
+    protected int | Closure | null $hintIconTabIndex = null;
+
     public function hint(string | Htmlable | Closure | null $hint): static
     {
         $this->hint = $hint;
@@ -48,10 +50,11 @@ trait HasHint
         return $this;
     }
 
-    public function hintIcon(string | Closure | null $icon, string | Closure | null $tooltip = null): static
+    public function hintIcon(string | Closure | null $icon, string | Closure | null $tooltip = null, int | Closure | null $tabIndex = null): static
     {
         $this->hintIcon = $icon;
         $this->hintIconTooltip($tooltip);
+        $this->hintIconTabIndex($tabIndex);
 
         return $this;
     }
@@ -59,6 +62,13 @@ trait HasHint
     public function hintIconTooltip(string | Closure | null $tooltip): static
     {
         $this->hintIconTooltip = $tooltip;
+
+        return $this;
+    }
+
+    public function hintIconTabIndex(int | Closure | null $tabIndex): static
+    {
+        $this->hintIconTabIndex = $tabIndex;
 
         return $this;
     }
@@ -104,6 +114,11 @@ trait HasHint
     public function getHintIconTooltip(): ?string
     {
         return $this->evaluate($this->hintIconTooltip);
+    }
+
+    public function getHintIconTabIndex(): ?int
+    {
+        return $this->evaluate($this->hintIconTabIndex);
     }
 
     /**

@@ -3,6 +3,7 @@
     'color' => 'gray',
     'icon' => null,
     'tooltip' => null,
+    'tabindex' => null
 ])
 
 <div
@@ -39,6 +40,7 @@
             x-data="{}"
             :icon="$icon"
             :x-tooltip="filled($tooltip) ? '{ content: ' . \Illuminate\Support\Js::from($tooltip) . ', theme: $store.theme }' : null"
+            :tabindex="$tabindex"
             @class([
                 'fi-fo-field-wrp-hint-icon h-5 w-5',
                 match ($color) {
