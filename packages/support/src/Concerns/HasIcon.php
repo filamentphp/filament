@@ -5,16 +5,19 @@ namespace Filament\Support\Concerns;
 use Closure;
 use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Support\HtmlString;
 
 trait HasIcon
 {
-    protected string | Closure | null $icon = null;
+    protected string | Htmlable | Closure | null $icon = null;
 
     protected IconPosition | string | Closure | null $iconPosition = null;
 
     protected IconSize | string | Closure | null $iconSize = null;
 
-    public function icon(string | Closure | null $icon): static
+    public function icon(string | Htmlable | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -35,9 +38,13 @@ trait HasIcon
         return $this;
     }
 
-    public function getIcon(): ?string
+    public function getIcon(): string | Htmlable | null
     {
-        return $this->evaluate($this->icon);
+        $icon = $this->icon instanceof Renderable
+            ? new HtmlString($this->icon->render())
+            : $this->icon;
+
+        return $this->evaluate($icon);
     }
 
     public function getIconPosition(): IconPosition | string
