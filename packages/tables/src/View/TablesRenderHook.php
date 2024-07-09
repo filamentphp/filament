@@ -8,6 +8,14 @@ class TablesRenderHook
 
     const SELECTION_INDICATOR_ACTIONS_BEFORE = 'tables::selection.indicator.actions.before';
 
+    const HEADER_AFTER = 'tables::header.after';
+
+    const HEADER_BEFORE = 'tables::header.before';
+
+    const TOOLBAR_AFTER = 'tables::toolbar.after';
+
+    const TOOLBAR_BEFORE = 'tables::toolbar.before';
+
     const TOOLBAR_END = 'tables::toolbar.end';
 
     const TOOLBAR_GROUPING_SELECTOR_AFTER = 'tables::toolbar.grouping-selector.after';
