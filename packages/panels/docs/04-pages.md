@@ -256,10 +256,11 @@ class ListPosts extends ListRecords
 }
 ```
 
-You can also change the heading icon's color and position like this:
+You can also change the heading icon's color, size and position like this:
 
 ```php
-use Filament\Pages\HeadingIconPosition;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\IconSize;
 
 public function getHeading(): string
 {
@@ -267,7 +268,8 @@ public function getHeading(): string
         heading: 'Blog Posts',
         icon: 'heroicon-o-document-text',
         iconColor: 'info',
-        iconPosition: HeadingIconPosition::End
+        iconPosition: IconPosition::After,
+        iconSize: IconSize::Large,
     );
 }
 ```
