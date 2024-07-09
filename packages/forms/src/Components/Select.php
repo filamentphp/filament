@@ -579,7 +579,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
     {
         return $this->evaluate($this->getOptionLabelUsing, [
             'value' => fn (): mixed => $this->getState(),
-        ]);
+        ]) ?? null; // Handle null value if label is null;
     }
 
     /**
@@ -593,6 +593,11 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
         if ($labels instanceof Arrayable) {
             $labels = $labels->toArray();
+        }
+
+        // Handle null or empty values
+        if (empty($labels)) {
+            return [];
         }
 
         return $labels;
@@ -1090,7 +1095,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 Model::class => $record,
                 $record::class => $record,
             ],
-        );
+        ) ?? ''; // Provide a default empty string if label is null
     }
 
     public function getRelationshipTitleAttribute(): ?string

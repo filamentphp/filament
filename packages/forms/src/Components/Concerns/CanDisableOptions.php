@@ -36,14 +36,14 @@ trait CanDisableOptions
     /**
      * @param  array-key  $value
      */
-    public function isOptionDisabled($value, string $label): bool
+    public function isOptionDisabled($value, ?string $label): bool
     {
         if ($this->isOptionDisabled === null) {
             return false;
         }
 
         return (bool) $this->evaluate($this->isOptionDisabled, [
-            'label' => $label,
+            'label' => $label ?? '', // Provide a default empty string if $label is null,
             'value' => $value,
         ]);
     }
