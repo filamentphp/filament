@@ -113,7 +113,7 @@ class ImportAction extends Action
 
                     $csvColumns = $csvReader->getHeader();
 
-                    $lowercaseCsvColumnValues = array_map('strtolower', $csvColumns);
+                    $lowercaseCsvColumnValues = array_map(Str::lower(...), $csvColumns);
                     $lowercaseCsvColumnKeys = array_combine(
                         $lowercaseCsvColumnValues,
                         $csvColumns,
