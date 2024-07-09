@@ -99,6 +99,56 @@ trait CanFormatState
         return $this;
     }
 
+    public function dateTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Infolist::$defaultDateDisplayFormat;
+
+        $this->tooltip(static function (TextEntry $component, mixed $state) use ($format, $timezone): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $component->getTimezone())
+                ->translatedFormat($format);
+        });
+
+        return $this;
+    }
+
+    public function dateTimeTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Infolist::$defaultDateTimeDisplayFormat;
+
+        $this->dateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function timeTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Infolist::$defaultTimeDisplayFormat;
+
+        $this->dateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function sinceTooltip(?string $timezone = null): static
+    {
+        $this->tooltip(static function (TextEntry $component, mixed $state) use ($timezone): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $component->getTimezone())
+                ->diffForHumans();
+        });
+
+        return $this;
+    }
+
     public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
     {
         $this->isMoney = true;

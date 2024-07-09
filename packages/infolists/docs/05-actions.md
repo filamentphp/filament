@@ -152,7 +152,7 @@ Now, to render the action in the view of the custom component, you need to call 
 
 ### Adding "anonymous" actions to an infolist without attaching them to a component
 
-You may use an `Actions` component to render a set of actions anywhere in the form, avoiding the need to register them to any particular component:
+You may use an `Actions` component to render a set of actions anywhere in the infolist, avoiding the need to register them to any particular component:
 
 ```php
 use App\Actions\Star;

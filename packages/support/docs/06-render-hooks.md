@@ -83,6 +83,8 @@ FilamentView::registerRenderHook(
 - `PanelsRenderHook::SCRIPTS_BEFORE` - Before scripts are defined
 - `PanelsRenderHook::SIDEBAR_NAV_END` - In the [sidebar](../panels/navigation), before `</nav>`
 - `PanelsRenderHook::SIDEBAR_NAV_START` - In the [sidebar](../panels/navigation), after `<nav>`
+- `PanelsRenderHook::SIMPLE_PAGE_END` - End of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class
+- `PanelsRenderHook::SIMPLE_PAGE_START` - Start of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIDEBAR_FOOTER` - Pinned to the bottom of the sidebar, below the content
 - `PanelsRenderHook::STYLES_AFTER` - After styles are defined
 - `PanelsRenderHook::STYLES_BEFORE` - Before styles are defined
@@ -108,6 +110,10 @@ All these render hooks [can be scoped](#scoping-render-hooks) to any table Livew
 
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER` - After the "select all" and "deselect all" action buttons in the selection indicator bar
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE` - Before the "select all" and "deselect all" action buttons in the selection indicator bar
+- `TablesRenderHook::HEADER_AFTER` - After the header container
+- `TablesRenderHook::HEADER_BEFORE` - Before the header container
+- `TablesRenderHook::TOOLBAR_AFTER` - After the toolbar container
+- `TablesRenderHook::TOOLBAR_BEFORE` - Before the toolbar container
 - `TablesRenderHook::TOOLBAR_END` - The end of the toolbar
 - `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER` - After the [grouping](../tables/grouping) selector
 - `TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE` - Before the [grouping](../tables/grouping) selector
