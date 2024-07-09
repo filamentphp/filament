@@ -17,9 +17,16 @@ trait CanBeHidden
         return $this;
     }
 
+    public function visible(bool | Closure $condition = true): static
+    {
+        $this->isVisible = $condition;
+
+        return $this;
+    }
+
     public function isHidden(): bool
     {
-        if ($this->evaluate($this->isHidden, ['query' => $this->query])) {
+        if ($this->evaluate($this->isHidden)) {
             return true;
         }
 
