@@ -37,6 +37,12 @@ trait HasHeadingIcon {
             ? '<x-'. $icon .' style="'. $iconStyle .'" class="inline text-custom-600" />'
             : null;
 
+        $headingText = $heading ?? $this->heading ?? $this->getTitle();
+
+        if (blank($iconComponent)) {
+            return $headingText;
+        }
+
         $iconStart = ($iconPosition === IconPosition::Before)
             ? $iconComponent
             : null;
@@ -44,8 +50,6 @@ trait HasHeadingIcon {
         $iconEnd = ($iconPosition === IconPosition::After)
             ? $iconComponent
             : null;
-
-        $headingText = $heading ?? $this->heading ?? $this->getTitle();
 
         return new HtmlString(
             Blade::render('<div class="flex items-center">
