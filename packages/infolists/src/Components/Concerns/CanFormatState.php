@@ -101,7 +101,7 @@ trait CanFormatState
 
     public function dateTooltip(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= Infolist::$defaultDateDisplayFormat;
+        $format ??= Schema::$defaultDateDisplayFormat;
 
         $this->tooltip(static function (TextEntry $component, mixed $state) use ($format, $timezone): ?string {
             if (blank($state)) {
@@ -118,7 +118,7 @@ trait CanFormatState
 
     public function dateTimeTooltip(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= Infolist::$defaultDateTimeDisplayFormat;
+        $format ??= Schema::$defaultDateTimeDisplayFormat;
 
         $this->dateTooltip($format, $timezone);
 
@@ -127,7 +127,7 @@ trait CanFormatState
 
     public function timeTooltip(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= Infolist::$defaultTimeDisplayFormat;
+        $format ??= Schema::$defaultTimeDisplayFormat;
 
         $this->dateTooltip($format, $timezone);
 
