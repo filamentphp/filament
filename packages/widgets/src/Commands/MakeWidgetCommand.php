@@ -14,7 +14,10 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-widget')]
+#[AsCommand(name: 'make:filament-widget', aliases: [
+    'filament:make-widget',
+    'filament:widget',
+])]
 class MakeWidgetCommand extends Command
 {
     use CanManipulateFiles;
@@ -22,6 +25,14 @@ class MakeWidgetCommand extends Command
     protected $description = 'Create a new Filament widget class';
 
     protected $signature = 'make:filament-widget {name?} {--R|resource=} {--C|chart} {--T|table} {--S|stats-overview} {--panel=} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:make-widget',
+        'filament:widget',
+    ];
 
     public function handle(): int
     {

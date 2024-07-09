@@ -3,8 +3,8 @@
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint\Operators;
 
 use Exception;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Select;
+use Filament\Schema\Components\Component;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\SelectConstraint;
 use Illuminate\Database\Eloquent\Builder;

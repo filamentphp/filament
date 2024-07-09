@@ -47,7 +47,7 @@
             x-tooltip.html="tooltip"
         @endif
         @class([
-            'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75',
+            'fi-sidebar-item-btn relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 outline-none transition duration-75',
             'hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/5 dark:focus-visible:bg-white/5' => filled($url),
             'bg-gray-100 dark:bg-white/5' => $active,
         ])

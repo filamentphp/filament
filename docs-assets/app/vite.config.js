@@ -8,10 +8,8 @@ export default defineConfig({
             refresh: [
                 ...refreshPaths,
                 'app/Filament/**',
-                'app/Forms/Components/**',
                 'app/Livewire/**',
                 'app/Providers/Filament/**',
-                'app/Tables/Columns/**',
             ],
         }),
     ],

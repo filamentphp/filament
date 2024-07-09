@@ -96,6 +96,47 @@ protected function getCreatedNotification(): ?Notification
 }
 ```
 
+## Creating another record
+
+### Disabling create another
+
+To disable the "create and create another" feature, define the `$canCreateAnother` property as `false` on the Create page class:
+
+```php
+protected bool $canCreateAnother = false;
+```
+
+Alternatively, if you'd like to specify a dynamic condition when the feature is disabled, you may override the `canCreateAnother()` method on the Create page class:
+
+```php
+protected function canCreateAnother(): bool
+{
+    return false;
+}
+```
+
+### Preserving data when creating another
+
+By default, when the user uses the "create and create another" feature, all the form data is cleared so the user can start fresh. If you'd like to preserve some of the data in the form, you may override the `preserveFormDataWhenCreatingAnother()` method on the Create page class, and return the part of the `$data` array that you'd like to keep:
+
+```php
+use Illuminate\Support\Arr;
+
+protected function preserveFormDataWhenCreatingAnother(array $data): array
+{
+    return Arr::only($data, ['is_admin', 'organization']);
+}
+```
+
+To preserve all the data, return the entire `$data` array:
+
+```php
+protected function preserveFormDataWhenCreatingAnother(array $data): array
+{
+    return $data;
+}
+```
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the Create page class with the name of the hook:
@@ -157,7 +198,7 @@ Alternatively, if you're creating records in a modal action, check out the [Acti
 At any time, you may call `$this->halt()` from inside a lifecycle hook or mutation method, which will halt the entire creation process:
 
 ```php
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 protected function beforeCreate(): void
@@ -219,7 +260,7 @@ Inside the `getSteps()` array, return your [wizard steps](../../forms/layout/wiz
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard\Step;
+use Filament\Schema\Components\Wizard\Step;
 
 protected function getSteps(): array
 {
@@ -272,12 +313,12 @@ If you'd like to reduce the amount of repetition between the resource form and w
 
 ```php
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schema\Schema;
 
 class CategoryResource extends Resource
 {
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([

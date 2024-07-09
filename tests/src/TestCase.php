@@ -9,6 +9,7 @@ use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Infolists\InfolistsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
+use Filament\Schema\SchemaServiceProvider;
 use Filament\SpatieLaravelSettingsPluginServiceProvider;
 use Filament\SpatieLaravelTranslatablePluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
@@ -28,7 +29,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function getPackageProviders($app): array
     {
-        return [
+        $providers = [
             ActionsServiceProvider::class,
             BladeCaptureDirectiveServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
@@ -38,6 +39,7 @@ abstract class TestCase extends BaseTestCase
             InfolistsServiceProvider::class,
             LivewireServiceProvider::class,
             NotificationsServiceProvider::class,
+            SchemaServiceProvider::class,
             SpatieLaravelSettingsPluginServiceProvider::class,
             SpatieLaravelTranslatablePluginServiceProvider::class,
             SupportServiceProvider::class,
@@ -51,6 +53,10 @@ abstract class TestCase extends BaseTestCase
             TenancyPanelProvider::class,
             DomainTenancyPanelProvider::class,
         ];
+
+        sort($providers);
+
+        return $providers;
     }
 
     protected function defineEnvironment($app): void

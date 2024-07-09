@@ -4,7 +4,7 @@ title: Import action
 
 ## Overview
 
-Filament v3.1 introduced a prebuilt action that is able to import rows from a CSV. When the trigger button is clicked, a modal asks the user for a file. Once they upload one, they are able to map each column in the CSV to a real column in the database. If any rows fail validation, they will be compiled into a downloadable CSV for the user to review after the rest of the rows have been imported. Users can also download an example CSV file containing all the columns that can be imported.
+Filament includes a prebuilt action that is able to import rows from a CSV. When the trigger button is clicked, a modal asks the user for a file. Once they upload one, they are able to map each column in the CSV to a real column in the database. If any rows fail validation, they will be compiled into a downloadable CSV for the user to review after the rest of the rows have been imported. Users can also download an example CSV file containing all the columns that can be imported.
 
 This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications#overview), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about imports:
 
@@ -40,7 +40,7 @@ If you want to add this action to the header of a table instead, you can use `Fi
 
 ```php
 use App\Filament\Imports\ProductImporter;
-use Filament\Tables\Actions\ImportAction;
+use Filament\Actions\ImportAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table

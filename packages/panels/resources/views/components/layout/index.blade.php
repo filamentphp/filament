@@ -36,7 +36,7 @@
             @if (filament()->hasTopbar())
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_BEFORE, scopes: $livewire->getRenderHookScopes()) }}
 
-                <x-filament-panels::topbar :navigation="$navigation" />
+                @livewire(\Filament\Livewire\Topbar::class)
 
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::TOPBAR_AFTER, scopes: $livewire->getRenderHookScopes()) }}
             @endif
@@ -90,10 +90,7 @@
                 class="fi-sidebar-close-overlay fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-gray-950/75 lg:hidden"
             ></div>
 
-            <x-filament-panels::sidebar
-                :navigation="$navigation"
-                class="fi-main-sidebar"
-            />
+            @livewire(\Filament\Livewire\Sidebar::class)
 
             <script>
                 document.addEventListener('DOMContentLoaded', () => {

@@ -10,10 +10,10 @@ use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasCellState;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasPlaceholder;
+use Filament\Support\Concerns\HasTooltip;
 use Filament\Support\Concerns\HasVerticalAlignment;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Traits\Conditionable;
 
 class Column extends ViewComponent
 {
@@ -39,14 +39,13 @@ class Column extends ViewComponent
     use Concerns\HasName;
     use Concerns\HasRecord;
     use Concerns\HasRowLoopObject;
-    use Concerns\HasTooltip;
     use Concerns\HasWidth;
     use Concerns\InteractsWithTableQuery;
-    use Conditionable;
     use HasAlignment;
     use HasCellState;
     use HasExtraAttributes;
     use HasPlaceholder;
+    use HasTooltip;
     use HasVerticalAlignment;
 
     protected string $evaluationIdentifier = 'column';
@@ -58,12 +57,25 @@ class Column extends ViewComponent
         $this->name($name);
     }
 
-    public static function make(string $name): static
+    public static function make(?string $name = null): static
     {
-        $static = app(static::class, ['name' => $name]);
+        $columnClass = static::class;
+
+        $name ??= static::getDefaultName();
+
+        if (blank($name)) {
+            throw new Exception("Column of class [$columnClass] must have a unique name, passed to the [make()] method.");
+        }
+
+        $static = app($columnClass, ['name' => $name]);
         $static->configure();
 
         return $static;
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return null;
     }
 
     public function getTable(): Table
@@ -94,6 +106,10 @@ class Column extends ViewComponent
         $record = $this->getRecord();
 
         if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        if (! ($record instanceof Model)) {
             return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
         }
 

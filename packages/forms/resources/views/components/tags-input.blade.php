@@ -91,7 +91,7 @@
 
             <div
                 @class([
-                    '[&_.fi-badge-delete-button]:hidden' => $isDisabled,
+                    '[&_.fi-badge-delete-btn]:hidden' => $isDisabled,
                 ])
             >
                 <div wire:ignore>

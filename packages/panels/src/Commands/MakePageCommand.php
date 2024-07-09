@@ -17,7 +17,10 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-page')]
+#[AsCommand(name: 'make:filament-page', aliases: [
+    'filament:make-page',
+    'filament:page',
+])]
 class MakePageCommand extends Command
 {
     use CanIndentStrings;
@@ -26,6 +29,14 @@ class MakePageCommand extends Command
     protected $description = 'Create a new Filament page class and view';
 
     protected $signature = 'make:filament-page {name?} {--R|resource=} {--T|type=} {--panel=} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:make-page',
+        'filament:page',
+    ];
 
     public function handle(): int
     {

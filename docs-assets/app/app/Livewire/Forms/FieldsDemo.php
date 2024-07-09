@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Forms;
 
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
@@ -10,7 +10,6 @@ use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Radio;
@@ -25,7 +24,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schema\Components\Group;
+use Filament\Schema\Schema;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
@@ -40,7 +40,7 @@ class FieldsDemo extends Component implements HasForms
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->statePath('data')
@@ -564,19 +564,6 @@ class FieldsDemo extends Component implements HasForms
                             ->label('Like this post?')
                             ->boolean()
                             ->inline()
-                            ->default(true),
-                    ]),
-                Group::make()
-                    ->id('inlineRadioUnderLabel')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
-                    ->schema([
-                        Radio::make('inlineRadioUnderLabel')
-                            ->label('Like this post?')
-                            ->boolean()
-                            ->inline()
-                            ->inlineLabel(false)
                             ->default(true),
                     ]),
                 Group::make()

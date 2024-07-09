@@ -2,7 +2,7 @@
 
 use BladeUI\Icons\Factory;
 use BladeUI\Icons\IconsManifest;
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;

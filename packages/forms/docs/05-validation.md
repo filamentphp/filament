@@ -535,8 +535,7 @@ TextInput::make('slug')->rules([
 You may [inject utilities](advanced#form-component-utility-injection) like [`$get`](advanced#injecting-the-state-of-another-field) into your custom rules, for example if you need to reference other field values in your form:
 
 ```php
-use Closure;
-use Filament\Forms\Get;
+use Filament\Schema\Components\Utilities\Get;
 
 TextInput::make('slug')->rules([
     fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
@@ -601,4 +600,17 @@ Page::$reportValidationErrorUsing = function (ValidationException $exception) {
         ->danger()
         ->send();
 };
+```
+
+## Disabling validation when fields are not dehydrated
+
+When a field is not dehydrated, it is still validated. To disable validation for fields that are not dehydrated, use the `validatedWhenNotDehydrated()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->required()
+    ->dehydrated(false)
+    ->validatedWhenNotDehydrated(false)
 ```

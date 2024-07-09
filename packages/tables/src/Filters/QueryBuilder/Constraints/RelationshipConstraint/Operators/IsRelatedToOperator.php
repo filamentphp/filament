@@ -4,8 +4,8 @@ namespace Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstrain
 
 use Closure;
 use Exception;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Select;
+use Filament\Schema\Components\Component;
 use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint;

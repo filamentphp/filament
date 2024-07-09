@@ -2,9 +2,13 @@
 
 namespace Filament\Tests\Panels\Fixtures\Resources;
 
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schema\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
@@ -23,7 +27,7 @@ class PostResource extends Resource
 
     protected static int $globalSearchResultsLimit = 3;
 
-    public static function form(Form $form): Form
+    public static function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -55,12 +59,12 @@ class PostResource extends Resource
                     ->query(fn (Builder $query) => $query->where('is_published', true)),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                DeleteBulkAction::make(),
             ]);
     }
 

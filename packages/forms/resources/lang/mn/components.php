@@ -252,20 +252,4 @@ return [
         'placeholder' => 'Шинэ таг',
     ],
 
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Буцах',
-            ],
-
-            'next_step' => [
-                'label' => 'Дараах',
-            ],
-
-        ],
-
-    ],
-
 ];

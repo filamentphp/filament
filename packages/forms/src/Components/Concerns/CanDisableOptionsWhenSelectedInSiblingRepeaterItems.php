@@ -2,8 +2,8 @@
 
 namespace Filament\Forms\Components\Concerns;
 
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Contracts\CanDisableOptions;
+use Filament\Schema\Components\Component;
 use Illuminate\Support\Arr;
 
 trait CanDisableOptionsWhenSelectedInSiblingRepeaterItems

@@ -118,12 +118,12 @@
                 <div
                     x-cloak
                     class="mb-2"
-                    wire:key="{{ $this->getId() }}.{{ $getStatePath() }}.{{ $field::class }}.actions"
+                    wire:key="{{ $getLivewireKey() }}.actions"
                 >
                     <span
                         x-show="! areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.select-all"
+                        wire:key="{{ $getLivewireKey() }}.actions.select-all"
                     >
                         {{ $getAction('selectAll') }}
                     </span>
@@ -131,7 +131,7 @@
                     <span
                         x-show="areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.deselect-all"
+                        wire:key="{{ $getLivewireKey() }}.actions.deselect-all"
                     >
                         {{ $getAction('deselectAll') }}
                     </span>
@@ -159,7 +159,7 @@
         >
             @forelse ($getOptions() as $value => $label)
                 <div
-                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
+                    wire:key="{{ $getLivewireKey() }}.options.{{ $value }}"
                     @if ($isSearchable)
                         x-show="
                             $el
@@ -212,9 +212,7 @@
                     </label>
                 </div>
             @empty
-                <div
-                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.empty"
-                ></div>
+                <div wire:key="{{ $getLivewireKey() }}.empty"></div>
             @endforelse
         </x-filament::grid>
 

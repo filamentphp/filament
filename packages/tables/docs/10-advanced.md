@@ -33,6 +33,8 @@ public function table(Table $table): Table
 }
 ```
 
+Be aware when using `all` as it will cause performance issues when dealing with a large number of records.
+
 ### Customizing the default pagination page option
 
 To customize the default number of records shown use the `defaultPaginationPageOption()` method:
@@ -79,33 +81,31 @@ public function table(Table $table): Table
 
 ### Using simple pagination
 
-You may use simple pagination by overriding `paginateTableQuery()` method.
-
-First, locate your Livewire component. If you're using a resource from the Panel Builder and you want to add simple pagination to the List page, you'll want to open the `Pages/List.php` file in the resource, not the resource class itself.
+You may use simple pagination by using the `paginationMode(PaginationMode::Simple)` method:
 
 ```php
-use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Enums\PaginationMode;
+use Filament\Tables\Table;
 
-protected function paginateTableQuery(Builder $query): Paginator
+public function table(Table $table): Table
 {
-    return $query->simplePaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+    return $table
+        ->paginationMode(PaginationMode::Simple);
 }
 ```
 
 ### Using cursor pagination
 
-You may use cursor pagination by overriding `paginateTableQuery()` method.
-
-First, locate your Livewire component. If you're using a resource from the Panel Builder and you want to add simple pagination to the List page, you'll want to open the `Pages/List.php` file in the resource, not the resource class itself.
+You may use cursor pagination by using the `paginationMode(PaginationMode::Cursor)` method:
 
 ```php
-use Illuminate\Contracts\Pagination\CursorPaginator;
-use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Enums\PaginationMode;
+use Filament\Tables\Table;
 
-protected function paginateTableQuery(Builder $query): CursorPaginator
+public function table(Table $table): Table
 {
-    return $query->cursorPaginate(($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage());
+    return $table
+        ->paginationMode(PaginationMode::Cursor);
 }
 ```
 
@@ -205,7 +205,7 @@ public function table(Table $table): Table
 To customize the reordering trigger button, you may use the `reorderRecordsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
 
 ```php
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table

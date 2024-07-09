@@ -8,7 +8,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 You may want to separate your entries into sections, each with a heading and description. To do this, you can use a section component:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make('Rate limiting')
     ->description('Prevent abuse by limiting the number of requests per period')
@@ -22,7 +22,7 @@ Section::make('Rate limiting')
 You can also use a section without a header, which just wraps the components in a simple card:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make()
     ->schema([
@@ -41,8 +41,8 @@ Sections can have actions in their [header](#adding-actions-to-the-sections-head
 You may add [actions](../actions) to the section's header using the `headerActions()` method:
 
 ```php
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Section;
 
 Section::make('Rate limiting')
     ->headerActions([
@@ -65,8 +65,8 @@ Section::make('Rate limiting')
 In addition to [header actions](#adding-an-icon-to-the-sections-header), you may add [actions](../actions) to the section's footer using the `footerActions()` method:
 
 ```php
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Section;
 
 Section::make('Rate limiting')
     ->footerActions([
@@ -89,8 +89,8 @@ Section::make('Rate limiting')
 Footer actions are aligned to the inline start by default. You may customize the alignment using the `footerActionsAlignment()` method:
 
 ```php
-use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Section;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Section;
 use Filament\Support\Enums\Alignment;
 
 Section::make('Rate limiting')
@@ -111,7 +111,7 @@ Section::make('Rate limiting')
 If your section does not have a heading, Filament has no way of locating the action inside it. In this case, you must pass a unique `id()` to the section:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make()
     ->id('rateLimitingSection')
@@ -128,7 +128,7 @@ Section::make()
 You may add an icon to the section's header using the `icon()` method:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make('Cart')
     ->description('The items you have selected for purchase')
@@ -145,7 +145,7 @@ Section::make('Cart')
 You may use the `aside()` method to align the heading and description on the left, and the infolist components inside a card on the right:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make('Rate limiting')
     ->description('Prevent abuse by limiting the number of requests per period')
@@ -162,7 +162,7 @@ Section::make('Rate limiting')
 Sections may be `collapsible()` to optionally hide content in long infolists:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make('Cart')
     ->description('The items you have selected for purchase')
@@ -175,7 +175,7 @@ Section::make('Cart')
 Your sections may be `collapsed()` by default:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make('Cart')
     ->description('The items you have selected for purchase')
@@ -192,7 +192,7 @@ Section::make('Cart')
 You can persist whether a section is collapsed in local storage using the `persistCollapsed()` method, so it will remain collapsed when the user refreshes the page:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make('Cart')
     ->description('The items you have selected for purchase')
@@ -206,7 +206,7 @@ Section::make('Cart')
 To persist the collapse state, the local storage needs a unique ID to store the state. This ID is generated based on the heading of the section. If your section does not have a heading, or if you have multiple sections with the same heading that you do not want to collapse together, you can manually specify the `id()` of that section to prevent an ID conflict:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make('Cart')
     ->description('The items you have selected for purchase')
@@ -223,7 +223,7 @@ Section::make('Cart')
 When nesting sections, you can use a more compact styling:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make('Rate limiting')
     ->description('Prevent abuse by limiting the number of requests per period')
@@ -240,7 +240,7 @@ Section::make('Rate limiting')
 You may use the `columns()` method to easily create a [grid](grid) within the section:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make('Heading')
     ->schema([

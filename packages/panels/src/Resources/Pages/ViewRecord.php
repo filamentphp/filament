@@ -8,16 +8,15 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Schema\Schema;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class ViewRecord extends Page
 {
@@ -72,7 +71,7 @@ class ViewRecord extends Page
 
     protected function hasInfolist(): bool
     {
-        return (bool) count($this->getInfolist('infolist')->getComponents());
+        return (bool) count($this->getSchema('infolist')->getComponents());
     }
 
     protected function fillForm(): void
@@ -140,10 +139,10 @@ class ViewRecord extends Page
 
         $action
             ->authorize($resource::canEdit($this->getRecord()))
-            ->form(fn (Form $form): Form => static::getResource()::form($form));
+            ->form(fn (Schema $form): Schema => static::getResource()::form($form));
 
         if ($resource::hasPage('edit')) {
-            $action->url(fn (): string => static::getResource()::getUrl('edit', ['record' => $this->getRecord()]));
+            $action->url(fn (): string => $this->getResourceUrl('edit'));
         }
     }
 
@@ -153,7 +152,7 @@ class ViewRecord extends Page
 
         $action
             ->authorize($resource::canForceDelete($this->getRecord()))
-            ->successRedirectUrl($resource::getUrl('index'));
+            ->successRedirectUrl($this->getResourceUrl());
     }
 
     protected function configureReplicateAction(ReplicateAction $action): void
@@ -174,7 +173,7 @@ class ViewRecord extends Page
 
         $action
             ->authorize($resource::canDelete($this->getRecord()))
-            ->successRedirectUrl($resource::getUrl('index'));
+            ->successRedirectUrl($this->getResourceUrl());
     }
 
     public function getTitle(): string | Htmlable
@@ -188,19 +187,19 @@ class ViewRecord extends Page
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
         return [
             'form' => $this->form(static::getResource()::form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->operation('view')
                     ->disabled()
                     ->model($this->getRecord())
@@ -216,17 +215,14 @@ class ViewRecord extends Page
         return 'data';
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(): Schema
     {
-        return static::getResource()::infolist($infolist);
-    }
-
-    protected function makeInfolist(): Infolist
-    {
-        return parent::makeInfolist()
-            ->record($this->getRecord())
-            ->columns($this->hasInlineLabels() ? 1 : 2)
-            ->inlineLabel($this->hasInlineLabels());
+        return static::getResource()::infolist(
+            $this->makeSchema()
+                ->record($this->getRecord())
+                ->columns($this->hasInlineLabels() ? 1 : 2)
+                ->inlineLabel($this->hasInlineLabels()),
+        );
     }
 
     public static function shouldRegisterNavigation(array $parameters = []): bool

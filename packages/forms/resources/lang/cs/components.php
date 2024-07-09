@@ -11,11 +11,63 @@ return [
             ],
 
             'add' => [
+
                 'label' => 'Přidat k :label',
+
+                'modal' => [
+
+                    'heading' => 'Přidat k :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Přidat',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'add_between' => [
+
                 'label' => 'Vložit',
+
+                'modal' => [
+
+                    'heading' => 'Přidat k :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Přidat',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'edit' => [
+
+                'label' => 'Upravit',
+
+                'modal' => [
+
+                    'heading' => 'Upravit blok',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Uložit',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'delete' => [
@@ -440,22 +492,6 @@ return [
         'boolean' => [
             'true' => 'Ano',
             'false' => 'Ne',
-        ],
-
-    ],
-
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Zpět',
-            ],
-
-            'next_step' => [
-                'label' => 'Další',
-            ],
-
         ],
 
     ],

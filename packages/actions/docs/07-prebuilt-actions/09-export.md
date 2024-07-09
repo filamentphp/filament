@@ -4,7 +4,7 @@ title: Export action
 
 ## Overview
 
-Filament v3.2 introduced a prebuilt action that is able to export rows to a CSV or XLSX file. When the trigger button is clicked, a modal asks for the columns that they want to export, and what they should be labeled. This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications#overview), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about exports:
+Filament includes a prebuilt action that is able to export rows to a CSV or XLSX file. When the trigger button is clicked, a modal asks for the columns that they want to export, and what they should be labeled. This feature uses [job batches](https://laravel.com/docs/queues#job-batching) and [database notifications](../../notifications/database-notifications#overview), so you need to publish those migrations from Laravel. Also, you need to publish the migrations for tables that Filament uses to store information about exports:
 
 ```bash
 # Laravel 11 and higher
@@ -38,7 +38,7 @@ If you want to add this action to the header of a table instead, you can use `Fi
 
 ```php
 use App\Filament\Exports\ProductExporter;
-use Filament\Tables\Actions\ExportAction;
+use Filament\Actions\ExportAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -55,7 +55,7 @@ Or if you want to add it as a table bulk action, so that the user can choose whi
 
 ```php
 use App\Filament\Exports\ProductExporter;
-use Filament\Tables\Actions\ExportBulkAction;
+use Filament\Actions\ExportBulkAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -365,7 +365,7 @@ public static function modifyQuery(Builder $query): Builder
 
 ### Customizing the storage disk
 
-By default, exported files will be uploaded to the storage disk defined in the [configuration file](../installation#publishing-configuration). You can also set the `FILAMENT_FILESYSTEM_DISK` environment variable to change this.
+By default, exported files will be uploaded to the storage disk defined in the [configuration file](../installation#publishing-configuration). You can also set the `FILESYSTEM_DISK` environment variable to change this.
 
 If you want to use a different disk for a specific export, you can pass the disk name to the `disk()` method on the action:
 

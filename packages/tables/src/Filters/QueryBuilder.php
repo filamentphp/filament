@@ -4,9 +4,9 @@ namespace Filament\Tables\Filters;
 
 use Closure;
 use Exception;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
 use Filament\Tables\Filters\QueryBuilder\Forms\Components\RuleBuilder;
 use Illuminate\Database\Eloquent\Builder;
@@ -223,7 +223,7 @@ class QueryBuilder extends BaseFilter
         return $builder;
     }
 
-    protected function getNestedRuleBuilder(ComponentContainer $ruleBuilderBlockContainer, string $orGroupIndex): RuleBuilder
+    protected function getNestedRuleBuilder(Schema $ruleBuilderBlockContainer, string $orGroupIndex): RuleBuilder
     {
         $builder = $ruleBuilderBlockContainer
             ->getComponent(fn (Component $component): bool => $component instanceof Repeater)
@@ -240,7 +240,7 @@ class QueryBuilder extends BaseFilter
     /**
      * @param  array<string, mixed>  $rule
      */
-    protected function tapOperatorFromRule(array $rule, ComponentContainer $ruleBuilderBlockContainer, Closure $callback): void
+    protected function tapOperatorFromRule(array $rule, Schema $ruleBuilderBlockContainer, Closure $callback): void
     {
         $constraint = $this->getConstraint($rule['type']);
 

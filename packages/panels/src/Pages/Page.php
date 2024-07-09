@@ -13,6 +13,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 
+use function Filament\Support\original_request;
+
 abstract class Page extends BasePage
 {
     use Concerns\CanAuthorizeAccess;
@@ -22,7 +24,9 @@ abstract class Page extends BasePage
 
     protected static string $layout;
 
-    /** @var class-string<Cluster> | null */
+    /**
+     * @var class-string<Cluster> | null
+     */
     protected static ?string $cluster = null;
 
     protected static bool $isDiscovered = true;
@@ -102,7 +106,7 @@ abstract class Page extends BasePage
                 ->parentItem(static::getNavigationParentItem())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn (): bool => request()->routeIs(static::getNavigationItemActiveRoutePattern()))
+                ->isActiveWhen(fn (): bool => original_request()->routeIs(static::getNavigationItemActiveRoutePattern()))
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->badgeTooltip(static::getNavigationBadgeTooltip())

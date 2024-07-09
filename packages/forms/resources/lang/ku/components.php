@@ -397,20 +397,4 @@ return [
         'placeholder' => 'تاگی نوێ',
     ],
 
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'پێشوو',
-            ],
-
-            'next_step' => [
-                'label' => 'دواتر',
-            ],
-
-        ],
-
-    ],
-
 ];

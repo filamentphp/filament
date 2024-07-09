@@ -1,20 +1,30 @@
 <?php
 
 return [
+
     'column_toggle' => [
 
         'heading' => 'Столбцы',
 
     ],
+
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Скрыть :count',
+                'expand_list' => 'Показать еще :count',
+            ],
+
             'more_list_items' => 'и :count еще',
+
         ],
 
     ],
 
     'fields' => [
+
         'bulk_select_page' => [
             'label' => 'Выбрать/снять все элементы для массовых действий.',
         ],
@@ -41,7 +51,7 @@ return [
 
         'subheadings' => [
             'all' => 'Все :label',
-            'group' => 'Cводка :group ',
+            'group' => 'Cводка :group',
             'page' => 'Эта страница',
         ],
 
@@ -60,6 +70,7 @@ return [
             ],
 
         ],
+
     ],
 
     'actions' => [
@@ -75,9 +86,11 @@ return [
         'filter' => [
             'label' => 'Фильтр',
         ],
+
         'group' => [
             'label' => 'Группировать',
         ],
+
         'open_bulk_actions' => [
             'label' => 'Открыть действия',
         ],
@@ -93,11 +106,16 @@ return [
         'heading' => 'Не найдено :model',
 
         'description' => 'Создать :model для старта.',
+
     ],
 
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'Применить фильтры',
+            ],
 
             'remove' => [
                 'label' => 'Удалить фильтр',

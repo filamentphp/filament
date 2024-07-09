@@ -228,7 +228,7 @@ new FilamentNotification()
 Notifications support [Actions](../actions/trigger-button), which are buttons that render below the content of the notification. They can open a URL or dispatch a Livewire event. Actions can be defined as follows:
 
 ```php
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 Notification::make()
@@ -269,7 +269,7 @@ You can learn more about how to style action buttons [here](../actions/trigger-b
 You can open a URL, optionally in a new tab, when clicking on an action:
 
 ```php
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 Notification::make()
@@ -309,7 +309,7 @@ new FilamentNotification()
 Sometimes you want to execute additional code when a notification action is clicked. This can be achieved by setting a Livewire event which should be dispatched on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
 
 ```php
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 Notification::make()
@@ -375,7 +375,7 @@ new FilamentNotificationAction('undo')
 After opening a URL or dispatching an event from your action, you may want to close the notification right away:
 
 ```php
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 Notification::make()

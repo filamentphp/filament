@@ -15,10 +15,10 @@
                 class="absolute end-0 top-0 flex h-16 items-center gap-x-4 pe-4 md:pe-6 lg:pe-8"
             >
                 @if (filament()->hasDatabaseNotifications())
-                    @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
+                    @livewire(Filament\Livewire\DatabaseNotifications::class)
                 @endif
 
-                <x-filament-panels::user-menu />
+                @livewire(Filament\Livewire\SimpleUserMenu::class)
             </div>
         @endif
 

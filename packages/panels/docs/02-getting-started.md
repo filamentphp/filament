@@ -158,9 +158,9 @@ Filament bundles a large selection of [form fields](../forms/fields/getting-star
 
 ```php
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
-public static function form(Form $form): Form
+public static function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -189,9 +189,9 @@ Let's add a second field for the type of patient: a choice between a cat, dog, o
 
 ```php
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
-public static function form(Form $form): Form
+public static function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -230,9 +230,9 @@ Let's add a [date picker field](../forms/fields/date-time-picker) for the `date_
 
 ```php
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
-public static function form(Form $form): Form
+public static function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -259,9 +259,9 @@ We should also add an owner when creating a new patient. Since we added a `Belon
 
 ```php
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
-public static function form(Form $form): Form
+public static function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -479,11 +479,11 @@ The `TreatmentsRelationManager.php` file contains a class that is prepopulated w
 
 ```php
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-public function form(Form $form): Form
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -521,9 +521,9 @@ Let's add the `notes` field, which can be used to add more details about the tre
 
 ```php
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
-public function form(Form $form): Form
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -544,9 +544,9 @@ Let's add a `price` field for the treatment. We can use a text input with some c
 
 ```php
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
-public function form(Form $form): Form
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([

@@ -31,7 +31,7 @@ You may create your own custom column classes and cell views, which you can reus
 To create a custom column class and view, you may use the following command:
 
 ```bash
-php artisan make:table-column StatusSwitcher
+php artisan make:filament-table-column StatusSwitcher
 ```
 
 This will create the following column class:

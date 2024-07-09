@@ -123,9 +123,9 @@ Filament's tables can use [Actions](../actions/overview). They are buttons that 
 
 ```php
 use App\Models\Post;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
 
 public function table(Table $table): Table
 {

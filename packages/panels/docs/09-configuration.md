@@ -115,6 +115,22 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Setting the default sub-navigation position
+
+Sub-navigation is rendered at the start of each page by default. It can be customized per-page, per-resource and per-cluster, but you can also customize it for the entire panel at once using the `subNavigationPosition()` method. The value may be `SubNavigationPosition::Start`, `SubNavigationPosition::End`, or `SubNavigationPosition::Top` to render the sub-navigation as tabs:
+
+```php
+use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->subNavigationPosition(SubNavigationPosition::End);
+}
+```
+
 ## Lifecycle hooks
 
 Hooks may be used to execute code during a panel's lifecycle. `bootUsing()` is a hook that gets run on every request that takes place within that panel. If you have multiple panels, only the current panel's `bootUsing()` will be run. The function gets run from middleware, after all service providers have been booted:

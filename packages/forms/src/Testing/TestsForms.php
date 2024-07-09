@@ -3,11 +3,11 @@
 namespace Filament\Forms\Testing;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
@@ -28,7 +28,7 @@ class TestsForms
 
             $livewire = $this->instance();
 
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
@@ -70,7 +70,7 @@ class TestsForms
 
             $livewire = $this->instance();
 
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
@@ -97,7 +97,7 @@ class TestsForms
 
             $livewire = $this->instance();
 
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
@@ -126,7 +126,7 @@ class TestsForms
 
             $livewire = $this->instance();
 
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
@@ -150,13 +150,13 @@ class TestsForms
     public function assertFormExists(): Closure
     {
         return function (string $name = 'form'): static {
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$name};
 
             $livewireClass = $this->instance()::class;
 
             Assert::assertInstanceOf(
-                ComponentContainer::class,
+                Schema::class,
                 $form,
                 "Failed asserting that a form with the name [{$name}] exists on the [{$livewireClass}] component."
             );
@@ -176,11 +176,11 @@ class TestsForms
             /** @phpstan-ignore-next-line  */
             $this->assertFormExists($formName);
 
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$formName};
 
             /** @var ?Component $component */
-            $component = $form->getFlatComponentsByKey(withHidden: true)[$componentKey] ?? null;
+            $component = $form->getFlatComponents(withHidden: true)[$componentKey] ?? null;
 
             $livewireClass = $this->instance()::class;
 
@@ -204,10 +204,10 @@ class TestsForms
     public function assertFormComponentDoesNotExist(): Closure
     {
         return function (string $componentKey, string $formName = 'form'): static {
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$formName};
 
-            $components = $form->getFlatComponentsByKey(withHidden: true);
+            $components = $form->getFlatComponents(withHidden: true);
 
             $livewireClass = $this->instance()::class;
 
@@ -232,7 +232,7 @@ class TestsForms
             /** @phpstan-ignore-next-line  */
             $this->assertFormExists($formName);
 
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$formName};
 
             /** @var ?Field $field */
@@ -260,7 +260,7 @@ class TestsForms
     public function assertFormFieldDoesNotExist(): Closure
     {
         return function (string $fieldName, string $formName = 'form'): static {
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$formName};
 
             $fields = $form->getFlatFields(withHidden: false);
@@ -283,7 +283,7 @@ class TestsForms
             /** @phpstan-ignore-next-line  */
             $this->assertFormFieldExists($fieldName, $formName);
 
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$formName};
 
             /** @var Field $field */
@@ -311,7 +311,7 @@ class TestsForms
             /** @phpstan-ignore-next-line  */
             $this->assertFormFieldExists($fieldName, $formName);
 
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$formName};
 
             /** @var Field $field */
@@ -339,7 +339,7 @@ class TestsForms
             /** @phpstan-ignore-next-line  */
             $this->assertFormFieldExists($fieldName, $formName);
 
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$formName};
 
             /** @var TextInput $field */
@@ -362,7 +362,7 @@ class TestsForms
             /** @phpstan-ignore-next-line  */
             $this->assertFormFieldExists($fieldName, $formName);
 
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$formName};
 
             $fields = $form->getFlatFields(withHidden: false);
@@ -385,7 +385,7 @@ class TestsForms
             /** @phpstan-ignore-next-line  */
             $this->assertFormFieldExists($fieldName, $formName);
 
-            /** @var ComponentContainer $form */
+            /** @var Schema $form */
             $form = $this->instance()->{$formName};
 
             $fields = $form->getFlatFields(withHidden: false);

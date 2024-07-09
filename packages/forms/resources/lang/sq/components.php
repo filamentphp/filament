@@ -397,20 +397,4 @@ return [
         'placeholder' => 'Tag i ri',
     ],
 
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Pas',
-            ],
-
-            'next_step' => [
-                'label' => 'Para',
-            ],
-
-        ],
-
-    ],
-
 ];

@@ -119,16 +119,16 @@ Now, in your new `app/Filament/Pages/Dashboard.php` file, you may add the `HasFi
 
 ```php
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
+use Filament\Schema\Components\Section;
+use Filament\Schema\Schema;
 
 class Dashboard extends BaseDashboard
 {
     use HasFiltersForm;
 
-    public function filtersForm(Form $form): Form
+    public function filtersForm(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -144,7 +144,7 @@ class Dashboard extends BaseDashboard
 }
 ```
 
-In widget classes that require data from the filters, you need to add the `InteractsWithPageFilters` trait, which will allow you to use the `$this->filters` property to access the raw data from the filters form:
+In widget classes that require data from the filters, you need to add the `InteractsWithPageFilters` trait, which will allow you to use the `$this->pageFilters` property to access the raw data from the filters form:
 
 ```php
 use App\Models\BlogPost;
@@ -159,8 +159,8 @@ class BlogPostsOverview extends StatsOverviewWidget
 
     public function getStats(): array
     {
-        $startDate = $this->filters['startDate'] ?? null;
-        $endDate = $this->filters['endDate'] ?? null;
+        $startDate = $this->pageFilters['startDate'] ?? null;
+        $endDate = $this->pageFilters['endDate'] ?? null;
 
         return [
             StatsOverviewWidget\Stat::make(
@@ -176,7 +176,7 @@ class BlogPostsOverview extends StatsOverviewWidget
 }
 ```
 
-The `$this->filters` array will always reflect the current form data. Please note that this data is not validated, as it is available live and not intended to be used for anything other than querying the database. You must ensure that the data is valid before using it. In this example, we check if the start date is set before using it in the query.
+The `$this->pageFilters` array will always reflect the current form data. Please note that this data is not validated, as it is available live and not intended to be used for anything other than querying the database. You must ensure that the data is valid before using it. In this example, we check if the start date is set before using it in the query.
 
 ### Filtering widget data using an action modal
 
@@ -190,7 +190,6 @@ To use an action modal instead of a filters form, you can use the `HasFiltersAct
 
 ```php
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Form;
 use Filament\Pages\Dashboard as BaseDashboard;
 use Filament\Pages\Dashboard\Actions\FilterAction;
 use Filament\Pages\Dashboard\Concerns\HasFiltersAction;

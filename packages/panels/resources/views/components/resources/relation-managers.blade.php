@@ -29,7 +29,7 @@
 
                 if ($content) {
                     match ($contentTabPosition) {
-                        \Filament\Resources\Pages\ContentTabPosition::After => $tabs = array_merge($tabs, [null => null]),
+                        \Filament\Resources\Pages\Enums\ContentTabPosition::After => $tabs = array_merge($tabs, [null => null]),
                         default => $tabs = array_replace([null => null], $tabs),
                     };
                 }
@@ -70,7 +70,6 @@
     @if (filled($activeManager) && isset($managers[$activeManager]))
         <div
             @if (count($managers) > 1)
-                id="relationManager{{ ucfirst($activeManager) }}"
                 role="tabpanel"
                 tabindex="0"
             @endif

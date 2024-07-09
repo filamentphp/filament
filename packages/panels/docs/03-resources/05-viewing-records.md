@@ -24,9 +24,9 @@ By default, the View page will display a disabled form with the record's data. I
 
 ```php
 use Filament\Infolists;
-use Filament\Infolists\Infolist;
+use Filament\Schema\Schema;
 
-public static function infolist(Infolist $infolist): Infolist
+public static function infolist(Schema $infolist): Schema
 {
     return $infolist
         ->schema([
@@ -71,7 +71,6 @@ If your resource is simple, you may wish to view records in modals rather than o
 If your resource doesn't contain a `ViewAction`, you can add one to the `$table->actions()` array:
 
 ```php
-use Filament\Tables;
 use Filament\Tables\Table;
 
 public static function table(Table $table): Table
@@ -81,7 +80,7 @@ public static function table(Table $table): Table
             // ...
         ])
         ->actions([
-            Tables\Actions\ViewAction::make(),
+            \Filament\Actions\ViewAction::make(),
             // ...
         ]);
 }
@@ -136,9 +135,9 @@ public static function getPages(): array
 Now, you can define the `infolist()` or `form()` for this page, which can contain other components that are not present on the main View page:
 
 ```php
-use Filament\Infolists\Infolist;
+use Filament\Schema\Schema;
 
-public function infolist(Infolist $infolist): Infolist
+public function infolist(Schema $infolist): Schema
 {
     return $infolist
         ->schema([

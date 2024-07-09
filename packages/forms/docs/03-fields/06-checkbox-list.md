@@ -309,7 +309,7 @@ This field uses action objects for easy customization of buttons within it. You 
 Here is an example of how you might customize an action:
 
 ```php
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 
 CheckboxList::make('technologies')

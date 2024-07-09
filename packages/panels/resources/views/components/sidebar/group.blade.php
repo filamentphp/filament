@@ -35,7 +35,7 @@
                 x-transition:enter-end="opacity-100"
             @endif
             @class([
-                'fi-sidebar-group-button flex items-center gap-x-3 px-2 py-2',
+                'fi-sidebar-group-btn flex items-center gap-x-3 px-2 py-2',
                 'cursor-pointer' => $collapsible,
             ])
         >
@@ -60,7 +60,7 @@
                     :label="$label"
                     x-bind:aria-expanded="! $store.sidebar.groupIsCollapsed(label)"
                     x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)"
-                    class="fi-sidebar-group-collapse-button"
+                    class="fi-sidebar-group-collapse-btn"
                     x-bind:class="{ '-rotate-180': $store.sidebar.groupIsCollapsed(label) }"
                 />
             @endif

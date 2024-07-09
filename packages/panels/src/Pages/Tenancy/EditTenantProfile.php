@@ -5,11 +5,11 @@ namespace Filament\Pages\Tenancy;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns;
 use Filament\Pages\Page;
 use Filament\Panel;
+use Filament\Schema\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -22,7 +22,7 @@ use function Filament\authorize;
 use function Filament\Support\is_app_url;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 abstract class EditTenantProfile extends Page
 {
@@ -179,19 +179,19 @@ abstract class EditTenantProfile extends Page
         return null;
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->operation('edit')
                     ->model($this->tenant)
                     ->statePath('data'),

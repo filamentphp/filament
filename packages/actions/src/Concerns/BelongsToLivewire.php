@@ -2,8 +2,6 @@
 
 namespace Filament\Actions\Concerns;
 
-use Exception;
-use Filament\Actions\Contracts\HasLivewire;
 use Livewire\Component;
 
 trait BelongsToLivewire
@@ -23,12 +21,14 @@ trait BelongsToLivewire
             return $this->livewire;
         }
 
-        $group = $this->getGroup();
-
-        if (! ($group instanceof HasLivewire)) {
-            throw new Exception('This action does not belong to a Livewire component.');
+        if ($livewire = $this->getSchemaComponent()?->getLivewire()) {
+            return $livewire;
         }
 
-        return $group->getLivewire();
+        if ($livewire = $this->getTable()?->getLivewire()) {
+            return $livewire;
+        }
+
+        return $this->getGroup()->getLivewire();
     }
 }

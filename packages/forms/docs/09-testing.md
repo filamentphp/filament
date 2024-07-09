@@ -339,7 +339,7 @@ it('can send invoices', function () {
     livewire(EditInvoice::class, [
         'invoice' => $invoice,
     ])
-        ->mountFormComponentAction('customer_id', 'send')
+        ->mountAction('customer_id', 'send')
         ->setFormComponentActionData('customer_id', 'send', data: [
             'email' => $email = fake()->email(),
         ])
@@ -398,11 +398,11 @@ it('can send invoices to the primary contact by default', function () {
     livewire(EditInvoice::class, [
         'invoice' => $invoice,
     ])
-        ->mountFormComponentAction('customer_id', 'send')
+        ->mountAction('customer_id', 'send')
         ->assertFormComponentActionDataSet([
             'email' => $recipientEmail,
         ])
-        ->callMountedFormComponentAction()
+        ->callMountedAction()
         ->assertHasNoFormComponentActionErrors();
         
     expect($invoice->refresh())

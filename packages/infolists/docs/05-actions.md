@@ -13,7 +13,7 @@ Action objects inside an infolist component are instances of `Filament/Infolists
 
 ```php
 use App\Actions\ResetStars;
-use Filament\Infolists\Components\Actions\Action;
+use Filament\Actions\Action;
 
 Action::make('resetStars')
     ->icon('heroicon-m-x-mark')
@@ -34,7 +34,7 @@ To define an affix action, you can pass it to either `prefixAction()` or `suffix
 
 ```php
 use App\Models\Product;
-use Filament\Infolists\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('cost')
@@ -57,7 +57,7 @@ TextEntry::make('cost')
 You may pass multiple affix actions to an entry by passing them in an array to either `prefixActions()` or `suffixActions()`. Either method can be used, or both at once, Filament will render all the registered actions in order:
 
 ```php
-use Filament\Infolists\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('cost')
@@ -79,7 +79,7 @@ All entries support "hint actions", which are rendered aside the entry's [hint](
 
 ```php
 use App\Models\Product;
-use Filament\Infolists\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('cost')
@@ -102,7 +102,7 @@ TextEntry::make('cost')
 You may pass multiple hint actions to a entry by passing them in an array to `hintActions()`. Filament will render all the registered actions in order:
 
 ```php
-use Filament\Infolists\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('cost')
@@ -120,8 +120,8 @@ If you wish to render an action within a custom infolist component, `ViewEntry` 
 
 ```php
 use App\Models\Post;
+use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
-use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Set;
 
@@ -152,13 +152,13 @@ Now, to render the action in the view of the custom component, you need to call 
 
 ### Adding "anonymous" actions to an infolist without attaching them to a component
 
-You may use an `Actions` component to render a set of actions anywhere in the form, avoiding the need to register them to any particular component:
+You may use an `Actions` component to render a set of actions anywhere in the infolist, avoiding the need to register them to any particular component:
 
 ```php
-use App\Actions\Star;
 use App\Actions\ResetStars;
-use Filament\Infolists\Components\Actions;
-use Filament\Infolists\Components\Actions\Action;
+use App\Actions\Star;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Actions;
 
 Actions::make([
     Action::make('star')
@@ -184,7 +184,7 @@ Actions::make([
 You can stretch the independent infolist actions to consume the full width of the infolist using `fullWidth()`:
 
 ```php
-use Filament\Infolists\Components\Actions;
+use Filament\Schema\Components\Actions;
 
 Actions::make([
     // ...
@@ -198,7 +198,7 @@ Actions::make([
 Independent infolist actions are aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `alignment()`:
 
 ```php
-use Filament\Infolists\Components\Actions;
+use Filament\Schema\Components\Actions;
 use Filament\Support\Enums\Alignment;
 
 Actions::make([
@@ -213,7 +213,7 @@ Actions::make([
 Independent infolist actions are vertically aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `verticalAlignment()`:
 
 ```php
-use Filament\Infolists\Components\Actions;
+use Filament\Schema\Components\Actions;
 use Filament\Support\Enums\VerticalAlignment;
 
 Actions::make([

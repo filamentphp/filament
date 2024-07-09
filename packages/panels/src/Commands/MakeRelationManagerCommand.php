@@ -13,7 +13,10 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-relation-manager')]
+#[AsCommand(name: 'make:filament-relation-manager', aliases: [
+    'filament:make-relation-manager',
+    'filament:relation-manager',
+])]
 class MakeRelationManagerCommand extends Command
 {
     use CanIndentStrings;
@@ -22,6 +25,14 @@ class MakeRelationManagerCommand extends Command
     protected $description = 'Create a new Filament relation manager class for a resource';
 
     protected $signature = 'make:filament-relation-manager {resource?} {relationship?} {recordTitleAttribute?} {--attach} {--associate} {--soft-deletes} {--view} {--panel=} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:make-relation-manager',
+        'filament:relation-manager',
+    ];
 
     public function handle(): int
     {

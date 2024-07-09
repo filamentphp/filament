@@ -4,10 +4,12 @@ namespace Filament\Tables\Columns;
 
 use Filament\Forms\Components\Concerns\CanDisableOptions;
 use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
+use Filament\Forms\Components\Concerns\HasEnum;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Tables\Columns\Contracts\Editable;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class SelectColumn extends Column implements Editable
 {
@@ -17,6 +19,7 @@ class SelectColumn extends Column implements Editable
         getRules as baseGetRules;
     }
     use Concerns\CanUpdateState;
+    use HasEnum;
     use HasExtraInputAttributes;
     use HasOptions;
 
@@ -41,7 +44,9 @@ class SelectColumn extends Column implements Editable
     {
         return [
             ...$this->baseGetRules(),
-            Rule::in(array_keys($this->getOptions())),
+            ...(filled($enum = $this->getEnum()) ?
+                [new Enum($enum)] :
+                Rule::in(array_keys($this->getEnabledOptions()))),
         ];
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\Testing\Fixtures\TestAction;
 use Filament\Notifications\Notification;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\Actions\TestCase;
@@ -54,6 +55,70 @@ it('can set default action data when mounted', function () {
         ]);
 });
 
+it('can call a nested action registered in the modal footer', function () {
+    livewire(Actions::class)
+        ->callAction([
+            'parent',
+            TestAction::make('footer'),
+        ], [
+            'bar' => Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('parent-called', foo: $foo);
+});
+
+it('can call a manually modal registered nested action', function () {
+    livewire(Actions::class)
+        ->callAction([
+            'parent',
+            TestAction::make('manuallyRegisteredModal'),
+        ], [
+            'bar' => Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('parent-called', foo: $foo);
+});
+
+it('can call a nested action registered on a schema component', function () {
+    livewire(Actions::class)
+        ->callAction([
+            'parent',
+            TestAction::make('nested')->schemaComponent('foo'),
+        ], [
+            'bar' => Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('parent-called', foo: $foo);
+});
+
+it('can cancel a parent action when calling a nested action', function () {
+    livewire(Actions::class)
+        ->callAction([
+            'parent',
+            TestAction::make('cancelParent')->schemaComponent('foo'),
+        ], [
+            'bar' => Str::random(),
+        ])
+        ->assertHasNoActionErrors()
+        ->assertActionNotMounted()
+        ->assertNotDispatched('parent-called');
+});
+
 it('can mount an action with arguments', function () {
     livewire(Actions::class)
         ->mountAction('arguments', arguments: [
@@ -67,6 +132,14 @@ it('can mount an action with arguments', function () {
 
 it('can mount a nested action with parent arguments', function () {
     livewire(Actions::class)
+        ->mountAction([
+            TestAction::make('arguments')->arguments(['payload' => Str::random()]),
+            'nested',
+        ])
+        ->callMountedAction()
+        ->assertDispatched('nested-called', arguments: []);
+
+    livewire(Actions::class)
         ->mountAction('arguments.nested', arguments: [
             'arguments' => ['payload' => Str::random()],
         ])
@@ -76,6 +149,16 @@ it('can mount a nested action with parent arguments', function () {
 
 it('can mount a nested action with nested arguments', function () {
     livewire(Actions::class)
+        ->mountAction([
+            'arguments',
+            TestAction::make('nested')->arguments(['payload' => $payload = Str::random()]),
+        ])
+        ->callMountedAction()
+        ->assertDispatched('nested-called', arguments: [
+            'payload' => $payload,
+        ]);
+
+    livewire(Actions::class)
         ->mountAction('arguments.nested', arguments: [
             'nested' => ['payload' => $payload = Str::random()],
         ])
@@ -83,6 +166,38 @@ it('can mount a nested action with nested arguments', function () {
         ->assertDispatched('nested-called', arguments: [
             'payload' => $payload,
         ]);
+});
+
+it('can get the raw data from parent actions', function () {
+    livewire(Actions::class)
+        ->mountAction('parent')
+        ->setActionData([
+            'foo' => $foo = Str::random(),
+        ])
+        ->mountAction('manuallyRegisteredModal')
+        ->setActionData([
+            'bar' => $bar = Str::random(),
+        ])
+        ->callAction('testData', [
+            'baz' => $baz = Str::random(),
+        ])
+        ->assertDispatched('data-test-called', foo: $foo, bar: $bar, baz: $baz);
+});
+
+it('can get the arguments from parent actions', function () {
+    livewire(Actions::class)
+        ->callAction([
+            TestAction::make('parent')->arguments([
+                'foo' => $foo = Str::random(),
+            ]),
+            TestAction::make('manuallyRegisteredModal')->arguments([
+                'bar' => $bar = Str::random(),
+            ]),
+            TestAction::make('testArguments')->arguments([
+                'baz' => $baz = Str::random(),
+            ]),
+        ])
+        ->assertDispatched('arguments-test-called', foo: $foo, bar: $bar, baz: $baz);
 });
 
 it('can call an action with arguments', function () {

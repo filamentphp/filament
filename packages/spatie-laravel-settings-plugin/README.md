@@ -39,9 +39,9 @@ Since the [Form Builder](https://filamentphp.com/docs/forms) is installed in the
 ```php
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
-public function form(Form $form): Form
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([

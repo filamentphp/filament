@@ -96,7 +96,7 @@
 
             <div
                 wire:ignore.self
-                wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.panel"
+                wire:key="{{ $getLivewireKey() }}.panel"
                 x-cloak
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 x-ref="panel"

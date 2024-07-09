@@ -5,7 +5,7 @@ namespace Filament\Actions\Exports;
 use Carbon\CarbonInterface;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\Models\Export;
-use Filament\Forms\Components\Component;
+use Filament\Schema\Components\Component;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\WithoutOverlapping;

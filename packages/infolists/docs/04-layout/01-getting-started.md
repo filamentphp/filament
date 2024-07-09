@@ -11,7 +11,7 @@ Layout component classes can be found in the `Filament\Infolists\Components` nam
 Components may be created using the static `make()` method. Usually, you will then define the child component `schema()` to display inside:
 
 ```php
-use Filament\Infolists\Components\Grid;
+use Filament\Schema\Components\Grid;
 
 Grid::make(2)
     ->schema([
@@ -36,7 +36,7 @@ You may also [create your own custom layout components](custom) to organize fiel
 You may define an ID for the component using the `id()` method:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make()
     ->id('main-section')
@@ -47,7 +47,7 @@ Section::make()
 You can pass extra HTML attributes to the component, which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:
 
 ```php
-use Filament\Infolists\Components\Group;
+
 
 Section::make()
     ->extraAttributes(['class' => 'custom-section-style'])
@@ -60,7 +60,7 @@ Classes will be merged with the default classes, and any other attributes will o
 If you wish to change the default behavior of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all section components have [2 columns](grid) by default, you can do it like so:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::configureUsing(function (Section $section): void {
     $section
@@ -71,7 +71,7 @@ Section::configureUsing(function (Section $section): void {
 Of course, you are still able to overwrite this on each field individually:
 
 ```php
-use Filament\Infolists\Components\Section;
+use Filament\Schema\Components\Section;
 
 Section::make()
     ->columns(1)

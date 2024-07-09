@@ -32,7 +32,7 @@ You may create your own custom entry classes and entry views, which you can reus
 To create a custom entry class and view, you may use the following command:
 
 ```bash
-php artisan make:infolist-entry StatusSwitcher
+php artisan make:filament-infolist-entry StatusSwitcher
 ```
 
 This will create the following entry class:

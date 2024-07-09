@@ -2,8 +2,8 @@
 
 namespace Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint\Operators;
 
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\DatePicker;
+use Filament\Schema\Components\Component;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Operators\Operator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;

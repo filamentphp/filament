@@ -4,6 +4,7 @@ namespace Filament\Tests\Forms\Fixtures;
 
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
 class Livewire extends Component implements HasForms
@@ -32,5 +33,10 @@ class Livewire extends Component implements HasForms
     public function getData()
     {
         return $this->data;
+    }
+
+    public function render(): View
+    {
+        return view('forms.fixtures.form');
     }
 }

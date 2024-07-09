@@ -1,5 +1,5 @@
 @php
-    use Filament\Tables\Columns\IconColumn\IconColumnSize;
+    use Filament\Tables\Columns\IconColumn\Enums\IconColumnSize;
 
     $arrayState = $getState();
 

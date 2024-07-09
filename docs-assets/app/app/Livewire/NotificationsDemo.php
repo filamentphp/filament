@@ -3,7 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\User;
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Notifications\DatabaseNotification;
 use Livewire\Component;

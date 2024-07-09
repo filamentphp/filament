@@ -6,12 +6,6 @@
     'field' => null,
     'hasInlineLabel' => null,
     'hasNestedRecursiveValidationRules' => null,
-    'helperText' => null,
-    'hint' => null,
-    'hintActions' => null,
-    'hintColor' => null,
-    'hintIcon' => null,
-    'hintIconTooltip' => null,
     'id' => null,
     'inlineLabelVerticalAlignment' => VerticalAlignment::Start,
     'isDisabled' => null,
@@ -27,12 +21,6 @@
     if ($field) {
         $hasInlineLabel ??= $field->hasInlineLabel();
         $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
-        $helperText ??= $field->getHelperText();
-        $hint ??= $field->getHint();
-        $hintActions ??= $field->getHintActions();
-        $hintColor ??= $field->getHintColor();
-        $hintIcon ??= $field->getHintIcon();
-        $hintIconTooltip ??= $field->getHintIconTooltip();
         $id ??= $field->getId();
         $isDisabled ??= $field->isDisabled();
         $label ??= $field->getLabel();
@@ -41,10 +29,14 @@
         $statePath ??= $field->getStatePath();
     }
 
-    $hintActions = array_filter(
-        $hintActions ?? [],
-        fn (\Filament\Forms\Components\Actions\Action $hintAction): bool => $hintAction->isVisible(),
-    );
+    $beforeLabelDecorations = $field?->getDecorations($field::BEFORE_LABEL_DECORATIONS);
+    $afterLabelDecorations = $field?->getDecorations($field::AFTER_LABEL_DECORATIONS);
+    $aboveContentDecorations = $field?->getDecorations($field::ABOVE_CONTENT_DECORATIONS);
+    $belowContentDecorations = $field?->getDecorations($field::BELOW_CONTENT_DECORATIONS);
+    $beforeContentDecorations = $field?->getDecorations($field::BEFORE_CONTENT_DECORATIONS);
+    $afterContentDecorations = $field?->getDecorations($field::AFTER_CONTENT_DECORATIONS);
+    $aboveErrorMessageDecorations = $field?->getDecorations($field::ABOVE_ERROR_MESSAGE_DECORATIONS);
+    $belowErrorMessageDecorations = $field?->getDecorations($field::BELOW_ERROR_MESSAGE_DECORATIONS);
 
     $hasError = filled($statePath) && ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")));
 @endphp
@@ -74,15 +66,17 @@
             } => $hasInlineLabel,
         ])
     >
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon || count($hintActions))
+        {{ $field?->getDecorations($field::ABOVE_LABEL_DECORATIONS) }}
+
+        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $beforeLabelDecorations || $afterLabelDecorations)
             <div
                 @class([
                     'flex items-center gap-x-3',
-                    'justify-between' => (! $labelSrOnly) || $labelPrefix || $labelSuffix,
-                    'justify-end' => $labelSrOnly && ! ($labelPrefix || $labelSuffix),
                     ($label instanceof \Illuminate\View\ComponentSlot) ? $label->attributes->get('class') : null,
                 ])
             >
+                {{ $beforeLabelDecorations }}
+
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
                         :for="$id"
@@ -99,27 +93,38 @@
                     {{ $labelSuffix }}
                 @endif
 
-                @if (filled($hint) || $hintIcon || count($hintActions))
-                    <x-filament-forms::field-wrapper.hint
-                        :actions="$hintActions"
-                        :color="$hintColor"
-                        :icon="$hintIcon"
-                        :tooltip="$hintIconTooltip"
-                    >
-                        {{ $hint }}
-                    </x-filament-forms::field-wrapper.hint>
-                @endif
+                {{ $afterLabelDecorations }}
             </div>
         @endif
 
-        @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || filled($helperText))
+        {{ $field?->getDecorations($field::BELOW_LABEL_DECORATIONS) }}
+
+        @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || $aboveContentDecorations || $belowContentDecorations || $beforeContentDecorations || $afterContentDecorations || $aboveErrorMessageDecorations || $belowErrorMessageDecorations)
             <div
                 @class([
                     'grid auto-cols-fr gap-y-2',
                     'sm:col-span-2' => $hasInlineLabel,
                 ])
             >
-                {{ $slot }}
+                {{ $aboveContentDecorations }}
+
+                @if ($beforeContentDecorations || $afterContentDecorations)
+                    <div class="flex w-full items-center gap-x-3">
+                        {{ $beforeContentDecorations }}
+
+                        <div class="w-full">
+                            {{ $slot }}
+                        </div>
+
+                        {{ $afterContentDecorations }}
+                    </div>
+                @else
+                    {{ $slot }}
+                @endif
+
+                {{ $belowContentDecorations }}
+
+                {{ $aboveErrorMessageDecorations }}
 
                 @if ($hasError)
                     <x-filament-forms::field-wrapper.error-message>
@@ -127,11 +132,7 @@
                     </x-filament-forms::field-wrapper.error-message>
                 @endif
 
-                @if (filled($helperText))
-                    <x-filament-forms::field-wrapper.helper-text>
-                        {{ $helperText }}
-                    </x-filament-forms::field-wrapper.helper-text>
-                @endif
+                {{ $belowErrorMessageDecorations }}
             </div>
         @endif
     </div>

@@ -4,8 +4,8 @@ namespace {{ namespace }};
 
 {{ clusterImport }}use App\Settings\{{ settingsClass }};
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Pages\SettingsPage;
+use Filament\Schema\Schema;
 
 class {{ class }} extends SettingsPage
 {
@@ -13,7 +13,7 @@ class {{ class }} extends SettingsPage
 
     protected static string $settings = {{ settingsClass }}::class;{{ clusterAssignment }}
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([

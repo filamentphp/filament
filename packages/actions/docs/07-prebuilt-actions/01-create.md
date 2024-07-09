@@ -23,8 +23,8 @@ CreateAction::make()
 If you want to add this action to the header of a table instead, you can use `Filament\Tables\Actions\CreateAction`:
 
 ```php
+use Filament\Actions\CreateAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -156,7 +156,7 @@ At any time, you may call `$action->halt()` from inside a lifecycle hook or muta
 
 ```php
 use App\Models\Post;
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 
 CreateAction::make()
@@ -193,7 +193,7 @@ You may easily transform the creation process into a multistep wizard. Instead o
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard\Step;
+use Filament\Schema\Components\Wizard\Step;
 
 CreateAction::make()
     ->steps([
@@ -237,11 +237,38 @@ CreateAction::make()
     ->skippableSteps()
 ```
 
-## Disabling create another
+## Creating another record
+
+### Disabling create another
 
 If you'd like to remove the "create another" button from the modal, you can use the `createAnother(false)` method:
 
 ```php
 CreateAction::make()
     ->createAnother(false)
+```
+
+### Preserving data when creating another
+
+By default, when the user uses the "create and create another" feature, all the form data is cleared so the user can start fresh. If you'd like to preserve some of the data in the form, you may use the `preserveFormDataWhenCreatingAnother()` method, passing an array of fields to preserve:
+
+```php
+CreateAction::make()
+    ->preserveFormDataWhenCreatingAnother(['is_admin', 'organization'])
+```
+
+Alternatively, you can define a function that returns an array of the `$data` to preserve:
+
+```php
+use Illuminate\Support\Arr;
+
+CreateAction::make()
+    ->preserveFormDataWhenCreatingAnother(fn (array $data): array => Arr::only($data, ['is_admin', 'organization']))
+```
+
+To preserve all the data, return the entire `$data` array:
+
+```php
+CreateAction::make()
+    ->preserveFormDataWhenCreatingAnother(fn (array $data): array => $data)
 ```

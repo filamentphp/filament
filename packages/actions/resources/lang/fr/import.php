@@ -13,6 +13,9 @@ return [
             'file' => [
                 'label' => 'Fichier',
                 'placeholder' => 'Télécharger un fichier CSV',
+                'rules' => [
+                    'duplicate_columns' => '{0} Le fichier ne doit pas contenir plus d\'un nom de colonne vide.|{1,*} Le fichier ne doit pas contenir de doublons de noms de colonne.: :columns.',
+                ],
             ],
 
             'columns' => [

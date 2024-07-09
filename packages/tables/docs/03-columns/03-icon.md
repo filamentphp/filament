@@ -50,7 +50,7 @@ The default icon size is `IconColumnSize::Large`, but you may customize the size
 use Filament\Tables\Columns\IconColumn;
 
 IconColumn::make('status')
-    ->size(IconColumn\IconColumnSize::Medium)
+    ->size(IconColumn\Enums\IconColumnSize::Medium)
 ```
 
 <AutoScreenshot name="tables/columns/icon/medium" alt="Medium-sized icon column" version="3.x" />

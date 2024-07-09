@@ -7,20 +7,23 @@
 @php
     $isDisabled = $action->isDisabled();
     $url = $action->getUrl();
+    $shouldPostToUrl = $action->shouldPostToUrl();
 @endphp
 
 <x-dynamic-component
+    :action="$shouldPostToUrl ? $url : null"
     :color="$action->getColor()"
     :component="$dynamicComponent"
     :disabled="$isDisabled"
     :form="$action->getFormToSubmit()"
     :form-id="$action->getFormId()"
-    :href="$isDisabled ? null : $url"
+    :href="($isDisabled || $shouldPostToUrl) ? null : $url"
     :icon="$icon ?? $action->getIcon()"
     :icon-size="$action->getIconSize()"
     :key-bindings="$action->getKeyBindings()"
     :label-sr-only="$action->isLabelHidden()"
-    :tag="$url ? 'a' : 'button'"
+    :method="$shouldPostToUrl ? 'post' : null"
+    :tag="$url ? $shouldPostToUrl ? 'form' : 'a' : 'button'"
     :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
     :tooltip="$action->getTooltip()"
     :type="$action->canSubmitForm() ? 'submit' : 'button'"

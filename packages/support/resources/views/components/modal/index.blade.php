@@ -11,6 +11,7 @@
     'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
     'closeByEscaping' => \Filament\Support\View\Components\Modal::$isClosedByEscaping,
     'closeEventName' => 'close-modal',
+    'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
     'displayClasses' => 'inline-block',
     'extraModalWindowAttributeBag' => null,
@@ -59,6 +60,7 @@
         aria-labelledby="{{ "{$id}.heading" }}"
     @endif
     aria-modal="true"
+    id="{{ $id }}"
     role="dialog"
     x-data="{
         isOpen: false,
@@ -66,11 +68,15 @@
         livewire: null,
 
         close: function () {
-            this.isOpen = false
+            this.closeQuietly()
 
             this.$refs.modalContainer.dispatchEvent(
                 new CustomEvent('modal-closed', { id: '{{ $id }}' }),
             )
+        },
+
+        closeQuietly: function () {
+            this.isOpen = false
 
             {{-- this.$nextTick(() => {
                 if (document.getElementsByClassName('fi-modal-open').length) {
@@ -86,15 +92,12 @@
 
             {{-- window.clearAllBodyScrollLocks()
             window.disableBodyScroll(this.$root) --}}
-
-            this.$refs.modalContainer.dispatchEvent(
-                new CustomEvent('modal-opened', { id: '{{ $id }}' }),
-            )
         },
     }"
     @if ($id)
-        x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') close()"
-        x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
+        x-on:{{ $closeEventName }}.window="if (($event.detail.id === '{{ $id }}') && isOpen) close()"
+        x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === '{{ $id }}') && isOpen) closeQuietly()"
+        x-on:{{ $openEventName }}.window="if (($event.detail.id === '{{ $id }}') && (! isOpen)) open()"
     @endif
     x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     x-bind:class="{

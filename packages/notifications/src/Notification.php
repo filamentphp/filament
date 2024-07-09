@@ -2,8 +2,8 @@
 
 namespace Filament\Notifications;
 
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Actions\ActionGroup;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Components\ViewComponent;

@@ -2,10 +2,11 @@
 
 namespace Filament\Pages\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
-use Filament\Pages\SubNavigationPosition;
 use Filament\Resources\Pages\Page as ResourcePage;
 
 trait HasSubNavigation
@@ -15,7 +16,7 @@ trait HasSubNavigation
      */
     protected array $cachedSubNavigation;
 
-    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
+    protected static ?SubNavigationPosition $subNavigationPosition = null;
 
     /**
      * @return array<NavigationItem | NavigationGroup>
@@ -29,9 +30,17 @@ trait HasSubNavigation
         return [];
     }
 
-    public function getSubNavigationPosition(): SubNavigationPosition
+    public static function getSubNavigationPosition(): SubNavigationPosition
     {
-        return static::$subNavigationPosition;
+        if (filled(static::$subNavigationPosition)) {
+            return static::$subNavigationPosition;
+        }
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::getSubNavigationPosition();
+        }
+
+        return Filament::getSubNavigationPosition();
     }
 
     /**

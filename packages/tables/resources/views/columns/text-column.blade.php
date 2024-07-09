@@ -3,7 +3,7 @@
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconPosition;
-    use Filament\Tables\Columns\TextColumn\TextColumnSize;
+    use Filament\Tables\Columns\TextColumn\Enums\TextColumnSize;
 
     $alignment = $getAlignment();
     $canWrap = $canWrap();

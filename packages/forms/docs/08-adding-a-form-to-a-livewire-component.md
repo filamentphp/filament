@@ -40,12 +40,11 @@ There are 5 main tasks when adding a form to a Livewire component class. Each on
 
 namespace App\Livewire;
 
-use App\Models\Post;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -60,7 +59,7 @@ class CreatePost extends Component implements HasForms
         $this->form->fill();
     }
     
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -143,12 +142,11 @@ It is advised to always pass the model to the form when there is one. As explain
 To pass the model to the form, use the `$form->model()` method:
 
 ```php
-use App\Models\Post;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
 public Post $post;
 
-public function form(Form $form): Form
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -165,9 +163,9 @@ In some cases, the form's model is not available until the form has been submitt
 
 ```php
 use App\Models\Post;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
-public function form(Form $form): Form
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -197,15 +195,15 @@ public function create(): void
 In all of our previous examples, we've been saving the form's data to the public `$data` property on the Livewire component. However, you can save the data to individual properties instead. For example, if you have a form with a `title` field, you can save the form's data to the `$title` property instead. To do this, don't pass a `statePath()` to the form at all. Ensure that all of your fields have their own **public** properties on the class.
 
 ```php
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Form;
+use Filament\Forms\Components\TextInput;
+use Filament\Schema\Schema;
 
 public ?string $title = null;
 
 public ?string $content = null;
 
-public function form(Form $form): Form
+public function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -234,11 +232,11 @@ protected function getForms(): array
 Each of these forms can now be defined within the Livewire component, using a method with the same name:
 
 ```php
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Form;
+use Filament\Forms\Components\TextInput;
+use Filament\Schema\Schema;
 
-public function editPostForm(Form $form): Form
+public function editPostForm(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -251,7 +249,7 @@ public function editPostForm(Form $form): Form
         ->model($this->post);
 }
 
-public function createCommentForm(Form $form): Form
+public function createCommentForm(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -299,7 +297,7 @@ public function createComment(): void
 It's advised that you learn how to set up a Livewire component with the Form Builder manually, but once you are confident, you can use the CLI to generate a form for you.
 
 ```bash
-php artisan make:livewire-form RegistrationForm
+php artisan make:filament-livewire-form RegistrationForm
 ```
 
 This will generate a new `app/Livewire/RegistrationForm.php` component, which you can customize.
@@ -311,7 +309,7 @@ Filament is also able to generate forms for a specific Eloquent model. These are
 When generating a form with the `make:livewire-form` command, it will ask for the name of the model:
 
 ```bash
-php artisan make:livewire-form Products/CreateProduct
+php artisan make:filament-livewire-form Products/CreateProduct
 ```
 
 #### Generating an edit form for an Eloquent record
@@ -319,7 +317,7 @@ php artisan make:livewire-form Products/CreateProduct
 By default, passing a model to the `make:livewire-form` command will result in a form that creates a new record in your database. If you pass the `--edit` flag to the command, it will generate an edit form for a specific record. This will automatically fill the form with the data from the record, and save the data back to the model when the form is submitted.
 
 ```bash
-php artisan make:livewire-form Products/EditProduct --edit
+php artisan make:filament-livewire-form Products/EditProduct --edit
 ```
 
 ### Automatically generating form schemas
@@ -327,5 +325,5 @@ php artisan make:livewire-form Products/EditProduct --edit
 Filament is also able to guess which form fields you want in the schema, based on the model's database columns. You can use the `--generate` flag when generating your form:
 
 ```bash
-php artisan make:livewire-form Products/CreateProduct --generate
+php artisan make:filament-livewire-form Products/CreateProduct --generate
 ```

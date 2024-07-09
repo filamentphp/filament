@@ -4,7 +4,7 @@ namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schema\Schema;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Support\Enums\ArgumentValue;
 use Illuminate\Contracts\Support\Htmlable;
@@ -56,7 +56,7 @@ trait CanFormatState
     {
         $this->isDate = true;
 
-        $format ??= Infolist::$defaultDateDisplayFormat;
+        $format ??= Schema::$defaultDateDisplayFormat;
 
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($format, $timezone): ?string {
             if (blank($state)) {
@@ -75,7 +75,7 @@ trait CanFormatState
     {
         $this->isDateTime = true;
 
-        $format ??= Infolist::$defaultDateTimeDisplayFormat;
+        $format ??= Schema::$defaultDateTimeDisplayFormat;
 
         $this->date($format, $timezone);
 
@@ -87,6 +87,56 @@ trait CanFormatState
         $this->isDateTime = true;
 
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($timezone): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $component->getTimezone())
+                ->diffForHumans();
+        });
+
+        return $this;
+    }
+
+    public function dateTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Schema::$defaultDateDisplayFormat;
+
+        $this->tooltip(static function (TextEntry $component, mixed $state) use ($format, $timezone): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $component->getTimezone())
+                ->translatedFormat($format);
+        });
+
+        return $this;
+    }
+
+    public function dateTimeTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Schema::$defaultDateTimeDisplayFormat;
+
+        $this->dateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function timeTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Schema::$defaultTimeDisplayFormat;
+
+        $this->dateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function sinceTooltip(?string $timezone = null): static
+    {
+        $this->tooltip(static function (TextEntry $component, mixed $state) use ($timezone): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -112,7 +162,7 @@ trait CanFormatState
                 return $state;
             }
 
-            $currency = $component->evaluate($currency) ?? Infolist::$defaultCurrency;
+            $currency = $component->evaluate($currency) ?? Schema::$defaultCurrency;
 
             if ($divideBy) {
                 $state /= $divideBy;
@@ -163,7 +213,7 @@ trait CanFormatState
     {
         $this->isTime = true;
 
-        $format ??= Infolist::$defaultTimeDisplayFormat;
+        $format ??= Schema::$defaultTimeDisplayFormat;
 
         $this->date($format, $timezone);
 

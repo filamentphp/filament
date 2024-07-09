@@ -34,6 +34,11 @@ class AssetManager
     protected array $styles = [];
 
     /**
+     * @var array<string, array<Font>>
+     */
+    protected array $fonts = [];
+
+    /**
      * @var array<string, Theme>
      */
     protected array $themes = [];
@@ -50,6 +55,7 @@ class AssetManager
                 $asset instanceof Theme => $this->themes[$asset->getId()] = $asset,
                 $asset instanceof AlpineComponent => $this->alpineComponents[$package][] = $asset,
                 $asset instanceof Css => $this->styles[$package][] = $asset,
+                $asset instanceof Font => $this->fonts[$package][] = $asset,
                 $asset instanceof Js => $this->scripts[$package][] = $asset,
                 default => null,
             };
@@ -80,11 +86,14 @@ class AssetManager
 
     /**
      * @param  array<string> | null  $packages
-     * @return array<Asset>
+     * @return array<AlpineComponent>
      */
     public function getAlpineComponents(?array $packages = null): array
     {
-        return $this->getAssets($this->alpineComponents, $packages);
+        /** @var array<AlpineComponent> $assets */
+        $assets = $this->getAssets($this->alpineComponents, $packages);
+
+        return $assets;
     }
 
     public function getAlpineComponentSrc(string $id, string $package = 'app'): string
@@ -147,7 +156,7 @@ class AssetManager
 
     /**
      * @param  array<string> | null  $packages
-     * @return array<Asset>
+     * @return array<Js>
      */
     public function getScripts(?array $packages = null, bool $withCore = true): array
     {
@@ -187,11 +196,26 @@ class AssetManager
 
     /**
      * @param  array<string> | null  $packages
-     * @return array<Asset>
+     * @return array<Font>
+     */
+    public function getFonts(?array $packages = null): array
+    {
+        /** @var array<Font> $assets */
+        $assets = $this->getAssets($this->fonts, $packages);
+
+        return $assets;
+    }
+
+    /**
+     * @param  array<string> | null  $packages
+     * @return array<Css>
      */
     public function getStyles(?array $packages = null): array
     {
-        return $this->getAssets($this->styles, $packages);
+        /** @var array<Css> $assets */
+        $assets = $this->getAssets($this->styles, $packages);
+
+        return $assets;
     }
 
     public function getStyleHref(string $id, string $package = 'app'): string
@@ -250,7 +274,13 @@ class AssetManager
         }
 
         return view('filament::assets', [
-            'assets' => $this->getStyles($packages),
+            'assets' => [
+                ...$this->getStyles($packages),
+                ...array_map(
+                    fn (Font $font): Css => $font->getStyle(),
+                    $this->getFonts($packages),
+                ),
+            ],
             'cssVariables' => $variables,
         ])->render();
     }

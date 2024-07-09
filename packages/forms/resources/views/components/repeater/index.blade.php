@@ -1,5 +1,5 @@
 @php
-    use Filament\Forms\Components\Actions\Action;
+    use Filament\Actions\Action;
 
     $containers = $getChildComponentContainers();
 
@@ -24,12 +24,12 @@
     $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
     $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
 
+    $key = $getKey();
     $statePath = $getStatePath();
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div
-        x-data="{}"
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
@@ -70,7 +70,7 @@
                     :lg="$getGridColumns('lg')"
                     :xl="$getGridColumns('xl')"
                     :two-xl="$getGridColumns('2xl')"
-                    :wire:end.stop="'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })'"
+                    :wire:end.stop="'mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })'"
                     x-sortable
                     :data-sortable-animation-duration="$getReorderAnimationDuration()"
                     class="items-start gap-4"
@@ -94,7 +94,7 @@
                         @endphp
 
                         <li
-                            wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
+                            wire:key="{{ $item->getLivewireKey() }}.item"
                             x-data="{
                                 isCollapsed: @js($isCollapsed($item)),
                             }"

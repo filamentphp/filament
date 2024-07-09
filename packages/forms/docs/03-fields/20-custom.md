@@ -49,7 +49,7 @@ You may create your own custom field classes and views, which you can reuse acro
 To create a custom field class and view, you may use the following command:
 
 ```bash
-php artisan make:form-field RangeSlider
+php artisan make:filament-form-field RangeSlider
 ```
 
 This will create the following field class:

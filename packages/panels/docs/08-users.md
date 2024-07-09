@@ -204,12 +204,12 @@ In this example, we will customize the profile page. We need to create a new PHP
 namespace App\Filament\Pages\Auth;
 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Pages\Auth\EditProfile as BaseEditProfile;
+use Filament\Schema\Schema;
 
 class EditProfile extends BaseEditProfile
 {
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -240,7 +240,7 @@ In the `form()` method of the example, we call methods like `getNameFormComponen
 If you'd like to customize a field in an authentication form without needing to define a new `form()` method, you could extend the specific field method and chain your customizations:
 
 ```php
-use Filament\Forms\Components\Component;
+use Filament\Schema\Components\Component;
 
 protected function getPasswordFormComponent(): Component
 {

@@ -4,18 +4,17 @@ namespace Filament\Resources\RelationManagers;
 
 use Closure;
 use Filament\Actions;
+use Filament\Actions\BulkAction;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Infolists;
-use Filament\Infolists\Infolist;
 use Filament\Pages\Page;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schema\Schema;
 use Filament\Support\Concerns\CanBeLazy;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\View\View;
@@ -94,7 +93,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
@@ -179,131 +178,165 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         return $this->ownerRecord;
     }
 
-    protected function configureTableAction(Tables\Actions\Action $action): void
+    protected function configureTableAction(Actions\Action $action): void
     {
         match (true) {
-            $action instanceof Tables\Actions\AssociateAction => $this->configureAssociateAction($action),
-            $action instanceof Tables\Actions\AttachAction => $this->configureAttachAction($action),
-            $action instanceof Tables\Actions\CreateAction => $this->configureCreateAction($action),
-            $action instanceof Tables\Actions\DeleteAction => $this->configureDeleteAction($action),
-            $action instanceof Tables\Actions\DetachAction => $this->configureDetachAction($action),
-            $action instanceof Tables\Actions\DissociateAction => $this->configureDissociateAction($action),
-            $action instanceof Tables\Actions\EditAction => $this->configureEditAction($action),
-            $action instanceof Tables\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
-            $action instanceof Tables\Actions\ReplicateAction => $this->configureReplicateAction($action),
-            $action instanceof Tables\Actions\RestoreAction => $this->configureRestoreAction($action),
-            $action instanceof Tables\Actions\ViewAction => $this->configureViewAction($action),
+            $action instanceof Actions\AssociateAction => $this->configureAssociateAction($action),
+            $action instanceof Actions\AttachAction => $this->configureAttachAction($action),
+            $action instanceof Actions\CreateAction => $this->configureCreateAction($action),
+            $action instanceof Actions\DeleteAction => $this->configureDeleteAction($action),
+            $action instanceof Actions\DetachAction => $this->configureDetachAction($action),
+            $action instanceof Actions\DissociateAction => $this->configureDissociateAction($action),
+            $action instanceof Actions\EditAction => $this->configureEditAction($action),
+            $action instanceof Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
+            $action instanceof Actions\ReplicateAction => $this->configureReplicateAction($action),
+            $action instanceof Actions\RestoreAction => $this->configureRestoreAction($action),
+            $action instanceof Actions\ViewAction => $this->configureViewAction($action),
             default => null,
         };
     }
 
-    protected function configureAssociateAction(Tables\Actions\AssociateAction $action): void
+    protected function configureAssociateAction(Actions\AssociateAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canAssociate());
     }
 
-    protected function configureAttachAction(Tables\Actions\AttachAction $action): void
+    protected function configureAttachAction(Actions\AttachAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canAttach());
     }
 
-    protected function configureCreateAction(Tables\Actions\CreateAction $action): void
+    protected function configureCreateAction(Actions\CreateAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canCreate())
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
+
+        $relatedResource = static::getRelatedResource();
+
+        if ($relatedResource && $relatedResource::hasPage('create')) {
+            $action->url(fn (): string => $relatedResource::getUrl('create', [$relatedResource::getParentResourceRegistration()->getParentRouteParameterName() => $this->getOwnerRecord()]));
+        }
     }
 
-    protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
+    protected function configureDeleteAction(Actions\DeleteAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canDelete($record));
     }
 
-    protected function configureDetachAction(Tables\Actions\DetachAction $action): void
+    protected function configureDetachAction(Actions\DetachAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canDetach($record));
     }
 
-    protected function configureDissociateAction(Tables\Actions\DissociateAction $action): void
+    protected function configureDissociateAction(Actions\DissociateAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canDissociate($record));
     }
 
-    protected function configureEditAction(Tables\Actions\EditAction $action): void
+    protected function configureEditAction(Actions\EditAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canEdit($record))
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
+
+        $relatedResource = static::getRelatedResource();
+
+        if ($relatedResource && $relatedResource::hasPage('edit')) {
+            $action->url(fn (Model $record): string => $relatedResource::getUrl('edit', ['record' => $record]));
+        }
     }
 
-    protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
+    protected function configureForceDeleteAction(Actions\ForceDeleteAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canForceDelete($record));
     }
 
-    protected function configureReplicateAction(Tables\Actions\ReplicateAction $action): void
+    protected function configureReplicateAction(Actions\ReplicateAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canReplicate($record));
     }
 
-    protected function configureRestoreAction(Tables\Actions\RestoreAction $action): void
+    protected function configureRestoreAction(Actions\RestoreAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canRestore($record));
     }
 
-    protected function configureViewAction(Tables\Actions\ViewAction $action): void
+    protected function configureViewAction(Actions\ViewAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => $livewire->canView($record))
-            ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->infolist(function (Schema $infolist): Schema {
+                $this->configureInfolist($infolist);
+
+                return $infolist;
+            })
+            ->form(function (Schema $form): Schema {
+                $this->configureForm($form);
+
+                return $form;
+            });
+
+        $relatedResource = static::getRelatedResource();
+
+        if ($relatedResource && $relatedResource::hasPage('view')) {
+            $action->url(fn (Model $record): string => $relatedResource::getUrl('view', ['record' => $record]));
+        }
     }
 
     protected function configureTableBulkAction(BulkAction $action): void
     {
         match (true) {
-            $action instanceof Tables\Actions\DeleteBulkAction => $this->configureDeleteBulkAction($action),
-            $action instanceof Tables\Actions\DetachBulkAction => $this->configureDetachBulkAction($action),
-            $action instanceof Tables\Actions\DissociateBulkAction => $this->configureDissociateBulkAction($action),
-            $action instanceof Tables\Actions\ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
-            $action instanceof Tables\Actions\RestoreBulkAction => $this->configureRestoreBulkAction($action),
+            $action instanceof Actions\DeleteBulkAction => $this->configureDeleteBulkAction($action),
+            $action instanceof Actions\DetachBulkAction => $this->configureDetachBulkAction($action),
+            $action instanceof Actions\DissociateBulkAction => $this->configureDissociateBulkAction($action),
+            $action instanceof Actions\ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
+            $action instanceof Actions\RestoreBulkAction => $this->configureRestoreBulkAction($action),
             default => null,
         };
     }
 
-    protected function configureDeleteBulkAction(Tables\Actions\DeleteBulkAction $action): void
+    protected function configureDeleteBulkAction(Actions\DeleteBulkAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canDeleteAny());
     }
 
-    protected function configureDetachBulkAction(Tables\Actions\DetachBulkAction $action): void
+    protected function configureDetachBulkAction(Actions\DetachBulkAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canDetachAny());
     }
 
-    protected function configureDissociateBulkAction(Tables\Actions\DissociateBulkAction $action): void
+    protected function configureDissociateBulkAction(Actions\DissociateBulkAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canDissociateAny());
     }
 
-    protected function configureForceDeleteBulkAction(Tables\Actions\ForceDeleteBulkAction $action): void
+    protected function configureForceDeleteBulkAction(Actions\ForceDeleteBulkAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canForceDeleteAny());
     }
 
-    protected function configureRestoreBulkAction(Tables\Actions\RestoreBulkAction $action): void
+    protected function configureRestoreBulkAction(Actions\RestoreBulkAction $action): void
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canRestoreAny());
@@ -324,12 +357,12 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         }
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $infolist): Schema
     {
         return $infolist;
     }
@@ -504,11 +537,10 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     protected function makeTable(): Table
     {
         return $this->makeBaseRelationshipTable()
-            ->query($this->getTableQuery())
-            ->inverseRelationship(static::getInverseRelationshipName())
-            ->modelLabel(static::getModelLabel())
-            ->pluralModelLabel(static::getPluralModelLabel())
-            ->recordTitleAttribute(static::getRecordTitleAttribute())
+            ->when(static::getInverseRelationshipName(), fn (Table $table, ?string $inverseRelationshipName): Table => $table->inverseRelationship($inverseRelationshipName))
+            ->when(static::getModelLabel(), fn (Table $table, string $modelLabel): Table => $table->modelLabel($modelLabel))
+            ->when(static::getPluralModelLabel(), fn (Table $table, string $pluralModelLabel): Table => $table->pluralModelLabel($pluralModelLabel))
+            ->when(static::getRecordTitleAttribute(), fn (Table $table, string $recordTitleAttribute): Table => $table->recordTitleAttribute($recordTitleAttribute))
             ->heading($this->getTableHeading() ?? static::getTitle($this->getOwnerRecord(), $this->getPageClass()))
             ->when(
                 $this->getTableRecordUrlUsing(),

@@ -53,12 +53,11 @@ trait HasDescriptions
         }
 
         if (
-            empty($descriptions) &&
-            is_string($this->options) &&
-            enum_exists($this->options) &&
-            is_a($this->options, HasDescription::class, allow_string: true)
+            blank($descriptions) &&
+            filled($enum = $this->getEnum()) &&
+            is_a($enum, HasDescription::class, allow_string: true)
         ) {
-            $descriptions = array_reduce($this->options::cases(), function (array $carry, HasDescription & UnitEnum $case): array {
+            $descriptions = array_reduce($enum::cases(), function (array $carry, HasDescription & UnitEnum $case): array {
                 if (filled($description = $case->getDescription())) {
                     $carry[$case?->value ?? $case->name] = $description;
                 }

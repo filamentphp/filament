@@ -125,9 +125,9 @@ Resource classes contain a `form()` method that is used to build the forms on th
 
 ```php
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
-public static function form(Form $form): Form
+public static function form(Schema $form): Schema
 {
     return $form
         ->schema([
@@ -198,11 +198,11 @@ public static function table(Table $table): Table
             // ...
         ])
         ->actions([
-            Tables\Actions\EditAction::make(),
+            \Filament\Actions\EditAction::make(),
         ])
         ->bulkActions([
-            Tables\Actions\BulkActionGroup::make([
-                Tables\Actions\DeleteBulkAction::make(),
+            \Filament\Actions\BulkActionGroup::make([
+                \Filament\Actions\DeleteBulkAction::make(),
             ]),
         ]);
 }
@@ -412,7 +412,7 @@ To generate a URL for an action in the resource's table, you should pass the `ta
 
 ```php
 use App\Filament\Resources\CustomerResource;
-use Filament\Tables\Actions\EditAction;
+use Filament\Actions\EditAction;
 
 CustomerResource::getUrl(parameters: [
     'tableAction' => EditAction::getDefaultName(),
@@ -518,14 +518,14 @@ Each item in the sub-navigation can be customized using the [same navigation met
 
 > If you're looking to add sub-navigation to switch *between* entire resources and [custom pages](../pages), you might be looking for [clusters](../clusters), which are used to group these together. The `getRecordSubNavigation()` method is intended to construct a navigation between pages that relate to a particular record *inside* a resource.
 
-### Sub-navigation position
+### Setting the sub-navigation position for a resource
 
-The sub-navigation is rendered at the start of the page by default. You may change the position by setting the `$subNavigationPosition` property on the resource. The value may be `SubNavigationPosition::Start`, `SubNavigationPosition::End`, or `SubNavigationPosition::Top` to render the sub-navigation as tabs:
+The sub-navigation is rendered at the start of the page by default. You may change the position for all pages in a resource by setting the `$subNavigationPosition` property on the resource. The value may be `SubNavigationPosition::Start`, `SubNavigationPosition::End`, or `SubNavigationPosition::Top` to render the sub-navigation as tabs:
 
 ```php
-use Filament\Pages\SubNavigationPosition;
+use Filament\Pages\Enums\SubNavigationPosition;
 
-protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
+protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
 
 ## Deleting resource pages

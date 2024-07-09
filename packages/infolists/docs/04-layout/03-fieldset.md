@@ -8,7 +8,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 You may want to group entries into a Fieldset. Each fieldset has a label, a border, and a two-column grid by default:
 
 ```php
-use Filament\Infolists\Components\Fieldset;
+use Filament\Schema\Components\Fieldset;
 
 Fieldset::make('Label')
     ->schema([
@@ -23,7 +23,7 @@ Fieldset::make('Label')
 You may use the `columns()` method to customize the [grid](grid) within the fieldset:
 
 ```php
-use Filament\Infolists\Components\Fieldset;
+use Filament\Schema\Components\Fieldset;
 
 Fieldset::make('Label')
     ->schema([

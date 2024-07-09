@@ -38,16 +38,16 @@ public static function table(Table $table): Table
             // You may add these actions to your table if you're using a simple
             // resource, or you just want to be able to delete records without
             // leaving the table.
-            Tables\Actions\DeleteAction::make(),
-            Tables\Actions\ForceDeleteAction::make(),
-            Tables\Actions\RestoreAction::make(),
+            \Filament\Actions\DeleteAction::make(),
+            \Filament\Actions\ForceDeleteAction::make(),
+            \Filament\Actions\RestoreAction::make(),
             // ...
         ])
         ->bulkActions([
-            Tables\Actions\BulkActionGroup::make([
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\ForceDeleteBulkAction::make(),
-                Tables\Actions\RestoreBulkAction::make(),
+            \Filament\Actions\BulkActionGroup::make([
+                \Filament\Actions\DeleteBulkAction::make(),
+                \Filament\Actions\ForceDeleteBulkAction::make(),
+                \Filament\Actions\RestoreBulkAction::make(),
                 // ...
             ]),
         ]);
@@ -83,7 +83,6 @@ protected function getHeaderActions(): array
 By default, you can bulk-delete records in your table. You may also wish to delete single records, using a `DeleteAction`:
 
 ```php
-use Filament\Tables;
 use Filament\Tables\Table;
 
 public static function table(Table $table): Table
@@ -94,7 +93,7 @@ public static function table(Table $table): Table
         ])
         ->actions([
             // ...
-            Tables\Actions\DeleteAction::make(),
+            \Filament\Actions\DeleteAction::make(),
         ]);
 }
 ```

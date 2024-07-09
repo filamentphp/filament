@@ -120,6 +120,12 @@ class TestsColumns
                     $checkColumnUsing($column),
                     "Failed asserting that a column with the name [{$name}] and provided configuration does not exist on the [{$livewireClass}] component."
                 );
+            } else {
+                Assert::assertNotInstanceOf(
+                    Column::class,
+                    $column,
+                    message: "Failed asserting that a table column with name [{$name}] does not exist on the [{$livewireClass}] component.",
+                );
             }
 
             return $this;

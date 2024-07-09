@@ -48,9 +48,9 @@ class ViewProduct extends Component implements HasForms, HasInfolists
 Next, add a method to the Livewire component which accepts an `$infolist` object, modifies it, and returns it:
 
 ```php
-use Filament\Infolists\Infolist;
+use Filament\Schema\Schema;
 
-public function productInfolist(Infolist $infolist): Infolist
+public function productInfolist(Schema $infolist): Schema
 {
     return $infolist
         ->record($this->product)
@@ -74,9 +74,9 @@ Either pass an Eloquent model instance to the `record()` method of the infolist,
 
 ```php
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schema\Schema;
 
-public function productInfolist(Infolist $infolist): Infolist
+public function productInfolist(Schema $infolist): Schema
 {
     return $infolist
         ->record($this->product)
@@ -92,12 +92,12 @@ Alternatively, you can pass an array of data to the `state()` method of the info
 
 ```php
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
+use Filament\Schema\Schema;
 
-public function productInfolist(Infolist $infolist): Infolist
+public function productInfolist(Schema $infolist): Schema
 {
     return $infolist
-        ->state([
+        ->constantState([
             'name' => 'MacBook Pro',
             'category' => [
                 'name' => 'Laptops',

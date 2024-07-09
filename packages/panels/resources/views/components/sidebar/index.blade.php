@@ -1,15 +1,11 @@
-@props([
-    'navigation',
-])
-
 @php
     $openSidebarClasses = 'fi-sidebar-open w-[--sidebar-width] translate-x-0 shadow-xl ring-1 ring-gray-950/5 dark:ring-white/10 rtl:-translate-x-0';
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
+    $navigation = filament()->getNavigation();
 @endphp
 
 {{-- format-ignore-start --}}
 <aside
-    x-data="{}"
     @if (filament()->isSidebarCollapsibleOnDesktop() && (! filament()->hasTopNavigation()))
         x-cloak
         x-bind:class="
@@ -71,7 +67,6 @@
                     icon-size="lg"
                     :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                     x-cloak
-                    x-data="{}"
                     x-on:click="$store.sidebar.open()"
                     x-show="! $store.sidebar.isOpen"
                     class="mx-auto"
@@ -87,7 +82,6 @@
                     icon-size="lg"
                     :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
                     x-cloak
-                    x-data="{}"
                     x-on:click="$store.sidebar.close()"
                     x-show="$store.sidebar.isOpen"
                     class="ms-auto hidden lg:flex"
@@ -165,7 +159,7 @@
                         '.fi-sidebar-group-items',
                     ).style.display = 'none'
                     group
-                        .querySelector('.fi-sidebar-group-collapse-button')
+                        .querySelector('.fi-sidebar-group-collapse-btn')
                         .classList.add('rotate-180')
                 })
         </script>

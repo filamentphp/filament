@@ -57,7 +57,6 @@ You may fill the form with existing data, using the `fillForm()` method:
 use App\Models\Post;
 use App\Models\User;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Form;
 
 Action::make('updateAuthor')
     ->fillForm(fn (Post $record): array => [
@@ -83,7 +82,7 @@ You may create a [multistep form wizard](../forms/layout/wizard) inside a modal.
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard\Step;
+use Filament\Schema\Components\Wizard\Step;
 
 Action::make('create')
     ->steps([
@@ -343,10 +342,10 @@ Action::make('updateAuthor')
 You may execute code within a closure when the modal opens, by passing it to the `mountUsing()` method:
 
 ```php
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
 Action::make('create')
-    ->mountUsing(function (Form $form) {
+    ->mountUsing(function (Schema $form) {
         $form->fill();
 
         // ...
@@ -364,11 +363,11 @@ By default, there are two actions in the footer of a modal. The first is a butto
 To modify the action instance that is used to render one of the default action buttons, you may pass a closure to the `modalSubmitAction()` and `modalCancelAction()` methods:
 
 ```php
-use Filament\Actions\StaticAction;
+use Filament\Actions\Action;
 
 Action::make('help')
     ->modalContent(view('actions.help'))
-    ->modalCancelAction(fn (StaticAction $action) => $action->label('Close'))
+    ->modalCancelAction(fn (Action $action) => $action->label('Close'))
 ```
 
 The [methods available to customize trigger buttons](trigger-button) will work to modify the `$action` instance inside the closure.
@@ -482,6 +481,80 @@ Action::make('first')
 ```
 
 In this example, if the `fourth` action is run, the `second` action is canceled, but so is the `third` action since it is a child of `second`. The `first` action is not canceled, however, since it is the parent of `second`. The `first` action's modal will remain open.
+
+## Accessing information about parent actions from a child
+
+You can access the instances of parent actions and their raw data and arguments by injecting the `$mountedActions` array in a function used by your nested action. For example, to get the top-most parent action currently active on the page, you can use `$mountedActions[0]`. From there, you can get the raw data for that action by calling `$mountedActions[0]->getRawData()`. Please be aware that raw data is not validated since the action has not been submitted yet:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+Action::make('first')
+    ->form([
+        TextInput::make('foo'),
+    ])
+    ->action(function () {
+        // ...
+    })
+    ->extraModalFooterActions([
+        Action::make('second')
+            ->requiresConfirmation()
+            ->action(function (array $mountedActions) {
+                dd($mountedActions[0]->getRawData());
+            
+                // ...
+            }),
+    ])
+```
+
+You can do similar with the current arguments for a parent action, with the `$mountedActions[0]->getArguments()` method.
+
+Even if you have multiple layers of nesting, the `$mountedActions` array will contain every action that is currently active, so you can access information about them:
+
+```php
+Action::make('first')
+    ->form([
+        TextInput::make('foo'),
+    ])
+    ->action(function () {
+        // ...
+    })
+    ->extraModalFooterActions([
+        Action::make('second')
+            ->form([
+                TextInput::make('bar'),
+            ])
+            ->arguments(['number' => 2])
+            ->action(function () {
+                // ...
+            })
+            ->extraModalFooterActions([
+                Action::make('third')
+                    ->form([
+                        TextInput::make('baz'),
+                    ])
+                    ->arguments(['number' => 3])
+                    ->action(function () {
+                        // ...
+                    })
+                    ->extraModalFooterActions([
+                        Action::make('fourth')
+                            ->requiresConfirmation()
+                            ->action(function (array $mountedActions) {
+                                dd(
+                                    $mountedActions[0]->getRawData(),
+                                    $mountedActions[0]->getArguments(),
+                                    $mountedActions[1]->getRawData(),
+                                    $mountedActions[1]->getArguments(),
+                                    $mountedActions[2]->getRawData(),
+                                    $mountedActions[2]->getArguments(),
+                                );
+                                // ...
+                            }),
+                    ]),
+            ]),
+    ])
+```
 
 ## Closing the modal by clicking away
 

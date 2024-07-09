@@ -39,7 +39,7 @@ You can then pass a function to `action()` which executes the task, or a functio
 
 ```php
 use App\Models\Post;
-use Filament\Tables\Actions\Action;
+use Filament\Actions\Action;
 
 Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
@@ -99,8 +99,8 @@ You may want an action to be able to access all the selected rows in the table. 
 For example, you may want to have a row action that copies the row data to all the selected records. To force the table to be selectable, even if there aren't bulk actions defined, you need to use the `selectable()` method. To allow the action to access the selected records, you need to use the `accessSelectedRecords()` method. Then, you can use the `$selectedRecords` parameter in your action to access the selected records:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Tables\Table;
-use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -141,7 +141,7 @@ public function table(Table $table): Table
 Bulk actions may be created using the static `make()` method, passing its unique name. You should then pass a callback to `action()` which executes the task:
 
 ```php
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 
 BulkAction::make('delete')
@@ -158,8 +158,8 @@ The function allows you to access the current table `$records` that are selected
 You may use a `BulkActionGroup` object to [group multiple bulk actions together](../actions/grouping-actions) in a dropdown. Any bulk actions that remain outside the `BulkActionGroup` will be rendered next to the dropdown's trigger button:
 
 ```php
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -182,8 +182,7 @@ public function table(Table $table): Table
 Alternatively, if all of your bulk actions are grouped, you can use the shorthand `groupedBulkActions()` method:
 
 ```php
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Actions\BulkAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -205,7 +204,7 @@ public function table(Table $table): Table
 You may deselect the records after a bulk action has been executed using the `deselectRecordsAfterCompletion()` method:
 
 ```php
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\BulkAction;
 use Illuminate\Database\Eloquent\Collection;
 
 BulkAction::make('delete')
@@ -293,10 +292,10 @@ Filament includes several prebuilt actions and bulk actions that you can add to 
 You may use an `ActionGroup` object to group multiple table actions together in a dropdown:
 
 ```php
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -322,7 +321,7 @@ Out of the box, action group triggers have 3 styles - "button", "link", and "ico
 "Icon button" triggers are circular buttons with an [icon](#setting-the-action-group-button-icon) and no label. Usually, this is the default button style, but you can use it manually with the `iconButton()` method:
 
 ```php
-use Filament\Tables\Actions\ActionGroup;
+use Filament\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
@@ -334,7 +333,7 @@ ActionGroup::make([
 "Button" triggers have a background color, label, and optionally an [icon](#setting-the-action-group-button-icon). You can switch to that style with the `button()` method:
 
 ```php
-use Filament\Tables\Actions\ActionGroup;
+use Filament\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
@@ -348,7 +347,7 @@ ActionGroup::make([
 "Link" triggers have no background color. They must have a label and optionally an [icon](#setting-the-action-group-button-icon). They look like a link that you might find embedded within text. You can switch to that style with the `link()` method:
 
 ```php
-use Filament\Tables\Actions\ActionGroup;
+use Filament\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
@@ -364,7 +363,7 @@ ActionGroup::make([
 You may set the [icon](https://blade-ui-kit.com/blade-icons?set=1#search) of the action group button using the `icon()` method:
 
 ```php
-use Filament\Tables\Actions\ActionGroup;
+use Filament\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
@@ -378,7 +377,7 @@ ActionGroup::make([
 You may set the color of the action group button using the `color()` method:
 
 ```php
-use Filament\Tables\Actions\ActionGroup;
+use Filament\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
@@ -392,8 +391,8 @@ ActionGroup::make([
 Buttons come in 3 sizes - `sm`, `md` or `lg`. You may set the size of the action group button using the `size()` method:
 
 ```php
+use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\ActionSize;
-use Filament\Tables\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
@@ -407,7 +406,7 @@ ActionGroup::make([
 You may set the tooltip of the action group using the `tooltip()` method:
 
 ```php
-use Filament\Tables\Actions\ActionGroup;
+use Filament\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...

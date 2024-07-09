@@ -3,11 +3,11 @@
 namespace Filament\Tables\Filters\QueryBuilder\Forms\Components;
 
 use Exception;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Repeater;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Filament\Tables\Filters\QueryBuilder\Concerns\HasConstraints;
 use Filament\Tables\Filters\QueryBuilder\Constraints\Constraint;
 use Illuminate\Support\Str;
@@ -49,7 +49,7 @@ class RuleBuilder extends Builder
                             }
 
                             $itemLabels = collect($repeater->getChildComponentContainers())
-                                ->map(fn (ComponentContainer $blockContainer, string $blockContainerUuid): string => $repeater->getItemLabel($blockContainerUuid));
+                                ->map(fn (Schema $blockContainer, string $blockContainerUuid): string => $repeater->getItemLabel($blockContainerUuid));
 
                             if ($itemLabels->count() === 1) {
                                 return $itemLabels->first();
@@ -74,7 +74,7 @@ class RuleBuilder extends Builder
                                 ->collapsible()
                                 ->expandAllAction(fn (Action $action) => $action->hidden())
                                 ->collapseAllAction(fn (Action $action) => $action->hidden())
-                                ->itemLabel(function (ComponentContainer $container, array $state): string {
+                                ->itemLabel(function (Schema $container, array $state): string {
                                     $builder = $container->getComponent(fn (Component $component): bool => $component instanceof RuleBuilder);
 
                                     if (! ($builder instanceof RuleBuilder)) {
@@ -82,7 +82,7 @@ class RuleBuilder extends Builder
                                     }
 
                                     $blockLabels = collect($builder->getChildComponentContainers())
-                                        ->map(function (ComponentContainer $blockContainer, string $blockUuid): string {
+                                        ->map(function (Schema $blockContainer, string $blockUuid): string {
                                             $block = $blockContainer->getParentComponent();
 
                                             if (! ($block instanceof Builder\Block)) {

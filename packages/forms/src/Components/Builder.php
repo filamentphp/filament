@@ -3,9 +3,12 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
+use Filament\Schema\Components\Concerns\CanBeCollapsed;
+use Filament\Schema\Components\Contracts\CanConcealComponents;
+use Filament\Schema\Components\Contracts\HasExtraItemActions;
+use Filament\Schema\Schema;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\MaxWidth;
@@ -16,10 +19,10 @@ use Illuminate\Support\Str;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 
-class Builder extends Field implements Contracts\CanConcealComponents, Contracts\HasExtraItemActions
+class Builder extends Field implements CanConcealComponents, HasExtraItemActions
 {
+    use CanBeCollapsed;
     use Concerns\CanBeCloned;
-    use Concerns\CanBeCollapsed;
     use Concerns\CanGenerateUuids;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasExtraItemActions;
@@ -243,6 +246,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
@@ -303,6 +308,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -342,6 +349,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -380,6 +389,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -418,6 +429,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->size(ActionSize::Small)
@@ -466,6 +479,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 $component->state($items);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
@@ -641,6 +656,8 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
                 $component->getChildComponentContainer($arguments['item'])->fill($data);
 
                 $component->callAfterStateUpdated();
+
+                $component->partiallyRender();
             })
             ->iconButton()
             ->icon('heroicon-s-cog-6-tooth')
@@ -869,7 +886,7 @@ class Builder extends Field implements Contracts\CanConcealComponents, Contracts
         return collect($this->getState())
             ->filter(fn (array $itemData): bool => filled($itemData['type'] ?? null) && $this->hasBlock($itemData['type']))
             ->map(
-                fn (array $itemData, $itemIndex): ComponentContainer => $this
+                fn (array $itemData, $itemIndex): Schema => $this
                     ->getBlock($itemData['type'])
                     ->getChildComponentContainer()
                     ->statePath("{$itemIndex}.data")

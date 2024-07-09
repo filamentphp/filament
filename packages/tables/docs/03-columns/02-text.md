@@ -410,7 +410,7 @@ For instance, you may make the text larger using `size(TextColumnSize::Large)`:
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
-    ->size(TextColumn\TextColumnSize::Large)
+    ->size(TextColumn\Enums\TextColumnSize::Large)
 ```
 
 <AutoScreenshot name="tables/columns/text/large" alt="Text column in a large font size" version="3.x" />

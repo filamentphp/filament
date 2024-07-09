@@ -129,16 +129,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.310.0",
+            "version": "3.311.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8ac02d36c609c6507136e5996f60cfd5152b4fd7"
+                "reference": "3e1cc8fe522eae7deca8b7753c573c2c69444705"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8ac02d36c609c6507136e5996f60cfd5152b4fd7",
-                "reference": "8ac02d36c609c6507136e5996f60cfd5152b4fd7",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/3e1cc8fe522eae7deca8b7753c573c2c69444705",
+                "reference": "3e1cc8fe522eae7deca8b7753c573c2c69444705",
                 "shasum": ""
             },
             "require": {
@@ -218,9 +218,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.310.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.311.0"
             },
-            "time": "2024-06-04T18:05:36+00:00"
+            "time": "2024-06-05T18:07:37+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -1571,7 +1571,7 @@
         },
         {
             "name": "filament/support",
-            "version": "3.x-dev",
+            "version": "4.x-dev",
             "dist": {
                 "type": "path",
                 "url": "packages/support",
@@ -4982,16 +4982,16 @@
         },
         {
             "name": "orchestra/testbench-core",
-            "version": "v9.1.3",
+            "version": "v9.1.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench-core.git",
-                "reference": "650758a0a7ae178c62a9344ad46c38347a2feb78"
+                "reference": "8738ddaf1fc657053bc466b81a136b60b7b8256f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/650758a0a7ae178c62a9344ad46c38347a2feb78",
-                "reference": "650758a0a7ae178c62a9344ad46c38347a2feb78",
+                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/8738ddaf1fc657053bc466b81a136b60b7b8256f",
+                "reference": "8738ddaf1fc657053bc466b81a136b60b7b8256f",
                 "shasum": ""
             },
             "require": {
@@ -5067,7 +5067,7 @@
                 "issues": "https://github.com/orchestral/testbench/issues",
                 "source": "https://github.com/orchestral/testbench-core"
             },
-            "time": "2024-06-04T05:14:04+00:00"
+            "time": "2024-06-06T07:15:36+00:00"
         },
         {
             "name": "orchestra/workbench",

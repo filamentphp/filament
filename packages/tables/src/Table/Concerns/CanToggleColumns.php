@@ -3,11 +3,11 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Filament\Schema\Schema;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Actions\Action;
 
 trait CanToggleColumns
 {
@@ -76,7 +76,7 @@ trait CanToggleColumns
         return $action;
     }
 
-    public function getColumnToggleForm(): Form
+    public function getColumnToggleForm(): Schema
     {
         return $this->getLivewire()->getTableColumnToggleForm();
     }

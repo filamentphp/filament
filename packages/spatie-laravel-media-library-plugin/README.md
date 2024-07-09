@@ -51,7 +51,7 @@ SpatieMediaLibraryFileUpload::make('avatar')
 
 ### Configuring the storage disk and directory
 
-By default, files will be uploaded publicly to your storage disk defined in the [Filament configuration file](https://filamentphp.com/docs/forms/installation#publishing-configuration). You can also set the `FILAMENT_FILESYSTEM_DISK` environment variable to change this. This is to ensure consistency between all Filament packages. Spatie's disk configuration will not be used, unless you [define a disk for a registered collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/defining-media-collections#content-using-a-specific-disk).
+By default, files will be uploaded publicly to your storage disk defined in the [Filament configuration file](https://filamentphp.com/docs/forms/installation#publishing-configuration). You can also set the `FILESYSTEM_DISK` environment variable to change this. This is to ensure consistency between all Filament packages. Spatie's disk configuration will not be used, unless you [define a disk for a registered collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/defining-media-collections#content-using-a-specific-disk).
 
 Alternatively, you can manually set the disk with the `disk()` method:
 
@@ -159,8 +159,8 @@ It's possible to target a file upload component to only handle a certain subset 
 For example, you could scope the field to only handle media that has certain custom properties:
 
 ```php
+use Filament\Schema\Components\Utilities\Get;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Get;
 use Illuminate\Support\Collection;
 
 SpatieMediaLibraryFileUpload::make('images')

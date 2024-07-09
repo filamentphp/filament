@@ -3,7 +3,7 @@
     'afterItem' => null,
     'blocks',
     'columns' => null,
-    'statePath',
+    'key',
     'trigger',
     'width' => null,
 ])
@@ -36,7 +36,7 @@
 
                     $wireClickActionArguments = \Illuminate\Support\Js::from($wireClickActionArguments);
 
-                    $wireClickAction = "mountFormComponentAction('{$statePath}', '{$action->getName()}', {$wireClickActionArguments})";
+                    $wireClickAction = "mountAction('{$action->getName()}', {$wireClickActionArguments}, { schemaComponent: '{$key}' })";
                 @endphp
 
                 <x-filament::dropdown.list.item

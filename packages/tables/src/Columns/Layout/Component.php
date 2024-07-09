@@ -16,7 +16,6 @@ use Filament\Tables\Columns\Concerns\HasRecord;
 use Filament\Tables\Columns\Concerns\HasRowLoopObject;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Traits\Conditionable;
 
 class Component extends ViewComponent
 {
@@ -25,7 +24,6 @@ class Component extends ViewComponent
     use CanBeHidden;
     use CanGrow;
     use CanSpanColumns;
-    use Conditionable;
     use HasExtraAttributes;
     use HasRecord;
     use HasRowLoopObject;
@@ -148,6 +146,10 @@ class Component extends ViewComponent
         $record = $this->getRecord();
 
         if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        if (! ($record instanceof Model)) {
             return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
         }
 

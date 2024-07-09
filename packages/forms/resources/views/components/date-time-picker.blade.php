@@ -128,7 +128,7 @@
                         @disabled($isDisabled)
                         readonly
                         placeholder="{{ $getPlaceholder() }}"
-                        wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.display-text"
+                        wire:key="{{ $getLivewireKey() }}.display-text"
                         x-model="displayText"
                         @if ($id = $getId()) id="{{ $id }}" @endif
                         @class([
@@ -142,7 +142,7 @@
                     x-cloak
                     x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                     wire:ignore
-                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.panel"
+                    wire:key="{{ $getLivewireKey() }}.panel"
                     @class([
                         'fi-fo-date-time-picker-panel absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                     ])

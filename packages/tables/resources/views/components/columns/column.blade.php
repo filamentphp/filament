@@ -40,7 +40,6 @@
 
 <div
     @if (filled($tooltip))
-        x-data="{}"
         x-tooltip="{
             content: @js($tooltip),
             theme: $store.theme,
@@ -57,7 +56,7 @@
         </a>
     @elseif (($action || $recordAction) && (! $isClickDisabled))
         @php
-            if ($action instanceof \Filament\Tables\Actions\Action) {
+            if ($action instanceof \Filament\Actions\Action) {
                 $wireClickAction = "mountTableAction('{$action->getName()}', '{$recordKey}')";
             } elseif ($action) {
                 $wireClickAction = "callTableColumnAction('{$name}', '{$recordKey}')";

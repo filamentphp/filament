@@ -17,7 +17,7 @@ The tabs component allows you to render a set of tabs, which can be used to togg
     </x-filament::tabs.item>
 
     <x-filament::tabs.item>
-        Tab 2
+        Tab 3
     </x-filament::tabs.item>
 </x-filament::tabs>
 ```

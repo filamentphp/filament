@@ -14,12 +14,7 @@ trait InteractsWithFormActions
      */
     protected array $cachedFormActions = [];
 
-    public function bootedInteractsWithFormActions(): void
-    {
-        $this->cacheFormActions();
-    }
-
-    protected function cacheFormActions(): void
+    public function cacheInteractsWithFormActions(): void
     {
         /** @var array<string, Action | ActionGroup> */
         $actions = Action::configureUsing(

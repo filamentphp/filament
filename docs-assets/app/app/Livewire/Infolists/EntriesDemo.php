@@ -2,10 +2,9 @@
 
 namespace App\Livewire\Infolists;
 
+use Filament\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\ColorEntry;
-use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
@@ -13,7 +12,8 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
+use Filament\Schema\Components\Group;
+use Filament\Schema\Schema;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
@@ -24,7 +24,7 @@ class EntriesDemo extends Component implements HasInfolists
     use InteractsWithForms;
     use InteractsWithInfolists;
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $infolist): Schema
     {
         return $infolist
             ->schema([
@@ -199,7 +199,7 @@ class EntriesDemo extends Component implements HasInfolists
                     ->schema([
                         TextEntry::make('title')
                             ->state('What is Filament?')
-                            ->size(TextEntry\TextEntrySize::Large),
+                            ->size(TextEntry\Enums\TextEntrySize::Large),
                     ]),
                 Group::make()
                     ->id('textBold')
@@ -288,7 +288,7 @@ class EntriesDemo extends Component implements HasInfolists
                                 'published' => 'success',
                                 default => 'gray',
                             })
-                            ->size(IconEntry\IconEntrySize::Medium),
+                            ->size(IconEntry\Enums\IconEntrySize::Medium),
                     ]),
                 Group::make()
                     ->id('iconBoolean')
@@ -541,7 +541,7 @@ class EntriesDemo extends Component implements HasInfolists
                             ),
                     ]),
             ])
-            ->state([
+            ->constantState([
                 'comments' => [
                     [
                         'author' => ['name' => 'Jane Doe'],

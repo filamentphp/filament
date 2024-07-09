@@ -15,7 +15,7 @@ import LaracastsBanner from "@components/LaracastsBanner.astro"
 Aside from [building custom layout components](#custom-layout-classes), you may create "view" components which allow you to create custom layouts without extra PHP classes.
 
 ```php
-use Filament\Infolists\Components\View;
+use Filament\Schema\Components\View;
 
 View::make('filament.infolists.components.box')
 ```
@@ -31,13 +31,13 @@ You may create your own custom component classes and views, which you can reuse 
 To create a custom column class and view, you may use the following command:
 
 ```bash
-php artisan make:infolist-layout Box
+php artisan make:filament-schema-layout Box
 ```
 
 This will create the following layout component class:
 
 ```php
-use Filament\Infolists\Components\Component;
+use Filament\Schema\Components\Component;
 
 class Box extends Component
 {

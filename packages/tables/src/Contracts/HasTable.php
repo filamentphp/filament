@@ -2,10 +2,9 @@
 
 namespace Filament\Tables\Contracts;
 
-use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Filament\Schema\Schema;
 use Filament\Support\Contracts\TranslatableContentDriver;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Filters\Indicator;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -46,21 +45,19 @@ interface HasTable
 
     public function getMountedTableAction(): ?Action;
 
-    public function getMountedTableActionForm(): ?Form;
+    public function getMountedTableActionForm(): ?Schema;
 
     public function getMountedTableActionRecord(): ?Model;
 
-    public function getMountedTableActionRecordKey(): int | string | null;
+    public function getMountedTableBulkAction(): ?Action;
 
-    public function getMountedTableBulkAction(): ?BulkAction;
-
-    public function getMountedTableBulkActionForm(): ?Form;
+    public function getMountedTableBulkActionForm(): ?Schema;
 
     public function getTable(): Table;
 
-    public function getTableFiltersForm(): Form;
+    public function getTableFiltersForm(): Schema;
 
-    public function getTableRecords(): EloquentCollection | Paginator | CursorPaginator;
+    public function getTableRecords(): Collection | Paginator | CursorPaginator;
 
     public function getTableRecordsPerPage(): int | string | null;
 
@@ -76,13 +73,17 @@ interface HasTable
 
     public function isTableColumnToggledHidden(string $name): bool;
 
-    public function getTableColumnToggleForm(): Form;
+    public function getTableColumnToggleForm(): Schema;
 
-    public function getTableRecord(?string $key): ?Model;
+    /**
+     * @return Model | array<string, mixed> | null
+     */
+    public function getTableRecord(?string $key): Model | array | null;
 
-    public function getTableRecordKey(Model $record): string;
-
-    public function mountedTableActionRecord(int | string | null $record): void;
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function getTableRecordKey(Model | array $record): string;
 
     public function toggleTableReordering(): void;
 
@@ -103,9 +104,9 @@ interface HasTable
      */
     public function getTableColumnSearchIndicators(): array;
 
-    public function getFilteredTableQuery(): Builder;
+    public function getFilteredTableQuery(): ?Builder;
 
-    public function getFilteredSortedTableQuery(): Builder;
+    public function getFilteredSortedTableQuery(): ?Builder;
 
     public function getTableQueryForExport(): Builder;
 
