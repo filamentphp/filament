@@ -19,6 +19,11 @@ trait HasComponents
     protected array $cachedVisibleComponents;
 
     /**
+     * @var array<array<array<array<string, Component>>>>
+     */
+    protected array $cachedFlatComponents = [];
+
+    /**
      * @param  array<Component> | Closure  $components
      */
     public function components(array | Closure $components): static
@@ -93,7 +98,7 @@ trait HasComponents
     {
         $containerKey ??= $this->getKey();
 
-        return array_reduce(
+        return $this->cachedFlatComponents[$withHidden][$withAbsoluteKeys][$containerKey] ??= array_reduce(
             $this->getComponents($withHidden),
             function (array $carry, Component $component) use ($containerKey, $withHidden, $withAbsoluteKeys): array {
                 $componentKey = $component->getKey();
