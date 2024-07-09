@@ -43,17 +43,17 @@ trait HasHeadingIcon {
             return $headingText;
         }
 
-        $iconStart = ($iconPosition === IconPosition::Before)
+        $iconBefore = ($iconPosition === IconPosition::Before)
             ? $iconComponent
             : null;
 
-        $iconEnd = ($iconPosition === IconPosition::After)
+        $iconAfter = ($iconPosition === IconPosition::After)
             ? $iconComponent
             : null;
 
         return new HtmlString(
             Blade::render('<div class="flex items-center">
-                '. $iconStart .' '. $headingText .' '. $iconEnd .'
+                '. $iconBefore .' '. $headingText .' '. $iconAfter .'
             </div>')
         );
     }
