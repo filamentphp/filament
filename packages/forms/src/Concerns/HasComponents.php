@@ -83,8 +83,6 @@ trait HasComponents
      */
     public function getFlatComponentsByKey(bool $withHidden = false): array
     {
-        $statePath = $this->getStatePath();
-
         return array_reduce($this->getFlatComponents($withHidden), function (array $carry, Component $component): array {
             $componentKey = $component->getKey();
 
