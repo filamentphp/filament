@@ -14,7 +14,7 @@ trait HasComponents
     protected array | Closure $components = [];
 
     /**
-     * @var array<string, array<Component>>
+     * @var array<array<Component>>
      */
     protected array $cachedFlatComponents = [];
 
