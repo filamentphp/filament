@@ -238,6 +238,40 @@ public function getHeading(): string
 }
 ```
 
+### Adding an icon to a heading
+
+If you want to add an icon before or after your heading text, use the `HasHeadingIcon` trait in your page class and return your heading like this:
+
+```php
+use Filament\Pages\Concerns\HasHeadingIcon;
+
+class ListPosts extends ListRecords
+{
+    use HasHeadingIcon;
+
+    public function getHeading(): string
+    {
+        return $this->getHeadingWithIcon(heading: 'Blog Posts', icon: 'heroicon-o-document-text');
+    }
+}
+```
+
+You can also change the heading icon's color and position like this:
+
+```php
+use Filament\Pages\HeadingIconPosition;
+
+public function getHeading(): string
+{
+    return $this->getHeadingWithIcon(
+        heading: 'Blog Posts',
+        icon: 'heroicon-o-document-text',
+        iconColor: 'info',
+        iconPosition: HeadingIconPosition::End
+    );
+}
+```
+
 ### Adding a page subheading
 
 You may also add a subheading to your page by defining a `$subheading` property on your page class:
