@@ -11,8 +11,7 @@ class RelationManagerConfiguration
     public function __construct(
         readonly public string $relationManager,
         protected array $properties = [],
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<string, mixed>

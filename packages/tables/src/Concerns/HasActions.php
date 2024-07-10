@@ -62,9 +62,7 @@ trait HasActions
     #[Url(as: 'tableActionRecord')]
     public $defaultTableActionRecord = null;
 
-    protected function configureTableAction(Action $action): void
-    {
-    }
+    protected function configureTableAction(Action $action): void {}
 
     /**
      * @param  array<string, mixed>  $arguments

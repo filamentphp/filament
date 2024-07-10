@@ -24,9 +24,7 @@ class ComponentManager implements ScopedComponentManager
      */
     protected array $methodCache = [];
 
-    final public function __construct()
-    {
-    }
+    final public function __construct() {}
 
     public static function resolve(): ScopedComponentManager
     {

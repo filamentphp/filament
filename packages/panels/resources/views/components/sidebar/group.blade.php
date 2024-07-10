@@ -15,7 +15,7 @@
 
 <li
     x-data="{ label: @js($subNavigation ? "sub_navigation_{$label}" : $label) }"
-    data-group-label="{{ $label }}"
+    data-group-label="{{ $subNavigation ? "sub_navigation_{$label}" : $label }}"
     {{
         $attributes->class([
             'fi-sidebar-group flex flex-col gap-y-1',

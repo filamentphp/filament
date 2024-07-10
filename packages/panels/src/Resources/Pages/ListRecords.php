@@ -69,9 +69,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         $this->loadDefaultActiveTab();
     }
 
-    protected function authorizeAccess(): void
-    {
-    }
+    protected function authorizeAccess(): void {}
 
     public function getBreadcrumb(): ?string
     {

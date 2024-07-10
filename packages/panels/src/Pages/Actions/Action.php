@@ -7,6 +7,4 @@ use Filament\Actions\Action as BaseAction;
 /**
  * @deprecated Use `\Filament\Actions\Action` instead.
  */
-class Action extends BaseAction
-{
-}
+class Action extends BaseAction {}
