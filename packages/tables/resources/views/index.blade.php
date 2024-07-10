@@ -5,8 +5,8 @@
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
     use Filament\Tables\Enums\ActionsPosition;
-    use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\BulkActionsPosition;
+    use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Illuminate\Support\Str;
 
