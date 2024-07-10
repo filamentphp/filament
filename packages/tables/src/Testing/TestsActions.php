@@ -3,6 +3,7 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
+use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\Testing\TestsActions as BaseTestsActions;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Contracts\HasTable;
@@ -277,6 +278,10 @@ class TestsActions
             $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
+            if (($actionGroup = $action->getRootGroup()) instanceof HasRecord) {
+                $actionGroup->record($record);
+            }
+
             Assert::assertFalse(
                 $action->isHidden(),
                 message: filled($record) ?
@@ -308,6 +313,10 @@ class TestsActions
 
             $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
+
+            if (($actionGroup = $action->getRootGroup()) instanceof HasRecord) {
+                $actionGroup->record($record);
+            }
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', $name);
@@ -348,6 +357,10 @@ class TestsActions
             $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
+            if (($actionGroup = $action->getRootGroup()) instanceof HasRecord) {
+                $actionGroup->record($record);
+            }
+
             Assert::assertFalse(
                 $action->isDisabled(),
                 message: filled($record) ?
@@ -379,6 +392,10 @@ class TestsActions
 
             $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
+
+            if (($actionGroup = $action->getRootGroup()) instanceof HasRecord) {
+                $actionGroup->record($record);
+            }
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', $name);
