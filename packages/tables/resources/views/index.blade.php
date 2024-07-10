@@ -6,6 +6,7 @@
     use Filament\Tables\Columns\ColumnGroup;
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\FiltersLayout;
+    use Filament\Tables\Enums\BulkActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Illuminate\Support\Str;
 
@@ -36,6 +37,8 @@
         $getBulkActions(),
         fn (\Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
+    $bulkActionsPosition = $getBulkActionsPosition();
+    $hasBulkActionsBelowTable = $bulkActionsPosition === BulkActionsPosition::BelowTable;
     $groups = $getGroups();
     $description = $getDescription();
     $isGroupsOnly = $isGroupsOnly() && $group;
@@ -192,7 +195,7 @@
 
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
 
-                    @if ((! $isReordering) && count($bulkActions))
+                    @if (! $hasBulkActionsBelowTable && (! $isReordering) && count($bulkActions))
                         <x-filament-tables::actions
                             :actions="$bulkActions"
                             x-cloak="x-cloak"
@@ -1244,6 +1247,19 @@
                 </tr>
             @endif
         </div>
+
+        @if ($hasBulkActionsBelowTable && (! $isReordering) && count($bulkActions))
+            <div
+                x-cloak
+                x-show="selectedRecords.length"
+                class="fi-ta-footer-bulk-actions flex items-center justify-between gap-x-4 px-4 py-3 sm:px-6"
+            >
+                <x-filament-tables::actions
+                    :actions="$bulkActions"
+                    x-show="selectedRecords.length"
+                />
+            </div>
+        @endif
 
         @if ((($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) &&
              ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
