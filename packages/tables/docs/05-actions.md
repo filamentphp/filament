@@ -252,7 +252,7 @@ public function table(Table $table): Table
 
 ### Displaying bulk actions below the table
 
-To render the bulk actions below the table, you may use:
+By default, the bulk actions are rendered above the table. Alternatively, you can move them below the table:
 
 ```php
 use Filament\Tables\Table;
