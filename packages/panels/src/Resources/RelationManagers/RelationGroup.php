@@ -27,8 +27,7 @@ class RelationGroup extends Component
     public function __construct(
         protected string | Closure $label,
         protected array | Closure $managers,
-    ) {
-    }
+    ) {}
 
     /**
      * @param  array<class-string<RelationManager> | RelationManagerConfiguration>  $managers
