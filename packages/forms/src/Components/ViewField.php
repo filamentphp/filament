@@ -2,6 +2,4 @@
 
 namespace Filament\Forms\Components;
 
-class ViewField extends Field
-{
-}
+class ViewField extends Field {}

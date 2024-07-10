@@ -2,6 +2,4 @@
 
 namespace Filament\Forms;
 
-class Form extends ComponentContainer
-{
-}
+class Form extends ComponentContainer {}

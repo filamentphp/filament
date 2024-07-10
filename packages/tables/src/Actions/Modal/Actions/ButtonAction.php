@@ -7,6 +7,4 @@ use Filament\Actions\StaticAction;
 /**
  * @deprecated Use `\Filament\Actions\StaticAction` instead.
  */
-class ButtonAction extends StaticAction
-{
-}
+class ButtonAction extends StaticAction {}
