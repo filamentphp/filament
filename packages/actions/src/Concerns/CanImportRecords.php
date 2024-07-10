@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Events\ImportCompleted;
+use Filament\Actions\Imports\Events\ImportInitiated;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Jobs\ImportCsv;
@@ -249,6 +250,8 @@ trait CanImportRecords
                 columnMap: $data['columnMap'],
                 options: $options,
             );
+
+            event(new ImportInitiated($import, $options));
 
             Bus::batch($importJobs->all())
                 ->allowFailures()
