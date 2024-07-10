@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ImportAction;
+use Filament\Actions\Imports\Events\ImportCompleted;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Jobs\ImportCsv;
@@ -263,8 +264,10 @@ trait CanImportRecords
                     filled($jobBatchName = $importer->getJobBatchName()),
                     fn (PendingBatch $batch) => $batch->name($jobBatchName),
                 )
-                ->finally(function () use ($import) {
+                ->finally(function () use ($import, $options) {
                     $import->touch('completed_at');
+
+                    event(new ImportCompleted($import, $options));
 
                     if (! $import->user instanceof Authenticatable) {
                         return;
