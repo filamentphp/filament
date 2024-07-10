@@ -53,6 +53,7 @@ class Import extends Model
         $authenticatable = app(Authenticatable::class);
 
         if ($authenticatable) {
+            /** @phpstan-ignore-next-line */
             return $this->belongsTo($authenticatable::class);
         }
 
@@ -60,6 +61,7 @@ class Import extends Model
             throw new Exception('No [App\\Models\\User] model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
         }
 
+        /** @phpstan-ignore-next-line */
         return $this->belongsTo(User::class);
     }
 
