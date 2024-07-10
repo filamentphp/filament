@@ -7,8 +7,7 @@ parameters:
     excludePaths:
         - packages/upgrade/*
 
-    parameters:
-        reportUnmatchedIgnoredErrors: false
+    reportUnmatchedIgnoredErrors: false
 
     ignoreErrors:
         - '#Unable to resolve the template type TKey in call to function collect#'
