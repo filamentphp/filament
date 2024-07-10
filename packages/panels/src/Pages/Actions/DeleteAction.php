@@ -7,6 +7,4 @@ use Filament\Actions\DeleteAction as BaseAction;
 /**
  * @deprecated Use `\Filament\Actions\DeleteAction` instead.
  */
-class DeleteAction extends BaseAction
-{
-}
+class DeleteAction extends BaseAction {}

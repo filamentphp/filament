@@ -7,6 +7,4 @@ use Filament\Actions\ViewAction as BaseAction;
 /**
  * @deprecated Use `\Filament\Actions\ViewAction` instead.
  */
-class ViewAction extends BaseAction
-{
-}
+class ViewAction extends BaseAction {}

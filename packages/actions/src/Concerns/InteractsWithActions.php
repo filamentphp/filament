@@ -151,9 +151,7 @@ trait InteractsWithActions
         return $result;
     }
 
-    protected function afterActionCalled(): void
-    {
-    }
+    protected function afterActionCalled(): void {}
 
     /**
      * @param  array<string, mixed>  $arguments
@@ -252,9 +250,7 @@ trait InteractsWithActions
         ];
     }
 
-    protected function configureAction(Action $action): void
-    {
-    }
+    protected function configureAction(Action $action): void {}
 
     public function getMountedAction(): ?Action
     {
