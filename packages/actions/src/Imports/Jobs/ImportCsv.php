@@ -4,6 +4,7 @@ namespace Filament\Actions\Imports\Jobs;
 
 use Carbon\CarbonInterface;
 use Exception;
+use Filament\Actions\Imports\Events\ImportCsvProcessed;
 use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\FailedImportRow;
@@ -109,6 +110,8 @@ class ImportCsv implements ShouldQueue
             $this->import->total_rows;
 
         $this->import->save();
+
+        event(new ImportCsvProcessed($this->import, $processedRows, $successfulRows, $exceptions));
 
         $this->handleExceptions($exceptions);
     }
