@@ -12,10 +12,12 @@ class ImportCompleted
     /**
      * @param Import $import
      * @param  array<string, mixed>  $options
+     * @param array<string, string> $columnMap
      */
     public function __construct(
         protected Import $import,
         protected array $options,
+        protected array $columnMap,
     ) {}
 
     public function getImport(): Import
@@ -29,5 +31,13 @@ class ImportCompleted
     public function getOptions(): array
     {
         return $this->options;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getColumnMap(): array
+    {
+        return $this->columnMap;
     }
 }

@@ -246,12 +246,13 @@ trait CanImportRecords
                     'options' => $options,
                 ]));
 
+            $columnMap = $data['columnMap'];
             $importer = $import->getImporter(
-                columnMap: $data['columnMap'],
+                columnMap: $columnMap,
                 options: $options,
             );
 
-            event(new ImportInitiated($import, $options));
+            event(new ImportInitiated($import, $options, $columnMap));
 
             Bus::batch($importJobs->all())
                 ->allowFailures()
@@ -267,10 +268,10 @@ trait CanImportRecords
                     filled($jobBatchName = $importer->getJobBatchName()),
                     fn (PendingBatch $batch) => $batch->name($jobBatchName),
                 )
-                ->finally(function () use ($import, $options) {
+                ->finally(function () use ($import, $options, $columnMap) {
                     $import->touch('completed_at');
 
-                    event(new ImportCompleted($import, $options));
+                    event(new ImportCompleted($import, $options, $columnMap));
 
                     if (! $import->user instanceof Authenticatable) {
                         return;
