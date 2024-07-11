@@ -848,6 +848,16 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 return;
             }
 
+            if ($relationship instanceof HasOneOrMany) {
+                $relatedModel = $relationship->getResults();
+
+                $component->state(
+                    $relatedModel->getAttribute(
+                        $relatedModel->getKeyName(),
+                    ),
+                );
+            }
+
             /** @var BelongsTo $relationship */
             $relatedModel = $relationship->getResults();
 
