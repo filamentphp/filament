@@ -245,9 +245,7 @@ trait InteractsWithForms
         }
     }
 
-    protected function onValidationError(ValidationException $exception): void
-    {
-    }
+    protected function onValidationError(ValidationException $exception): void {}
 
     /**
      * @param  array<string, mixed>  $attributes

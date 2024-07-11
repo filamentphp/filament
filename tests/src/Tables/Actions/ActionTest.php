@@ -76,9 +76,13 @@ it('can call an action and halt', function () {
 });
 
 it('can hide an action', function () {
+    $post = Post::factory()->create();
+
     livewire(PostsTable::class)
         ->assertTableActionVisible('visible')
-        ->assertTableActionHidden('hidden');
+        ->assertTableActionHidden('hidden')
+        ->assertTableActionVisible('groupedWithVisibleGroupCondition', $post)
+        ->assertTableActionHidden('groupedWithHiddenGroupCondition', $post);
 });
 
 it('can disable an action', function () {

@@ -131,7 +131,7 @@ trait HasActions
             return null;
         }
 
-        if (($actionGroup = $action->getGroup()) instanceof HasRecord) {
+        if (($actionGroup = $action->getRootGroup()) instanceof HasRecord) {
             $actionGroup->record($mountedRecord);
         }
 

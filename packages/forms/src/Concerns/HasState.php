@@ -277,13 +277,17 @@ trait HasState
 
     public function getStatePath(bool $isAbsolute = true): string
     {
+        if (! $isAbsolute) {
+            return $this->statePath ?? '';
+        }
+
         if (isset($this->cachedAbsoluteStatePath)) {
             return $this->cachedAbsoluteStatePath;
         }
 
         $pathComponents = [];
 
-        if ($isAbsolute && $parentComponentStatePath = $this->getParentComponent()?->getStatePath()) {
+        if ($parentComponentStatePath = $this->getParentComponent()?->getStatePath()) {
             $pathComponents[] = $parentComponentStatePath;
         }
 

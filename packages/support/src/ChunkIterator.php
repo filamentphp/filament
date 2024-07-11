@@ -10,8 +10,7 @@ class ChunkIterator
     public function __construct(
         protected Iterator $iterator,
         protected int $chunkSize,
-    ) {
-    }
+    ) {}
 
     public function get(): Generator
     {

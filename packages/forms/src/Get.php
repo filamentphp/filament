@@ -8,8 +8,7 @@ class Get
 {
     public function __construct(
         protected Component $component,
-    ) {
-    }
+    ) {}
 
     public function __invoke(string | Component $path, bool $isAbsolute = false): mixed
     {
