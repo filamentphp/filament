@@ -22,6 +22,7 @@ use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Livewire\Component;
 
@@ -141,6 +142,12 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                 Action::make('enabled'),
                 Action::make('disabled')
                     ->disabled(),
+                ActionGroup::make([
+                    Action::make('groupedWithVisibleGroupCondition'),
+                ])->visible(fn (?Model $record): bool => $record !== null),
+                ActionGroup::make([
+                    Action::make('groupedWithHiddenGroupCondition'),
+                ])->hidden(fn (?Model $record): bool => $record !== null),
                 Action::make('hasIcon')
                     ->icon('heroicon-m-pencil-square'),
                 Action::make('hasLabel')

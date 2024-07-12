@@ -461,7 +461,7 @@ trait InteractsWithActions
             $record = $this->getTableRecord($action['context']['recordKey']);
 
             $resolvedAction->record($record);
-            $resolvedAction->getGroup()?->record($record);
+            $resolvedAction->getRootGroup()?->record($record);
         }
 
         return $resolvedAction;
