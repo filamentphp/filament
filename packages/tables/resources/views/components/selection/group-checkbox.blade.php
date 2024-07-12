@@ -22,5 +22,6 @@
         return null
     '"
     :x-on:click="'toggleSelectRecordsInGroup(' . \Illuminate\Support\Js::from($key) . ')'"
+    class="fi-ta-group-checkbox"
 />
 {{-- format-ignore-end --}}
