@@ -11,6 +11,9 @@ use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasTooltip;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
@@ -293,5 +296,23 @@ class ActionGroup extends ViewComponent implements Arrayable
     protected static function isViewSafe(string $view): bool
     {
         return Str::startsWith($view, 'filament-actions::');
+    }
+
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return match ($parameterName) {
+            'record' => [$this->getRecord()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getRecord();
+
+        return match ($parameterType) {
+            Model::class, ($record instanceof Model) ? $record::class : null => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 }
