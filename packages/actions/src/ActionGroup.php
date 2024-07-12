@@ -11,9 +11,7 @@ use Filament\Support\Concerns\HasIcon;
 use Filament\Support\Concerns\HasTooltip;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Component;
 

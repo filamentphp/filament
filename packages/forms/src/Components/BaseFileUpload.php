@@ -159,7 +159,7 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
             if (
                 $component->shouldMoveFiles() &&
-                ($component->getDiskName() == (fn (): string => $this->disk)->call($file))
+                ($component->getDiskName() === (fn (): string => $this->disk)->call($file))
             ) {
                 $newPath = trim($component->getDirectory() . '/' . $component->getUploadedFileNameForStorage($file), '/');
 

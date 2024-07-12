@@ -123,15 +123,15 @@ class CheckTranslationsCommand extends Command
 
                         $locale = locale_get_display_name($locale, 'en');
 
-                        if ($missingKeysCount == 0 && $removedKeysCount == 0) {
+                        if ((! $missingKeysCount) && (! $removedKeysCount)) {
                             $this->info("[✓] Package filament/{$package} has no missing or removed translation keys for {$locale}!\n");
 
                             $this->newLine();
-                        } elseif ($missingKeysCount > 0 && $removedKeysCount > 0) {
+                        } elseif ($missingKeysCount && $removedKeysCount) {
                             $this->warn("[!] Package filament/{$package} has {$missingKeysCount} missing translation " . Str::plural('key', $missingKeysCount) . " and {$removedKeysCount} removed translation " . Str::plural('key', $removedKeysCount) . " for {$locale}.\n");
-                        } elseif ($missingKeysCount > 0) {
+                        } elseif ($missingKeysCount) {
                             $this->warn("[!] Package filament/{$package} has {$missingKeysCount} missing translation " . Str::plural('key', $missingKeysCount) . " for {$locale}.\n");
-                        } elseif ($removedKeysCount > 0) {
+                        } elseif ($removedKeysCount) {
                             $this->warn("[!] Package filament/{$package} has {$removedKeysCount} removed translation " . Str::plural('key', $removedKeysCount) . " for {$locale}.\n");
                         }
                     })
