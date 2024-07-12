@@ -14,6 +14,8 @@ class Infolist extends ComponentContainer
 
     public static string $defaultTimeDisplayFormat = 'H:i:s';
 
+    public static ?string $defaultNumberLocale = null;
+
     public function name(string $name): static
     {
         $this->name = $name;
