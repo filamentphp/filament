@@ -323,7 +323,7 @@
                                         return null
                                     "
                                     x-on:click="toggleSelectRecordsOnPage"
-                                    class="fi-ta-bulk-select-checkbox my-4"
+                                    class="fi-ta-page-checkbox my-4"
                                 />
                             @endif
 
@@ -814,7 +814,7 @@
                                             return null
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
-                                        class="fi-ta-bulk-select-checkbox"
+                                        class="fi-ta-page-checkbox"
                                     />
                                 </x-filament-tables::selection.cell>
                             @endif
@@ -892,7 +892,7 @@
                                             return null
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
-                                        class="fi-ta-bulk-select-checkbox"
+                                        class="fi-ta-page-checkbox"
                                     />
                                 </x-filament-tables::selection.cell>
                             @endif
