@@ -2,6 +2,4 @@
 
 namespace Filament\Infolists\Contracts;
 
-interface HasInfolists
-{
-}
+interface HasInfolists {}

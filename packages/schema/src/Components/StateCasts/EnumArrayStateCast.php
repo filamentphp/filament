@@ -12,8 +12,7 @@ class EnumArrayStateCast implements StateCast
      */
     public function __construct(
         protected string $enum,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<BackedEnum>

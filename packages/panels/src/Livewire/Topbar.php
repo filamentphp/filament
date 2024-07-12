@@ -20,9 +20,7 @@ class Topbar extends Component implements HasActions, HasForms
     use InteractsWithForms;
 
     #[On('refresh-topbar')]
-    public function refresh(): void
-    {
-    }
+    public function refresh(): void {}
 
     public function render(): View
     {

@@ -8,8 +8,7 @@ class Set
 {
     public function __construct(
         protected Component $component,
-    ) {
-    }
+    ) {}
 
     public function __invoke(string | Component $key, mixed $state, bool $isAbsolute = false, bool $shouldCallUpdatedHooks = false): mixed
     {

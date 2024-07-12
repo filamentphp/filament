@@ -11,8 +11,7 @@ class ActionCalling
 
     public function __construct(
         protected Action $action,
-    ) {
-    }
+    ) {}
 
     public function getAction(): Action
     {

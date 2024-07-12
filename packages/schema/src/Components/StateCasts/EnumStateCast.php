@@ -12,8 +12,7 @@ class EnumStateCast implements StateCast
      */
     public function __construct(
         protected string $enum,
-    ) {
-    }
+    ) {}
 
     public function get(mixed $state): ?BackedEnum
     {

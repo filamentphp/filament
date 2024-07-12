@@ -9,9 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 trait HasActions
 {
-    protected function configureTableAction(Action $action): void
-    {
-    }
+    protected function configureTableAction(Action $action): void {}
 
     /**
      * @deprecated Use the `callMountedAction()` method instead.

@@ -10,8 +10,7 @@ class FileUploadStateCast implements StateCast
 {
     public function __construct(
         protected bool $isMultiple = false,
-    ) {
-    }
+    ) {}
 
     public function get(mixed $state): mixed
     {

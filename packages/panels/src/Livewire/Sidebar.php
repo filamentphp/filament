@@ -18,9 +18,7 @@ class Sidebar extends Component implements HasActions, HasForms
     use InteractsWithForms;
 
     #[On('refresh-sidebar')]
-    public function refresh(): void
-    {
-    }
+    public function refresh(): void {}
 
     public function render(): View
     {

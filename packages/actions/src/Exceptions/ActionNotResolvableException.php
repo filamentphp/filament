@@ -4,6 +4,4 @@ namespace Filament\Actions\Exceptions;
 
 use Exception;
 
-class ActionNotResolvableException extends Exception
-{
-}
+class ActionNotResolvableException extends Exception {}

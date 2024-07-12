@@ -2,6 +2,4 @@
 
 namespace Filament\Schema\Components\Contracts;
 
-interface ExposesStateToActionData
-{
-}
+interface ExposesStateToActionData {}
