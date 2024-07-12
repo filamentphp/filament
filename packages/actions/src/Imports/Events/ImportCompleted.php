@@ -10,8 +10,7 @@ class ImportCompleted
     use Dispatchable;
 
     /**
-     * @param Import $import
-     * @param  array<string, mixed>  $options
+     * @param array<string, mixed>  $options
      * @param array<string, string> $columnMap
      */
     public function __construct(

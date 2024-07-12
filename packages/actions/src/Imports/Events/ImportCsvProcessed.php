@@ -11,7 +11,7 @@ class ImportCsvProcessed
     use Dispatchable;
 
     /**
-     * @param  array<Throwable>  $exceptions
+     * @param array<Throwable>  $exceptions
      */
     public function __construct(
         protected Import $import,
@@ -25,17 +25,11 @@ class ImportCsvProcessed
         return $this->import;
     }
 
-    /**
-     * @return int
-     */
     public function getProcessedRows(): int
     {
         return $this->processedRows;
     }
 
-    /**
-     * @return int
-     */
     public function getSuccessfulRows(): int
     {
         return $this->successfulRows;
