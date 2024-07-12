@@ -85,12 +85,12 @@ TextEntry::make('stock')
     ->numeric(locale: 'nl')
 ```
 
-Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+Alternatively, you can set the default locale used across your app using the `Infolist::$defaultNumberLocale` method in the `boot()` method of a service provider:
 
 ```php
-use Illuminate\Support\Number;
+use Filament\Infolists\Infolist;
 
-Number::useLocale('nl');
+Infolist::$defaultNumberLocale = 'nl';
 ```
 
 ## Currency formatting
@@ -122,12 +122,12 @@ TextEntry::make('price')
     ->money('EUR', locale: 'nl')
 ```
 
-Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+Alternatively, you can set the default locale used across your app using the `Infolist::$defaultNumberLocale` method in the `boot()` method of a service provider:
 
 ```php
-use Illuminate\Support\Number;
+use Filament\Infolists\Infolist;
 
-Number::useLocale('nl');
+Infolist::$defaultNumberLocale = 'nl';
 ```
 
 ## Limiting text length
