@@ -54,6 +54,35 @@ protected function getHeaderActions(): array
 }
 ```
 
+### Opening an action modal when a page loads
+
+You can also open an action when a page loads by setting the `$defaultAction` property to the name of the action you want to open:
+
+```php
+use Filament\Actions\Action;
+
+public $defaultAction = 'onboarding';
+
+public function onboardingAction(): Action
+{
+    return Action::make('onboarding')
+        ->modalHeading('Welcome')
+        ->visible(fn (): bool => ! auth()->user()->isOnBoarded());
+}
+```
+
+You can also pass an array of arguments to the default action using the `$defaultActionArguments` property:
+
+```php
+public $defaultActionArguments = ['step' => 2];
+```
+
+Alternatively, you can open an action modal when a page loads by specifying the `defaultAction` as a query string parameter to the page:
+
+```
+/admin/products/edit/932510?defaultAction=onboarding
+```
+
 ### Refreshing form data
 
 If you're using actions on an [Edit](resources/editing-records) or [View](resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
