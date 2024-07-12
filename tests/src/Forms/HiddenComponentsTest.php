@@ -173,9 +173,5 @@ test('components can be visible based on Livewire component', function () {
         ->toHaveLength(1);
 });
 
-class Foo extends Livewire
-{
-}
-class Bar extends Livewire
-{
-}
+class Foo extends Livewire {}
+class Bar extends Livewire {}

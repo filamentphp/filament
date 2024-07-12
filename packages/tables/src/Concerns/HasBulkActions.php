@@ -21,9 +21,7 @@ trait HasBulkActions
 
     protected Collection $cachedSelectedTableRecords;
 
-    protected function configureTableBulkAction(BulkAction $action): void
-    {
-    }
+    protected function configureTableBulkAction(BulkAction $action): void {}
 
     /**
      * @deprecated Use the `callMountedAction()` method instead.

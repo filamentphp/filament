@@ -28,8 +28,7 @@ abstract class Exporter
         protected Export $export,
         protected array $columnMap,
         protected array $options,
-    ) {
-    }
+    ) {}
 
     /**
      * @return array<mixed>

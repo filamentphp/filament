@@ -37,8 +37,7 @@ abstract class Importer
         protected Import $import,
         protected array $columnMap,
         protected array $options,
-    ) {
-    }
+    ) {}
 
     /**
      * @param  array<string, mixed>  $data

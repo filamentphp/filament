@@ -17,8 +17,7 @@ class DatabaseNotification extends BaseNotification implements Arrayable, Should
      */
     public function __construct(
         public array $data,
-    ) {
-    }
+    ) {}
 
     /**
      * @param  Model  $notifiable
