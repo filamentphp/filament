@@ -77,6 +77,15 @@ TextColumn::make('title')
     ->translateLabel() // Equivalent to `label(__('Title'))`
 ```
 
+Optionally, to hide the label:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->label(false)
+```
+
 ## Sorting
 
 Columns may be sortable, by clicking on the column label. To make a column sortable, you must use the `sortable()` method:
