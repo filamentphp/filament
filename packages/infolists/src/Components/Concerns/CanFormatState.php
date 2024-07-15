@@ -169,7 +169,7 @@ trait CanFormatState
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $component->evaluate($locale) ?? config('app.locale'));
+            return Number::currency($state, $currency, $locale);
         });
 
         return $this;
