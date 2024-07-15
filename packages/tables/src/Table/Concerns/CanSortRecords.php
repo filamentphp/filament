@@ -4,6 +4,7 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Tables\Columns\Column;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
@@ -14,6 +15,8 @@ trait CanSortRecords
     protected string | Closure | null $defaultSortDirection = null;
 
     protected bool | Closure | null $persistsSortInSession = false;
+
+    protected string | Htmlable | Closure | null $defaultSortOptionLabel = null;
 
     public function defaultSort(string | Closure | null $column, string | Closure | null $direction = 'asc'): static
     {
@@ -26,6 +29,13 @@ trait CanSortRecords
     public function persistSortInSession(bool | Closure $condition = true): static
     {
         $this->persistsSortInSession = $condition;
+
+        return $this;
+    }
+
+    public function defaultSortOptionLabel(string | Htmlable | Closure | null $label): static
+    {
+        $this->defaultSortOptionLabel = $label;
 
         return $this;
     }
@@ -105,5 +115,10 @@ trait CanSortRecords
     public function persistsSortInSession(): bool
     {
         return (bool) $this->evaluate($this->persistsSortInSession);
+    }
+
+    public function getDefaultSortOptionLabel(): string | Htmlable | null
+    {
+        return $this->evaluate($this->defaultSortOptionLabel) ?? '-';
     }
 }
