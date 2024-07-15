@@ -14,8 +14,10 @@ php artisan make:notifications-table
 # Laravel 10
 php artisan queue:batches-table
 php artisan notifications:table
+```
 
-# Laravel 10 & higher
+```bash
+# All apps
 php artisan vendor:publish --tag=filament-actions-migrations
 php artisan migrate
 ```
