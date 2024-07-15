@@ -96,3 +96,22 @@ use Filament\Pages\Enums\SubNavigationPosition;
 
 protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::End;
 ```
+
+## Customizing the cluster breadcrumb
+
+The cluster's name is in the breadcrumbs of all resources and pages in the cluster.
+
+You may customize the breadcrumb name using the `$clusterBreadcrumb` property in the cluster class:
+
+```php
+protected static ?string $clusterBreadcrumb = 'cluster';
+```
+
+Alternatively, you may use the `getClusterBreadcrumb()` to define a dynamic breadcrumb name:
+
+```php
+public static function getClusterBreadcrumb(): string
+{
+    return __('filament/clusters/cluster.name');
+}
+```

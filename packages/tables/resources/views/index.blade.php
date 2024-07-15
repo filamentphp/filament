@@ -69,6 +69,7 @@
     $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
     $toggleColumnsTriggerAction = $getToggleColumnsTriggerAction();
     $page = $this->getTablePage();
+    $defaultSortOptionLabel = $getDefaultSortOptionLabel();
 
     if (count($actions) && (! $isReordering)) {
         $columnsCount++;
@@ -357,7 +358,7 @@
                                             <x-filament::input.select
                                                 x-model="column"
                                             >
-                                                <option value="">-</option>
+                                                <option value="">{{ $defaultSortOptionLabel }}</option>
 
                                                 @foreach ($sortableColumns as $column)
                                                     <option

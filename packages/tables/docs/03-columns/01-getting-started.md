@@ -147,6 +147,23 @@ public function table(Table $table): Table
 }
 ```
 
+### Setting a default sort option label
+
+To set a default sort option label, use the `defaultSortOptionLabel()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->defaultSortOptionLabel('Date');
+}
+```
+
 ## Searching
 
 Columns may be searchable by using the text input field in the top right of the table. To make a column searchable, you must use the `searchable()` method:
