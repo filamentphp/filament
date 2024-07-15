@@ -162,11 +162,9 @@ trait CanGroupRecords
      */
     public function getGroups(): array
     {
-        $evaluatedGroups = $this->evaluate($this->groups);
-
         $groups = [];
         
-        foreach ($evaluatedGroups as $group) {
+        foreach ($this->evaluate($this->groups) as $group) {
             if (! $group instanceof Group) {
                 $group = Group::make($group);
             }
