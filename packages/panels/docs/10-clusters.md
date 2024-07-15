@@ -86,3 +86,22 @@ When using clusters, it is recommended that you move all of your resources and p
 This is a recommendation, not a requirement. You can structure your panel however you like, as long as the resources and pages in your cluster use the [`$cluster`](#adding-resources-and-pages-to-a-cluster) property. This is just a suggestion to help you keep your panel organized.
 
 When a cluster exists in your panel, and you generate new resources or pages with the `make:filament-resource` or `make:filament-page` commands, you will be asked if you want to create them inside a cluster directory, according to these guidelines. If you choose to, then Filament will also assign the correct `$cluster` property to the resource or page class for you. If you do not, you will need to [define the `$cluster` property](#adding-resources-and-pages-to-a-cluster) yourself.
+
+## Customizing the cluster breadcrumb
+
+The cluster's name is in the breadcrumbs of all resources and pages in the cluster.
+
+You may customize the breadcrumb name using the `$clusterBreadcrumb` property in the cluster class:
+
+```php
+protected static ?string $clusterBreadcrumb = 'cluster';
+```
+
+Alternatively, you may use the `getClusterBreadcrumb()` to define a dynamic breadcrumb name:
+
+```php
+public static function getClusterBreadcrumb(): string
+{
+    return __('filament/clusters/cluster.name');
+}
+```
