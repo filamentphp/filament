@@ -91,7 +91,7 @@ When a cluster exists in your panel, and you generate new resources or pages wit
 
 The cluster's name is in the breadcrumbs of all resources and pages in the cluster.
 
-You may customize the breadcrumb name using the `$clusterBreadcrumb` property:
+You may customize the breadcrumb name using the `$clusterBreadcrumb` property in the cluster class:
 
 ```php
 protected static ?string $clusterBreadcrumb = 'cluster';
