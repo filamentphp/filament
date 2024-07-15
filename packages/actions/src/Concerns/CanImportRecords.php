@@ -247,6 +247,7 @@ trait CanImportRecords
                 ]));
 
             $columnMap = $data['columnMap'];
+            
             $importer = $import->getImporter(
                 columnMap: $columnMap,
                 options: $options,
