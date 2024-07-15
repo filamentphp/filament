@@ -40,9 +40,9 @@ trait HasIcon
 
     public function getIcon(): string | Htmlable | null
     {
-        $icon = $this->icon instanceof Renderable
-            ? new HtmlString($this->icon->render())
-            : $this->icon;
+        $icon = $this->icon instanceof Renderable ?
+            new HtmlString($this->icon->render()) :
+            $this->icon;
 
         return $this->evaluate($icon);
     }
