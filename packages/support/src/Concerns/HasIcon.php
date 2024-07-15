@@ -40,14 +40,14 @@ trait HasIcon
 
     public function getIcon(): string | Htmlable | null
     {
-        $icon = $this->evaluate($icon);
+        $icon = $this->evaluate($this->icon);
 
         // https://github.com/filamentphp/filament/pull/13512
-        if ($this->icon instanceof Renderable) {
-            return new HtmlString($this->icon->render());
+        if ($icon instanceof Renderable) {
+            return new HtmlString($icon->render());
         }
 
-        return $this->icon;
+        return $icon;
     }
 
     public function getIconPosition(): IconPosition | string
