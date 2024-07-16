@@ -10,26 +10,19 @@ class ImportCompleted
     use Dispatchable;
 
     /**
-     * @param array<string, mixed>  $options
-     * @param array<string, string> $columnMap
+     * @param  array<string, string>  $columnMap
+     * @param  array<string, mixed>  $options
      */
     public function __construct(
         protected Import $import,
-        protected array $options,
         protected array $columnMap,
-    ) {}
+        protected array $options,
+    ) {
+    }
 
     public function getImport(): Import
     {
         return $this->import;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function getOptions(): array
-    {
-        return $this->options;
     }
 
     /**
@@ -38,5 +31,13 @@ class ImportCompleted
     public function getColumnMap(): array
     {
         return $this->columnMap;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 }

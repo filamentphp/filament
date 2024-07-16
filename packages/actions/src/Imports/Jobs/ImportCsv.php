@@ -111,7 +111,14 @@ class ImportCsv implements ShouldQueue
 
         $this->import->save();
 
-        event(new ImportCsvProcessed($this->import, $processedRows, $successfulRows, $exceptions));
+        event(new ImportCsvProcessed(
+            $this->import,
+            $this->columnMap,
+            $this->options,
+            $processedRows,
+            $successfulRows,
+            $exceptions
+        ));
 
         $this->handleExceptions($exceptions);
     }

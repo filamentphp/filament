@@ -11,18 +11,39 @@ class ImportCsvProcessed
     use Dispatchable;
 
     /**
-     * @param array<Throwable>  $exceptions
+     * @param  array<string, string>  $columnMap
+     * @param  array<string, mixed>  $options
+     * @param  array<Throwable>  $exceptions
      */
     public function __construct(
         protected Import $import,
+        protected array $columnMap,
+        protected array $options,
         protected int $processedRows,
         protected int $successfulRows,
         protected array $exceptions,
-    ) {}
+    ) {
+    }
 
     public function getImport(): Import
     {
         return $this->import;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getColumnMap(): array
+    {
+        return $this->columnMap;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 
     public function getProcessedRows(): int
