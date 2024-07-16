@@ -284,7 +284,7 @@
         @endif
 
         <div
-            @if ($pollingInterval = $getPollingInterval())
+            @if (! $isReordering && ($pollingInterval = $getPollingInterval()))
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
@@ -358,7 +358,9 @@
                                             <x-filament::input.select
                                                 x-model="column"
                                             >
-                                                <option value="">{{ $defaultSortOptionLabel }}</option>
+                                                <option value="">
+                                                    {{ $defaultSortOptionLabel }}
+                                                </option>
 
                                                 @foreach ($sortableColumns as $column)
                                                     <option
