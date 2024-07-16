@@ -36,7 +36,7 @@
         $getBulkActions(),
         fn (\Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
-    $groups = $getCachedGroups();
+    $groups = $getGroups();
     $description = $getDescription();
     $isGroupsOnly = $isGroupsOnly() && $group;
     $isReorderable = $isReorderable();
