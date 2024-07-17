@@ -203,7 +203,17 @@ trait EntanglesStateWithSingularRelationship
             return $this->cachedExistingRecord;
         }
 
-        $record = $this->getRelationship()?->getResults();
+        $relationshipName = $this->getRelationshipName();
+
+        if (! $relationshipName) {
+            return null;
+        }
+
+        if ($this->getModelInstance()->relationLoaded($relationshipName)) {
+            $record = $this->getModelInstance()->getRelationValue($relationshipName);
+        } else {
+            $record = $this->getRelationship()?->getResults();
+        }
 
         if (! $record?->exists) {
             return null;
