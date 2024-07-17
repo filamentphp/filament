@@ -163,12 +163,13 @@ trait CanFormatState
             }
 
             $currency = $component->evaluate($currency) ?? Infolist::$defaultCurrency;
+            $locale = $component->evaluate($locale) ?? Infolist::$defaultNumberLocale ?? config('app.locale');
 
             if ($divideBy) {
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $component->evaluate($locale) ?? config('app.locale'));
+            return Number::currency($state, $currency, $locale);
         });
 
         return $this;
@@ -203,7 +204,9 @@ trait CanFormatState
                 );
             }
 
-            return Number::format($state, $decimalPlaces, $component->evaluate($maxDecimalPlaces), $component->evaluate($locale) ?? config('app.locale'));
+            $locale = $component->evaluate($locale) ?? Infolist::$defaultNumberLocale ?? config('app.locale');
+
+            return Number::format($state, $decimalPlaces, $component->evaluate($maxDecimalPlaces), $locale);
         });
 
         return $this;

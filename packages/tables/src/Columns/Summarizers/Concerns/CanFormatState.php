@@ -47,12 +47,13 @@ trait CanFormatState
             }
 
             $currency = $summarizer->evaluate($currency) ?? Table::$defaultCurrency;
+            $locale = $summarizer->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
 
             if ($divideBy) {
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $summarizer->evaluate($locale) ?? config('app.locale'));
+            return Number::currency($state, $currency, $locale);
         });
 
         return $this;
@@ -85,7 +86,9 @@ trait CanFormatState
                 );
             }
 
-            return Number::format($state, $decimalPlaces, $summarizer->evaluate($maxDecimalPlaces), locale: $summarizer->evaluate($locale) ?? config('app.locale'));
+            $locale = $summarizer->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
+
+            return Number::format($state, $decimalPlaces, $summarizer->evaluate($maxDecimalPlaces), locale: $locale);
         });
 
         return $this;
