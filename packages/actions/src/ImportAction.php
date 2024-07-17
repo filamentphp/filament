@@ -3,6 +3,8 @@
 namespace Filament\Actions;
 
 use Closure;
+use Filament\Actions\Imports\Events\ImportCompleted;
+use Filament\Actions\Imports\Events\ImportStarted;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Jobs\ImportCsv;
@@ -240,10 +242,14 @@ class ImportAction extends Action
                     'options' => $options,
                 ]));
 
+            $columnMap = $data['columnMap'];
+
             $importer = $import->getImporter(
-                columnMap: $data['columnMap'],
+                columnMap: $columnMap,
                 options: $options,
             );
+
+            event(new ImportStarted($import, $columnMap, $options));
 
             Bus::batch($importJobs->all())
                 ->allowFailures()
@@ -259,8 +265,10 @@ class ImportAction extends Action
                     filled($jobBatchName = $importer->getJobBatchName()),
                     fn (PendingBatch $batch) => $batch->name($jobBatchName),
                 )
-                ->finally(function () use ($import) {
+                ->finally(function () use ($import, $columnMap, $options) {
                     $import->touch('completed_at');
+
+                    event(new ImportCompleted($import, $columnMap, $options));
 
                     if (! $import->user instanceof Authenticatable) {
                         return;
