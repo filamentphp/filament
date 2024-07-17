@@ -284,7 +284,7 @@
         @endif
 
         <div
-            @if (! $isReordering && ($pollingInterval = $getPollingInterval()))
+            @if ((! $isReordering) && ($pollingInterval = $getPollingInterval()))
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
