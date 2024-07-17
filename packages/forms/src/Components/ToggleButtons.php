@@ -12,6 +12,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
     use Concerns\CanFixIndistinctState;
     use Concerns\HasColors;
     use Concerns\HasExtraInputAttributes;
+    use \Filament\Support\Concerns\HasExtraAttributes;
     use Concerns\HasGridDirection;
     use Concerns\HasIcons;
     use Concerns\HasOptions;
