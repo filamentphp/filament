@@ -174,9 +174,9 @@ trait CanGroupRecords
                     $group = Group::make($group);
                 }
 
-                $groups[$group->getId()] = $group;
+                $carry[$group->getId()] = $group;
 
-                return $groups;
+                return $carry;
             },
             initial: [],
         );
