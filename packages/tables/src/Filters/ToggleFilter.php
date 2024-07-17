@@ -244,9 +244,11 @@ class ToggleFilter extends BaseFilter
     {
         $field = ToggleButtons::make($this->isMultiple() ? 'values' : 'value')
             ->label($this->getLabel())
-            ->grouped($this->isGrouped())
             ->extraAttributes($this->extraAttributes,true)
             ->multiple($this->isMultiple());
+
+        if($this->isGrouped)
+            $field->grouped();
 
         if ($this->queriesRelationships()) {
             $field
