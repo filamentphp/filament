@@ -18,7 +18,7 @@ trait CanGroupRecords
     protected ?array $cachedGroups;
 
     /**
-     * @var array<Group | string> | Closure
+     * @var array<string | Group> | Closure
      */
     protected array | Closure $groups = [];
 
@@ -78,7 +78,7 @@ trait CanGroupRecords
     }
 
     /**
-     * @param  array<Group | string> | Closure  $groups
+     * @param  array<string | Group> | Closure  $groups
      */
     public function groups(array | Closure $groups): static
     {
