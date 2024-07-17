@@ -69,7 +69,7 @@ class ActionGroup extends ViewComponent implements HasLivewire
     /**
      * @param  array<StaticAction | ActionGroup>  $actions
      */
-    public static function make(array $actions): static
+    public static function make(?array $actions = []): static
     {
         $static = app(static::class, ['actions' => $actions]);
         $static->configure();
