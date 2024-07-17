@@ -205,7 +205,8 @@ trait HasFilters
                 Action::make('resetFilters')
                     ->label(__('filament-tables::table.filters.actions.reset.label'))
                     ->color('danger')
-                    ->action('resetTableFiltersForm'),
+                    ->action('resetTableFiltersForm')
+                    ->button(),
             ])
             ->modalCancelActionLabel(__('filament::components/modal.actions.close.label'))
             ->table($this);
@@ -229,7 +230,8 @@ trait HasFilters
             ->label(__('filament-tables::table.filters.actions.apply.label'))
             ->action('applyTableFilters')
             ->table($this)
-            ->visible($this->hasDeferredFilters());
+            ->visible($this->hasDeferredFilters())
+            ->button();
 
         if ($this->modifyFiltersApplyActionUsing) {
             $action = $this->evaluate($this->modifyFiltersApplyActionUsing, [
