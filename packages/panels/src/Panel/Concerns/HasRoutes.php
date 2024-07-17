@@ -167,7 +167,7 @@ trait HasRoutes
 
     public function getUrl(?Model $tenant = null): ?string
     {
-        if (! $this->auth()->check() && $this->hasLogin()) {
+        if ((! $this->auth()->check()) && $this->hasLogin()) {
             return $this->getLoginUrl();
         }
 
