@@ -40,6 +40,11 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
      */
     protected static string $view = 'filament-panels::resources.relation-manager';
 
+    /**
+     * @var ?class-string
+     */
+    protected static ?string $resource = null;
+
     #[Locked]
     public Model $ownerRecord;
 
@@ -133,6 +138,14 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         return [];
     }
 
+    /**
+     * @return ?class-string
+     */
+    public static function getResource(): ?string
+    {
+        return static::$resource;
+    }
+
     public static function getIcon(Model $ownerRecord, string $pageClass): ?string
     {
         return static::$icon;
@@ -211,9 +224,15 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
     protected function configureCreateAction(Tables\Actions\CreateAction $action): void
     {
+        $resource = static::getResource();
+
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canCreate())
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+
+        if (isset($resource) && $resource::hasPage('create')) {
+            $action->url(fn (): string => $resource::getUrl('create'));
+        }
     }
 
     protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
@@ -236,9 +255,15 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
     protected function configureEditAction(Tables\Actions\EditAction $action): void
     {
+        $resource = static::getResource();
+
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canEdit($record))
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+
+        if (isset($resource) && $resource::hasPage('edit')) {
+            $action->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]));
+        }
     }
 
     protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
@@ -261,10 +286,16 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
     protected function configureViewAction(Tables\Actions\ViewAction $action): void
     {
+        $resource = static::getResource();
+
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => $livewire->canView($record))
             ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+
+        if (isset($resource) && $resource::hasPage('view')) {
+            $action->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]));
+        }
     }
 
     protected function configureTableBulkAction(BulkAction $action): void
