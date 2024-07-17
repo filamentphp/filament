@@ -17,8 +17,7 @@ class ImportCompleted
         protected Import $import,
         protected array $columnMap,
         protected array $options,
-    ) {
-    }
+    ) {}
 
     public function getImport(): Import
     {

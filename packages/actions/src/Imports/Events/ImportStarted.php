@@ -5,7 +5,7 @@ namespace Filament\Actions\Imports\Events;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Foundation\Events\Dispatchable;
 
-class ImportInitiated
+class ImportStarted
 {
     use Dispatchable;
 
@@ -17,8 +17,7 @@ class ImportInitiated
         protected Import $import,
         protected array $columnMap,
         protected array $options,
-    ) {
-    }
+    ) {}
 
     public function getImport(): Import
     {

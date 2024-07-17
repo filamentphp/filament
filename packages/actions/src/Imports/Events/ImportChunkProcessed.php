@@ -6,7 +6,7 @@ use Filament\Actions\Imports\Models\Import;
 use Illuminate\Foundation\Events\Dispatchable;
 use Throwable;
 
-class ImportCsvProcessed
+class ImportChunkProcessed
 {
     use Dispatchable;
 
@@ -22,8 +22,7 @@ class ImportCsvProcessed
         protected int $processedRows,
         protected int $successfulRows,
         protected array $exceptions,
-    ) {
-    }
+    ) {}
 
     public function getImport(): Import
     {

@@ -6,7 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Events\ImportCompleted;
-use Filament\Actions\Imports\Events\ImportInitiated;
+use Filament\Actions\Imports\Events\ImportStarted;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Jobs\ImportCsv;
@@ -253,7 +253,7 @@ trait CanImportRecords
                 options: $options,
             );
 
-            event(new ImportInitiated($import, $columnMap, $options));
+            event(new ImportStarted($import, $columnMap, $options));
 
             Bus::batch($importJobs->all())
                 ->allowFailures()
@@ -387,7 +387,7 @@ trait CanImportRecords
     {
         /** @phpstan-ignore-next-line */
         $fileDisk = invade($file)->disk;
-        
+
         $filePath = $file->getRealPath();
 
         if (config("filesystems.disks.{$fileDisk}.driver") !== 's3') {
