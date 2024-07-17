@@ -91,6 +91,19 @@ trait CanOpenModal
      */
     protected string | array | Closure | null $modalIconColor = null;
 
+    protected bool $useModal = false;
+
+    public function preferModal($bool = false): static
+    {
+        $this->useModal = $bool;
+        return $this;
+    }
+
+    public function shouldUseModal(): bool
+    {
+        return $this->useModal;
+    }
+
     public function closeModalByClickingAway(bool | Closure | null $condition = true): static
     {
         $this->isModalClosedByClickingAway = $condition;

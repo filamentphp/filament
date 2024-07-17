@@ -60,11 +60,16 @@ class StaticAction extends ViewComponent implements Contracts\Groupable
         $this->name($name);
     }
 
-    public static function make(?string $name = null): static
+    public static function make(?string $name = null, bool $useModal = false): static
     {
         $static = app(static::class, [
             'name' => $name ?? static::getDefaultName(),
         ]);
+
+        if ($static instanceof MountableAction) {
+            $static->preferModal($useModal);
+        }
+
         $static->configure();
 
         return $static;

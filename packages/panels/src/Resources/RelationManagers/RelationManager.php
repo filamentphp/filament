@@ -230,7 +230,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canCreate())
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
 
-        if (isset($resource) && $resource::hasPage('create')) {
+        if (isset($resource) && $resource::hasPage('create') && !$action->shouldUseModal()) {
             $action->url(fn (): string => $resource::getUrl('create'));
         }
     }
@@ -261,7 +261,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canEdit($record))
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
 
-        if (isset($resource) && $resource::hasPage('edit')) {
+        if (isset($resource) && $resource::hasPage('edit') && !$action->shouldUseModal()) {
             $action->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]));
         }
     }
@@ -293,7 +293,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
             ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
 
-        if (isset($resource) && $resource::hasPage('view')) {
+        if (isset($resource) && $resource::hasPage('view') && !$action->shouldUseModal()) {
             $action->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]));
         }
     }
