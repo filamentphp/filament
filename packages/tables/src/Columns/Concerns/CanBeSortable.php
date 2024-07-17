@@ -6,7 +6,7 @@ use Closure;
 
 trait CanBeSortable
 {
-    protected bool $isSortable = false;
+    protected bool | Closure $isSortable = false;
 
     /**
      * @var array<string> | null
@@ -16,9 +16,9 @@ trait CanBeSortable
     protected ?Closure $sortQuery = null;
 
     /**
-     * @param  bool | array<string>  $condition
+     * @param  bool | array<string> | Closure  $condition
      */
-    public function sortable(bool | array $condition = true, ?Closure $query = null): static
+    public function sortable(bool | array | Closure $condition = true, ?Closure $query = null): static
     {
         if (is_array($condition)) {
             $this->isSortable = true;
@@ -43,7 +43,7 @@ trait CanBeSortable
 
     public function isSortable(): bool
     {
-        return $this->isSortable;
+        return (bool) $this->evaluate($this->isSortable);
     }
 
     /**

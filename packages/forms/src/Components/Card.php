@@ -5,6 +5,4 @@ namespace Filament\Forms\Components;
 /**
  * @deprecated Use `Section` with an empty heading instead.
  */
-class Card extends Section
-{
-}
+class Card extends Section {}

@@ -69,6 +69,7 @@
     $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
     $toggleColumnsTriggerAction = $getToggleColumnsTriggerAction();
     $page = $this->getTablePage();
+    $defaultSortOptionLabel = $getDefaultSortOptionLabel();
 
     if (count($actions) && (! $isReordering)) {
         $columnsCount++;
@@ -323,7 +324,7 @@
                                         return null
                                     "
                                     x-on:click="toggleSelectRecordsOnPage"
-                                    class="my-4"
+                                    class="fi-ta-page-checkbox my-4"
                                 />
                             @endif
 
@@ -357,7 +358,7 @@
                                             <x-filament::input.select
                                                 x-model="column"
                                             >
-                                                <option value="">-</option>
+                                                <option value="">{{ $defaultSortOptionLabel }}</option>
 
                                                 @foreach ($sortableColumns as $column)
                                                     <option
@@ -814,6 +815,7 @@
                                             return null
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
+                                        class="fi-ta-page-checkbox"
                                     />
                                 </x-filament-tables::selection.cell>
                             @endif
@@ -891,6 +893,7 @@
                                             return null
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
+                                        class="fi-ta-page-checkbox"
                                     />
                                 </x-filament-tables::selection.cell>
                             @endif

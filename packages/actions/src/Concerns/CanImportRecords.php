@@ -385,16 +385,19 @@ trait CanImportRecords
      */
     public function getUploadedFileStream(TemporaryUploadedFile $file)
     {
+        /** @phpstan-ignore-next-line */
+        $fileDisk = invade($file)->disk;
+        
         $filePath = $file->getRealPath();
 
-        if (config('filesystems.disks.' . config('filament.default_filesystem_disk') . '.driver') !== 's3') {
+        if (config("filesystems.disks.{$fileDisk}.driver") !== 's3') {
             $resource = fopen($filePath, mode: 'r');
         } else {
             /** @var AwsS3V3Adapter $s3Adapter */
-            $s3Adapter = Storage::disk('s3')->getAdapter();
+            $s3Adapter = Storage::disk($fileDisk)->getAdapter();
 
             invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-            $fileS3Path = 's3://' . config('filesystems.disks.s3.bucket') . '/' . $filePath;
+            $fileS3Path = 's3://' . config("filesystems.disks.{$fileDisk}.bucket") . '/' . $filePath;
 
             $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
                 's3' => [

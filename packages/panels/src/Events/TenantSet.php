@@ -14,8 +14,7 @@ class TenantSet
     public function __construct(
         protected Model $tenant,
         protected Model | Authenticatable | HasTenants $user,
-    ) {
-    }
+    ) {}
 
     public function getTenant(): Model
     {
