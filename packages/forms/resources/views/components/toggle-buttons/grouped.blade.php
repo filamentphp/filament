@@ -53,6 +53,7 @@
                 grouped
                 :icon="$getIcon($value)"
                 tag="label"
+                :attributes="$getExtraAttributeBag()"
             >
                 {{ $label }}
             </x-filament::button>
