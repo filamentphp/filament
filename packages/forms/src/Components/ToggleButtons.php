@@ -47,9 +47,11 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
         });
     }
 
-    public function grouped(): static
+    public function grouped(bool | Closure $condition = true): static
     {
+        if($condition)
         return $this->view(static::GROUPED_VIEW);
+        return $this;
     }
 
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
