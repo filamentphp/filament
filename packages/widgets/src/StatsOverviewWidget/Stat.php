@@ -3,8 +3,8 @@
 namespace Filament\Widgets\StatsOverviewWidget;
 
 use Closure;
-use Filament\Support\Enums\IconPosition;
 use Filament\Support\Concerns\Macroable;
+use Filament\Support\Enums\IconPosition;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
@@ -14,7 +14,7 @@ use Illuminate\View\ComponentAttributeBag;
 class Stat extends Component implements Htmlable
 {
     use Macroable;
-    
+
     /**
      * @var array<float> | null
      */

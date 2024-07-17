@@ -5,6 +5,8 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ImportAction;
+use Filament\Actions\Imports\Events\ImportCompleted;
+use Filament\Actions\Imports\Events\ImportStarted;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Jobs\ImportCsv;
@@ -244,10 +246,14 @@ trait CanImportRecords
                     'options' => $options,
                 ]));
 
+            $columnMap = $data['columnMap'];
+
             $importer = $import->getImporter(
-                columnMap: $data['columnMap'],
+                columnMap: $columnMap,
                 options: $options,
             );
+
+            event(new ImportStarted($import, $columnMap, $options));
 
             Bus::batch($importJobs->all())
                 ->allowFailures()
@@ -263,8 +269,10 @@ trait CanImportRecords
                     filled($jobBatchName = $importer->getJobBatchName()),
                     fn (PendingBatch $batch) => $batch->name($jobBatchName),
                 )
-                ->finally(function () use ($import) {
+                ->finally(function () use ($import, $columnMap, $options) {
                     $import->touch('completed_at');
+
+                    event(new ImportCompleted($import, $columnMap, $options));
 
                     if (! $import->user instanceof Authenticatable) {
                         return;
@@ -379,7 +387,7 @@ trait CanImportRecords
     {
         /** @phpstan-ignore-next-line */
         $fileDisk = invade($file)->disk;
-        
+
         $filePath = $file->getRealPath();
 
         if (config("filesystems.disks.{$fileDisk}.driver") !== 's3') {
