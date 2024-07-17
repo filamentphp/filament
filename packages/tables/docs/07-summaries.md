@@ -255,12 +255,12 @@ TextColumn::make('rating')
     ))
 ```
 
-Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+Alternatively, you can set the default locale used across your app using the `Table::$defaultNumberLocale` method in the `boot()` method of a service provider:
 
 ```php
-use Illuminate\Support\Number;
+use Filament\Tables\Table;
 
-Number::useLocale('nl');
+Table::$defaultNumberLocale = 'nl';
 ```
 
 ### Currency formatting
@@ -295,12 +295,12 @@ TextColumn::make('price')
     ->summarize(Sum::make()->money('EUR', locale: 'nl'))
 ```
 
-Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+Alternatively, you can set the default locale used across your app using the `Table::$defaultNumberLocale` method in the `boot()` method of a service provider:
 
 ```php
-use Illuminate\Support\Number;
+use Filament\Tables\Table;
 
-Number::useLocale('nl');
+Table::$defaultNumberLocale = 'nl';
 ```
 
 ### Limiting text length
