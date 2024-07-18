@@ -10,7 +10,7 @@ class OptimizeClearCommand extends Command
 {
     protected $signature = 'filament:optimize-clear';
 
-    protected $description = 'Clear the cached components and blade icons.';
+    protected $description = 'Remove cached components and blade icons.';
 
     public function handle(): int
     {

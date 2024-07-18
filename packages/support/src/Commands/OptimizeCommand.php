@@ -10,11 +10,11 @@ class OptimizeCommand extends Command
 {
     protected $signature = 'filament:optimize';
 
-    protected $description = 'Optimize Filament.';
+    protected $description = 'Cache components and blade icons to increase performance.';
 
     public function handle(): int
     {
-        $this->components->info('Caching components and blade icons to increase performance.');
+        $this->components->info('Caching components and blade icons.');
 
         collect([
             'Caching components' => fn () => $this->callSilent('filament:cache-components') == 0,
