@@ -1,0 +1,32 @@
+{
+    "$schema":     "https://laravel-ide.com/schema/laravel-ide-v2.json",
+    "completions": [
+        {
+            "complete":  "bladeIcon",
+            "condition": [
+                {
+                    "methodNames": [
+                        "icon",
+                        "trueIcon",
+                        "falseIcon",
+                        "offIcon",
+                        "onIcon",
+                        "prefixIcon",
+                        "suffixIcon",
+                        "activeIcon",
+                        "completedIcon",
+                        "badgeIcon",
+                        "hintIcon",
+                        "modalIcon",
+                        "descriptionIcon",
+                        "groupedIcon",
+                        "emptyStateIcon"
+                    ],
+                    "parameters":  [
+                        1
+                    ]
+                }
+            ]
+        }
+    ]
+}
