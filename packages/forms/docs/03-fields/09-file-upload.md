@@ -279,14 +279,15 @@ FileUpload::make('attachment')
     ->uploadProgressIndicatorPosition('left')
 ```
 
-### Grid Layout
+### Displaying files in a grid
 
-You can also use the [Filepond Grid Layout](https://pqina.nl/filepond/docs/api/style/#grid-layout) by setting the panel layout to 'grid'.
+You can use the [Filepond `grid` layout](https://pqina.nl/filepond/docs/api/style/#grid-layout) by setting the `panelLayout()`:
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
-FileUpload::make('attachment')
+FileUpload::make('attachments')
+    ->multiple()
     ->panelLayout('grid')
 ```
 
