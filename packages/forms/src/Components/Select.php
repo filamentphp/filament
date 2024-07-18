@@ -851,6 +851,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             }
 
             if ($relationship instanceof HasMany) {
+                /** @var Collection $relatedRecords */
                 $relatedRecords = $relationship->getResults();
 
                 $component->state(
