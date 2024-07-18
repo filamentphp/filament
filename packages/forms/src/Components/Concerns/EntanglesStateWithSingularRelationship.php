@@ -203,7 +203,9 @@ trait EntanglesStateWithSingularRelationship
             return $this->cachedExistingRecord;
         }
 
-        if (! $parentRecord = $this->getRecord()) {
+        $parentRecord = $this->getRecord();
+
+        if (! $parentRecord) {
             return null;
         }
 
