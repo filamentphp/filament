@@ -1,8 +1,8 @@
 {
-    "$schema":     "https://laravel-ide.com/schema/laravel-ide-v2.json",
+    "$schema": "https://laravel-ide.com/schema/laravel-ide-v2.json",
     "completions": [
         {
-            "complete":  "bladeIcon",
+            "complete": "bladeIcon",
             "condition": [
                 {
                     "methodNames": [
@@ -22,9 +22,7 @@
                         "groupedIcon",
                         "emptyStateIcon"
                     ],
-                    "parameters":  [
-                        1
-                    ]
+                    "parameters": [1]
                 }
             ]
         }
