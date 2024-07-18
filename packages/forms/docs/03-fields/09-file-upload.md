@@ -279,6 +279,18 @@ FileUpload::make('attachment')
     ->uploadProgressIndicatorPosition('left')
 ```
 
+### Displaying files in a grid
+
+You can use the [Filepond `grid` layout](https://pqina.nl/filepond/docs/api/style/#grid-layout) by setting the `panelLayout()`:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->panelLayout('grid')
+```
+
 ## Reordering files
 
 You can also allow users to re-order uploaded files using the `reorderable()` method:
