@@ -42,6 +42,23 @@ The Filament Panel Builder pre-installs the [Form Builder](/docs/forms), [Table 
 
 ## Improving Filament panel performance
 
+### Optimizing Filament for production
+
+To optimize Filament for production, you should run the following command in your deployment script:
+
+```bash
+php artisan filament:optimize
+```
+
+This command will cache the Filament components and additionally the Blade Icons, which can significantly improve the performance of your Filament panels.
+This command is a shorthand for the commands `php artisan icons:cache` and `php artisan filament:cache-components`.
+
+To clear the cached components, you can run:
+
+```bash
+php artisan filament:optimize-clear
+```
+
 ### Caching Blade Icons
 
 You may wish to consider running `php artisan icons:cache` locally, and also in your deployment script. This is because Filament uses the [Blade Icons](https://blade-ui-kit.com/blade-icons) package, which can be much more performant when cached.
