@@ -12,6 +12,8 @@ use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\MakeIssueCommand;
+use Filament\Support\Commands\OptimizeClearCommand;
+use Filament\Support\Commands\OptimizeCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Components\ComponentManager;
 use Filament\Support\Components\Contracts\ScopedComponentManager;
@@ -40,10 +42,11 @@ class SupportServiceProvider extends PackageServiceProvider
                 AssetsCommand::class,
                 CheckTranslationsCommand::class,
                 InstallCommand::class,
-                UpgradeCommand::class,
-
                 MakeIssueCommand::class,
                 MakeIssueCommandAlias::class,
+                OptimizeClearCommand::class,
+                OptimizeCommand::class,
+                UpgradeCommand::class,
             ])
             ->hasConfigFile()
             ->hasTranslations()
