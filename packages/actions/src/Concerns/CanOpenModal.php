@@ -435,7 +435,7 @@ trait CanOpenModal
         if (
             ($this instanceof HasRecord) &&
             ($action instanceof HasRecord) &&
-            invade($action)->record === null
+            ! $action->hasRecord()
         ) {
             $action->record($this->getRecord());
         }
