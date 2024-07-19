@@ -1,5 +1,8 @@
-<h4
-    {{ $attributes->class(['fi-ta-empty-state-heading text-base font-semibold leading-6 text-gray-950 dark:text-white']) }}
+<x-filament::empty-state.heading
+    :attributes="
+        \Filament\Support\prepare_inherited_attributes($attributes)
+            ->class(['fi-ta-empty-state-heading'])
+    "
 >
     {{ $slot }}
-</h4>
+</x-filament::empty-state.heading>
