@@ -22,6 +22,20 @@ composer require filament/filament:"^3.2" -W
 php artisan filament:install --panels
 ```
 
+If you are on **Windows** you can install the Filament Panel Builder by running the following commands in your Laravel project directory:
+
+```bash
+composer require filament/filament -W
+
+php artisan filament:install --panels
+```
+
+or alternately add the following line to your `composer.json` file:
+
+```
+”filament/filament”: “^3.2”
+```
+
 This will create and register a new [Laravel service provider](https://laravel.com/docs/providers) called `app/Providers/Filament/AdminPanelProvider.php`.
 
 > If you get an error when accessing your panel, check that the service provider was registered in `bootstrap/providers.php` (Laravel 11 and above) or `config/app.php` (Laravel 10 and below). If not, you should manually add it.
