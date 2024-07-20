@@ -314,6 +314,32 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Customizing width of the navigation
+You can customize width of the navigation using the `sidebarWidth()` method.
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->sidebarWidth('auto');
+}
+```
+Additionally, if you are using the `sidebarCollapsibleOnDesktop()` method, you can customize width of the icons when collapsed using the `collapsedSidebarWidth()` method.
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->sidebarCollapsibleOnDesktop()
+        ->collapsedSidebarWidth('auto');
+}
+```
+
 ## Advanced navigation customization
 
 The `navigation()` method can be called from the [configuration](configuration). It allows you to build a custom navigation that overrides Filament's automatically generated items. This API is designed to give you complete control over the navigation.
