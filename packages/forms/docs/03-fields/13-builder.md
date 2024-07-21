@@ -398,25 +398,6 @@ You can use `../` to go up a level in the data structure, so `$get('../client_id
 
 The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current path.
 
-## Builder validation
-
-As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to builders.
-
-### Number of items validation
-
-You can validate the minimum and maximum number of items that you can have in a builder by setting the `minItems()` and `maxItems()` methods:
-
-```php
-use Filament\Forms\Components\Builder;
-
-Builder::make('content')
-    ->blocks([
-        // ...
-    ])
-    ->minItems(1)
-    ->maxItems(5)
-```
-
 ## Customizing the builder item actions
 
 This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button). The following methods are available to customize the actions:
