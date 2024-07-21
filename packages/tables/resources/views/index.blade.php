@@ -38,7 +38,8 @@
         fn (\Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $bulkActionsPosition = $getBulkActionsPosition();
-    $hasBulkActionsBelowTable = $bulkActionsPosition === BulkActionsPosition::BelowTable;
+    $hasBulkActionsAboveTable = $bulkActionsPosition->isAboveTable();
+    $hasBulkActionsBelowTable = $bulkActionsPosition->isBelowTable();
     $groups = $getGroups();
     $description = $getDescription();
     $isGroupsOnly = $isGroupsOnly() && $group;
@@ -196,7 +197,7 @@
 
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
 
-                    @if (! $hasBulkActionsBelowTable && (! $isReordering) && count($bulkActions))
+                    @if ($hasBulkActionsAboveTable && (! $isReordering) && count($bulkActions))
                         <x-filament-tables::actions
                             :actions="$bulkActions"
                             x-cloak="x-cloak"
@@ -1257,12 +1258,28 @@
             <div
                 x-cloak
                 x-show="selectedRecords.length"
-                class="fi-ta-footer-bulk-actions flex items-center justify-between gap-x-4 px-4 py-3 sm:px-6"
+                class="fi-ta-footer-bulk-actions-wrapper relative divide-y divide-gray-200 overflow-x-auto
+                dark:divide-white/10"
             >
-                <x-filament-tables::actions
-                    :actions="$bulkActions"
-                    x-show="selectedRecords.length"
-                />
+                <div class="fi-ta-footer-bulk-actions-selections">
+                    @if ($isSelectionEnabled && $isLoaded)
+                        <x-filament-tables::selection.indicator
+                            :all-selectable-records-count="$allSelectableRecordsCount"
+                            :colspan="$columnsCount"
+                            :page="$page"
+                            :select-current-page-only="$selectsCurrentPageOnly"
+                            x-bind:hidden="! selectedRecords.length"
+                            x-show="selectedRecords.length"
+                        />
+                    @endif
+                </div>
+
+                <div class="fi-ta-footer-bulk-actions flex items-center px-4 py-3 sm:px-6">
+                    <x-filament-tables::actions
+                        :actions="$bulkActions"
+                        x-show="selectedRecords.length"
+                    />
+                </div>
             </div>
         @endif
 

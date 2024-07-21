@@ -268,6 +268,9 @@ public function table(Table $table): Table
 }
 ```
 
+Or display bulk actions both above and below the table, with the `BulkActionsPosition::AboveAndBelowTable` 
+position option.
+
 ## Header actions
 
 Both [row actions](#row-actions) and [bulk actions](#bulk-actions) can be rendered in the header of the table. You can put them in the `$table->headerActions()` method:
