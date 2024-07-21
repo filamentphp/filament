@@ -465,7 +465,7 @@ trait HasState
         return new Set($this);
     }
 
-    public function generateRelativeStatePath(string | Component $path, bool $isAbsolute = false): string
+    public function generateRelativeStatePath(string | Component $path = '', bool $isAbsolute = false): string
     {
         if ($path instanceof Component) {
             return $path->getStatePath();
@@ -489,7 +489,7 @@ trait HasState
             return $path;
         }
 
-        return "{$containerPath}.{$path}";
+        return filled(ltrim($path, './')) ? "{$containerPath}.{$path}" : $containerPath;
     }
 
     protected function flushCachedAbsoluteStatePath(): void

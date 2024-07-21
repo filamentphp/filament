@@ -10,7 +10,7 @@ class Get
         protected Component $component,
     ) {}
 
-    public function __invoke(string | Component $path, bool $isAbsolute = false): mixed
+    public function __invoke(string | Component $path = '', bool $isAbsolute = false): mixed
     {
         $livewire = $this->component->getLivewire();
 
