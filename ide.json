@@ -6,21 +6,21 @@
             "condition": [
                 {
                     "methodNames": [
-                        "icon",
-                        "trueIcon",
+                        "activeIcon",
+                        "badgeIcon",
+                        "completedIcon",
+                        "descriptionIcon",
+                        "emptyStateIcon",
                         "falseIcon",
+                        "groupedIcon",
+                        "hintIcon",
+                        "icon",
+                        "modalIcon",
                         "offIcon",
                         "onIcon",
                         "prefixIcon",
                         "suffixIcon",
-                        "activeIcon",
-                        "completedIcon",
-                        "badgeIcon",
-                        "hintIcon",
-                        "modalIcon",
-                        "descriptionIcon",
-                        "groupedIcon",
-                        "emptyStateIcon"
+                        "trueIcon"
                     ],
                     "parameters": [1]
                 }
