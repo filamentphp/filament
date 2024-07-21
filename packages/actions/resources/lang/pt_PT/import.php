@@ -18,6 +18,9 @@ return [
             'columns' => [
                 'label' => 'Colunas',
                 'placeholder' => 'Seleccione uma coluna',
+                'rules' => [
+                    'duplicate_columns' => '{0} O ficheiro não pode conter, em falta, mais de um cabeçalho.|{1,*} O ficheiro não pode conter cabeçalhos em duplicado: :columns.',
+                ],
             ],
 
         ],

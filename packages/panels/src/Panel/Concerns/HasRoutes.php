@@ -167,8 +167,8 @@ trait HasRoutes
 
     public function getUrl(?Model $tenant = null): ?string
     {
-        if (! $this->auth()->check()) {
-            return $this->hasLogin() ? $this->getLoginUrl() : url($this->getPath());
+        if ((! $this->auth()->check()) && $this->hasLogin()) {
+            return $this->getLoginUrl();
         }
 
         $hasTenancy = $this->hasTenancy();

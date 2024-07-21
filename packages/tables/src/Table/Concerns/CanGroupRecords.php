@@ -15,7 +15,12 @@ trait CanGroupRecords
     /**
      * @var array<string, Group>
      */
-    protected array $groups = [];
+    protected ?array $cachedGroups;
+
+    /**
+     * @var array<string | Group> | Closure
+     */
+    protected array | Closure $groups = [];
 
     protected bool | Closure $isGroupsOnly = false;
 
@@ -73,17 +78,11 @@ trait CanGroupRecords
     }
 
     /**
-     * @param  array<Group | string>  $groups
+     * @param  array<string | Group> | Closure  $groups
      */
-    public function groups(array $groups): static
+    public function groups(array | Closure $groups): static
     {
-        foreach ($groups as $group) {
-            if (! $group instanceof Group) {
-                $group = Group::make($group);
-            }
-
-            $this->groups[$group->getId()] = $group;
-        }
+        $this->groups = $groups;
 
         return $this;
     }
@@ -168,7 +167,19 @@ trait CanGroupRecords
      */
     public function getGroups(): array
     {
-        return $this->groups;
+        return $this->cachedGroups ??= array_reduce(
+            $this->evaluate($this->groups),
+            function (array $carry, $group): array {
+                if (! $group instanceof Group) {
+                    $group = Group::make($group);
+                }
+
+                $carry[$group->getId()] = $group;
+
+                return $carry;
+            },
+            initial: [],
+        );
     }
 
     public function getGroup(string $id): ?Group

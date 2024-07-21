@@ -19,4 +19,21 @@ trait BelongsToGroup
     {
         return $this->group;
     }
+
+    public function getRootGroup(): ?ActionGroup
+    {
+        $group = $this->getGroup();
+
+        while ($group) {
+            $parentGroup = $group->getGroup();
+
+            if (! $parentGroup) {
+                break;
+            }
+
+            $group = $parentGroup;
+        }
+
+        return $group;
+    }
 }

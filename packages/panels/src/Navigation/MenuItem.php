@@ -29,9 +29,7 @@ class MenuItem extends Component
 
     protected bool | Closure $isVisible = true;
 
-    final public function __construct()
-    {
-    }
+    final public function __construct() {}
 
     public static function make(): static
     {
