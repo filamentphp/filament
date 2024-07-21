@@ -1258,8 +1258,7 @@
             <div
                 x-cloak
                 x-show="selectedRecords.length"
-                class="fi-ta-footer-bulk-actions-wrapper relative divide-y divide-gray-200 overflow-x-auto
-                dark:divide-white/10"
+                class="fi-ta-footer-bulk-actions-wrapper relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10"
             >
                 <div class="fi-ta-footer-bulk-actions-selections">
                     @if ($isSelectionEnabled && $isLoaded)
@@ -1274,7 +1273,9 @@
                     @endif
                 </div>
 
-                <div class="fi-ta-footer-bulk-actions flex items-center px-4 py-3 sm:px-6">
+                <div
+                    class="fi-ta-footer-bulk-actions flex items-center px-4 py-3 sm:px-6"
+                >
                     <x-filament-tables::actions
                         :actions="$bulkActions"
                         x-show="selectedRecords.length"
