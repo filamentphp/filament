@@ -19,9 +19,4 @@ trait HasRecord
     {
         return $this->record ?? $this->getLayout()?->getRecord();
     }
-
-    public function hasRecord(): bool
-    {
-        return $this->record !== null;
-    }
 }
