@@ -4,6 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\Exceptions\ActionNotResolvableException;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\View\Components\Modal;
@@ -427,7 +428,10 @@ trait CanOpenModal
         return $action
             ->schemaComponent($this->getSchemaComponent())
             ->livewire($this->getLivewire())
-            ->record($this->getRecord())
+            ->when(
+                ! $action->hasRecord(),
+                fn (Action $action) => $action->record($this->getRecord()),
+            )
             ->table($this->getTable());
     }
 

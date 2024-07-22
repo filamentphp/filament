@@ -179,6 +179,11 @@ trait InteractsWithRecord
         return $this->recordTitleAttribute !== null;
     }
 
+    public function hasRecord(): bool
+    {
+        return $this->record !== null;
+    }
+
     public function getModel(): ?string
     {
         $model = $this->getCustomModel();
