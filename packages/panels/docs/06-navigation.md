@@ -314,8 +314,10 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Customizing width of the navigation
-You can customize width of the navigation using the `sidebarWidth()` method.
+## Customizing the width of the sidebar
+
+You can customize the width of the sidebar by passing it to the `sidebarWidth()` method in the [configuration](configuration):
+
 ```php
 use Filament\Panel;
 
@@ -323,10 +325,11 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->sidebarWidth('auto');
+        ->sidebarWidth('40rem');
 }
 ```
-Additionally, if you are using the `sidebarCollapsibleOnDesktop()` method, you can customize width of the icons when collapsed using the `collapsedSidebarWidth()` method.
+
+Additionally, if you are using the `sidebarCollapsibleOnDesktop()` method, you can customize width of the collapsed icons by using the `collapsedSidebarWidth()` method in the [configuration](configuration):
 
 ```php
 use Filament\Panel;
@@ -336,7 +339,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->sidebarCollapsibleOnDesktop()
-        ->collapsedSidebarWidth('auto');
+        ->collapsedSidebarWidth('9rem');
 }
 ```
 
