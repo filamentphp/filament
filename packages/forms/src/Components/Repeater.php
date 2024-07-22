@@ -952,7 +952,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 $existingRecords->push($record);
             }
 
-            $component->getModelInstance()->setRelation($component->getRelationshipName(), $existingRecords);
+            $component->getRecord()->setRelation($component->getRelationshipName(), $existingRecords);
         });
 
         $this->dehydrated(false);
