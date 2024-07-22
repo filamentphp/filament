@@ -22,7 +22,7 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'E-postedresse',
+            'label' => 'E-postadresse',
         ],
 
         'password' => [
