@@ -168,7 +168,6 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->form([
                         TextInput::make('title')
                             ->required()
-                            ->unique(),
                     ]),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\DeleteAction::make('groupedDelete'),
