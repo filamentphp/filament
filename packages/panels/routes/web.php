@@ -170,3 +170,8 @@ Route::name('filament.')
             }
         }
     });
+
+if (!Route::has('login')) {
+    Route::redirect('/login/redirect', '/login')
+        ->name('login');
+}
