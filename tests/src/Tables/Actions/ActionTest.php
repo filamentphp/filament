@@ -8,8 +8,8 @@ use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
-use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
 
