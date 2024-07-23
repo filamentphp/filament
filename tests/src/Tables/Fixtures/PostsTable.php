@@ -159,6 +159,17 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
+                Tables\Actions\ReplicateAction::make()
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $data['title'] = $data['title'] . ' (Copy)';
+
+                        return $data;
+                    })
+                    ->form([
+                        TextInput::make('title')
+                            ->required()
+                            ->unique(),
+                    ]),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\DeleteAction::make('groupedDelete'),
                     Tables\Actions\ForceDeleteAction::make('groupedForceDelete'),

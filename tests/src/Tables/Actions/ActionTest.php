@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
 use function Pest\Laravel\assertSoftDeleted;
+use function Pest\Laravel\assertDatabaseHas;
 
 uses(TestCase::class);
 
@@ -138,4 +139,18 @@ it('can state whether a table action exists with a given configuration', functio
     livewire(PostsTable::class)
         ->assertTableActionExists('attachMultiple', fn (AttachAction $action) => $action->isMultiple())
         ->assertTableActionDoesNotExist(AttachAction::class, fn (AttachAction $action) => $action->isMultiple());
+});
+
+it('can replicate a record', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertTableActionExists('replicate')
+        ->callTableAction('replicate', $post)
+        ->callMountedTableAction()
+        ->assertHasNoTableActionErrors();
+
+    assertDatabaseHas('posts', [
+        'title' => $post->title . ' (Copy)',
+    ]);
 });
