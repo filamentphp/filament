@@ -82,6 +82,16 @@ TextColumn::make('created_at')
     ->since()
 ```
 
+Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()` or `timeTooltip()` method to display a formatted date in a tooltip, often to provide extra information:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('created_at')
+    ->since()
+    ->dateTimeTooltip()
+```
+
 ## Number formatting
 
 The `numeric()` method allows you to format an entry as a number:
