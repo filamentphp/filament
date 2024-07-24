@@ -2,14 +2,14 @@
 
 namespace Filament\Support\Commands;
 
-use Filament\Support\Concerns\CanCacheComponents;
+use Filament\Support\Commands\Concerns\CanCachePanelComponents;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'filament:optimize')]
 class OptimizeCommand extends Command
 {
-    use CanCacheComponents;
+    use CanCachePanelComponents;
 
     protected $signature = 'filament:optimize';
 
