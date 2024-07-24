@@ -69,15 +69,14 @@
         is_string($color) ? "fi-color-{$color}" : null,
     ]);
 
-    if ($labelSrOnly) {
-        $labelClasses = 'sr-only';
-    } else {
+    if (! $labelSrOnly) {
         $labelClasses = \Illuminate\Support\Arr::toCssClasses([
             match ($weight) {
                 FontWeight::Thin, 'thin' => 'font-thin',
                 FontWeight::ExtraLight, 'extralight' => 'font-extralight',
                 FontWeight::Light, 'light' => 'font-light',
                 FontWeight::Medium, 'medium' => 'font-medium',
+                FontWeight::Normal, 'normal' => 'font-normal',
                 FontWeight::SemiBold, 'semibold' => 'font-semibold',
                 FontWeight::Bold, 'bold' => 'font-bold',
                 FontWeight::ExtraBold, 'extrabold' => 'font-extrabold',
@@ -98,6 +97,8 @@
             },
             'group-hover/link:underline group-focus-visible/link:underline',
         ]);
+    } else {
+        $labelClasses = 'sr-only';
     }
 
     $labelStyles = \Illuminate\Support\Arr::toCssStyles([
