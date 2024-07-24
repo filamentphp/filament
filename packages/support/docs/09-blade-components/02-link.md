@@ -64,6 +64,10 @@ By default, the font weight of links is `semibold`. You can make it `thin`, `ext
     New user
 </x-filament::link>
 
+<x-filament::link weight="normal">
+    New user
+</x-filament::link>
+
 <x-filament::link weight="medium">
     New user
 </x-filament::link>
