@@ -23,7 +23,7 @@ class OptimizeCommand extends Command
             'Caching Blade icons' => fn (): bool => $this->callSilent('icons:cache') === static::SUCCESS,
         ]);
 
-        if ($this->canCacheComponents()) {
+        if ($this->canCachePanelComponents()) {
             $tasks->put(
                 'Caching components',
                 fn (): bool => $this->callSilent('filament:cache-components') === static::SUCCESS

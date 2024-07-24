@@ -1,93 +1,92 @@
 {
-  "name": "filament/filament",
-  "description": "A collection of full-stack components for accelerated Laravel development.",
-  "license": "MIT",
-  "require": {
-    "php": "^8.1",
-    "ext-intl": "*",
-    "composer-runtime-api": "^2.1"
-  },
-  "require-dev": {
-    "anourvalar/eloquent-serialize": "^1.2",
-    "danharrin/livewire-rate-limiting": "^0.3|^1.0",
-    "filament/support": "*",
-    "kirschbaum-development/eloquent-power-joins": "^3.0",
-    "larastan/larastan": "^2.2",
-    "laravel/pint": "^1.0",
-    "league/csv": "^9.14",
-    "league/flysystem-aws-s3-v3": "^3.0",
-    "nunomaduro/termwind": "^1.0|^2.0",
-    "openspout/openspout": "^4.23",
-    "orchestra/testbench": "^8.20|^9.0",
-    "pestphp/pest": "^2.0",
-    "pestphp/pest-plugin-laravel": "^2.0",
-    "phpstan/extension-installer": "^1.1",
-    "phpstan/phpstan": "v1.11.1",
-    "rector/rector": "^1.0",
-    "spatie/laravel-medialibrary": "^10.0|^11.0",
-    "spatie/laravel-ray": "^1.29",
-    "spatie/laravel-tags": "^4.2",
-    "staudenmeir/belongs-to-through": "^2.5",
-    "staudenmeir/eloquent-has-many-deep": "^1.7",
-    "symplify/monorepo-builder": "^10.0"
-  },
-  "autoload": {
-    "files": [
-      "packages/panels/src/global_helpers.php",
-      "packages/panels/src/helpers.php",
-      "packages/support/src/helpers.php",
-      "tests/helpers.php"
-    ],
-    "psr-4": {
-      "Filament\\": [
-        "packages/panels/src",
-        "packages/spatie-laravel-media-library-plugin/src",
-        "packages/spatie-laravel-settings-plugin/src",
-        "packages/spatie-laravel-tags-plugin/src",
-        "packages/spatie-laravel-translatable-plugin/src"
-      ],
-      "Filament\\Actions\\": "packages/actions/src",
-      "Filament\\Billing\\Providers\\": "packages/spark-billing-provider/src",
-      "Filament\\Forms\\": "packages/forms/src",
-      "Filament\\FontProviders\\": "packages/spatie-laravel-google-fonts-plugin/src",
-      "Filament\\Infolists\\": "packages/infolists/src",
-      "Filament\\Notifications\\": "packages/notifications/src",
-      "Filament\\Support\\": "packages/support/src",
-      "Filament\\Tables\\": "packages/tables/src",
-      "Filament\\Tests\\": "tests/src",
-      "Filament\\Tests\\Database\\Factories\\": "tests/database/factories",
-      "Filament\\Upgrade\\": "packages/upgrade/src",
-      "Filament\\Widgets\\": "packages/widgets/src"
-    }
-  },
-  "config": {
-    "sort-packages": true,
-    "allow-plugins": {
-      "composer/package-versions-deprecated": true,
-      "pestphp/pest-plugin": true,
-      "phpstan/extension-installer": true
-    }
-  },
-  "scripts": {
-    "cs": [
-      "Composer\\Config::disableProcessTimeout",
-      "pint",
-      "npm run prettier"
-    ],
-    "pint": "pint --config pint-strict-imports.json",
-    "test:pest": "pest --parallel",
-    "test:phpstan": "phpstan analyse",
-    "test": [
-      "@test:pest",
-      "@test:phpstan"
+    "name": "filament/filament",
+    "description": "A collection of full-stack components for accelerated Laravel development.",
+    "license": "MIT",
+    "require": {
+        "php": "^8.1",
+        "ext-intl": "*",
+        "composer-runtime-api": "^2.1"
+    },
+    "require-dev": {
+        "anourvalar/eloquent-serialize": "^1.2",
+        "danharrin/livewire-rate-limiting": "^0.3|^1.0",
+        "filament/support": "*",
+        "kirschbaum-development/eloquent-power-joins": "^3.0",
+        "larastan/larastan": "^2.2",
+        "laravel/pint": "^1.0",
+        "league/csv": "^9.14",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "nunomaduro/termwind": "^1.0|^2.0",
+        "openspout/openspout": "^4.23",
+        "orchestra/testbench": "^8.20|^9.0",
+        "pestphp/pest": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.0",
+        "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan": "v1.11.1",
+        "rector/rector": "^1.0",
+        "spatie/laravel-medialibrary": "^10.0|^11.0",
+        "spatie/laravel-ray": "^1.29",
+        "spatie/laravel-tags": "^4.2",
+        "staudenmeir/belongs-to-through": "^2.5",
+        "staudenmeir/eloquent-has-many-deep": "^1.7",
+        "symplify/monorepo-builder": "^10.0"
+    },
+    "autoload": {
+        "files": [
+            "packages/panels/src/global_helpers.php",
+            "packages/panels/src/helpers.php",
+            "packages/support/src/helpers.php",
+            "tests/helpers.php"
+        ],
+        "psr-4": {
+            "Filament\\": [
+                "packages/panels/src",
+                "packages/spatie-laravel-media-library-plugin/src",
+                "packages/spatie-laravel-settings-plugin/src",
+                "packages/spatie-laravel-tags-plugin/src",
+                "packages/spatie-laravel-translatable-plugin/src"
+            ],
+            "Filament\\Actions\\": "packages/actions/src",
+            "Filament\\Billing\\Providers\\": "packages/spark-billing-provider/src",
+            "Filament\\Forms\\": "packages/forms/src",
+            "Filament\\FontProviders\\": "packages/spatie-laravel-google-fonts-plugin/src",
+            "Filament\\Infolists\\": "packages/infolists/src",
+            "Filament\\Notifications\\": "packages/notifications/src",
+            "Filament\\Support\\": "packages/support/src",
+            "Filament\\Tables\\": "packages/tables/src",
+            "Filament\\Tests\\": "tests/src",
+            "Filament\\Tests\\Database\\Factories\\": "tests/database/factories",
+            "Filament\\Upgrade\\": "packages/upgrade/src",
+            "Filament\\Widgets\\": "packages/widgets/src"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "scripts": {
+        "cs": [
+            "pint",
+            "npm run prettier"
+        ],
+        "pint": "pint --config pint-strict-imports.json",
+        "test:pest": "pest --parallel",
+        "test:phpstan": "phpstan analyse",
+        "test": [
+            "@test:pest",
+            "@test:phpstan"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/support"
+        }
     ]
-  },
-  "minimum-stability": "dev",
-  "prefer-stable": true,
-  "repositories": [
-    {
-      "type": "path",
-      "url": "packages/support"
-    }
-  ]
 }

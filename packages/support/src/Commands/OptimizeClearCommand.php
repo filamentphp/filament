@@ -23,7 +23,7 @@ class OptimizeClearCommand extends Command
             'Clearing cached Blade icons' => fn (): bool => $this->callSilent('icons:clear') === static::SUCCESS,
         ]);
 
-        if ($this->canCacheComponents()) {
+        if ($this->canCachePanelComponents()) {
             $tasks->put(
                 'Clearing cached components',
                 fn (): bool => $this->callSilent('filament:clear-cached-components') === static::SUCCESS
