@@ -1,28 +1,37 @@
 <?php
 
-namespace Filament\Support\Commands;
+    namespace Filament\Support\Commands;
 
-use Illuminate\Console\Command;
-use Symfony\Component\Console\Attribute\AsCommand;
+    use Filament\Support\Concerns\CanCacheComponents;
+    use Illuminate\Console\Command;
+    use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'filament:optimize')]
-class OptimizeCommand extends Command
-{
-    protected $signature = 'filament:optimize';
-
-    protected $description = 'Cache components and Blade icons to improve performance.';
-
-    public function handle(): int
+    #[AsCommand(name: 'filament:optimize')]
+    class OptimizeCommand extends Command
     {
-        $this->components->info('Caching components and Blade icons...');
+        use CanCacheComponents;
 
-        collect([
-            'Caching components' => fn () => $this->callSilent('filament:cache-components') == 0,
-            'Caching blade icons' => fn () => $this->callSilent('icons:cache') == 0,
-        ])->each(fn ($task, $description) => $this->components->task($description, $task));
+        protected $signature = 'filament:optimize';
 
-        $this->newLine();
+        protected $description = 'Cache components and Blade icons to improve performance.';
 
-        return static::SUCCESS;
+        public function handle(): int
+        {
+            $this->components->info('Caching components and Blade icons...');
+
+            $tasks = collect([
+                'Caching Blade icons' => fn(): bool => $this->callSilent('icons:cache') === static::SUCCESS,
+            ]);
+
+            if ($this->canCacheComponents()) {
+                $tasks->put('Caching components',
+                    fn(): bool => $this->callSilent('filament:cache-components') === static::SUCCESS);
+            }
+
+            $tasks->each(fn($task, $description) => $this->components->task($description, $task));
+
+            $this->newLine();
+
+            return static::SUCCESS;
+        }
     }
-}

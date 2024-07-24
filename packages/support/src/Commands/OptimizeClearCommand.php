@@ -1,28 +1,37 @@
 <?php
 
-namespace Filament\Support\Commands;
+    namespace Filament\Support\Commands;
 
-use Illuminate\Console\Command;
-use Symfony\Component\Console\Attribute\AsCommand;
+    use Filament\Support\Concerns\CanCacheComponents;
+    use Illuminate\Console\Command;
+    use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'filament:optimize-clear')]
-class OptimizeClearCommand extends Command
-{
-    protected $signature = 'filament:optimize-clear';
-
-    protected $description = 'Remove cached components and blade icons.';
-
-    public function handle(): int
+    #[AsCommand(name: 'filament:optimize-clear')]
+    class OptimizeClearCommand extends Command
     {
-        $this->components->info('Clearing cached components and blade icons.');
+        use CanCacheComponents;
 
-        collect([
-            'Clearing cached Components' => fn () => $this->callSilent('filament:clear-cached-components') == 0,
-            'Clearing cached Blade Icons' => fn () => $this->callSilent('icons:clear') == 0,
-        ])->each(fn ($task, $description) => $this->components->task($description, $task));
+        protected $signature = 'filament:optimize-clear';
 
-        $this->newLine();
+        protected $description = 'Remove cached components and Blade icons.';
 
-        return static::SUCCESS;
+        public function handle(): int
+        {
+            $this->components->info('Clearing cached components and Blade icons.');
+
+            $tasks = collect([
+                'Clearing cached Blade icons' => fn(): bool => $this->callSilent('icons:clear') === static::SUCCESS,
+            ]);
+
+            if ($this->canCacheComponents()) {
+                $tasks->put('Clearing cached components',
+                    fn(): bool => $this->callSilent('filament:clear-cached-components') === static::SUCCESS);
+            }
+
+            $tasks->each(fn($task, $description) => $this->components->task($description, $task));
+
+            $this->newLine();
+
+            return static::SUCCESS;
+        }
     }
-}
