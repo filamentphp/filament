@@ -12,6 +12,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -171,6 +172,16 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                 DeleteAction::make(),
                 ForceDeleteAction::make(),
                 RestoreAction::make(),
+                ReplicateAction::make()
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $data['title'] = $data['title'] . ' (Copy)';
+
+                        return $data;
+                    })
+                    ->form([
+                        TextInput::make('title')
+                            ->required(),
+                    ]),
                 Action::make('parent')
                     ->schema([
                         TextInput::make('foo')

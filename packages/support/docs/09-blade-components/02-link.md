@@ -47,6 +47,52 @@ By default, the size of a link is "medium". You can make it "small", "large", "e
 </x-filament::link>
 ```
 
+## Setting the font weight of a link
+
+By default, the font weight of links is `semibold`. You can make it `thin`, `extralight`, `light`, `normal`, `medium`, `bold`, `extrabold` or `black` by using the `weight` attribute:
+
+```blade
+<x-filament::link weight="thin">
+    New user
+</x-filament::link>
+
+<x-filament::link weight="extralight">
+    New user
+</x-filament::link>
+
+<x-filament::link weight="light">
+    New user
+</x-filament::link>
+
+<x-filament::link weight="normal">
+    New user
+</x-filament::link>
+
+<x-filament::link weight="medium">
+    New user
+</x-filament::link>
+
+<x-filament::link weight="semibold">
+    New user
+</x-filament::link>
+   
+<x-filament::link weight="bold">
+    New user
+</x-filament::link>
+
+<x-filament::link weight="black">
+    New user
+</x-filament::link> 
+```
+
+Alternatively, you can pass in a custom CSS class to define the weight:
+
+```blade
+<x-filament::link weight="md:font-[650]">
+    New user
+</x-filament::link>
+```
+
 ## Changing the color of a link
 
 By default, the color of a link is "primary". You can change it to be `danger`, `gray`, `info`, `success` or `warning` by using the `color` attribute:

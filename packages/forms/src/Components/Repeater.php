@@ -911,6 +911,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 }
 
                 $recordsToDelete[] = $keyToCheckForDeletion;
+                $existingRecords->forget("record-{$keyToCheckForDeletion}");
             }
 
             $relationship
@@ -965,7 +966,10 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
 
                 $record = $relationship->save($record);
                 $item->model($record)->saveRelationships();
+                $existingRecords->push($record);
             }
+
+            $component->getRecord()->setRelation($component->getRelationshipName(), $existingRecords);
         });
 
         $this->dehydrated(false);
