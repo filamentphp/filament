@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands;
 
+use Closure;
 use Filament\Support\Commands\Concerns\CanCachePanelComponents;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -33,7 +34,7 @@ class OptimizeClearCommand extends Command
             fn (): bool => $this->callSilent('icons:clear') === static::SUCCESS
         );
 
-        $tasks->each(fn ($task, $description) => $this->components->task($description, $task));
+        $tasks->each(fn (Closure $task, string $description) => $this->components->task($description, $task));
 
         $this->newLine();
 
