@@ -475,6 +475,8 @@ You are trying to retrieve the value of `client_id` from inside the repeater ite
 
 You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('repeater.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
 
+The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current repeater item.
+
 ## Repeater validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to repeaters.

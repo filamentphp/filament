@@ -650,7 +650,7 @@ trait HasState
         return $this->makeSetUtility();
     }
 
-    public function resolveRelativeStatePath(string | Component $path, bool $isAbsolute = false): string
+    public function resolveRelativeStatePath(string | Component $path = '', bool $isAbsolute = false): string
     {
         if ($path instanceof Component) {
             return $path->getStatePath();
@@ -679,10 +679,10 @@ trait HasState
             return $path;
         }
 
-        return "{$containerPath}.{$path}";
+        return filled(ltrim($path, './')) ? "{$containerPath}.{$path}" : $containerPath;
     }
 
-    public function resolveRelativeKey(string | Component $key, bool $isAbsolute = false): string
+    public function resolveRelativeKey(string | Component $key = '', bool $isAbsolute = false): string
     {
         if ($key instanceof Component) {
             return $key->getKey();
@@ -711,7 +711,7 @@ trait HasState
             return $key;
         }
 
-        return "{$containerKey}.{$key}";
+        return filled(ltrim($key, './')) ? "{$containerKey}.{$key}" : $containerKey;
     }
 
     protected function flushCachedAbsoluteStatePath(): void
