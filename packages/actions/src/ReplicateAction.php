@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class ReplicateAction extends Action
 {
@@ -40,7 +41,7 @@ class ReplicateAction extends Action
         $this->successNotificationTitle(__('filament-actions::replicate.single.notifications.replicated.title'));
 
         $this->fillForm(function (Model $record): array {
-            $data = $record->attributesToArray();
+            $data = Arr::except($record->attributesToArray(), $this->getExcludedAttributes() ?? []);
 
             if ($this->mutateRecordDataUsing) {
                 $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
@@ -50,8 +51,10 @@ class ReplicateAction extends Action
         });
 
         $this->action(function () {
-            $result = $this->process(function (Model $record) {
+            $result = $this->process(function (array $data, Model $record) {
                 $this->replica = $record->replicate($this->getExcludedAttributes());
+
+                $this->replica->fill($data);
 
                 $this->callBeforeReplicaSaved();
 
