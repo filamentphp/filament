@@ -49,7 +49,7 @@ By default, the size of a link is "medium". You can make it "small", "large", "e
 
 ## Setting the font weight of a link
 
-By default, the font weight of a link is "semi-bold". You can make it "thin", "light", "medium", "semibold", "bold" or "black" by using the `weight` attribute:
+By default, the font weight of links is `semibold`. You can make it `thin`, `extralight`, `light`, `normal`, `medium`, `bold`, `extrabold` or `black` by using the `weight` attribute:
 
 ```blade
 <x-filament::link weight="thin">
@@ -81,7 +81,7 @@ By default, the font weight of a link is "semi-bold". You can make it "thin", "l
 </x-filament::link> 
 ```
 
-Or enter a custom weight
+Alternatively, you can pass in a custom CSS class to define the weight:
 
 ```blade
 <x-filament::link weight="md:font-[650]">
