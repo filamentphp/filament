@@ -1,8 +1,8 @@
 export default function table() {
     return {
-        collapsedGroups: [],
+        checkboxClickController: null,
 
-        controller: null,
+        collapsedGroups: [],
 
         isLoading: false,
 
@@ -176,17 +176,16 @@ export default function table() {
         },
 
         watchForCheckboxClicks: function () {
-            if (this.controller) {
-                this.controller.abort()
+            if (this.checkboxClickController) {
+                this.checkboxClickController.abort()
             }
-            this.controller = new AbortController()
-            const { signal } = this.controller
+            this.checkboxClickController = new AbortController()
+            const { signal } = this.checkboxClickController
 
             this.$root?.addEventListener(
                 'click',
                 (event) =>
-                    event.target &&
-                    event.target.matches('.fi-ta-record-checkbox') &&
+                    event.target?.matches('.fi-ta-record-checkbox') &&
                     this.handleCheckboxClick(event, event.target),
                 { signal },
             )
