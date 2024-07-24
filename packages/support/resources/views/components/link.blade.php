@@ -27,7 +27,7 @@
     'target' => null,
     'tooltip' => null,
     'type' => 'button',
-    'weight' => 'font-semibold',
+    'weight' => FontWeight::SemiBold,
 ])
 
 @php
