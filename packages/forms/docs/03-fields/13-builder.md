@@ -499,7 +499,7 @@ Builder::make('content')
     ])
 ```
 
-In `/resources/views/filament/content/block-previews/heading.blade.php`, you can access the block data like so:
+In `/resources/views/filament/content/blocks-previews/heading.blade.php`, you can access the block data like so:
 
 ```blade
 <h1>
