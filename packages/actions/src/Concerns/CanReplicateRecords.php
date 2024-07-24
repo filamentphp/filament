@@ -48,8 +48,10 @@ trait CanReplicateRecords
         });
 
         $this->action(function () {
-            $result = $this->process(function (Model $record) {
+            $result = $this->process(function (array $data, Model $record) {
                 $this->replica = $record->replicate($this->getExcludedAttributes());
+
+                $this->replica->fill($data);
 
                 $this->callBeforeReplicaSaved();
 
