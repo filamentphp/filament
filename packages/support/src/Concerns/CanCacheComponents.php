@@ -1,13 +1,13 @@
 <?php
 
-    namespace Filament\Support\Concerns;
+namespace Filament\Support\Concerns;
 
-    use Filament\PanelProvider;
+use Filament\PanelProvider;
 
-    trait CanCacheComponents
+trait CanCacheComponents
+{
+    protected function canCacheComponents(): bool
     {
-        protected function canCacheComponents(): bool
-        {
-            return class_exists(PanelProvider::class);
-        }
+        return class_exists(PanelProvider::class);
     }
+}
