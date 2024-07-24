@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands;
 
+use Closure;
 use Filament\Support\Commands\Concerns\CanCachePanelComponents;
 use Illuminate\Console\Command;
 use Symfony\Component\Console\Attribute\AsCommand;
@@ -30,7 +31,7 @@ class OptimizeCommand extends Command
 
         $tasks->put('Caching Blade icons', fn (): bool => $this->callSilent('icons:cache') === static::SUCCESS);
 
-        $tasks->each(fn ($task, $description) => $this->components->task($description, $task));
+        $tasks->each(fn (Closure $task, string $description) => $this->components->task($description, $task));
 
         $this->newLine();
 
