@@ -177,16 +177,19 @@ export default function table() {
 
         watchForCheckboxClicks: function () {
             if (this.controller) {
-                this.controller.abort();
+                this.controller.abort()
             }
             this.controller = new AbortController()
             const { signal } = this.controller
 
-            this.$root?.addEventListener('click', (event) =>
-                (event.target &&
-                event.target.matches('.fi-ta-record-checkbox')) &&
-                    this.handleCheckboxClick(event, event.target)
-                , { signal })
+            this.$root?.addEventListener(
+                'click',
+                (event) =>
+                    event.target &&
+                    event.target.matches('.fi-ta-record-checkbox') &&
+                    this.handleCheckboxClick(event, event.target),
+                { signal },
+            )
         },
 
         handleCheckboxClick: function (event, checkbox) {
