@@ -495,7 +495,7 @@ Builder::make('content')
                 TextInput::make('text')
                     ->placeholder('Default heading'),
             ])
-            ->preview('filament.content.blocks-previews.heading'),
+            ->preview('filament.content.block-previews.heading'),
     ])
 ```
 
