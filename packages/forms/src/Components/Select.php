@@ -856,7 +856,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
 
                 $component->state(
                     $relatedRecords->pluck(
-                        $relationship->getForeignKeyName()
+                        $relationship->getForeignKeyName(),
                     ),
                 );
 
