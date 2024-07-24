@@ -50,26 +50,25 @@ To optimize Filament for production, you should run the following command in you
 php artisan filament:optimize
 ```
 
-This command will cache the Filament components and additionally the Blade Icons, which can significantly improve the performance of your Filament panels.
-This command is a shorthand for the commands `php artisan icons:cache` and `php artisan filament:cache-components`.
+This command will [cache the Filament components](#caching-filament-components) and additionally the [Blade icons](#caching-blade-icons), which can significantly improve the performance of your Filament panels. This command is a shorthand for the commands `php artisan filament:cache-components` and `php artisan icons:cache`.
 
-To clear the cached components, you can run:
+To clear the caches at once, you can run:
 
 ```bash
 php artisan filament:optimize-clear
 ```
 
-### Caching Blade Icons
+#### Caching Filament components
 
-You may wish to consider running `php artisan icons:cache` locally, and also in your deployment script. This is because Filament uses the [Blade Icons](https://blade-ui-kit.com/blade-icons) package, which can be much more performant when cached.
-
-### Caching Filament components
-
-You may also wish to consider running `php artisan filament:cache-components` in your deployment script, especially if you have large numbers of components (resources, pages, widgets, relation managers, custom Livewire components, etc.). This will create cache files in the `bootstrap/cache/filament` directory of your application, which contain indexes for each type of component. This can significantly improve the performance of Filament in some apps, as it reduces the number of files that need to be scanned and auto-discovered for components.
+If you're not using the [`filament:optimize` command](#optimizing-filament-for-production), you may wish to consider running `php artisan filament:cache-components` in your deployment script, especially if you have large numbers of components (resources, pages, widgets, relation managers, custom Livewire components, etc.). This will create cache files in the `bootstrap/cache/filament` directory of your application, which contain indexes for each type of component. This can significantly improve the performance of Filament in some apps, as it reduces the number of files that need to be scanned and auto-discovered for components.
 
 However, if you are actively developing your app locally, you should avoid using this command, as it will prevent any new components from being discovered until the cache is cleared or rebuilt.
 
 You can clear the cache at any time without rebuilding it by running `php artisan filament:clear-cached-components`.
+
+#### Caching Blade Icons
+
+If you're not using the [`filament:optimize` command](#optimizing-filament-for-production), you may wish to consider running `php artisan icons:cache` locally, and also in your deployment script. This is because Filament uses the [Blade Icons](https://blade-ui-kit.com/blade-icons) package, which can be much more performant when cached.
 
 ### Enabling OPcache on your server
 
