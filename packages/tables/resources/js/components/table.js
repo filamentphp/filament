@@ -2,6 +2,8 @@ export default function table() {
     return {
         collapsedGroups: [],
 
+        controller: null,
+
         isLoading: false,
 
         selectedRecords: [],
@@ -174,18 +176,17 @@ export default function table() {
         },
 
         watchForCheckboxClicks: function () {
-            let checkboxes =
-                this.$root?.getElementsByClassName('fi-ta-record-checkbox') ??
-                []
-
-            for (let checkbox of checkboxes) {
-                // Remove existing listener to avoid duplicates
-                checkbox.removeEventListener('click', this.handleCheckboxClick)
-
-                checkbox.addEventListener('click', (event) =>
-                    this.handleCheckboxClick(event, checkbox),
-                )
+            if (this.controller) {
+                this.controller.abort();
             }
+            this.controller = new AbortController()
+            const { signal } = this.controller
+
+            this.$root?.addEventListener('click', (event) =>
+                (event.target &&
+                event.target.matches('.fi-ta-record-checkbox')) &&
+                    this.handleCheckboxClick(event, event.target)
+                , { signal })
         },
 
         handleCheckboxClick: function (event, checkbox) {
