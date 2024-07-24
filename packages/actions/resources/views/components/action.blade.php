@@ -25,7 +25,6 @@
         :label-sr-only="$action->isLabelHidden()"
         :tag="$url ? 'a' : 'button'"
         :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
-        :tooltip="$tooltip"
         :type="$action->canSubmitForm() ? 'submit' : 'button'"
         :wire:click="$action->getLivewireClickHandler()"
         :wire:target="$action->getLivewireTarget()"
