@@ -14,7 +14,7 @@ class OptimizeCommand extends Command
 
     public function handle(): int
     {
-        $this->components->info('Caching components and blade icons.');
+        $this->components->info('Caching components and Blade icons...');
 
         collect([
             'Caching components' => fn () => $this->callSilent('filament:cache-components') == 0,
