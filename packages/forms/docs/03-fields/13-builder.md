@@ -495,11 +495,11 @@ Builder::make('content')
                 TextInput::make('text')
                     ->placeholder('Default heading'),
             ])
-            ->preview('filament.content.blocks-previews.heading'),
+            ->preview('filament.content.block-previews.heading'),
     ])
 ```
 
-In `/resources/views/filament/content/blocks-previews/heading.blade.php`, you can access the block data like so:
+In `/resources/views/filament/content/block-previews/heading.blade.php`, you can access the block data like so:
 
 ```blade
 <h1>
