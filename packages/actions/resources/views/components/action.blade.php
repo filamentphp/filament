@@ -11,7 +11,7 @@
     $tooltipIsNotEmpty = str($tooltip)->isNotEmpty();
 @endphp
 
-@if ($tooltipIsNotEmpty) <div x-data x-tooltip.raw="{{ $tooltip }}"> @endif
+@if ($tooltipIsNotEmpty) <div x-data x-tooltip.raw="{{ $tooltip }}" class="flex"> @endif
     <x-dynamic-component
         :color="$action->getColor()"
         :component="$dynamicComponent"
@@ -32,7 +32,7 @@
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
                 ->merge($action->getExtraAttributes(), escape: false)
-                ->class(['fi-ac-action'])
+                ->class(['fi-ac-action flex-1'])
         "
     >
         {{ $slot }}
