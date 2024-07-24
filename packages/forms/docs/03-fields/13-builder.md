@@ -396,7 +396,7 @@ You are trying to retrieve the value of `client_id` from inside the builder item
 
 You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('builder.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
 
-The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current path.
+The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current builder item.
 
 ## Customizing the builder item actions
 
