@@ -14,7 +14,7 @@ class OptimizeCommand extends Command
 
     protected $signature = 'filament:optimize';
 
-    protected $description = 'Cache components and Blade icons to improve performance.';
+    protected $description = 'Cache components and Blade icons to increase performance';
 
     public function handle(): int
     {
