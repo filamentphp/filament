@@ -9,6 +9,7 @@ use Filament\Enums\ThemeMode;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
 use Filament\Exceptions\NoDefaultPanelSetException;
+use Filament\Facades\Filament;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;
@@ -31,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
+use Throwable;
 
 class FilamentManager
 {
@@ -340,6 +342,40 @@ class FilamentManager
     public function getResources(): array
     {
         return $this->getCurrentPanel()->getResources();
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     *
+     * @throws Throwable
+     */
+    public function getResourceUrl(string | Model $model, string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    {
+        $modelClass = is_string($model) ? $model : $model::class;
+
+        $resources = filled($tenant) ? $this->getPanel($panel)->getResources() : Filament::getResources();
+
+        $matchingResources = collect($resources)
+            ->filter(fn ($resource) => $resource::getModel() === $modelClass);
+
+        if ($matchingResources->isEmpty()) {
+            throw new Exception("No Filament resource found for model {$modelClass}");
+        }
+
+        if ($matchingResources->count() > 1) {
+            $resourceList = $matchingResources->implode(', ');
+
+            throw new Exception("Multiple Filament resources found for model {$modelClass}: {$resourceList}");
+        }
+
+        // If the model is an instance of Model and the name is 'edit' and no parameters are passed, we assume the user wants to edit the given record
+        if ($model instanceof Model && in_array($name, ['edit', 'view']) && blank($parameters)) {
+            $parameters = ['record' => $model];
+        }
+
+        $resourceClass = $matchingResources->first();
+
+        return $resourceClass::getUrl($name, $parameters, $isAbsolute, $panel, $tenant);
     }
 
     public function getSidebarWidth(): string
