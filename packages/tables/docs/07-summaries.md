@@ -315,6 +315,22 @@ TextColumn::make('sku')
     ->summarize(Range::make()->limit(5))
 ```
 
+### Adding a prefix or suffix
+
+You may add a prefix or suffix to the summary's value:
+
+```php
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\HtmlString;
+
+TextColumn::make('volume')
+    ->summarize(Sum::make()
+        ->prefix('Total volume: ')
+        ->suffix(new HtmlString(' m&sup3;'))
+    )
+```
+
 ## Custom summaries
 
 You may create a custom summary by returning the value from the `using()` method:
