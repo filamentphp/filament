@@ -6,6 +6,8 @@ use Closure;
 use Filament\Support\Enums\ArgumentValue;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
@@ -14,6 +16,14 @@ trait CanFormatState
     protected ?Closure $formatStateUsing = null;
 
     protected string | Closure | null $placeholder = null;
+
+    protected string | Htmlable | Closure | null $prefix = null;
+
+    protected string | Htmlable | Closure | null $suffix = null;
+
+    protected bool | Closure $isHtml = false;
+
+    protected bool | Closure $isMarkdown = false;
 
     public function formatStateUsing(?Closure $callback): static
     {
@@ -101,16 +111,110 @@ trait CanFormatState
         return $this;
     }
 
+    public function markdown(bool | Closure $condition = true): static
+    {
+        $this->isMarkdown = $condition;
+
+        return $this;
+    }
+
+    public function prefix(string | Htmlable | Closure | null $prefix): static
+    {
+        $this->prefix = $prefix;
+
+        return $this;
+    }
+
+    public function suffix(string | Htmlable | Closure | null $suffix): static
+    {
+        $this->suffix = $suffix;
+
+        return $this;
+    }
+
+    public function html(bool | Closure $condition = true): static
+    {
+        $this->isHtml = $condition;
+
+        return $this;
+    }
+
     public function formatState(mixed $state): mixed
     {
+        $isHtml = $this->isHtml();
+
         $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
         ]);
+
+        if ($isHtml) {
+            $state = Str::sanitizeHtml($state);
+        }
+
+        if ($state instanceof Htmlable) {
+            $isHtml = true;
+            $state = $state->toHtml();
+        }
+
+        if ($isHtml && $this->isMarkdown()) {
+            $state = Str::markdown($state);
+        }
+
+        $prefix = $this->getPrefix();
+        $suffix = $this->getSuffix();
+
+        if (
+            (($prefix instanceof Htmlable) || ($suffix instanceof Htmlable)) &&
+            (! $isHtml)
+        ) {
+            $isHtml = true;
+            $state = e($state);
+        }
+
+        if (filled($prefix)) {
+            if ($prefix instanceof Htmlable) {
+                $prefix = $prefix->toHtml();
+            } elseif ($isHtml) {
+                $prefix = e($prefix);
+            }
+
+            $state = $prefix . $state;
+        }
+
+        if (filled($suffix)) {
+            if ($suffix instanceof Htmlable) {
+                $suffix = $suffix->toHtml();
+            } elseif ($isHtml) {
+                $suffix = e($suffix);
+            }
+
+            $state = $state . $suffix;
+        }
 
         if (blank($state)) {
             $state = $this->evaluate($this->placeholder);
         }
 
-        return $state;
+        return $isHtml ? new HtmlString($state) : $state;
+    }
+
+    public function isHtml(): bool
+    {
+        return $this->evaluate($this->isHtml) || $this->isMarkdown();
+    }
+
+    public function getPrefix(): string | Htmlable | null
+    {
+        return $this->evaluate($this->prefix);
+    }
+
+    public function getSuffix(): string | Htmlable | null
+    {
+        return $this->evaluate($this->suffix);
+    }
+
+    public function isMarkdown(): bool
+    {
+        return (bool) $this->evaluate($this->isMarkdown);
     }
 }
