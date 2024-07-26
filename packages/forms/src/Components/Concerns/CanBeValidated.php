@@ -242,7 +242,7 @@ trait CanBeValidated
         return $this;
     }
 
-    public function multipleOf(int | Closure $value): static
+    public function multipleOf(int | float | Closure $value): static
     {
         $this->rule(static function (Field $component) use ($value) {
             return 'multiple_of:' . $component->evaluate($value);
