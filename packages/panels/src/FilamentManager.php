@@ -530,6 +530,11 @@ class FilamentManager
         return $this->getCurrentPanel()->getWidgets();
     }
 
+    public function hasBrandLogoInTopBar(): bool
+    {
+        return $this->getCurrentPanel()->hasBrandLogoInTopBar();
+    }
+
     public function hasBreadcrumbs(): bool
     {
         return $this->getCurrentPanel()->hasBreadcrumbs();

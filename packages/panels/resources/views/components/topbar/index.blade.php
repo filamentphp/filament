@@ -46,7 +46,7 @@
             />
         @endif
 
-        @if (filament()->hasTopNavigation() || (! filament()->hasNavigation()))
+        @if (filament()->hasBrandLogoInTopBar() || (filament()->hasTopNavigation() || (! filament()->hasNavigation())))
             <div class="me-6 hidden lg:flex">
                 @if ($homeUrl = filament()->getHomeUrl())
                     <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
@@ -56,7 +56,9 @@
                     <x-filament-panels::logo />
                 @endif
             </div>
-
+        @endif
+    
+        @if (filament()->hasTopNavigation() || (! filament()->hasNavigation()))
             @if (filament()->hasTenancy() && filament()->hasTenantMenu())
                 <x-filament-panels::tenant-menu class="hidden lg:block" />
             @endif

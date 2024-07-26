@@ -53,12 +53,14 @@
                     x-transition:enter-end="opacity-100"
                 @endif
             >
-                @if ($homeUrl = filament()->getHomeUrl())
-                    <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
+                @if (! filament()->hasBrandLogoInTopBar())
+                    @if ($homeUrl = filament()->getHomeUrl())
+                        <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
+                            <x-filament-panels::logo />
+                        </a>
+                    @else
                         <x-filament-panels::logo />
-                    </a>
-                @else
-                    <x-filament-panels::logo />
+                    @endif
                 @endif
             </div>
 
