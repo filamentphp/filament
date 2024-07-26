@@ -35,7 +35,7 @@ class TableWidget extends Widget implements Actions\Contracts\HasActions, Forms\
     {
         return $query->simplePaginate(
             perPage: ($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage(),
-            pageName: $this->getIdentifiedTableQueryStringPropertyNameFor('page')
+            pageName: $this->getTablePaginationPageName()
         );
     }
 
