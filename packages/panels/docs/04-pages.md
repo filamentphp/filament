@@ -77,10 +77,10 @@ You can also pass an array of arguments to the default action using the `$defaul
 public $defaultActionArguments = ['step' => 2];
 ```
 
-Alternatively, you can open an action modal when a page loads by specifying the `defaultAction` as a query string parameter to the page:
+Alternatively, you can open an action modal when a page loads by specifying the `action` as a query string parameter to the page:
 
 ```
-/admin/products/edit/932510?defaultAction=onboarding
+/admin/products/edit/932510?action=onboarding
 ```
 
 ### Refreshing form data
