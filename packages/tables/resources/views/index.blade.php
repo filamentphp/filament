@@ -833,6 +833,10 @@
                             @endif
                         @endif
 
+                        @if ($isGroupsOnly)
+                            <x-filament-tables::header-cell>{{ $group->getLabel() }}</x-filament-tables::header-cell>
+                        @endif
+
                         @foreach ($columns as $column)
                             @php
                                 $columnWidth = $column->getWidth();
