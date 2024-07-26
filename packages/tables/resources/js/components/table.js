@@ -179,9 +179,9 @@ export default function table() {
             if (this.checkboxClickController) {
                 this.checkboxClickController.abort()
             }
-            
+
             this.checkboxClickController = new AbortController()
-            
+
             const { signal } = this.checkboxClickController
 
             this.$root?.addEventListener(
