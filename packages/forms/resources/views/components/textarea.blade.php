@@ -34,7 +34,6 @@
         "
     >
         <textarea
-            x-ignore
             @if (FilamentView::hasSpaMode())
                 ax-load="visible"
             @else
