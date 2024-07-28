@@ -60,7 +60,7 @@ class Wizard extends Component
     {
         parent::setUp();
 
-        $this->currentStepIndex = $this->getStartStep() - 1;
+        $this->setCurrentStepIndex($this->getStartStep() - 1);
 
         $this->registerActions([
             fn (Wizard $component): Action => $component->getNextAction(),
@@ -266,15 +266,15 @@ class Wizard extends Component
         return filled($this->getStepQueryStringKey());
     }
 
-    private function setCurrentStepIndex(int $currentStepIndex): static
+    public function getCurrentStepIndex(): int
+    {
+        return $this->currentStepIndex;
+    }
+
+    protected function setCurrentStepIndex(int $currentStepIndex): static
     {
         $this->currentStepIndex = $currentStepIndex;
 
         return $this;
-    }
-
-    public function getCurrentStepIndex(): int
-    {
-        return $this->currentStepIndex;
     }
 }
