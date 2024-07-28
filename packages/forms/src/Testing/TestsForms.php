@@ -413,7 +413,7 @@ class TestsForms
             $form = $this->instance()->{$formName};
 
             /** @var Wizard $wizard */
-            $wizard = $form->getComponent(fn ($component) => $component instanceof Wizard);
+            $wizard = $form->getComponent(fn (Component $component): bool => $component instanceof Wizard);
             Assert::assertArrayHasKey(
                 $step - 1,
                 $wizard->getChildComponents(),
