@@ -97,7 +97,7 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertWizardStepExists(int $step, string $formName = 'form'): static {}
 
-        public function assertWizardCurrentStepIs(int $step, string $formName = 'form'): static {}
+        public function assertWizardCurrentStep(int $step, string $formName = 'form'): static {}
     }
 
 }

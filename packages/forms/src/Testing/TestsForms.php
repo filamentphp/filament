@@ -412,17 +412,19 @@ class TestsForms
             /** @var ComponentContainer $form */
             $form = $this->instance()->{$formName};
 
-            /**
-             * @var Wizard $wizard
-             */
+            /** @var Wizard $wizard */
             $wizard = $form->getComponent(fn ($component) => $component instanceof Wizard);
-            Assert::assertTrue(count($wizard->getChildComponents()) >= $step, "Wizard does not have a step $step");
+            Assert::assertArrayHasKey(
+                $step,
+                $wizard->getChildComponents(),
+                "Wizard does not have a step {$step}"
+            );
 
             return $this;
         };
     }
 
-    public function assertWizardCurrentStepIs(): Closure
+    public function assertWizardCurrentStep(): Closure
     {
         return function (int $step, string $formName = 'form'): static {
             /** @phpstan-ignore-next-line  */
@@ -431,14 +433,12 @@ class TestsForms
             /** @var ComponentContainer $form */
             $form = $this->instance()->{$formName};
 
-            /**
-             * @var Wizard $wizard
-             */
-            $wizard = $form->getComponent(fn ($component) => $component instanceof Wizard);
+            /** @var Wizard $wizard */
+            $wizard = $form->getComponent(fn (Component $component): bool => $component instanceof Wizard);
             Assert::assertEquals(
                 $step,
                 $current = $wizard->getCurrentStepIndex() + 1,
-                "Failed asserting that wizard is on step $step, current step is {$current}"
+                "Failed asserting that wizard is on step {$step}, current step is {$current}"
             );
 
             return $this;
@@ -447,22 +447,14 @@ class TestsForms
 
     public function goToWizardStep(): Closure
     {
-        return function (int $desiredStep = 1, string $formName = 'form'): static {
+        return function (int $step = 1, string $formName = 'form'): static {
             /** @phpstan-ignore-next-line  */
-            $this->assertWizardStepExists($desiredStep, $formName);
+            $this->assertWizardStepExists($step, $formName);
 
             /** @var ComponentContainer $form */
             $form = $this->instance()->{$formName};
 
-            /**
-             * @var Wizard $wizardComponent
-             */
-            $wizardComponent = $form->getComponent(fn ($component) => $component instanceof Wizard);
-            if ($desiredStep === -1) {
-                $desiredStep = count($wizardComponent->getChildComponents()) + 1;
-            }
-
-            $stepIndex = $desiredStep <= 1 ? 0 : $desiredStep - 2;
+            $stepIndex = $step <= 1 ? 0 : $step - 2;
             $this->call('dispatchFormEvent', 'wizard::nextStep', $form->getStatePath(), $stepIndex);
 
             return $this;
@@ -478,10 +470,8 @@ class TestsForms
             /** @var ComponentContainer $form */
             $form = $this->instance()->{$formName};
 
-            /**
-             * @var Wizard $wizardComponent
-             */
-            $wizardComponent = $form->getComponent(fn ($component) => $component instanceof Wizard);
+            /** @var Wizard $wizardComponent */
+            $wizardComponent = $form->getComponent(fn (Component $component): bool => $component instanceof Wizard);
             $nextStep = $wizardComponent->getCurrentStepIndex() + 2;
 
             /** @phpstan-ignore-next-line  */
@@ -498,10 +488,8 @@ class TestsForms
             /** @var ComponentContainer $form */
             $form = $this->instance()->{$formName};
 
-            /**
-             * @var Wizard $wizardComponent
-             */
-            $wizardComponent = $form->getComponent(fn ($component) => $component instanceof Wizard);
+            /** @var Wizard $wizardComponent */
+            $wizardComponent = $form->getComponent(fn (Component $component): bool => $component instanceof Wizard);
             $previousStepIndex = $wizardComponent->getCurrentStepIndex() - 1;
 
             $this->call('dispatchFormEvent', 'wizard::previousStep', $form->getStatePath(), $previousStepIndex);

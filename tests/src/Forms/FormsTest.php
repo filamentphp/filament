@@ -120,12 +120,7 @@ it('can go to next wizard step on multiple forms', function () {
         ->assertWizardStepExists(2, 'fooForm')
         ->goToWizardStep(2, formName: 'fooForm')
         ->assertHasFormErrors(['title'], 'fooForm')
-        ->assertHasNoFormErrors(['title'], 'barForm')
-
-        ->goToWizardStep(-1, formName: 'barForm')
-        ->assertHasNoFormErrors(['title'], 'barForm')
-        ->assertHasFormErrors(['content'], 'barForm')
-        ->assertHasNoFormErrors(['content'], 'fooForm');
+        ->assertHasNoFormErrors(['title'], 'barForm');
 });
 
 class TestComponentWithForm extends Livewire
