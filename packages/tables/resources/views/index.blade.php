@@ -69,6 +69,7 @@
     $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
     $toggleColumnsTriggerAction = $getToggleColumnsTriggerAction();
     $page = $this->getTablePage();
+    $defaultSortOptionLabel = $getDefaultSortOptionLabel();
 
     if (count($actions) && (! $isReordering)) {
         $columnsCount++;
@@ -131,6 +132,8 @@
             x-show="@js($hasHeader) || (selectedRecords.length && @js(count($bulkActions)))"
             class="fi-ta-header-ctn divide-y divide-gray-200 dark:divide-white/10"
         >
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::HEADER_BEFORE, scopes: static::class) }}
+
             @if ($header)
                 {{ $header }}
             @elseif (($heading || $description || $headerActions) && ! $isReordering)
@@ -141,6 +144,8 @@
                     :heading="$heading"
                 />
             @endif
+
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::HEADER_AFTER, scopes: static::class) }}
 
             @if ($hasFiltersAboveContent)
                 <div
@@ -167,6 +172,8 @@
                     @endif
                 </div>
             @endif
+
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_BEFORE, scopes: static::class) }}
 
             <div
                 @if (! $hasHeaderToolbar) x-cloak @endif
@@ -253,6 +260,8 @@
 
                 {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_END) }}
             </div>
+
+            {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_AFTER) }}
         </div>
 
         @if ($isReordering)
@@ -275,7 +284,7 @@
         @endif
 
         <div
-            @if ($pollingInterval = $getPollingInterval())
+            @if ((! $isReordering) && ($pollingInterval = $getPollingInterval()))
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
@@ -315,7 +324,7 @@
                                         return null
                                     "
                                     x-on:click="toggleSelectRecordsOnPage"
-                                    class="my-4"
+                                    class="fi-ta-page-checkbox my-4"
                                 />
                             @endif
 
@@ -349,7 +358,9 @@
                                             <x-filament::input.select
                                                 x-model="column"
                                             >
-                                                <option value="">-</option>
+                                                <option value="">
+                                                    {{ $defaultSortOptionLabel }}
+                                                </option>
 
                                                 @foreach ($sortableColumns as $column)
                                                     <option
@@ -806,6 +817,7 @@
                                             return null
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
+                                        class="fi-ta-page-checkbox"
                                     />
                                 </x-filament-tables::selection.cell>
                             @endif
@@ -883,6 +895,7 @@
                                             return null
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
+                                        class="fi-ta-page-checkbox"
                                     />
                                 </x-filament-tables::selection.cell>
                             @endif

@@ -8,6 +8,7 @@ use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Str;
 
 use function Filament\Tests\livewire;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);
@@ -76,9 +77,13 @@ it('can call an action and halt', function () {
 });
 
 it('can hide an action', function () {
+    $post = Post::factory()->create();
+
     livewire(PostsTable::class)
         ->assertTableActionVisible('visible')
-        ->assertTableActionHidden('hidden');
+        ->assertTableActionHidden('hidden')
+        ->assertTableActionVisible('groupedWithVisibleGroupCondition', $post)
+        ->assertTableActionHidden('groupedWithHiddenGroupCondition', $post);
 });
 
 it('can disable an action', function () {
@@ -134,4 +139,18 @@ it('can state whether a table action exists with a given configuration', functio
     livewire(PostsTable::class)
         ->assertTableActionExists('attachMultiple', fn (AttachAction $action) => $action->isMultiple())
         ->assertTableActionDoesNotExist(AttachAction::class, fn (AttachAction $action) => $action->isMultiple());
+});
+
+it('can replicate a record', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertTableActionExists('replicate')
+        ->callTableAction('replicate', $post)
+        ->callMountedTableAction()
+        ->assertHasNoTableActionErrors();
+
+    assertDatabaseHas('posts', [
+        'title' => $post->title . ' (Copy)',
+    ]);
 });

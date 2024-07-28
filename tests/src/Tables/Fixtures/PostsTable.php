@@ -11,6 +11,7 @@ use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Livewire\Component;
 
@@ -129,6 +130,12 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Actions\Action::make('enabled'),
                 Tables\Actions\Action::make('disabled')
                     ->disabled(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('groupedWithVisibleGroupCondition'),
+                ])->visible(fn (?Model $record): bool => $record !== null),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('groupedWithHiddenGroupCondition'),
+                ])->hidden(fn (?Model $record): bool => $record !== null),
                 Tables\Actions\Action::make('hasIcon')
                     ->icon('heroicon-m-pencil-square'),
                 Tables\Actions\Action::make('hasLabel')
@@ -152,6 +159,16 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\ForceDeleteAction::make(),
                 Tables\Actions\RestoreAction::make(),
+                Tables\Actions\ReplicateAction::make()
+                    ->mutateRecordDataUsing(function (array $data): array {
+                        $data['title'] = $data['title'] . ' (Copy)';
+
+                        return $data;
+                    })
+                    ->form([
+                        TextInput::make('title')
+                            ->required(),
+                    ]),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\DeleteAction::make('groupedDelete'),
                     Tables\Actions\ForceDeleteAction::make('groupedForceDelete'),

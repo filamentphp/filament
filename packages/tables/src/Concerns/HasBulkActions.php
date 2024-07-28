@@ -37,9 +37,7 @@ trait HasBulkActions
 
     protected EloquentCollection | Collection $cachedSelectedTableRecords;
 
-    protected function configureTableBulkAction(BulkAction $action): void
-    {
-    }
+    protected function configureTableBulkAction(BulkAction $action): void {}
 
     /**
      * @param  array<string, mixed>  $arguments

@@ -64,6 +64,8 @@ class Table extends ViewComponent
 
     public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';
 
+    public static ?string $defaultNumberLocale = null;
+
     public static string $defaultTimeDisplayFormat = 'H:i:s';
 
     final public function __construct(HasTable $livewire)

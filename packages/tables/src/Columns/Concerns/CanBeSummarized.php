@@ -40,11 +40,14 @@ trait CanBeSummarized
      */
     public function getSummarizers(): array
     {
-        return $this->summarizers;
+        return array_filter(
+            $this->summarizers,
+            fn (Summarizer $summarizer): bool => $summarizer->isVisible(),
+        );
     }
 
     public function hasSummary(): bool
     {
-        return (bool) count($this->summarizers);
+        return (bool) count($this->getSummarizers());
     }
 }

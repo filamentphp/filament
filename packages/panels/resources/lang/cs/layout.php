@@ -52,4 +52,12 @@ return [
 
     ],
 
+    'avatar' => [
+        'alt' => 'Profilový obrázek pro :name',
+    ],
+
+    'logo' => [
+        'alt' => ':name logo',
+    ],
+
 ];

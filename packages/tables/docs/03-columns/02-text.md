@@ -82,6 +82,16 @@ TextColumn::make('created_at')
     ->since()
 ```
 
+Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()` or `timeTooltip()` method to display a formatted date in a tooltip, often to provide extra information:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('created_at')
+    ->since()
+    ->dateTimeTooltip()
+```
+
 ## Number formatting
 
 The `numeric()` method allows you to format an entry as a number:
@@ -111,12 +121,12 @@ TextColumn::make('stock')
     ->numeric(locale: 'nl')
 ```
 
-Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+Alternatively, you can set the default locale used across your app using the `Table::$defaultNumberLocale` method in the `boot()` method of a service provider:
 
 ```php
-use Illuminate\Support\Number;
+use Filament\Tables\Table;
 
-Number::useLocale('nl');
+Table::$defaultNumberLocale = 'nl';
 ```
 
 ## Currency formatting
@@ -148,12 +158,12 @@ TextColumn::make('price')
     ->money('EUR', locale: 'nl')
 ```
 
-Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+Alternatively, you can set the default locale used across your app using the `Table::$defaultNumberLocale` method in the `boot()` method of a service provider:
 
 ```php
-use Illuminate\Support\Number;
+use Filament\Tables\Table;
 
-Number::useLocale('nl');
+Table::$defaultNumberLocale = 'nl';
 ```
 
 ## Limiting text length

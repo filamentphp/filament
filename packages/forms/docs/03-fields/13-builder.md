@@ -368,6 +368,36 @@ Builder::make('content')
     ->maxItems(5)
 ```
 
+## Using `$get()` to access parent field values
+
+All form components are able to [use `$get()` and `$set()`](../advanced) to access another field's value. However, you might experience unexpected behavior when using this inside the builder's schema.
+
+This is because `$get()` and `$set()`, by default, are scoped to the current builder item. This means that you are able to interact with another field inside that builder item easily without knowing which builder item the current form component belongs to.
+
+The consequence of this is that you may be confused when you are unable to interact with a field outside the builder. We use `../` syntax to solve this problem - `$get('../../parent_field_name')`.
+
+Consider your form has this data structure:
+
+```php
+[
+    'client_id' => 1,
+
+    'builder' => [
+        'item1' => [
+            'service_id' => 2,
+        ],
+    ],
+]
+```
+
+You are trying to retrieve the value of `client_id` from inside the builder item.
+
+`$get()` is relative to the current builder item, so `$get('client_id')` is looking for `$get('builder.item1.client_id')`.
+
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('builder.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
+
+The special case of `$get()` with no arguments, or `$get('')` or `$get('./')`, will always return the full data array for the current builder item.
+
 ## Customizing the builder item actions
 
 This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button). The following methods are available to customize the actions:
@@ -495,7 +525,7 @@ Builder::make('content')
                 TextInput::make('text')
                     ->placeholder('Default heading'),
             ])
-            ->preview('filament.content.blocks-previews.heading'),
+            ->preview('filament.content.block-previews.heading'),
     ])
 ```
 

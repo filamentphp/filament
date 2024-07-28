@@ -255,12 +255,12 @@ TextColumn::make('rating')
     ))
 ```
 
-Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+Alternatively, you can set the default locale used across your app using the `Table::$defaultNumberLocale` method in the `boot()` method of a service provider:
 
 ```php
-use Illuminate\Support\Number;
+use Filament\Tables\Table;
 
-Number::useLocale('nl');
+Table::$defaultNumberLocale = 'nl';
 ```
 
 ### Currency formatting
@@ -295,12 +295,12 @@ TextColumn::make('price')
     ->summarize(Sum::make()->money('EUR', locale: 'nl'))
 ```
 
-Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+Alternatively, you can set the default locale used across your app using the `Table::$defaultNumberLocale` method in the `boot()` method of a service provider:
 
 ```php
-use Illuminate\Support\Number;
+use Filament\Tables\Table;
 
-Number::useLocale('nl');
+Table::$defaultNumberLocale = 'nl';
 ```
 
 ### Limiting text length
@@ -313,6 +313,22 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('sku')
     ->summarize(Range::make()->limit(5))
+```
+
+### Adding a prefix or suffix
+
+You may add a prefix or suffix to the summary's value:
+
+```php
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Support\HtmlString;
+
+TextColumn::make('volume')
+    ->summarize(Sum::make()
+        ->prefix('Total volume: ')
+        ->suffix(new HtmlString(' m&sup3;'))
+    )
 ```
 
 ## Custom summaries
@@ -332,13 +348,39 @@ TextColumn::make('name')
 
 The callback has access to the database `$query` builder instance to perform calculations with. It should return the value to display in the table.
 
+## Conditionally hiding the summary
+
+To hide a summary, you may pass a boolean, or a function that returns a boolean, to the `hidden()` method. If you need it, you can access the Eloquent query builder instance for that summarizer via the `$query` argument of the function:
+
+```php
+use Filament\Tables\Columns\Summarizers\Summarizer;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+
+TextColumn::make('sku')
+    ->summarize(Summarizer::make()
+        ->hidden(fn (Builder $query): bool => ! $query->exists()))
+```
+
+Alternatively, you can use the `visible()` method to achieve the opposite effect:
+
+```php
+use Filament\Tables\Columns\Summarizers\Summarizer;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Builder;
+
+TextColumn::make('sku')
+    ->summarize(Summarizer::make()
+        ->visible(fn (Builder $query): bool => $query->exists()))
+```
+
 ## Summarising groups of rows
 
 You can use summaries with [groups](grouping) to display a summary of the records inside a group. This works automatically if you choose to add a summariser to a column in a grouped table.
 
 ### Hiding the grouped rows and showing the summary only
 
-You may hide the rows inside groups and just show the summary of each group using the `groupsOnly()` method. This is very useful in many reporting scenarios.
+You may hide the rows inside groups and just show the summary of each group using the `groupsOnly()` method. This is beneficial in many reporting scenarios.
 
 ```php
 use Filament\Tables\Columns\Summarizers\Sum;

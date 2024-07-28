@@ -86,7 +86,7 @@ trait CanFormatState
     {
         $this->isDateTime = true;
 
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($timezone): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, mixed $state) use ($timezone): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -103,7 +103,7 @@ trait CanFormatState
     {
         $format ??= Table::$defaultDateDisplayFormat;
 
-        $this->tooltip(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
+        $this->tooltip(static function (TextColumn $column, mixed $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -136,7 +136,7 @@ trait CanFormatState
 
     public function sinceTooltip(?string $timezone = null): static
     {
-        $this->tooltip(static function (TextColumn $column, $state) use ($timezone): ?string {
+        $this->tooltip(static function (TextColumn $column, mixed $state) use ($timezone): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -163,12 +163,13 @@ trait CanFormatState
             }
 
             $currency = $column->evaluate($currency) ?? Table::$defaultCurrency;
+            $locale = $column->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
 
             if ($divideBy) {
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $column->evaluate($locale) ?? config('app.locale'));
+            return Number::currency($state, $currency, $locale);
         });
 
         return $this;
@@ -203,7 +204,9 @@ trait CanFormatState
                 );
             }
 
-            return Number::format($state, $decimalPlaces, $column->evaluate($maxDecimalPlaces), locale: $column->evaluate($locale) ?? config('app.locale'));
+            $locale = $column->evaluate($locale) ?? Table::$defaultNumberLocale ?? config('app.locale');
+
+            return Number::format($state, $decimalPlaces, $column->evaluate($maxDecimalPlaces), locale: $locale);
         });
 
         return $this;

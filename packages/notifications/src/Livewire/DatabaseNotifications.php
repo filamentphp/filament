@@ -29,9 +29,7 @@ class DatabaseNotifications extends Component
     public static ?string $authGuard = null;
 
     #[On('databaseNotificationsSent')]
-    public function refresh(): void
-    {
-    }
+    public function refresh(): void {}
 
     #[On('notificationClosed')]
     public function removeNotification(string $id): void

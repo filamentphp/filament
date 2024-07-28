@@ -99,6 +99,56 @@ trait CanFormatState
         return $this;
     }
 
+    public function dateTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Infolist::$defaultDateDisplayFormat;
+
+        $this->tooltip(static function (TextEntry $component, mixed $state) use ($format, $timezone): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $component->getTimezone())
+                ->translatedFormat($format);
+        });
+
+        return $this;
+    }
+
+    public function dateTimeTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Infolist::$defaultDateTimeDisplayFormat;
+
+        $this->dateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function timeTooltip(?string $format = null, ?string $timezone = null): static
+    {
+        $format ??= Infolist::$defaultTimeDisplayFormat;
+
+        $this->dateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function sinceTooltip(?string $timezone = null): static
+    {
+        $this->tooltip(static function (TextEntry $component, mixed $state) use ($timezone): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $component->getTimezone())
+                ->diffForHumans();
+        });
+
+        return $this;
+    }
+
     public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
     {
         $this->isMoney = true;
@@ -113,12 +163,13 @@ trait CanFormatState
             }
 
             $currency = $component->evaluate($currency) ?? Infolist::$defaultCurrency;
+            $locale = $component->evaluate($locale) ?? Infolist::$defaultNumberLocale ?? config('app.locale');
 
             if ($divideBy) {
                 $state /= $divideBy;
             }
 
-            return Number::currency($state, $currency, $component->evaluate($locale) ?? config('app.locale'));
+            return Number::currency($state, $currency, $locale);
         });
 
         return $this;
@@ -153,7 +204,9 @@ trait CanFormatState
                 );
             }
 
-            return Number::format($state, $decimalPlaces, $component->evaluate($maxDecimalPlaces), $component->evaluate($locale) ?? config('app.locale'));
+            $locale = $component->evaluate($locale) ?? Infolist::$defaultNumberLocale ?? config('app.locale');
+
+            return Number::format($state, $decimalPlaces, $component->evaluate($maxDecimalPlaces), $locale);
         });
 
         return $this;

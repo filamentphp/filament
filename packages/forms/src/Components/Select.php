@@ -18,7 +18,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
@@ -842,6 +844,31 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 $component->state(
                     $relatedModel->getAttribute(
                         $relationship->getRelated()->getKeyName(),
+                    ),
+                );
+
+                return;
+            }
+
+            if ($relationship instanceof HasMany) {
+                /** @var Collection $relatedRecords */
+                $relatedRecords = $relationship->getResults();
+
+                $component->state(
+                    $relatedRecords->pluck(
+                        $relationship->getForeignKeyName(),
+                    ),
+                );
+
+                return;
+            }
+
+            if ($relationship instanceof HasOne) {
+                $relatedModel = $relationship->getResults();
+
+                $component->state(
+                    $relatedModel->getAttribute(
+                        $relationship->getForeignKeyName(),
                     ),
                 );
 

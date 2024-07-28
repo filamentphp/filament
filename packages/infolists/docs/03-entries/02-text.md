@@ -56,6 +56,16 @@ TextEntry::make('created_at')
     ->since()
 ```
 
+Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()` or `timeTooltip()` method to display a formatted date in a tooltip, often to provide extra information:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('created_at')
+    ->since()
+    ->dateTimeTooltip()
+```
+
 ## Number formatting
 
 The `numeric()` method allows you to format an entry as a number:
@@ -85,12 +95,12 @@ TextEntry::make('stock')
     ->numeric(locale: 'nl')
 ```
 
-Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+Alternatively, you can set the default locale used across your app using the `Infolist::$defaultNumberLocale` method in the `boot()` method of a service provider:
 
 ```php
-use Illuminate\Support\Number;
+use Filament\Infolists\Infolist;
 
-Number::useLocale('nl');
+Infolist::$defaultNumberLocale = 'nl';
 ```
 
 ## Currency formatting
@@ -122,12 +132,12 @@ TextEntry::make('price')
     ->money('EUR', locale: 'nl')
 ```
 
-Alternatively, you can set the default locale used across your app using the `Number::useLocale()` method in the `boot()` method of a service provider:
+Alternatively, you can set the default locale used across your app using the `Infolist::$defaultNumberLocale` method in the `boot()` method of a service provider:
 
 ```php
-use Illuminate\Support\Number;
+use Filament\Infolists\Infolist;
 
-Number::useLocale('nl');
+Infolist::$defaultNumberLocale = 'nl';
 ```
 
 ## Limiting text length
