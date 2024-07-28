@@ -312,7 +312,7 @@ it('moves to next wizard step', function () {
 });
 ```
 
-If you want to go to a specific step, use `goToWizardStep`, the `assertWizardCurrentStepIs` method can ensure you are on the desired step:
+If you want to go to a specific step, use `goToWizardStep`, the `assertWizardCurrentStep` method can ensure you are on the desired step:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -320,7 +320,7 @@ use function Pest\Livewire\livewire;
 it('moves to the wizards second step', function () {
     livewire(CreatePostUsingWizard::class)
         ->goToWizardStep(2)
-        ->assertWizardCurrentStepIs(2);
+        ->assertWizardCurrentStep(2);
 });
 ```
 
