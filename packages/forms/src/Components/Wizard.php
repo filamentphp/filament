@@ -271,9 +271,9 @@ class Wizard extends Component
         return $this->currentStepIndex;
     }
 
-    protected function setCurrentStepIndex(int $currentStepIndex): static
+    protected function setCurrentStepIndex(int $index): static
     {
-        $this->currentStepIndex = $currentStepIndex;
+        $this->currentStepIndex = $index;
 
         return $this;
     }
