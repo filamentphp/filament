@@ -29,12 +29,6 @@
                 return
             }
 
-            $wire.dispatchFormEvent(
-                'wizard::previousStep',
-                '{{ $statePath }}',
-                this.getStepIndex(this.step),
-            )
-
             this.step = this.getSteps()[previousStepIndex]
 
             this.autofocusFields()
