@@ -415,7 +415,7 @@ class TestsForms
             /** @var Wizard $wizard */
             $wizard = $form->getComponent(fn ($component) => $component instanceof Wizard);
             Assert::assertArrayHasKey(
-                $step,
+                $step - 1,
                 $wizard->getChildComponents(),
                 "Wizard does not have a step {$step}"
             );
