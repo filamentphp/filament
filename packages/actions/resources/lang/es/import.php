@@ -11,8 +11,14 @@ return [
         'form' => [
 
             'file' => [
+
                 'label' => 'Archivo',
+
                 'placeholder' => 'Cargar un archivo CSV',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} El archivo no debe contener más de un encabezado de columna vacío.|{1,*} El archivo no debe contener encabezados de columna duplicados: :columns.',
+                ],
             ],
 
             'columns' => [
