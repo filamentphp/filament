@@ -96,73 +96,85 @@
             </x-filament::input.select>
         @else
             <div
-                x-ignore
-                @if (FilamentView::hasSpaMode())
-                    ax-load="visible"
-                @else
-                    ax-load
-                @endif
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
-                x-data="selectFormComponent({
-                            canSelectPlaceholder: @js($canSelectPlaceholder),
-                            isHtmlAllowed: @js($isHtmlAllowed()),
-                            getOptionLabelUsing: async () => {
-                                return await $wire.getFormSelectOptionLabel(@js($statePath))
-                            },
-                            getOptionLabelsUsing: async () => {
-                                return await $wire.getFormSelectOptionLabels(@js($statePath))
-                            },
-                            getOptionsUsing: async () => {
-                                return await $wire.getFormSelectOptions(@js($statePath))
-                            },
-                            getSearchResultsUsing: async (search) => {
-                                return await $wire.getFormSelectSearchResults(@js($statePath), search)
-                            },
-                            isAutofocused: @js($isAutofocused()),
-                            isMultiple: @js($isMultiple()),
-                            isSearchable: @js($isSearchable()),
-                            livewireId: @js($this->getId()),
-                            hasDynamicOptions: @js($hasDynamicOptions()),
-                            hasDynamicSearchResults: @js($hasDynamicSearchResults()),
-                            loadingMessage: @js($getLoadingMessage()),
-                            maxItems: @js($getMaxItems()),
-                            maxItemsMessage: @js($getMaxItemsMessage()),
-                            noSearchResultsMessage: @js($getNoSearchResultsMessage()),
-                            options: @js($getOptionsForJs()),
-                            optionsLimit: @js($getOptionsLimit()),
-                            placeholder: @js($getPlaceholder()),
-                            position: @js($getPosition()),
-                            searchDebounce: @js($getSearchDebounce()),
-                            searchingMessage: @js($getSearchingMessage()),
-                            searchPrompt: @js($getSearchPrompt()),
-                            searchableOptionFields: @js($getSearchableOptionFields()),
-                            state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
-                            statePath: @js($statePath),
-                        })"
-                wire:ignore
-                x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
-                {{
-                    $attributes
-                        ->merge($getExtraAlpineAttributes(), escape: false)
-                        ->class([
-                            '[&_.choices\_\_inner]:ps-0' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
-                        ])
-                }}
+                x-data="{
+                    disabled: @js($isDisabled),
+                    init(){
+                        const container = $el.querySelector('div[data-select-container]')
+                        container.dispatchEvent(new CustomEvent('toggle-state', { detail : { disabled: this.disabled } }))
+                    }
+                }"
             >
-                <select
-                    x-ref="input"
+                <div
+                    data-select-container
+                    x-ignore
+                    @if (FilamentView::hasSpaMode())
+                        ax-load="visible"
+                    @else
+                        ax-load
+                    @endif
+                    ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
+                    x-data="selectFormComponent({
+                                canSelectPlaceholder: @js($canSelectPlaceholder),
+                                isHtmlAllowed: @js($isHtmlAllowed()),
+                                getOptionLabelUsing: async () => {
+                                    return await $wire.getFormSelectOptionLabel(@js($statePath))
+                                },
+                                getOptionLabelsUsing: async () => {
+                                    return await $wire.getFormSelectOptionLabels(@js($statePath))
+                                },
+                                getOptionsUsing: async () => {
+                                    return await $wire.getFormSelectOptions(@js($statePath))
+                                },
+                                getSearchResultsUsing: async (search) => {
+                                    return await $wire.getFormSelectSearchResults(@js($statePath), search)
+                                },
+                                isAutofocused: @js($isAutofocused()),
+                                isMultiple: @js($isMultiple()),
+                                isSearchable: @js($isSearchable()),
+                                livewireId: @js($this->getId()),
+                                hasDynamicOptions: @js($hasDynamicOptions()),
+                                hasDynamicSearchResults: @js($hasDynamicSearchResults()),
+                                loadingMessage: @js($getLoadingMessage()),
+                                maxItems: @js($getMaxItems()),
+                                maxItemsMessage: @js($getMaxItemsMessage()),
+                                noSearchResultsMessage: @js($getNoSearchResultsMessage()),
+                                options: @js($getOptionsForJs()),
+                                optionsLimit: @js($getOptionsLimit()),
+                                placeholder: @js($getPlaceholder()),
+                                position: @js($getPosition()),
+                                searchDebounce: @js($getSearchDebounce()),
+                                searchingMessage: @js($getSearchingMessage()),
+                                searchPrompt: @js($getSearchPrompt()),
+                                searchableOptionFields: @js($getSearchableOptionFields()),
+                                state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
+                                statePath: @js($statePath),
+                            })"
+                    wire:ignore
+                    x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
+                    x-on:toggle-state="$event.detail.disabled ? select.disable() : select.enable()"
                     {{
-                        $getExtraInputAttributeBag()
-                            ->merge([
-                                'disabled' => $isDisabled,
-                                'id' => $getId(),
-                                'multiple' => $isMultiple(),
-                            ], escape: false)
+                        $attributes
+                            ->merge($getExtraAlpineAttributes(), escape: false)
                             ->class([
-                                'h-9 w-full rounded-lg border-none bg-transparent !bg-none',
+                                '[&_.choices\_\_inner]:ps-0' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
                             ])
                     }}
-                ></select>
+                >
+                    <select
+                        x-ref="input"
+                        {{
+                            $getExtraInputAttributeBag()
+                                ->merge([
+                                    'disabled' => $isDisabled,
+                                    'id' => $getId(),
+                                    'multiple' => $isMultiple(),
+                                ], escape: false)
+                                ->class([
+                                    'h-9 w-full rounded-lg border-none bg-transparent !bg-none',
+                                ])
+                        }}
+                    ></select>
+                </div>
             </div>
         @endif
     </x-filament::input.wrapper>
