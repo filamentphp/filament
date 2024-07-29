@@ -98,10 +98,14 @@
             <div
                 x-data="{
                     disabled: @js($isDisabled),
-                    init(){
+                    init() {
                         const container = $el.querySelector('div[data-select-container]')
-                        container.dispatchEvent(new CustomEvent('toggle-state', { detail : { disabled: this.disabled } }))
-                    }
+                        container.dispatchEvent(
+                            new CustomEvent('toggle-state', {
+                                detail: { disabled: this.disabled },
+                            }),
+                        )
+                    },
                 }"
             >
                 <div
