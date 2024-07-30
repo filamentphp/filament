@@ -7,6 +7,7 @@ use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Wizard;
 use Filament\Schema\Schema;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
@@ -397,6 +398,104 @@ class TestsForms
                 $fields,
                 "Failed asserting that a field with the name [{$fieldName}] is visible on the form named [{$formName}] on the [{$livewireClass}] component."
             );
+
+            return $this;
+        };
+    }
+
+    public function assertWizardStepExists(): Closure
+    {
+        return function (int $step, string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormExists($formName);
+
+            /** @var Schema $form */
+            $form = $this->instance()->{$formName};
+
+            /** @var Wizard $wizard */
+            $wizard = $form->getComponent(fn (Component $component): bool => $component instanceof Wizard);
+            Assert::assertArrayHasKey(
+                $step - 1,
+                $wizard->getChildComponents(),
+                "Wizard does not have a step {$step}."
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertWizardCurrentStep(): Closure
+    {
+        return function (int $step, string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormExists($formName);
+
+            /** @var Schema $form */
+            $form = $this->instance()->{$formName};
+
+            /** @var Wizard $wizard */
+            $wizard = $form->getComponent(fn (Component $component): bool => $component instanceof Wizard);
+            Assert::assertEquals(
+                $step,
+                $current = $wizard->getCurrentStepIndex() + 1,
+                "Failed asserting that wizard is on step {$step}, current step is {$current}."
+            );
+
+            return $this;
+        };
+    }
+
+    public function goToWizardStep(): Closure
+    {
+        return function (int $step, string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertWizardStepExists($step, $formName);
+
+            /** @var Schema $form */
+            $form = $this->instance()->{$formName};
+
+            /** @var Wizard $wizard */
+            $wizard = $form->getComponent(fn (Component $component): bool => $component instanceof Wizard);
+
+            $stepIndex = ($step <= 1) ? 0 : $step - 2;
+
+            $this->call('callSchemaComponentMethod', $wizard->getKey(), 'nextStep', [$stepIndex]);
+
+            return $this;
+        };
+    }
+
+    public function goToNextWizardStep(): Closure
+    {
+        return function (string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormExists($formName);
+
+            /** @var Schema $form */
+            $form = $this->instance()->{$formName};
+
+            /** @var Wizard $wizard */
+            $wizard = $form->getComponent(fn (Component $component): bool => $component instanceof Wizard);
+
+            $this->call('callSchemaComponentMethod', $wizard->getKey(), 'nextStep', [$wizard->getCurrentStepIndex()]);
+
+            return $this;
+        };
+    }
+
+    public function goToPreviousWizardStep(): Closure
+    {
+        return function (string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormExists($formName);
+
+            /** @var Schema $form */
+            $form = $this->instance()->{$formName};
+
+            /** @var Wizard $wizard */
+            $wizard = $form->getComponent(fn (Component $component): bool => $component instanceof Wizard);
+
+            $this->call('callSchemaComponentMethod', $wizard->getKey(), 'previousStep', [$wizard->getCurrentStepIndex()]);
 
             return $this;
         };

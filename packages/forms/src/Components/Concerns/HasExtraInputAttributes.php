@@ -31,7 +31,7 @@ trait HasExtraInputAttributes
      */
     public function getExtraInputAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag();
+        $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraInputAttributes as $extraInputAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraInputAttributes));

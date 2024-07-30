@@ -31,6 +31,8 @@ class Wizard extends Component
 
     protected int | Closure $startStep = 1;
 
+    protected int $currentStepIndex = 0;
+
     /**
      * @var view-string
      */
@@ -61,6 +63,8 @@ class Wizard extends Component
 
         $this->key('wizard');
 
+        $this->currentStepIndex($this->getStartStep() - 1);
+
         $this->registerActions([
             fn (Wizard $component): Action => $component->getNextAction(),
             fn (Wizard $component): Action => $component->getPreviousAction(),
@@ -82,6 +86,7 @@ class Wizard extends Component
 
             /** @var ?Step $nextStep */
             $nextStep = $steps[$currentStepIndex + 1] ?? null;
+            $this->currentStepIndex($currentStepIndex + 1);
 
             try {
                 $currentStep->callBeforeValidation();
@@ -96,6 +101,16 @@ class Wizard extends Component
         /** @var LivewireComponent $livewire */
         $livewire = $this->getLivewire();
         $livewire->dispatch('next-wizard-step', key: $this->getKey());
+    }
+
+    #[Exposed]
+    public function previousStep(int $currentStepIndex): void
+    {
+        if ($currentStepIndex < 1) {
+            $currentStepIndex = 1;
+        }
+
+        $this->currentStepIndex($currentStepIndex - 1);
     }
 
     public function getNextAction(): Action
@@ -242,5 +257,17 @@ class Wizard extends Component
     public function isStepPersistedInQueryString(): bool
     {
         return filled($this->getStepQueryStringKey());
+    }
+
+    public function getCurrentStepIndex(): int
+    {
+        return $this->currentStepIndex;
+    }
+
+    protected function currentStepIndex(int $index): static
+    {
+        $this->currentStepIndex = $index;
+
+        return $this;
     }
 }

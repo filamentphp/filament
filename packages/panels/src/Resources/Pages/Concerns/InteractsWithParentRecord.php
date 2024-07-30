@@ -79,7 +79,7 @@ trait InteractsWithParentRecord
                 );
 
                 if ($parentRecord === null) {
-                    throw (new ModelNotFoundException())->setModel($parentResource::getModel(), [$parentRecordKey]);
+                    throw (new ModelNotFoundException)->setModel($parentResource::getModel(), [$parentRecordKey]);
                 }
 
                 if ($previousParentRecord) {

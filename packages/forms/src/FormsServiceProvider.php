@@ -49,7 +49,7 @@ class FormsServiceProvider extends PackageServiceProvider
             }
         }
 
-        Testable::mixin(new TestsForms());
-        Testable::mixin(new TestsFormComponentActions());
+        Testable::mixin(new TestsForms);
+        Testable::mixin(new TestsFormComponentActions);
     }
 }

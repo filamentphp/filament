@@ -44,6 +44,6 @@ class ActionsServiceProvider extends PackageServiceProvider
             }
         }
 
-        Testable::mixin(new TestsActions());
+        Testable::mixin(new TestsActions);
     }
 }

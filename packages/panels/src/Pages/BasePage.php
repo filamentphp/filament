@@ -126,7 +126,7 @@ abstract class BasePage extends Component implements HasActions, HasForms, HasIn
 
     protected function halt(): void
     {
-        throw new Halt();
+        throw new Halt;
     }
 
     protected function callHook(string $hook): void

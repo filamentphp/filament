@@ -18,7 +18,7 @@ it('can log a user out', function () {
 });
 
 it('allows a user to override the logout response', function () {
-    $logoutResponseFake = new class() implements LogoutResponse
+    $logoutResponseFake = new class implements LogoutResponse
     {
         public function toResponse($request): RedirectResponse
         {

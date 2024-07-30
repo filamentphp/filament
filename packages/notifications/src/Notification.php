@@ -236,7 +236,7 @@ class Notification extends ViewComponent implements Arrayable
 
     public static function assertNotified(Notification | string | null $notification = null): void
     {
-        $notificationsLivewireComponent = new Notifications();
+        $notificationsLivewireComponent = new Notifications;
         $notificationsLivewireComponent->mount();
         $notifications = $notificationsLivewireComponent->notifications;
 
@@ -272,7 +272,7 @@ class Notification extends ViewComponent implements Arrayable
 
     public static function assertNotNotified(Notification | string | null $notification = null): void
     {
-        $notificationsLivewireComponent = new Notifications();
+        $notificationsLivewireComponent = new Notifications;
         $notificationsLivewireComponent->mount();
         $notifications = $notificationsLivewireComponent->notifications;
 

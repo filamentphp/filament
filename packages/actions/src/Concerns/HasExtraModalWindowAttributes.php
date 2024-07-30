@@ -31,7 +31,7 @@ trait HasExtraModalWindowAttributes
      */
     public function getExtraModalWindowAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag();
+        $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraModalWindowAttributes as $extraModalWindowAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraModalWindowAttributes));

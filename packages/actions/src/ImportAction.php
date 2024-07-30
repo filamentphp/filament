@@ -323,7 +323,7 @@ class ImportAction extends Action
                 ->action(function (): StreamedResponse {
                     $columns = $this->getImporter()::getColumns();
 
-                    $csv = Writer::createFromFileObject(new SplTempFileObject());
+                    $csv = Writer::createFromFileObject(new SplTempFileObject);
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter())) {
                         $csv->setDelimiter($csvDelimiter);

@@ -960,7 +960,7 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 if ($translatableContentDriver) {
                     $record = $translatableContentDriver->makeRecord($relatedModel, $itemData);
                 } else {
-                    $record = new $relatedModel();
+                    $record = new $relatedModel;
                     $record->fill($itemData);
                 }
 

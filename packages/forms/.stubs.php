@@ -2,7 +2,6 @@
 
 namespace Livewire\Features\SupportTesting {
 
-    use Illuminate\Support\Collection;
     use Closure;
 
     class Testable {
@@ -31,6 +30,16 @@ namespace Livewire\Features\SupportTesting {
         public function assertFormComponentExists(string $componentKey, string | Closure $formName = 'form', ?Closure $checkComponentUsing = null): static {}
 
         public function assertFormComponentDoesNotExist(string $componentKey, string $formName = 'form'): static {}
+
+        public function goToWizardStep(int $step, string $formName = 'form'): static {}
+
+        public function goToNextWizardStep(string $formName = 'form'): static {}
+
+        public function goToPreviousWizardStep(string $formName = 'form'): static {}
+
+        public function assertWizardStepExists(int $step, string $formName = 'form'): static {}
+
+        public function assertWizardCurrentStep(int $step, string $formName = 'form'): static {}
     }
 
 }

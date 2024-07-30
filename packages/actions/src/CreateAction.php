@@ -78,7 +78,7 @@ class CreateAction extends Action
                 if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
                     $record = $translatableContentDriver->makeRecord($model, $data);
                 } else {
-                    $record = new $model();
+                    $record = new $model;
                     $record->fill($data);
                 }
 
