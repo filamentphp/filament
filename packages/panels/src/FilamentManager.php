@@ -350,21 +350,9 @@ class FilamentManager
      */
     public function getResourceUrl(string | Model $model, string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
     {
-        $modelClass = is_string($model) ? $model : $model::class;
-
         $panel = filled($panel) ? $this->getPanel($panel) : $this->getCurrentPanel();
-        $resource = $panel->getModelResource($modelClass);
 
-        if (blank($resource)) {
-            throw new Exception("No Filament resource found for model {$modelClass}");
-        }
-
-        // If the model is an instance of Model and the name is "edit" or "view" pass the record as a parameter.
-        if ($model instanceof Model && in_array($name, ['edit', 'view']) && blank($parameters)) {
-            $parameters = ['record' => $model];
-        }
-
-        return $resource::getUrl($name, $parameters, $isAbsolute, $panel->getId(), $tenant);
+        return $panel->getResourceUrl($model, $name, $parameters, $isAbsolute, $tenant);
     }
 
     public function getSidebarWidth(): string
