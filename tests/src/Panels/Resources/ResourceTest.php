@@ -105,17 +105,17 @@ it('can retrieve a page\'s URL', function () {
         ->toContain(strval($post->getRouteKey()));
 });
 
-it('can retrieve page urls by models', function () {
+it('can retrieve a page\'s URL from its model', function () {
     $post = Post::factory()->create();
 
     expect(Filament::getResourceUrl($post, 'edit'))
-        ->toEndWith('/posts/' . $post->getKey() . '/edit');
+        ->toEndWith("/posts/{$post->getKey(}/edit");
     expect(Filament::getResourceUrl($post, 'view'))
-        ->toEndWith('/posts/' . $post->getKey());
+        ->toEndWith("/posts/{$post->getKey()}");
     expect(Filament::getResourceUrl(Post::class, 'view', ['record' => $post]))
-        ->toEndWith('/posts/' . $post->getKey());
+        ->toEndWith("/posts/{$post->getKey()}");
     expect(Filament::getResourceUrl(Post::class))
-        ->toEndWith('/posts');
+        ->toEndWith("/posts");
     expect(Filament::getResourceUrl($post))
-        ->toEndWith('/posts');
+        ->toEndWith("/posts");
 });
