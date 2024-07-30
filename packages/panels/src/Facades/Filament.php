@@ -71,6 +71,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getRequestPasswordResetUrl(array $parameters = [])
  * @method static string getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = [])
  * @method static array getResources()
+ * @method static array getResourceUrl(string | Model $model, string $name = 'index', array $parameters = [], bool $isAbsolute = false, ?Model $tenant = null)
  * @method static string getSidebarWidth()
  * @method static Model | null getTenant()
  * @method static string | null getTenantAvatarUrl(Model $tenant)

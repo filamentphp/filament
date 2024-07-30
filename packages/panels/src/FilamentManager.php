@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
+use Throwable;
 
 class FilamentManager
 {
@@ -340,6 +341,14 @@ class FilamentManager
     public function getResources(): array
     {
         return $this->getCurrentPanel()->getResources();
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getResourceUrl(string | Model $model, string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?Model $tenant = null): string
+    {
+        return $this->getCurrentPanel()->getResourceUrl($model, $name, $parameters, $isAbsolute, $tenant);
     }
 
     public function getSidebarWidth(): string
