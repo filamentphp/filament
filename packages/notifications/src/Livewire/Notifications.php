@@ -27,7 +27,7 @@ class Notifications extends Component
 
     public function mount(): void
     {
-        $this->notifications = new Collection();
+        $this->notifications = new Collection;
         $this->pullNotificationsFromSession();
     }
 

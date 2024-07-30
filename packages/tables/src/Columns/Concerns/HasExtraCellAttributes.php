@@ -31,7 +31,7 @@ trait HasExtraCellAttributes
      */
     public function getExtraCellAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag();
+        $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraCellAttributes as $extraCellAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraCellAttributes));

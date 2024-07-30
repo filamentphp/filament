@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 uses(TestCase::class);
 
 test('components can be hidden', function () {
-    $component = (new Component())
+    $component = (new Component)
         ->container(ComponentContainer::make(Livewire::make()))
         ->hidden();
 
@@ -23,7 +23,7 @@ test('components can be hidden based on condition', function () {
 
     $container = ComponentContainer::make(Livewire::make())
         ->components([
-            (new Component())
+            (new Component)
                 ->visible(fn (callable $get) => $get($statePath) === false),
         ])
         ->fill([
@@ -34,7 +34,7 @@ test('components can be hidden based on condition', function () {
         ->toHaveCount(0);
 
     $container->components([
-        (new Component())
+        (new Component)
             ->whenTruthy($statePath),
     ]);
 
@@ -42,7 +42,7 @@ test('components can be hidden based on condition', function () {
         ->toHaveLength(1);
 
     $container->components([
-        (new Component())
+        (new Component)
             ->whenFalsy($statePath),
     ]);
 
@@ -51,7 +51,7 @@ test('components can be hidden based on condition', function () {
 
     $container
         ->components([
-            (new Component())
+            (new Component)
                 ->whenFalsy([$statePath, 'bob']),
         ])
         ->fill([
@@ -63,7 +63,7 @@ test('components can be hidden based on condition', function () {
 
     $container
         ->components([
-            (new Component())
+            (new Component)
                 ->whenTruthy([$statePath, 'bob']),
         ])
         ->fill([
@@ -78,11 +78,11 @@ test('hidden components are not returned from container', function () {
     $components = [];
 
     foreach (range(1, $visibleCount = rand(2, 10)) as $i) {
-        $components[] = new Component();
+        $components[] = new Component;
     }
 
     foreach (range(1, rand(2, 10)) as $i) {
-        $components[] = (new Component())->hidden();
+        $components[] = (new Component)->hidden();
     }
 
     $componentsBoundToContainer = ($container = ComponentContainer::make(Livewire::make()))

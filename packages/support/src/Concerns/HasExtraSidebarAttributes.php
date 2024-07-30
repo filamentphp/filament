@@ -31,7 +31,7 @@ trait HasExtraSidebarAttributes
      */
     public function getExtraSidebarAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag();
+        $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraSidebarAttributes as $extraSidebarAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraSidebarAttributes));

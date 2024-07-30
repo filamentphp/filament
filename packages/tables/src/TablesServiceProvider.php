@@ -40,12 +40,12 @@ class TablesServiceProvider extends PackageServiceProvider
             }
         }
 
-        Testable::mixin(new TestsActions());
-        Testable::mixin(new TestsBulkActions());
-        Testable::mixin(new TestsColumns());
-        Testable::mixin(new TestsFilters());
-        Testable::mixin(new TestsRecords());
-        Testable::mixin(new TestsSummaries());
+        Testable::mixin(new TestsActions);
+        Testable::mixin(new TestsBulkActions);
+        Testable::mixin(new TestsColumns);
+        Testable::mixin(new TestsFilters);
+        Testable::mixin(new TestsRecords);
+        Testable::mixin(new TestsSummaries);
     }
 
     /**

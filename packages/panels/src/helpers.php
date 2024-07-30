@@ -34,7 +34,7 @@ if (! function_exists('Filament\authorize')) {
             );
 
             if ($response === false) {
-                throw new AuthorizationException();
+                throw new AuthorizationException;
             }
 
             if (! $response instanceof Response) {

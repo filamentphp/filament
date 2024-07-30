@@ -189,7 +189,7 @@ trait HasTenancy
             ->resolveRouteBinding($key, $this->getTenantSlugAttribute());
 
         if ($record === null) {
-            throw (new ModelNotFoundException())->setModel($tenantModel, [$key]);
+            throw (new ModelNotFoundException)->setModel($tenantModel, [$key]);
         }
 
         return $record;

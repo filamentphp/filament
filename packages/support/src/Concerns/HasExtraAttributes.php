@@ -31,7 +31,7 @@ trait HasExtraAttributes
      */
     public function getExtraAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag();
+        $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraAttributes as $extraAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraAttributes));

@@ -52,6 +52,6 @@ class NotificationsServiceProvider extends PackageServiceProvider
             $component->dispatch('notificationsSent');
         });
 
-        Testable::mixin(new TestsNotifications());
+        Testable::mixin(new TestsNotifications);
     }
 }

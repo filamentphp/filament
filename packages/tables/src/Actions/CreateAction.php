@@ -60,7 +60,7 @@ class CreateAction extends Action
                 if ($translatableContentDriver = $table->makeTranslatableContentDriver()) {
                     $record = $translatableContentDriver->makeRecord($model, $data);
                 } else {
-                    $record = new $model();
+                    $record = new $model;
                     $record->fill($data);
                 }
 

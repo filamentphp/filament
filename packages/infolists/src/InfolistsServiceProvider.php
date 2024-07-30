@@ -20,7 +20,7 @@ class InfolistsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        Testable::mixin(new TestsActions());
+        Testable::mixin(new TestsActions);
     }
 
     /**

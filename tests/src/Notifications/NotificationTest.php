@@ -174,7 +174,7 @@ it('can close notifications', function () {
 
 function getLastNotificationAction()
 {
-    $notificationsLivewireComponent = new Notifications();
+    $notificationsLivewireComponent = new Notifications;
     $notificationsLivewireComponent->mount();
     $notifications = $notificationsLivewireComponent->notifications;
 

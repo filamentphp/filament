@@ -22,7 +22,7 @@ class DownloadImportFailureCsv
             abort_unless($import->user()->is(auth()->user()), 403);
         }
 
-        $csv = Writer::createFromFileObject(new SplTempFileObject());
+        $csv = Writer::createFromFileObject(new SplTempFileObject);
         $csv->setOutputBOM(ByteSequence::BOM_UTF8);
 
         $columnHeaders = array_keys($import->failedRows()->first()->data);

@@ -31,7 +31,7 @@ trait HasExtraEntryWrapperAttributes
      */
     public function getExtraEntryWrapperAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag();
+        $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraEntryWrapperAttributes as $extraEntryWrapperAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraEntryWrapperAttributes));

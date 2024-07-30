@@ -57,7 +57,7 @@ class SupportServiceProvider extends PackageServiceProvider
     {
         $this->app->scoped(
             AssetManager::class,
-            fn () => new AssetManager(),
+            fn () => new AssetManager,
         );
 
         $this->app->scoped(
@@ -69,23 +69,23 @@ class SupportServiceProvider extends PackageServiceProvider
 
         $this->app->scoped(
             ColorManager::class,
-            fn () => new ColorManager(),
+            fn () => new ColorManager,
         );
 
         $this->app->scoped(
             IconManager::class,
-            fn () => new IconManager(),
+            fn () => new IconManager,
         );
 
         $this->app->scoped(
             ViewManager::class,
-            fn () => new ViewManager(),
+            fn () => new ViewManager,
         );
 
         $this->app->scoped(
             HtmlSanitizerInterface::class,
             fn (): HtmlSanitizer => new HtmlSanitizer(
-                (new HtmlSanitizerConfig())
+                (new HtmlSanitizerConfig)
                     ->allowSafeElements()
                     ->allowRelativeLinks()
                     ->allowRelativeMedias()

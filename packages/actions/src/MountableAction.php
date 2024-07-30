@@ -43,12 +43,12 @@ abstract class MountableAction extends StaticAction implements HasLivewire
 
     public function cancel(bool $shouldRollBackDatabaseTransaction = false): void
     {
-        throw (new Cancel())->rollBackDatabaseTransaction($shouldRollBackDatabaseTransaction);
+        throw (new Cancel)->rollBackDatabaseTransaction($shouldRollBackDatabaseTransaction);
     }
 
     public function halt(bool $shouldRollBackDatabaseTransaction = false): void
     {
-        throw (new Halt())->rollBackDatabaseTransaction($shouldRollBackDatabaseTransaction);
+        throw (new Halt)->rollBackDatabaseTransaction($shouldRollBackDatabaseTransaction);
     }
 
     /**

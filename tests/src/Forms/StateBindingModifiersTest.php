@@ -28,14 +28,14 @@ test('fields can have state binding modifiers', function () {
 });
 
 test('component state binding is deferred by default', function () {
-    $component = (new Component())->container(ComponentContainer::make(Livewire::make()));
+    $component = (new Component)->container(ComponentContainer::make(Livewire::make()));
 
     expect($component)
         ->getStateBindingModifiers()->toBe([]);
 });
 
 test('component state binding can be live', function () {
-    $component = (new Component())
+    $component = (new Component)
         ->container(ComponentContainer::make(Livewire::make()))
         ->live();
 
@@ -44,7 +44,7 @@ test('component state binding can be live', function () {
 });
 
 test('component state binding can be triggered on blur', function () {
-    $component = (new Component())
+    $component = (new Component)
         ->container(ComponentContainer::make(Livewire::make()))
         ->live(onBlur: true);
 
@@ -53,7 +53,7 @@ test('component state binding can be triggered on blur', function () {
 });
 
 test('component state binding can be debounced', function () {
-    $component = (new Component())
+    $component = (new Component)
         ->container(ComponentContainer::make(Livewire::make()))
         ->live(debounce: '750ms');
 
@@ -62,11 +62,11 @@ test('component state binding can be debounced', function () {
 });
 
 test('components inherit their state binding modifiers', function () {
-    $component = (new Component())
+    $component = (new Component)
         ->container(
             ComponentContainer::make(Livewire::make())
                 ->parentComponent(
-                    (new Component())->stateBindingModifiers($modifiers = [Str::random()]),
+                    (new Component)->stateBindingModifiers($modifiers = [Str::random()]),
                 ),
         );
 

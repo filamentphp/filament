@@ -176,7 +176,7 @@
                         x-transition:leave-end="scale-95 opacity-0"
                     @endif
                     {{
-                        ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag())->class([
+                        ($extraModalWindowAttributeBag ?? new \Illuminate\View\ComponentAttributeBag)->class([
                             'fi-modal-window pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                             'fi-modal-slide-over-window ms-auto overflow-y-auto' => $slideOver,
                             // Using an arbitrary value instead of the h-dvh class that was added in Tailwind CSS v3.4.0
