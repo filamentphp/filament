@@ -348,11 +348,9 @@ class FilamentManager
      *
      * @throws Throwable
      */
-    public function getResourceUrl(string | Model $model, string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    public function getResourceUrl(string | Model $model, string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?Model $tenant = null): string
     {
-        $panel = filled($panel) ? $this->getPanel($panel) : $this->getCurrentPanel();
-
-        return $panel->getResourceUrl($model, $name, $parameters, $isAbsolute, $tenant);
+        return $this->getCurrentPanel()->getResourceUrl($model, $name, $parameters, $isAbsolute, $tenant);
     }
 
     public function getSidebarWidth(): string
