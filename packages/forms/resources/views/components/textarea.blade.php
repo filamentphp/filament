@@ -34,6 +34,7 @@
         "
     >
         <textarea
+            wire:ignore
             x-ignore
             @if (FilamentView::hasSpaMode())
                 ax-load="visible"
@@ -41,12 +42,17 @@
                 ax-load
             @endif
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms') }}"
-            x-data="textareaFormComponent({ initialHeight: @js($initialHeight) })"
+            x-data="textareaFormComponent({
+                initialHeight: @js($initialHeight),
+                shouldAutosize: @js($shouldAutosize),
+                state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
+            })"
             @if ($shouldAutosize)
                 x-intersect.once="resize()"
                 x-on:input="resize()"
                 x-on:resize.window="resize()"
             @endif
+            x-model="state"
             x-bind:style="{ height }"
             {{ $getExtraAlpineAttributeBag() }}
             {{
@@ -63,7 +69,6 @@
                         'readonly' => $isReadOnly(),
                         'required' => $isRequired() && (! $isConcealed),
                         'rows' => $rows,
-                        $applyStateBindingModifiers('wire:model') => $statePath,
                     ], escape: false)
                     ->class([
                         'block w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:text-sm sm:leading-6',
