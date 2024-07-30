@@ -417,7 +417,7 @@ class TestsForms
             Assert::assertArrayHasKey(
                 $step - 1,
                 $wizard->getChildComponents(),
-                "Wizard does not have a step {$step}"
+                "Wizard does not have a step {$step}."
             );
 
             return $this;
@@ -438,7 +438,7 @@ class TestsForms
             Assert::assertEquals(
                 $step,
                 $current = $wizard->getCurrentStepIndex() + 1,
-                "Failed asserting that wizard is on step {$step}, current step is {$current}"
+                "Failed asserting that wizard is on step {$step}, current step is {$current}."
             );
 
             return $this;
@@ -447,7 +447,7 @@ class TestsForms
 
     public function goToWizardStep(): Closure
     {
-        return function (int $step = 1, string $formName = 'form'): static {
+        return function (int $step, string $formName = 'form'): static {
             /** @phpstan-ignore-next-line  */
             $this->assertWizardStepExists($step, $formName);
 

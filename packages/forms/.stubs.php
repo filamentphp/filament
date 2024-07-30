@@ -89,7 +89,7 @@ namespace Livewire\Features\SupportTesting {
 
         public function parseNestedFormComponentActionComponentAndName(string | array $component, string | array $name, string $formName = 'form'): static {}
 
-        public function goToWizardStep(int $desiredStep, string $formName = 'form'): static {}
+        public function goToWizardStep(int $step, string $formName = 'form'): static {}
 
         public function goToNextWizardStep(string $formName = 'form'): static {}
 

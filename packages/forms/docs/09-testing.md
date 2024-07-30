@@ -288,49 +288,49 @@ test('comments section is enabled' function () {
 
 ### Wizard
 
-To call a wizard's next step, use the `goToNextWizardStep()` method:
+To go to a wizard's next step, use `goToNextWizardStep()`:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('moves to next wizard step', function () {
-    livewire(CreatePostUsingWizard::class)
+    livewire(CreatePost::class)
         ->goToNextWizardStep()
         ->assertHasFormErrors(['title']);
 });
 ```
 
-You can also go to the previous step by calling `goToPreviousWizardStep()` method:
+You can also go to the previous step by calling `goToPreviousWizardStep()`:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('moves to next wizard step', function () {
-    livewire(CreatePostUsingWizard::class)
+    livewire(CreatePost::class)
         ->goToPreviousWizardStep()
         ->assertHasFormErrors(['title']);
 });
 ```
 
-If you want to go to a specific step, use `goToWizardStep`, the `assertWizardCurrentStep` method can ensure you are on the desired step:
+If you want to go to a specific step, use `goToWizardStep()`, then the `assertWizardCurrentStep` method which can ensure you are on the desired step without validation errors from the previous:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('moves to the wizards second step', function () {
-    livewire(CreatePostUsingWizard::class)
+    livewire(CreatePost::class)
         ->goToWizardStep(2)
         ->assertWizardCurrentStep(2);
 });
 ```
 
-If you have multiple forms on a single component, any of the wizard test helpers can accept a formName parameter:
+If you have multiple forms on a single Livewire component, any of the wizard test helpers can accept a `formName` parameter:
 
 ```php
 use function Pest\Livewire\livewire;
 
 it('moves to next wizard step only for fooForm', function () {
-    livewire(CreatePostUsingWizard::class)
+    livewire(CreatePost::class)
         ->goToNextWizardStep(formName: 'fooForm')
         ->assertHasFormErrors(['title'], formName: 'fooForm');
 });

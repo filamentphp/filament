@@ -13,6 +13,7 @@ class CreatePostUsingWizard extends CreateRecord
     use HasWizard;
 
     protected static string $resource = PostResource::class;
+
     public function getSteps(): array
     {
         return [
