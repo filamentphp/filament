@@ -345,8 +345,6 @@ class FilamentManager
 
     /**
      * @param  array<mixed>  $parameters
-     *
-     * @throws Throwable
      */
     public function getResourceUrl(string | Model $model, string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?Model $tenant = null): string
     {
