@@ -109,7 +109,7 @@ it('can retrieve a page\'s URL from its model', function () {
     $post = Post::factory()->create();
 
     expect(Filament::getResourceUrl($post, 'edit'))
-        ->toEndWith("/posts/{$post->getKey(}/edit");
+        ->toEndWith("/posts/{$post->getKey()}/edit");
     expect(Filament::getResourceUrl($post, 'view'))
         ->toEndWith("/posts/{$post->getKey()}");
     expect(Filament::getResourceUrl(Post::class, 'view', ['record' => $post]))
