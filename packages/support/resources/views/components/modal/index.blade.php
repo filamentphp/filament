@@ -71,14 +71,6 @@
             this.$refs.modalContainer.dispatchEvent(
                 new CustomEvent('modal-closed', { id: '{{ $id }}' }),
             )
-
-            {{-- this.$nextTick(() => {
-                if (document.getElementsByClassName('fi-modal-open').length) {
-                    return
-                }
-
-                window.clearAllBodyScrollLocks()
-            }) --}}
         },
 
         open: function () {
@@ -89,9 +81,6 @@
                     new CustomEvent('modal-opened', { id: '{{ $id }}' }),
                 )
             })
-
-            {{-- window.clearAllBodyScrollLocks()
-            window.disableBodyScroll(this.$root) --}}
         },
     }"
     @if ($id)
