@@ -82,14 +82,16 @@
         },
 
         open: function () {
-            this.isOpen = true
+            this.$nextTick(() => {
+                this.isOpen = true
+
+                this.$refs.modalContainer.dispatchEvent(
+                    new CustomEvent('modal-opened', { id: '{{ $id }}' }),
+                )
+            })
 
             {{-- window.clearAllBodyScrollLocks()
             window.disableBodyScroll(this.$root) --}}
-
-            this.$refs.modalContainer.dispatchEvent(
-                new CustomEvent('modal-opened', { id: '{{ $id }}' }),
-            )
         },
     }"
     @if ($id)
