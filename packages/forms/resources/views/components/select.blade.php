@@ -98,12 +98,12 @@
             <div
                 class="hidden"
                 x-data="{
-                    disabled: @js($isDisabled),
-                    init() {
+                    isDisabled: @js($isDisabled),
+                    init: function () {
                         const container = $el.nextElementSibling
                         container.dispatchEvent(
-                            new CustomEvent('toggle-state', {
-                                detail: { disabled: this.disabled },
+                            new CustomEvent('set-select-property', {
+                                detail: { isDisabled: this.isDisabled },
                             }),
                         )
                     },
@@ -155,7 +155,7 @@
                         })"
                 wire:ignore
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
-                x-on:toggle-state="$event.detail.disabled ? select.disable() : select.enable()"
+                x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
                 {{
                     $attributes
                         ->merge($getExtraAlpineAttributes(), escape: false)
