@@ -108,8 +108,7 @@
                         )
                     },
                 }"
-            >
-            </div>
+            ></div>
             <div
                 x-ignore
                 @if (FilamentView::hasSpaMode())
