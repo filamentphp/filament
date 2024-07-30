@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 class Panel extends Component
 {
+    use Panel\Concerns\CanGenerateResourceUrls;
     use Panel\Concerns\HasAssets;
     use Panel\Concerns\HasAuth;
     use Panel\Concerns\HasAvatars;
@@ -42,7 +43,6 @@ class Panel extends Component
     use Panel\Concerns\HasTopbar;
     use Panel\Concerns\HasTopNavigation;
     use Panel\Concerns\HasUnsavedChangesAlerts;
-    use Panel\Concerns\HasUrls;
     use Panel\Concerns\HasUserMenu;
 
     protected bool $isDefault = false;
