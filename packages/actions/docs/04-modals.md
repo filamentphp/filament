@@ -508,7 +508,7 @@ Modal::closedByClickingAway(false);
 
 ## Closing the modal by escaping
 
-By default, when you press escape on a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closedByEscaping(false)` method:
+By default, when you press escape on a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closeModalByEscaping(false)` method:
 
 ```php
 Action::make('updateAuthor')
@@ -518,7 +518,7 @@ Action::make('updateAuthor')
     ->action(function (array $data): void {
         // ...
     })
-    ->closedByEscaping(false)
+    ->closeModalByEscaping(false)
 ```
 
 If you'd like to change the behavior for all modals in the application, you can do so by calling `Modal::closedByEscaping()` inside a service provider or middleware:
