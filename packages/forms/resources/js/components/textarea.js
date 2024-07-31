@@ -1,12 +1,19 @@
 export default function textareaFormComponent({ initialHeight, shouldAutosize, state }) {
     return {
-        height: null,
+        height: initialHeight + 'rem',
 
         state,
 
+        wrapperEl: null,
+
         init: function () {
+            this.wrapperEl = this.$el.parentNode
+
             this.setInitialHeight()
-            this.setUpResizeObserver()
+
+            if (! shouldAutosize) {
+                this.setUpResizeObserver()
+            }
 
             if (shouldAutosize) {
                 this.$watch('state', () => {
@@ -22,7 +29,7 @@ export default function textareaFormComponent({ initialHeight, shouldAutosize, s
                 return
             }
 
-            this.$el.style.height = this.height
+            this.wrapperEl.style.height = this.height
         },
 
         resize: function () {
@@ -39,12 +46,12 @@ export default function textareaFormComponent({ initialHeight, shouldAutosize, s
             }
 
             this.height = newHeight
-            this.$el.style.height = this.height
+            this.wrapperEl.style.height = this.height
         },
 
         setUpResizeObserver: function () {
             const observer = new ResizeObserver(() => {
-                this.height = this.$el.style.height
+                this.height = this.wrapperEl.style.height = this.$el.style.height
             })
 
             observer.observe(this.$el)
