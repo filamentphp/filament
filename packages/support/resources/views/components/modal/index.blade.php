@@ -80,13 +80,7 @@
         },
 
         open: function () {
-            this.$nextTick(() => {
-                this.isOpen = true
-
-                this.$refs.modalContainer.dispatchEvent(
-                    new CustomEvent('modal-opened', { id: '{{ $id }}' }),
-                )
-            })
+            this.$nextTick(() => this.isOpen = true)
         },
     }"
     @if ($id)
