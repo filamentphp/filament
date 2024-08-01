@@ -2,6 +2,7 @@
 
 namespace {{ namespace }};
 
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schema\Schema;
@@ -41,7 +42,7 @@ class {{ managerClass }} extends RelationManager
 {{ tableActions }}
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
 {{ tableBulkActions }}
                 ]),
             ]){{ modifyQueryUsing }};

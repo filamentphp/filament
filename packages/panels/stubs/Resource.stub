@@ -5,6 +5,7 @@ namespace {{ namespace }};
 {{ clusterImport }}use {{ resource }}\Pages;
 use {{ resource }}\RelationManagers;
 use {{ model }};
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schema\Schema;
@@ -40,7 +41,7 @@ class {{ resourceClass }} extends Resource
 {{ tableActions }}
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
 {{ tableBulkActions }}
                 ]),
             ]);
