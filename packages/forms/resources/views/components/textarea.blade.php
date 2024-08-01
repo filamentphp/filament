@@ -49,7 +49,6 @@
                 })"
                 @if ($shouldAutosize)
                     x-intersect.once="resize()"
-                    x-on:input="resize()"
                     x-on:resize.window="resize()"
                 @endif
                 x-model="state"

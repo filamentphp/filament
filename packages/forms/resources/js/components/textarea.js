@@ -1,7 +1,5 @@
 export default function textareaFormComponent({ initialHeight, shouldAutosize, state }) {
     return {
-        height: initialHeight + 'rem',
-
         state,
 
         wrapperEl: null,
@@ -23,13 +21,11 @@ export default function textareaFormComponent({ initialHeight, shouldAutosize, s
         },
 
         setInitialHeight: function () {
-            this.height = initialHeight + 'rem'
-
             if (this.$el.scrollHeight <= 0) {
                 return
             }
 
-            this.wrapperEl.style.height = this.height
+            this.wrapperEl.style.height = initialHeight + 'rem'
         },
 
         resize: function () {
@@ -41,17 +37,16 @@ export default function textareaFormComponent({ initialHeight, shouldAutosize, s
 
             const newHeight = this.$el.scrollHeight + 'px'
 
-            if (this.height === newHeight) {
+            if (this.wrapperEl.style.height === newHeight) {
                 return
             }
 
-            this.height = newHeight
-            this.wrapperEl.style.height = this.height
+            this.wrapperEl.style.height = newHeight
         },
 
         setUpResizeObserver: function () {
             const observer = new ResizeObserver(() => {
-                this.height = this.wrapperEl.style.height = this.$el.style.height
+                this.wrapperEl.style.height = this.$el.style.height
             })
 
             observer.observe(this.$el)
