@@ -510,6 +510,7 @@ const locales = {
     ro: require('dayjs/locale/ro'),
     ru: require('dayjs/locale/ru'),
     sv: require('dayjs/locale/sv'),
+    th: require('dayjs/locale/th'),
     tr: require('dayjs/locale/tr'),
     uk: require('dayjs/locale/uk'),
     vi: require('dayjs/locale/vi'),
