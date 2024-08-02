@@ -52,7 +52,7 @@ class {{ resourcePageClass }} extends {{ baseResourcePageClass }}
 {{ tableActions }}
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
 {{ tableBulkActions }}
                 ]),
             ]){{ modifyQueryUsing }};

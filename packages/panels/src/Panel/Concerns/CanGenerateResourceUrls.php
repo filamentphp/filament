@@ -4,7 +4,6 @@ namespace Filament\Panel\Concerns;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
-use Throwable;
 
 trait CanGenerateResourceUrls
 {

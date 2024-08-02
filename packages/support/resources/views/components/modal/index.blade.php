@@ -80,7 +80,7 @@
         },
 
         open: function () {
-            this.$nextTick(() => this.isOpen = true)
+            this.$nextTick(() => (this.isOpen = true))
         },
     }"
     @if ($id)
