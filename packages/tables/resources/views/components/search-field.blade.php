@@ -29,7 +29,7 @@
     >
         <x-filament::input
             :attributes="
-                (new ComponentAttributeBag())->merge([
+                (new ComponentAttributeBag)->merge([
                     'autocomplete' => 'off',
                     'inlinePrefix' => true,
                     'placeholder' => $placeholder,

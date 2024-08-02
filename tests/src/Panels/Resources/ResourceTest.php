@@ -115,7 +115,7 @@ it('can retrieve a page\'s URL from its model', function () {
     expect(Filament::getResourceUrl(Post::class, 'view', ['record' => $post]))
         ->toEndWith("/posts/{$post->getKey()}");
     expect(Filament::getResourceUrl(Post::class))
-        ->toEndWith("/posts");
+        ->toEndWith('/posts');
     expect(Filament::getResourceUrl($post))
-        ->toEndWith("/posts");
+        ->toEndWith('/posts');
 });
