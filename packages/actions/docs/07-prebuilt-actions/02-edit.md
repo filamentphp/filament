@@ -20,7 +20,7 @@ EditAction::make()
     ])
 ```
 
-If you want to edit table rows, you can use the `Filament\Tables\Actions\EditAction` instead:
+If you want to edit table rows, you can use the `Filament\Actions\EditAction` instead:
 
 ```php
 use Filament\Actions\EditAction;

@@ -36,7 +36,7 @@ ExportAction::make()
     ->exporter(ProductExporter::class)
 ```
 
-If you want to add this action to the header of a table instead, you can use `Filament\Tables\Actions\ExportAction`:
+If you want to add this action to the header of a table instead, you can use `Filament\Actions\ExportAction`:
 
 ```php
 use App\Filament\Exports\ProductExporter;
@@ -53,7 +53,7 @@ public function table(Table $table): Table
 }
 ```
 
-Or if you want to add it as a table bulk action, so that the user can choose which rows to export, they can use `Filament\Tables\Actions\ExportBulkAction`:
+Or if you want to add it as a table bulk action, so that the user can choose which rows to export, they can use `Filament\Actions\ExportBulkAction`:
 
 ```php
 use App\Filament\Exports\ProductExporter;

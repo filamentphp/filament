@@ -20,7 +20,7 @@ CreateAction::make()
     ])
 ```
 
-If you want to add this action to the header of a table instead, you can use `Filament\Tables\Actions\CreateAction`:
+If you want to add this action to the header of a table instead, you can use `Filament\Actions\CreateAction`:
 
 ```php
 use Filament\Actions\CreateAction;
