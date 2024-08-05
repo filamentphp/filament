@@ -1,6 +1,7 @@
 @php
     use Filament\Support\Enums\Alignment;
 @endphp
+
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
         $alignment = $getAlignment();
