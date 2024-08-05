@@ -20,7 +20,7 @@ ViewAction::make()
     ])
 ```
 
-If you want to view table rows, you can use the `Filament\Tables\Actions\ViewAction` instead:
+If you want to view table rows, you can use the `Filament\Actions\ViewAction` instead:
 
 ```php
 use Filament\Actions\ViewAction;

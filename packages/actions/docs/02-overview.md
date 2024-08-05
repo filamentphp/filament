@@ -60,7 +60,7 @@ If you're looking to add an action to a Livewire component, [visit this page](ad
 
 Filament's tables also use actions. Actions can be added to the end of any table row, or even in the header of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. Additionally, actions can be added to any table column, such that each cell in that column is a trigger for your action.
 
-These actions use the `Filament\Tables\Actions\Action` class. They can open a modal if you choose, or even just a URL.
+These actions use the `Filament\Actions\Action` class. They can open a modal if you choose, or even just a URL.
 
 If you're looking to add an action to a table in your app, [visit this page](../tables/actions) in the docs.
 
@@ -68,7 +68,7 @@ If you're looking to add an action to a table in your app, [visit this page](../
 
 Tables also support "bulk actions". These can be used when the user selects rows in the table. Traditionally, when rows are selected, a "bulk actions" button appears in the top left corner of the table. When the user clicks this button, they are presented with a dropdown menu of actions to choose from. Bulk actions may also be added to the header of a table, next to other header actions. In this case, bulk action trigger buttons are disabled until the user selects table rows.
 
-These actions use the `Filament\Tables\Actions\BulkAction` class. They can open modals if you choose.
+These actions use the `Filament\Actions\BulkAction` class. They can open modals if you choose.
 
 If you're looking to add a bulk action to a table in your app, [visit this page](../tables/actions#bulk-actions) in the docs.
 

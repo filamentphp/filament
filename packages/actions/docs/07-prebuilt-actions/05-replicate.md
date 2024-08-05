@@ -13,7 +13,7 @@ ReplicateAction::make()
     ->record($this->post)
 ```
 
-If you want to replicate table rows, you can use the `Filament\Tables\Actions\ReplicateAction` instead:
+If you want to replicate table rows, you can use the `Filament\Actions\ReplicateAction` instead:
 
 ```php
 use Filament\Actions\ReplicateAction;

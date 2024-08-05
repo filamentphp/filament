@@ -38,7 +38,7 @@ ImportAction::make()
     ->importer(ProductImporter::class)
 ```
 
-If you want to add this action to the header of a table instead, you can use `Filament\Tables\Actions\ImportAction`:
+If you want to add this action to the header of a table instead, you can use `Filament\Actions\ImportAction`:
 
 ```php
 use App\Filament\Imports\ProductImporter;

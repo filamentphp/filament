@@ -13,7 +13,7 @@ ForceDeleteAction::make()
     ->record($this->post)
 ```
 
-If you want to force-delete table rows, you can use the `Filament\Tables\Actions\ForceDeleteAction` instead, or `Filament\Tables\Actions\ForceDeleteBulkAction` to force-delete multiple at once:
+If you want to force-delete table rows, you can use the `Filament\Actions\ForceDeleteAction` instead, or `Filament\Actions\ForceDeleteBulkAction` to force-delete multiple at once:
 
 ```php
 use Filament\Actions\BulkActionGroup;
