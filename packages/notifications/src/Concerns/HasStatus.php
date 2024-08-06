@@ -25,6 +25,11 @@ trait HasStatus
         return $this->status('danger');
     }
 
+    public function error(): static
+    {
+        return $this->status('danger');
+    }
+
     public function info(): static
     {
         return $this->status('info');
