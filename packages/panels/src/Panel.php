@@ -45,6 +45,7 @@ class Panel extends Component
     use Panel\Concerns\HasTopNavigation;
     use Panel\Concerns\HasUnsavedChangesAlerts;
     use Panel\Concerns\HasUserMenu;
+    use Panel\Concerns\HasFocusMode;
 
     protected bool $isDefault = false;
 

@@ -936,4 +936,9 @@ class FilamentManager
 
         return request()->getHost();
     }
+
+    public function hasFocusMode(): bool
+    {
+        return $this->getCurrentPanel()->hasFocusMode();
+    }
 }
