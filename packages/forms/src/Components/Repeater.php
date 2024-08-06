@@ -45,7 +45,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
     protected bool | Closure $isInset = false;
 
-    protected ?Collection $cachedExistingRecords = null;
+    protected static array $cachedExistingRecords = [];
 
     protected string | Closure | null $orderColumn = null;
 
@@ -1056,8 +1056,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
     public function getCachedExistingRecords(): Collection
     {
-        if ($this->cachedExistingRecords) {
-            return $this->cachedExistingRecords;
+        $statePath = $this->getStatePath();
+        if (isset(static::$cachedExistingRecords[$statePath])) {
+            return static::$cachedExistingRecords[$statePath];
         }
 
         $relationship = $this->getRelationship();
@@ -1070,7 +1071,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             $this->getModelInstance()->relationLoaded($relationshipName) &&
             (! $this->modifyRelationshipQueryUsing)
         ) {
-            return $this->cachedExistingRecords = $this->getRecord()->getRelationValue($relationshipName)
+            return static::$cachedExistingRecords[$statePath] = $this->getRecord()->getRelationValue($relationshipName)
                 ->when(filled($orderColumn), fn (Collection $records) => $records->sortBy($orderColumn))
                 ->mapWithKeys(
                     fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
@@ -1096,7 +1097,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
             $relationshipQuery->orderBy($orderColumn);
         }
 
-        return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
+        return static::$cachedExistingRecords[$statePath] = $relationshipQuery->get()->mapWithKeys(
             fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
         );
     }
@@ -1136,7 +1137,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
     public function clearCachedExistingRecords(): void
     {
-        $this->cachedExistingRecords = null;
+        unset(static::$cachedExistingRecords[$this->getStatePath()]);
     }
 
     public function getRelatedModel(): string
