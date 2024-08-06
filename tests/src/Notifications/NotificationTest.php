@@ -29,6 +29,7 @@ it('can send notifications', function () {
     $getRandomColor = function (): string {
         return Arr::random([
             'danger',
+            'error',
             'gray',
             'info',
             'primary',
