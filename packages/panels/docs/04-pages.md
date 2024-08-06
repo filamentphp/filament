@@ -221,7 +221,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 public function getTitle(): string | Htmlable
 {
-    return __('Custom Page Title');
+    return $this->record->name;
 }
 ```
 
