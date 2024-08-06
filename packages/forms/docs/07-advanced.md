@@ -338,7 +338,7 @@ use Filament\Forms\Set;
 use Illuminate\Support\Str;
 
 TextInput::make('title')
-    ->live()
+    ->live(onBlur: true)
     ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
     
 TextInput::make('slug')
@@ -355,7 +355,7 @@ use Filament\Forms\Set;
 use Illuminate\Support\Str;
 
 TextInput::make('title')
-    ->live()
+    ->live(onBlur: true)
     ->afterStateUpdated(function (Get $get, Set $set, ?string $old, ?string $state) {
         if (($get('slug') ?? '') !== Str::slug($old)) {
             return;
