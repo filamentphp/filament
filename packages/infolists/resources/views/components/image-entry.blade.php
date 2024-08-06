@@ -1,5 +1,10 @@
+@php
+    use Filament\Support\Enums\Alignment;
+@endphp
+
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
+        $alignment = $getAlignment();
         $state = $getState();
 
         if ($state instanceof \Illuminate\Support\Collection) {
@@ -22,6 +27,10 @@
         $limitedStateCount = count($limitedState);
 
         $defaultImageUrl = $getDefaultImageUrl();
+
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+        }
 
         if ((! $limitedStateCount) && filled($defaultImageUrl)) {
             $limitedState = [null];
@@ -59,6 +68,13 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
                     'fi-in-image flex items-center gap-x-2.5',
+                    match ($alignment) {
+                        Alignment::Start, Alignment::Left => 'justify-start',
+                        Alignment::Center => 'justify-center',
+                        Alignment::End, Alignment::Right => 'justify-end',
+                        Alignment::Between, Alignment::Justify => 'justify-between',
+                        default => $alignment,
+                    },
                 ])
         }}
     >
