@@ -38,7 +38,7 @@
                     </span>
                 @else
                     <a
-                        {{ \Filament\Support\generate_href_html(is_int($url) ? '#' : $url) }}
+                        {{ \Filament\Support\generate_href_html($url) }}
                         class="{{ $itemLabelClasses }} transition duration-75 hover:text-gray-700 dark:hover:text-gray-200"
                     >
                         {{ $label }}
