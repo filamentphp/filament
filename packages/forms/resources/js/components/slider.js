@@ -1,6 +1,6 @@
 import noUiSlider from 'nouislider';
 
-export default function sliderFormComponent({ state, range, step, start, margin, limit, connect, direction, orientation }) {
+export default function sliderFormComponent({ state, range, step, start, margin, limit, connect, direction, orientation, behaviour, tooltips }) {
     return {
         state,
 
@@ -18,6 +18,8 @@ export default function sliderFormComponent({ state, range, step, start, margin,
                 connect: connect,
                 direction: direction,
                 orientation: orientation,
+                behaviour: behaviour,
+                tooltips: tooltips,
             })
         },
     }

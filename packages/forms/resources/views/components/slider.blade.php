@@ -11,11 +11,13 @@
     $connect = $getConnect();
     $direction = $getDirection();
     $orientation = $getOrientation();
+    $behaviour = $getBehaviour();
+    $tooltips = $getTooltips();
 @endphp
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div
         ax-load
-            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('slider', 'filament/forms') }}"
+        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('slider', 'filament/forms') }}"
         x-data="sliderFormComponent({
             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
             range: @js($range),
@@ -26,6 +28,8 @@
             connect: @js($connect),
             direction: @js($direction),
             orientation: @js($orientation),
+            behaviour: @js($behaviour),
+            tooltips: @js($tooltips),
         })"
         x-ignore
     >

@@ -26,7 +26,6 @@ class Slider extends Field
     protected int | Closure |null $step = null;
 
     protected array | Closure | null $start = null;
-
     protected int | Closure | null $margin = null;
 
     protected int | Closure | null $limit = null;
@@ -37,15 +36,14 @@ class Slider extends Field
 
     protected string | Closure | null $orientation = null;
 
+    protected string | Closure | null $behaviour = null;
+
+    protected bool | Closure | null $tooltips = null;
     // To be added:
     // Put '0' at the bottom of the slider
-    //    orientation: 'vertical',
     //
-    //        // Move handle on tap, bars are draggable
-    //    behaviour: 'tap-drag',
-    //    tooltips: true,
     //    format: wNumb({
-    //    decimals: 0
+    //      decimals: 0
     //    }),
     //
     //    // Show a scale with the   slider
@@ -111,7 +109,6 @@ class Slider extends Field
         return $this;
     }
 
-
     public function direction(string | Closure | null $direction = 'ltr'): static
     {
         // These are the only accepted values.
@@ -123,6 +120,7 @@ class Slider extends Field
 
         return $this;
     }
+
     public function orientation(string | Closure | null $orientation = 'horizontal'): static
     {
         // These are the only accepted values.
@@ -131,6 +129,31 @@ class Slider extends Field
         }
 
         $this->orientation = $orientation;
+
+        return $this;
+    }
+
+    public function behaviour(array | Closure | null $behaviour = null): static
+    {
+        $acceptedValues = ['drag', 'drag-all', 'tap', 'fixed', 'snap', 'unconstrained', 'invert-connects', 'none'];
+
+        if (is_array($behaviour)) {
+            foreach ($behaviour as $value) {
+                if (!in_array($value, $acceptedValues)) {
+                    throw new InvalidArgumentException($value . ' is not an accepted value for the behaviour.');
+                }
+            }
+            $behaviour = implode('-', $behaviour);
+        }
+
+        $this->behaviour = $behaviour;
+
+        return $this;
+    }
+
+    public function tooltips(bool | Closure | null $tooltips = false): static
+    {
+        $this->tooltips = $tooltips;
 
         return $this;
     }
@@ -173,6 +196,16 @@ class Slider extends Field
     public function getOrientation(): ?string
     {
         return $this->evaluate($this->orientation);
+    }
+
+    public function getBehaviour(): ?string
+    {
+        return $this->evaluate($this->behaviour);
+    }
+
+    public function getTooltips(): ?bool
+    {
+        return $this->evaluate($this->tooltips);
     }
 }
 
