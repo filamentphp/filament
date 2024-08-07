@@ -1,5 +1,5 @@
 ---
-title: Support & Help
+title: Help & support
 ---
 
 > We offer a variety of support options, mostly free of charge. If you need help, the community is here for you.

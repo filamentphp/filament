@@ -1,5 +1,5 @@
 ---
-title: Assets
+title: Registering assets
 ---
 import LaracastsBanner from "@components/LaracastsBanner.astro"
 

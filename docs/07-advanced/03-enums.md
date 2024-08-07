@@ -1,5 +1,5 @@
 ---
-title: Enums
+title: Enum tricks
 ---
 
 ## Overview

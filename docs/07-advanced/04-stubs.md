@@ -1,5 +1,5 @@
 ---
-title: Stubs
+title: Customizing stubs
 ---
 
 ## Publishing the stubs
