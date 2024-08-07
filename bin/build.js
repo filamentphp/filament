@@ -106,6 +106,7 @@ const formComponents = [
     'markdown-editor',
     'rich-editor',
     'select',
+    'slider',
     'tags-input',
     'textarea',
 ]
