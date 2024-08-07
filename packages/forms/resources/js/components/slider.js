@@ -1,6 +1,6 @@
 import noUiSlider from 'nouislider';
 
-export default function sliderFormComponent({ state }) {
+export default function sliderFormComponent({ state, range, step, start, margin, limit, connect, direction, orientation }) {
     return {
         state,
 
@@ -9,17 +9,18 @@ export default function sliderFormComponent({ state }) {
         init: function () {
             this.slider = document.getElementById('slider')
 
-            console.log(this.slider);
-
             noUiSlider.create(this.slider, {
-                start: [20, 80],
-                connect: true,
-                range: {
-                    min: 0,
-                    max: 100,
-                },
+                start: start ?? [0],
+                range:  range ?? {'min': 0, 'max': 100},
+                step: step,
+                margin: margin,
+                limit: limit,
+                connect: connect,
+                direction: direction,
+                orientation: orientation,
             })
         },
     }
 }
+
 
