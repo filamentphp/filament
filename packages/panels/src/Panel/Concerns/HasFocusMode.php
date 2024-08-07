@@ -6,18 +6,20 @@ trait HasFocusMode
 {
     protected bool $hasFocusMode = false;
     protected bool $showOnListPage = true;
-    protected bool $showOnFormPage = true;
+    protected bool $showOnCreatePage = true;
+    protected bool $showOnEditPage = true;
 
     /**
      * @param  bool  $condition
      * @param  bool  $showOnListPage
-     * @param  bool  $showOnFormPage
+     * @param  bool  $showOnEditPage
      */
-    public function focusMode(bool $condition = true, bool $showOnListPage = true, bool $showOnFormPage = true): static
+    public function focusMode(bool $condition = true, bool $showOnListPage = true, bool $showOnCreatePage = true, bool $showOnEditPage = true): static
     {
         $this->hasFocusMode = $condition;
         $this->showOnListPage = $showOnListPage;
-        $this->showOnFormPage = $showOnFormPage;
+        $this->showOnCreatePage = $showOnCreatePage;
+        $this->showOnEditPage = $showOnEditPage;
 
         return $this;
     }
@@ -32,9 +34,14 @@ trait HasFocusMode
         return $this->showOnListPage;
     }
 
-    public function canShowFocusModeOnFormPage(): bool
+    public function canShowFocusModeOnCreatePage(): bool
     {
-        return $this->showOnFormPage;
+        return $this->showOnCreatePage;
+    }
+
+    public function canShowFocusModeOnEditPage(): bool
+    {
+        return $this->showOnEditPage;
     }
 
 }
