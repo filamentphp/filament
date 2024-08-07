@@ -195,9 +195,7 @@ export default function fileUploadFormComponent({
                     oncancel: () => this.closeEditor(),
                     onclose: () => this.closeEditor(),
                 },
-                fileValidateTypeDetectType: async (source, detectedType) => {
-                    return detectedType || mime.getType(source.name.split('.').pop());
-                },
+                fileValidateTypeDetectType: (source, detectedType) => detectedType || mime.getType(source.name.split('.').pop()),
             })
 
             this.$watch('state', async () => {
