@@ -1,5 +1,5 @@
 ---
-title: Style customization
+title: CSS hooks
 ---
 
 ## Overview
