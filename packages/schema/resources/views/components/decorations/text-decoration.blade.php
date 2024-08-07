@@ -22,7 +22,7 @@
     @else
         <span
             @class([
-                'fi-sc-text-decoration text-sm',
+                'fi-sc-text-decoration break-words text-sm',
                 match ($color) {
                     'gray' => 'text-gray-600 dark:text-gray-400',
                     default => 'fi-color-custom text-custom-600 dark:text-custom-400',
