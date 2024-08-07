@@ -8,7 +8,9 @@
     $subNavigation = $this->getCachedSubNavigation();
     $subNavigationPosition = $this->getSubNavigationPosition();
     $widgetData = $this->getWidgetData();
-    $focusMode = filament()->hasFocusMode();
+    $focusMode = filament()->hasFocusMode() && 
+                    (filament()->canShowFocusModeOnListPage() && $this instanceof \Filament\Resources\Pages\ListRecords) ||
+                    (filament()->canShowFocusModeOnFormPage() && $this instanceof \Filament\Resources\Pages\EditRecord);
 @endphp
 
 <div

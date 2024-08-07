@@ -941,4 +941,14 @@ class FilamentManager
     {
         return $this->getCurrentPanel()->hasFocusMode();
     }
+
+    public function canShowFocusModeOnListPage(): bool
+    {
+        return $this->getCurrentPanel()->canShowFocusModeOnListPage();
+    }
+
+    public function canShowFocusModeOnFormPage(): bool
+    {
+        return $this->getCurrentPanel()->canShowFocusModeOnFormPage();
+    }
 }
