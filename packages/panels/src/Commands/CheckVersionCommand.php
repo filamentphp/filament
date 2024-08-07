@@ -7,7 +7,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'filament:version', aliases: [
     'filament:about',
-    'filament:v'
+    'filament:v',
 ])]
 class CheckVersionCommand extends Command
 {
@@ -20,7 +20,7 @@ class CheckVersionCommand extends Command
      */
     protected $aliases = [
         'filament:about',
-        'filament:v'
+        'filament:v',
     ];
 
     public function handle(): int
