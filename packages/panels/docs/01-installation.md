@@ -164,3 +164,11 @@ composer update
 
 php artisan filament:upgrade
 ```
+
+## Checking the Installed Filament Version
+
+To check the version of Filament that is installed, use the following command:
+
+```bash
+php artisan filament:version
+```
