@@ -18,15 +18,6 @@
     $ariaFormat = $getAriaFormat();
 @endphp
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    <x-filament::input.wrapper
-        :id="$id"
-        :valid="! $errors->has($statePath)"
-        :disabled="$isDisabled"
-        :attributes="
-            \Filament\Support\prepare_inherited_attributes($attributes)
-                ->merge($getExtraAttributes(), escape: false)
-//                ->class([''])
-        ">
         <div
             ax-load
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('slider', 'filament/forms') }}"
@@ -53,5 +44,4 @@
                 'fi-slider-vh' => $orientation === \Filament\Forms\Enums\SliderOrientation::Vertical->value,
             ])>
         </div>
-    </x-filament::input.wrapper>
 </x-dynamic-component>
