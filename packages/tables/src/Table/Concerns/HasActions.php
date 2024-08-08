@@ -158,9 +158,9 @@ trait HasActions
     protected function cacheAction(Action $action, bool $shouldOverwriteExistingAction = true): void
     {
         if ($shouldOverwriteExistingAction) {
-            $this->flatActions[$action->getName()] = $action;
+            $this->flatActions[$action::getDefaultName()] = $action;
         } else {
-            $this->flatActions[$action->getName()] ??= $action;
+            $this->flatActions[$action::getDefaultName()] ??= $action;
         }
     }
 
