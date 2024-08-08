@@ -4,16 +4,32 @@ import wNumb from 'wnumb';
 // Expose wNumb library to the window object
 window.wNumb = wNumb;
 
-export default function sliderFormComponent({ state, range, step, start, margin, limit, connect, direction, orientation, behaviour, tooltips, format, pips, ariaFormat }) {
+export default function sliderFormComponent({
+        state,
+        statePath,
+        range,
+        step,
+        start,
+        margin,
+        limit,
+        connect,
+        direction,
+        orientation,
+        behaviour,
+        tooltips,
+        format,
+        pips,
+        ariaFormat
+    }) {
     return {
         state,
 
         slider: null,
 
-        init: function () {
+        init: function() {
             noUiSlider.create(this.$el, {
-                start: start ?? [0],
-                range:  range ?? {'min': 0, 'max': 100},
+                start: start,
+                range: range,
                 step: step,
                 margin: margin,
                 limit: limit,
@@ -29,6 +45,3 @@ export default function sliderFormComponent({ state, range, step, start, margin,
         },
     }
 }
-
-
-

@@ -57,7 +57,7 @@ class Slider extends Field
 //        $this->range(['min' => 0, 'max' => 100]);
     }
 
-    public function range(array | Closure | null $range = null): static
+    public function range(array | Closure $range): static
     {
         if ( is_array($range) && (!array_key_exists('min', $range) || !array_key_exists('max', $range) || count($range) !== 2)) {
             throw new InvalidArgumentException("The range array must have 'min' and 'max' keys.");
@@ -75,7 +75,7 @@ class Slider extends Field
         return $this;
     }
 
-    public function start(array | int | Closure | null $start = null): static
+    public function start(array | int | Closure $start): static
     {
         if (empty($start)){
             $start = null;
@@ -179,7 +179,7 @@ class Slider extends Field
 
     public function getRange(): ?array
     {
-        return $this->evaluate($this->range);
+        return $this->evaluate($this->range ?? ['min' => 0, 'max' => 100]);
     }
 
     public function getStep(): ?int
@@ -187,9 +187,9 @@ class Slider extends Field
         return $this->evaluate($this->step);
     }
 
-    public function getStart(): ?array
+    public function getStart(): int | array | null
     {
-        return $this->evaluate($this->start);
+        return $this->evaluate($this->start ?? 0);
     }
 
     public function getMargin(): ?int
