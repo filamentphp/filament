@@ -56,7 +56,7 @@ Tabs::make('Tabs')
 
 ## Setting a tab icon
 
-Tabs may have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), which you can set using the `icon()` method:
+Tabs may have an [icon](../../styling/icons), which you can set using the `icon()` method:
 
 ```php
 use Filament\Schema\Components\Tabs;

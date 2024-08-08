@@ -130,7 +130,7 @@ Builder::make('content')
 
 ## Setting a block's icon
 
-Blocks may also have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), which is displayed next to the label. You can add an icon by passing its name to the `icon()` method:
+Blocks may also have an [icon](../../styling/icons), which is displayed next to the label. You can add an icon by passing its name to the `icon()` method:
 
 ```php
 use Filament\Forms\Components\Builder;

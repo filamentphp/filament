@@ -6,7 +6,30 @@ title: Icons
 
 Icons are used throughout the entire Filament UI to visually communicate core parts of the user experience. To render icons, we use the [Blade Icons](https://github.com/blade-ui-kit/blade-icons) package from Blade UI Kit.
 
-They have a website where you can [search all the available icons](https://blade-ui-kit.com/blade-icons?set=1#search) from various Blade Icons packages. Each package contains a different icon set that you can choose from.
+They have a website where you can [search all the available icons](https://blade-ui-kit.com/blade-icons?set=1#search) from various Blade Icons packages. Each package contains a different icon set that you can choose from. Filament installs the "Heroicons" icon set by default, so if you are using icons from this set you do not need to install any additional packages.
+
+## How to pass an icon to Filament
+
+Once you have [found an icon](https://blade-ui-kit.com/blade-icons?set=1#search), installed the icon set (if it's not a Heroicon) you would like to use in Filament, you need to use its name. For example, if you wanted to use the [`heroicon-m-star`](https://blade-ui-kit.com/blade-icons/heroicon-m-star) icon, you could pass it to an icon method of a PHP component like so:
+
+```php
+use Filament\Actions\Action;
+use Filament\Forms\Components\Toggle;
+
+Action::make('star')
+    ->icon('heroicon-m-star')
+    
+Toggle::make('is_starred')
+    ->onIcon('heroicon-m-star')
+```
+
+If you would like to use an icon in a [Blade component](../ui/overview), you can pass it as an attribute:
+
+```blade
+<x-filament::badge icon="heroicon-m-star">
+    Star
+</x-filament::badge>
+```
 
 ## Using custom SVGs as icons
 
@@ -20,7 +43,14 @@ php artisan vendor:publish --tag=blade-icons
 
 Now, open the `config/blade-icons.php` file, and uncomment the `default` set in the `sets` array.
 
-Now that the default set exists in the config file, you can simply put any icons you want inside the `resources/svg` directory of your application. For example, if you put an SVG file named `star.svg` inside the `resources/svg` directory, you can reference it anywhere in Filament as `icon-star`. The `icon-` prefix is configurable in the `config/blade-icons.php` file too. You can also render the custom icon in a Blade view using the [`@svg('icon-star')` directive](https://github.com/blade-ui-kit/blade-icons#directive).
+Now that the default set exists in the config file, you can simply put any icons you want inside the `resources/svg` directory of your application. For example, if you put an SVG file named `star.svg` inside the `resources/svg` directory, you can reference it anywhere in Filament as `icon-star` (see below). The `icon-` prefix is configurable in the `config/blade-icons.php` file too. You can also render the custom icon in a Blade view using the [`@svg('icon-star')` directive](https://github.com/blade-ui-kit/blade-icons#directive).
+
+```php
+use Filament\Actions\Action;
+
+Action::make('star')
+    ->icon('icon-star')
+```
 
 ## Replacing the default icons
 

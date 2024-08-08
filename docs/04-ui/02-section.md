@@ -36,7 +36,7 @@ You can add a description below the heading to the section by using the `descrip
 
 ## Adding an icon to the section header
 
-You can add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to a section by using the `icon` attribute:
+You can add an [icon](../styling/icons) to a section by using the `icon` attribute:
 
 ```blade
 <x-filament::section icon="heroicon-o-user">

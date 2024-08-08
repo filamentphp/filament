@@ -125,7 +125,7 @@ Section::make()
 
 ## Adding an icon to the section's header
 
-You may add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to the section's header using the `icon()` method:
+You may add an [icon](../../styling/icons) to the section's header using the `icon()` method:
 
 ```php
 use Filament\Schema\Components\Section;

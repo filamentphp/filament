@@ -166,7 +166,7 @@ RichEditor::make('content')
 
 ### Adding an icon aside the hint
 
-Hints may also have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) rendered next to them:
+Hints may also have an [icon](../../styling/icons) rendered next to them:
 
 ```php
 use Filament\Forms\Components\RichEditor;

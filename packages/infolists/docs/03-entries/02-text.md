@@ -329,7 +329,7 @@ TextEntry::make('status')
 
 ## Adding an icon
 
-Text entries may also have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search):
+Text entries may also have an [icon](../../styling/icons):
 
 ```php
 use Filament\Infolists\Components\TextEntry;

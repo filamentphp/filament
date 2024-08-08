@@ -57,7 +57,7 @@ new FilamentNotification()
 
 ## Setting an icon
 
-Optionally, a notification can have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) that's displayed in front of its content. You may also set a color for the icon, which is gray by default:
+Optionally, a notification can have an [icon](../styling/icons) that's displayed in front of its content. You may also set a color for the icon, which is gray by default:
 
 ```php
 use Filament\Notifications\Notification;

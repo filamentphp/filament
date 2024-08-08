@@ -44,7 +44,7 @@ public function getTabs(): array
 
 ### Adding icons to filter tabs
 
-You can add icons to the tabs by passing an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) into the `icon()` method of the tab:
+You can add icons to the tabs by passing an [icon](../../styling/icons) into the `icon()` method of the tab:
 
 ```php
 use Filament\Resources\Components\Tab;

@@ -74,7 +74,7 @@ You can add a description, below the heading, to a modal by using the `descripti
 
 ## Adding an icon to a modal
 
-You can add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to a modal by using the `icon` attribute:
+You can add an [icon](../styling/icons) to a modal by using the `icon` attribute:
 
 ```blade
 <x-filament::modal icon="heroicon-o-information-circle">

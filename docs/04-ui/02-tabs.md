@@ -68,7 +68,7 @@ Or you can use the `alpine-active` attribute to make a tab appear active conditi
 
 ## Setting a tab icon
 
-Tabs may have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), which you can set using the `icon` attribute:
+Tabs may have an [icon](../styling/icons), which you can set using the `icon` attribute:
 
 ```blade
 <x-filament::tabs>

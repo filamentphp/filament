@@ -105,7 +105,7 @@ Action::make('create')
 
 ## Setting an icon
 
-Buttons may have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to add more detail to the UI. You can set the icon using the `icon()` method:
+Buttons may have an [icon](../styling/icons) to add more detail to the UI. You can set the icon using the `icon()` method:
 
 ```php
 Action::make('edit')

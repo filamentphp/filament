@@ -75,7 +75,7 @@ By default, the color of a button is "primary". You can change it to be `danger`
 
 ## Adding an icon to a button
 
-You can add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to a button by using the `icon` attribute:
+You can add an [icon](../styling/icons) to a button by using the `icon` attribute:
 
 ```blade
 <x-filament::button icon="heroicon-m-sparkles">

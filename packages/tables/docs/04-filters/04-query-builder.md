@@ -337,7 +337,7 @@ TextConstraint::make('adminCreatorName')
 
 ## Customizing the constraint icon
 
-Each constraint type has a default [icon](https://blade-ui-kit.com/blade-icons?set=1#search), which is displayed next to the label in the picker. You can customize the icon for a constraint by passing its name to the `icon()` method:
+Each constraint type has a default [icon](../../styling/icons), which is displayed next to the label in the picker. You can customize the icon for a constraint by passing its name to the `icon()` method:
 
 ```php
 use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;

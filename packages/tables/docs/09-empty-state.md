@@ -43,7 +43,7 @@ public function table(Table $table): Table
 
 ## Setting the empty state icon
 
-To customize the [icon](https://blade-ui-kit.com/blade-icons?set=1#search) of the empty state, use the `emptyStateIcon()` method:
+To customize the [icon](../styling/icons) of the empty state, use the `emptyStateIcon()` method:
 
 ```php
 use Filament\Tables\Table;

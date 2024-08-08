@@ -360,7 +360,7 @@ ActionGroup::make([
 
 ### Setting the action group button icon
 
-You may set the [icon](https://blade-ui-kit.com/blade-icons?set=1#search) of the action group button using the `icon()` method:
+You may set the [icon](../styling/icons) of the action group button using the `icon()` method:
 
 ```php
 use Filament\Actions\ActionGroup;

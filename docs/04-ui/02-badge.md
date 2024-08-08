@@ -54,7 +54,7 @@ By default, the color of a badge is "primary". You can change it to be `danger`,
 
 ## Adding an icon to a badge
 
-You can add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to a badge by using the `icon` attribute:
+You can add an [icon](../styling/icons) to a badge by using the `icon` attribute:
 
 ```blade
 <x-filament::badge icon="heroicon-m-sparkles">

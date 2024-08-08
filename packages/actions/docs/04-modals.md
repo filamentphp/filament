@@ -160,7 +160,7 @@ Action::make('delete')
 
 ## Adding an icon inside the modal
 
-You may add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) inside the modal using the `modalIcon()` method:
+You may add an [icon](../styling/icons) inside the modal using the `modalIcon()` method:
 
 ```php
 use App\Models\Post;

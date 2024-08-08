@@ -32,7 +32,7 @@ class User extends Model
 
 ## Adding icons to the toggle button
 
-Toggles may also use an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to represent the "on" and "off" state of the button. To add an icon to the "on" state, use the `onIcon()` method. To add an icon to the "off" state, use the `offIcon()` method:
+Toggles may also use an [icon](../../styling/icons) to represent the "on" and "off" state of the button. To add an icon to the "on" state, use the `onIcon()` method. To add an icon to the "off" state, use the `offIcon()` method:
 
 ```php
 use Filament\Forms\Components\Toggle;

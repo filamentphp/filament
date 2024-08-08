@@ -46,7 +46,7 @@ If you are using an enum for the options, you can use the [`HasColor` interface]
 
 ## Adding icons to option buttons
 
-You can add [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to the option buttons using the `icons()` method. Each key in the array should correspond to an option value, and the value may be any valid [Blade icon](https://blade-ui-kit.com/blade-icons?set=1#search):
+You can add [icon](../../styling/icons) to the option buttons using the `icons()` method. Each key in the array should correspond to an option value, and the value may be any valid [Blade icon](https://blade-ui-kit.com/blade-icons?set=1#search):
 
 ```php
 use Filament\Forms\Components\ToggleButtons;

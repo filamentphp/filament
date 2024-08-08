@@ -70,7 +70,7 @@ You could use this component in a separate Blade view if you want.
 
 ## Setting up step icons
 
-Steps may also have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), set using the `icon()` method:
+Steps may also have an [icon](../../styling/icons), set using the `icon()` method:
 
 ```php
 use Filament\Schema\Components\Wizard;

@@ -88,7 +88,7 @@ You may place text before and after the input using the `prefix` and `suffix` sl
 
 ### Using icons as affixes
 
-You may place an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) before and after the input using the `prefix-icon` and `suffix-icon` attributes:
+You may place an [icon](../styling/icons) before and after the input using the `prefix-icon` and `suffix-icon` attributes:
 
 ```blade
 <x-filament::input.wrapper suffix-icon="heroicon-m-globe-alt">

@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-Icon entries render an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) representing their contents:
+Icon entries render an [icon](../../styling/icons) representing their contents:
 
 ```php
 use Filament\Infolists\Components\IconEntry;

@@ -27,7 +27,7 @@ public static function getNavigationLabel(): string
 
 ## Customizing a navigation item's icon
 
-To customize a navigation item's [icon](https://blade-ui-kit.com/blade-icons?set=1#search), you may override the `$navigationIcon` property on the [resource](resources/getting-started) or [page](pages) class:
+To customize a navigation item's [icon](../styling/icons), you may override the `$navigationIcon` property on the [resource](resources/getting-started) or [page](pages) class:
 
 ```php
 protected static ?string $navigationIcon = 'heroicon-o-document-text';
@@ -37,7 +37,7 @@ If you set `$navigationIcon = null` on all items within the same navigation grou
 
 ### Switching navigation item icon when it is active
 
-You may assign a navigation [icon](https://blade-ui-kit.com/blade-icons?set=1#search) which will only be used for active items using the `$activeNavigationIcon` property:
+You may assign a navigation [icon](../styling/icons) which will only be used for active items using the `$activeNavigationIcon` property:
 
 ```php
 protected static ?string $activeNavigationIcon = 'heroicon-o-document-text';

@@ -71,7 +71,7 @@ By default, the color of a dropdown item is "gray". You can change it to be `dan
 
 ## Adding an icon to a dropdown item
 
-You can add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to a dropdown item by using the `icon` attribute:
+You can add an [icon](../styling/icons) to a dropdown item by using the `icon` attribute:
 
 ```blade
 <x-filament::dropdown.list.item icon="heroicon-m-pencil">

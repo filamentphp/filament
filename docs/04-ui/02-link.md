@@ -121,7 +121,7 @@ By default, the color of a link is "primary". You can change it to be `danger`, 
 
 ## Adding an icon to a link
 
-You can add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to a link by using the `icon` attribute:
+You can add an [icon](../styling/icons) to a link by using the `icon` attribute:
 
 ```blade
 <x-filament::link icon="heroicon-m-sparkles">
