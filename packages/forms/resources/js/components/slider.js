@@ -27,7 +27,7 @@ export default function sliderFormComponent({
         slider: null,
 
         init: function() {
-            noUiSlider.create(this.$el, {
+            this.slider = noUiSlider.create(this.$el, {
                 start: start,
                 range: range,
                 step: step,
