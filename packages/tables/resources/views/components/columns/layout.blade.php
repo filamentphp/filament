@@ -55,6 +55,14 @@
             :twoXlStart="$layoutComponent->getColumnStart('2xl')"
             @class([
                 'flex-1 w-full' => $layoutComponent->canGrow(),
+                match ($getFromBreakpoint()) {
+                    'sm' => 'sm:sticky sm:top-[--sticky-offset] sm:self-start',
+                    'md' => 'md:sticky md:top-[--sticky-offset] md:self-start',
+                    'lg' => 'lg:sticky lg:top-[--sticky-offset] lg:self-start',
+                    'xl' => 'xl:sticky xl:top-[--sticky-offset] xl:self-start',
+                    '2xl' => '2xl:sticky 2xl:top-[--sticky-offset] 2xl:self-start',
+                    default => 'sticky top-[--sticky-offset] self-start',
+                } => $layoutComponent->isSticky(),
                 $getHiddenClasses($layoutComponent),
             ])
         >

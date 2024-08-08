@@ -175,6 +175,7 @@
                             'h-[100dvh]' => $slideOver || ($width === MaxWidth::Screen),
                             'mx-auto rounded-xl' => ! ($slideOver || ($width === MaxWidth::Screen)),
                             'hidden' => ! $visible,
+                            '[--sticky-offset:1.5rem]' => ! $stickyHeader,
                             match ($width) {
                                 MaxWidth::ExtraSmall => 'max-w-xs',
                                 MaxWidth::Small => 'max-w-sm',

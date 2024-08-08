@@ -64,6 +64,7 @@
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
                 --default-theme-mode: {{ filament()->getDefaultThemeMode()->value }};
+                --sticky-offset: 6rem;
             }
         </style>
 

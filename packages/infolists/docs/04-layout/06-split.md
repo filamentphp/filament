@@ -26,11 +26,13 @@ Split::make([
             ->dateTime(),
         TextEntry::make('published_at')
             ->dateTime(),
-    ])->grow(false),
+    ])->grow(false)->sticky(),
 ])->from('md')
 ```
 
 In this example, the first section will `grow()` to consume available horizontal space, without affecting the amount of space needed to render the second section. This creates a sidebar effect.
+
+The `sticky()` method will make the sidebar sticky in its containing block.
 
 The `from()` method is used to control the [Tailwind breakpoint](https://tailwindcss.com/docs/responsive-design#overview) (`sm`, `md`, `lg`, `xl`, `2xl`) at which the split layout should be used. In this example, the split layout will be used on medium devices and larger. On smaller devices, the sections will stack on top of each other.
 

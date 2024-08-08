@@ -6,6 +6,7 @@ use Filament\Infolists\Concerns\HasColumns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Concerns\IsSticky;
 use Illuminate\Database\Eloquent\Model;
 
 class Component extends ViewComponent
@@ -27,6 +28,7 @@ class Component extends ViewComponent
     use Concerns\HasState;
     use HasColumns;
     use HasExtraAttributes;
+    use isSticky;
 
     protected string $evaluationIdentifier = 'component';
 

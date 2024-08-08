@@ -7,6 +7,7 @@ use Exception;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Concerns\IsSticky;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
 use Filament\Tables\Columns\Concerns\BelongsToTable;
@@ -29,6 +30,7 @@ class Component extends ViewComponent
     use HasExtraAttributes;
     use HasRecord;
     use HasRowLoopObject;
+    use IsSticky;
 
     protected string $evaluationIdentifier = 'layout';
 

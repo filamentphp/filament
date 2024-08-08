@@ -7,6 +7,7 @@ use Filament\Forms\Concerns\HasStateBindingModifiers;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\CanGrow;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Concerns\IsSticky;
 use Illuminate\Database\Eloquent\Model;
 
 class Component extends ViewComponent
@@ -34,6 +35,7 @@ class Component extends ViewComponent
     use HasColumns;
     use HasExtraAttributes;
     use HasStateBindingModifiers;
+    use IsSticky;
 
     protected string $evaluationIdentifier = 'component';
 
