@@ -4,3 +4,7 @@
     --tw-bg-opacity: 1;
     background: rgba(var(--primary-500), var(--tw-bg-opacity));
 }
+
+.fi-slider-vh {
+    height: 10rem;
+}

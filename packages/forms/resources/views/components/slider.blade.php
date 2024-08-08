@@ -47,10 +47,11 @@
                 pips: @js($pips),
                 ariaFormat: @js($ariaFormat),
             })"
-            x-ignore>
+            x-ignore
+            {{--Set dimensions! Vertical sliders don't assume a default height, so a height needs to be set.--}}
+            @class([
+                'fi-slider-vh' => $orientation === \Filament\Forms\Enums\SliderOrientation::Vertical->value,
+            ])>
         </div>
     </x-filament::input.wrapper>
 </x-dynamic-component>
-
-
-
