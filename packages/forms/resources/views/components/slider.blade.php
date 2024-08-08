@@ -13,6 +13,9 @@
     $orientation = $getOrientation();
     $behaviour = $getBehaviour();
     $tooltips = $getTooltips();
+    $format = $getFormat();
+    $pips = $getPips();
+    $ariaFormat = $getAriaFormat();
 @endphp
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div
@@ -30,6 +33,9 @@
             orientation: @js($orientation),
             behaviour: @js($behaviour),
             tooltips: @js($tooltips),
+            format: @js($format),
+            pips: @js($pips),
+            ariaFormat: @js($ariaFormat),
         })"
         x-ignore
     >

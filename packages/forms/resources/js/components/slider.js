@@ -1,6 +1,10 @@
 import noUiSlider from 'nouislider';
+import wNumb from 'wnumb';
 
-export default function sliderFormComponent({ state, range, step, start, margin, limit, connect, direction, orientation, behaviour, tooltips }) {
+// Expose wNumb library to the window object
+window.wNumb = wNumb;
+
+export default function sliderFormComponent({ state, range, step, start, margin, limit, connect, direction, orientation, behaviour, tooltips, format, pips, ariaFormat }) {
     return {
         state,
 
@@ -20,6 +24,9 @@ export default function sliderFormComponent({ state, range, step, start, margin,
                 orientation: orientation,
                 behaviour: behaviour,
                 tooltips: tooltips,
+                format: format,
+                pips: pips,
+                ariaFormat: ariaFormat
             })
         },
     }

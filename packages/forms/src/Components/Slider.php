@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\RawJs;
 use InvalidArgumentException;
 
 class Slider extends Field
@@ -39,19 +40,13 @@ class Slider extends Field
     protected string | Closure | null $behaviour = null;
 
     protected array | bool | Closure | null $tooltips = null;
-    // To be added:
-    // Put '0' at the bottom of the slider
-    //
-    //    format: wNumb({
-    //      decimals: 0
-    //    }),
-    //
-    //    // Show a scale with the   slider
-    //    pips: {
-    //        mode: 'steps',
-    //            stepped: true,
-    //            density: 4
-    //        }
+
+    protected RawJs | Closure | null $format = null;
+
+    protected RawJs | Closure | null $ariaFormat = null;
+
+    protected RawJs | Closure | null $pips = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -133,7 +128,7 @@ class Slider extends Field
         return $this;
     }
 
-    public function behaviour(array | Closure | null $behaviour = null): static
+    public function behaviour(array | Closure | null $behaviour = null):        static
     {
         $acceptedValues = ['drag', 'drag-all', 'tap', 'fixed', 'snap', 'unconstrained', 'invert-connects', 'none'];
 
@@ -154,6 +149,27 @@ class Slider extends Field
     public function tooltips(array | bool | Closure | null $tooltips = false): static
     {
         $this->tooltips = $tooltips;
+
+        return $this;
+    }
+
+    public function format(RawJs | Closure | null $format = null): static
+    {
+        $this->format = $format;
+
+        return $this;
+    }
+
+    public function pips(RawJs | Closure | null $pips = null): static
+    {
+        $this->pips = $pips;
+
+        return $this;
+    }
+
+    public function ariaFormat(RawJs | Closure | null $ariaFormat = null): static
+    {
+        $this->ariaFormat = $ariaFormat;
 
         return $this;
     }
@@ -206,6 +222,21 @@ class Slider extends Field
     public function getTooltips(): ?bool
     {
         return $this->evaluate($this->tooltips);
+    }
+
+    public function getFormat(): ?RawJs
+    {
+        return $this->evaluate($this->format);
+    }
+
+    public function getPips(): ?RawJs
+    {
+        return $this->evaluate($this->pips);
+    }
+
+    public function getAriaFormat(): ?RawJs
+    {
+        return $this->evaluate($this->ariaFormat);
     }
 }
 

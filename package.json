@@ -62,6 +62,7 @@
         "tippy.js": "^6.3.7",
         "trix": "^2.0",
         "uuid-browser": "^3.1.0",
-        "vanilla-colorful": "^0.6.2"
+        "vanilla-colorful": "^0.6.2",
+        "wnumb": "^1.2.0"
     }
 }
