@@ -9,14 +9,13 @@ export default function textareaFormComponent({ initialHeight, shouldAutosize, s
 
             this.setInitialHeight()
 
-            if (! shouldAutosize) {
-                this.setUpResizeObserver()
-            }
-
             if (shouldAutosize) {
                 this.$watch('state', () => {
                     this.resize()
                 })
+                
+            } else {
+                this.setUpResizeObserver()
             }
         },
 
