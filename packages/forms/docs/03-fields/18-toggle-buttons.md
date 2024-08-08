@@ -22,7 +22,7 @@ ToggleButtons::make('status')
 
 ## Changing the color of option buttons
 
-You can change the color of the option buttons using the `colors()` method. Each key in the array should correspond to an option value, and the value may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+You can change the [color](../../styling/colors) of the option buttons using the `colors()` method. Each key in the array should correspond to an option value:
 
 ```php
 use Filament\Forms\Components\ToggleButtons;

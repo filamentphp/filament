@@ -96,39 +96,34 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 ## Available icon aliases
 
-### Panel Builder icon aliases
+### Actions icon aliases
 
-- `panels::global-search.field` - Global search field
-- `panels::pages.dashboard.actions.filter` - Trigger button of the dashboard filter action
-- `panels::pages.dashboard.navigation-item` - Dashboard page navigation item
-- `panels::pages.password-reset.request-password-reset.actions.login` - Trigger button of the login action on the request password reset page
-- `panels::pages.password-reset.request-password-reset.actions.login.rtl` - Trigger button of the login action on the request password reset page (right-to-left direction)
-- `panels::resources.pages.edit-record.navigation-item` - Resource edit record page navigation item
-- `panels::resources.pages.manage-related-records.navigation-item` - Resource manage related records page navigation item
-- `panels::resources.pages.view-record.navigation-item` - Resource view record page navigation item
-- `panels::sidebar.collapse-button` - Button to collapse the sidebar
-- `panels::sidebar.collapse-button.rtl` - Button to collapse the sidebar (right-to-left direction)
-- `panels::sidebar.expand-button` - Button to expand the sidebar
-- `panels::sidebar.expand-button.rtl` - Button to expand the sidebar (right-to-left direction)
-- `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
-- `panels::tenant-menu.billing-button` - Billing button in the tenant menu
-- `panels::tenant-menu.profile-button` - Profile button in the tenant menu
-- `panels::tenant-menu.registration-button` - Registration button in the tenant menu
-- `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
-- `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
-- `panels::theme-switcher.dark-button` - Button to switch to the dark theme from the theme switcher
-- `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
-- `panels::topbar.close-sidebar-button` - Button to close the sidebar
-- `panels::topbar.open-sidebar-button` - Button to open the sidebar
-- `panels::topbar.group.toggle-button` - Toggle button for a topbar group
-- `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
-- `panels::user-menu.profile-item` - Profile item in the user menu
-- `panels::user-menu.logout-button` - Button in the user menu to log out
-- `panels::widgets.account.logout-button` - Button in the account widget to log out
-- `panels::widgets.filament-info.open-documentation-button` - Button to open the documentation from the Filament info widget
-- `panels::widgets.filament-info.open-github-button` - Button to open GitHub from the Filament info widget
+- `actions::action-group` - Trigger button of an action group
+- `actions::create-action.grouped` - Trigger button of a grouped create action
+- `actions::delete-action` - Trigger button of a delete action
+- `actions::delete-action.grouped` - Trigger button of a grouped delete action
+- `actions::delete-action.modal` - Modal of a delete action
+- `actions::detach-action` - Trigger button of a detach action
+- `actions::detach-action.modal` - Modal of a detach action
+- `actions::dissociate-action` - Trigger button of a dissociate action
+- `actions::dissociate-action.modal` - Modal of a dissociate action
+- `actions::edit-action` - Trigger button of an edit action
+- `actions::edit-action.grouped` - Trigger button of a grouped edit action
+- `actions::export-action.grouped` - Trigger button of a grouped export action
+- `actions::force-delete-action` - Trigger button of a force delete action
+- `actions::force-delete-action.grouped` - Trigger button of a grouped force delete action
+- `actions::force-delete-action.modal` - Modal of a force delete action
+- `actions::import-action.grouped` - Trigger button of a grouped import action
+- `actions::modal.confirmation` - Modal of an action that requires confirmation
+- `actions::replicate-action` - Trigger button of a replicate action
+- `actions::replicate-action.grouped` - Trigger button of a grouped replicate action
+- `actions::restore-action` - Trigger button of a restore action
+- `actions::restore-action.grouped` - Trigger button of a grouped restore action
+- `actions::restore-action.modal` - Modal of a restore action
+- `actions::view-action` - Trigger button of a view action
+- `actions::view-action.grouped` - Trigger button of a grouped view action
 
-### Form Builder icon aliases
+### Forms icon aliases
 
 - `forms::components.builder.actions.clone` - Trigger button of a clone action in a builder item
 - `forms::components.builder.actions.collapse` - Trigger button of a collapse action in a builder item
@@ -166,9 +161,58 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `forms::components.text-input.actions.show-password` - Trigger button of a show password action in a text input field
 - `forms::components.toggle-buttons.boolean.false` - "False" option of a `boolean()` toggle buttons field
 - `forms::components.toggle-buttons.boolean.true` - "True" option of a `boolean()` toggle buttons field
-- `forms::components.wizard.completed-step` - Completed step in a wizard
 
-### Table Builder icon aliases
+### Infolists icon aliases
+
+- `infolists::components.icon-entry.false` - Falsy state of an icon entry
+- `infolists::components.icon-entry.true` - Truthy state of an icon entry
+
+### Notifications icon aliases
+
+- `notifications::database.modal.empty-state` - Empty state of the database notifications modal
+- `notifications::notification.close-button` - Button to close a notification
+- `notifications::notification.danger` - Danger notification
+- `notifications::notification.info` - Info notification
+- `notifications::notification.success` - Success notification
+- `notifications::notification.warning` - Warning notification
+
+### Panels icon aliases
+
+- `panels::global-search.field` - Global search field
+- `panels::pages.dashboard.actions.filter` - Trigger button of the dashboard filter action
+- `panels::pages.dashboard.navigation-item` - Dashboard page navigation item
+- `panels::pages.password-reset.request-password-reset.actions.login` - Trigger button of the login action on the request password reset page
+- `panels::pages.password-reset.request-password-reset.actions.login.rtl` - Trigger button of the login action on the request password reset page (right-to-left direction)
+- `panels::resources.pages.edit-record.navigation-item` - Resource edit record page navigation item
+- `panels::resources.pages.manage-related-records.navigation-item` - Resource manage related records page navigation item
+- `panels::resources.pages.view-record.navigation-item` - Resource view record page navigation item
+- `panels::sidebar.collapse-button` - Button to collapse the sidebar
+- `panels::sidebar.collapse-button.rtl` - Button to collapse the sidebar (right-to-left direction)
+- `panels::sidebar.expand-button` - Button to expand the sidebar
+- `panels::sidebar.expand-button.rtl` - Button to expand the sidebar (right-to-left direction)
+- `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
+- `panels::tenant-menu.billing-button` - Billing button in the tenant menu
+- `panels::tenant-menu.profile-button` - Profile button in the tenant menu
+- `panels::tenant-menu.registration-button` - Registration button in the tenant menu
+- `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
+- `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
+- `panels::theme-switcher.dark-button` - Button to switch to the dark theme from the theme switcher
+- `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
+- `panels::topbar.close-sidebar-button` - Button to close the sidebar
+- `panels::topbar.open-sidebar-button` - Button to open the sidebar
+- `panels::topbar.group.toggle-button` - Toggle button for a topbar group
+- `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
+- `panels::user-menu.profile-item` - Profile item in the user menu
+- `panels::user-menu.logout-button` - Button in the user menu to log out
+- `panels::widgets.account.logout-button` - Button in the account widget to log out
+- `panels::widgets.filament-info.open-documentation-button` - Button to open the documentation from the Filament info widget
+- `panels::widgets.filament-info.open-github-button` - Button to open GitHub from the Filament info widget
+
+### Schema icon aliases
+
+- `schema::components.wizard.completed-step` - Completed step in a wizard
+
+### Tables icon aliases
 
 - `tables::actions.disable-reordering` - Trigger button of the disable reordering action
 - `tables::actions.enable-reordering` - Trigger button of the enable reordering action
@@ -192,47 +236,6 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `tables::header-cell.sort-desc-button` - Sort button of a column sorted in descending order
 - `tables::reorder.handle` - Handle to grab in order to reorder a record with drag and drop
 - `tables::search-field` - Search input
-
-### Notifications icon aliases
-
-- `notifications::database.modal.empty-state` - Empty state of the database notifications modal
-- `notifications::notification.close-button` - Button to close a notification
-- `notifications::notification.danger` - Danger notification
-- `notifications::notification.info` - Info notification
-- `notifications::notification.success` - Success notification
-- `notifications::notification.warning` - Warning notification
-
-### Actions icon aliases
-
-- `actions::action-group` - Trigger button of an action group
-- `actions::create-action.grouped` - Trigger button of a grouped create action
-- `actions::delete-action` - Trigger button of a delete action
-- `actions::delete-action.grouped` - Trigger button of a grouped delete action
-- `actions::delete-action.modal` - Modal of a delete action
-- `actions::detach-action` - Trigger button of a detach action
-- `actions::detach-action.modal` - Modal of a detach action
-- `actions::dissociate-action` - Trigger button of a dissociate action
-- `actions::dissociate-action.modal` - Modal of a dissociate action
-- `actions::edit-action` - Trigger button of an edit action
-- `actions::edit-action.grouped` - Trigger button of a grouped edit action
-- `actions::export-action.grouped` - Trigger button of a grouped export action
-- `actions::force-delete-action` - Trigger button of a force delete action
-- `actions::force-delete-action.grouped` - Trigger button of a grouped force delete action
-- `actions::force-delete-action.modal` - Modal of a force delete action
-- `actions::import-action.grouped` - Trigger button of a grouped import action
-- `actions::modal.confirmation` - Modal of an action that requires confirmation
-- `actions::replicate-action` - Trigger button of a replicate action
-- `actions::replicate-action.grouped` - Trigger button of a grouped replicate action
-- `actions::restore-action` - Trigger button of a restore action
-- `actions::restore-action.grouped` - Trigger button of a grouped restore action
-- `actions::restore-action.modal` - Modal of a restore action
-- `actions::view-action` - Trigger button of a view action
-- `actions::view-action.grouped` - Trigger button of a grouped view action
-
-### Infolist Builder icon aliases
-
-- `infolists::components.icon-entry.false` - Falsy state of an icon entry
-- `infolists::components.icon-entry.true` - Truthy state of an icon entry
 
 ### UI components icon aliases
 

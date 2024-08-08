@@ -168,7 +168,7 @@
                         @endphp
 
                         <x-filament::icon
-                            :alias="filled($completedIcon) ? null : 'forms::components.wizard.completed-step'"
+                            :alias="filled($completedIcon) ? null : 'schema::components.wizard.completed-step'"
                             :icon="$completedIcon ?? 'heroicon-o-check'"
                             x-cloak="x-cloak"
                             x-show="getStepIndex(step) > {{ $loop->index }}"

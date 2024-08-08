@@ -24,7 +24,7 @@ In the function, `$state` is the value of the entry, and `$record` can be used t
 
 ## Customizing the color
 
-Icon entries may also have a set of icon colors, using the same syntax. They may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+Icon entries may also have a set of icon [colors](../../styling/colors), using the same syntax:
 
 ```php
 use Filament\Infolists\Components\IconEntry;
@@ -87,7 +87,7 @@ IconEntry::make('is_featured')
 
 ### Customizing the boolean colors
 
-You may customize the icon color representing each state. These may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+You may customize the icon [color](../../styling/colors) representing each state:
 
 ```php
 use Filament\Infolists\Components\IconEntry;

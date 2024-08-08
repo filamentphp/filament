@@ -24,7 +24,7 @@ In the function, `$state` is the value of the column, and `$record` can be used 
 
 ## Customizing the color
 
-Icon columns may also have a set of icon colors, using the same syntax. They may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+Icon columns may also have a set of icon [colors](../../styling/colors), using the same syntax:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
@@ -87,7 +87,7 @@ IconColumn::make('is_featured')
 
 ### Customizing the boolean colors
 
-You may customize the icon color representing each state. These may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+You may customize the icon [color](../../styling/colors) representing each state:
 
 ```php
 use Filament\Tables\Columns\IconColumn;

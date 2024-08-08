@@ -73,7 +73,7 @@ Stat::make('Unique views', '192.1k')
 
 ## Changing the color of the stat
 
-You may also give stats a `color()` (`danger`, `gray`, `info`, `primary`, `success` or `warning`):
+You may also give stats a [color](../styling/colors):
 
 ```php
 use Filament\Widgets\StatsOverviewWidget\Stat;

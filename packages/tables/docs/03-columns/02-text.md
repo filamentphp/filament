@@ -361,7 +361,7 @@ TextColumn::make('status')
 
 ## Customizing the color
 
-You may set a color for the text, either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+You may set a [color](../../styling/colors) for the text:
 
 ```php
 use Filament\Tables\Columns\TextColumn;

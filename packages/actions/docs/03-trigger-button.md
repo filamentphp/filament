@@ -81,7 +81,7 @@ Action::make('edit')
 
 ## Setting a color
 
-Buttons may have a color to indicate their significance. It may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+Buttons may have a [color](../styling/colors) to indicate their significance:
 
 ```php
 Action::make('delete')
@@ -187,7 +187,7 @@ Action::make('filter')
 
 <AutoScreenshot name="actions/trigger-button/badged" alt="Trigger with badge" version="3.x" />
 
-You can also pass a color to be used for the badge, which can be either `danger`, `gray`, `info`, `primary`, `success` and `warning`:
+You can also pass a [color](../styling/colors) to be used for the badge:
 
 ```php
 use Filament\Actions\Action;

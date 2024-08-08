@@ -66,7 +66,7 @@ Below is a list of available chart widget classes which you may extend, and thei
 
 ## Customizing the chart color
 
-You can customize the color of the chart data by setting the `$color` property to either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+You can customize the [color](../styling/colors) of the chart data by setting the `$color` property:
 
 ```php
 protected static string $color = 'info';

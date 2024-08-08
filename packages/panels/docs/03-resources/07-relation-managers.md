@@ -717,7 +717,7 @@ RelationGroup::make('Contacts', [
 
 ### Changing the color of relation manager tab badges
 
-If a badge value is defined, it will display using the primary color by default. To style the badge contextually, set the `$badgeColor` to either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+If a badge value is defined, it will display using the primary color by default. To style the badge contextually, set the `$badgeColor` to be a [registered color](../../styling/colors):
 
 ```php
 protected static ?string $badgeColor = 'danger';
