@@ -3,6 +3,9 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Enums\SliderBehaviour;
+use Filament\Forms\Enums\SliderDirection;
+use Filament\Forms\Enums\SliderOrientation;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
@@ -107,11 +110,11 @@ class Slider extends Field
         return $this;
     }
 
-    public function direction(string | Closure | null $direction = 'ltr'): static
+    public function direction(SliderDirection | Closure | null $direction = SliderDirection::LTR): static
     {
-        // These are the only accepted values.
-        if (!in_array($direction, ['rtl', 'ltr'])) {
-            throw new InvalidArgumentException("The direction must be 'rtl' or 'ltr'.");
+        // Convert the enum to its string value before assignment
+        if ($direction instanceof SliderDirection) {
+            $direction = $direction->value;
         }
 
         $this->direction = $direction;
@@ -119,11 +122,11 @@ class Slider extends Field
         return $this;
     }
 
-    public function orientation(string | Closure | null $orientation = 'horizontal'): static
+    public function orientation(SliderOrientation | Closure | null $orientation = SliderOrientation::Horizontal): static
     {
-        // These are the only accepted values.
-        if (!in_array($orientation, ['vertical', 'horizontal'])) {
-            throw new InvalidArgumentException("The orientation must be 'vertical' or 'horizontal'.");
+        // Convert the enum to its string value before assignment
+        if ($orientation instanceof SliderOrientation   ) {
+            $orientation = $orientation->value;
         }
 
         $this->orientation = $orientation;
@@ -131,23 +134,20 @@ class Slider extends Field
         return $this;
     }
 
-    public function behaviour(array | Closure | null $behaviour = null): static
+    public function behaviour(array | SliderBehaviour | Closure | null $behaviour = null): static
     {
-        $acceptedValues = ['drag', 'drag-all', 'tap', 'fixed', 'snap', 'unconstrained', 'invert-connects', 'none'];
-
         if (is_array($behaviour)) {
-            foreach ($behaviour as $value) {
-                if (!in_array($value, $acceptedValues)) {
-                    throw new InvalidArgumentException($value . ' is not an accepted value for the behaviour.');
-                }
-            }
-            $behaviour = implode('-', $behaviour);
+            $behaviourStrings = array_map(fn($item) => $item->value, $behaviour);
+            $behaviour = implode('-', $behaviourStrings);
+        } elseif ($behaviour instanceof SliderBehaviour) {
+            $behaviour = $behaviour->value;
         }
 
         $this->behaviour = $behaviour;
 
         return $this;
     }
+
 
     public function tooltips(array | bool | Closure | null $tooltips = false): static
     {
