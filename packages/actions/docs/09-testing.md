@@ -86,7 +86,7 @@ it('stops sending if invoice has no email address', function () {
 });
 ```
 
-## Testing modal content
+## Testing modals
 
 To assert against the content of a modal, you should first mount the action (rather than call it which resolves the modal). You can then use [livewire assertions](https://livewire.laravel.com/docs/testing#assertions) such as `assertSee` to assert the modal has rendered as you expect:
 
