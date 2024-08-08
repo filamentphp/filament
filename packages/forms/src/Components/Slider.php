@@ -38,7 +38,7 @@ class Slider extends Field
 
     protected string | Closure | null $behaviour = null;
 
-    protected bool | Closure | null $tooltips = null;
+    protected array | bool | Closure | null $tooltips = null;
     // To be added:
     // Put '0' at the bottom of the slider
     //
@@ -151,7 +151,7 @@ class Slider extends Field
         return $this;
     }
 
-    public function tooltips(bool | Closure | null $tooltips = false): static
+    public function tooltips(array | bool | Closure | null $tooltips = false): static
     {
         $this->tooltips = $tooltips;
 
