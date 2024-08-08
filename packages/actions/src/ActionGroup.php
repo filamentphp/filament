@@ -103,7 +103,7 @@ class ActionGroup extends ViewComponent implements HasLivewire
                     ...$action->getFlatActions(),
                 ];
             } else {
-                $this->flatActions[$action->getName()] = $action;
+                $this->flatActions[$action::getDefaultName()] = $action;
             }
 
             $this->actions[] = $action;
