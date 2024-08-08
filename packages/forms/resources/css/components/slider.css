@@ -1,1 +1,6 @@
 @import 'nouislider/dist/nouislider.css';
+
+.noUi-connect {
+    --tw-bg-opacity: 1;
+    background: rgba(var(--primary-500), var(--tw-bg-opacity));
+}

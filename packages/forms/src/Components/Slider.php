@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
 use InvalidArgumentException;
@@ -14,6 +15,8 @@ class Slider extends Field
 //    use Concerns\CanFixIndistinctState;
 //    use Concerns\HasToggleColors;
 //    use Concerns\HasToggleIcons;
+    use HasColor;
+    use Concerns\HasExtraInputAttributes;
     use HasExtraAlpineAttributes;
     use Concerns\CanBeNative;
 
