@@ -29,7 +29,7 @@ class Slider extends Field
 
     protected int | Closure |null $step = null;
 
-    protected array | Closure | null $start = null;
+    protected array | int | Closure | null $start = null;
     protected int | Closure | null $margin = null;
 
     protected int | Closure | null $limit = null;
@@ -75,7 +75,7 @@ class Slider extends Field
         return $this;
     }
 
-    public function start(array | Closure | null $start = null): static
+    public function start(array | int | Closure | null $start = null): static
     {
         if (empty($start)){
             $start = null;

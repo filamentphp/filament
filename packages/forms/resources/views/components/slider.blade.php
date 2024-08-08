@@ -25,9 +25,8 @@
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-nouislider'])
-        "
-        >
+//                ->class([''])
+        ">
         <div
             ax-load
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('slider', 'filament/forms') }}"
