@@ -2,7 +2,7 @@
 title: Installation
 ---
 
-**The Notifications package is pre-installed with the [Panel Builder](/docs/panels).** This guide is for using the Notifications package in a custom TALL Stack application (Tailwind, Alpine, Livewire, Laravel).
+**The Notifications package is pre-installed with the [Panel Builder](../panels).** This guide is for using the Notifications package in a custom TALL Stack application (Tailwind, Alpine, Livewire, Laravel).
 
 ## Requirements
 

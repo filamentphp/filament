@@ -2,7 +2,7 @@
 title: Installation
 ---
 
-**The Form Builder package is pre-installed with the [Panel Builder](/docs/panels).** This guide is for using the Form Builder in a custom TALL Stack application (Tailwind, Alpine, Livewire, Laravel).
+**The Form Builder package is pre-installed with the [Panel Builder](../panels).** This guide is for using the Form Builder in a custom TALL Stack application (Tailwind, Alpine, Livewire, Laravel).
 
 ## Requirements
 

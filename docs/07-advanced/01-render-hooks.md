@@ -39,7 +39,7 @@ FilamentView::registerRenderHook(
 ### Panel Builder render hooks
 
 ```php
-    use Filament\View\PanelsRenderHook;
+use Filament\View\PanelsRenderHook;
 ```
 
 - `PanelsRenderHook::AUTH_LOGIN_FORM_AFTER` - After login form
@@ -105,7 +105,7 @@ FilamentView::registerRenderHook(
 All these render hooks [can be scoped](#scoping-render-hooks) to any table Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager. Table widgets are also Livewire component classes.
 
 ```php
-    use Filament\Tables\View\TablesRenderHook;
+use Filament\Tables\View\TablesRenderHook;
 ```
 
 - `TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER` - After the "select all" and "deselect all" action buttons in the selection indicator bar
@@ -129,7 +129,7 @@ All these render hooks [can be scoped](#scoping-render-hooks) to any table Livew
 ### Widgets render hooks
 
 ```php
-    use Filament\Widgets\View\WidgetsRenderHook;
+use Filament\Widgets\View\WidgetsRenderHook;
 ```
 
 - `WidgetsRenderHook::TABLE_WIDGET_END` - End of the [table widget](../panels/dashboard#table-widgets), after the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class

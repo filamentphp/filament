@@ -16,12 +16,12 @@ While Filament comes with virtually any tool you'll need to build great apps, so
 
 Before we dive in, it's important to understand the different contexts in which plugins can be used. There are two main contexts:
 
-1. **Panel Plugins**: These are plugins that are used with [Panel Builders](/docs/3.x/panels/installation). They are typically used only to add functionality when used inside a Panel or as a complete Panel in and of itself. Examples of this are:
+1. **Panel Plugins**: These are plugins that are used with [Panel Builders](../panels/installation). They are typically used only to add functionality when used inside a Panel or as a complete Panel in and of itself. Examples of this are:
    1. A plugin that adds specific functionality to the dashboard in the form of Widgets.
    2. A plugin that adds a set of Resources / functionality to an app like a Blog or User Management feature.
 2. **Standalone Plugins**: These are plugins that are used in any context outside a Panel Builder. Examples of this are:
-   1. A plugin that adds custom fields to be used with the [Form Builders](/docs/3.x/forms/installation/).
-   2. A plugin that adds custom columns or filters to the [Table Builders](/docs/3.x/tables/installation/).
+   1. A plugin that adds custom fields to be used with the [Form Builders](..//forms/installation/).
+   2. A plugin that adds custom columns or filters to the [Table Builders](..//tables/installation/).
 
 Although these are two different mental contexts to keep in mind when building plugins, they can be used together inside the same plugin. They do not have to be mutually exclusive.
 
@@ -31,20 +31,20 @@ Before we dive into the specifics of building plugins, there are a few concepts 
 
 1. [Laravel Package Development](https://laravel.com/docs/packages)
 2. [Spatie Package Tools](https://github.com/spatie/laravel-package-tools)
-3. [Filament Asset Management](/docs/3.x/support/assets)
+3. [Filament Asset Management](../advanced/assets)
 
 ### The Plugin object
 
 Filament v3 introduces the concept of a Plugin object that is used to configure the plugin. This object is a simple PHP class that implements the `Filament\Contracts\Plugin` interface. This class is used to configure the plugin and is the main entry point for the plugin. It is also used to register Resources and Icons that might be used by your plugin.
 
-While the plugin object is extremely helpful, it is not required to build a plugin. You can still build plugins without using the plugin object as you can see in the [Building a Panel Plugin](/docs/3.x/support/plugins/build-a-panel-plugin) tutorial.
+While the plugin object is extremely helpful, it is not required to build a plugin. You can still build plugins without using the plugin object as you can see in the [Building a Panel Plugin](build-a-panel-plugin) tutorial.
 
 > **Info** 
 > The Plugin object is only used for Panel Providers. Standalone Plugins do not use this object. All configuration for Standalone Plugins should be handled in the plugin's service provider.
 
 ### Registering Assets
 
-All [asset registration](/docs/3.x/support/assets), including CSS, JS and Alpine Components, should be done through the plugin's service provider in the `packageBooted()` method. This allows Filament to register the assets with the Asset Manager and load them when needed.
+All [asset registration](../advanced/assets), including CSS, JS and Alpine Components, should be done through the plugin's service provider in the `packageBooted()` method. This allows Filament to register the assets with the Asset Manager and load them when needed.
 
 ## Creating a Plugin
 
@@ -82,8 +82,8 @@ class MyPluginServiceProvider extends PackageServiceProvider
 
 Please read this guide in its entirety before upgrading your plugin. It will help you understand the concepts and how to build your plugin.
 
-1. [Filament Asset Management](/docs/3.x/support/assets)
-2. [Panel Plugin Development](/docs/3.x/panels/plugins)
-3. [Icon Management](/docs/3.x/support/icons)
-4. [Colors Management](/docs/3.x/support/colors)
-5. [Style Customization](/docs/3.x/support/style-customization)
+1. [Filament Asset Management](../advanced/assets)
+2. [Panel Plugin Development](../panels/plugins)
+3. [Icon Management](../styling/icons)
+4. [Colors Management](../styling/colors)
+5. [CSS Hooks](../styling/css-hooks)

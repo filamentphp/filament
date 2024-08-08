@@ -12,7 +12,7 @@ import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Preface
 
-Please read the docs on [panel plugin development](/docs/3.x/panels/plugins) and the [getting started guide](/docs/3.x/support/plugins/getting-started) before continuing.
+Please read the docs on [panel plugin development](../panels/plugins) and the [getting started guide](getting-started) before continuing.
 
 ## Overview
 
@@ -22,7 +22,7 @@ You can find the final code for this plugin at [https://github.com/awcodes/clock
 
 ## Step 1: Create the plugin
 
-First, we'll create the plugin using the steps outlined in the [getting started guide](/docs/3.x/support/plugins/getting-started#creating-a-plugin).
+First, we'll create the plugin using the steps outlined in the [getting started guide](getting-started#creating-a-plugin).
 
 ## Step 2: Clean up
 
@@ -144,7 +144,7 @@ class ClockWidget extends Widget
 
 Next, we'll need to create the view for our widget. Create a new file at `resources/views/widget.blade.php` and add the following code. We'll make use of Filament's blade components to save time on writing the html for the widget.
 
-We are using async Alpine to load our Alpine component, so we'll need to add the `x-ignore` attribute to the div that will load our component. We'll also need to add the `ax-load` attribute to the div to tell Alpine to load our component. You can learn more about this in the [Core Concepts](/docs/3.x/support/assets#asynchronous-alpinejs-components) section of the docs.
+We are using async Alpine to load our Alpine component, so we'll need to add the `x-ignore` attribute to the div that will load our component. We'll also need to add the `ax-load` attribute to the div to tell Alpine to load our component. You can learn more about this in the [Core Concepts](../advanced/assets#asynchronous-alpinejs-components) section of the docs.
 
 ```blade
 <x-filament-widgets::widget>

@@ -4,7 +4,7 @@ title: Build a standalone plugin
 
 ## Preface
 
-Please read the docs on [panel plugin development](/docs/3.x/panels/plugins/) and the [getting started guide](/docs/3.x/support/plugins/getting-started) before continuing.
+Please read the docs on [panel plugin development](../panels/plugins/) and the [getting started guide](getting-started) before continuing.
 
 ## Overview
 
@@ -14,7 +14,7 @@ You can find the final code for this plugin at [https://github.com/awcodes/headi
 
 ## Step 1: Create the plugin
 
-First, we'll create the plugin using the steps outlined in the [getting started guide](/docs/3.x/support/plugins/getting-started#creating-a-plugin).
+First, we'll create the plugin using the steps outlined in the [getting started guide](getting-started#creating-a-plugin).
 
 ## Step 2: Clean up
 
@@ -195,7 +195,7 @@ class Heading extends Component
 
 Next, we'll need to create the view for our component. Create a new file at `resources/views/heading.blade.php` and add the following code.
 
-We are using x-load to asynchronously load stylesheet, so it's only loaded when necessary. You can learn more about this in the [Core Concepts](/docs/3.x/support/assets#lazy-loading-css) section of the docs.
+We are using x-load to asynchronously load stylesheet, so it's only loaded when necessary. You can learn more about this in the [Core Concepts](../advanced/assets#lazy-loading-css) section of the docs.
 
 ```blade
 @php

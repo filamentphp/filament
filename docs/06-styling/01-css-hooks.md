@@ -54,10 +54,11 @@ We use a few common abbreviations in our hook classes to keep them short and rea
 
 - `fi` is short for "Filament"
 - `fi-ac` is used to represent classes used in the Actions package
-- `fi-fo` is used to represent classes used in the Form Builder package
-- `fi-in` is used to represent classes used in the Infolist Builder package
+- `fi-fo` is used to represent classes used in the Forms package
+- `fi-in` is used to represent classes used in the Infolists package
 - `fi-no` is used to represent classes used in the Notifications package
-- `fi-ta` is used to represent classes used in the Table Builder package
+- `fi-sc` is used to represent classes used in the Schema package
+- `fi-ta` is used to represent classes used in the Tables package
 - `fi-wi` is used to represent classes used in the Widgets package
 - `btn` is short for "button"
 - `col` is short for "column"

@@ -2,7 +2,7 @@
 title: Installation
 ---
 
-**The Widgets package is pre-installed with the [Panel Builder](/docs/panels).** This guide is for using the Widgets package in a custom TALL Stack application (Tailwind, Alpine, Livewire, Laravel).
+**The Widgets package is pre-installed with the [Panel Builder](../panels).** This guide is for using the Widgets package in a custom TALL Stack application (Tailwind, Alpine, Livewire, Laravel).
 
 ## Requirements
 
