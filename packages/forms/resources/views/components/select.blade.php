@@ -96,6 +96,20 @@
             </x-filament::input.select>
         @else
             <div
+                class="hidden"
+                x-data="{
+                    isDisabled: @js($isDisabled),
+                    init: function () {
+                        const container = $el.nextElementSibling
+                        container.dispatchEvent(
+                            new CustomEvent('set-select-property', {
+                                detail: { isDisabled: this.isDisabled },
+                            }),
+                        )
+                    },
+                }"
+            ></div>
+            <div
                 x-ignore
                 @if (FilamentView::hasSpaMode())
                     ax-load="visible"
@@ -141,6 +155,7 @@
                         })"
                 wire:ignore
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
+                x-on:set-select-property="$event.detail.isDisabled ? select.disable() : select.enable()"
                 {{
                     $attributes
                         ->merge($getExtraAlpineAttributes(), escape: false)

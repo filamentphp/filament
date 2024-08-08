@@ -239,7 +239,7 @@ class ImageColumn extends Column
      */
     public function getExtraImgAttributes(): array
     {
-        $temporaryAttributeBag = new ComponentAttributeBag();
+        $temporaryAttributeBag = new ComponentAttributeBag;
 
         foreach ($this->extraImgAttributes as $extraImgAttributes) {
             $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraImgAttributes));

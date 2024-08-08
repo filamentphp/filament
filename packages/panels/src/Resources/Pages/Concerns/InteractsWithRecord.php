@@ -23,7 +23,7 @@ trait InteractsWithRecord
         $record = static::getResource()::resolveRecordRouteBinding($key);
 
         if ($record === null) {
-            throw (new ModelNotFoundException())->setModel($this->getModel(), [$key]);
+            throw (new ModelNotFoundException)->setModel($this->getModel(), [$key]);
         }
 
         return $record;

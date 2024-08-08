@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 uses(TestCase::class);
 
 it('belongs to container', function () {
-    $component = (new Component())
+    $component = (new Component)
         ->container($container = ComponentContainer::make(Livewire::make()));
 
     expect($component)
@@ -17,7 +17,7 @@ it('belongs to container', function () {
 });
 
 it('can access container\'s Livewire component', function () {
-    $component = (new Component())
+    $component = (new Component)
         ->container(ComponentContainer::make($livewire = Livewire::make()));
 
     expect($component)
@@ -28,10 +28,10 @@ it('has child components', function () {
     $components = [];
 
     foreach (range(1, $count = rand(2, 10)) as $i) {
-        $components[] = new Component();
+        $components[] = new Component;
     }
 
-    $componentsBoundToContainer = ($parentComponent = new Component())
+    $componentsBoundToContainer = ($parentComponent = new Component)
         ->container(ComponentContainer::make(Livewire::make()))
         ->childComponents($components)
         ->getChildComponentContainer()
@@ -47,7 +47,7 @@ it('has child components', function () {
 });
 
 it('has a label', function () {
-    $component = (new Component())
+    $component = (new Component)
         ->container(ComponentContainer::make(Livewire::make()))
         ->label($label = Str::random());
 
@@ -56,7 +56,7 @@ it('has a label', function () {
 });
 
 it('can have meta', function () {
-    $component = (new Component())
+    $component = (new Component)
         ->meta('foo', 'bar')
         ->meta('bob', 'baz');
 

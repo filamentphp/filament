@@ -30,7 +30,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
      */
     public function makeRecord(string $model, array $data): Model
     {
-        $record = new $model();
+        $record = new $model;
 
         if (method_exists($record, 'setLocale')) {
             $record->setLocale($this->activeLocale);

@@ -23,7 +23,7 @@ it('has components', function () {
     $components = [];
 
     foreach (range(1, $count = rand(2, 10)) as $i) {
-        $components[] = new Component();
+        $components[] = new Component;
     }
 
     $componentsBoundToContainer = ($container = ComponentContainer::make(Livewire::make()))
@@ -43,7 +43,7 @@ it('has dynamic components', function () {
     $components = [];
 
     foreach (range(1, $count = rand(2, 10)) as $i) {
-        $components[] = new Component();
+        $components[] = new Component;
     }
 
     $componentsBoundToContainer = ($container = ComponentContainer::make(Livewire::make()))
@@ -61,7 +61,7 @@ it('has dynamic components', function () {
 
 it('belongs to parent component', function () {
     $container = ComponentContainer::make(Livewire::make())
-        ->parentComponent($component = new Component());
+        ->parentComponent($component = new Component);
 
     expect($container)
         ->getParentComponent()->toBe($component);

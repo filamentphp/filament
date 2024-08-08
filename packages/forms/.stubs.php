@@ -2,7 +2,6 @@
 
 namespace Livewire\Features\SupportTesting {
 
-    use Illuminate\Support\Collection;
     use Closure;
 
     class Testable {
@@ -89,6 +88,16 @@ namespace Livewire\Features\SupportTesting {
         public function getNestedFormComponentActionComponentAndName(string | array $component, string | array $name, string $formName = 'form'): static {}
 
         public function parseNestedFormComponentActionComponentAndName(string | array $component, string | array $name, string $formName = 'form'): static {}
+
+        public function goToWizardStep(int $step, string $formName = 'form'): static {}
+
+        public function goToNextWizardStep(string $formName = 'form'): static {}
+
+        public function goToPreviousWizardStep(string $formName = 'form'): static {}
+
+        public function assertWizardStepExists(int $step, string $formName = 'form'): static {}
+
+        public function assertWizardCurrentStep(int $step, string $formName = 'form'): static {}
     }
 
 }

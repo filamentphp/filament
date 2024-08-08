@@ -943,7 +943,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 if ($translatableContentDriver) {
                     $record = $translatableContentDriver->makeRecord($relatedModel, $itemData);
                 } else {
-                    $record = new $relatedModel();
+                    $record = new $relatedModel;
                     $record->fill($itemData);
                 }
 

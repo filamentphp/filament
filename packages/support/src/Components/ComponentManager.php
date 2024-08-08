@@ -34,7 +34,7 @@ class ComponentManager implements ScopedComponentManager
 
         app()->singletonIf(
             ComponentManager::class,
-            fn () => new ComponentManager(),
+            fn () => new ComponentManager,
         );
 
         return app(ComponentManager::class);

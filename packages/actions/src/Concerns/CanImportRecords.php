@@ -330,7 +330,7 @@ trait CanImportRecords
                 ->action(function (): StreamedResponse {
                     $columns = $this->getImporter()::getColumns();
 
-                    $csv = Writer::createFromFileObject(new SplTempFileObject());
+                    $csv = Writer::createFromFileObject(new SplTempFileObject);
                     $csv->setOutputBOM(ByteSequence::BOM_UTF8);
 
                     if (filled($csvDelimiter = $this->getCsvDelimiter())) {

@@ -286,6 +286,56 @@ test('comments section is enabled' function () {
 });
 ```
 
+### Wizard
+
+To go to a wizard's next step, use `goToNextWizardStep()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to next wizard step', function () {
+    livewire(CreatePost::class)
+        ->goToNextWizardStep()
+        ->assertHasFormErrors(['title']);
+});
+```
+
+You can also go to the previous step by calling `goToPreviousWizardStep()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to next wizard step', function () {
+    livewire(CreatePost::class)
+        ->goToPreviousWizardStep()
+        ->assertHasFormErrors(['title']);
+});
+```
+
+If you want to go to a specific step, use `goToWizardStep()`, then the `assertWizardCurrentStep` method which can ensure you are on the desired step without validation errors from the previous:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to the wizards second step', function () {
+    livewire(CreatePost::class)
+        ->goToWizardStep(2)
+        ->assertWizardCurrentStep(2);
+});
+```
+
+If you have multiple forms on a single Livewire component, any of the wizard test helpers can accept a `formName` parameter:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('moves to next wizard step only for fooForm', function () {
+    livewire(CreatePost::class)
+        ->goToNextWizardStep(formName: 'fooForm')
+        ->assertHasFormErrors(['title'], formName: 'fooForm');
+});
+```
+
 ## Actions
 
 You can call an action by passing its form component name, and then the name of the action to `callFormComponentAction()`:

@@ -52,7 +52,7 @@ class PrepareCsvExport implements ShouldQueue
 
     public function handle(): void
     {
-        $csv = Writer::createFromFileObject(new SplTempFileObject());
+        $csv = Writer::createFromFileObject(new SplTempFileObject);
         $csv->setOutputBOM(ByteSequence::BOM_UTF8);
         $csv->setDelimiter($this->exporter::getCsvDelimiter());
         $csv->insertOne(array_values($this->columnMap));

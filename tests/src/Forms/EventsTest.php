@@ -15,7 +15,7 @@ test('registered event listeners are executed', function () {
 
     ComponentContainer::make(Livewire::make())
         ->components([
-            (new Component())
+            (new Component)
                 ->registerListeners([
                     $event => [
                         fn () => throw new Exception($event),

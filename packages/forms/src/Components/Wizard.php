@@ -30,6 +30,8 @@ class Wizard extends Component
 
     protected int | Closure $startStep = 1;
 
+    protected int $currentStepIndex = 0;
+
     /**
      * @var view-string
      */
@@ -58,12 +60,27 @@ class Wizard extends Component
     {
         parent::setUp();
 
+        $this->setCurrentStepIndex($this->getStartStep() - 1);
+
         $this->registerActions([
             fn (Wizard $component): Action => $component->getNextAction(),
             fn (Wizard $component): Action => $component->getPreviousAction(),
         ]);
 
         $this->registerListeners([
+            'wizard::previousStep' => [
+                function (Wizard $component, string $statePath, int $currentStepIndex): void {
+                    if ($statePath !== $component->getStatePath()) {
+                        return;
+                    }
+
+                    if ($currentStepIndex < 1) {
+                        $currentStepIndex = 1;
+                    }
+
+                    $this->setCurrentStepIndex($currentStepIndex - 1);
+                },
+            ],
             'wizard::nextStep' => [
                 function (Wizard $component, string $statePath, int $currentStepIndex): void {
                     if ($statePath !== $component->getStatePath()) {
@@ -79,6 +96,7 @@ class Wizard extends Component
 
                         /** @var Step $currentStep */
                         $currentStep = $steps[$currentStepIndex];
+                        $this->setCurrentStepIndex($currentStepIndex);
 
                         /** @var ?Step $nextStep */
                         $nextStep = $steps[$currentStepIndex + 1] ?? null;
@@ -96,6 +114,7 @@ class Wizard extends Component
                     /** @var LivewireComponent $livewire */
                     $livewire = $component->getLivewire();
                     $livewire->dispatch('next-wizard-step', statePath: $statePath);
+                    $this->setCurrentStepIndex($currentStepIndex + 1);
                 },
             ],
         ]);
@@ -245,5 +264,17 @@ class Wizard extends Component
     public function isStepPersistedInQueryString(): bool
     {
         return filled($this->getStepQueryStringKey());
+    }
+
+    public function getCurrentStepIndex(): int
+    {
+        return $this->currentStepIndex;
+    }
+
+    protected function setCurrentStepIndex(int $index): static
+    {
+        $this->currentStepIndex = $index;
+
+        return $this;
     }
 }

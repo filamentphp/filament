@@ -16,7 +16,7 @@ class SpatieTagsInput extends TagsInput
     {
         parent::setUp();
 
-        $this->type(new AllTagTypes());
+        $this->type(new AllTagTypes);
 
         $this->loadStateFromRelationshipsUsing(static function (SpatieTagsInput $component, ?Model $record): void {
             if (! method_exists($record, 'tagsWithType')) {
