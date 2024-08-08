@@ -19,6 +19,7 @@
 @endphp
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div
+        id="slider"
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('slider', 'filament/forms') }}"
         x-data="sliderFormComponent({
@@ -39,9 +40,6 @@
         })"
         x-ignore
     >
-        <div id="slider">
-
-        </div>
     </div>
 </x-dynamic-component>
 

@@ -128,7 +128,7 @@ class Slider extends Field
         return $this;
     }
 
-    public function behaviour(array | Closure | null $behaviour = null):        static
+    public function behaviour(array | Closure | null $behaviour = null): static
     {
         $acceptedValues = ['drag', 'drag-all', 'tap', 'fixed', 'snap', 'unconstrained', 'invert-connects', 'none'];
 
