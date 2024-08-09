@@ -100,7 +100,7 @@ class Slider extends Field
         return $this;
     }
 
-    public function connect(bool | Closure | null $connect = true): static
+    public function connect(bool | Closure | null $connect = null): static
     {
         $this->connect = $connect;
 
