@@ -2,6 +2,8 @@
 
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Wizard;
+use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Form;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
@@ -252,11 +254,11 @@ class TestComponentWithMultipleWizardForms extends Livewire
     protected function getSchemaForForms(): array
     {
         return [
-            \Filament\Forms\Components\Wizard::make([
-                \Filament\Forms\Components\Wizard\Step::make('step 1')->schema([
+            Wizard::make([
+                Step::make('step 1')->schema([
                     TextInput::make('title')->required(),
                 ]),
-                \Filament\Forms\Components\Wizard\Step::make('step 2')->schema([
+                Step::make('step 2')->schema([
                     TextInput::make('content')->required(),
                 ]),
             ]),
