@@ -49,8 +49,7 @@ export default function sliderFormComponent({
             }
 
             this.slider.on('update', (values, handle, unencoded, tap, positions, noUiSlider) => {
-                this.state = this.slider.get(true) ?? null
-                this.$nextTick(() => (this.isStateBeingUpdated = false))
+                this.state = values ?? null
             });
         },
     }

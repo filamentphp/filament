@@ -53,8 +53,6 @@ class Slider extends Field
     protected function setUp(): void
     {
         parent::setUp();
-
-//        $this->range(['min' => 0, 'max' => 100]);
     }
 
     public function range(array | Closure $range): static
