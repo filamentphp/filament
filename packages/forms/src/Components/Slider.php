@@ -25,11 +25,14 @@ class Slider extends Field
      */
     protected string $view = 'filament-forms::components.slider';
 
+    /** @var array<string, int>|Closure|null */
     protected array | Closure | null $range = null;
 
-    protected int | Closure |null $step = null;
+    protected int | Closure | null $step = null;
 
+    /** @var array<int>|int|Closure|null */
     protected array | int | Closure | null $start = null;
+
     protected int | Closure | null $margin = null;
 
     protected int | Closure | null $limit = null;
@@ -40,8 +43,10 @@ class Slider extends Field
 
     protected string | Closure | null $orientation = null;
 
+    /** @var string|Closure|null */
     protected string | Closure | null $behaviour = null;
 
+    /** @var array<int, bool>|bool|Closure|null */
     protected array | bool | Closure | null $tooltips = null;
 
     protected RawJs | Closure | null $format = null;
@@ -55,9 +60,10 @@ class Slider extends Field
         parent::setUp();
     }
 
+    /** @param array<string, int>|Closure $range */
     public function range(array | Closure $range): static
     {
-        if ( is_array($range) && (!array_key_exists('min', $range) || !array_key_exists('max', $range) || count($range) !== 2)) {
+        if (is_array($range) && (!array_key_exists('min', $range) || !array_key_exists('max', $range) || count($range) !== 2)) {
             throw new InvalidArgumentException("The range array must have 'min' and 'max' keys.");
         }
 
@@ -73,9 +79,10 @@ class Slider extends Field
         return $this;
     }
 
+    /** @param array<int>|int|Closure $start */
     public function start(array | int | Closure $start): static
     {
-        if (empty($start)){
+        if (empty($start)) {
             $start = null;
         }
 
@@ -120,7 +127,7 @@ class Slider extends Field
     public function orientation(SliderOrientation | Closure | null $orientation = SliderOrientation::Horizontal): static
     {
         // Convert the enum to its string value before assignment
-        if ($orientation instanceof SliderOrientation   ) {
+        if ($orientation instanceof SliderOrientation) {
             $orientation = $orientation->value;
         }
 
@@ -129,6 +136,7 @@ class Slider extends Field
         return $this;
     }
 
+    /** @param array<SliderBehaviour>|SliderBehaviour|Closure|null $behaviour */
     public function behaviour(array | SliderBehaviour | Closure | null $behaviour = null): static
     {
         if (is_array($behaviour)) {
@@ -143,7 +151,7 @@ class Slider extends Field
         return $this;
     }
 
-
+    /** @param array<int, bool>|bool|Closure|null $tooltips */
     public function tooltips(array | bool | Closure | null $tooltips = false): static
     {
         $this->tooltips = $tooltips;
@@ -172,6 +180,7 @@ class Slider extends Field
         return $this;
     }
 
+    /** @return array<string, int>|null */
     public function getRange(): ?array
     {
         return $this->evaluate($this->range ?? ['min' => 0, 'max' => 100]);
@@ -182,6 +191,7 @@ class Slider extends Field
         return $this->evaluate($this->step);
     }
 
+    /** @return int|array<int>|null */
     public function getStart(): int | array | null
     {
         return $this->evaluate($this->start ?? 0);
@@ -217,7 +227,8 @@ class Slider extends Field
         return $this->evaluate($this->behaviour);
     }
 
-    public function getTooltips(): ?bool
+    /** @return bool|array<int, bool>|null */
+    public function getTooltips(): bool | array | null
     {
         return $this->evaluate($this->tooltips);
     }
@@ -237,4 +248,3 @@ class Slider extends Field
         return $this->evaluate($this->ariaFormat);
     }
 }
-
