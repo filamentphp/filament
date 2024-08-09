@@ -181,7 +181,7 @@ class TestsActions
 
     public function assertActionVisible(): Closure
     {
-        return function (string | array $name, array $arguments): static {
+        return function (string | array $name, array $arguments = []): static {
             /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
@@ -207,7 +207,7 @@ class TestsActions
 
     public function assertActionHidden(): Closure
     {
-        return function (string | array $name): static {
+        return function (string | array $name, array $arguments = []): static {
             /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
@@ -216,6 +216,8 @@ class TestsActions
             $this->assertActionExists($name);
 
             $action = $this->instance()->getAction($name);
+
+            $action->arguments($arguments);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', $name);
