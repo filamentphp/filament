@@ -13,15 +13,12 @@ use InvalidArgumentException;
 
 class Slider extends Field
 {
-//    use Concerns\CanBeAccepted;
-//    use Concerns\CanBeInline;
-//    use Concerns\CanFixIndistinctState;
-//    use Concerns\HasToggleColors;
-//    use Concerns\HasToggleIcons;
-    use HasColor;
+    use Concerns\CanBeDisabled;
+    use Concerns\CanBeHidden;
+    use Concerns\CanBeValidated;
+    use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
     use HasExtraAlpineAttributes;
-    use Concerns\CanBeNative;
 
     /**
      * @var view-string
@@ -52,8 +49,6 @@ class Slider extends Field
     protected RawJs | Closure | null $ariaFormat = null;
 
     protected RawJs | Closure | null $pips = null;
-
-    protected HtmlString | string | Closure | null $description = null;
 
     protected function setUp(): void
     {
@@ -179,13 +174,6 @@ class Slider extends Field
         return $this;
     }
 
-    public function description(HtmlString | string | Closure | null $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
     public function getRange(): ?array
     {
         return $this->evaluate($this->range ?? ['min' => 0, 'max' => 100]);
@@ -249,11 +237,6 @@ class Slider extends Field
     public function getAriaFormat(): ?RawJs
     {
         return $this->evaluate($this->ariaFormat);
-    }
-
-    public function getDescription(): HtmlString | string | null
-    {
-        return $this->evaluate($this->description);
     }
 }
 

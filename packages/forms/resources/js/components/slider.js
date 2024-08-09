@@ -42,6 +42,16 @@ export default function sliderFormComponent({
                 pips: pips,
                 ariaFormat: ariaFormat
             })
+
+            // Set the initial value of the slider
+            if (![null, undefined, ''].includes(this.state)) {
+                this.slider.set(this.state)
+            }
+
+            this.slider.on('update', (values, handle, unencoded, tap, positions, noUiSlider) => {
+                this.state = this.slider.get(true) ?? null
+                this.$nextTick(() => (this.isStateBeingUpdated = false))
+            });
         },
     }
 }

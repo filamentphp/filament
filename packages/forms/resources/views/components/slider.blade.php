@@ -16,10 +16,15 @@
     $format = $getFormat();
     $pips = $getPips();
     $ariaFormat = $getAriaFormat();
-    $description = $getDescription();
 @endphp
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
         <div
+            {{--Set dimensions! Vertical sliders don't assume a default height, so a height needs to be set.--}}
+            {{--Set margin bottom when orientation is horizontal due to nouislider bug  --}}
+            @class([
+                'fi-slider-vh' => $orientation === \Filament\Forms\Enums\SliderOrientation::Vertical->value,
+                'mb-8' => $orientation === \Filament\Forms\Enums\SliderOrientation::Horizontal->value,
+            ])
             ax-load
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('slider', 'filament/forms') }}"
             x-data="sliderFormComponent({
@@ -48,21 +53,7 @@
                     ->merge($getExtraAttributes(), escape: false)
                     ->merge($getExtraAlpineAttributes(), escape: false)
             }}
-            x-ignore
-            {{--Set dimensions! Vertical sliders don't assume a default height, so a height needs to be set.--}}
-            @class([
-                'fi-slider-vh' => $orientation === \Filament\Forms\Enums\SliderOrientation::Vertical->value,
-            ])>
+            wire:ignore
+            x-ignore>
         </div>
-        @if ( filled($description) )
-            <div
-                @class([
-                    'text-sm text-gray-500 dark:text-gray-400',
-                ])
-            >
-                <x-filament-forms::field-wrapper.helper-text>
-                    {{ $description }}
-                </x-filament-forms::field-wrapper.helper-text>
-            </div>
-        @endif
-</x-dynamic-component>
+    </x-dynamic-component>
