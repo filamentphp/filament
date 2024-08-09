@@ -5,6 +5,18 @@
     background: rgba(var(--primary-500), var(--tw-bg-opacity));
 }
 
+/*.noUi-pips-horizontal {*/
+/*    top: 50%;*/
+/*    left: 0;*/
+/*    width: 100%;*/
+/*}*/
+
+/*.noUi-pips {*/
+/*    position: relative;*/
+/*    color: #999;*/
+/*}*/
+
 .fi-slider-vh {
     height: 10rem;
 }
+

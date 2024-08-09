@@ -19,7 +19,7 @@ export default function sliderFormComponent({
         tooltips,
         format,
         pips,
-        ariaFormat
+        ariaFormat,
     }) {
     return {
         state,

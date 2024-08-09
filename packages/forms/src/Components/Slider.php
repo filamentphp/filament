@@ -53,6 +53,8 @@ class Slider extends Field
 
     protected RawJs | Closure | null $pips = null;
 
+    protected HtmlString | string | Closure | null $description = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -177,6 +179,13 @@ class Slider extends Field
         return $this;
     }
 
+    public function description(HtmlString | string | Closure | null $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
     public function getRange(): ?array
     {
         return $this->evaluate($this->range ?? ['min' => 0, 'max' => 100]);
@@ -240,6 +249,11 @@ class Slider extends Field
     public function getAriaFormat(): ?RawJs
     {
         return $this->evaluate($this->ariaFormat);
+    }
+
+    public function getDescription(): HtmlString | string | null
+    {
+        return $this->evaluate($this->description);
     }
 }
 
