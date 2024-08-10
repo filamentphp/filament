@@ -90,7 +90,7 @@ class TestsActions
     {
         return function (string | array $name, array $data = [], array $arguments = []): static {
             /** @phpstan-ignore-next-line */
-            $this->assertActionVisible($name);
+            $this->assertActionVisible($name, $arguments);
 
             /** @phpstan-ignore-next-line */
             $this->mountAction($name, $arguments);
@@ -181,7 +181,7 @@ class TestsActions
 
     public function assertActionVisible(): Closure
     {
-        return function (string | array $name): static {
+        return function (string | array $name, array $arguments = []): static {
             /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
@@ -190,6 +190,8 @@ class TestsActions
             $this->assertActionExists($name);
 
             $action = $this->instance()->getAction($name);
+
+            $action->arguments($arguments);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', $name);
@@ -205,7 +207,7 @@ class TestsActions
 
     public function assertActionHidden(): Closure
     {
-        return function (string | array $name): static {
+        return function (string | array $name, array $arguments = []): static {
             /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
@@ -214,6 +216,8 @@ class TestsActions
             $this->assertActionExists($name);
 
             $action = $this->instance()->getAction($name);
+
+            $action->arguments($arguments);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', $name);
