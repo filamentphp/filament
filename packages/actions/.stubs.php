@@ -18,13 +18,13 @@ namespace Livewire\Features\SupportTesting {
 
         public function callMountedAction(array $arguments = []): static {}
 
-        public function assertActionExists(string | TestAction | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {}
+        public function assertActionExists(string | TestAction | array $actions, array $arguments = [], ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {}
 
         public function assertActionDoesNotExist(string | TestAction | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {}
 
-        public function assertActionVisible(string | TestAction | array $actions): static {}
+        public function assertActionVisible(string | TestAction | array $actions, array $arguments = []): static {}
 
-        public function assertActionHidden(string | TestAction | array $actions): static {}
+        public function assertActionHidden(string | TestAction | array $actions, array $arguments = []): static {}
 
         public function assertActionEnabled(string | TestAction | array $actions): static {}
 

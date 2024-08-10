@@ -95,7 +95,7 @@ class TestsActions
             $initialMountedActionsCount = count($this->instance()->mountedActions);
 
             /** @phpstan-ignore-next-line */
-            $this->assertActionVisible($actions);
+            $this->assertActionVisible($actions, $arguments);
 
             /** @phpstan-ignore-next-line */
             $this->mountAction($actions, $arguments);
@@ -143,10 +143,10 @@ class TestsActions
 
     public function assertActionExists(): Closure
     {
-        return function (string | TestAction | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {
+        return function (string | TestAction | array $actions, array $arguments = [], ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
-            $actions = $this->parseNestedActions($actions);
+            $actions = $this->parseNestedActions($actions, $arguments);
 
             $action = $this->instance()->getAction([
                 ...$this->instance()->mountedActions,
@@ -222,9 +222,10 @@ class TestsActions
 
     public function assertActionVisible(): Closure
     {
-        return function (string | TestAction | array $actions): static {
+        return function (string | TestAction | array $actions, array $arguments = []): static {
             $this->assertActionExists(
                 $actions,
+                $arguments,
                 checkActionUsing: fn (Action $action): bool => $action->isVisible(),
                 generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] is visible on the [{$livewireClass}] component.",
             );
@@ -235,9 +236,10 @@ class TestsActions
 
     public function assertActionHidden(): Closure
     {
-        return function (string | TestAction | array $actions): static {
+        return function (string | TestAction | array $actions, array $arguments = []): static {
             $this->assertActionExists(
                 $actions,
+                $arguments,
                 checkActionUsing: fn (Action $action): bool => $action->isHidden(),
                 generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] is hidden on the [{$livewireClass}] component.",
             );
