@@ -20,7 +20,7 @@ IconEntry::make('status')
 
 In the function, `$state` is the value of the entry, and `$record` can be used to access the underlying Eloquent record.
 
-<AutoScreenshot name="infolists/entries/icon/simple" alt="Icon entry" version="3.x" />
+<AutoScreenshot name="infolists/entries/icon/simple" alt="Icon entry" version="4.x" />
 
 ## Customizing the color
 
@@ -40,7 +40,7 @@ IconEntry::make('status')
 
 In the function, `$state` is the value of the entry, and `$record` can be used to access the underlying Eloquent record.
 
-<AutoScreenshot name="infolists/entries/icon/color" alt="Icon entry with color" version="3.x" />
+<AutoScreenshot name="infolists/entries/icon/color" alt="Icon entry with color" version="4.x" />
 
 ## Customizing the size
 
@@ -53,7 +53,7 @@ IconEntry::make('status')
     ->size(IconEntry\Enums\IconEntrySize::Medium)
 ```
 
-<AutoScreenshot name="infolists/entries/icon/medium" alt="Medium-sized icon entry" version="3.x" />
+<AutoScreenshot name="infolists/entries/icon/medium" alt="Medium-sized icon entry" version="4.x" />
 
 ## Handling booleans
 
@@ -68,7 +68,7 @@ IconEntry::make('is_featured')
 
 > If this column in the model class is already cast as a `bool` or `boolean`, Filament is able to detect this, and you do not need to use `boolean()` manually.
 
-<AutoScreenshot name="infolists/entries/icon/boolean" alt="Icon entry to display a boolean" version="3.x" />
+<AutoScreenshot name="infolists/entries/icon/boolean" alt="Icon entry to display a boolean" version="4.x" />
 
 ### Customizing the boolean icons
 
@@ -83,7 +83,7 @@ IconEntry::make('is_featured')
     ->falseIcon('heroicon-o-x-mark')
 ```
 
-<AutoScreenshot name="infolists/entries/icon/boolean-icon" alt="Icon entry to display a boolean with custom icons" version="3.x" />
+<AutoScreenshot name="infolists/entries/icon/boolean-icon" alt="Icon entry to display a boolean with custom icons" version="4.x" />
 
 ### Customizing the boolean colors
 
@@ -98,4 +98,4 @@ IconEntry::make('is_featured')
     ->falseColor('warning')
 ```
 
-<AutoScreenshot name="infolists/entries/icon/boolean-color" alt="Icon entry to display a boolean with custom colors" version="3.x" />
+<AutoScreenshot name="infolists/entries/icon/boolean-color" alt="Icon entry to display a boolean with custom colors" version="4.x" />

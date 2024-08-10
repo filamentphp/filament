@@ -13,7 +13,7 @@ use Filament\Forms\Components\Textarea;
 Textarea::make('description')
 ```
 
-<AutoScreenshot name="forms/fields/textarea/simple" alt="Textarea" version="3.x" />
+<AutoScreenshot name="forms/fields/textarea/simple" alt="Textarea" version="4.x" />
 
 ## Resizing the textarea
 
@@ -40,7 +40,7 @@ Textarea::make('description')
 
 ## Making the field read-only
 
-Not to be confused with [disabling the field](getting-started#disabling-a-field), you may make the field "read-only" using the `readOnly()` method:
+Not to be confused with [disabling the field](overview#disabling-a-field), you may make the field "read-only" using the `readOnly()` method:
 
 ```php
 use Filament\Forms\Components\Textarea;
@@ -49,7 +49,7 @@ Textarea::make('description')
     ->readOnly()
 ```
 
-There are a few differences, compared to [`disabled()`](getting-started#disabling-a-field):
+There are a few differences, compared to [`disabled()`](overview#disabling-a-field):
 
 - When using `readOnly()`, the field will still be sent to the server when the form is submitted. It can be mutated with the browser console, or via JavaScript. You can use [`dehydrated(false)`](advanced#preventing-a-field-from-being-dehydrated) to prevent this.
 - There are no styling changes, such as less opacity, when using `readOnly()`.

@@ -72,7 +72,7 @@ public function table(Table $table): Table
 }
 ```
 
-You may use the [trigger action API](getting-started#customizing-the-filters-trigger-action) to [customize the modal](../actions/modals), including [using a `slideOver()`](../actions/modals#using-a-slide-over-instead-of-a-modal).
+You may use the [trigger action API](overview#customizing-the-filters-trigger-action) to [customize the modal](../actions/modals), including [using a `slideOver()`](../actions/modals#using-a-slide-over-instead-of-a-modal).
 
 ## Displaying filters above the table content
 
@@ -91,7 +91,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/above-content" alt="Table with filters above content" version="3.x" />
+<AutoScreenshot name="tables/filters/above-content" alt="Table with filters above content" version="4.x" />
 
 ### Allowing filters above the table content to be collapsed
 
@@ -126,7 +126,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/filters/below-content" alt="Table with filters below content" version="3.x" />
+<AutoScreenshot name="tables/filters/below-content" alt="Table with filters below content" version="4.x" />
 
 ## Hiding the filter indicators
 
@@ -147,7 +147,7 @@ public function table(Table $table): Table
 
 ## Customizing the filter form schema
 
-You may customize the [form schema](../../forms/layout) of the entire filter form at once, in order to rearrange filters into your desired layout, and use any of the [layout components](../../forms/layout) available to forms. To do this, use the `filterFormSchema()` method, passing a closure function that receives the array of defined `$filters` that you can insert:
+You may customize the [form schema](../../schema/layout) of the entire filter form at once, in order to rearrange filters into your desired layout, and use any of the [layout components](../../schema/layout) available to forms. To do this, use the `filterFormSchema()` method, passing a closure function that receives the array of defined `$filters` that you can insert:
 
 ```php
 use Filament\Schema\Components\Section;
@@ -177,4 +177,4 @@ public function table(Table $table): Table
 }
 ```
 
-In this example, we have put two of the filters inside a [section](../../forms/layout/section) component, and used the `columns()` method to specify that the section should have two columns. We have also used the `columnSpanFull()` method to specify that the section should span the full width of the filter form, which is also 2 columns wide. We have inserted each filter into the form schema by using the filter's name as the key in the `$filters` array.
+In this example, we have put two of the filters inside a [section](../../schema/layout/section) component, and used the `columns()` method to specify that the section should have two columns. We have also used the `columnSpanFull()` method to specify that the section should span the full width of the filter form, which is also 2 columns wide. We have inserted each filter into the form schema by using the filter's name as the key in the `$filters` array.

@@ -33,7 +33,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 > These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
 
-All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), etc.) have a [`relationship()` method](../../forms/advanced#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
+All layout form components ([Grid](../../schema/layout/grid#grid-component), [Section](../../schema/layout/section), [Fieldset](../../schema/layout/fieldset), etc.) have a [`relationship()` method](../../forms/advanced#saving-data-to-relationships). When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -73,7 +73,7 @@ php artisan make:filament-relation-manager CategoryResource posts title
 - `posts` is the name of the relationship you want to manage.
 - `title` is the name of the attribute that will be used to identify posts.
 
-This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](getting-started#resource-forms) and [table](getting-started#resource-tables) for your relation manager:
+This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](overview#resource-forms) and [table](overview#resource-tables) for your relation manager:
 
 ```php
 use Filament\Forms;
@@ -959,7 +959,7 @@ AttachAction::make()
 
 Using a `ManageRelatedRecords` page is an alternative to using a relation manager, if you want to keep the functionality of managing a relationship separate from editing or viewing the owner record.
 
-This feature is ideal if you are using [resource sub-navigation](getting-started#resource-sub-navigation), as you are easily able to switch between the View or Edit page and the relation page.
+This feature is ideal if you are using [resource sub-navigation](overview#resource-sub-navigation), as you are easily able to switch between the View or Edit page and the relation page.
 
 To create a relation page, you should use the `make:filament-page` command:
 
@@ -990,7 +990,7 @@ Now, you can customize the page in exactly the same way as a relation manager, w
 
 ### Adding relation pages to resource sub-navigation
 
-If you're using [resource sub-navigation](getting-started#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
+If you're using [resource sub-navigation](overview#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
 
 ```php
 use App\Filament\Resources\CustomerResource\Pages;

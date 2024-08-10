@@ -1112,8 +1112,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/fieldset/simple': {
-        url: 'forms/layout',
+    'schema/layout/fieldset/simple': {
+        url: 'schema/layout',
         selector: '#fieldset',
         viewport: {
             width: 1920,
@@ -1121,8 +1121,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/tabs/simple': {
-        url: 'forms/layout',
+    'schema/layout/tabs/simple': {
+        url: 'schema/layout',
         selector: '#tabs',
         viewport: {
             width: 1920,
@@ -1130,8 +1130,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/tabs/icons': {
-        url: 'forms/layout',
+    'schema/layout/tabs/icons': {
+        url: 'schema/layout',
         selector: '#tabsIcons',
         viewport: {
             width: 1920,
@@ -1139,8 +1139,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/tabs/icons-after': {
-        url: 'forms/layout',
+    'schema/layout/tabs/icons-after': {
+        url: 'schema/layout',
         selector: '#tabsIconsAfter',
         viewport: {
             width: 1920,
@@ -1148,8 +1148,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/tabs/badges': {
-        url: 'forms/layout',
+    'schema/layout/tabs/badges': {
+        url: 'schema/layout',
         selector: '#tabsBadges',
         viewport: {
             width: 1920,
@@ -1157,8 +1157,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/wizard/simple': {
-        url: 'forms/layout',
+    'schema/layout/wizard/simple': {
+        url: 'schema/layout',
         selector: '#wizard',
         viewport: {
             width: 1920,
@@ -1166,8 +1166,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/wizard/icons': {
-        url: 'forms/layout',
+    'schema/layout/wizard/icons': {
+        url: 'schema/layout',
         selector: '#wizardIcons',
         viewport: {
             width: 1920,
@@ -1175,8 +1175,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/wizard/completed-icons': {
-        url: 'forms/layout',
+    'schema/layout/wizard/completed-icons': {
+        url: 'schema/layout',
         selector: '#wizardCompletedIcons',
         viewport: {
             width: 1920,
@@ -1184,8 +1184,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/wizard/descriptions': {
-        url: 'forms/layout',
+    'schema/layout/wizard/descriptions': {
+        url: 'schema/layout',
         selector: '#wizardDescriptions',
         viewport: {
             width: 1920,
@@ -1193,8 +1193,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/section/simple': {
-        url: 'forms/layout',
+    'schema/layout/section/simple': {
+        url: 'schema/layout',
         selector: '#section',
         viewport: {
             width: 1920,
@@ -1202,8 +1202,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/section/header/actions': {
-        url: 'forms/layout',
+    'schema/layout/section/header/actions': {
+        url: 'schema/layout',
         selector: '#sectionHeaderActions',
         viewport: {
             width: 1920,
@@ -1211,8 +1211,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/section/footer/actions': {
-        url: 'forms/layout',
+    'schema/layout/section/footer/actions': {
+        url: 'schema/layout',
         selector: '#sectionFooterActions',
         viewport: {
             width: 1920,
@@ -1220,8 +1220,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/section/icons': {
-        url: 'forms/layout',
+    'schema/layout/section/icons': {
+        url: 'schema/layout',
         selector: '#sectionIcons',
         viewport: {
             width: 1920,
@@ -1229,8 +1229,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/section/aside': {
-        url: 'forms/layout',
+    'schema/layout/section/aside': {
+        url: 'schema/layout',
         selector: '#sectionAside',
         viewport: {
             width: 1920,
@@ -1238,8 +1238,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/section/collapsed': {
-        url: 'forms/layout',
+    'schema/layout/section/collapsed': {
+        url: 'schema/layout',
         selector: '#sectionCollapsed',
         viewport: {
             width: 1920,
@@ -1247,8 +1247,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/section/compact': {
-        url: 'forms/layout',
+    'schema/layout/section/compact': {
+        url: 'schema/layout',
         selector: '#sectionCompact',
         viewport: {
             width: 1920,
@@ -1256,8 +1256,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/section/without-header': {
-        url: 'forms/layout',
+    'schema/layout/section/without-header': {
+        url: 'schema/layout',
         selector: '#sectionWithoutHeader',
         viewport: {
             width: 1920,
@@ -1265,8 +1265,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/split/simple': {
-        url: 'forms/layout',
+    'schema/layout/split/simple': {
+        url: 'schema/layout',
         selector: '#split',
         viewport: {
             width: 1920,
@@ -1274,17 +1274,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/placeholder/simple': {
-        url: 'forms/layout',
-        selector: '#placeholder',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/layout/actions/anonymous/simple': {
-        url: 'forms/layout',
+    'schema/layout/actions/anonymous/simple': {
+        url: 'schema/layout',
         selector: '#anonymousActions',
         viewport: {
             width: 1920,
@@ -1292,8 +1283,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/actions/anonymous/full-width': {
-        url: 'forms/layout',
+    'schema/layout/actions/anonymous/full-width': {
+        url: 'schema/layout',
         selector: '#anonymousActionsFullWidth',
         viewport: {
             width: 1920,
@@ -1301,8 +1292,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/actions/anonymous/horizontally-aligned-center': {
-        url: 'forms/layout',
+    'schema/layout/actions/anonymous/horizontally-aligned-center': {
+        url: 'schema/layout',
         selector: '#anonymousActionsHorizontallyAlignedCenter',
         viewport: {
             width: 1920,
@@ -1310,8 +1301,8 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/actions/anonymous/vertically-aligned-end': {
-        url: 'forms/layout',
+    'schema/layout/actions/anonymous/vertically-aligned-end': {
+        url: 'schema/layout',
         selector: '#anonymousActionsVerticallyAlignedEnd',
         viewport: {
             width: 1920,
@@ -1679,168 +1670,6 @@ export default {
     'infolists/entries/actions/hint': {
         url: 'infolists/entries',
         selector: '#hintAction',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/fieldset/simple': {
-        url: 'infolists/layout',
-        selector: '#fieldset',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/tabs/simple': {
-        url: 'infolists/layout',
-        selector: '#tabs',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/tabs/icons': {
-        url: 'infolists/layout',
-        selector: '#tabsIcons',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/tabs/icons-after': {
-        url: 'infolists/layout',
-        selector: '#tabsIconsAfter',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/tabs/badges': {
-        url: 'infolists/layout',
-        selector: '#tabsBadges',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/section/simple': {
-        url: 'infolists/layout',
-        selector: '#section',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/section/header/actions': {
-        url: 'infolists/layout',
-        selector: '#sectionHeaderActions',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/section/footer/actions': {
-        url: 'infolists/layout',
-        selector: '#sectionFooterActions',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/section/icons': {
-        url: 'infolists/layout',
-        selector: '#sectionIcons',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/section/aside': {
-        url: 'infolists/layout',
-        selector: '#sectionAside',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/section/collapsed': {
-        url: 'infolists/layout',
-        selector: '#sectionCollapsed',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/section/compact': {
-        url: 'infolists/layout',
-        selector: '#sectionCompact',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/section/without-header': {
-        url: 'infolists/layout',
-        selector: '#sectionWithoutHeader',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/split/simple': {
-        url: 'infolists/layout',
-        selector: '#split',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/actions/anonymous/simple': {
-        url: 'infolists/layout',
-        selector: '#anonymousActions',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/actions/anonymous/full-width': {
-        url: 'infolists/layout',
-        selector: '#anonymousActionsFullWidth',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/actions/anonymous/horizontally-aligned-center': {
-        url: 'infolists/layout',
-        selector: '#anonymousActionsHorizontallyAlignedCenter',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/actions/anonymous/vertically-aligned-end': {
-        url: 'infolists/layout',
-        selector: '#anonymousActionsVerticallyAlignedEnd',
         viewport: {
             width: 1920,
             height: 640,

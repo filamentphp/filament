@@ -13,7 +13,7 @@ use Filament\Forms\Components\Toggle;
 Toggle::make('is_admin')
 ```
 
-<AutoScreenshot name="forms/fields/toggle/simple" alt="Toggle" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle/simple" alt="Toggle" version="4.x" />
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
 
@@ -42,7 +42,7 @@ Toggle::make('is_admin')
     ->offIcon('heroicon-m-user')
 ```
 
-<AutoScreenshot name="forms/fields/toggle/icons" alt="Toggle icons" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle/icons" alt="Toggle icons" version="4.x" />
 
 ## Customizing the color of the toggle button
 
@@ -56,9 +56,9 @@ Toggle::make('is_admin')
     ->offColor('danger')
 ```
 
-<AutoScreenshot name="forms/fields/toggle/off-color" alt="Toggle off color" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle/off-color" alt="Toggle off color" version="4.x" />
 
-<AutoScreenshot name="forms/fields/toggle/on-color" alt="Toggle on color" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle/on-color" alt="Toggle on color" version="4.x" />
 
 ## Positioning the label above
 
@@ -73,7 +73,7 @@ Toggle::make('is_admin')
     ->inline()
 ```
 
-<AutoScreenshot name="forms/fields/toggle/inline" alt="Toggle with its label inline" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle/inline" alt="Toggle with its label inline" version="4.x" />
 
 When the toggle is stacked, its label is above it:
 
@@ -84,7 +84,7 @@ Toggle::make('is_admin')
     ->inline(false)
 ```
 
-<AutoScreenshot name="forms/fields/toggle/not-inline" alt="Toggle with its label above" version="3.x" />
+<AutoScreenshot name="forms/fields/toggle/not-inline" alt="Toggle with its label above" version="4.x" />
 
 ## Toggle validation
 

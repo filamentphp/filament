@@ -8,7 +8,7 @@ By default, the configuration file is located at `app/Providers/Filament/AdminPa
 
 ## Introducing panels
 
-By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources/getting-started), [custom pages](pages), and [dashboard widgets](dashboard) you create get registered to this panel.
+By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources), [custom pages](pages), and [dashboard widgets](dashboard) you create get registered to this panel.
 
 However, you can create as many panels as you want, and each can have its own set of resources, pages and widgets.
 
@@ -183,7 +183,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-> In this example, we are using [`getUrl()`](/resources/getting-started#generating-urls-to-resource-pages) on a resource to get the URL to the resource's index page. This feature requires the panel to already be registered though, and the configuration is too early in the request lifecycle to do that. You can use a function to return the URLs instead, which will be resolved when the panel has been registered.
+> In this example, we are using [`getUrl()`](/resources#generating-urls-to-resource-pages) on a resource to get the URL to the resource's index page. This feature requires the panel to already be registered though, and the configuration is too early in the request lifecycle to do that. You can use a function to return the URLs instead, which will be resolved when the panel has been registered.
 
 These URLs need to exactly match the URL that the user is navigating to, including the domain and protocol. If you'd like to use a pattern to match multiple URLs, you can use an asterisk (`*`) as a wildcard character:
 

@@ -160,7 +160,7 @@ If you're using mass assignment protection on your model, you will also need to 
 
 When making the table reorderable, a new button will be available on the table to toggle reordering.
 
-<AutoScreenshot name="tables/reordering" alt="Table with reorderable rows" version="3.x" />
+<AutoScreenshot name="tables/reordering" alt="Table with reorderable rows" version="4.x" />
 
 The `reorderable()` method accepts the name of a column to store the record order in. If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may use this instead:
 
@@ -219,7 +219,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/reordering/custom-trigger-action" alt="Table with reorderable rows and a custom trigger action" version="3.x" />
+<AutoScreenshot name="tables/reordering/custom-trigger-action" alt="Table with reorderable rows and a custom trigger action" version="4.x" />
 
 ## Customizing the table header
 
@@ -389,7 +389,7 @@ public function table(Table $table): Table
 }
 ```
 
-<AutoScreenshot name="tables/striped" alt="Table with striped rows" version="3.x" />
+<AutoScreenshot name="tables/striped" alt="Table with striped rows" version="4.x" />
 
 ### Custom row classes
 

@@ -4,9 +4,9 @@ title: Getting started
 
 ## Overview
 
-Filament's infolist package allows you to [render a read-only list of data about a particular entity](adding-an-infolist-to-a-livewire-component). It's also used within other Filament packages, such as the [Panel Builder](../panels) for displaying [app resources](../panels/resources/getting-started) and [relation managers](../panels/resources/relation-managers), as well as for [action modals](../actions). Learning the features of the Infolist Builder will be incredibly time-saving when both building your own custom Livewire applications and using Filament's other packages.
+Filament's infolist package allows you to [render a read-only list of data about a particular entity](adding-an-infolist-to-a-livewire-component). It's also used within other Filament packages, such as the [Panel Builder](../panels) for displaying [app resources](../panels/resources) and [relation managers](../panels/resources/relation-managers), as well as for [action modals](../actions). Learning the features of the Infolist Builder will be incredibly time-saving when both building your own custom Livewire applications and using Filament's other packages.
 
-This guide will walk you through the basics of building infolists with Filament's infolist package. If you're planning to add a new infolist to your own Livewire component, you should [do that first](adding-an-infolist-to-a-livewire-component) and then come back. If you're adding an infolist to an [app resource](../panels/resources/getting-started), or another Filament package, you're ready to go!
+This guide will walk you through the basics of building infolists with Filament's infolist package. If you're planning to add a new infolist to your own Livewire component, you should [do that first](adding-an-infolist-to-a-livewire-component) and then come back. If you're adding an infolist to an [app resource](../panels/resources), or another Filament package, you're ready to go!
 
 ## Defining entries
 
@@ -23,7 +23,7 @@ $infolist
     ]);
 ```
 
-Each entry is a piece of information that should be displayed in the infolist. The `TextEntry` is used for displaying text, but there are [other entry types available](entries/getting-started#available-entries).
+Each entry is a piece of information that should be displayed in the infolist. The `TextEntry` is used for displaying text, but there are [other entry types available](entries#available-entries).
 
 Infolists within the Panel Builder and other packages usually have 2 columns by default. For custom infolists, you can use the `columns()` method to achieve the same effect:
 
@@ -48,11 +48,11 @@ use Filament\Infolists\Components\TextEntry;
 ]
 ```
 
-You can learn more about columns and spans in the [layout documentation](layout/grid). You can even make them responsive!
+You can learn more about columns and spans in the [layout documentation](../schema/layout/grid). You can even make them responsive!
 
 ## Using layout components
 
-The Infolist Builder allows you to use [layout components](layout/getting-started#available-layout-components) inside the schema array to control how entries are displayed. `Section` is a layout component, and it allows you to add a heading and description to a set of entries. It can also allow entries inside it to collapse, which saves space in long infolists.
+The Infolist Builder allows you to use [layout components](../schema/layout#available-layout-components) inside the schema array to control how entries are displayed. `Section` is a layout component, and it allows you to add a heading and description to a set of entries. It can also allow entries inside it to collapse, which saves space in long infolists.
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -93,5 +93,5 @@ This section now contains an [`ImageEntry`](entries/image) and a [`TextEntry`](e
 
 Now you've finished reading this guide, where to next? Here are some suggestions:
 
-- [Explore the available entries to display data in your infolist.](entries/getting-started#available-entries)
-- [Discover how to build complex, responsive layouts without touching CSS.](layout/getting-started)
+- [Explore the available entries to display data in your infolist.](entries#available-entries)
+- [Discover how to build complex, responsive layouts without touching CSS.](../schema/layout)

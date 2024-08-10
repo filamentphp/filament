@@ -13,7 +13,7 @@ import LaracastsBanner from "@components/LaracastsBanner.astro"
     series="building-advanced-components"
 />
 
-You may use components from the [Form Builder](../../forms/fields/getting-started) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
+You may use components from the [Form Builder](../../forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
 
 ```php
 use Filament\Forms\Components\DatePicker;
@@ -38,7 +38,7 @@ Filter::make('created_at')
     })
 ```
 
-<AutoScreenshot name="tables/filters/custom-form" alt="Table with custom filter form" version="3.x" />
+<AutoScreenshot name="tables/filters/custom-form" alt="Table with custom filter form" version="4.x" />
 
 ### Setting default values for custom filter fields
 
@@ -60,7 +60,7 @@ Filter::make('created_at')
 
 When a filter is active, an indicator is displayed above the table content to signal that the table query has been scoped.
 
-<AutoScreenshot name="tables/filters/indicators" alt="Table with filter indicators" version="3.x" />
+<AutoScreenshot name="tables/filters/indicators" alt="Table with filter indicators" version="4.x" />
 
 By default, the label of the filter is used as the indicator. You can override this using the `indicator()` method:
 

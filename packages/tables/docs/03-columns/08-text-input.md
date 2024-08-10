@@ -13,7 +13,7 @@ use Filament\Tables\Columns\TextInputColumn;
 TextInputColumn::make('email')
 ```
 
-<AutoScreenshot name="tables/columns/text-input/simple" alt="Text input column" version="3.x" />
+<AutoScreenshot name="tables/columns/text-input/simple" alt="Text input column" version="4.x" />
 
 ## Validation
 

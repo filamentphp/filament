@@ -38,7 +38,7 @@ public static function infolist(Schema $infolist): Schema
 }
 ```
 
-The `schema()` method is used to define the structure of your infolist. It is an array of [entries](../../infolists/entries/getting-started#available-entries) and [layout components](../../infolists/layout/getting-started#available-layout-components), in the order they should appear in your infolist.
+The `schema()` method is used to define the structure of your infolist. It is an array of [entries](../../infolists/entries#available-entries) and [layout components](../../schema/layout#available-layout-components), in the order they should appear in your infolist.
 
 Check out the Infolists docs for a [guide](../../infolists/getting-started) on how to build infolists with Filament.
 
@@ -66,7 +66,7 @@ public static function getPages(): array
 
 ## Viewing records in modals
 
-If your resource is simple, you may wish to view records in modals rather than on the [View page](viewing-records). If this is the case, you can just [delete the view page](getting-started#deleting-resource-pages).
+If your resource is simple, you may wish to view records in modals rather than on the [View page](viewing-records). If this is the case, you can just [delete the view page](overview#deleting-resource-pages).
 
 If your resource doesn't contain a `ViewAction`, you can add one to the `$table->actions()` array:
 
@@ -109,7 +109,7 @@ Users may access the View page if the `view()` method of the model policy return
 
 ## Creating another View page
 
-One View page may not be enough space to allow users to navigate a lot of information. You can create as many View pages for a resource as you want. This is especially useful if you are using [resource sub-navigation](getting-started#resource-sub-navigation), as you are then easily able to switch between the different View pages.
+One View page may not be enough space to allow users to navigate a lot of information. You can create as many View pages for a resource as you want. This is especially useful if you are using [resource sub-navigation](overview#resource-sub-navigation), as you are then easily able to switch between the different View pages.
 
 To create a View page, you should use the `make:filament-page` command:
 
@@ -148,7 +148,7 @@ public function infolist(Schema $infolist): Schema
 
 ## Adding view pages to resource sub-navigation
 
-If you're using [resource sub-navigation](getting-started#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
+If you're using [resource sub-navigation](overview#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
 
 ```php
 use App\Filament\Resources\CustomerResource\Pages;

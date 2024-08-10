@@ -50,7 +50,7 @@ TextEntry::make('cost')
     )
 ```
 
-<AutoScreenshot name="infolists/entries/actions/suffix" alt="Text entry with suffix action" version="3.x" />
+<AutoScreenshot name="infolists/entries/actions/suffix" alt="Text entry with suffix action" version="4.x" />
 
 #### Passing multiple affix actions to a entry
 
@@ -75,7 +75,7 @@ TextEntry::make('cost')
 
 ### Adding a hint action to an entry
 
-All entries support "hint actions", which are rendered aside the entry's [hint](entries/getting-started#adding-a-hint-next-to-the-label). To add a hint action to a entry, you may pass it to `hintAction()`:
+All entries support "hint actions", which are rendered aside the entry's [hint](entries#adding-a-hint-next-to-the-label). To add a hint action to a entry, you may pass it to `hintAction()`:
 
 ```php
 use App\Models\Product;
@@ -95,7 +95,7 @@ TextEntry::make('cost')
     )
 ```
 
-<AutoScreenshot name="infolists/entries/actions/hint" alt="Text entry with hint action" version="3.x" />
+<AutoScreenshot name="infolists/entries/actions/hint" alt="Text entry with hint action" version="4.x" />
 
 #### Passing multiple hint actions to a entry
 
@@ -177,7 +177,7 @@ Actions::make([
 ]),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/simple" alt="Anonymous actions" version="3.x" />
+<AutoScreenshot name="infolists/layout/actions/anonymous/simple" alt="Anonymous actions" version="4.x" />
 
 #### Making the independent infolist actions consume the full width of the infolist
 
@@ -191,7 +191,7 @@ Actions::make([
 ])->fullWidth(),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/full-width" alt="Anonymous actions consuming the full width" version="3.x" />
+<AutoScreenshot name="infolists/layout/actions/anonymous/full-width" alt="Anonymous actions consuming the full width" version="4.x" />
 
 #### Controlling the horizontal alignment of independent infolist actions
 
@@ -206,7 +206,7 @@ Actions::make([
 ])->alignment(Alignment::Center),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/horizontally-aligned-center" alt="Anonymous actions horizontally aligned to the center" version="3.x" />
+<AutoScreenshot name="infolists/layout/actions/anonymous/horizontally-aligned-center" alt="Anonymous actions horizontally aligned to the center" version="4.x" />
 
 #### Controlling the vertical alignment of independent infolist actions
 
@@ -221,4 +221,4 @@ Actions::make([
 ])->verticalAlignment(VerticalAlignment::End),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/vertically-aligned-end" alt="Anonymous actions vertically aligned to the end" version="3.x" />
+<AutoScreenshot name="infolists/layout/actions/anonymous/vertically-aligned-end" alt="Anonymous actions vertically aligned to the end" version="4.x" />

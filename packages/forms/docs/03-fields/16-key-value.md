@@ -13,7 +13,7 @@ use Filament\Forms\Components\KeyValue;
 KeyValue::make('meta')
 ```
 
-<AutoScreenshot name="forms/fields/key-value/simple" alt="Key-value" version="3.x" />
+<AutoScreenshot name="forms/fields/key-value/simple" alt="Key-value" version="4.x" />
 
 If you're saving the data in Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -152,7 +152,7 @@ KeyValue::make('meta')
     ->reorderable()
 ```
 
-<AutoScreenshot name="forms/fields/key-value/reorderable" alt="Key-value with reorderable rows" version="3.x" />
+<AutoScreenshot name="forms/fields/key-value/reorderable" alt="Key-value with reorderable rows" version="4.x" />
 
 ## Customizing the key-value action objects
 

@@ -21,7 +21,7 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachment')
 ```
 
-<AutoScreenshot name="forms/fields/file-upload/simple" alt="File upload" version="3.x" />
+<AutoScreenshot name="forms/fields/file-upload/simple" alt="File upload" version="4.x" />
 
 > Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/plugins/filament-spatie-media-library) for more information.
 

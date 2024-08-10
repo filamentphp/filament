@@ -11,7 +11,7 @@ When using a cluster, a few things happen:
 - A new navigation item is added to the navigation, which is a link to the first resource or page in the cluster.
 - The individual navigation items for the resources or pages are no longer visible in the main navigation.
 - A new sub-navigation UI is added to each resource or page in the cluster, which contains the navigation items for the resources or pages in the cluster.
-- Resources and pages in the cluster get a new URL, prefixed with the name of the cluster. If you are generating URLs to [resources](resources/getting-started#generating-urls-to-resource-pages) and [pages](pages#generating-urls-to-pages) correctly, then this change should be handled for you automatically.
+- Resources and pages in the cluster get a new URL, prefixed with the name of the cluster. If you are generating URLs to [resources](resources#generating-urls-to-resource-pages) and [pages](pages#generating-urls-to-pages) correctly, then this change should be handled for you automatically.
 - The cluster's name is in the breadcrumbs of all resources and pages in the cluster. When clicking it, you are taken to the first resource or page in the cluster.
 
 ## Creating a cluster

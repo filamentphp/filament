@@ -15,7 +15,7 @@ use Filament\Forms\Components\TagsInput;
 TagsInput::make('tags')
 ```
 
-<AutoScreenshot name="forms/fields/tags-input/simple" alt="Tags input" version="3.x" />
+<AutoScreenshot name="forms/fields/tags-input/simple" alt="Tags input" version="4.x" />
 
 If you're saving the JSON tags using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 

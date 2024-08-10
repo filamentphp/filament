@@ -13,7 +13,7 @@ use Filament\Forms\Components\RichEditor;
 RichEditor::make('content')
 ```
 
-<AutoScreenshot name="forms/fields/rich-editor/simple" alt="Rich editor" version="3.x" />
+<AutoScreenshot name="forms/fields/rich-editor/simple" alt="Rich editor" version="4.x" />
 
 ## Customizing the toolbar buttons
 

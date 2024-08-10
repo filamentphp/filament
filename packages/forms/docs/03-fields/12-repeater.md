@@ -26,7 +26,7 @@ Repeater::make('members')
     ->columns(2)
 ```
 
-<AutoScreenshot name="forms/fields/repeater/simple" alt="Repeater" version="3.x" />
+<AutoScreenshot name="forms/fields/repeater/simple" alt="Repeater" version="4.x" />
 
 We recommend that you store repeater data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
@@ -143,7 +143,7 @@ Repeater::make('members')
     ->reorderableWithButtons()
 ```
 
-<AutoScreenshot name="forms/fields/repeater/reorderable-with-buttons" alt="Repeater that is reorderable with buttons" version="3.x" />
+<AutoScreenshot name="forms/fields/repeater/reorderable-with-buttons" alt="Repeater that is reorderable with buttons" version="4.x" />
 
 ### Preventing reordering with drag and drop
 
@@ -185,7 +185,7 @@ Repeater::make('qualifications')
     ->collapsed()
 ```
 
-<AutoScreenshot name="forms/fields/repeater/collapsed" alt="Collapsed repeater" version="3.x" />
+<AutoScreenshot name="forms/fields/repeater/collapsed" alt="Collapsed repeater" version="4.x" />
 
 ## Cloning items
 
@@ -201,7 +201,7 @@ Repeater::make('qualifications')
     ->cloneable()
 ```
 
-<AutoScreenshot name="forms/fields/repeater/cloneable" alt="Cloneable repeater" version="3.x" />
+<AutoScreenshot name="forms/fields/repeater/cloneable" alt="Cloneable repeater" version="4.x" />
 
 ## Integrating with an Eloquent relationship
 
@@ -384,9 +384,9 @@ Repeater::make('qualifications')
     ->grid(2)
 ```
 
-<AutoScreenshot name="forms/fields/repeater/grid" alt="Repeater with a 2 column grid of items" version="3.x" />
+<AutoScreenshot name="forms/fields/repeater/grid" alt="Repeater with a 2 column grid of items" version="4.x" />
 
-This method accepts the same options as the `columns()` method of the [grid](../layout/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](../../schema/layout/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
 
 ## Adding a label to repeater items based on their content
 
@@ -416,7 +416,7 @@ Repeater::make('members')
 
 Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
 
-<AutoScreenshot name="forms/fields/repeater/labelled" alt="Repeater with item labels" version="3.x" />
+<AutoScreenshot name="forms/fields/repeater/labelled" alt="Repeater with item labels" version="4.x" />
 
 ## Simple repeaters with one field
 
@@ -434,7 +434,7 @@ Repeater::make('invitations')
     )
 ```
 
-<AutoScreenshot name="forms/fields/repeater/simple-one-field" alt="Simple repeater design with only one field" version="3.x" />
+<AutoScreenshot name="forms/fields/repeater/simple-one-field" alt="Simple repeater design with only one field" version="4.x" />
 
 Instead of using a nested array to store data, simple repeaters use a flat array of values. This means that the data structure for the above example could look like this:
 

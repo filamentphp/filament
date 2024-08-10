@@ -23,7 +23,7 @@ RepeatableEntry::make('comments')
 
 As you can see, the repeatable entry has an embedded `schema()` which gets repeated for each item.
 
-<AutoScreenshot name="infolists/entries/repeatable/simple" alt="Repeatable entry" version="3.x" />
+<AutoScreenshot name="infolists/entries/repeatable/simple" alt="Repeatable entry" version="4.x" />
 
 ## Grid layout
 
@@ -39,9 +39,9 @@ RepeatableEntry::make('comments')
     ->grid(2)
 ```
 
-This method accepts the same options as the `columns()` method of the [grid](../layout/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](../../schema/layout/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
 
-<AutoScreenshot name="infolists/entries/repeatable/grid" alt="Repeatable entry in grid layout" version="3.x" />
+<AutoScreenshot name="infolists/entries/repeatable/grid" alt="Repeatable entry in grid layout" version="4.x" />
 
 ## Removing the styled container
 

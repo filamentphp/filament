@@ -13,7 +13,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
 ```
 
-<AutoScreenshot name="forms/fields/text-input/simple" alt="Text input" version="3.x" />
+<AutoScreenshot name="forms/fields/text-input/simple" alt="Text input" version="4.x" />
 
 ## Setting the HTML input type
 
@@ -130,7 +130,7 @@ TextInput::make('domain')
     ->suffix('.com')
 ```
 
-<AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="3.x" />
+<AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="4.x" />
 
 ### Using icons as affixes
 
@@ -144,7 +144,7 @@ TextInput::make('domain')
     ->suffixIcon('heroicon-m-globe-alt')
 ```
 
-<AutoScreenshot name="forms/fields/text-input/suffix-icon" alt="Text input with suffix icon" version="3.x" />
+<AutoScreenshot name="forms/fields/text-input/suffix-icon" alt="Text input with suffix icon" version="4.x" />
 
 #### Setting the affix icon's color
 
@@ -171,7 +171,7 @@ TextInput::make('password')
     ->revealable()
 ```
 
-<AutoScreenshot name="forms/fields/text-input/revealable-password" alt="Text input with revealable password" version="3.x" />
+<AutoScreenshot name="forms/fields/text-input/revealable-password" alt="Text input with revealable password" version="4.x" />
 
 ## Input masking
 
@@ -213,7 +213,7 @@ TextInput::make('amount')
 
 ## Making the field read-only
 
-Not to be confused with [disabling the field](getting-started#disabling-a-field), you may make the field "read-only" using the `readOnly()` method:
+Not to be confused with [disabling the field](overview#disabling-a-field), you may make the field "read-only" using the `readOnly()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -222,7 +222,7 @@ TextInput::make('name')
     ->readOnly()
 ```
 
-There are a few differences, compared to [`disabled()`](getting-started#disabling-a-field):
+There are a few differences, compared to [`disabled()`](overview#disabling-a-field):
 
 - When using `readOnly()`, the field will still be sent to the server when the form is submitted. It can be mutated with the browser console, or via JavaScript. You can use [`dehydrated(false)`](advanced#preventing-a-field-from-being-dehydrated) to prevent this.
 - There are no styling changes, such as less opacity, when using `readOnly()`.

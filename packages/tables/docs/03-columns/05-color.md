@@ -13,7 +13,7 @@ use Filament\Tables\Columns\ColorColumn;
 ColorColumn::make('color')
 ```
 
-<AutoScreenshot name="tables/columns/color/simple" alt="Color column" version="3.x" />
+<AutoScreenshot name="tables/columns/color/simple" alt="Color column" version="4.x" />
 
 ## Allowing the color to be copied to the clipboard
 
@@ -28,7 +28,7 @@ ColorColumn::make('color')
     ->copyMessageDuration(1500)
 ```
 
-<AutoScreenshot name="tables/columns/color/copyable" alt="Color column with a button to copy it" version="3.x" />
+<AutoScreenshot name="tables/columns/color/copyable" alt="Color column with a button to copy it" version="4.x" />
 
 ### Customizing the text that is copied to the clipboard
 

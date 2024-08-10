@@ -13,7 +13,7 @@ use Filament\Infolists\Components\KeyValueEntry;
 KeyValueEntry::make('meta')
 ```
 
-<AutoScreenshot name="infolists/entries/key-value/simple" alt="Key-value entry" version="3.x" />
+<AutoScreenshot name="infolists/entries/key-value/simple" alt="Key-value entry" version="4.x" />
 
 If you're saving the data in Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 

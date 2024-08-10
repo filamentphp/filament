@@ -180,7 +180,7 @@ Alternatively, if you're editing records in a modal action, check out the [Actio
 
 ## Saving a part of the form independently
 
-You may want to allow the user to save a part of the form independently of the rest of the form. One way to do this is with a [section action in the header or footer](../../forms/layout/section#adding-actions-to-the-sections-header-or-footer). From the `action()` method, you can call `saveFormComponentOnly()`, passing in the `Section` component that you want to save:
+You may want to allow the user to save a part of the form independently of the rest of the form. One way to do this is with a [section action in the header or footer](../../schema/layout/section#adding-actions-to-the-sections-header-or-footer). From the `action()` method, you can call `saveFormComponentOnly()`, passing in the `Section` component that you want to save:
 
 ```php
 use Filament\Actions\Action;
@@ -328,7 +328,7 @@ protected function getFormActions(): array
 
 ## Creating another Edit page
 
-One Edit page may not be enough space to allow users to navigate many form fields. You can create as many Edit pages for a resource as you want. This is especially useful if you are using [resource sub-navigation](getting-started#resource-sub-navigation), as you are then easily able to switch between the different Edit pages.
+One Edit page may not be enough space to allow users to navigate many form fields. You can create as many Edit pages for a resource as you want. This is especially useful if you are using [resource sub-navigation](overview#resource-sub-navigation), as you are then easily able to switch between the different Edit pages.
 
 To create an Edit page, you should use the `make:filament-page` command:
 
@@ -367,7 +367,7 @@ public function form(Schema $form): Schema
 
 ## Adding edit pages to resource sub-navigation
 
-If you're using [resource sub-navigation](getting-started#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
+If you're using [resource sub-navigation](overview#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
 
 ```php
 use App\Filament\Resources\CustomerResource\Pages;

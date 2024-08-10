@@ -5,17 +5,17 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-Filament's form package allows you to easily build dynamic forms in your app. You can use it to [add a form to any Livewire component](adding-a-form-to-a-livewire-component). Additionally, it's used within other Filament packages to render forms within [app resources](../panels/resources/getting-started), [action modals](../actions/modals), [table filters](../tables/filters/getting-started), and more. Learning how to build forms is essential to learning how to use these Filament packages.
+Filament's form package allows you to easily build dynamic forms in your app. You can use it to [add a form to any Livewire component](adding-a-form-to-a-livewire-component). Additionally, it's used within other Filament packages to render forms within [app resources](../panels/resources), [action modals](../actions/modals), [table filters](../tables/filters/getting-started), and more. Learning how to build forms is essential to learning how to use these Filament packages.
 
-This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](adding-a-form-to-a-livewire-component) and then come back. If you're adding a form to an [app resource](../panels/resources/getting-started), or another Filament package, you're ready to go!
+This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](adding-a-form-to-a-livewire-component) and then come back. If you're adding a form to an [app resource](../panels/resources), or another Filament package, you're ready to go!
 
 ## Form schemas
 
-All Filament forms have a "schema". This is an array, which contains [fields](fields/getting-started#available-fields) and [layout components](layout/getting-started#available-layout-components).
+All Filament forms have a "schema". This is an array, which contains [fields](fields#available-fields) and [layout components](../schema/layout#available-layout-components).
 
-Fields are the inputs that your user will fill their data into. For example, HTML's `<input>` or `<select>` elements. Each field has its own PHP class. For example, the [`TextInput`](fields/text-input) class is used to render a text input field, and the [`Select`](fields/select) class is used to render a select field. You can see a full [list of available fields here](fields/getting-started#available-fields).
+Fields are the inputs that your user will fill their data into. For example, HTML's `<input>` or `<select>` elements. Each field has its own PHP class. For example, the [`TextInput`](fields/text-input) class is used to render a text input field, and the [`Select`](fields/select) class is used to render a select field. You can see a full [list of available fields here](fields#available-fields).
 
-Layout components are used to group fields together, and to control how they are displayed. For example, you can use a [`Grid`](layout/grid#grid-component) component to display multiple fields side-by-side, or a [`Wizard`](layout/wizard) to separate fields into a multistep form. You can deeply nest layout components within each other to create very complex responsive UIs. You can see a full [list of available layout components here](layout/getting-started#available-layout-components).
+Layout components are used to group fields together, and to control how they are displayed. For example, you can use a [`Grid`](../schema/layout/grid#grid-component) component to display multiple fields side-by-side, or a [`Wizard`](layout/wizard) to separate fields into a multistep form. You can deeply nest layout components within each other to create very complex responsive UIs. You can see a full [list of available layout components here](layout#available-layout-components).
 
 ### Adding fields to a form schema
 
@@ -37,7 +37,7 @@ public function form(Schema $form): Schema
 }
 ```
 
-<AutoScreenshot name="forms/getting-started/fields" alt="Form fields" version="3.x" />
+<AutoScreenshot name="forms/getting-started/fields" alt="Form fields" version="4.x" />
 
 Forms within a panel and other packages usually have 2 columns by default. For custom forms, you can use the `columns()` method to achieve the same effect:
 
@@ -49,7 +49,7 @@ $form
     ->columns(2);
 ```
 
-<AutoScreenshot name="forms/getting-started/columns" alt="Form fields in 2 columns" version="3.x" />
+<AutoScreenshot name="forms/getting-started/columns" alt="Form fields in 2 columns" version="4.x" />
 
 Now, the `RichEditor` will only consume half of the available width. We can use the `columnSpan()` method to make it span the full width:
 
@@ -65,13 +65,13 @@ use Filament\Forms\Components\TextInput;
 ]
 ```
 
-<AutoScreenshot name="forms/getting-started/column-span" alt="Form fields in 2 columns, but with the rich editor spanning the full width of the form" version="3.x" />
+<AutoScreenshot name="forms/getting-started/column-span" alt="Form fields in 2 columns, but with the rich editor spanning the full width of the form" version="4.x" />
 
-You can learn more about columns and spans in the [layout documentation](layout/grid). You can even make them responsive!
+You can learn more about columns and spans in the [layout documentation](../schema/layout/grid). You can even make them responsive!
 
 ### Adding layout components to a form schema
 
-Let's add a new [`Section`](layout/section) to our form. `Section` is a layout component, and it allows you to add a heading and description to a set of fields. It can also allow fields inside it to collapse, which saves space in long forms.
+Let's add a new [`Section`](../schema/layout/section) to our form. `Section` is a layout component, and it allows you to add a heading and description to a set of fields. It can also allow fields inside it to collapse, which saves space in long forms.
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -111,7 +111,7 @@ Section::make('Publishing')
     ])
 ```
 
-<AutoScreenshot name="forms/getting-started/section" alt="Form with section component" version="3.x" />
+<AutoScreenshot name="forms/getting-started/section" alt="Form with section component" version="4.x" />
 
 This section now contains a [`Select` field](fields/select) and a [`DateTimePicker` field](fields/date-time-picker). You can learn more about those fields and their functionalities on the respective docs pages.
 
@@ -207,7 +207,7 @@ use Illuminate\Support\Str;
 
 Now you've finished reading this guide, where to next? Here are some suggestions:
 
-- [Explore the available fields to collect input from your users.](fields/getting-started#available-fields)
-- [Check out the list of layout components to craft intuitive form structures with.](fields/getting-started#available-fields)
+- [Explore the available fields to collect input from your users.](fields#available-fields)
+- [Check out the list of layout components to craft intuitive form structures with.](fields#available-fields)
 - [Find out about all advanced techniques that you can customize forms to your needs.](advanced)
 - [Write automated tests for your forms using our suite of helper methods.](testing)
