@@ -129,7 +129,7 @@ The `reorder()` method is used to control [reordering a record](#reordering-reco
 
 ## Customizing the table Eloquent query
 
-Although you can [customize the Eloquent query for the entire resource](getting-started#customizing-the-resource-eloquent-query), you may also make specific modifications for the List page table. To do this, use the `modifyQueryUsing()` method in the `table()` method of the resource:
+Although you can [customize the Eloquent query for the entire resource](overview#customizing-the-resource-eloquent-query), you may also make specific modifications for the List page table. To do this, use the `modifyQueryUsing()` method in the `table()` method of the resource:
 
 ```php
 use Filament\Tables\Table;
