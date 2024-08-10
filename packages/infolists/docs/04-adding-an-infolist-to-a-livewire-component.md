@@ -25,19 +25,16 @@ use Illuminate\Support\Facades\Route;
 Route::get('products/{product}', ViewProduct::class);
 ```
 
-You must use the `InteractsWithInfolists` and `InteractsWithForms` traits, and implement the `HasInfolists` and `HasForms` interfaces on your Livewire component class:
+You must use the `InteractsWithSchemas` trait, and implement the `HasSchemas` interface on your Livewire component class:
 
 ```php
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
-use Filament\Infolists\Contracts\HasInfolists;
+use Filament\Schema\Concerns\InteractsWithSchemas;
+use Filament\Schema\Contracts\HasSchemas;
 use Livewire\Component;
 
-class ViewProduct extends Component implements HasForms, HasInfolists
+class ViewProduct extends Component implements HasSchemas
 {
-    use InteractsWithInfolists;
-    use InteractsWithForms;
+    use InteractsWithSchemas;
 
     // ...
 }

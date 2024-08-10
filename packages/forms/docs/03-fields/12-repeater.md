@@ -616,7 +616,7 @@ Repeater::make('members')
 
 ### Adding extra item actions to a repeater
 
-You may add new [action buttons](../actions) to the header of each repeater item by passing `Action` objects into `extraItemActions()`:
+You may add new [action buttons](../../schema/actions) to the header of each repeater item by passing `Action` objects into `extraItemActions()`:
 
 ```php
 use Filament\Actions\Action;

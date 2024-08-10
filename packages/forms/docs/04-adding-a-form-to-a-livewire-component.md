@@ -29,7 +29,7 @@ Route::get('posts/create', CreatePost::class);
 
 There are 5 main tasks when adding a form to a Livewire component class. Each one is essential:
 
-1) Implement the `HasForms` interface and use the `InteractsWithForms` trait.
+1) Implement the `HasSchemas` interface and use the `InteractsWithSchemas` trait.
 2) Define a public Livewire property to store your form's data. In our example, we'll call this `$data`, but you can call it whatever you want.
 3) Add a `form()` method, which is where you configure the form. [Add the form's schema](getting-started#form-schemas), and tell Filament to store the form data in the `$data` property (using `statePath('data')`).
 4) Initialize the form with `$this->form->fill()` in `mount()`. This is imperative for every form that you build, even if it doesn't have any initial data.
@@ -42,15 +42,14 @@ namespace App\Livewire;
 
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Schema\Schema;
+use Filament\Schema\Concerns\InteractsWithSchemas;
+use Filament\Schema\Contracts\HasSchemas;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class CreatePost extends Component implements HasForms
+class CreatePost extends Component implements HasSchemas
 {
-    use InteractsWithForms;
+    use InteractsWithSchemas;
     
     public ?array $data = [];
     
@@ -99,7 +98,7 @@ Finally, in your Livewire component's view, render the form:
 </div>
 ```
 
-> `<x-filament-actions::modals />` is used to render form component [action modals](actions). The code can be put anywhere outside the `<form>` element, as long as it's within the Livewire component.
+> `<x-filament-actions::modals />` is used to render form component [action modals](../schema/actions). The code can be put anywhere outside the `<form>` element, as long as it's within the Livewire component.
 
 Visit your Livewire component in the browser, and you should see the form components from `schema()`:
 
