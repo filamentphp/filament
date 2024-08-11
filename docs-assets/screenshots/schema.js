@@ -314,42 +314,6 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/fields/helper-text': {
-        url: 'forms/fields',
-        selector: '#helperText',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/fields/hint': {
-        url: 'forms/fields',
-        selector: '#hint',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/fields/hint-color': {
-        url: 'forms/fields',
-        selector: '#hintColor',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/fields/hint-icon': {
-        url: 'forms/fields',
-        selector: '#hintIcon',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
     'forms/fields/disabled': {
         url: 'forms/fields',
         selector: '#disabled',
@@ -1103,15 +1067,6 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/fields/actions/hint': {
-        url: 'forms/fields',
-        selector: '#hintAction',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
     'schema/layout/fieldset/simple': {
         url: 'schema/layout',
         selector: '#fieldset',
@@ -1322,42 +1277,6 @@ export default {
     'infolists/entries/placeholder': {
         url: 'infolists/entries',
         selector: '#placeholder',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/entries/helper-text': {
-        url: 'infolists/entries',
-        selector: '#helperText',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/entries/hint': {
-        url: 'infolists/entries',
-        selector: '#hint',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/entries/hint-color': {
-        url: 'infolists/entries',
-        selector: '#hintColor',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/entries/hint-icon': {
-        url: 'infolists/entries',
-        selector: '#hintIcon',
         viewport: {
             width: 1920,
             height: 640,
@@ -1661,15 +1580,6 @@ export default {
     'infolists/entries/actions/suffix': {
         url: 'infolists/entries',
         selector: '#suffixAction',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/entries/actions/hint': {
-        url: 'infolists/entries',
-        selector: '#hintAction',
         viewport: {
             width: 1920,
             height: 640,
