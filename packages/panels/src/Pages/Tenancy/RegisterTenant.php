@@ -72,7 +72,7 @@ abstract class RegisterTenant extends SimplePage
     public function register(): void
     {
         abort_unless(static::canView(), 404);
-        
+
         try {
             $this->beginDatabaseTransaction();
 
