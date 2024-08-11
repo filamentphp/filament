@@ -85,7 +85,7 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Co
     public function header(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
         $this->decorations(
-            self::HEADER_DECORATIONS,
+            static::HEADER_DECORATIONS,
             $decorations,
             makeDefaultLayoutUsing: fn (array $decorations): AlignDecorations => AlignDecorations::end($decorations),
         );
@@ -98,7 +98,7 @@ class Form extends Component implements CanEntangleWithSingularRelationships, Co
      */
     public function footer(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::FOOTER_DECORATIONS, $decorations);
+        $this->decorations(static::FOOTER_DECORATIONS, $decorations);
 
         return $this;
     }

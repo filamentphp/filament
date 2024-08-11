@@ -532,7 +532,7 @@ class LayoutDemo extends Component implements HasForms
                         ])->statePath('split'),
                     ]),
                 Group::make()
-                    ->id('anonymousActions')
+                    ->id('independentActions')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
@@ -546,7 +546,7 @@ class LayoutDemo extends Component implements HasForms
                         ]),
                     ]),
                 Group::make()
-                    ->id('anonymousActionsFullWidth')
+                    ->id('independentActionsFullWidth')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
@@ -560,7 +560,7 @@ class LayoutDemo extends Component implements HasForms
                         ])->fullWidth(),
                     ]),
                 Group::make()
-                    ->id('anonymousActionsHorizontallyAlignedCenter')
+                    ->id('independentActionsHorizontallyAlignedCenter')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
@@ -574,7 +574,7 @@ class LayoutDemo extends Component implements HasForms
                         ])->alignment(Alignment::Center),
                     ]),
                 Group::make()
-                    ->id('anonymousActionsVerticallyAlignedEnd')
+                    ->id('independentActionsVerticallyAlignedEnd')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])

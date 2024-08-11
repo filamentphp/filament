@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-Filament's infolists can use [Actions](../actions). They are buttons that can be added to any infolist component. Also, you can [render anonymous sets of actions](#adding-anonymous-actions-to-an-infolist-without-attaching-them-to-a-component) on their own, that are not attached to a particular infolist component.
+Filament's infolists can use [Actions](../actions). They are buttons that can be added to any infolist component. Also, you can [render independent sets of actions](#adding-independent-actions-to-an-infolist-without-attaching-them-to-a-component) on their own, that are not attached to a particular infolist component.
 
 ## Defining a infolist component action
 
@@ -150,7 +150,7 @@ Now, to render the action in the view of the custom component, you need to call 
 </div>
 ```
 
-### Adding "anonymous" actions to an infolist without attaching them to a component
+### Adding independent actions to an infolist without attaching them to a component
 
 You may use an `Actions` component to render a set of actions anywhere in the infolist, avoiding the need to register them to any particular component:
 
@@ -177,7 +177,7 @@ Actions::make([
 ]),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/simple" alt="Anonymous actions" version="4.x" />
+<AutoScreenshot name="infolists/layout/actions/independent/simple" alt="Independent actions" version="4.x" />
 
 #### Making the independent infolist actions consume the full width of the infolist
 
@@ -191,7 +191,7 @@ Actions::make([
 ])->fullWidth(),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/full-width" alt="Anonymous actions consuming the full width" version="4.x" />
+<AutoScreenshot name="infolists/layout/actions/independent/full-width" alt="Independent actions consuming the full width" version="4.x" />
 
 #### Controlling the horizontal alignment of independent infolist actions
 
@@ -206,7 +206,7 @@ Actions::make([
 ])->alignment(Alignment::Center),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/horizontally-aligned-center" alt="Anonymous actions horizontally aligned to the center" version="4.x" />
+<AutoScreenshot name="infolists/layout/actions/independent/horizontally-aligned-center" alt="Independent actions horizontally aligned to the center" version="4.x" />
 
 #### Controlling the vertical alignment of independent infolist actions
 
@@ -221,4 +221,4 @@ Actions::make([
 ])->verticalAlignment(VerticalAlignment::End),
 ```
 
-<AutoScreenshot name="infolists/layout/actions/anonymous/vertically-aligned-end" alt="Anonymous actions vertically aligned to the end" version="4.x" />
+<AutoScreenshot name="infolists/layout/actions/independent/vertically-aligned-end" alt="Independent actions vertically aligned to the end" version="4.x" />

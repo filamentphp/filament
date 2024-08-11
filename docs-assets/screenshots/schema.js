@@ -1274,36 +1274,36 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/actions/anonymous/simple': {
+    'schema/layout/actions/independent/simple': {
         url: 'schema/layout',
-        selector: '#anonymousActions',
+        selector: '#independentActions',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/actions/anonymous/full-width': {
+    'schema/layout/actions/independent/full-width': {
         url: 'schema/layout',
-        selector: '#anonymousActionsFullWidth',
+        selector: '#independentActionsFullWidth',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/actions/anonymous/horizontally-aligned-center': {
+    'schema/layout/actions/independent/horizontally-aligned-center': {
         url: 'schema/layout',
-        selector: '#anonymousActionsHorizontallyAlignedCenter',
+        selector: '#independentActionsHorizontallyAlignedCenter',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
     },
-    'schema/layout/actions/anonymous/vertically-aligned-end': {
+    'schema/layout/actions/independent/vertically-aligned-end': {
         url: 'schema/layout',
-        selector: '#anonymousActionsVerticallyAlignedEnd',
+        selector: '#independentActionsVerticallyAlignedEnd',
         viewport: {
             width: 1920,
             height: 640,

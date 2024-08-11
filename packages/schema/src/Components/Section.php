@@ -127,7 +127,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
     public function afterHeader(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
         $this->decorations(
-            self::AFTER_HEADER_DECORATIONS,
+            static::AFTER_HEADER_DECORATIONS,
             $decorations,
             makeDefaultLayoutUsing: fn (array $decorations): AlignDecorations => AlignDecorations::end($decorations),
         );
@@ -140,7 +140,7 @@ class Section extends Component implements CanConcealComponents, CanEntangleWith
      */
     public function footer(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::FOOTER_DECORATIONS, $decorations);
+        $this->decorations(static::FOOTER_DECORATIONS, $decorations);
 
         return $this;
     }

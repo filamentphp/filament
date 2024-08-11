@@ -111,7 +111,7 @@ class Field extends Component implements Contracts\HasValidationRules
      */
     public function aboveLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::ABOVE_LABEL_DECORATIONS, $decorations);
+        $this->decorations(static::ABOVE_LABEL_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -121,7 +121,7 @@ class Field extends Component implements Contracts\HasValidationRules
      */
     public function belowLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BELOW_LABEL_DECORATIONS, $decorations);
+        $this->decorations(static::BELOW_LABEL_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -131,7 +131,7 @@ class Field extends Component implements Contracts\HasValidationRules
      */
     public function beforeLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BEFORE_LABEL_DECORATIONS, $decorations);
+        $this->decorations(static::BEFORE_LABEL_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -142,7 +142,7 @@ class Field extends Component implements Contracts\HasValidationRules
     public function afterLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
         $this->decorations(
-            self::AFTER_LABEL_DECORATIONS,
+            static::AFTER_LABEL_DECORATIONS,
             $decorations,
             makeDefaultLayoutUsing: fn (array $decorations): AlignDecorations => AlignDecorations::end($decorations),
         );
@@ -155,7 +155,7 @@ class Field extends Component implements Contracts\HasValidationRules
      */
     public function aboveContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::ABOVE_CONTENT_DECORATIONS, $decorations);
+        $this->decorations(static::ABOVE_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -165,7 +165,7 @@ class Field extends Component implements Contracts\HasValidationRules
      */
     public function belowContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BELOW_CONTENT_DECORATIONS, $decorations);
+        $this->decorations(static::BELOW_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -175,7 +175,7 @@ class Field extends Component implements Contracts\HasValidationRules
      */
     public function beforeContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BEFORE_CONTENT_DECORATIONS, $decorations);
+        $this->decorations(static::BEFORE_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -186,7 +186,7 @@ class Field extends Component implements Contracts\HasValidationRules
     public function afterContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
         $this->decorations(
-            self::AFTER_CONTENT_DECORATIONS,
+            static::AFTER_CONTENT_DECORATIONS,
             $decorations,
             makeDefaultLayoutUsing: fn (array $decorations): AlignDecorations => AlignDecorations::end($decorations),
         );
@@ -199,7 +199,7 @@ class Field extends Component implements Contracts\HasValidationRules
      */
     public function aboveErrorMessage(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::ABOVE_ERROR_MESSAGE_DECORATIONS, $decorations);
+        $this->decorations(static::ABOVE_ERROR_MESSAGE_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -209,7 +209,7 @@ class Field extends Component implements Contracts\HasValidationRules
      */
     public function belowErrorMessage(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BELOW_ERROR_MESSAGE_DECORATIONS, $decorations);
+        $this->decorations(static::BELOW_ERROR_MESSAGE_DECORATIONS, $decorations);
 
         return $this;
     }

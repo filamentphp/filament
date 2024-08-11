@@ -105,7 +105,7 @@ class Entry extends Component
      */
     public function aboveLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::ABOVE_LABEL_DECORATIONS, $decorations);
+        $this->decorations(static::ABOVE_LABEL_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -115,7 +115,7 @@ class Entry extends Component
      */
     public function belowLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BELOW_LABEL_DECORATIONS, $decorations);
+        $this->decorations(static::BELOW_LABEL_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -125,7 +125,7 @@ class Entry extends Component
      */
     public function beforeLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BEFORE_LABEL_DECORATIONS, $decorations);
+        $this->decorations(static::BEFORE_LABEL_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -135,7 +135,7 @@ class Entry extends Component
      */
     public function afterLabel(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::AFTER_LABEL_DECORATIONS, $decorations);
+        $this->decorations(static::AFTER_LABEL_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -145,7 +145,7 @@ class Entry extends Component
      */
     public function aboveContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::ABOVE_CONTENT_DECORATIONS, $decorations);
+        $this->decorations(static::ABOVE_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -155,7 +155,7 @@ class Entry extends Component
      */
     public function belowContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BELOW_CONTENT_DECORATIONS, $decorations);
+        $this->decorations(static::BELOW_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -165,7 +165,7 @@ class Entry extends Component
      */
     public function beforeContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::BEFORE_CONTENT_DECORATIONS, $decorations);
+        $this->decorations(static::BEFORE_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }
@@ -175,7 +175,7 @@ class Entry extends Component
      */
     public function afterContent(array | DecorationsLayout | Component | Action | string | Closure | null $decorations): static
     {
-        $this->decorations(self::AFTER_CONTENT_DECORATIONS, $decorations);
+        $this->decorations(static::AFTER_CONTENT_DECORATIONS, $decorations);
 
         return $this;
     }
