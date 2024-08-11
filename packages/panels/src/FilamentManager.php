@@ -835,6 +835,16 @@ class FilamentManager
         }
     }
 
+    public function hasUserMenu(): bool
+    {
+        return $this->getCurrentPanel()->hasUserMenu();
+    }
+
+    public function getUserMenu(): array
+    {
+        return $this->getCurrentPanel()->getUserMenu();
+    }
+
     /**
      * @deprecated Use the `userMenuItems()` method on the panel configuration instead.
      *

@@ -439,6 +439,7 @@ public function panel(Panel $panel): Panel
 
 The user menu is featured in the top right corner of the admin layout. It's fully customizable.
 
+
 To register new items to the user menu, you can use the [configuration](configuration):
 
 ```php
@@ -513,6 +514,45 @@ MenuItem::make()
     ->visible(fn (): bool => auth()->user()->can('viewAny', Payment::class))
     // or
     ->hidden(fn (): bool => ! auth()->user()->can('viewAny', Payment::class))
+```
+
+### Customizing the visibility of the user menu
+To change the visibility of the user menu, you can use the following configuration:
+
+```php
+use App\Filament\Pages\Settings;
+use Filament\Navigation\MenuItem;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->userMenu(false);
+}
+```
+
+
+If you want total control of the menu items, you can use the following configuration:
+
+```php
+use App\Filament\Pages\Settings;
+use Filament\Navigation\MenuItem;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->userMenu(true, true)
+        ->userMenuItems([
+            MenuItem::make()
+                ->label('Settings')
+                ->url(fn (): string => Settings::getUrl())
+                ->icon('heroicon-o-cog-6-tooth'),
+            // ...
+        ]);
+}
 ```
 
 ### Sending a `POST` HTTP request from a user menu item
