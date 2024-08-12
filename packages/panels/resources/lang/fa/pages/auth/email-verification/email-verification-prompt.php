@@ -16,7 +16,7 @@ return [
 
     'messages' => [
         'notification_not_received' => 'ایمیلی که فرستادیم را دریافت نکردید؟',
-        'notification_sent' => 'ما یک ایمیل حاوی دستورات لازم برای بازنشانی رمز عبور به :فرستادیم address.',
+        'notification_sent' => 'ما یک ایمیل حاوی دستورات لازم برای بازنشانی رمز عبور به :email فرستادیم.',
     ],
 
     'notifications' => [
