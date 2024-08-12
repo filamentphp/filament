@@ -20,6 +20,8 @@ class ImportColumn extends Component
 
     protected bool | Closure $isMappingRequired = false;
 
+    protected bool | Closure $isMappingRequiredForNewRecordsOnly = false;
+
     protected int | Closure | null $decimalPlaces = null;
 
     protected bool | Closure $isNumeric = false;
@@ -143,6 +145,13 @@ class ImportColumn extends Component
     public function requiredMapping(bool | Closure $condition = true): static
     {
         $this->isMappingRequired = $condition;
+
+        return $this;
+    }
+
+    public function requiredMappingForNewRecordsOnly(bool | Closure $condition = true): static
+    {
+        $this->isMappingRequiredForNewRecordsOnly = $condition;
 
         return $this;
     }
@@ -500,6 +509,11 @@ class ImportColumn extends Component
     public function isMappingRequired(): bool
     {
         return (bool) $this->evaluate($this->isMappingRequired);
+    }
+
+    public function isMappingRequiredForNewRecordsOnly(): bool
+    {
+        return (bool) $this->evaluate($this->isMappingRequiredForNewRecordsOnly);
     }
 
     public function hasRelationship(): bool
