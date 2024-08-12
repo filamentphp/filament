@@ -86,7 +86,7 @@
                 x-on:click="togglePanelVisibility()"
             >
                 <div
-                    class="h-5 w-5 select-none rounded-full"
+                    class="size-5 select-none rounded-full"
                     x-bind:class="{
                         'ring-1 ring-inset ring-gray-200 dark:ring-white/10': ! state,
                     }"

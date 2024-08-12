@@ -35,7 +35,7 @@
             <x-filament::icon
                 :icon="($active && $activeIcon) ? $activeIcon : $icon"
                 @class([
-                    'fi-topbar-item-icon h-5 w-5',
+                    'fi-topbar-item-icon size-5',
                     'text-gray-400 dark:text-gray-500' => ! $active,
                     'text-primary-600 dark:text-primary-400' => $active,
                 ])
@@ -67,7 +67,7 @@
                 icon="heroicon-m-chevron-down"
                 icon-alias="panels::topbar.group.toggle-button"
                 @class([
-                    'fi-topbar-group-toggle-icon h-5 w-5',
+                    'fi-topbar-group-toggle-icon size-5',
                     'text-gray-400 dark:text-gray-500' => ! $active,
                     'text-primary-600 dark:text-primary-400' => $active,
                 ])

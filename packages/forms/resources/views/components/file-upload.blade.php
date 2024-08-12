@@ -260,7 +260,7 @@
                                             </div>
 
                                             <div class="space-y-3">
-                                                @foreach ($getImageEditorActions(iconSizeClasses: 'h-5 w-5 mx-auto') as $groupedActions)
+                                                @foreach ($getImageEditorActions(iconSizeClasses: 'size-5 mx-auto') as $groupedActions)
                                                     <x-filament::button.group
                                                         class="w-full"
                                                     >

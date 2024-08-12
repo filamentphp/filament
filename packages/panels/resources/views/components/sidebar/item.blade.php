@@ -57,7 +57,7 @@
                 :icon="($active && $activeIcon) ? $activeIcon : $icon"
                 :x-show="($subGrouped && $sidebarCollapsible) ? '! $store.sidebar.isOpen' : false"
                 @class([
-                    'fi-sidebar-item-icon h-6 w-6',
+                    'fi-sidebar-item-icon size-6',
                     'text-gray-400 dark:text-gray-500' => ! $active,
                     'text-primary-600 dark:text-primary-400' => $active,
                 ])
@@ -69,7 +69,7 @@
                 @if (filled($icon) && $subGrouped && $sidebarCollapsible)
                     x-show="$store.sidebar.isOpen"
                 @endif
-                class="fi-sidebar-item-grouped-border relative flex h-6 w-6 items-center justify-center"
+                class="fi-sidebar-item-grouped-border relative flex size-6 items-center justify-center"
             >
                 @if (! $first)
                     <div
