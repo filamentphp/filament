@@ -11,7 +11,6 @@
         "anourvalar/eloquent-serialize": "^1.2",
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "filament/support": "*",
-        "kirschbaum-development/eloquent-power-joins": "^3.0",
         "larastan/larastan": "^2.2",
         "laravel/pint": "^1.0",
         "league/csv": "^9.14",
