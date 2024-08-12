@@ -30,7 +30,7 @@
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
-                class="fi-pagination-item-icon h-5 w-5 text-gray-400 transition duration-75 group-hover/btn:text-gray-500 dark:text-gray-500 dark:group-hover/btn:text-gray-400"
+                class="fi-pagination-item-icon size-5 text-gray-400 transition duration-75 group-hover/btn:text-gray-500 dark:text-gray-500 dark:group-hover/btn:text-gray-400"
             />
         @endif
 

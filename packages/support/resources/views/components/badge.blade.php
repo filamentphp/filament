@@ -41,11 +41,11 @@
     $isDeletable = count($deleteButton?->attributes->getAttributes() ?? []) > 0;
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-badge-icon h-4 w-4',
+        'fi-badge-icon size-4',
         match ($iconSize) {
-            IconSize::Small => 'h-4 w-4',
-            IconSize::Medium => 'h-5 w-5',
-            IconSize::Large => 'h-6 w-6',
+            IconSize::Small => 'size-4',
+            IconSize::Medium => 'size-5',
+            IconSize::Large => 'size-6',
             default => $iconSize,
         },
         match ($color) {

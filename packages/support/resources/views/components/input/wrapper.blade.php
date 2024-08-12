@@ -47,7 +47,7 @@
     $labelClasses = 'fi-input-wrp-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
     $getIconClasses = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssClasses([
-        'fi-input-wrp-icon h-5 w-5',
+        'fi-input-wrp-icon size-5',
         match ($color) {
             'gray' => 'text-gray-400 dark:text-gray-500',
             default => 'text-custom-500',

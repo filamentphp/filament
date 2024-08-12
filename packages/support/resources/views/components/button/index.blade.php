@@ -115,9 +115,9 @@
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-icon transition duration-75',
         match ($iconSize) {
-            IconSize::Small => 'h-4 w-4',
-            IconSize::Medium => 'h-5 w-5',
-            IconSize::Large => 'h-6 w-6',
+            IconSize::Small => 'size-4',
+            IconSize::Medium => 'size-5',
+            IconSize::Large => 'size-6',
             default => $iconSize,
         },
         'text-gray-400 dark:text-gray-500' => ($color === 'gray') || ($tag === 'label'),

@@ -274,7 +274,7 @@
                                                 :alias="$iconAlias"
                                                 :icon="$icon"
                                                 @class([
-                                                    'fi-modal-icon h-6 w-6',
+                                                    'fi-modal-icon size-6',
                                                     match ($iconColor) {
                                                         'gray' => 'text-gray-500 dark:text-gray-400',
                                                         default => 'text-custom-600 dark:text-custom-400',

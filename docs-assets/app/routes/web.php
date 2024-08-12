@@ -4,10 +4,8 @@ use App\Livewire\ActionsDemo;
 use App\Livewire\Forms\FieldsDemo;
 use App\Livewire\Forms\GettingStartedDemo;
 use App\Livewire\Infolists\EntriesDemo;
-use App\Livewire\Infolists\LayoutDemo as InfolistsLayoutDemo;
 use App\Livewire\NotificationsDemo;
 use App\Livewire\Schema\LayoutDemo;
-use App\Livewire\Schema\LayoutDemo as FormsLayoutDemo;
 use App\Livewire\TablesDemo;
 use Illuminate\Support\Facades\Route;
 

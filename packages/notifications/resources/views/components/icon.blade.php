@@ -20,9 +20,9 @@
                 },
                 is_string($color) ? 'fi-color-' . $color : null,
                 match ($size) {
-                    IconSize::Small, 'sm' => 'h-4 w-4',
-                    IconSize::Medium, 'md' => 'h-5 w-5',
-                    IconSize::Large, 'lg' => 'h-6 w-6',
+                    IconSize::Small, 'sm' => 'size-4',
+                    IconSize::Medium, 'md' => 'size-5',
+                    IconSize::Large, 'lg' => 'size-6',
                     default => $size,
                 },
             ])

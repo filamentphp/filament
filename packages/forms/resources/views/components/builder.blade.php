@@ -151,7 +151,7 @@
                                 @if ($hasBlockIcons && filled($blockIcon))
                                     <x-filament::icon
                                         :icon="$blockIcon"
-                                        class="fi-fo-builder-item-header-icon h-5 w-5 text-gray-400 dark:text-gray-500"
+                                        class="fi-fo-builder-item-header-icon size-5 text-gray-400 dark:text-gray-500"
                                     />
                                 @endif
 
