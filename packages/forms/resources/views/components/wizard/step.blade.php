@@ -1,6 +1,8 @@
 @php
     $id = $getId();
-    $isContained = $getContainer()->getParentComponent()->isContained();
+	$parentComponent = $getContainer()->getParentComponent();
+    $isContained = $parentComponent->isContained();
+    $isVertical = $parentComponent->isVertical();
 
     $activeStepClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-active',
@@ -33,7 +35,10 @@
                 'tabindex' => '0',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-fo-wizard-step outline-none'])
+            ->class([
+					'fi-fo-wizard-step outline-none',
+					'md:col-span-6' => $isVertical
+					])
     }}
 >
     {{ $getChildComponentContainer() }}

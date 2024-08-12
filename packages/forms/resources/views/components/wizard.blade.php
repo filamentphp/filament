@@ -1,5 +1,6 @@
 @php
     $isContained = $isContained();
+    $isVertical = $isVertical();
     $statePath = $getStatePath();
 @endphp
 
@@ -106,7 +107,8 @@
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
             ->class([
-                'fi-fo-wizard',
+                'fi-fo-wizard ',
+                'fi-fo-wizard-vertical grid md:grid-cols-8' => $isVertical,
                 'fi-contained rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $isContained,
             ])
     }}
@@ -129,14 +131,17 @@
         @endif
         role="list"
         @class([
-            'fi-fo-wizard-header grid divide-y divide-gray-200 dark:divide-white/5 md:grid-flow-col md:divide-y-0 md:overflow-x-auto',
-            'border-b border-gray-200 dark:border-white/10' => $isContained,
+            'fi-fo-wizard-header grid divide-y divide-gray-200 dark:divide-white/5',
+            'md:grid-flow-row md:divide-y md:col-span-2 content-start border-e' => $isVertical,
+            'md:grid-flow-col md:divide-y-0 md:overflow-x-auto' => !$isVertical,
+            'border-gray-200 dark:border-white/10' => $isContained,
+            'border-b' => $isContained && !$isVertical,
             'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => ! $isContained,
         ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
             <li
-                class="fi-fo-wizard-header-step relative flex"
+                class="fi-fo-wizard-header-step relative {{$isVertical ? 'block' : 'flex'}}"
                 x-bind:class="{
                     'fi-active': getStepIndex(step) === {{ $loop->index }},
                     'fi-completed': getStepIndex(step) > {{ $loop->index }},
@@ -148,7 +153,7 @@
                     x-on:click="step = @js($step->getId())"
                     x-bind:disabled="! isStepAccessible(@js($step->getId()))"
                     role="step"
-                    class="fi-fo-wizard-header-step-button flex h-full items-center gap-x-4 px-6 py-4 text-start"
+                    class="fi-fo-wizard-header-step-button flex {{$isVertical ? 'w-full' : 'h-full'}} items-center gap-x-4 px-6 py-4 text-start"
                 >
                     <div
                         class="fi-fo-wizard-header-step-icon-ctn flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
@@ -227,7 +232,7 @@
                     </div>
                 </button>
 
-                @if (! $loop->last)
+                @if (! $loop->last && !$isVertical)
                     <div
                         aria-hidden="true"
                         class="fi-fo-wizard-header-step-separator absolute end-0 hidden h-full w-5 md:block"
@@ -257,9 +262,10 @@
 
     <div
         @class([
-            'flex items-center justify-between gap-x-3',
+            'fi-fo-wizard-actions flex items-center justify-between gap-x-3',
             'px-6 pb-6' => $isContained,
             'mt-6' => ! $isContained,
+            'md:col-span-8 border-t pt-6' => $isVertical
         ])
     >
         <span x-cloak x-on:click="previousStep" x-show="! isFirstStep()">
