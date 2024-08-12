@@ -207,10 +207,14 @@ By default, when you press escape on a modal, it will close itself. If you wish 
 
 ## Hiding the modal close button
 
-By default, modals have a close button in the top right corner. You can remove the close button from the modal by using the `close-button` attribute:
+By default, modals with a header have a close button in the top right corner. You can remove the close button from the modal by using the `close-button` attribute:
 
 ```blade
 <x-filament::modal :close-button="false">
+    <x-slot name="heading">
+        Modal heading
+    </x-slot>
+
     {{-- Modal content --}}
 </x-filament::modal>
 ```

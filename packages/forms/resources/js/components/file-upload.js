@@ -1,5 +1,6 @@
 import * as FilePond from 'filepond'
 import Cropper from 'cropperjs'
+import mime from 'mime'
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 import FilePondPluginImageCrop from 'filepond-plugin-image-crop'
@@ -193,6 +194,14 @@ export default function fileUploadFormComponent({
                     onconfirm: () => {},
                     oncancel: () => this.closeEditor(),
                     onclose: () => this.closeEditor(),
+                },
+                fileValidateTypeDetectType: (source, detectedType) => {
+                    return new Promise((resolve, reject) => {
+                        const mimeType =
+                            detectedType ||
+                            mime.getType(source.name.split('.').pop())
+                        mimeType ? resolve(mimeType) : reject()
+                    })
                 },
             })
 

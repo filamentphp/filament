@@ -19,9 +19,9 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertActionDoesNotExist(string | array $name): static {}
 
-        public function assertActionVisible(string | array $name): static {}
+        public function assertActionVisible(string | array $name, array $arguments = []): static {}
 
-        public function assertActionHidden(string | array $name): static {}
+        public function assertActionHidden(string | array $name, array $arguments = []): static {}
 
         public function assertActionEnabled(string | array $name): static {}
 
