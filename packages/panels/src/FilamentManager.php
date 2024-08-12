@@ -470,6 +470,12 @@ class FilamentManager
         return app($this->getDefaultAvatarProvider())->get($user);
     }
 
+    public function getDefaultTenant(): ?Model
+    {
+        $tenantModel = $this->getCurrentPanel()->getTenantModel();
+        return app($tenantModel)::query()->first();
+    }
+
     public function getUserDefaultTenant(HasTenants | Model | Authenticatable $user): ?Model
     {
         $tenant = null;
@@ -506,9 +512,14 @@ class FilamentManager
     /**
      * @return array<Model>
      */
-    public function getUserTenants(HasTenants | Model | Authenticatable $user): array
+    public function getUserTenants(HasTenants | Model | Authenticatable | null $user): array
     {
-        $tenants = $user->getTenants($this->getCurrentPanel());
+        if (is_null($user)) {
+            $tenantModel = $this->getCurrentPanel()->getTenantModel();
+            $tenants = app($tenantModel)::query()->get();
+        } else {
+            $tenants = $user->getTenants($this->getCurrentPanel());
+        }
 
         if ($tenants instanceof Collection) {
             $tenants = $tenants->all();

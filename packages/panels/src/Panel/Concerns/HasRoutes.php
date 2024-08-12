@@ -174,7 +174,13 @@ trait HasRoutes
         $hasTenancy = $this->hasTenancy();
 
         if ((! $tenant) && $hasTenancy) {
-            $tenant = Filament::getUserDefaultTenant($this->auth()->user());
+            $user = $this->auth()->user();
+
+            if (! $user) {
+                $tenant = Filament::getDefaultTenant();
+            } else {
+                $tenant = Filament::getUserDefaultTenant(Filament::auth()->user());
+            }
         }
 
         if ((! $tenant) && $hasTenancy) {
