@@ -13,10 +13,10 @@ class RedirectToTenantController
         $panel = Filament::getCurrentPanel();
         $user = Filament::auth()->user();
 
-        if (! $user) {
-            $tenant = Filament::getDefaultTenant();
-        } else {
+        if ($user) {
             $tenant = Filament::getUserDefaultTenant(Filament::auth()->user());
+        } else {
+            $tenant = Filament::getDefaultTenant();
         }
 
         if (! $tenant) {
