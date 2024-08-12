@@ -22,7 +22,7 @@ class IdentifyTenant
             return $next($request);
         }
 
-        /** @var Model $user */
+        /** @var ?Model $user */
         $user = $panel->auth()->user();
 
         if ($user && (! $user instanceof HasTenants)) {
