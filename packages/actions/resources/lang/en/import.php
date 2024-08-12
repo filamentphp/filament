@@ -79,6 +79,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'error',
         'system_error' => 'System error, please contact support.',
+        'column_mapping_required_for_new_record' => 'The :attribute column was not mapped to a column in the file, but it is required for creating new records.',
     ],
 
 ];
