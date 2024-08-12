@@ -673,6 +673,28 @@ public function getContentTabIcon(): ?string
 }
 ```
 
+### Setting a badge for the form tab
+
+On the Edit or View page class, override the `getContentTabBadge()` method:
+
+```php
+public function getContentTabBadge(): ?string
+{
+    return '3';
+}
+```
+
+### Setting a color for the form tab badge
+
+On the Edit or View page class, override the `getContentTabBadgeColor()` method:
+
+```php
+public function getContentTabBadgeColor(): ?string
+{
+    return 'warning';
+}
+```
+
 ### Setting the position of the form tab
 
 By default, the form tab is rendered before the relation tabs. To render it after, you can override the `getContentTabPosition()` method on the Edit or View page class:

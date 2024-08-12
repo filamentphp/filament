@@ -3,6 +3,8 @@
     'activeManager',
     'content' => null,
     'contentTabLabel' => null,
+    'contentTabBadge' => null,
+    'contentTabBadgeColor' => null,
     'contentTabIcon' => null,
     'contentTabPosition' => null,
     'managers',
@@ -50,8 +52,8 @@
 
                 <x-filament::tabs.item
                     :active="$activeManager === $tabKey"
-                    :badge="filled($tabKey) ? ($isGroup ? $manager->getBadge() : $manager::getBadge($ownerRecord, $pageClass)) : null"
-                    :badge-color="filled($tabKey) ? ($isGroup ? $manager->getBadgeColor() : $manager::getBadgeColor($ownerRecord, $pageClass)) : null"
+                    :badge="filled($tabKey) ? ($isGroup ? $manager->getBadge() : $manager::getBadge($ownerRecord, $pageClass)) : ($contentTabBadge ?? null)"
+                    :badge-color="filled($tabKey) ? ($isGroup ? $manager->getBadgeColor() : $manager::getBadgeColor($ownerRecord, $pageClass)) : ($contentTabBadgeColor ?? null)"
                     :badge-tooltip="filled($tabKey) ? ($isGroup ? $manager->getBadgeTooltip() : $manager::getBadgeTooltip($ownerRecord, $pageClass)) : null"
                     :icon="filled($tabKey) ? ($isGroup ? $manager->getIcon() : $manager::getIcon($ownerRecord, $pageClass)) : ($contentTabIcon ?? null)"
                     :icon-position="filled($tabKey) ? ($isGroup ? $manager->getIconPosition() : $manager::getIconPosition($ownerRecord, $pageClass)) : ($contentTabIconPosition ?? null)"

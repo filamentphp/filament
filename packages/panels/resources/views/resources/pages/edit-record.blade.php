@@ -34,6 +34,8 @@
             :active-locale="isset($activeLocale) ? $activeLocale : null"
             :active-manager="$this->activeRelationManager ?? ($hasCombinedRelationManagerTabsWithContent ? null : array_key_first($relationManagers))"
             :content-tab-label="$this->getContentTabLabel()"
+            :content-tab-badge="$this->getContentTabBadge()"
+            :content-tab-badge-color="$this->getContentTabBadgeColor()"
             :content-tab-icon="$this->getContentTabIcon()"
             :content-tab-position="$this->getContentTabPosition()"
             :managers="$relationManagers"
