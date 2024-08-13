@@ -83,7 +83,7 @@
     <span
         @if ($hasAlpineActiveClasses)
             x-bind:class="{
-                @js($inactiveLabelClasses): ! ({{-- format-ignore-start --}} ({{ $alpineActive }}) {{-- format-ignore-end --}}),
+                @js($inactiveLabelClasses): ({{-- format-ignore-start --}} ! ({{ $alpineActive }}) {{-- format-ignore-end --}}),
                 @js($activeLabelClasses): {{ $alpineActive }},
             }"
         @endif
