@@ -26,7 +26,7 @@
 >
     <div
         @if (FilamentView::hasSpaMode())
-            ax-load="visible"
+            {{-- format-ignore-start --}}ax-load="visible || event (ax-modal-opened)"{{-- format-ignore-end --}}
         @else
             ax-load
         @endif

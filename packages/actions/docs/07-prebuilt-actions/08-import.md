@@ -133,6 +133,19 @@ ImportColumn::make('sku')
 
 If you require a column in the database, you also need to make sure that it has a [`rules(['required'])` validation rule](#validating-csv-data).
 
+If a column is not mapped, it will not be validated since there is no data to validate.
+
+If you allow an import to create records as well as [update existing ones](#updating-existing-records-when-importing), but only require a column to be mapped when creating records as it's a required field, you can use the `requiredMappingForNewRecordsOnly()` method instead of `requiredMapping()`:
+
+```php
+use Filament\Actions\Imports\ImportColumn;
+
+ImportColumn::make('sku')
+    ->requiredMappingForNewRecordsOnly()
+```
+
+If the `resolveRecord()` method returns a model instance that is not saved in the database yet, the column will be required to be mapped, just for that row. If the user does not map the column, and one of the rows in the import does not yet exist in the database, just that row will fail and a message will be added to the failed rows CSV after every row has been analyzed.
+
 ### Validating CSV data
 
 You can call the `rules()` method to add validation rules to a column. These rules will check the data in each row from the CSV before it is saved to the database:
