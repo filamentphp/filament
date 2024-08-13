@@ -15,9 +15,13 @@ trait BelongsToModel
         return $this;
     }
 
-    public function saveRelationships(): void
+    public function saveRelationships(?array $exceptComponents = []): void
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
+            if (method_exists($component, 'getName') && in_array($component->getName(), $exceptComponents)) {
+                continue;
+            }
+            
             $component->saveRelationshipsBeforeChildren();
 
             $shouldSaveRelationshipsWhenDisabled = $component->shouldSaveRelationshipsWhenDisabled();
@@ -27,16 +31,20 @@ trait BelongsToModel
                     continue;
                 }
 
-                $container->saveRelationships();
+                $container->saveRelationships($exceptComponents);
             }
 
             $component->saveRelationships();
         }
     }
 
-    public function loadStateFromRelationships(bool $andHydrate = false): void
+    public function loadStateFromRelationships(bool $andHydrate = false, ?array $exceptComponents = []): void
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
+            if (method_exists($component, 'getName') && in_array($component->getName(), $exceptComponents)) {
+                continue;
+            }
+            
             $component->loadStateFromRelationships($andHydrate);
 
             foreach ($component->getChildComponentContainers(withHidden: true) as $container) {

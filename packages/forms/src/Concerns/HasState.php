@@ -46,10 +46,10 @@ trait HasState
         return false;
     }
 
-    public function callBeforeStateDehydrated(): void
+    public function callBeforeStateDehydrated(?array $exceptComponents = []): void
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->isHidden()) {
+            if ($component->isHidden() || (method_exists($component, 'getName') && in_array($component->getName(), $exceptComponents))) {
                 continue;
             }
 
@@ -60,7 +60,7 @@ trait HasState
                     continue;
                 }
 
-                $container->callBeforeStateDehydrated();
+                $container->callBeforeStateDehydrated($exceptComponents);
             }
         }
     }
@@ -221,15 +221,15 @@ trait HasState
     /**
      * @return array<string, mixed>
      */
-    public function getState(bool $shouldCallHooksBefore = true, ?Closure $afterValidate = null): array
+    public function getState(bool $shouldCallHooksBefore = true, ?Closure $afterValidate = null, ?array $shouldCallHooksBeforeExceptComponents = []): array
     {
         $state = $this->validate();
 
         if ($shouldCallHooksBefore) {
-            $this->callBeforeStateDehydrated();
+            $this->callBeforeStateDehydrated($shouldCallHooksBeforeExceptComponents);
 
-            $afterValidate || $this->saveRelationships();
-            $afterValidate || $this->loadStateFromRelationships(andHydrate: true);
+            $afterValidate || $this->saveRelationships($shouldCallHooksBeforeExceptComponents);
+            $afterValidate || $this->loadStateFromRelationships(andHydrate: true, exceptComponents: $shouldCallHooksBeforeExceptComponents);
         }
 
         $this->dehydrateState($state);
@@ -242,8 +242,8 @@ trait HasState
         if ($afterValidate) {
             value($afterValidate, $state);
 
-            $shouldCallHooksBefore && $this->saveRelationships();
-            $shouldCallHooksBefore && $this->loadStateFromRelationships(andHydrate: true);
+            $shouldCallHooksBefore && $this->saveRelationships($shouldCallHooksBeforeExceptComponents);
+            $shouldCallHooksBefore && $this->loadStateFromRelationships(andHydrate: true, exceptComponents: $shouldCallHooksBeforeExceptComponents);
         }
 
         return $state;
