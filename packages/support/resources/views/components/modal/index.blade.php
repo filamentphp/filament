@@ -1,6 +1,7 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\MaxWidth;
+    use Filament\Support\Facades\FilamentView;
 @endphp
 
 @props([
@@ -76,6 +77,10 @@
         open: function () {
             this.$nextTick(() => {
                 this.isOpen = true
+
+                @if (FilamentView::hasSpaMode())
+                    this.$dispatch('ax-modal-opened')
+                @endif
 
                 this.$refs.modalContainer.dispatchEvent(
                     new CustomEvent('modal-opened', { id: '{{ $id }}' }),
