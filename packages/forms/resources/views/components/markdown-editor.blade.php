@@ -20,7 +20,7 @@
             "
         >
             <div
-                ax-load="visible || event (ax-modal-opened)"
+                ax-load="|| event (ax-modal-opened) visible"
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
                 x-data="markdownEditorFormComponent({
                             canAttachFiles: @js($hasToolbarButton('attachFiles')),

@@ -79,7 +79,7 @@
                 this.isOpen = true
 
                 @if (FilamentView::hasSpaMode())
-                this.$dispatch('ax-modal-opened')
+                    this.$dispatch('ax-modal-opened')
                 @endif
 
                 this.$refs.modalContainer.dispatchEvent(
