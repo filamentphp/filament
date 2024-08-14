@@ -7,19 +7,15 @@ import RadioGroupOption from "@components/RadioGroupOption.astro"
 import Checkboxes from "@components/Checkboxes.astro"
 import Checkbox from "@components/Checkbox.astro"
 
-## Requirements
-
 Filament requires the following to run:
 
 - PHP 8.1+
 - Laravel v10.0+
 - Livewire v3.0+
 
-## Installation
+Installation comes in two flavours, depending on whether you want to build an app using our panel builder, or if you want to use the components within the Blade views of your app:
 
-Filament installation comes in two flavours, depending on whether you want to build an app using our panel builder, or if you want to use the components within the Blade views of your app:
-
-<div x-data="{ package: ['components', 'panels'].includes(window.location.hash) ? window.location.hash : 'panels' }">
+<div x-data="{ package: (window.location.hash === '#components') ? 'components' : 'panels' }">
 
 <RadioGroup model="package">
     <RadioGroupOption value="panels">
@@ -160,8 +156,7 @@ To quickly get started with Filament in a new Laravel project, run the following
 
 > Since these commands will overwrite existing files in your application, only run this in a new Laravel project!
 
-```bash
-php artisan filament:install --scaffold --forms
+<pre><code class="language-bash">php artisan filament:install --scaffold <span x-show="componentPackages.includes('forms')">--forms</span> <span x-show="componentPackages.includes('infolists')">--infolists</span> <span x-show="componentPackages.includes('tables')">--tables</span> <span x-show="componentPackages.includes('actions')">--actions</span> <span x-show="componentPackages.includes('notifications')">--notifications</span> <span x-show="componentPackages.includes('widgets')">--widgets</span></code></pre>
 
 npm install
 
@@ -174,9 +169,7 @@ npm run dev
 
 Run the following command to install the Filament frontend assets:
 
-```bash
-php artisan filament:install --forms
-```
+<pre><code class="language-bash">php artisan filament:install <span x-show="componentPackages.includes('forms')">--forms</span> <span x-show="componentPackages.includes('infolists')">--infolists</span> <span x-show="componentPackages.includes('tables')">--tables</span> <span x-show="componentPackages.includes('actions')">--actions</span> <span x-show="componentPackages.includes('notifications')">--notifications</span> <span x-show="componentPackages.includes('widgets')">--widgets</span></code></pre>
 
 ### Installing Tailwind CSS
 
@@ -225,7 +218,7 @@ export default {
 
 ### Automatically refreshing the browser
 
-You may also want to update your `vite.config.js` file to refresh the page automatically when Livewire components are updated:
+You may also want to update your `vite.config.js` file to refresh the page automatically when Livewire and Filament components are updated:
 
 ```js
 import { defineConfig } from 'vite'
@@ -237,6 +230,7 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: [
                 ...refreshPaths,
+                'app/Filament/**',
                 'app/Livewire/**',
             ],
         }),
@@ -276,6 +270,8 @@ Create a new `resources/views/components/layouts/app.blade.php` layout file for 
 
     <body class="antialiased">
         {{ $slot }}
+
+        @livewire('notifications')
 
         @filamentScripts
         @vite('resources/js/app.js')
