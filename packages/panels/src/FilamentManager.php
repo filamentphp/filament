@@ -455,8 +455,6 @@ class FilamentManager
 
     public function getUserAvatarUrl(Model | Authenticatable $user): string
     {
-        $avatar = null;
-
         if ($user instanceof HasAvatar) {
             $avatar = $user->getFilamentAvatarUrl();
         } else {
