@@ -3,8 +3,8 @@ title: Installation
 ---
 import RadioGroup from "@components/RadioGroup.astro"
 import RadioGroupOption from "@components/RadioGroupOption.astro"
-import RadioGroupLabel from "@components/RadioGroupLabel.astro"
-import RadioGroupDescription from "@components/RadioGroupDescription.astro"
+import RadioGroupOptionLabel from "@components/RadioGroupOptionLabel.astro"
+import RadioGroupOptionDescription from "@components/RadioGroupOptionDescription.astro"
 
 <div x-data="{ package: 'panels' }">
 
