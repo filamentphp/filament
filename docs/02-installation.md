@@ -156,9 +156,7 @@ To quickly get started with Filament in a new Laravel project, run the following
 
 > Since these commands will overwrite existing files in your application, only run this in a new Laravel project!
 
-```bash
-php artisan filament:install --scaffold <span x-show="componentPackages.includes('forms')">--forms</span> <span x-show="componentPackages.includes('infolists')">--infolists</span> <span x-show="componentPackages.includes('tables')">--tables</span> <span x-show="componentPackages.includes('actions')">--actions</span> <span x-show="componentPackages.includes('notifications')">--notifications</span> <span x-show="componentPackages.includes('widgets')">--widgets</span>
-```
+<pre><code class="language-bash">php artisan filament:install --scaffold <span x-show="componentPackages.includes('forms')">--forms</span> <span x-show="componentPackages.includes('infolists')">--infolists</span> <span x-show="componentPackages.includes('tables')">--tables</span> <span x-show="componentPackages.includes('actions')">--actions</span> <span x-show="componentPackages.includes('notifications')">--notifications</span> <span x-show="componentPackages.includes('widgets')">--widgets</span></code></pre>
 
 npm install
 
@@ -171,9 +169,7 @@ npm run dev
 
 Run the following command to install the Filament frontend assets:
 
-```bash
-php artisan filament:install <span x-show="componentPackages.includes('forms')">--forms</span> <span x-show="componentPackages.includes('infolists')">--infolists</span> <span x-show="componentPackages.includes('tables')">--tables</span> <span x-show="componentPackages.includes('actions')">--actions</span> <span x-show="componentPackages.includes('notifications')">--notifications</span> <span x-show="componentPackages.includes('widgets')">--widgets</span>
-```
+<pre><code class="language-bash">php artisan filament:install <span x-show="componentPackages.includes('forms')">--forms</span> <span x-show="componentPackages.includes('infolists')">--infolists</span> <span x-show="componentPackages.includes('tables')">--tables</span> <span x-show="componentPackages.includes('actions')">--actions</span> <span x-show="componentPackages.includes('notifications')">--notifications</span> <span x-show="componentPackages.includes('widgets')">--widgets</span></code></pre>
 
 ### Installing Tailwind CSS
 
