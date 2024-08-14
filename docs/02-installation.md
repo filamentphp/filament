@@ -8,7 +8,7 @@ import RadioGroupOptionDescription from "@components/RadioGroupOptionDescription
 
 <div x-data="{ package: 'panels' }">
 
-<RadioGroup x-model="package">
+<RadioGroup model="package">
     <RadioGroupOption value="panels">
         <RadioGroupOptionLabel>
             Panels
