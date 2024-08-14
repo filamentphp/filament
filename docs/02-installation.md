@@ -1,15 +1,55 @@
 ---
 title: Installation
 ---
-import Tab from "@components/Tab.astro"
-import Tabs from "@components/Tabs.astro"
+import RadioGroup from "@components/RadioGroup.astro"
+import RadioGroupOption from "@components/RadioGroupOption.astro"
+import RadioGroupLabel from "@components/RadioGroupLabel.astro"
+import RadioGroupDescription from "@components/RadioGroupDescription.astro"
 
-<Tabs headers={['One', 'Two']}>
-    <Tab>
-        Content 1
-    </Tab>
+<div x-data="{ package: 'panels' }">
 
-    <Tab>
-        Content 2
-    </Tab>
-</Tabs>
+<RadioGroup x-model="package">
+    <RadioGroupOption value="panels">
+        <RadioGroupOptionLabel>
+            Panels
+        </RadioGroupOptionLabel>
+
+        <RadioGroupOptionDescription>
+            Just the panel
+        </RadioGroupOptionDescription>
+    </RadioGroupOption>
+
+    <RadioGroupOption value="components">
+        <RadioGroupOptionLabel>
+            Components
+        </RadioGroupOptionLabel>
+
+        <RadioGroupOptionDescription>
+            Individual components
+        </RadioGroupOptionDescription>
+    </RadioGroupOption>
+</RadioGroup>
+
+Let's test this: <span x-text="package"></span>
+
+<div x-show="package === 'panels'">
+## Panels
+
+Panels are cool
+
+```php
+echo 'panels';
+```
+</div>
+
+<div x-show="package === 'components'">
+## Components
+
+Components are cool
+
+```php
+echo 'components';
+```
+</div>
+
+</div>
