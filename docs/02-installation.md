@@ -1,5 +1,6 @@
 ---
 title: Installation
+contents: false
 ---
 import RadioGroup from "@components/RadioGroup.astro"
 import RadioGroupOption from "@components/RadioGroupOption.astro"
