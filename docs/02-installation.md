@@ -61,8 +61,6 @@ Open `/admin` in your web browser, sign in, and start building your app!
 
 </div>
 
-## Installing the individual components
-
 <div
     x-show="package === 'components'"
     x-data="{
@@ -71,6 +69,8 @@ Open `/admin` in your web browser, sign in, and start building your app!
     }"
     x-cloak
 >
+
+## Installing the individual components
 
 First, select which components you would like to install, so we can tailor the installation instructions for you:
 
