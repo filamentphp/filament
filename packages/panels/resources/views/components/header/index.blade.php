@@ -33,7 +33,7 @@
 
     <div
         @class([
-            'flex shrink-0 items-center',
+            'flex shrink-0 items-center gap-3',
             'sm:mt-7' => $breadcrumbs,
         ])
     >
