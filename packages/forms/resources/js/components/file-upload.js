@@ -83,6 +83,8 @@ export default function fileUploadFormComponent({
 
         lastState: null,
 
+        error: null,
+
         uploadedFileIndex: {},
 
         isEditorOpen: false,
@@ -313,6 +315,21 @@ export default function fileUploadFormComponent({
             this.pond.on('processfileabort', handleFileProcessing)
 
             this.pond.on('processfilerevert', handleFileProcessing)
+
+            if (panelLayout === 'compact circle') {
+                // The compact circle layout does not have enough space to render an error message inside the input.
+                // As such, we need to display the error message outside of the input, using the `error` Alpine.js
+                // property that is output as a message in the field's view.
+
+                this.pond.on('error', (error) => {
+                    // FilePond has a weird English translation for the error message when a file of an unexpected
+                    // type is uploaded, for example: `File of invalid type: Expects  or image/*`. This is a
+                    // hacky workaround to fix the message to be `File of invalid type: Expects image/*`.
+                    this.error = `${error.main}: ${error.sub}`.replace('Expects  or', 'Expects')
+                })
+
+                this.pond.on('removefile', () => this.error = null)
+            }
         },
 
         destroy: function () {
