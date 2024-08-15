@@ -37,6 +37,14 @@ Please see the [Panel Builder](../panels/upgrade-guide#the-filament_filesystem_d
 
 ### Medium-impact changes
 
+#### Import and export job retries
+
+In Filament v3, import and export jobs were retries continuously for 24 hours if they failed, with no backoff between tries by default.
+
+In v4, they are retried 3 times with a 60 second backoff between each retry.
+
+This behaviour can be customized in the [importer](prebuilt-actions/import#customizing-the-import-job-retries) and [exporter](prebuilt-actions/export#customizing-the-export-job-retries) classes.
+
 ### Low-impact changes
 
 #### Overriding the `ExportColumn::make()` or `ImportColumn::make()` methods

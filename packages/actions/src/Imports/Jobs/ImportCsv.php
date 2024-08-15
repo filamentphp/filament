@@ -124,6 +124,19 @@ class ImportCsv implements ShouldQueue
         return $this->importer->getJobRetryUntil();
     }
 
+    public function tries(): ?int
+    {
+        return $this->importer->getJobTries();
+    }
+
+    /**
+     * @return int | array<int> | null
+     */
+    public function backoff(): int | array | null
+    {
+        return $this->importer->getJobBackoff();
+    }
+
     /**
      * @return array<int, string>
      */
