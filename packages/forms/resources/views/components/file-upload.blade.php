@@ -109,14 +109,11 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class([
-                    'fi-fo-file-upload flex [&_.filepond--root]:font-sans',
+                    'fi-fo-file-upload flex flex-col gap-y-2 [&_.filepond--root]:font-sans',
                     match ($alignment) {
-                        Alignment::Start => 'justify-start',
-                        Alignment::Center => 'justify-center',
-                        Alignment::End => 'justify-end',
-                        Alignment::Left => 'justify-left',
-                        Alignment::Right => 'justify-right',
-                        Alignment::Between, Alignment::Justify => 'justify-between',
+                        Alignment::Start, Alignment::Left => 'items-start',
+                        Alignment::Center => 'items-center',
+                        Alignment::End, Alignment::Right => 'items-end',
                         default => $alignment,
                     },
                 ])
@@ -141,6 +138,13 @@
                 }}
             />
         </div>
+
+        <div
+            x-show="error"
+            x-text="error"
+            x-cloak
+            class="text-sm text-danger-600 dark:text-danger-400"
+        ></div>
 
         @if ($hasImageEditor && (! $isDisabled))
             <div
