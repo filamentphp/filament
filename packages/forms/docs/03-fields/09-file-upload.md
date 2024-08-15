@@ -314,6 +314,19 @@ FileUpload::make('attachments')
     ->appendFiles()
 ```
 
+## Upload file through paste
+
+You can allow users to upload a file though paste using the `allowPaste()` method. 
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->allowPaste()
+```
+
+Bare in mind that this feature is [not supported in all browsers](https://caniuse.com/?search=paste).
+
 ## Opening files in a new tab
 
 You can add a button to open each file in a new tab with the `openable()` method:
