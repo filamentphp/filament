@@ -36,6 +36,8 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
 
     protected bool | Closure $isReorderable = false;
 
+    protected bool | Closure $doesAllowPaste = false;
+
     protected string | Closure | null $directory = null;
 
     protected string | Closure | null $diskName = null;
@@ -282,6 +284,13 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
         return $this;
     }
 
+    public function allowPaste(bool | Closure $condition = true): static
+    {
+        $this->doesAllowPaste = $condition;
+
+        return $this;
+    }
+
     public function previewable(bool | Closure $condition = true): static
     {
         $this->isPreviewable = $condition;
@@ -489,6 +498,11 @@ class BaseFileUpload extends Field implements Contracts\HasNestedRecursiveValida
     public function isReorderable(): bool
     {
         return (bool) $this->evaluate($this->isReorderable);
+    }
+
+    public function doesAllowPaste(): bool
+    {
+        return (bool) $this->evaluate($this->doesAllowPaste);
     }
 
     /**
