@@ -29,8 +29,19 @@ class IsOperator extends Operator
     public function getSummary(): string
     {
         $constraint = $this->getConstraint();
+        $settings = $this->getSettings();
 
-        $values = Arr::wrap($this->getSettings()[$constraint->isMultiple() ? 'values' : 'value']);
+        if ($constraint->isMultiple()) {
+            $callback = $constraint->getOptionLabelsUsingCallback();
+            $valuesKey = 'values';
+        } else {
+            $callback = $constraint->getOptionLabelUsingCallback();
+            $valuesKey = 'value';
+        }
+
+        $values = $callback
+            ? Arr::wrap($this->evaluate($callback, [$valuesKey => $settings[$valuesKey]]))
+            : Arr::only($constraint->getOptions(), $settings[$valuesKey]);
 
         $values = Arr::join($values, glue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.0'), finalGlue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.final'));
 
