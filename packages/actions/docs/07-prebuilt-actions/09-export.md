@@ -626,7 +626,16 @@ If you'd like to customize the middleware that is applied to jobs of a certain e
 
 ### Customizing the export job retries
 
-By default, the export system will retry a job for 24 hours. This is to allow for temporary issues, such as the database being unavailable, to be resolved. That functionality is defined in the `getJobRetryUntil()` method on the exporter class:
+By default, the export system will retry a job 3 times. This is to allow for temporary issues, such as the database being unavailable, to be resolved. That number can be customized in the `getJobTries()` method on the exporter class:
+
+```php
+public function getJobTries(): ?int
+{
+    return 5;
+}
+```
+
+You may instead set a time period for the job to retry, which is defined in the `getJobRetryUntil()` method on the exporter class:
 
 ```php
 use Carbon\CarbonInterface;
@@ -635,9 +644,30 @@ public function getJobRetryUntil(): ?CarbonInterface
 {
     return now()->addDay();
 }
+
+public function getJobTries(): ?int
+{
+    return null;
+}
 ```
 
-If you'd like to customize the retry time for jobs of a certain exporter, you may override this method in your exporter class. You can read more about job retries in the [Laravel docs](https://laravel.com/docs/queues#time-based-attempts).
+You can read more about job retries in the [Laravel docs](https://laravel.com/docs/queues#max-job-attempts-and-timeout).
+
+#### Customizing the export job backoff strategy
+
+By default, the export system will wait 60 seconds before retrying a job. This is to prevent the server from being overloaded by a job that is failing repeatedly. That functionality is defined in the `getJobBackoff()` method on the exporter class:
+
+```php
+/**
+* @return int | array<int> | null
+ */
+public function getJobBackoff(): int | array | null
+{
+    return 60;
+}
+```
+
+If you'd like to customize the backoff strategy that is applied to jobs of a certain exporter, you may override this method in your exporter class. You can read more about job backoff, including how to configure exponential backoffs, in the [Laravel docs](https://laravel.com/docs/queues#dealing-with-failed-jobs).
 
 ### Customizing the export job tags
 

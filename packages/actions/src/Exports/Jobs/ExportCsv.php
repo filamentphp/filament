@@ -118,6 +118,19 @@ class ExportCsv implements ShouldQueue
         return $this->exporter->getJobRetryUntil();
     }
 
+    public function tries(): ?int
+    {
+        return $this->exporter->getJobTries();
+    }
+
+    /**
+     * @return int | array<int> | null
+     */
+    public function backoff(): int | array | null
+    {
+        return $this->exporter->getJobBackoff();
+    }
+
     /**
      * @return array<int, string>
      */
