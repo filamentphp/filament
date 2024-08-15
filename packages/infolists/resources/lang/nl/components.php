@@ -29,9 +29,9 @@ return [
 
             ],
 
-        ],
+            'placeholder' => 'Geen items',
 
-        'placeholder' => 'Geen gegevens',
+        ],
 
     ],
 
