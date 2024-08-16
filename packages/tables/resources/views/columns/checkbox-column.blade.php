@@ -82,5 +82,6 @@
             \Filament\Support\prepare_inherited_attributes($attributes)
                 ->merge($getExtraInputAttributes(), escape: false)
         "
+        wire:loading.attr="disabled"
     />
 </div>

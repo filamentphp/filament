@@ -96,6 +96,7 @@
                 isLoading = false
             "
             :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())"
+            wire:loading.attr="disabled"
         >
             @if ($canSelectPlaceholder)
                 <option value="">{{ $getPlaceholder() }}</option>

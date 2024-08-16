@@ -136,6 +136,7 @@
                         ])
                 )
             "
+            wire:loading.attr="disabled"
         />
         {{-- format-ignore-end --}}
     </x-filament::input.wrapper>
