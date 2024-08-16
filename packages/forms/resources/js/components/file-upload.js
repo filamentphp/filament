@@ -325,10 +325,13 @@ export default function fileUploadFormComponent({
                     // FilePond has a weird English translation for the error message when a file of an unexpected
                     // type is uploaded, for example: `File of invalid type: Expects  or image/*`. This is a
                     // hacky workaround to fix the message to be `File of invalid type: Expects image/*`.
-                    this.error = `${error.main}: ${error.sub}`.replace('Expects  or', 'Expects')
+                    this.error = `${error.main}: ${error.sub}`.replace(
+                        'Expects  or',
+                        'Expects',
+                    )
                 })
 
-                this.pond.on('removefile', () => this.error = null)
+                this.pond.on('removefile', () => (this.error = null))
             }
         },
 

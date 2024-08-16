@@ -16,6 +16,7 @@ class Post extends Model
     protected $casts = [
         'is_published' => 'boolean',
         'tags' => 'array',
+        'json_array_of_objects' => 'array',
     ];
 
     protected $guarded = [];
