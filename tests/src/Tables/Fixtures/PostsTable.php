@@ -72,6 +72,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->state('correct state'),
                 Tables\Columns\TextColumn::make('formatted_state')
                     ->formatStateUsing(fn () => 'formatted state'),
+                Tables\Columns\TextColumn::make('json_array_of_objects.*.value'),
                 Tables\Columns\TextColumn::make('extra_attributes')
                     ->extraAttributes([
                         'class' => 'text-danger-500',

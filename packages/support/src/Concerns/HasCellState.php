@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
 use Znck\Eloquent\Relations\BelongsToThrough;
@@ -98,7 +97,7 @@ trait HasCellState
     {
         $record = $this->getRecord();
 
-        $state = Arr::get($record, $this->getName());
+        $state = data_get($record, $this->getName());
 
         if ($state !== null) {
             return $state;

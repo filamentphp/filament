@@ -141,6 +141,19 @@ it('can state whether a column has the correct formatted value', function () {
         ->assertTableColumnFormattedStateNotSet('formatted_state', 'incorrect formatted state', $post);
 });
 
+it('can output values in a JSON array column of objects', function () {
+    $post = Post::factory()->create([
+        'json_array_of_objects' => [
+            ['value' => 'foo'],
+            ['value' => 'bar'],
+            ['value' => 'baz'],
+        ],
+    ]);
+
+    livewire(PostsTable::class)
+        ->assertTableColumnStateSet('json_array_of_objects.*.value', ['foo', 'bar', 'baz'], $post);
+});
+
 it('can state whether a column has extra attributes', function () {
     $post = Post::factory()->create();
 
