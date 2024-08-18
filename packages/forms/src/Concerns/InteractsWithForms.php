@@ -288,7 +288,7 @@ trait InteractsWithForms
     {
         $statePath = (string) str($statePath)->before('.');
 
-        if (! Arr::has($this->oldFormState, 'data')) {
+        if (! Arr::has($this->oldFormState, $statePath)) {
             $this->oldFormState[$statePath] = data_get($this, $statePath);
         }
     }
