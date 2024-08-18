@@ -32,18 +32,22 @@ class IsOperator extends Operator
         $settings = $this->getSettings();
 
         if ($constraint->isMultiple()) {
-            $callback = $constraint->getOptionLabelsUsingCallback();
+            $getLabels = $constraint->getOptionLabelsUsingCallback();
             $valuesKey = 'values';
         } else {
-            $callback = $constraint->getOptionLabelUsingCallback();
+            $getLabels = $constraint->getOptionLabelUsingCallback();
             $valuesKey = 'value';
         }
 
-        $values = $callback
-            ? Arr::wrap($this->evaluate($callback, [$valuesKey => $settings[$valuesKey]]))
-            : Arr::only($constraint->getOptions(), $settings[$valuesKey]);
+        $labels = $getLabels ?
+            Arr::wrap($this->evaluate($getValues, [$valuesKey => $settings[$valuesKey]])) :
+            Arr::only($constraint->getOptions(), $settings[$valuesKey]);
 
-        $values = Arr::join($values, glue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.0'), finalGlue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.final'));
+        $joinedValues = Arr::join(
+            $labels,
+            glue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.0'),
+            finalGlue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.final'),
+        );
 
         return __(
             $this->isInverse() ?
@@ -51,7 +55,7 @@ class IsOperator extends Operator
                 'filament-tables::filters/query-builder.operators.select.is.summary.direct',
             [
                 'attribute' => $constraint->getAttributeLabel(),
-                'values' => $values,
+                'values' => $joinedValues,
             ],
         );
     }
