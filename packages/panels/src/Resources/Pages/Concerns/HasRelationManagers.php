@@ -70,6 +70,16 @@ trait HasRelationManagers
         return null;
     }
 
+    public function getContentTabBadge(): ?string
+    {
+        return null;
+    }
+
+    public function getContentTabBadgeColor(): ?string
+    {
+        return null;
+    }
+
     public function getContentTabIcon(): ?string
     {
         return null;
