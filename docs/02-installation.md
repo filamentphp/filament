@@ -4,8 +4,6 @@ contents: false
 ---
 import RadioGroup from "@components/RadioGroup.astro"
 import RadioGroupOption from "@components/RadioGroupOption.astro"
-import Checkboxes from "@components/Checkboxes.astro"
-import Checkbox from "@components/Checkbox.astro"
 
 Filament requires the following to run:
 
@@ -13,7 +11,7 @@ Filament requires the following to run:
 - Laravel v10.0+
 - Livewire v3.0+
 
-Installation comes in two flavours, depending on whether you want to build an app using our panel builder, or if you want to use the components within the Blade views of your app:
+Installation comes in two flavors, depending on whether you want to build an app using our panel builder, or if you want to use the components within the Blade views of your app:
 
 <div x-data="{ package: (window.location.hash === '#components') ? 'components' : 'panels' }">
 
@@ -42,7 +40,7 @@ Installation comes in two flavours, depending on whether you want to build an ap
 Install the Filament Panel Builder by running the following commands in your Laravel project directory:
 
 ```bash
-composer require filament/filament:"^3.2" -W
+composer require filament/filament
 
 php artisan filament:install --panels
 ```
@@ -63,74 +61,27 @@ Open `/admin` in your web browser, sign in, and start building your app!
 
 <div
     x-show="package === 'components'"
-    x-data="{
-        componentPackages: ['forms', 'infolists', 'tables', 'actions', 'notifications', 'widgets', 'support'],
-        laravelProject: 'new',
-    }"
+    x-data="{ laravelProject: 'new' }"
     x-cloak
 >
 
 ## Installing the individual components
 
-First, select which components you would like to install, so we can tailor the installation instructions for you:
+To start with, you need to install the Filament components you'd like to use with Composer:
 
-<Checkboxes>
-    <Checkbox value="forms" model="componentPackages">
-        Forms
+```bash
+composer require
+    filament/forms # A variety of field types and layouts, complete with integrated frontend and backend validation.
+    filament/infolists # The easiest way to create read-only views of data, using a combination of different data types and layouts.
+    filament/tables # Integrative tables and grids, complete with advanced filtering, sorting and grouping options.
+    filament/actions # Buttons that open complex modals that can be used to confirm actions, collect data, or display information.
+    filament/notifications # Send flash messages to the user after an interaction, through a live websocket connection, or via Laravel's database notifications.
+    filament/widgets # Dashboard components like charts and stats overviews, which can be integrated with static or live data.
+```
 
-        <span slot="description">
-            A variety of field types and layouts, complete with integrated frontend and backend validation.
-        </span>
-    </Checkbox>
+You can install additional packages later in your project without needing to follow all these steps.
 
-    <Checkbox value="infolists" model="componentPackages">
-        Infolists
-
-        <span slot="description">
-            The easiest way to create read-only views of data, using a combination of different data types and layouts.
-        </span>
-    </Checkbox>
-
-    <Checkbox value="tables" model="componentPackages">
-        Tables
-
-        <span slot="description">
-            Integrative tables and grids, complete with advanced filtering, sorting and grouping options.
-        </span>
-    </Checkbox>
-
-    <Checkbox value="actions" model="componentPackages">
-        Actions
-
-        <span slot="description">
-            Buttons that open complex modals that can be used to confirm actions, collect data, or display information.
-        </span>
-    </Checkbox>
-
-    <Checkbox value="notifications" model="componentPackages">
-        Notifications
-
-        <span slot="description">
-            Send flash messages to the user after an interaction, through a live websocket connection, or via Laravel's database notifications.
-        </span>
-    </Checkbox>
-
-    <Checkbox value="widgets" model="componentPackages">
-        Widgets
-
-        <span slot="description">
-            Dashboard components like charts and stats overviews, which can be integrated with static or live data.
-        </span>
-    </Checkbox>
-
-    <Checkbox value="support" model="componentPackages">
-        UI
-
-        <span slot="description">
-            Directly use the complete set of Blade components that are used by the Filament PHP class APIs.
-        </span>
-    </Checkbox>
-</Checkboxes>
+If you would like to only use the set of [Blade UI components](ui), you need to require `filament/support` at this stage.
 
 <RadioGroup model="laravelProject">
     <RadioGroupOption value="new">
@@ -156,12 +107,17 @@ To quickly get started with Filament in a new Laravel project, run the following
 
 > Since these commands will overwrite existing files in your application, only run this in a new Laravel project!
 
-<pre><code class="language-bash">php artisan filament:install --scaffold <span x-show="componentPackages.includes('forms')">--forms</span> <span x-show="componentPackages.includes('infolists')">--infolists</span> <span x-show="componentPackages.includes('tables')">--tables</span> <span x-show="componentPackages.includes('actions')">--actions</span> <span x-show="componentPackages.includes('notifications')">--notifications</span> <span x-show="componentPackages.includes('widgets')">--widgets</span></code></pre>
+Run the following command to install the Filament frontend assets:
+
+```bash
+php artisan filament:install --scaffold
 
 npm install
 
 npm run dev
 ```
+
+When scaffolding, if you have the [notifications](notifications) package installed, Filament will ask you if you would like to install the required Livewire component into the default layout file. This is required if you wish to send flash notifications to your users through Filament.
 
 </div>
 
@@ -169,7 +125,9 @@ npm run dev
 
 Run the following command to install the Filament frontend assets:
 
-<pre><code class="language-bash">php artisan filament:install <span x-show="componentPackages.includes('forms')">--forms</span> <span x-show="componentPackages.includes('infolists')">--infolists</span> <span x-show="componentPackages.includes('tables')">--tables</span> <span x-show="componentPackages.includes('actions')">--actions</span> <span x-show="componentPackages.includes('notifications')">--notifications</span> <span x-show="componentPackages.includes('widgets')">--widgets</span></code></pre>
+```bash
+php artisan filament:install
+```
 
 ### Installing Tailwind CSS
 
@@ -271,13 +229,15 @@ Create a new `resources/views/components/layouts/app.blade.php` layout file for 
     <body class="antialiased">
         {{ $slot }}
 
-        @livewire('notifications')
+        @livewire('notifications') {{-- Only required if you wish to send flash notifications --}}
 
         @filamentScripts
         @vite('resources/js/app.js')
     </body>
 </html>
 ```
+
+Please note the `@livewire('notifications')` line above - this is only required if you have the [notifications](notifications) package installed, and you wish to send flash notifications to your users through Filament.
 
 </div>
 
