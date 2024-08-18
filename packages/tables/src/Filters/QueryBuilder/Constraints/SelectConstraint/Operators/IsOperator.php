@@ -29,10 +29,25 @@ class IsOperator extends Operator
     public function getSummary(): string
     {
         $constraint = $this->getConstraint();
+        $settings = $this->getSettings();
 
-        $values = Arr::wrap($this->getSettings()[$constraint->isMultiple() ? 'values' : 'value']);
+        if ($constraint->isMultiple()) {
+            $getLabels = $constraint->getOptionLabelsUsingCallback();
+            $valuesKey = 'values';
+        } else {
+            $getLabels = $constraint->getOptionLabelUsingCallback();
+            $valuesKey = 'value';
+        }
 
-        $values = Arr::join($values, glue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.0'), finalGlue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.final'));
+        $labels = $getLabels ?
+            Arr::wrap($this->evaluate($getLabels, [$valuesKey => $settings[$valuesKey]])) :
+            Arr::only($constraint->getOptions(), $settings[$valuesKey]);
+
+        $joinedValues = Arr::join(
+            $labels,
+            glue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.0'),
+            finalGlue: __('filament-tables::filters/query-builder.operators.select.is.summary.values_glue.final'),
+        );
 
         return __(
             $this->isInverse() ?
@@ -40,7 +55,7 @@ class IsOperator extends Operator
                 'filament-tables::filters/query-builder.operators.select.is.summary.direct',
             [
                 'attribute' => $constraint->getAttributeLabel(),
-                'values' => $values,
+                'values' => $joinedValues,
             ],
         );
     }
