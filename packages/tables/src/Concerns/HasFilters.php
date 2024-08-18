@@ -5,6 +5,7 @@ namespace Filament\Tables\Concerns;
 use Filament\Forms\Form;
 use Filament\Tables\Filters\BaseFilter;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 /**
  * @property Form $tableFiltersForm
@@ -140,20 +141,18 @@ trait HasFilters
 
     protected function applyFiltersToTableQuery(Builder $query): Builder
     {
-        $data = $this->tableFilters;
-
         foreach ($this->getTable()->getFilters() as $filter) {
             $filter->applyToBaseQuery(
                 $query,
-                $data[$filter->getName()] ?? [],
+                $this->getTableFilterState($filter->getName()) ?? [],
             );
         }
 
-        return $query->where(function (Builder $query) use ($data) {
+        return $query->where(function (Builder $query) {
             foreach ($this->getTable()->getFilters() as $filter) {
                 $filter->apply(
                     $query,
-                    $data[$filter->getName()] ?? [],
+                    $this->getTableFilterState($filter->getName()) ?? [],
                 );
             }
         });
@@ -161,7 +160,7 @@ trait HasFilters
 
     public function getTableFilterState(string $name): ?array
     {
-        return $this->tableFilters[$this->parseTableFilterName($name)] ?? null;
+        return Arr::get($this->tableFilters, $this->parseTableFilterName($name));
     }
 
     public function parseTableFilterName(string $name): string
