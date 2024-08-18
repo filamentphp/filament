@@ -40,7 +40,7 @@ class IsOperator extends Operator
         }
 
         $labels = $getLabels ?
-            Arr::wrap($this->evaluate($getValues, [$valuesKey => $settings[$valuesKey]])) :
+            Arr::wrap($this->evaluate($getLabels, [$valuesKey => $settings[$valuesKey]])) :
             Arr::only($constraint->getOptions(), $settings[$valuesKey]);
 
         $joinedValues = Arr::join(
