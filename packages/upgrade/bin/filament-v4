@@ -70,7 +70,7 @@ if (
         <span class="bg-amber-600 text-amber-50 mr-1">
             The <strong>FILAMENT_FILESYSTEM_DISK</strong> has been removed, and the default configuration file now
             references the <strong>FILESYSTEM_DISK</strong> environment variable. Please read the
-            <a href="https://filamentphp.com/docs/v4/panels/upgrade-guide#the-filament_filesystem_disk-environment-variable" class="underline font-bold">documentation</a>
+            <a href="https://filamentphp.com/docs/v4/upgrade-guide" class="underline font-bold">documentation</a>
             for more information. and press any key to continue.
         </span>
     HTML);

@@ -336,7 +336,7 @@ In v3, the `Illuminate\Auth\Events\Login` event was fired from the import and ex
 </Disclosure>
 
 <Disclosure>
-<span slot="summary">The European Portuguese translations</span>
+<span slot="summary">European Portuguese translations</span>
 
 The European Portuguese translations have been moved from `pt_PT` to `pt`, which appears to be the more commonly used language code for the language within the Laravel community.
 </Disclosure>
