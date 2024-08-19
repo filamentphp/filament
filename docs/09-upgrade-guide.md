@@ -98,7 +98,7 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 
 ### High-impact changes
 
-<Disclosure x-show="packages.includes('panels')">
+<Disclosure open x-show="packages.includes('panels')">
 <span slot="summary">The `FILAMENT_FILESYSTEM_DISK` environment variable</span>
 
 If you hadn't published the Filament configuration file to `config/filament.php`, Filament will now reference the `FILESYSTEM_DISK` environment variable instead of `FILAMENT_FILESYSTEM_DISK` when uploading files. Laravel also uses this environment variable to represent the default filesystem disk, so this change aims to bring Filament in line to avoid potential confusion.
