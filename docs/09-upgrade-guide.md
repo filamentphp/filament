@@ -39,7 +39,7 @@ After upgrading the dependencies via Composer, you should execute `php artisan f
 To begin, filter the upgrade guide for your specific needs by selecting only the packages that you use in your project:
 
 <Checkboxes>
-    <Checkbox value="forms" model="packages">
+    <Checkbox value="panels" model="packages">
         Panels
     </Checkbox>
 
