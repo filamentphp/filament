@@ -98,7 +98,7 @@ To begin, filter the upgrade guide for your specific needs by selecting only the
 
 ### High-impact changes
 
-<Disclosure>
+<Disclosure x-show="packages.includes('panels')">
 <span slot="summary">The `FILAMENT_FILESYSTEM_DISK` environment variable</span>
 
 If you hadn't published the Filament configuration file to `config/filament.php`, Filament will now reference the `FILESYSTEM_DISK` environment variable instead of `FILAMENT_FILESYSTEM_DISK` when uploading files. Laravel also uses this environment variable to represent the default filesystem disk, so this change aims to bring Filament in line to avoid potential confusion.
@@ -117,7 +117,7 @@ If you have not published the Filament configuration file, or you have removed t
 
 ### Medium-impact changes
 
-<Disclosure>
+<Disclosure x-show="packages.includes('panels')">
 <span slot="summary">The `$maxContentWidth` property on page classes</span>
 
 The `$maxContentWidth` property on page classes has a new type. It is now able to accept `MaxWidth` enum values, as well as strings and null:
@@ -131,13 +131,13 @@ protected MaxWidth | string | null $maxContentWidth = null;
 
 ### Low-impact changes
 
-<Disclosure>
+<Disclosure x-show="packages.includes('panels')">
 <span slot="summary">The European Portuguese translations</span>
 
 The European Portuguese translations have been moved from `pt_PT` to `pt`, which appears to be the more commonly used language code for the language within the Laravel community.
 </Disclosure>
 
-<Disclosure>
+<Disclosure x-show="packages.includes('panels')">
 <span slot="summary">Nepalese translations</span>
 
 The Nepalese translations have been moved from `np` to `ne`, which appears to be the more commonly used language code for the language within the Laravel community.
