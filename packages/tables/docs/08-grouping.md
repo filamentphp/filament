@@ -352,3 +352,17 @@ public function table(Table $table): Table
         ->groupingDirectionSettingHidden();
 }
 ```
+
+### Setting the default ordering direction
+
+You can set the default ordering direction of all groups using the `defaultGroupDirection()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+		->defaultGroupDirection('desc');
+}
+```
