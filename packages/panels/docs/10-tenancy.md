@@ -294,7 +294,7 @@ If you're using the `requiresTenantSubscription()` configuration method, then yo
 
 ### Writing a custom billing integration
 
-Billing integrations are quite simple to write. You just need a class that implements the `Filament\Billing\Contracts\Provider` interface. This interface has two methods.
+Billing integrations are quite simple to write. You just need a class that implements the `Filament\Billing\Providers\Contracts\Provider` interface. This interface has two methods.
 
 `getRouteAction()` is used to get the route action that should be run when the user visits the billing page. This could be a callback function, or the name of a controller, or a Livewire component - anything that works when using `Route::get()` in Laravel normally. For example, you could put in a simple redirect to your own billing page using a callback function.
 
@@ -304,7 +304,7 @@ Here's an example billing provider that uses a callback function for the route a
 
 ```php
 use App\Http\Middleware\RedirectIfUserNotSubscribed;
-use Filament\Billing\Contracts\Provider;
+use Filament\Billing\Providers\Contracts\Provider;
 use Illuminate\Http\RedirectResponse;
 
 class ExampleBillingProvider implements Provider
