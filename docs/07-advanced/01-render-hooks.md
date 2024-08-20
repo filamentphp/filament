@@ -61,6 +61,8 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::GLOBAL_SEARCH_START` - The start of the [global search](../panels/resources/global-search) container
 - `PanelsRenderHook::HEAD_END` - Before `</head>`
 - `PanelsRenderHook::HEAD_START` - After `<head>`
+- `PanelsRenderHook::LAYOUT_END` - End of the layout container, also [can be scoped](#scoping-render-hooks) to the page class
+- `PanelsRenderHook::LAYOUT_START` - Start of the layout container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::PAGE_END` - End of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_FOOTER_WIDGETS_AFTER` - After the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `PanelsRenderHook::PAGE_FOOTER_WIDGETS_BEFORE` - Before the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
@@ -83,6 +85,8 @@ use Filament\View\PanelsRenderHook;
 - `PanelsRenderHook::SCRIPTS_BEFORE` - Before scripts are defined
 - `PanelsRenderHook::SIDEBAR_NAV_END` - In the [sidebar](../panels/navigation), before `</nav>`
 - `PanelsRenderHook::SIDEBAR_NAV_START` - In the [sidebar](../panels/navigation), after `<nav>`
+- `PanelsRenderHook::SIMPLE_LAYOUT_END` - End of the simple layout container, also [can be scoped](#scoping-render-hooks) to the page class
+- `PanelsRenderHook::SIMPLE_LAYOUT_START` - Start of the simple layout container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIMPLE_PAGE_END` - End of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIMPLE_PAGE_START` - Start of the simple page content container, also [can be scoped](#scoping-render-hooks) to the page class
 - `PanelsRenderHook::SIDEBAR_FOOTER` - Pinned to the bottom of the sidebar, below the content
