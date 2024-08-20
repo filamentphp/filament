@@ -39,6 +39,7 @@ trait HasBulkActions
     public function bulkActions(array | ActionGroup $actions): static
     {
         $this->bulkActions = [];
+        $this->flatBulkActions = [];
         $this->pushBulkActions($actions);
 
         return $this;
