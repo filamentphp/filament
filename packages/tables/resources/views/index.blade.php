@@ -207,6 +207,7 @@
                         <x-filament-tables::groups
                             :direction-setting="$isGroupingDirectionSettingHidden"
                             :dropdown-on-desktop="$areGroupingSettingsInDropdownOnDesktop()"
+                            :defaultDirection="$getDefaultDirection()"
                             :groups="$groups"
                             :trigger-action="$getGroupRecordsTriggerAction()"
                         />

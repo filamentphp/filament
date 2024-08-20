@@ -30,6 +30,8 @@ trait CanGroupRecords
 
     protected bool | Closure $isGroupingDirectionSettingHidden = false;
 
+    protected ?string $defaultGroupDirection = 'asc';
+
     protected ?Closure $modifyGroupRecordsTriggerActionUsing = null;
 
     public function groupRecordsTriggerAction(?Closure $callback): static
@@ -66,6 +68,13 @@ trait CanGroupRecords
     public function groupingDirectionSettingHidden(bool | Closure $condition = true): static
     {
         $this->isGroupingDirectionSettingHidden = $condition;
+
+        return $this;
+    }
+
+    public function defaultGroupDirection(string $direction): static
+    {
+        $this->defaultGroupDirection = $direction;
 
         return $this;
     }
@@ -195,5 +204,10 @@ trait CanGroupRecords
     public function isGroupsOnly(): bool
     {
         return (bool) $this->evaluate($this->isGroupsOnly);
+    }
+
+    public function getDefaultGroupDirection(): string
+    {
+        return $this->defaultGroupDirection;
     }
 }

@@ -1,6 +1,7 @@
 @props([
     'directionSetting' => false,
     'dropdownOnDesktop' => false,
+    'defaultDirection',
     'groups',
     'triggerAction',
 ])
@@ -30,7 +31,7 @@
                 return
             }
 
-            direction = 'asc'
+            direction = @js($defaultDirection)
         })
     "
 >
