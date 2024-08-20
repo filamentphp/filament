@@ -604,7 +604,7 @@ Modal::closedByEscaping(false);
 
 ## Hooks for when action modal is closed
 
-You may want to execute some code when the modal is closed. You can do this by using the `onModalClose()` method:
+You may want to execute some code before or after the modal is closed.
 
 ```php
 Action::make('updateAuthor')
