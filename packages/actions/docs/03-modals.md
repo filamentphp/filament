@@ -1,4 +1,4 @@
----
+        ---
 title: Modals
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
@@ -600,6 +600,20 @@ If you'd like to change the behavior for all modals in the application, you can 
 use Filament\Support\View\Components\Modal;
 
 Modal::closedByEscaping(false);
+```
+
+## Hooks for when action modal is closed
+
+You may want to execute some code when the modal is closed. You can do this by using the `onModalClose()` method:
+
+```php
+Action::make('updateAuthor')
+    ->beforeClose(function () {
+        // Do something before the modal is closed.
+    })
+    ->afterClose(function () {
+        // Do something after the modal is closed.
+    })
 ```
 
 ## Hiding the modal close button
