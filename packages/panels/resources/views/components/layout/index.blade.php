@@ -9,6 +9,7 @@
     <div
         class="fi-layout flex min-h-screen w-full flex-row-reverse overflow-x-clip"
     >
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::LAYOUT_START, scopes: $livewire->getRenderHookScopes()) }}
         <div
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-data="{}"
@@ -132,5 +133,6 @@
                 })
             </script>
         @endif
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::LAYOUT_END, scopes: $livewire->getRenderHookScopes()) }}
     </div>
 </x-filament-panels::layout.base>
