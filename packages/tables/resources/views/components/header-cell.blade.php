@@ -22,9 +22,12 @@
 >
     <{{ $sortable ? 'button' : 'span' }}
         @if ($sortable)
-            aria-label="{{ __('filament-tables::table.sorting.fields.column.label') }} {{ $sortDirection === 'asc' ? __('filament-tables::table.sorting.fields.direction.options.desc') : __('filament-tables::table.sorting.fields.direction.options.asc') }}"
             type="button"
+            aria-label="{{$slot}}"
             wire:click="sortTable('{{ $name }}')"
+        @endif
+        @if($activelySorted)
+            aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending'}}"
         @endif
         @class([
             'group flex w-full items-center gap-x-1',
