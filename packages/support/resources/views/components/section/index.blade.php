@@ -72,7 +72,6 @@
             },
         ])
     }}
-    wire:ignore.self
 >
     @if ($hasHeader)
         <header
