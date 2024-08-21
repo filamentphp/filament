@@ -24,7 +24,7 @@ If you would like to propose a new feature or improvement to Filament, you may u
 
 ## Development of plugins
 
-If you would like to develop a plugin for Filament, please refer to the [plugin development section](https://filamentphp.com/docs/support/plugins) here in the documentation. Our [Discord](https://filamentphp.com/discord) server is also a great place to ask questions and get help with plugin development. You can start a conversation in the [`#plugin-developers-chat`](https://discord.com/channels/883083792112300104/970354547723730955) channel.
+If you would like to develop a plugin for Filament, please refer to the [plugin development section](../plugins) here in the documentation. Our [Discord](https://filamentphp.com/discord) server is also a great place to ask questions and get help with plugin development. You can start a conversation in the [`#plugin-developers-chat`](https://discord.com/channels/883083792112300104/970354547723730955) channel.
 
 You can [submit your plugin to the Filament website](https://github.com/filamentphp/filamentphp.com/blob/main/README.md#contributing).
 
@@ -62,7 +62,7 @@ Once you're finished making changes, you can commit them and submit a pull reque
 
 ## Checking for missing translations
 
-Set up a Laravel app, and install the [panel builder](https://filamentphp.com/docs/admin/installation).
+Set up a Laravel app, and install the [panel builder](../installation).
 
 Now, if you want to check for missing Spanish translations, run:
 

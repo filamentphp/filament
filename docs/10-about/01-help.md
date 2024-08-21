@@ -1,5 +1,5 @@
 ---
-title: Help & support
+title: Help
 ---
 
 > We offer a variety of support options, mostly free of charge. If you need help, the community is here for you.
@@ -33,7 +33,7 @@ If you have a feature request, you can create a discussion on GitHub [following 
 
 ## One-on-one private support & consulting (paid)
 
-If you're looking for dedicated help with your Filament project, we're here for you. Whether you're a solo developer or running a large company, we provide support and development services that fit your needs. More information can be found on our [consulting page](https://filamentphp.com/consulting).
+If you're looking for dedicated help with your Filament project, we're here for you. Whether you're a solo developer or running a large company, we provide support and development services that fit your needs. More information can be found on our [consulting page](consulting).
 
 ## Laracasts
 
@@ -51,4 +51,4 @@ Since we make use of [AnswerOverflow](https://www.answeroverflow.com/c/883083792
 
 ## Helping others
 
-We would like to encourage you to join any of the above platforms and help yourself and our community out. Additionally, we would like to encourage you to [contribute](https://filamentphp.com/docs/3.x/support/contributing) to Filament itself. We are always looking for new contributors to help us improve Filament.
+We would like to encourage you to join any of the above platforms and help yourself and our community out. Additionally, we would like to encourage you to [contribute](contributing) to Filament itself. We are always looking for new contributors to help us improve Filament.

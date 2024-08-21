@@ -1,12 +1,6 @@
 # Security Policy
 
-## Supported Versions
-
-| Version | Supported |
-|---------| ------------------ |
-| 1.x     | :white_check_mark: |
-| 2.x     | :white_check_mark: |
-| 3.x     | :white_check_mark: |
+Please review the [Version Support Policy](https://filamentphp.com/docs/version-support-policy) on our website.
 
 ## Reporting a Vulnerability
 
