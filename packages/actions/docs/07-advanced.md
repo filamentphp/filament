@@ -7,6 +7,8 @@ title: Advanced actions
 The vast majority of methods used to configure actions accept functions as parameters instead of hardcoded values:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     ->label('Edit post')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))

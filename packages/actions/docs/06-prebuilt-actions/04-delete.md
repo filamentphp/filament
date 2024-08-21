@@ -13,26 +13,32 @@ DeleteAction::make()
     ->record($this->post)
 ```
 
-If you want to delete table rows, you can use the `Filament\Actions\DeleteAction` instead, or `Filament\Actions\DeleteBulkAction` to delete multiple at once:
+If you want to add this action to a row of a table, you may do so like this:
 
 ```php
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
     return $table
         ->actions([
-            DeleteAction::make(),
-            // ...
-        ])
+            DeleteAction::make()
+        ]);
+}
+```
+
+Or if you want to add it as a table bulk action, so that the user can choose which rows to delete, they can use `Filament\Actions\DeleteBulkAction`:
+
+```php
+use Filament\Actions\DeleteBulkAction;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
         ->bulkActions([
-            BulkActionGroup::make([
-                DeleteBulkAction::make(),
-                // ...
-            ]),
+            DeleteBulkAction::make(),
         ]);
 }
 ```
@@ -42,6 +48,8 @@ public function table(Table $table): Table
 You may set up a custom redirect when the form is submitted using the `successRedirectUrl()` method:
 
 ```php
+use Filament\Actions\DeleteAction;
+
 DeleteAction::make()
     ->successRedirectUrl(route('posts.list'))
 ```
@@ -53,6 +61,8 @@ When the record is successfully deleted, a notification is dispatched to the use
 To customize the title of this notification, use the `successNotificationTitle()` method:
 
 ```php
+use Filament\Actions\DeleteAction;
+
 DeleteAction::make()
     ->successNotificationTitle('User deleted')
 ```
@@ -60,6 +70,7 @@ DeleteAction::make()
 You may customize the entire notification using the `successNotification()` method:
 
 ```php
+use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 
 DeleteAction::make()
@@ -74,6 +85,8 @@ DeleteAction::make()
 To disable the notification altogether, use the `successNotification(null)` method:
 
 ```php
+use Filament\Actions\DeleteAction;
+
 DeleteAction::make()
     ->successNotification(null)
 ```
@@ -83,6 +96,8 @@ DeleteAction::make()
 You can use the `before()` and `after()` methods to execute code before and after a record is deleted:
 
 ```php
+use Filament\Actions\DeleteAction;
+
 DeleteAction::make()
     ->before(function () {
         // ...

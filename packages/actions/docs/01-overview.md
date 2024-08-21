@@ -9,6 +9,8 @@ title: Overview
 In Filament, actions also handle "doing" something in your app. However, they are a bit different from traditional actions. They are designed to be used in the context of a user interface. For instance, you might have a button to delete a client record, which opens a modal to confirm your decision. When the user clicks the "Delete" button in the modal, the client is deleted. This whole workflow is an "action".
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('delete')
     ->requiresConfirmation()
     ->action(fn () => $this->client->delete())
@@ -17,6 +19,7 @@ Action::make('delete')
 Actions can also collect extra information from the user. For instance, you might have a button to email a client. When the user clicks the button, a modal opens to collect the email subject and body. When the user clicks the "Send" button in the modal, the email is sent:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Facades\Mail;
@@ -38,6 +41,8 @@ Action::make('sendEmail')
 Usually, actions get executed without redirecting the user away from the page. This is because we extensively use Livewire. However, actions can be much simpler, and don't even need a modal. You can pass a URL to an action, and when the user clicks on the button, they are redirected to that page:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
 ```
@@ -121,6 +126,9 @@ Filament includes several prebuilt actions that you can add to your app. Their a
 You may group actions together into a dropdown menu by using an `ActionGroup` object. Groups may contain many actions, or other groups:
 
 ```php
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+
 ActionGroup::make([
     Action::make('view'),
     Action::make('edit'),

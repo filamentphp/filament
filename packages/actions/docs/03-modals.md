@@ -13,6 +13,7 @@ You may require confirmation before an action is run using the `requiresConfirma
 
 ```php
 use App\Models\Post;
+use Filament\Actions\Action;
 
 Action::make('delete')
     ->action(fn (Post $record) => $record->delete())
@@ -32,6 +33,7 @@ You may use components from the [Form Builder](../forms) to create custom action
 ```php
 use App\Models\Post;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 
 Action::make('updateAuthor')
@@ -56,6 +58,7 @@ You may fill the form with existing data, using the `fillForm()` method:
 ```php
 use App\Models\Post;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 
 Action::make('updateAuthor')
@@ -79,6 +82,7 @@ Action::make('updateAuthor')
 You may create a [multistep form wizard](../schema/layout/wizard) inside a modal. Instead of using a `form()`, define a `steps()` array and pass your `Step` objects:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -123,6 +127,7 @@ You may wish to disable all form fields in the modal, ensuring the user cannot e
 ```php
 use App\Models\Post;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 
@@ -147,6 +152,7 @@ You may customize the heading, description and label of the submit button in the
 
 ```php
 use App\Models\Post;
+use Filament\Actions\Action;
 
 Action::make('delete')
     ->action(fn (Post $record) => $record->delete())
@@ -164,6 +170,7 @@ You may add an [icon](../styling/icons) inside the modal using the `modalIcon()`
 
 ```php
 use App\Models\Post;
+use Filament\Actions\Action;
 
 Action::make('delete')
     ->action(fn (Post $record) => $record->delete())
@@ -177,6 +184,7 @@ By default, the icon will inherit the color of the action button. You may custom
 
 ```php
 use App\Models\Post;
+use Filament\Actions\Action;
 
 Action::make('delete')
     ->action(fn (Post $record) => $record->delete())
@@ -191,6 +199,7 @@ Action::make('delete')
 By default, modal content will be aligned to the start, or centered if the modal is `xs` or `sm` in [width](#changing-the-modal-width). If you wish to change the alignment of content in a modal, you can use the `modalAlignment()` method and pass it `Alignment::Start` or `Alignment::Center`:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Support\Enums\Alignment;
 
 Action::make('updateAuthor')
@@ -209,6 +218,7 @@ You may define custom content to be rendered inside your modal, which you can sp
 
 ```php
 use App\Models\Post;
+use Filament\Actions\Action;
 
 Action::make('advance')
     ->action(fn (Post $record) => $record->advance())
@@ -220,6 +230,7 @@ Action::make('advance')
 You can pass data to the view by returning it from a function. For example, if the `$record` of an action is set, you can pass that through to the view:
 
 ```php
+use Filament\Actions\Action;
 use Illuminate\Contracts\View\View;
 
 Action::make('advance')
@@ -236,6 +247,7 @@ By default, the custom content is displayed above the modal form if there is one
 
 ```php
 use App\Models\Post;
+use Filament\Actions\Action;
 
 Action::make('advance')
     ->action(fn (Post $record) => $record->advance())
@@ -248,6 +260,7 @@ You can add an action button to your custom modal content, which is useful if yo
 
 ```php
 use App\Models\Post;
+use Filament\Actions\Action;
 use Illuminate\Contracts\View\View;
 
 Action::make('advance')
@@ -276,6 +289,8 @@ Now, in the view file, you can render the action button by calling `getModalActi
 You can open a "slide-over" dialog instead of a modal by using the `slideOver()` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('updateAuthor')
     ->form([
         // ...
@@ -295,6 +310,8 @@ Instead of opening in the center of the screen, the modal content will now slide
 The header of a modal scrolls out of view with the modal content when it overflows the modal size. However, slide-overs have a sticky header that's always visible. You may control this behavior using `stickyModalHeader()`:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('updateAuthor')
     ->form([
         // ...
@@ -310,6 +327,8 @@ Action::make('updateAuthor')
 The footer of a modal is rendered inline after the content by default. Slide-overs, however, have a sticky footer that always shows when scrolling the content. You may enable this for a modal too using `stickyModalFooter()`:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('updateAuthor')
     ->form([
         // ...
@@ -325,6 +344,7 @@ Action::make('updateAuthor')
 You can change the width of the modal by using the `modalWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge`, `SevenExtraLarge`, and `Screen`:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Support\Enums\MaxWidth;
 
 Action::make('updateAuthor')
@@ -342,6 +362,7 @@ Action::make('updateAuthor')
 You may execute code within a closure when the modal opens, by passing it to the `mountUsing()` method:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Schema\Schema;
 
 Action::make('create')
@@ -377,6 +398,8 @@ The [methods available to customize trigger buttons](trigger-button) will work t
 To remove a default action, you may pass `false` to either `modalSubmitAction()` or `modalCancelAction()`:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('help')
     ->modalContent(view('actions.help'))
     ->modalSubmitAction(false)
@@ -387,6 +410,8 @@ Action::make('help')
 You may pass an array of extra actions to be rendered, between the default actions, in the footer of the modal using the `extraModalFooterActions()` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('create')
     ->form([
         // ...
@@ -402,6 +427,8 @@ Action::make('create')
 The second parameter of `makeModalSubmitAction()` allows you to pass an array of arguments that will be accessible inside the action's `action()` closure as `$arguments`. These could be useful as flags to indicate that the action should behave differently based on the user's decision:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('create')
     ->form([
         // ...
@@ -424,6 +451,8 @@ Action::make('create')
 You can nest actions within each other, allowing you to open a new modal from an extra footer action:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     // ...
     ->extraModalFooterActions([
@@ -440,6 +469,8 @@ Now, the edit modal will have a "Delete" button in the footer, which will open a
 In this example though, you probably want to cancel the `edit` action if the `delete` action is run. You can do this using the `cancelParentActions()` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('delete')
     ->requiresConfirmation()
     ->action(function () {
@@ -451,6 +482,8 @@ Action::make('delete')
 If you have deep nesting with multiple parent actions, but you don't want to cancel all of them, you can pass the name of the parent action you want to cancel, including its children, to `cancelParentActions()`:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('first')
     ->requiresConfirmation()
     ->action(function () {
@@ -487,6 +520,7 @@ In this example, if the `fourth` action is run, the `second` action is canceled,
 You can access the instances of parent actions and their raw data and arguments by injecting the `$mountedActions` array in a function used by your nested action. For example, to get the top-most parent action currently active on the page, you can use `$mountedActions[0]`. From there, you can get the raw data for that action by calling `$mountedActions[0]->getRawData()`. Please be aware that raw data is not validated since the action has not been submitted yet:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Forms\Components\TextInput;
 
 Action::make('first')
@@ -512,6 +546,8 @@ You can do similar with the current arguments for a parent action, with the `$mo
 Even if you have multiple layers of nesting, the `$mountedActions` array will contain every action that is currently active, so you can access information about them:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('first')
     ->form([
         TextInput::make('foo'),
@@ -561,6 +597,8 @@ Action::make('first')
 By default, when you click away from a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closeModalByClickingAway(false)` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('updateAuthor')
     ->form([
         // ...
@@ -584,6 +622,8 @@ Modal::closedByClickingAway(false);
 By default, when you press escape on a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closeModalByEscaping(false)` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('updateAuthor')
     ->form([
         // ...
@@ -607,6 +647,8 @@ Modal::closedByEscaping(false);
 By default, modals have a close button in the top right corner. If you wish to hide the close button, you can use the `modalCloseButton(false)` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('updateAuthor')
     ->form([
         // ...
@@ -630,6 +672,8 @@ Modal::closeButton(false);
 By default, modals will autofocus on the first focusable element when opened. If you wish to disable this behavior, you can use the `modalAutofocus(false)` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('updateAuthor')
     ->form([
         // ...
@@ -655,6 +699,8 @@ When you use database queries or other heavy operations inside modal configurati
 To skip the check that Filament does to decide whether to render the modal, you can use the `modal()` method, which will inform Filament that the modal exists for this action and it does not need to check again:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('updateAuthor')
     ->modal()
 ```
@@ -664,6 +710,8 @@ Action::make('updateAuthor')
 You may have a need to conditionally show a modal for confirmation reasons while falling back to the default action. This can be achieved using `modalHidden()`:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('create')
     ->action(function (array $data): void {
         // ...
@@ -677,6 +725,8 @@ Action::make('create')
 You may also pass extra HTML attributes to the modal window using `extraModalWindowAttributes()`:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('updateAuthor')
     ->extraModalWindowAttributes(['class' => 'update-author-modal'])
 ```

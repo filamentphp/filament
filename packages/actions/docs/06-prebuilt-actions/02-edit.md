@@ -20,7 +20,7 @@ EditAction::make()
     ])
 ```
 
-If you want to edit table rows, you can use the `Filament\Actions\EditAction` instead:
+If you want to edit table rows, you may do so like this:
 
 ```php
 use Filament\Actions\EditAction;
@@ -47,6 +47,8 @@ public function table(Table $table): Table
 You may wish to modify the data from a record before it is filled into the form. To do this, you may use the `mutateRecordDataUsing()` method to modify the `$data` array, and return the modified version before it is filled into the form:
 
 ```php
+use Filament\Actions\EditAction;
+
 EditAction::make()
     ->mutateRecordDataUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
@@ -60,6 +62,8 @@ EditAction::make()
 Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may use the `mutateFormDataUsing()` method, which has access to the `$data` as an array, and returns the modified version:
 
 ```php
+use Filament\Actions\EditAction;
+
 EditAction::make()
     ->mutateFormDataUsing(function (array $data): array {
         $data['last_edited_by_id'] = auth()->id();
@@ -73,6 +77,7 @@ EditAction::make()
 You can tweak how the record is updated with the `using()` method:
 
 ```php
+use Filament\Actions\EditAction;
 use Illuminate\Database\Eloquent\Model;
 
 EditAction::make()
@@ -88,6 +93,8 @@ EditAction::make()
 You may set up a custom redirect when the form is submitted using the `successRedirectUrl()` method:
 
 ```php
+use Filament\Actions\EditAction;
+
 EditAction::make()
     ->successRedirectUrl(route('posts.list'))
 ```
@@ -95,6 +102,7 @@ EditAction::make()
 If you want to redirect using the created record, use the `$record` parameter:
 
 ```php
+use Filament\Actions\EditAction;
 use Illuminate\Database\Eloquent\Model;
 
 EditAction::make()
@@ -110,6 +118,8 @@ When the record is successfully updated, a notification is dispatched to the use
 To customize the title of this notification, use the `successNotificationTitle()` method:
 
 ```php
+use Filament\Actions\EditAction;
+
 EditAction::make()
     ->successNotificationTitle('User updated')
 ```
@@ -117,6 +127,7 @@ EditAction::make()
 You may customize the entire notification using the `successNotification()` method:
 
 ```php
+use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 
 EditAction::make()
@@ -131,6 +142,8 @@ EditAction::make()
 To disable the notification altogether, use the `successNotification(null)` method:
 
 ```php
+use Filament\Actions\EditAction;
+
 EditAction::make()
     ->successNotification(null)
 ```
@@ -142,6 +155,8 @@ Hooks may be used to execute code at various points within the action's lifecycl
 There are several available hooks:
 
 ```php
+use Filament\Actions\EditAction;
+
 EditAction::make()
     ->beforeFormFilled(function () {
         // Runs before the form fields are populated from the database.

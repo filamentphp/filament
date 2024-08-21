@@ -13,7 +13,7 @@ ReplicateAction::make()
     ->record($this->post)
 ```
 
-If you want to replicate table rows, you can use the `Filament\Actions\ReplicateAction` instead:
+If you want to replicate table rows, you may do so like this:
 
 ```php
 use Filament\Actions\ReplicateAction;
@@ -34,6 +34,8 @@ public function table(Table $table): Table
 The `excludeAttributes()` method is used to instruct the action which columns should be excluded from replication:
 
 ```php
+use Filament\Actions\ReplicateAction;
+
 ReplicateAction::make()
     ->excludeAttributes(['slug'])
 ```
@@ -43,6 +45,8 @@ ReplicateAction::make()
 You may wish to modify the data from a record before it is filled into the form. To do this, you may use the `mutateRecordDataUsing()` method to modify the `$data` array, and return the modified version before it is filled into the form:
 
 ```php
+use Filament\Actions\ReplicateAction;
+
 ReplicateAction::make()
     ->mutateRecordDataUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
@@ -56,6 +60,8 @@ ReplicateAction::make()
 You may set up a custom redirect when the form is submitted using the `successRedirectUrl()` method:
 
 ```php
+use Filament\Actions\ReplicateAction;
+
 ReplicateAction::make()
     ->successRedirectUrl(route('posts.list'))
 ```
@@ -63,6 +69,7 @@ ReplicateAction::make()
 If you want to redirect using the replica, use the `$replica` parameter:
 
 ```php
+use Filament\Actions\ReplicateAction;
 use Illuminate\Database\Eloquent\Model;
 
 ReplicateAction::make()
@@ -78,6 +85,8 @@ When the record is successfully replicated, a notification is dispatched to the 
 To customize the title of this notification, use the `successNotificationTitle()` method:
 
 ```php
+use Filament\Actions\ReplicateAction;
+
 ReplicateAction::make()
     ->successNotificationTitle('Category replicated')
 ```
@@ -85,6 +94,7 @@ ReplicateAction::make()
 You may customize the entire notification using the `successNotification()` method:
 
 ```php
+use Filament\Actions\ReplicateAction;
 use Filament\Notifications\Notification;
 
 ReplicateAction::make()
@@ -101,6 +111,7 @@ ReplicateAction::make()
 Hooks may be used to execute code at various points within the action's lifecycle, like before the replica is saved.
 
 ```php
+use Filament\Actions\ReplicateAction;
 use Illuminate\Database\Eloquent\Model;
 
 ReplicateAction::make()
@@ -122,6 +133,7 @@ At any time, you may call `$action->halt()` from inside a lifecycle hook, which 
 ```php
 use App\Models\Post;
 use Filament\Actions\Action;
+use Filament\Actions\ReplicateAction;
 use Filament\Notifications\Notification;
 
 ReplicateAction::make()

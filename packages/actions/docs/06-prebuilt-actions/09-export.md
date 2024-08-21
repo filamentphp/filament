@@ -36,7 +36,7 @@ ExportAction::make()
     ->exporter(ProductExporter::class)
 ```
 
-If you want to add this action to the header of a table instead, you can use `Filament\Actions\ExportAction`:
+If you want to add this action to the header of a table, you may do so like this:
 
 ```php
 use App\Filament\Exports\ProductExporter;
@@ -48,7 +48,7 @@ public function table(Table $table): Table
     return $table
         ->headerActions([
             ExportAction::make()
-                ->exporter(ProductExporter::class)
+                ->exporter(ProductExporter::class),
         ]);
 }
 ```
@@ -65,7 +65,7 @@ public function table(Table $table): Table
     return $table
         ->bulkActions([
             ExportBulkAction::make()
-                ->exporter(ProductExporter::class)
+                ->exporter(ProductExporter::class),
         ]);
 }
 ```
@@ -136,6 +136,7 @@ By default, user will be asked which columns they would like to export. You can 
 
 ```php
 use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
 
 ExportAction::make()
     ->exporter(ProductExporter::class)
@@ -233,7 +234,8 @@ If you wish to count the number of related records in a column, you may use the 
 ```php
 use Filament\Actions\Exports\ExportColumn;
 
-ExportColumn::make('users_count')->counts('users')
+ExportColumn::make('users_count')
+    ->counts('users')
 ```
 
 In this example, `users` is the name of the relationship to count from. The name of the column must be `users_count`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#counting-related-models) for storing the result.
@@ -244,9 +246,10 @@ If you'd like to scope the relationship before calculating, you can pass an arra
 use Filament\Actions\Exports\ExportColumn;
 use Illuminate\Database\Eloquent\Builder;
 
-ExportColumn::make('users_count')->counts([
-    'users' => fn (Builder $query) => $query->where('is_active', true),
-])
+ExportColumn::make('users_count')
+    ->counts([
+        'users' => fn (Builder $query) => $query->where('is_active', true),
+    ])
 ```
 
 ### Determining relationship existence
@@ -256,7 +259,8 @@ If you simply wish to indicate whether related records exist in a column, you ma
 ```php
 use Filament\Actions\Exports\ExportColumn;
 
-ExportColumn::make('users_exists')->exists('users')
+ExportColumn::make('users_exists')
+    ->exists('users')
 ```
 
 In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
@@ -267,9 +271,10 @@ If you'd like to scope the relationship before calculating, you can pass an arra
 use Filament\Actions\Exports\ExportColumn;
 use Illuminate\Database\Eloquent\Builder;
 
-ExportColumn::make('users_exists')->exists([
-    'users' => fn (Builder $query) => $query->where('is_active', true),
-])
+ExportColumn::make('users_exists')
+    ->exists([
+        'users' => fn (Builder $query) => $query->where('is_active', true),
+    ])
 ```
 
 ### Aggregating relationships
@@ -279,7 +284,8 @@ Filament provides several methods for aggregating a relationship field, includin
 ```php
 use Filament\Actions\Exports\ExportColumn;
 
-ExportColumn::make('users_avg_age')->avg('users', 'age')
+ExportColumn::make('users_avg_age')
+    ->avg('users', 'age')
 ```
 
 In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
@@ -290,9 +296,10 @@ If you'd like to scope the relationship before calculating, you can pass an arra
 use Filament\Actions\Exports\ExportColumn;
 use Illuminate\Database\Eloquent\Builder;
 
-ExportColumn::make('users_avg_age')->avg([
-    'users' => fn (Builder $query) => $query->where('is_active', true),
-], 'age')
+ExportColumn::make('users_avg_age')
+    ->avg([
+        'users' => fn (Builder $query) => $query->where('is_active', true),
+    ], 'age')
 ```
 
 ## Configuring the export formats
@@ -301,6 +308,7 @@ By default, the export action will allow the user to choose between both CSV and
 
 ```php
 use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 
 ExportAction::make()
@@ -338,6 +346,7 @@ By default, if you are using the `ExportAction` with a table, the action will us
 
 ```php
 use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
 use Illuminate\Database\Eloquent\Builder;
 
 ExportAction::make()
@@ -372,6 +381,8 @@ By default, exported files will be uploaded to the storage disk defined in the [
 If you want to use a different disk for a specific export, you can pass the disk name to the `disk()` method on the action:
 
 ```php
+use Filament\Actions\ExportAction;
+
 ExportAction::make()
     ->exporter(ProductExporter::class)
     ->fileDisk('s3')
@@ -391,6 +402,7 @@ public function getFileDisk(): string
 By default, exported files will have a name generated based on the ID and type of the export. You can also use the `fileName()` method on the action to customize the file name:
 
 ```php
+use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Models\Export;
 
 ExportAction::make()
@@ -401,7 +413,6 @@ ExportAction::make()
 Alternatively, you can override the `getFileName()` method on the exporter class, returning a string:
 
 ```php
-
 use Filament\Actions\Exports\Models\Export;
 
 public function getFileName(Export $export): string
@@ -430,6 +441,9 @@ public static function getOptionsFormComponents(): array
 Alternatively, you can pass a set of static options to the exporter through the `options()` method on the action:
 
 ```php
+use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
+
 ExportAction::make()
     ->exporter(ProductExporter::class)
     ->options([
@@ -501,6 +515,9 @@ Export::polymorphicUserRelationship();
 To prevent server overload, you may wish to limit the maximum number of rows that can be exported from one CSV file. You can do this by calling the `maxRows()` method on the action:
 
 ```php
+use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
+
 ExportAction::make()
     ->exporter(ProductExporter::class)
     ->maxRows(100000)
@@ -511,6 +528,9 @@ ExportAction::make()
 Filament will chunk the CSV, and process each chunk in a different queued job. By default, chunks are 100 rows at a time. You can change this by calling the `chunkSize()` method on the action:
 
 ```php
+use App\Filament\Exports\ProductExporter;
+use Filament\Actions\ExportAction;
+
 ExportAction::make()
     ->exporter(ProductExporter::class)
     ->chunkSize(250)
@@ -582,7 +602,9 @@ $this->app->bind(BasePrepareCsvExport::class, PrepareCsvExport::class);
 Or, you can pass the new job class to the `job()` method on the action, to customize the job for a specific export:
 
 ```php
+use App\Filament\Exports\ProductExporter;
 use App\Jobs\PrepareCsvExport;
+use Filament\Actions\ExportAction;
 
 ExportAction::make()
     ->exporter(ProductExporter::class)

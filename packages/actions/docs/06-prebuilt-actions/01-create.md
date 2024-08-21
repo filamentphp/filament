@@ -20,7 +20,7 @@ CreateAction::make()
     ])
 ```
 
-If you want to add this action to the header of a table instead, you can use `Filament\Actions\CreateAction`:
+If you want to add this action to the header of a table, you may do so like this:
 
 ```php
 use Filament\Actions\CreateAction;
@@ -47,6 +47,8 @@ public function table(Table $table): Table
 Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may use the `mutateFormDataUsing()` method, which has access to the `$data` as an array, and returns the modified version:
 
 ```php
+use Filament\Actions\CreateAction;
+
 CreateAction::make()
     ->mutateFormDataUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
@@ -60,6 +62,7 @@ CreateAction::make()
 You can tweak how the record is created with the `using()` method:
 
 ```php
+use Filament\Actions\CreateAction;
 use Illuminate\Database\Eloquent\Model;
 
 CreateAction::make()
@@ -75,6 +78,8 @@ CreateAction::make()
 You may set up a custom redirect when the form is submitted using the `successRedirectUrl()` method:
 
 ```php
+use Filament\Actions\CreateAction;
+
 CreateAction::make()
     ->successRedirectUrl(route('posts.list'))
 ```
@@ -82,6 +87,7 @@ CreateAction::make()
 If you want to redirect using the created record, use the `$record` parameter:
 
 ```php
+use Filament\Actions\CreateAction;
 use Illuminate\Database\Eloquent\Model;
 
 CreateAction::make()
@@ -97,6 +103,8 @@ When the record is successfully created, a notification is dispatched to the use
 To customize the title of this notification, use the `successNotificationTitle()` method:
 
 ```php
+use Filament\Actions\CreateAction;
+
 CreateAction::make()
     ->successNotificationTitle('User registered')
 ```
@@ -104,6 +112,7 @@ CreateAction::make()
 You may customize the entire notification using the `successNotification()` method:
 
 ```php
+use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 
 CreateAction::make()
@@ -118,6 +127,8 @@ CreateAction::make()
 To disable the notification altogether, use the `successNotification(null)` method:
 
 ```php
+use Filament\Actions\CreateAction;
+
 CreateAction::make()
     ->successNotification(null)
 ```
@@ -129,6 +140,8 @@ Hooks may be used to execute code at various points within the action's lifecycl
 There are several available hooks:
 
 ```php
+use Filament\Actions\CreateAction;
+
 CreateAction::make()
     ->beforeFormFilled(function () {
         // Runs before the form fields are populated with their default values.
@@ -157,6 +170,7 @@ At any time, you may call `$action->halt()` from inside a lifecycle hook or muta
 ```php
 use App\Models\Post;
 use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 
 CreateAction::make()
@@ -190,6 +204,7 @@ $action->cancel();
 You may easily transform the creation process into a multistep wizard. Instead of using a `form()`, define a `steps()` array and pass your `Step` objects:
 
 ```php
+use Filament\Actions\CreateAction;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -230,6 +245,8 @@ Now, create a new record to see your wizard in action! Edit will still use the f
 If you'd like to allow free navigation, so all the steps are skippable, use the `skippableSteps()` method:
 
 ```php
+use Filament\Actions\CreateAction;
+
 CreateAction::make()
     ->steps([
         // ...
@@ -244,6 +261,8 @@ CreateAction::make()
 If you'd like to remove the "create another" button from the modal, you can use the `createAnother(false)` method:
 
 ```php
+use Filament\Actions\CreateAction;
+
 CreateAction::make()
     ->createAnother(false)
 ```
@@ -253,6 +272,8 @@ CreateAction::make()
 By default, when the user uses the "create and create another" feature, all the form data is cleared so the user can start fresh. If you'd like to preserve some of the data in the form, you may use the `preserveFormDataWhenCreatingAnother()` method, passing an array of fields to preserve:
 
 ```php
+use Filament\Actions\CreateAction;
+
 CreateAction::make()
     ->preserveFormDataWhenCreatingAnother(['is_admin', 'organization'])
 ```
@@ -260,6 +281,7 @@ CreateAction::make()
 Alternatively, you can define a function that returns an array of the `$data` to preserve:
 
 ```php
+use Filament\Actions\CreateAction;
 use Illuminate\Support\Arr;
 
 CreateAction::make()
@@ -269,6 +291,8 @@ CreateAction::make()
 To preserve all the data, return the entire `$data` array:
 
 ```php
+use Filament\Actions\CreateAction;
+
 CreateAction::make()
     ->preserveFormDataWhenCreatingAnother(fn (array $data): array => $data)
 ```

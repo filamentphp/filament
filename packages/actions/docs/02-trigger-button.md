@@ -16,6 +16,8 @@ Out of the box, action triggers have 4 styles - "button", "link", "icon button",
 "Button" triggers have a background color, label, and optionally an [icon](#setting-an-icon). Usually, this is the default button style, but you can use it manually with the `button()` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     ->button()
 ```
@@ -25,6 +27,8 @@ Action::make('edit')
 "Link" triggers have no background color. They must have a label and optionally an [icon](#setting-an-icon). They look like a link that you might find embedded within text. You can switch to that style with the `link()` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     ->link()
 ```
@@ -34,6 +38,8 @@ Action::make('edit')
 "Icon button" triggers are circular buttons with an [icon](#setting-an-icon) and no label. You can switch to that style with the `iconButton()` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     ->icon('heroicon-m-pencil-square')
     ->iconButton()
@@ -44,6 +50,8 @@ Action::make('edit')
 "Badge" triggers have a background color, label, and optionally an [icon](#setting-an-icon). You can use a badge as trigger using the `badge()` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     ->badge()
 ```
@@ -55,6 +63,8 @@ Action::make('edit')
 You may want to use a button style with a label on desktop, but remove the label on mobile. This will transform it into an icon button. You can do this with the `labeledFrom()` method, passing in the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) at which you want the label to be added to the button:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     ->icon('heroicon-m-pencil-square')
     ->button()
@@ -66,6 +76,8 @@ Action::make('edit')
 By default, the label of the trigger button is generated from its name. You may customize this using the `label()` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     ->label('Edit post')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
@@ -74,6 +86,8 @@ Action::make('edit')
 Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     ->translateLabel() // Equivalent to `label(__('Edit'))`
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
@@ -84,6 +98,8 @@ Action::make('edit')
 Buttons may have a [color](../styling/colors) to indicate their significance:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('delete')
     ->color('danger')
 ```
@@ -95,6 +111,7 @@ Action::make('delete')
 Buttons come in 3 sizes - `ActionSize::Small`, `ActionSize::Medium` or `ActionSize::Large`. You can change the size of the action's trigger using the `size()` method:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Support\Enums\ActionSize;
 
 Action::make('create')
@@ -108,6 +125,8 @@ Action::make('create')
 Buttons may have an [icon](../styling/icons) to add more detail to the UI. You can set the icon using the `icon()` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
     ->icon('heroicon-m-pencil-square')
@@ -118,6 +137,7 @@ Action::make('edit')
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
 
 ```php
+use Filament\Actions\Action;
 use Filament\Support\Enums\IconPosition;
 
 Action::make('edit')
@@ -133,6 +153,8 @@ Action::make('edit')
 You may conditionally show or hide actions for certain users. To do this, you can use either the `visible()` or `hidden()` methods:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
     ->visible(auth()->user()->can('update', $this->post))
@@ -149,6 +171,8 @@ This is useful for authorization of certain actions to only users who have permi
 If you want to disable a button instead of hiding it, you can use the `disabled()` method:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('delete')
     ->disabled()
 ```
@@ -156,6 +180,8 @@ Action::make('delete')
 You can conditionally disable a button by passing a boolean to it:
 
 ```php
+use Filament\Actions\Action;
+
 Action::make('delete')
     ->disabled(! auth()->user()->can('delete', $this->post))
 ```

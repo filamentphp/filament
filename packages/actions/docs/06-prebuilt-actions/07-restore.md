@@ -13,26 +13,32 @@ RestoreAction::make()
     ->record($this->post)
 ```
 
-If you want to restore table rows, you can use the `Filament\Actions\RestoreAction` instead, or `Filament\Actions\RestoreBulkAction` to restore multiple at once:
+If you want to add this action to a row of a table, you may do so like this:
 
 ```php
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\RestoreAction;
-use Filament\Actions\RestoreBulkAction;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
 {
     return $table
         ->actions([
-            RestoreAction::make(),
-            // ...
-        ])
+            RestoreAction::make()
+        ]);
+}
+```
+
+Or if you want to add it as a table bulk action, so that the user can choose which rows to restore, they can use `Filament\Actions\RestoreBulkAction`:
+
+```php
+use Filament\Actions\RestoreBulkAction;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
         ->bulkActions([
-            BulkActionGroup::make([
-                RestoreBulkAction::make(),
-                // ...
-            ]),
+            RestoreBulkAction::make(),
         ]);
 }
 ```
@@ -42,6 +48,8 @@ public function table(Table $table): Table
 You may set up a custom redirect when the form is submitted using the `successRedirectUrl()` method:
 
 ```php
+use Filament\Actions\RestoreAction;
+
 RestoreAction::make()
     ->successRedirectUrl(route('posts.list'))
 ```
@@ -53,6 +61,8 @@ When the record is successfully restored, a notification is dispatched to the us
 To customize the title of this notification, use the `successNotificationTitle()` method:
 
 ```php
+use Filament\Actions\RestoreAction;
+
 RestoreAction::make()
     ->successNotificationTitle('User restored')
 ```
@@ -60,6 +70,7 @@ RestoreAction::make()
 You may customize the entire notification using the `successNotification()` method:
 
 ```php
+use Filament\Actions\RestoreAction;
 use Filament\Notifications\Notification;
 
 RestoreAction::make()
@@ -74,6 +85,8 @@ RestoreAction::make()
 To disable the notification altogether, use the `successNotification(null)` method:
 
 ```php
+use Filament\Actions\RestoreAction;
+
 RestoreAction::make()
     ->successNotification(null)
 ```
@@ -83,6 +96,8 @@ RestoreAction::make()
 You can use the `before()` and `after()` methods to execute code before and after a record is restored:
 
 ```php
+use Filament\Actions\RestoreAction;
+
 RestoreAction::make()
     ->before(function () {
         // ...

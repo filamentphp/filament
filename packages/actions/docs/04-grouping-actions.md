@@ -8,6 +8,9 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 You may group actions together into a dropdown menu by using an `ActionGroup` object. Groups may contain many actions, or other groups:
 
 ```php
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+
 ActionGroup::make([
     Action::make('view'),
     Action::make('edit'),
@@ -24,6 +27,7 @@ This page is about customizing the look of the group's trigger button and dropdo
 The button which opens the dropdown may be customized in the same way as a normal action. [All the methods available for trigger buttons](trigger-button) may be used to customize the group trigger button:
 
 ```php
+use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\ActionSize;
 
 ActionGroup::make([
@@ -43,6 +47,8 @@ ActionGroup::make([
 The dropdown may be positioned relative to the trigger button by using the `dropdownPlacement()` method:
 
 ```php
+use Filament\Actions\ActionGroup;
+
 ActionGroup::make([
     // Array of actions
 ])
@@ -56,6 +62,8 @@ ActionGroup::make([
 You may add dividers between groups of actions by using nested `ActionGroup` objects:
 
 ```php
+use Filament\Actions\ActionGroup;
+
 ActionGroup::make([
     ActionGroup::make([
         // Array of actions
@@ -73,6 +81,7 @@ The `dropdown(false)` method puts the actions inside the parent dropdown, instea
 The dropdown may be set to a width by using the `dropdownWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `ExtraSmall`, `Small`, `Medium`, `Large`, `ExtraLarge`, `TwoExtraLarge`, `ThreeExtraLarge`, `FourExtraLarge`, `FiveExtraLarge`, `SixExtraLarge` and `SevenExtraLarge`:
 
 ```php
+use Filament\Actions\ActionGroup;
 use Filament\Support\Enums\MaxWidth;
 
 ActionGroup::make([
@@ -86,6 +95,8 @@ ActionGroup::make([
 The dropdown content can have a maximum height using the `maxHeight()` method, so that it scrolls. You can pass a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
 
 ```php
+use Filament\Actions\ActionGroup;
+
 ActionGroup::make([
     // Array of actions
 ])
@@ -97,6 +108,8 @@ ActionGroup::make([
 You may control the offset of the dropdown using the `dropdownOffset()` method, by default the offset is set to `8`.
 
 ```php
+use Filament\Actions\ActionGroup;
+
 ActionGroup::make([
     // Array of actions
 ])

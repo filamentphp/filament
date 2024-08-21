@@ -20,7 +20,7 @@ ViewAction::make()
     ])
 ```
 
-If you want to view table rows, you can use the `Filament\Actions\ViewAction` instead:
+If you want to view table rows, you may do so like this:
 
 ```php
 use Filament\Actions\ViewAction;
@@ -47,6 +47,8 @@ public function table(Table $table): Table
 You may wish to modify the data from a record before it is filled into the form. To do this, you may use the `mutateRecordDataUsing()` method to modify the `$data` array, and return the modified version before it is filled into the form:
 
 ```php
+use Filament\Actions\ViewAction;
+
 ViewAction::make()
     ->mutateRecordDataUsing(function (array $data): array {
         $data['user_id'] = auth()->id();

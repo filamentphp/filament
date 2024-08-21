@@ -38,7 +38,7 @@ ImportAction::make()
     ->importer(ProductImporter::class)
 ```
 
-If you want to add this action to the header of a table instead, you can use `Filament\Actions\ImportAction`:
+If you want to add this action to the header of a table, you may do so like this:
 
 ```php
 use App\Filament\Imports\ProductImporter;
@@ -60,6 +60,8 @@ The ["importer" class needs to be created](#creating-an-importer) to tell Filame
 If you have more than one `ImportAction` in the same place, you should give each a unique name in the `make()` method:
 
 ```php
+use Filament\Actions\ImportAction;
+
 ImportAction::make('importProducts')
     ->importer(ProductImporter::class)
 
@@ -459,6 +461,7 @@ public static function getOptionsFormComponents(): array
 Alternatively, you can pass a set of static options to the importer through the `options()` method on the action:
 
 ```php
+use App\Filament\Imports\ProductImporter;
 use Filament\Actions\ImportAction;
 
 ImportAction::make()
@@ -571,6 +574,9 @@ Import::polymorphicUserRelationship();
 To prevent server overload, you may wish to limit the maximum number of rows that can be imported from one CSV file. You can do this by calling the `maxRows()` method on the action:
 
 ```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\ImportAction;
+
 ImportAction::make()
     ->importer(ProductImporter::class)
     ->maxRows(100000)
@@ -581,6 +587,9 @@ ImportAction::make()
 Filament will chunk the CSV, and process each chunk in a different queued job. By default, chunks are 100 rows at a time. You can change this by calling the `chunkSize()` method on the action:
 
 ```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\ImportAction;
+
 ImportAction::make()
     ->importer(ProductImporter::class)
     ->chunkSize(250)
@@ -593,6 +602,9 @@ If you are encountering memory or timeout issues when importing large CSV files,
 The default delimiter for CSVs is the comma (`,`). If your import uses a different delimiter, you may call the `csvDelimiter()` method on the action, passing a new one:
 
 ```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\ImportAction;
+
 ImportAction::make()
     ->importer(ProductImporter::class)
     ->csvDelimiter(';')
@@ -605,6 +617,9 @@ You can only specify a single character, otherwise an exception will be thrown.
 If your column headers are not on the first row of the CSV, you can call the `headerOffset()` method on the action, passing the number of rows to skip:
 
 ```php
+use App\Filament\Imports\ProductImporter;
+use Filament\Actions\ImportAction;
+
 ImportAction::make()
     ->importer(ProductImporter::class)
     ->headerOffset(5)
@@ -624,7 +639,9 @@ $this->app->bind(BaseImportCsv::class, ImportCsv::class);
 Or, you can pass the new job class to the `job()` method on the action, to customize the job for a specific import:
 
 ```php
+use App\Filament\Imports\ProductImporter;
 use App\Jobs\ImportCsv;
+use Filament\Actions\ImportAction;
 
 ImportAction::make()
     ->importer(ProductImporter::class)
@@ -656,6 +673,8 @@ public function getJobConnection(): ?string
 By default, the import system will only process one job at a time from each import. This is to prevent the server from being overloaded, and other jobs from being delayed by large imports. That functionality is defined in the `WithoutOverlapping` middleware on the importer class:
 
 ```php
+use Illuminate\Queue\Middleware\WithoutOverlapping;
+
 public function getJobMiddleware(): array
 {
     return [
@@ -766,6 +785,7 @@ ImportColumn::make('name')
 You can add new [Laravel validation rules](https://laravel.com/docs/validation#available-validation-rules) for the import file using the `fileRules()` method:
 
 ```php
+use Filament\Actions\ImportAction;
 use Illuminate\Validation\Rules\File;
 
 ImportAction::make()
