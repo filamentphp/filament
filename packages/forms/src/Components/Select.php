@@ -807,6 +807,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
+                    'search' => null,
                 ]) ?? $relationshipQuery;
             }
 
@@ -854,6 +855,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
                 if ($modifyQueryUsing) {
                     $component->evaluate($modifyQueryUsing, [
                         'query' => $relationship->getQuery(),
+                        'search' => null,
                     ]);
                 }
 
@@ -946,6 +948,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
+                    'search' => null,
                 ]) ?? $relationshipQuery;
             }
 
@@ -964,6 +967,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
+                    'search' => null,
                 ]) ?? $relationshipQuery;
             }
 
@@ -1022,6 +1026,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
             if ($modifyQueryUsing) {
                 $component->evaluate($modifyQueryUsing, [
                     'query' => $relationship->getQuery(),
+                    'search' => null,
                 ]);
             }
 
