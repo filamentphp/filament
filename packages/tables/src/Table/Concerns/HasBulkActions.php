@@ -38,8 +38,25 @@ trait HasBulkActions
      */
     public function bulkActions(array | ActionGroup $actions): static
     {
+        // We must remove the existing cached bulk actions before setting the new ones, as
+        // the visibility of the checkboxes is determined by which bulk actions are visible.
+        // The `$this->flatBulkActions` array is used to determine if any bulk actions are
+        // visible. We cannot simply clear it, as the bulk actions defined in the header
+        // of the table are also stored in this array, and we do not want to remove them,
+        // only the bulk actions that are stored in the `$this->bulkActions` array.
+        foreach ($this->bulkActions as $existingAction) {
+            if ($existingAction instanceof ActionGroup) {
+                /** @var array<BulkAction> $flatExistingActions */
+                $flatExistingActions = $existingAction->getFlatActions();
+
+                $this->removeCachedBulkActions($flatExistingActions);
+            } elseif ($existingAction instanceof BulkAction) {
+                $this->removeCachedBulkActions([$existingAction]);
+            }
+        }
+
         $this->bulkActions = [];
-        $this->flatBulkActions = [];
+
         $this->pushBulkActions($actions);
 
         return $this;
@@ -94,6 +111,14 @@ trait HasBulkActions
             ...$this->flatBulkActions,
             ...$actions,
         ];
+    }
+
+    /**
+     * @param  array<BulkAction>  $actions
+     */
+    protected function removeCachedBulkActions(array $actions): void
+    {
+        $this->flatBulkActions = array_diff($this->flatBulkActions, $actions);
     }
 
     public function checkIfRecordIsSelectableUsing(?Closure $callback): static
