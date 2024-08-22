@@ -18,6 +18,9 @@
 @endphp
 
 <th
+    @if ($activelySorted)
+        aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
+    @endif
     {{ $attributes->class(['fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6']) }}
 >
     <{{ $sortable ? 'button' : 'span' }}
@@ -25,9 +28,6 @@
             aria-label="{{ $slot }}"
             type="button"
             wire:click="sortTable('{{ $name }}')"
-        @endif
-        @if ($activelySorted)
-            aria-sort="{{ __($sortDirection === 'asc' ? 'filament-tables::table.sorting.fields.direction.options.asc' : 'filament-tables::table.sorting.fields.direction.options.desc') }}"
         @endif
         @class([
             'group flex w-full items-center gap-x-1',
