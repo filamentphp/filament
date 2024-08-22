@@ -22,8 +22,8 @@
 >
     <{{ $sortable ? 'button' : 'span' }}
         @if ($sortable)
-            type="button"
             aria-label="{{ $slot }}"
+            type="button"
             wire:click="sortTable('{{ $name }}')"
         @endif
         @if ($activelySorted)
