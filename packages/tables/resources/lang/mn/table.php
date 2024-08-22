@@ -45,7 +45,7 @@ return [
 
     ],
 
-     'summary' => [
+    'summary' => [
 
         'heading' => 'Нийлбэр',
 
@@ -107,7 +107,7 @@ return [
 
         'description' => 'Шинэ :model мэдээлэл үүсгэх.',
 
-    ],    
+    ],
 
     'filters' => [
 
