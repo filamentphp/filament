@@ -18,7 +18,7 @@ namespace Livewire\Features\SupportTesting {
 
         public function callMountedAction(array $arguments = []): static {}
 
-        public function assertActionExists(string | TestAction | array $actions, array $arguments = [], ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {}
+        public function assertActionExists(string | TestAction | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null, array $arguments = []): static {}
 
         public function assertActionDoesNotExist(string | TestAction | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {}
 
