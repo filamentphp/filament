@@ -18,11 +18,14 @@
 @endphp
 
 <th
+    @if ($activelySorted)
+        aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
+    @endif
     {{ $attributes->class(['fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6']) }}
 >
     <{{ $sortable ? 'button' : 'span' }}
         @if ($sortable)
-            aria-label="{{ __('filament-tables::table.sorting.fields.column.label') }} {{ $sortDirection === 'asc' ? __('filament-tables::table.sorting.fields.direction.options.desc') : __('filament-tables::table.sorting.fields.direction.options.asc') }}"
+            aria-label="{{ $slot }}"
             type="button"
             wire:click="sortTable('{{ $name }}')"
         @endif
