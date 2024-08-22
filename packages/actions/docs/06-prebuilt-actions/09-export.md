@@ -648,28 +648,14 @@ If you'd like to customize the middleware that is applied to jobs of a certain e
 
 ### Customizing the export job retries
 
-By default, the export system will retry a job 3 times. This is to allow for temporary issues, such as the database being unavailable, to be resolved. That number can be customized in the `getJobTries()` method on the exporter class:
-
-```php
-public function getJobTries(): ?int
-{
-    return 5;
-}
-```
-
-You may instead set a time period for the job to retry, which is defined in the `getJobRetryUntil()` method on the exporter class:
+By default, the export system will retry a job for 24 hours, or until it fails with 5 unhandled exceptions, whichever happens first. This is to allow for temporary issues, such as the database being unavailable, to be resolved. You may change the time period for the job to retry, which is defined in the `getJobRetryUntil()` method on the exporter class:
 
 ```php
 use Carbon\CarbonInterface;
 
 public function getJobRetryUntil(): ?CarbonInterface
 {
-    return now()->addDay();
-}
-
-public function getJobTries(): ?int
-{
-    return null;
+    return now()->addHours(12);
 }
 ```
 
@@ -677,7 +663,7 @@ You can read more about job retries in the [Laravel docs](https://laravel.com/do
 
 #### Customizing the export job backoff strategy
 
-By default, the export system will wait 60 seconds before retrying a job. This is to prevent the server from being overloaded by a job that is failing repeatedly. That functionality is defined in the `getJobBackoff()` method on the exporter class:
+By default, the export system will wait 1 minute, then 2 minutes, then 5 minutes, then 10 minutes thereafter before retrying a job. This is to prevent the server from being overloaded by a job that is failing repeatedly. That functionality is defined in the `getJobBackoff()` method on the exporter class:
 
 ```php
 /**
@@ -685,11 +671,11 @@ By default, the export system will wait 60 seconds before retrying a job. This i
  */
 public function getJobBackoff(): int | array | null
 {
-    return 60;
+    return [60, 120, 300, 600];
 }
 ```
 
-If you'd like to customize the backoff strategy that is applied to jobs of a certain exporter, you may override this method in your exporter class. You can read more about job backoff, including how to configure exponential backoffs, in the [Laravel docs](https://laravel.com/docs/queues#dealing-with-failed-jobs).
+You can read more about job backoff, including how to configure exponential backoffs, in the [Laravel docs](https://laravel.com/docs/queues#dealing-with-failed-jobs).
 
 ### Customizing the export job tags
 
