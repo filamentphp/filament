@@ -1,4 +1,8 @@
-export default function textareaFormComponent({ initialHeight, shouldAutosize, state }) {
+export default function textareaFormComponent({
+    initialHeight,
+    shouldAutosize,
+    state,
+}) {
     return {
         state,
 
@@ -13,7 +17,6 @@ export default function textareaFormComponent({ initialHeight, shouldAutosize, s
                 this.$watch('state', () => {
                     this.resize()
                 })
-                
             } else {
                 this.setUpResizeObserver()
             }

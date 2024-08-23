@@ -33,7 +33,7 @@
                 ->class(['fi-fo-textarea overflow-hidden'])
         "
     >
-        <div wire:ignore.self style="height: '{{ $initialHeight . 'rem' }}';">
+        <div wire:ignore.self style="height: '{{ $initialHeight . 'rem' }}'">
             <textarea
                 x-ignore
                 @if (FilamentView::hasSpaMode())
@@ -43,10 +43,10 @@
                 @endif
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms') }}"
                 x-data="textareaFormComponent({
-                    initialHeight: @js($initialHeight),
-                    shouldAutosize: @js($shouldAutosize),
-                    state: $wire.$entangle('{{ $statePath }}'),
-                })"
+                            initialHeight: @js($initialHeight),
+                            shouldAutosize: @js($shouldAutosize),
+                            state: $wire.$entangle('{{ $statePath }}'),
+                        })"
                 @if ($shouldAutosize)
                     x-intersect.once="resize()"
                     x-on:resize.window="resize()"
@@ -70,7 +70,7 @@
                             $applyStateBindingModifiers('wire:model') => $statePath,
                         ], escape: false)
                         ->class([
-                            'block w-full h-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:text-sm sm:leading-6',
+                            'block h-full w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:text-sm sm:leading-6',
                             'resize-none' => $shouldAutosize,
                         ])
                 }}

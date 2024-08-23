@@ -1,32 +1,32 @@
-import noUiSlider from 'nouislider';
-import wNumb from 'wnumb';
+import noUiSlider from 'nouislider'
+import wNumb from 'wnumb'
 
 // Expose wNumb library to the window object
-window.wNumb = wNumb;
+window.wNumb = wNumb
 
 export default function sliderFormComponent({
-        state,
-        statePath,
-        range,
-        step,
-        start,
-        margin,
-        limit,
-        connect,
-        direction,
-        orientation,
-        behaviour,
-        tooltips,
-        format,
-        pips,
-        ariaFormat,
-    }) {
+    state,
+    statePath,
+    range,
+    step,
+    start,
+    margin,
+    limit,
+    connect,
+    direction,
+    orientation,
+    behaviour,
+    tooltips,
+    format,
+    pips,
+    ariaFormat,
+}) {
     return {
         state,
 
         slider: null,
 
-        init: function() {
+        init: function () {
             this.slider = noUiSlider.create(this.$el, {
                 start: start,
                 range: range,
@@ -40,7 +40,7 @@ export default function sliderFormComponent({
                 tooltips: tooltips,
                 format: format,
                 pips: pips,
-                ariaFormat: ariaFormat
+                ariaFormat: ariaFormat,
             })
 
             // Set the initial value of the slider
@@ -48,9 +48,12 @@ export default function sliderFormComponent({
                 this.slider.set(this.state)
             }
 
-            this.slider.on('update', (values, handle, unencoded, tap, positions, noUiSlider) => {
-                this.state = values ?? null
-            });
+            this.slider.on(
+                'update',
+                (values, handle, unencoded, tap, positions, noUiSlider) => {
+                    this.state = values ?? null
+                },
+            )
         },
     }
 }
