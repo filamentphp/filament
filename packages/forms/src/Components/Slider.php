@@ -8,7 +8,6 @@ use Filament\Forms\Enums\SliderDirection;
 use Filament\Forms\Enums\SliderOrientation;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
-use InvalidArgumentException;
 
 class Slider extends Field
 {
@@ -58,14 +57,9 @@ class Slider extends Field
         parent::setUp();
     }
 
-    /** @param array<string, int>|Closure $range */
-    public function range(array | Closure $range): static
+    public function range(int $min, int $max): static
     {
-        if (is_array($range) && (! array_key_exists('min', $range) || ! array_key_exists('max', $range) || count($range) !== 2)) {
-            throw new InvalidArgumentException("The range array must have 'min' and 'max' keys.");
-        }
-
-        $this->range = $range;
+        $this->range = ['min' => $min, 'max' => $max];
 
         return $this;
     }
