@@ -19,7 +19,7 @@ class Js extends Asset
     protected bool $isModule = false;
 
     /**
-     * @var  array<string, string>
+     * @var array<string, string>
      */
     protected array $extraAttributes = [];
 
@@ -136,9 +136,9 @@ class Js extends Asset
         ",
         );
     }
-    
+
     /**
-     * @return  array<string, string>
+     * @return array<string, string>
      */
     public function getExtraAttributes(): array
     {
