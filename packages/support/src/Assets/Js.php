@@ -18,6 +18,11 @@ class Js extends Asset
 
     protected bool $isModule = false;
 
+    /**
+     * @var array<string, string>
+     */
+    protected array $extraAttributes = [];
+
     protected string | Htmlable | null $html = null;
 
     public function async(bool $condition = true): static
@@ -87,6 +92,16 @@ class Js extends Asset
         return $this->isModule;
     }
 
+    /**
+     * @param  array<string, string>  $attributes
+     */
+    public function extraAttributes(array $attributes): static
+    {
+        $this->extraAttributes = $attributes;
+
+        return $this;
+    }
+
     public function getHtml(): Htmlable
     {
         $html = $this->html;
@@ -100,22 +115,45 @@ class Js extends Asset
         $async = $this->isAsync() ? 'async' : '';
         $defer = $this->isDeferred() ? 'defer' : '';
         $module = $this->isModule() ? 'type="module"' : '';
+        $extraAttributesHtml = $this->getExtraAttributesHtml();
 
         $hasSpaMode = FilamentView::hasSpaMode();
 
         $navigateOnce = ($hasSpaMode && $this->isNavigateOnce()) ? 'data-navigate-once' : '';
         $navigateTrack = $hasSpaMode ? 'data-navigate-track' : '';
 
-        return new HtmlString("
+        return new HtmlString(
+            "
             <script
                 src=\"{$html}\"
                 {$async}
                 {$defer}
                 {$module}
+                {$extraAttributesHtml}
                 {$navigateOnce}
                 {$navigateTrack}
             ></script>
-        ");
+        ",
+        );
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function getExtraAttributes(): array
+    {
+        return $this->extraAttributes;
+    }
+
+    public function getExtraAttributesHtml(): string
+    {
+        $attributes = '';
+
+        foreach ($this->getExtraAttributes() as $key => $value) {
+            $attributes .= " {$key}=\"{$value}\"";
+        }
+
+        return $attributes;
     }
 
     public function getSrc(): string
