@@ -118,7 +118,10 @@ trait HasBulkActions
      */
     protected function removeCachedBulkActions(array $actions): void
     {
-        $this->flatBulkActions = array_diff($this->flatBulkActions, $actions);
+        $this->flatBulkActions = array_filter(
+            $this->flatBulkActions,
+            fn (BulkAction $existingAction): bool => ! in_array($existingAction, $actions, true),
+        );
     }
 
     public function checkIfRecordIsSelectableUsing(?Closure $callback): static
