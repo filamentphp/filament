@@ -18,6 +18,9 @@ class Js extends Asset
 
     protected bool $isModule = false;
 
+    /**
+     * @var  array<string, string>
+     */
     protected array $extraAttributes = [];
 
     protected string | Htmlable | null $html = null;
@@ -89,6 +92,9 @@ class Js extends Asset
         return $this->isModule;
     }
 
+    /**
+     * @param  array<string, string>  $attributes
+     */
     public function extraAttributes(array $attributes): static
     {
         $this->extraAttributes = $attributes;
@@ -109,7 +115,7 @@ class Js extends Asset
         $async = $this->isAsync() ? 'async' : '';
         $defer = $this->isDeferred() ? 'defer' : '';
         $module = $this->isModule() ? 'type="module"' : '';
-        $extraAttributes = $this->getExtraAttributes();
+        $extraAttributesHtml = $this->getExtraAttributesHtml();
 
         $hasSpaMode = FilamentView::hasSpaMode();
 
@@ -123,19 +129,27 @@ class Js extends Asset
                 {$async}
                 {$defer}
                 {$module}
-                {$extraAttributes}
+                {$extraAttributesHtml}
                 {$navigateOnce}
                 {$navigateTrack}
             ></script>
         ",
         );
     }
+    
+    /**
+     * @return  array<string, string>
+     */
+    public function getExtraAttributes(): array
+    {
+        return $attributes;
+    }
 
-    public function getExtraAttributes(): string
+    public function getExtraAttributesHtml(): string
     {
         $attributes = '';
 
-        foreach ($this->extraAttributes as $key => $value) {
+        foreach ($this->getExtraAttributes() as $key => $value) {
             $attributes .= " {$key}=\"{$value}\"";
         }
 
