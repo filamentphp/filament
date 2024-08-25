@@ -10,7 +10,7 @@
 <nav {{ $attributes->class(['fi-breadcrumbs']) }}>
     <ol class="fi-breadcrumbs-list flex flex-wrap items-center gap-x-2">
         @foreach ($breadcrumbs as $url => $label)
-            <li class="fi-breadcrumbs-item flex gap-x-2">
+            <li class="fi-breadcrumbs-item flex items-center gap-x-2">
                 @if (! $loop->first)
                     <x-filament::icon
                         alias="breadcrumbs.separator"
