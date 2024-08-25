@@ -3,11 +3,9 @@
 namespace Filament\Actions\Imports\Jobs;
 
 use Carbon\CarbonInterface;
-use Exception;
 use Filament\Actions\Imports\Events\ImportChunkProcessed;
 use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Actions\Imports\Importer;
-use Filament\Actions\Imports\Models\FailedImportRow;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -16,7 +14,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Throwable;
@@ -32,6 +29,11 @@ class ImportCsv implements ShouldQueue
     public bool $deleteWhenMissingModels = true;
 
     protected Importer $importer;
+
+    /** @var array<array<string, mixed>> */
+    protected array $failedRows = [];
+
+    public ?int $maxExceptions = 5;
 
     /**
      * @param  array<array<string, string>> | string  $rows
@@ -65,68 +67,59 @@ class ImportCsv implements ShouldQueue
 
         auth()->setUser($user);
 
-        $exceptions = [];
-
         $processedRows = 0;
         $successfulRows = 0;
 
-        if (! is_array($this->rows)) {
-            $rows = unserialize(base64_decode($this->rows));
-        }
+        $rows = is_array($this->rows) ? $this->rows : unserialize(base64_decode($this->rows));
 
-        foreach (($rows ?? $this->rows) as $row) {
-            $row = $this->utf8Encode($row);
+        DB::transaction(function () use (&$processedRows, $rows, &$successfulRows) {
+            foreach ($rows as $row) {
+                $row = $this->utf8Encode($row);
 
-            try {
-                DB::transaction(fn () => ($this->importer)($row));
-                $successfulRows++;
-            } catch (RowImportFailedException $exception) {
-                $this->logFailedRow($row, $exception->getMessage());
-            } catch (ValidationException $exception) {
-                $this->logFailedRow($row, collect($exception->errors())->flatten()->implode(' '));
-            } catch (Throwable $exception) {
-                $exceptions[$exception::class] = $exception;
+                try {
+                    ($this->importer)($row);
+                    $successfulRows++;
+                } catch (RowImportFailedException $exception) {
+                    $this->logFailedRow($row, $exception->getMessage());
+                } catch (ValidationException $exception) {
+                    $this->logFailedRow($row, collect($exception->errors())->flatten()->implode(' '));
+                } catch (Throwable $exception) {
+                    report($exception);
 
-                $this->logFailedRow($row);
+                    $this->logFailedRow($row);
+                }
+
+                $processedRows++;
             }
 
-            $processedRows++;
-        }
+            $this->import->refresh();
 
-        $this->import->refresh();
+            $importProcessedRows = $this->import->processed_rows + $processedRows;
+            $this->import->processed_rows = ($importProcessedRows < $this->import->total_rows) ?
+                $importProcessedRows :
+                $this->import->total_rows;
 
-        $importProcessedRows = $this->import->processed_rows + $processedRows;
-        $this->import->processed_rows = ($importProcessedRows < $this->import->total_rows) ?
-            $importProcessedRows :
-            $this->import->total_rows;
+            $importSuccessfulRows = $this->import->successful_rows + $successfulRows;
+            $this->import->successful_rows = ($importSuccessfulRows < $this->import->total_rows) ?
+                $importSuccessfulRows :
+                $this->import->total_rows;
 
-        $importSuccessfulRows = $this->import->successful_rows + $successfulRows;
-        $this->import->successful_rows = ($importSuccessfulRows < $this->import->total_rows) ?
-            $importSuccessfulRows :
-            $this->import->total_rows;
+            $this->import->save();
+            $this->import->failedRows()->createMany($this->failedRows);
 
-        $this->import->save();
-
-        event(new ImportChunkProcessed(
-            $this->import,
-            $this->columnMap,
-            $this->options,
-            $processedRows,
-            $successfulRows,
-            $exceptions,
-        ));
-
-        $this->handleExceptions($exceptions);
+            event(new ImportChunkProcessed(
+                $this->import,
+                $this->columnMap,
+                $this->options,
+                $processedRows,
+                $successfulRows,
+            ));
+        });
     }
 
     public function retryUntil(): ?CarbonInterface
     {
         return $this->importer->getJobRetryUntil();
-    }
-
-    public function tries(): ?int
-    {
-        return $this->importer->getJobTries();
     }
 
     /**
@@ -150,11 +143,10 @@ class ImportCsv implements ShouldQueue
      */
     protected function logFailedRow(array $data, ?string $validationError = null): void
     {
-        $failedRow = app(FailedImportRow::class);
-        $failedRow->import()->associate($this->import);
-        $failedRow->data = $data;
-        $failedRow->validation_error = $validationError;
-        $failedRow->save();
+        $this->failedRows[] = [
+            'data' => $data,
+            'validation_error' => $validationError,
+        ];
     }
 
     protected function utf8Encode(mixed $value): mixed
@@ -168,21 +160,5 @@ class ImportCsv implements ShouldQueue
         }
 
         return $value;
-    }
-
-    /**
-     * @param  array<Throwable>  $exceptions
-     */
-    protected function handleExceptions(array $exceptions): void
-    {
-        if (empty($exceptions)) {
-            return;
-        }
-
-        if (count($exceptions) > 1) {
-            throw new Exception('Multiple types of exceptions occurred: [' . implode('], [', array_keys($exceptions)) . ']');
-        }
-
-        throw Arr::first($exceptions);
     }
 }

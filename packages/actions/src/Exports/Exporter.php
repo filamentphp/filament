@@ -90,12 +90,7 @@ abstract class Exporter
 
     public function getJobRetryUntil(): ?CarbonInterface
     {
-        return null;
-    }
-
-    public function getJobTries(): ?int
-    {
-        return 3;
+        return now()->addDay();
     }
 
     /**
@@ -103,7 +98,7 @@ abstract class Exporter
      */
     public function getJobBackoff(): int | array | null
     {
-        return 60;
+        return [60, 120, 300, 600];
     }
 
     /**

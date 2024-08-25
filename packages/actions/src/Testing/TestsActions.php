@@ -143,7 +143,7 @@ class TestsActions
 
     public function assertActionExists(): Closure
     {
-        return function (string | TestAction | array $actions, array $arguments = [], ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null): static {
+        return function (string | TestAction | array $actions, ?Closure $checkActionUsing = null, ?Closure $generateMessageUsing = null, array $arguments = []): static {
             /** @var array<array<string, mixed>> $actions */
             /** @phpstan-ignore-next-line */
             $actions = $this->parseNestedActions($actions, $arguments);
@@ -225,9 +225,9 @@ class TestsActions
         return function (string | TestAction | array $actions, array $arguments = []): static {
             $this->assertActionExists(
                 $actions,
-                $arguments,
                 checkActionUsing: fn (Action $action): bool => $action->isVisible(),
                 generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] is visible on the [{$livewireClass}] component.",
+                arguments: $arguments,
             );
 
             return $this;
@@ -239,9 +239,9 @@ class TestsActions
         return function (string | TestAction | array $actions, array $arguments = []): static {
             $this->assertActionExists(
                 $actions,
-                $arguments,
                 checkActionUsing: fn (Action $action): bool => $action->isHidden(),
                 generateMessageUsing: fn (string $prettyName, string $livewireClass): string => "Failed asserting that an action with name [{$prettyName}] is hidden on the [{$livewireClass}] component.",
+                arguments: $arguments,
             );
 
             return $this;

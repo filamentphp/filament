@@ -206,6 +206,7 @@ trait CanExportRecords
                     'chunkSize' => $action->getChunkSize(),
                     'records' => $action instanceof ExportBulkAction ? $action->getSelectedRecords()->all() : null,
                 ])])
+                    ->allowFailures()
                     ->when(
                         filled($jobQueue),
                         fn (PendingBatch $batch) => $batch->onQueue($jobQueue),
@@ -217,8 +218,7 @@ trait CanExportRecords
                     ->when(
                         filled($jobBatchName),
                         fn (PendingBatch $batch) => $batch->name($jobBatchName),
-                    )
-                    ->allowFailures(),
+                    ),
                 ...(($hasXlsx && (! $hasCsv)) ? [$makeCreateXlsxFileJob()] : []),
                 app(ExportCompletion::class, [
                     'export' => $export,
