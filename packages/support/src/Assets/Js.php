@@ -142,7 +142,7 @@ class Js extends Asset
      */
     public function getExtraAttributes(): array
     {
-        return $attributes;
+        return $this->extraAttributes;
     }
 
     public function getExtraAttributesHtml(): string
