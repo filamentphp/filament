@@ -10,6 +10,8 @@
     ])
 
     <div class="fi-simple-layout flex min-h-screen flex-col items-center">
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_LAYOUT_START, scopes: $livewire->getRenderHookScopes()) }}
+
         @if (($hasTopbar ?? true) && filament()->auth()->check())
             <div
                 class="absolute end-0 top-0 flex h-16 items-center gap-x-4 pe-4 md:pe-6 lg:pe-8"
@@ -48,5 +50,7 @@
         </div>
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::FOOTER, scopes: $livewire->getRenderHookScopes()) }}
+
+        {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SIMPLE_LAYOUT_END, scopes: $livewire->getRenderHookScopes()) }}
     </div>
 </x-filament-panels::layout.base>
