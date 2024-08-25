@@ -975,7 +975,7 @@
                                 $recordGroupTitle = $group?->getTitle($record);
                             @endphp
 
-                            @if ($recordGroupTitle !== $previousRecordGroupTitle)
+                            @if ($recordGroupTitle !== $previousRecordGroupTitle || $recordGroupKey !== $previousRecordGroupKey)
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                     <x-filament-tables::summary.row
                                         :actions="count($actions)"
