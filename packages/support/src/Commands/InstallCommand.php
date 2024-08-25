@@ -3,7 +3,6 @@
 namespace Filament\Support\Commands;
 
 use Composer\InstalledVersions;
-use Filament\Notifications\Notification;
 use Filament\PanelProvider;
 use Filament\Support\Commands\Concerns\CanGeneratePanels;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
