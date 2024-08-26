@@ -6,6 +6,7 @@ use Carbon\CarbonInterface;
 use Exception;
 use Filament\Actions\Imports\Events\ImportChunkProcessed;
 use Filament\Actions\Imports\Exceptions\RowImportFailedException;
+use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\FailedImportRow;
 use Filament\Actions\Imports\Models\Import;
@@ -143,9 +144,40 @@ class ImportCsv implements ShouldQueue
     {
         $failedRow = app(FailedImportRow::class);
         $failedRow->import()->associate($this->import);
-        $failedRow->data = $data;
+        $failedRow->data = $this->filterSensitiveData($data);
         $failedRow->validation_error = $validationError;
         $failedRow->save();
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function filterSensitiveData(array $data): array
+    {
+        return array_reduce(
+            $this->importer->getColumns(),
+            function (array $carry, ImportColumn $column): array {
+                if (! $column->isSensitive()) {
+                    return $carry;
+                }
+
+                $csvHeader = $this->columnMap[$column->getName()] ?? null;
+
+                if (blank($csvHeader)) {
+                    return $carry;
+                }
+
+                if (! array_key_exists($csvHeader, $carry)) {
+                    return $carry;
+                }
+
+                unset($carry[$csvHeader]);
+
+                return $carry;
+            },
+            initial: $data,
+        );
     }
 
     protected function utf8Encode(mixed $value): mixed

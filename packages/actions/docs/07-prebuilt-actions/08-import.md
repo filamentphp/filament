@@ -336,6 +336,19 @@ ImportColumn::make('customer_ratings')
     ->nestedRecursiveRules(['integer', 'min:1', 'max:5'])
 ```
 
+### Marking column data as sensitive
+
+When import rows fail validation, they are logged to the database, ready for export when the import completes. You may want to exclude certain columns from this logging to avoid storing sensitive data in plain text. To achieve this, you can use the `sensitive()` method on the `ImportColumn` to prevent its data from being logged:
+
+```php
+use Filament\Actions\Imports\ImportColumn;
+
+ImportColumn::make('ssn')
+    ->label('Social security number')
+    ->sensitive()
+    ->rules(['required', 'digits:9'])
+```
+
 ### Customizing how a column is filled into a record
 
 If you want to customize how column state is filled into a record, you can pass a function to the `fillRecordUsing()` method:
