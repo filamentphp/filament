@@ -452,7 +452,7 @@ trait InteractsWithForms
     /**
      * @deprecated Override the `form()` method to configure the default form.
      */
-    protected function getFormStatePath(): ?string
+    public function getFormStatePath(): ?string
     {
         return null;
     }
