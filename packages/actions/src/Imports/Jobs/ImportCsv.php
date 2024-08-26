@@ -143,9 +143,28 @@ class ImportCsv implements ShouldQueue
     {
         $failedRow = app(FailedImportRow::class);
         $failedRow->import()->associate($this->import);
-        $failedRow->data = $data;
+        $failedRow->data = $this->filterSensitiveData($data, $this->columnMap);
+
         $failedRow->validation_error = $validationError;
         $failedRow->save();
+    }
+
+    protected function filterSensitiveData(array $data, array $columnMap): array
+    {
+        $sensitiveColumns = [];
+
+        foreach ($this->importer->getColumns() as $column) {
+            if ($column->isSensitive()) {
+                $csvHeader = $columnMap[$column->getName()] ?? null;
+                if ($csvHeader !== null) {
+                    $sensitiveColumns[] = $csvHeader;
+                }
+            }
+        }
+
+        return array_filter($data, function ($key) use ($sensitiveColumns) {
+            return ! in_array($key, $sensitiveColumns, true);
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     protected function utf8Encode(mixed $value): mixed
