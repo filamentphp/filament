@@ -5,6 +5,7 @@ namespace Filament\Actions\Imports\Jobs;
 use Carbon\CarbonInterface;
 use Filament\Actions\Imports\Events\ImportChunkProcessed;
 use Filament\Actions\Imports\Exceptions\RowImportFailedException;
+use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Bus\Batchable;
@@ -144,9 +145,40 @@ class ImportCsv implements ShouldQueue
     protected function logFailedRow(array $data, ?string $validationError = null): void
     {
         $this->failedRows[] = [
-            'data' => $data,
+            'data' => $this->filterSensitiveData($data),
             'validation_error' => $validationError,
         ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function filterSensitiveData(array $data): array
+    {
+        return array_reduce(
+            $this->importer->getColumns(),
+            function (array $carry, ImportColumn $column): array {
+                if (! $column->isSensitive()) {
+                    return $carry;
+                }
+
+                $csvHeader = $this->columnMap[$column->getName()] ?? null;
+
+                if (blank($csvHeader)) {
+                    return $carry;
+                }
+
+                if (! array_key_exists($csvHeader, $carry)) {
+                    return $carry;
+                }
+
+                unset($carry[$csvHeader]);
+
+                return $carry;
+            },
+            initial: $data,
+        );
     }
 
     protected function utf8Encode(mixed $value): mixed

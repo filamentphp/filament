@@ -79,6 +79,8 @@ class ImportColumn extends Component
 
     protected string | Htmlable | Closure | null $helperText = null;
 
+    protected bool | Closure $isSensitive = false;
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -619,5 +621,17 @@ class ImportColumn extends Component
             Model::class, $record ? $record::class : null => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
+    }
+
+    public function sensitive(bool | Closure $condition = true): static
+    {
+        $this->isSensitive = $condition;
+
+        return $this;
+    }
+
+    public function isSensitive(): bool
+    {
+        return (bool) $this->evaluate($this->isSensitive);
     }
 }
