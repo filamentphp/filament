@@ -159,20 +159,6 @@ ImportColumn::make('sku')
 
 Any rows that do not pass validation will not be imported. Instead, they will be compiled into a new CSV of "failed rows", which the user can download after the import has finished. The user will be shown a list of validation errors for each row that failed.
 
-### Marking columns as sensitive
-You may want to exclude certain columns from the failed import data to avoid storing sensitive or encrypted information in plain text. To achieve this, you can use the `sensitive()` method on the `ImportColumn` class:
-
-```php
-use Filament\Actions\Imports\ImportColumn;
-
-ImportColumn::make('ssn')
-    ->label('Social Security Number')
-    ->sensitive()
-    ->rules(['required', 'digits:9'])
-```
-
-When a column is marked as sensitive, its data will be excluded from the JSON data stored for any failed import rows. This helps to ensure that sensitive information is not stored in a vulnerable manner.
-
 ### Casting state
 
 Before [validation](#validating-csv-data), data from the CSV can be cast. This is useful for converting strings into the correct data type, otherwise validation may fail. For example, if you have a `price` column in your CSV, you may want to cast it to a float:
@@ -348,6 +334,19 @@ ImportColumn::make('customer_ratings')
     ->integer()
     ->rules(['array'])
     ->nestedRecursiveRules(['integer', 'min:1', 'max:5'])
+```
+
+### Marking column data as sensitive
+
+When import rows fail validation, they are logged to the database, ready for export when the import completes. You may want to exclude certain columns from this logging to avoid storing sensitive data in plain text. To achieve this, you can use the `sensitive()` method on the `ImportColumn` to prevent its data from being logged:
+
+```php
+use Filament\Actions\Imports\ImportColumn;
+
+ImportColumn::make('ssn')
+    ->label('Social security number')
+    ->sensitive()
+    ->rules(['required', 'digits:9'])
 ```
 
 ### Customizing how a column is filled into a record
