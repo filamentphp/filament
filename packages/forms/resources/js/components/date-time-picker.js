@@ -385,17 +385,16 @@ export default function dateTimePickerFormComponent({
         togglePanelVisibility: function () {
             if (!this.isOpen()) {
                 this.focusedDate =
-                    this.getSelectedDate() ??
-                    (dayjs()
-                        .tz(timezone)
-                        .isBetween(
+                    this.getSelectedDate() ?? (
+                        dayjs().tz(timezone).isBetween(
                             this.getMinDate(),
                             this.getMaxDate(),
                             null,
                             '[]',
-                        )
-                        ? dayjs().tz(timezone)
-                        : this.getMinDate() ?? this.getMaxDate())
+                        ) ?
+                            dayjs().tz(timezone) :
+                            (this.getMinDate() ?? this.getMaxDate())
+                    )
 
                 this.setupDaysGrid()
             }
