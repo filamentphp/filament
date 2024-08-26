@@ -144,11 +144,15 @@ class ImportCsv implements ShouldQueue
         $failedRow = app(FailedImportRow::class);
         $failedRow->import()->associate($this->import);
         $failedRow->data = $this->filterSensitiveData($data, $this->columnMap);
-
         $failedRow->validation_error = $validationError;
         $failedRow->save();
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @param  array<string, string>  $columnMap
+     * @return array<string, mixed>
+     */
     protected function filterSensitiveData(array $data, array $columnMap): array
     {
         $sensitiveColumns = [];
@@ -162,7 +166,7 @@ class ImportCsv implements ShouldQueue
             }
         }
 
-        return array_filter($data, function ($key) use ($sensitiveColumns) {
+        return array_filter($data, function (string $key) use ($sensitiveColumns): bool {
             return ! in_array($key, $sensitiveColumns, true);
         }, ARRAY_FILTER_USE_KEY);
     }
