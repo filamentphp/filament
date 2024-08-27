@@ -3,7 +3,9 @@
 namespace Filament\Tables\Actions\Concerns;
 
 use Closure;
+use Exception;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 trait InteractsWithRecords
@@ -35,6 +37,11 @@ trait InteractsWithRecords
         return $this;
     }
 
+    /**
+     * @return class-string<Model>
+     *
+     * @throws Exception
+     */
     public function getModel(): string
     {
         return $this->getTable()->getModel();

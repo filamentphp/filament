@@ -6,8 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 trait BelongsToModel
 {
+    /**
+     * @var Model|class-string<Model>|null
+     */
     public Model | string | null $model = null;
 
+    /**
+     * @param  Model|class-string<Model>|null  $model
+     */
     public function model(Model | string | null $model = null): static
     {
         $this->model = $model;
@@ -45,6 +51,9 @@ trait BelongsToModel
         }
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getModel(): ?string
     {
         $model = $this->model;

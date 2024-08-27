@@ -396,6 +396,9 @@ class FilamentManager
         return $this->getCurrentPanel()->getTenantMenuItems();
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getTenantModel(): ?string
     {
         return $this->getCurrentPanel()->getTenantModel();

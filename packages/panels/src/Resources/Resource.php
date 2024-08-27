@@ -64,6 +64,9 @@ abstract class Resource
 
     protected static ?string $modelLabel = null;
 
+    /**
+     * @var class-string<Model>|null
+     */
     protected static ?string $model = null;
 
     protected static ?string $navigationBadgeTooltip = null;
@@ -495,6 +498,9 @@ abstract class Resource
         return Str::ucwords(static::getModelLabel());
     }
 
+    /**
+     * @return class-string<Model>
+     */
     public static function getModel(): string
     {
         return static::$model ?? (string) str(class_basename(static::class))

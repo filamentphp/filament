@@ -4,6 +4,7 @@ namespace Filament\Tables\Table\Concerns;
 
 use BackedEnum;
 use Closure;
+use Exception;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -71,6 +72,11 @@ trait HasRecords
         return $this->getLivewire()->getTableRecordKey($record);
     }
 
+    /**
+     * @return class-string<Model>
+     *
+     * @throws Exception
+     */
     public function getModel(): string
     {
         return $this->getQuery()->getModel()::class;

@@ -14,6 +14,9 @@ trait InteractsWithRecord
 {
     protected Model | Closure | null $record = null;
 
+    /**
+     * @var class-string<Model>|Closure|null
+     */
     protected string | Closure | null $model = null;
 
     protected string | Closure | null $modelLabel = null;
@@ -31,6 +34,9 @@ trait InteractsWithRecord
         return $this;
     }
 
+    /**
+     * @param  class-string<Model>|Closure|null  $model
+     */
     public function model(string | Closure | null $model): static
     {
         $this->model = $model;
@@ -136,6 +142,9 @@ trait InteractsWithRecord
         return $this->record !== null;
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getModel(): ?string
     {
         $model = $this->getCustomModel();
@@ -153,6 +162,9 @@ trait InteractsWithRecord
         return $record::class;
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getCustomModel(): ?string
     {
         return $this->evaluate($this->model);

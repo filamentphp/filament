@@ -27,6 +27,9 @@ abstract class Importer
 
     protected ?Model $record;
 
+    /**
+     * @var class-string<Model>|null
+     */
     protected static ?string $model = null;
 
     /**

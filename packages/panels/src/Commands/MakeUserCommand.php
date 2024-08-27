@@ -8,6 +8,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Symfony\Component\Console\Attribute\AsCommand;
 
@@ -45,7 +46,7 @@ class MakeUserCommand extends Command
                 required: true,
                 validate: fn (string $email): ?string => match (true) {
                     ! filter_var($email, FILTER_VALIDATE_EMAIL) => 'The email address must be valid.',
-                    static::getUserModel()::where('email', $email)->exists() => 'A user with this email address already exists',
+                    static::getUserModel()::query()->where('email', $email)->exists() => 'A user with this email address already exists',
                     default => null,
                 },
             ),
@@ -57,12 +58,15 @@ class MakeUserCommand extends Command
         ];
     }
 
-    protected function createUser(): Authenticatable
+    protected function createUser(): Model & Authenticatable
     {
-        return static::getUserModel()::create($this->getUserData());
+        /** @var Model&Authenticatable $user */
+        $user = static::getUserModel()::query()->create($this->getUserData());
+
+        return $user;
     }
 
-    protected function sendSuccessMessage(Authenticatable $user): void
+    protected function sendSuccessMessage(Model & Authenticatable $user): void
     {
         $loginUrl = Filament::getLoginUrl();
 
@@ -79,6 +83,9 @@ class MakeUserCommand extends Command
         return $this->getAuthGuard()->getProvider();
     }
 
+    /**
+     * @return class-string<Model&Authenticatable>
+     */
     protected function getUserModel(): string
     {
         /** @var EloquentUserProvider $provider */

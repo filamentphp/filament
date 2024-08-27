@@ -216,6 +216,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->authorize(static::getResource()::canRestoreAny());
     }
 
+    /**
+     * @return Model|class-string<Model>|null
+     */
     protected function getMountedActionFormModel(): Model | string | null
     {
         return $this->getModel();

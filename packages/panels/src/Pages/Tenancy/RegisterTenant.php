@@ -142,6 +142,9 @@ abstract class RegisterTenant extends SimplePage
         ];
     }
 
+    /**
+     * @return class-string<Model>
+     */
     public function getModel(): string
     {
         return Filament::getTenantModel();

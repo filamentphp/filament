@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 trait BelongsToModel
 {
+    /**
+     * @var Model|class-string<Model>|Closure|null
+     */
     protected Model | string | Closure | null $model = null;
 
     protected ?Closure $loadStateFromRelationshipsUsing = null;
@@ -19,6 +22,9 @@ trait BelongsToModel
 
     protected bool | Closure $shouldSaveRelationshipsWhenHidden = false;
 
+    /**
+     * @param  Model|class-string<Model>|Closure|null  $model
+     */
     public function model(Model | string | Closure | null $model = null): static
     {
         $this->model = $model;
@@ -142,6 +148,9 @@ trait BelongsToModel
         return $this;
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getModel(): ?string
     {
         $model = $this->evaluate($this->model);

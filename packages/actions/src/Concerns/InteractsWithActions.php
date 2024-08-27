@@ -291,6 +291,9 @@ trait InteractsWithActions
         );
     }
 
+    /**
+     * @return Model|class-string<Model>|null
+     */
     protected function getMountedActionFormModel(): Model | string | null
     {
         return null;

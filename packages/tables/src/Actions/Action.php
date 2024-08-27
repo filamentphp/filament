@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
+use Exception;
 use Filament\Actions\Concerns\HasMountableArguments;
 use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
@@ -136,6 +137,11 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
         return $this->getCustomPluralModelLabel() ?? $this->getTable()->getPluralModelLabel();
     }
 
+    /**
+     * @return class-string<Model>
+     *
+     * @throws Exception
+     */
     public function getModel(): string
     {
         return $this->getCustomModel() ?? $this->getTable()->getModel();

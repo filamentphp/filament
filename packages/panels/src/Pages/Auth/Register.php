@@ -45,6 +45,9 @@ class Register extends SimplePage
      */
     public ?array $data = [];
 
+    /**
+     * @var class-string<Model>
+     */
     protected string $userModel;
 
     public function mount(): void
@@ -219,6 +222,9 @@ class Register extends SimplePage
             ->url(filament()->getLoginUrl());
     }
 
+    /**
+     * @return class-string<Model>
+     */
     protected function getUserModel(): string
     {
         if (isset($this->userModel)) {

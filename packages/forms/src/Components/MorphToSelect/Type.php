@@ -37,10 +37,16 @@ class Type
 
     protected int $optionsLimit = 50;
 
+    /**
+     * @var class-string<Model>
+     */
     protected string $model;
 
     protected ?bool $isSearchForcedCaseInsensitive = null;
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     final public function __construct(string $model)
     {
         $this->model($model);
@@ -179,6 +185,9 @@ class Type
         });
     }
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     public function model(string $model): static
     {
         $this->model = $model;
@@ -265,6 +274,9 @@ class Type
         return $this->getOptionLabelFromRecordUsing !== null;
     }
 
+    /**
+     * @return class-string<Model>
+     */
     public function getModel(): string
     {
         return $this->model;

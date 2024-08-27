@@ -12,6 +12,9 @@ use ReflectionException;
 
 trait CanReadModelSchemas
 {
+    /**
+     * @return class-string<Model>|null
+     */
     protected function getModel(string $model): ?string
     {
         if (! class_exists($model)) {
