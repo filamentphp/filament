@@ -14,12 +14,15 @@ use function Filament\Support\locale_has_pluralization;
 trait InteractsWithRecord
 {
     /**
-     * @var Model | string | array<string, mixed> | Closure | null
+     * @var Model | class-string<Model> | array<string, mixed> | Closure | null
      */
     protected Model | string | array | Closure | null $record = null;
 
     protected ?Closure $resolveRecordUsing = null;
 
+    /**
+     * @var class-string<Model>|Closure|null
+     */
     protected string | Closure | null $model = null;
 
     protected string | Closure | null $modelLabel = null;
@@ -47,6 +50,9 @@ trait InteractsWithRecord
         return $this;
     }
 
+    /**
+     * @param  class-string<Model>|Closure|null  $model
+     */
     public function model(string | Closure | null $model): static
     {
         $this->model = $model;
@@ -84,6 +90,8 @@ trait InteractsWithRecord
 
     /**
      * @return Model | array<string, mixed> | null
+     *
+     * @throws Exception
      */
     public function getRecord(): Model | array | null
     {
@@ -184,6 +192,11 @@ trait InteractsWithRecord
         return $this->record !== null;
     }
 
+    /**
+     * @return class-string<Model>|null
+     *
+     * @throws Exception
+     */
     public function getModel(): ?string
     {
         $model = $this->getCustomModel();
@@ -207,6 +220,9 @@ trait InteractsWithRecord
         return $record::class;
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getCustomModel(): ?string
     {
         return $this->evaluate($this->model);

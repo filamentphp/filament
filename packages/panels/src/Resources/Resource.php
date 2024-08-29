@@ -11,6 +11,7 @@ use Filament\Schema\Schema;
 use Filament\Tables\Table;
 use Filament\Widgets\Widget;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Macroable;
 
 abstract class Resource
@@ -32,6 +33,9 @@ abstract class Resource
 
     protected static bool $isDiscovered = true;
 
+    /**
+     * @var class-string<Model>|null
+     */
     protected static ?string $model = null;
 
     public static function form(Schema $form): Schema
@@ -75,6 +79,9 @@ abstract class Resource
         return $query;
     }
 
+    /**
+     * @return class-string<Model>
+     */
     public static function getModel(): string
     {
         return static::$model ?? (string) str(class_basename(static::class))

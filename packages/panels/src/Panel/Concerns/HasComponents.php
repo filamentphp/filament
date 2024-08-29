@@ -145,6 +145,9 @@ trait HasComponents
         return $this;
     }
 
+    /**
+     * @param  class-string<Model>|Model  $model
+     */
     public function getModelResource(string | Model $model): ?string
     {
         if ($model instanceof Model) {

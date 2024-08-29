@@ -6,6 +6,7 @@ use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Http\Request;
 use Illuminate\Support\HtmlString;
@@ -40,6 +41,9 @@ if (! function_exists('Filament\Support\format_number')) {
 }
 
 if (! function_exists('Filament\Support\get_model_label')) {
+    /**
+     * @param  class-string<Model>  $model
+     */
     function get_model_label(string $model): string
     {
         return (string) str(class_basename($model))

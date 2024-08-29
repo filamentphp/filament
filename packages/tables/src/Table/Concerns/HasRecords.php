@@ -107,15 +107,14 @@ trait HasRecords
         return $this->getLivewire()->getTableRecordKey($record);
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getModel(): ?string
     {
         $query = $this->getQuery();
 
-        if (! $query) {
-            return null;
-        }
-
-        return $query->getModel()::class;
+        return $query?->getModel()::class;
     }
 
     public function allowsDuplicates(): bool

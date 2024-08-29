@@ -1224,6 +1224,9 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->getSearchResultsUsing instanceof Closure;
     }
 
+    /**
+     * @return Model|class-string<Model>|null
+     */
     public function getActionFormModel(): Model | string | null
     {
         if ($this->hasRelationship()) {

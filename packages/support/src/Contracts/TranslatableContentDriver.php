@@ -9,6 +9,9 @@ interface TranslatableContentDriver
 {
     public function __construct(string $activeLocale);
 
+    /**
+     * @param  class-string<Model>  $model
+     */
     public function isAttributeTranslatable(string $model, string $attribute): bool;
 
     /**
@@ -17,6 +20,7 @@ interface TranslatableContentDriver
     public function getRecordAttributesToArray(Model $record): array;
 
     /**
+     * @param  class-string<Model>  $model
      * @param  array<string, mixed>  $data
      */
     public function makeRecord(string $model, array $data): Model;
