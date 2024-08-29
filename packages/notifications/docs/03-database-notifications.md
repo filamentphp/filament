@@ -118,6 +118,28 @@ public function toDatabase(User $notifiable): array
 
 Without any setup, new database notifications will only be received when the page is first loaded.
 
+### Paginate database notifications
+
+Pagination for Laravel Filament notifications allows you to manage large sets of notifications efficiently by breaking them into smaller, more manageable pages. This approach enhances performance by reducing the number of notifications loaded at once, leading to faster load times and a better user experience.
+
+By default, notifications paginated 50 per page.
+
+You may completely disable pagination if you wish:
+
+```php
+use Filament\Notifications\Livewire\DatabaseNotifications;
+
+DatabaseNotifications::$isPaginated=false;
+```
+
+You may change pagination per page if you wish:
+
+```php
+use Filament\Notifications\Livewire\DatabaseNotifications;
+
+DatabaseNotifications::$perPageCount=10;
+```
+
 ### Polling for new database notifications
 
 Polling is the practice of periodically making a request to the server to check for new notifications. This is a good approach as the setup is simple, but some may say that it is not a scalable solution as it increases server load.
