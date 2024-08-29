@@ -26,6 +26,8 @@ class DatabaseNotifications extends Component
 
     public static ?string $pollingInterval = '30s';
 
+    public static ?int $perPageCount = 50;
+
     public static ?string $authGuard = null;
 
     #[On('databaseNotificationsSent')]
@@ -72,12 +74,17 @@ class DatabaseNotifications extends Component
             return $this->getNotificationsQuery()->get();
         }
 
-        return $this->getNotificationsQuery()->simplePaginate(50, pageName: 'database-notifications-page');
+        return $this->getNotificationsQuery()->simplePaginate($this->getPerPageCount(), pageName: 'database-notifications-page');
     }
 
     public function isPaginated(): bool
     {
         return static::$isPaginated;
+    }
+
+    public function getPerPageCount(): bool
+    {
+        return static::$perPageCount;
     }
 
     public function getNotificationsQuery(): Builder | Relation
