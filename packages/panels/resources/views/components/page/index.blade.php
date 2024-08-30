@@ -64,6 +64,8 @@
             ])
         >
             @if ($subNavigation)
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_BEFORE, scopes: $this->getRenderHookScopes()) }}
+
                 <x-filament-panels::page.sub-navigation.select
                     :navigation="$subNavigation"
                 />
@@ -79,6 +81,8 @@
                         :navigation="$subNavigation"
                     />
                 @endif
+
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_AFTER, scopes: $this->getRenderHookScopes()) }}
             @endif
 
             <div
@@ -117,9 +121,13 @@
             </div>
 
             @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_BEFORE, scopes: $this->getRenderHookScopes()) }}
+
                 <x-filament-panels::page.sub-navigation.sidebar
                     :navigation="$subNavigation"
                 />
+
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_AFTER, scopes: $this->getRenderHookScopes()) }}
             @endif
         </div>
 
