@@ -25,7 +25,7 @@
 >
     <{{ $sortable ? 'button' : 'span' }}
         @if ($sortable)
-            aria-label="{{ strip_tags($slot) }}"
+            aria-label="{{ trim(strip_tags($slot)) }}"
             type="button"
             wire:click="sortTable('{{ $name }}')"
         @endif
