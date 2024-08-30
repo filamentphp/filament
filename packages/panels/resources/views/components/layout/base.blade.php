@@ -23,8 +23,8 @@
         @endif
 
         @php
-            $title = strip_tags(($livewire ?? null)?->getTitle() ?? '');
-            $brandName = strip_tags(filament()->getBrandName());
+            $title = trim(strip_tags(($livewire ?? null)?->getTitle() ?? ''));
+            $brandName = trim(strip_tags(filament()->getBrandName()));
         @endphp
 
         <title>
