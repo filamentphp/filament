@@ -1156,6 +1156,9 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         $this->cachedExistingRecords = null;
     }
 
+    /**
+     * @return class-string<Model>
+     */
     public function getRelatedModel(): string
     {
         return $this->getRelationship()->getModel()::class;

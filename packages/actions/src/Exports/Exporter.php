@@ -18,6 +18,9 @@ abstract class Exporter
 
     protected ?Model $record;
 
+    /**
+     * @var class-string<Model>|null
+     */
     protected static ?string $model = null;
 
     /**

@@ -325,6 +325,9 @@ class CreateRecord extends Page
         return [];
     }
 
+    /**
+     * @return Model|class-string<Model>|null
+     */
     protected function getMountedActionSchemaModel(): Model | string | null
     {
         return $this->getModel();

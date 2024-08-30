@@ -150,6 +150,8 @@ trait InteractsWithForms
 
     /**
      * @deprecated Override the `form()` method to configure the default form.
+     *
+     * @return Model|class-string<Model>|null
      */
     protected function getFormModel(): Model | string | null
     {

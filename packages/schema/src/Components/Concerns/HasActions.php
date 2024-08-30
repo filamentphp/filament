@@ -21,6 +21,9 @@ trait HasActions
      */
     protected array $actions = [];
 
+    /**
+     * @var Model|class-string<Model>|null
+     */
     protected Model | string | null $actionFormModel = null;
 
     protected ?Action $action = null;
@@ -138,6 +141,9 @@ trait HasActions
         return $action->schemaComponent($this);
     }
 
+    /**
+     * @param  Model|class-string<Model>|null  $model
+     */
     public function actionFormModel(Model | string | null $model): static
     {
         $this->actionFormModel = $model;
@@ -145,6 +151,9 @@ trait HasActions
         return $this;
     }
 
+    /**
+     * @return Model|class-string<Model>|null
+     */
     public function getActionFormModel(): Model | string | null
     {
         return $this->actionFormModel ?? $this->getRecord() ?? $this->getModel();

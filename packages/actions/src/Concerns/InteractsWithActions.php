@@ -561,6 +561,9 @@ trait InteractsWithActions
         return $this->getMountedActionSchema($actionNestingIndex, $mountedAction);
     }
 
+    /**
+     * @return Model|class-string<Model>|null
+     */
     protected function getMountedActionSchemaModel(): Model | string | null
     {
         return null;

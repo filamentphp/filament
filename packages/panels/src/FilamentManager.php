@@ -272,6 +272,9 @@ class FilamentManager
         return $this->getCurrentPanel()->getMaxContentWidth();
     }
 
+    /**
+     * @param  class-string<Model>|Model  $model
+     */
     public function getModelResource(string | Model $model): ?string
     {
         return $this->getCurrentPanel()->getModelResource($model);
@@ -443,6 +446,9 @@ class FilamentManager
         return $this->getCurrentPanel()->getTenantMenuItems();
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getTenantModel(): ?string
     {
         return $this->getCurrentPanel()->getTenantModel();

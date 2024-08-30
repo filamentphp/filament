@@ -186,6 +186,9 @@ trait EntanglesStateWithSingularRelationship
         return $this->relationship;
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getRelatedModel(): ?string
     {
         return $this->getRelationship()?->getModel()::class;

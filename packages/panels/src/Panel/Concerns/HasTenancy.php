@@ -25,6 +25,9 @@ trait HasTenancy
 
     protected ?string $tenantDomain = null;
 
+    /**
+     * @var class-string<Model>|null
+     */
     protected ?string $tenantModel = null;
 
     protected ?string $tenantProfilePage = null;
@@ -69,6 +72,9 @@ trait HasTenancy
         return $this;
     }
 
+    /**
+     * @param  class-string<Model>|null  $model
+     */
     public function tenant(?string $model, ?string $slugAttribute = null, ?string $ownershipRelationship = null): static
     {
         $this->tenantModel = $model;
@@ -199,6 +205,9 @@ trait HasTenancy
         return $record;
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getTenantModel(): ?string
     {
         return $this->tenantModel;
