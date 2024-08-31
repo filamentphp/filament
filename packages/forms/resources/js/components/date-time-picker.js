@@ -386,16 +386,8 @@ export default function dateTimePickerFormComponent({
             if (!this.isOpen()) {
                 this.focusedDate =
                     this.getSelectedDate() ??
-                    (dayjs()
-                        .tz(timezone)
-                        .isBetween(
-                            this.getMinDate(),
-                            this.getMaxDate(),
-                            null,
-                            '[]',
-                        )
-                        ? dayjs().tz(timezone)
-                        : this.getMinDate() ?? this.getMaxDate())
+                    this.getMinDate() ??
+                    dayjs().tz(timezone)
 
                 this.setupDaysGrid()
             }
