@@ -2,7 +2,7 @@
 title: Introduction to Filament
 ---
 
-Filament is a meta-framework for Laravel. It aims to provide a set of components and conventions that make it easier to build the frontend for your Laravel applications using Livewire, Alpine.js, and Tailwind CSS. Filament is designed to be flexible and extensible, so you can use as much or as little of it as you like and easily customize it to fit your needs.
+Filament is a meta-framework for Laravel. It aims to provide a set of components and conventions that make it easier to build the frontend for your Laravel applications using Livewire, Alpine.js, and Tailwind CSS. Filament is designed to be flexible and extensible, so you can use as much or as little of it as you like and customize it to fit your needs.
 
 Thousands of developers choose Filament to add an admin panel interface to their app. You'll be able to do this regardless of what your app's frontend is built using: it's commonly paired with tools like Inertia.js that interface Laravel with a full-fat frontend framework like Vue.js, React, or Svelte.
 
