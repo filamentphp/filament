@@ -45,6 +45,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Default Export Directory
+    |--------------------------------------------------------------------------
+    |
+    | This configuration option specifies the default directory where exported files will be stored.
+    | The value is retrieved from the `FILAMENT_EXPORT_DIRECTORY` environment variable, and if not set,
+    | it defaults to `filament_exports`.
+    |
+    */
+    'default_export_directory' => env('FILAMENT_EXPORT_DIRECTORY', 'filament_exports'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Assets Path
     |--------------------------------------------------------------------------
     |

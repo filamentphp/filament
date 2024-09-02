@@ -96,6 +96,6 @@ class Export extends Model
 
     public function getFileDirectory(): string
     {
-        return 'filament_exports' . DIRECTORY_SEPARATOR . $this->getKey();
+        return \rtrim(config('filament.default_export_directory'), '/') . DIRECTORY_SEPARATOR . $this->getKey();
     }
 }
