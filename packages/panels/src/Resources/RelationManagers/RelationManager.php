@@ -318,7 +318,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         $model = $this->getTable()->getModel();
 
         try {
-            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence())->allowed();
+            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence(), static::getAuthorizationArguments($action, $record))->allowed();
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }
@@ -495,7 +495,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         $model = $ownerRecord->{static::getRelationshipName()}()->getQuery()->getModel()::class;
 
         try {
-            return authorize('viewAny', $model, static::shouldCheckPolicyExistence())->allowed();
+            return authorize('viewAny', $model, static::shouldCheckPolicyExistence(), static::getAuthorizationArguments('viewAny'))->allowed();
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }

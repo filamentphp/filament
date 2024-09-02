@@ -22,6 +22,9 @@ trait InteractsWithRelationshipTable
 
     protected static bool $shouldSkipAuthorization = false;
 
+    /** @var array<mixed> */
+    protected static array $authorizationArguments = [];
+
     public static function checkPolicyExistence(bool $condition = true): void
     {
         static::$shouldCheckPolicyExistence = $condition;
@@ -40,6 +43,14 @@ trait InteractsWithRelationshipTable
     public static function shouldSkipAuthorization(): bool
     {
         return static::$shouldSkipAuthorization;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public static function getAuthorizationArguments(string $action, ?Model $record = null): array
+    {
+        return static::$authorizationArguments;
     }
 
     public function getRelationship(): Relation | Builder

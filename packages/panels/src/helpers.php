@@ -10,14 +10,16 @@ use Illuminate\Support\Facades\Gate;
 
 if (! function_exists('Filament\authorize')) {
     /**
+     * @param array<mixed> $arguments
+     *
      * @throws AuthorizationException
      */
-    function authorize(string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
+    function authorize(string $action, Model | string $model, bool $shouldCheckPolicyExistence = true, array $arguments = []): Response
     {
         $user = Filament::auth()->user();
 
         if (! $shouldCheckPolicyExistence) {
-            return Gate::forUser($user)->authorize($action, $model);
+            return Gate::forUser($user)->authorize($action, [$model, ...$arguments]);
         }
 
         $policy = Gate::getPolicyFor($model);
@@ -30,7 +32,7 @@ if (! function_exists('Filament\authorize')) {
             $response = invade(Gate::forUser($user))->callBeforeCallbacks( /** @phpstan-ignore-line */
                 $user,
                 $action,
-                [$model],
+                [$model, ...$arguments]
             );
 
             if ($response === false) {
@@ -44,6 +46,6 @@ if (! function_exists('Filament\authorize')) {
             return $response->authorize();
         }
 
-        return Gate::forUser($user)->authorize($action, $model);
+        return Gate::forUser($user)->authorize($action, [$model, ...$arguments]);
     }
 }

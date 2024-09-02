@@ -105,7 +105,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         $model = $record->{static::getRelationshipName()}()->getQuery()->getModel()::class;
 
         try {
-            return authorize('viewAny', $model, static::shouldCheckPolicyExistence())->allowed();
+            return authorize('viewAny', $model, static::shouldCheckPolicyExistence(), static::getAuthorizationArguments('viewAny'))->allowed();
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }
@@ -273,7 +273,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
         $model = $this->getTable()->getModel();
 
         try {
-            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence())->allowed();
+            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence(), static::getAuthorizationArguments($action, $record))->allowed();
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }

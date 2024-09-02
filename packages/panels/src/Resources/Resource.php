@@ -117,6 +117,11 @@ abstract class Resource
 
     protected static bool $shouldSkipAuthorization = false;
 
+    /**
+     * @var array<mixed>
+     */
+    protected static array $authorizationArguments = [];
+
     protected static ?bool $isGlobalSearchForcedCaseInsensitive = null;
 
     protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Start;
@@ -201,7 +206,7 @@ abstract class Resource
         $model = static::getModel();
 
         try {
-            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence())->allowed();
+            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence(), static::getAuthorizationArguments($action, $record))->allowed();
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }
@@ -219,7 +224,7 @@ abstract class Resource
         $model = static::getModel();
 
         try {
-            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence());
+            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence(), static::getAuthorizationArguments($action, $record));
         } catch (AuthorizationException $exception) {
             return $exception->toResponse();
         }
@@ -243,6 +248,14 @@ abstract class Resource
     public static function shouldSkipAuthorization(): bool
     {
         return static::$shouldSkipAuthorization;
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    public static function getAuthorizationArguments(string $action, ?Model $record = null): array
+    {
+        return static::$authorizationArguments;
     }
 
     public static function canViewAny(): bool
