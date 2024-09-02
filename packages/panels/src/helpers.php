@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Gate;
 
 if (! function_exists('Filament\authorize')) {
     /**
-     * @param array<mixed> $arguments
+     * @param  array<mixed>  $arguments
      *
      * @throws AuthorizationException
      */
