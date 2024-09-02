@@ -4,8 +4,7 @@ title: Introduction to Filament
 
 Filament is a meta-framework for Laravel. It aims to provide a set of components and conventions that make it easier to build the frontend for your Laravel applications using Livewire, Alpine.js and Tailwind CSS. Filament is designed to be flexible and extensible, so you can use as much or as little of it as you like, and easily customize it to fit your needs.
 
-After:
-A Livewire component can be inserted into any Blade view or rendered from a route, regardless of whether you're already using Livewire for your other Blade views or not.
+Thousands of developers choose Filament to add an admin panel interface to their app. You'll be able to do this regardless of what your app's frontend is built using: it's commonly paired with tools like Inertia.js that interface Laravel with a full-fat frontend framework like Vue.js, React or Svelte.
 
 If you're building your app's frontend with Blade (Livewire or not), you'll be able to enrich your views with components from the framework to save yourself time. For example, the same form builder and table builder that powers our admin panel tool can be installed into a Livewire component. Livewire components can be inserted into any Blade view or rendered from a route, regardless of whether you're already using Livewire for your other Blade views or not.
 
