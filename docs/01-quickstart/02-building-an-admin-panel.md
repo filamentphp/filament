@@ -1,3 +1,3 @@
 ---
-title: Building an Admin Panel
+title: Building an admin panel
 ---
