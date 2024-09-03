@@ -58,9 +58,21 @@ class PanelsRenderHook
 
     const PAGE_START = 'panels::page.start';
 
-    const PAGE_SUB_NAVIGATION_AFTER = 'panels::page.sub-navigation.after';
+    const PAGE_SUB_NAVIGATION_SELECT_AFTER = 'panels::page.sub-navigation.select.after';
 
-    const PAGE_SUB_NAVIGATION_BEFORE = 'panels::page.sub-navigation.before';
+    const PAGE_SUB_NAVIGATION_SELECT_BEFORE = 'panels::page.sub-navigation.select.before';
+
+    const PAGE_SUB_NAVIGATION_START_AFTER = 'panels::page.sub-navigation.start.after';
+
+    const PAGE_SUB_NAVIGATION_START_BEFORE = 'panels::page.sub-navigation.start.before';
+
+    const PAGE_SUB_NAVIGATION_TOP_AFTER = 'panels::page.sub-navigation.top.after';
+
+    const PAGE_SUB_NAVIGATION_TOP_BEFORE = 'panels::page.sub-navigation.top.before';
+
+    const PAGE_SUB_NAVIGATION_END_AFTER = 'panels::page.sub-navigation.end.after';
+
+    const PAGE_SUB_NAVIGATION_END_BEFORE = 'panels::page.sub-navigation.end.before';
 
     const RESOURCE_PAGES_LIST_RECORDS_TABLE_AFTER = 'panels::resource.pages.list-records.table.after';
 
