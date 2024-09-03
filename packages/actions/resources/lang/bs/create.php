@@ -4,20 +4,20 @@ return [
 
     'single' => [
 
-        'label' => 'Napraviti',
+        'label' => 'Kreirajte',
 
         'modal' => [
 
-            'heading' => 'Napravite :label',
+            'heading' => 'Kreirajte :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'Napraviti',
+                    'label' => 'Kreirati',
                 ],
 
                 'create_another' => [
-                    'label' => 'Napravite i napravite još jedan',
+                    'label' => 'Kreirajte i kreirajte još jedan',
                 ],
 
             ],
