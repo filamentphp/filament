@@ -88,6 +88,8 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
 
     protected static ?string $badgeTooltip = null;
 
+    protected bool $useSlideOver = false;
+
     public function mount(): void
     {
         $this->loadDefaultActiveTab();
@@ -213,7 +215,8 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canCreate())
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(fn (Form $form): Form => $this->form($form->columns(2)))
+            ->slideOver($this->useSlideOver);
     }
 
     protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
@@ -238,7 +241,8 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canEdit($record))
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(fn (Form $form): Form => $this->form($form->columns(2)))
+            ->slideOver($this->useSlideOver);
     }
 
     protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
