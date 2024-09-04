@@ -145,7 +145,7 @@ trait HasQuery
         }
 
         return $this->evaluate($this->inverseRelationship) ?? (string) str(class_basename($relationship->getParent()::class))
-            ->plural()
+            ->singular()
             ->camel();
     }
 
