@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -144,9 +145,13 @@ trait HasQuery
             return null;
         }
 
-        return $this->evaluate($this->inverseRelationship) ?? (string) str(class_basename($relationship->getParent()::class))
-            ->singular()
-            ->camel();
+        $inverseRelationship = $this->evaluate($this->inverseRelationship) ?? (string) str(class_basename($relationship->getParent()::class));
+
+        if ($relationship instanceof HasMany) {
+            $inverseRelationship->singular()->camel();
+        }
+
+        return $inverseRelationship->plural()->camel();
     }
 
     public function getInverseRelationshipFor(Model $record): Relation | Builder
