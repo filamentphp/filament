@@ -145,13 +145,19 @@ trait HasQuery
             return null;
         }
 
-        $inverseRelationship = $this->evaluate($this->inverseRelationship) ?? (string) str(class_basename($relationship->getParent()::class));
+        $inverseRelationship = $this->evaluate($this->inverseRelationship);
 
-        if ($relationship instanceof HasMany) {
-            $inverseRelationship->singular()->camel();
+        if ($inverseRelationship) {
+            return $inverseRelationship;
         }
 
-        return $inverseRelationship->plural()->camel();
+        $inverseRelationship = str(class_basename($relationship->getParent()::class));
+
+        if ($relationship instanceof HasMany) {
+            return (string) $inverseRelationship->singular()->camel();
+        }
+
+        return (string) $inverseRelationship->plural()->camel();
     }
 
     public function getInverseRelationshipFor(Model $record): Relation | Builder
