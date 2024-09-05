@@ -1,7 +1,7 @@
 @props([
     'notifications',
     'unreadNotificationsCount',
-    'markAllNotificationsAsReadAction'
+    'markAllNotificationsAsReadAction',
 ])
 
 <div {{ $attributes->class('mt-2 flex gap-x-3') }}>

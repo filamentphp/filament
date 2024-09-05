@@ -1,7 +1,7 @@
 @props([
     'notifications',
     'unreadNotificationsCount',
-    'markAllNotificationsAsReadAction'
+    'markAllNotificationsAsReadAction',
 ])
 
 @php

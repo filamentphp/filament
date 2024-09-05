@@ -129,7 +129,7 @@ class DatabaseNotifications extends Component
             ->action('markAllNotificationsAsRead');
     }
 
-    public function getUser(): Model|Authenticatable|null
+    public function getUser(): Model | Authenticatable | null
     {
         return auth(static::$authGuard)->user();
     }
