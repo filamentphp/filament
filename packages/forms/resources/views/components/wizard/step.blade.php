@@ -30,7 +30,6 @@
                 'aria-labelledby' => $id,
                 'id' => $id,
                 'role' => 'tabpanel',
-                'tabindex' => '0',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->class(['fi-fo-wizard-step outline-none'])
