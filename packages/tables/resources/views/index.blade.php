@@ -793,7 +793,7 @@
                                         {{ $actionsColumnLabel }}
                                     </x-filament-tables::header-cell>
                                 @else
-                                    <th class="w-1"></th>
+                                    <th class="fi-ta-header-cell-actions w-1"></th>
                                 @endif
                             @endif
 
