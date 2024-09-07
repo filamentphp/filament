@@ -1,0 +1,8 @@
+<?php
+
+namespace {{ contractNamespace }};
+
+interface {{ actionContractName }}
+{
+    public function __invoke();
+}

@@ -1,0 +1,13 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ contractNamespace }}\{{ actionContractName }};
+
+class {{ actionClassName }} implements {{ actionContractName }}
+{
+    public function __invoke(): void
+    {
+        //
+    }
+}

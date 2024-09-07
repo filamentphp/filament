@@ -1,0 +1,11 @@
+<?php
+
+namespace {{ namespace }};
+
+class {{ actionClassName }}
+{
+    public function __invoke(): void
+    {
+        //
+    }
+}
