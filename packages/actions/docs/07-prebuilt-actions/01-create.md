@@ -237,6 +237,16 @@ CreateAction::make()
     ->skippableSteps()
 ```
 
+To prevent backward navigation and only allow users to move forward through the steps, use the `preventBackNavigationSteps()` method:
+
+```php
+CreateAction::make()
+    ->steps([
+        // ...
+    ])
+    ->preventBackNavigationSteps()
+```
+
 ## Disabling create another
 
 If you'd like to remove the "create another" button from the modal, you can use the `createAnother(false)` method:

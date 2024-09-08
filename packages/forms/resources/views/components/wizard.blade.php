@@ -23,6 +23,10 @@
         },
 
         previousStep: function () {
+            if (this.isBackNavigationPrevented()) {
+                return
+            }
+
             let previousStepIndex = this.getStepIndex(this.step) - 1
 
             if (previousStepIndex < 0) {
@@ -73,10 +77,18 @@
             return this.getStepIndex(this.step) + 1 >= this.getSteps().length
         },
 
+        isBackNavigationPrevented: function () {
+            return @js($isBackNavigationPrevented());
+        },
+
+        isSkippable: function () {
+            return @js($isSkippable());
+        },
+
         isStepAccessible: function (stepId) {
-            return (
-                @js($isSkippable()) || this.getStepIndex(this.step) > this.getStepIndex(stepId)
-            )
+            return this.isSkippable()
+                ? !this.isBackNavigationPrevented() || this.getStepIndex(this.step) <= this.getStepIndex(stepId)
+                : !this.isBackNavigationPrevented() && this.getStepIndex(this.step) > this.getStepIndex(stepId);
         },
 
         updateQueryString: function () {
@@ -262,11 +274,11 @@
             'mt-6' => ! $isContained,
         ])
     >
-        <span x-cloak x-on:click="previousStep" x-show="! isFirstStep()">
+        <span x-cloak x-on:click="previousStep()" x-show="! isFirstStep() && !isBackNavigationPrevented()">
             {{ $getAction('previous') }}
         </span>
 
-        <span x-show="isFirstStep()">
+        <span x-show="isFirstStep() || isBackNavigationPrevented()">
             {{ $getCancelAction() }}
         </span>
 

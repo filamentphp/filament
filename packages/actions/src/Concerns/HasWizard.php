@@ -11,6 +11,8 @@ trait HasWizard
 
     protected bool | Closure $isWizardSkippable = false;
 
+    protected bool | Closure $isWizardBackNavigationPrevented = false;
+
     protected int | Closure $wizardStartStep = 1;
 
     protected ?Closure $modifyWizardUsing = null;
@@ -40,6 +42,13 @@ trait HasWizard
         return $this;
     }
 
+    public function preventBackNavigationSteps(bool | Closure $condition = true): static
+    {
+        $this->isWizardBackNavigationPrevented = $condition;
+
+        return $this;
+    }
+
     public function isWizard(): bool
     {
         return $this->isWizard;
@@ -48,6 +57,11 @@ trait HasWizard
     public function isWizardSkippable(): bool
     {
         return (bool) $this->evaluate($this->isWizardSkippable);
+    }
+
+    public function isWizardBackNavigationPrevented(): bool
+    {
+        return (bool) $this->evaluate($this->isWizardBackNavigationPrevented);
     }
 
     public function modifyWizardUsing(?Closure $callback): static

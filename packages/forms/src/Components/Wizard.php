@@ -20,6 +20,8 @@ class Wizard extends Component
 
     protected bool | Closure $isSkippable = false;
 
+    protected bool | Closure $isBackNavigationPrevented = false;
+
     protected string | Closure | null $stepQueryStringKey = null;
 
     protected string | Htmlable | null $submitAction = null;
@@ -217,6 +219,13 @@ class Wizard extends Component
         return $this;
     }
 
+    public function preventBackNavigation(bool | Closure $condition = true): static
+    {
+        $this->isBackNavigationPrevented = $condition;
+
+        return $this;
+    }
+
     public function persistStepInQueryString(string | Closure | null $key = 'step'): static
     {
         $this->stepQueryStringKey = $key;
@@ -259,6 +268,11 @@ class Wizard extends Component
     public function isSkippable(): bool
     {
         return (bool) $this->evaluate($this->isSkippable);
+    }
+
+    public function isBackNavigationPrevented(): bool
+    {
+        return (bool) $this->evaluate($this->isBackNavigationPrevented);
     }
 
     public function isStepPersistedInQueryString(): bool

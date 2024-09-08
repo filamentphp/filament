@@ -71,6 +71,7 @@ trait HasForm
                 ->cancelAction($this->getModalCancelAction())
                 ->submitAction($this->getModalSubmitAction())
                 ->skippable($this->isWizardSkippable())
+                ->preventBackNavigation($this->isWizardBackNavigationPrevented())
                 ->disabled($this->isFormDisabled());
 
             if ($this->modifyWizardUsing) {

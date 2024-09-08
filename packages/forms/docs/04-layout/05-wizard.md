@@ -140,6 +140,18 @@ Wizard::make([
 ])->skippable()
 ```
 
+## Preventing backward navigation
+
+If you'd like to restrict navigation so users can only move forward, use the `preventBackNavigation()` method. This hides the "back" button, allowing users to proceed only to the next step:
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    // ...
+])->preventBackNavigation()
+```
+
 ## Persisting the current step in the URL's query string
 
 By default, the current step is not persisted in the URL's query string. You can change this behavior using the `persistStepInQueryString()` method:
