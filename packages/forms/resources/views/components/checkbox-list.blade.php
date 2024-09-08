@@ -33,10 +33,12 @@
                 this.visibleCheckboxListOptions.forEach((checkboxLabel) => {
                     checkbox = checkboxLabel.querySelector('input[type=checkbox]')
 
-                    if (!checkbox.disabled) {
-                        checkbox.checked = state
-                        checkbox.dispatchEvent(new Event('change'))
+                    if (checkbox.disabled) {
+                        return
                     }
+
+                    checkbox.checked = state
+                    checkbox.dispatchEvent(new Event('change'))
                 })
 
                 this.areAllCheckboxesChecked = state
