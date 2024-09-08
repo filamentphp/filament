@@ -64,20 +64,32 @@
             ])
         >
             @if ($subNavigation)
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_SELECT_BEFORE, scopes: $this->getRenderHookScopes()) }}
+
                 <x-filament-panels::page.sub-navigation.select
                     :navigation="$subNavigation"
                 />
 
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_SELECT_AFTER, scopes: $this->getRenderHookScopes()) }}
+
                 @if ($subNavigationPosition === SubNavigationPosition::Start)
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_START_BEFORE, scopes: $this->getRenderHookScopes()) }}
+
                     <x-filament-panels::page.sub-navigation.sidebar
                         :navigation="$subNavigation"
                     />
+
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_START_AFTER, scopes: $this->getRenderHookScopes()) }}
                 @endif
 
                 @if ($subNavigationPosition === SubNavigationPosition::Top)
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_TOP_BEFORE, scopes: $this->getRenderHookScopes()) }}
+
                     <x-filament-panels::page.sub-navigation.tabs
                         :navigation="$subNavigation"
                     />
+
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_TOP_AFTER, scopes: $this->getRenderHookScopes()) }}
                 @endif
             @endif
 
@@ -117,9 +129,13 @@
             </div>
 
             @if ($subNavigation && $subNavigationPosition === SubNavigationPosition::End)
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_END_BEFORE, scopes: $this->getRenderHookScopes()) }}
+
                 <x-filament-panels::page.sub-navigation.sidebar
                     :navigation="$subNavigation"
                 />
+
+                {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_END_AFTER, scopes: $this->getRenderHookScopes()) }}
             @endif
         </div>
 
