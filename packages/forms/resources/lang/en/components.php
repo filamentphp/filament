@@ -399,7 +399,7 @@ return [
             'underline' => 'Underline',
             'undo' => 'Undo',
             'sub' => 'Subscript',
-            'sup' => 'Supscript',
+            'sup' => 'Superscript',
         ],
 
     ],
