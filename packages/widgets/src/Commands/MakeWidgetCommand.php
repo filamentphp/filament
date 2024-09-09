@@ -124,24 +124,25 @@ class MakeWidgetCommand extends Command
                 $widgetDirectories[array_search($namespace, $widgetNamespaces)] :
                 (Arr::first($widgetDirectories) ?? app_path('Filament/Widgets/'));
         } else {
-            $resourceDirectories = [
-                app_path('Filament/Resources/'),
-                ...$panel->getResourceDirectories(),
-            ];
-            $resourceNamespaces = [
-                'App\\Filament\\Resources',
-                ...$panel->getResourceNamespaces(),
-            ];
+            $resourceDirectories = $panel->getResourceDirectories();
+            $resourceNamespaces = $panel->getResourceNamespaces();
+
+            foreach ($resourceDirectories as $resourceIndex => $resourceDirectory) {
+                if (mb_strpos($resourceDirectory, base_path('vendor')) === 0) {
+                    unset($resourceDirectories[$resourceIndex]);
+                    unset($resourceNamespaces[$resourceIndex]);
+                }
+            }
 
             $resourceNamespace = (count($resourceNamespaces) > 1) ?
                 select(
                     label: 'Which namespace would you like to create this in?',
                     options: $resourceNamespaces,
                 ) :
-                Arr::first($resourceNamespaces);
+                (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
             $resourcePath = (count($resourceDirectories) > 1) ?
                 $resourceDirectories[array_search($resourceNamespace, $resourceNamespaces)] :
-                Arr::first($resourceDirectories);
+                (Arr::first($resourceDirectories) ?? app_path('Filament/Resources/'));
         }
 
         $view = str($widget)->prepend(
