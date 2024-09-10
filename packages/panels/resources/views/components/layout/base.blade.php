@@ -128,6 +128,17 @@
 
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::SCRIPTS_AFTER, scopes: $livewire->getRenderHookScopes()) }}
 
+        <script>
+                Livewire.hook('request', ({ uri, options, payload, respond, succeed, fail }) => {
+                    fail(({ status, content, preventDefault }) => {
+                        if (status === 419) {
+                            preventDefault()
+                        }
+                    })
+                })
+            }
+        </script>
+
         {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::BODY_END, scopes: $livewire->getRenderHookScopes()) }}
     </body>
 </html>
