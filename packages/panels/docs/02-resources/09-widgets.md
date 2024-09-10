@@ -24,15 +24,17 @@ To get started building a resource widget:
 php artisan make:filament-widget CustomerOverview --resource=CustomerResource
 ```
 
-This command will create two files - a widget class in the `app/Filament/Resources/CustomerResource/Widgets` directory, and a view in the `resources/views/filament/resources/customer-resource/widgets` directory.
+This command will create two files - a widget class in the `app/Filament/Resources/Customers/Widgets` directory, and a view in the `resources/views/filament/resources/customers/widgets` directory.
 
 You must register the new widget in your resource's `getWidgets()` method:
 
 ```php
+use App\Filament\Resources\Customers\Widgets\CustomerOverview;
+
 public static function getWidgets(): array
 {
     return [
-        CustomerResource\Widgets\CustomerOverview::class,
+        CustomerOverview::class,
     ];
 }
 ```
@@ -46,9 +48,9 @@ To display a widget on a resource page, use the `getHeaderWidgets()` or `getFoot
 ```php
 <?php
 
-namespace App\Filament\Resources\CustomerResource\Pages;
+namespace App\Filament\Resources\Customers\Pages;
 
-use App\Filament\Resources\CustomerResource;
+use App\Filament\Resources\Customers\CustomerResource;
 
 class ListCustomers extends ListRecords
 {
@@ -96,7 +98,7 @@ class ListProducts extends ListRecords
 Now, on the widget class, you must add the `InteractsWithPageTable` trait, and return the name of the page class from the `getTablePage()` method:
 
 ```php
-use App\Filament\Resources\ProductResource\Pages\ListProducts;
+use App\Filament\Resources\Products\Pages\ListProducts;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\Widget;
 

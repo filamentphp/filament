@@ -168,7 +168,7 @@ public function panel(Panel $panel): Panel
 By default, when enabling SPA mode, any URL that lives on the same domain as the current request will be navigated to using Livewire's [`wire:navigate`](https://livewire.laravel.com/docs/navigate) feature. If you want to disable this for specific URLs, you can use the `spaUrlExceptions()` method:
 
 ```php
-use App\Filament\Resources\PostResource;
+use App\Filament\Resources\Posts\PostResource;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel

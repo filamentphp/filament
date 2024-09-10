@@ -236,7 +236,7 @@ You may easily transform the creation process into a multistep wizard.
 On the page class, add the corresponding `HasWizard` trait:
 
 ```php
-use App\Filament\Resources\CategoryResource;
+use App\Filament\Resources\Categories\CategoryResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateCategory extends CreateRecord
@@ -347,7 +347,7 @@ class CategoryResource extends Resource
 ```
 
 ```php
-use App\Filament\Resources\CategoryResource;
+use App\Filament\Resources\Categories\CategoryResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateCategory extends CreateRecord

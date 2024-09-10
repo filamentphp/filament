@@ -44,7 +44,7 @@ Filament::setCurrentPanel(
 To ensure that the List page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
 
 ```php
-it('can render page', function () {
+use PostResource\PostResource;it('can render page', function () {
     $this->get(PostResource::getUrl('index'))->assertSuccessful();
 });
 ```
@@ -73,7 +73,7 @@ it('can list posts', function () {
 To ensure that the Create page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
 
 ```php
-it('can render page', function () {
+use PostResource\PostResource;it('can render page', function () {
     $this->get(PostResource::getUrl('create'))->assertSuccessful();
 });
 ```
@@ -131,7 +131,7 @@ it('can validate input', function () {
 To ensure that the Edit page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
 
 ```php
-it('can render page', function () {
+use PostResource\PostResource;it('can render page', function () {
     $this->get(PostResource::getUrl('edit', [
         'record' => Post::factory()->create(),
     ]))->assertSuccessful();
@@ -255,7 +255,7 @@ it('can not delete', function () {
 To ensure that the View page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
 
 ```php
-it('can render page', function () {
+use PostResource\PostResource;it('can render page', function () {
     $this->get(PostResource::getUrl('view', [
         'record' => Post::factory()->create(),
     ]))->assertSuccessful();
@@ -291,7 +291,7 @@ it('can retrieve data', function () {
 To ensure that a relation manager is able to render successfully, mount the Livewire component:
 
 ```php
-use App\Filament\Resources\CategoryResource\Pages\EditCategory;
+use App\Filament\Resources\Categories\Pages\EditCategory;
 use function Pest\Livewire\livewire;
 
 it('can render relation manager', function () {
@@ -314,7 +314,7 @@ Filament includes a selection of helpers for testing tables. A full guide to tes
 To use a table [testing helper](../tables/testing), make assertions on the relation manager class, which holds the table:
 
 ```php
-use App\Filament\Resources\CategoryResource\Pages\EditCategory;
+use App\Filament\Resources\Categories\Pages\EditCategory;
 use function Pest\Livewire\livewire;
 
 it('can list posts', function () {

@@ -354,7 +354,7 @@ To register navigation items, call the `items()` method:
 
 ```php
 use App\Filament\Pages\Settings;
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\Users\UserResource;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
@@ -384,8 +384,8 @@ If you want to register groups, you can call the `groups()` method:
 
 ```php
 use App\Filament\Pages\HomePageSettings;
-use App\Filament\Resources\CategoryResource;
-use App\Filament\Resources\PageResource;
+use App\Filament\Resources\Categories\CategoryResource;
+use App\Filament\Resources\Pages\PageResource;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;

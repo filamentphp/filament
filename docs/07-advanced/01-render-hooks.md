@@ -160,7 +160,7 @@ use Illuminate\Support\Facades\Blade;
 FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
     fn (): View => view('warning-banner'),
-    scopes: \App\Filament\Resources\UserResource\Pages\EditUser::class,
+    scopes: \App\Filament\Resources\Users\Pages\EditUser::class,
 );
 ```
 
@@ -174,8 +174,8 @@ FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
     fn (): View => view('warning-banner'),
     scopes: [
-        \App\Filament\Resources\UserResource\Pages\CreateUser::class,
-        \App\Filament\Resources\UserResource\Pages\EditUser::class,
+        \App\Filament\Resources\Users\Pages\CreateUser::class,
+        \App\Filament\Resources\Users\Pages\EditUser::class,
     ],
 );
 ```
@@ -189,7 +189,7 @@ use Filament\View\PanelsRenderHook;
 FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
     fn (): View => view('warning-banner'),
-    scopes: \App\Filament\Resources\UserResource::class,
+    scopes: \App\Filament\Resources\Users\UserResource::class,
 );
 ```
 
@@ -204,7 +204,7 @@ use Filament\View\PanelsRenderHook;
 FilamentView::registerRenderHook(
     PanelsRenderHook::PAGE_START,
     fn (array $scopes): View => view('warning-banner', ['scopes' => $scopes]),
-    scopes: \App\Filament\Resources\UserResource::class,
+    scopes: \App\Filament\Resources\Users\UserResource::class,
 );
 ```
 
@@ -225,5 +225,5 @@ To provide scope your render hook, you can pass it as the second argument to `re
 You can even pass multiple scopes as an array, and all render hooks that match any of the scopes will be rendered:
 
 ```blade
-{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: [static::class, \App\Filament\Resources\UserResource::class]) }}
+{{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_START, scopes: [static::class, \App\Filament\Resources\Users\UserResource::class]) }}
 ```

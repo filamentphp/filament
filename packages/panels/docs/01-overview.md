@@ -46,8 +46,8 @@ The `discoverPages()` method registers a directory and namespace for page auto-d
 Often, CRUD interfaces are the backbone of a panel. If you aren't aware, CRUD stands for "create", "read", "update", and "delete", which are common operations that you may perform on a table in your database. Filament represents these operations as UI pages grouped by a "resource". A resource wires together these pages by associating them with a particular Eloquent model class that exists in your project. By default, when creating a resource for a panel, the following files are created in the `app/Filament/Resources` directory:
 
 ```
-+-- CustomerResource.php
-+-- CustomerResource
++-- Customers
+|   +-- CustomerResource.php
 |   +-- Pages
 |   |   +-- CreateCustomer.php
 |   |   +-- EditCustomer.php
@@ -55,7 +55,7 @@ Often, CRUD interfaces are the backbone of a panel. If you aren't aware, CRUD st
 ```
 
 - The `CustomerResource` class is the main resource file, where you can define the Eloquent model, customize the labeling for the UI, register and customize a navigation item that links to the CRUD, and any other configuration associated with it. This class extends `Filament\Resources\Resource`.
-- The `CustomerResource/Pages` directory contains the page classes that belong to that resource. These page classes are not auto-discovered by the panel since they live inside `app/Filament/Resources`, not `app/Filament/Pages`. They are registered in the main `CustomerResource.php` file, which is then auto-discovered or registered by the panel.
+- The `Pages` directory contains the page classes that belong to that resource. These page classes are not auto-discovered by the panel since they live inside `app/Filament/Resources`, not `app/Filament/Pages`. They are registered in the main `CustomerResource.php` file, which is then auto-discovered or registered by the panel.
   - The `ListCustomers` class is a page class that inherits from the `Filament\Resources\Pages\ListRecords` class, which itself extends `Filament\Pages\Page` and as such is a Livewire component. By default, it serves as a table view of all the records in the database table associated with the resource's Eloquent model. Out of the box, there is a way to select multiple records in the table and delete them all at once through a button and confirmation modal. It is rendered to the `index` route of the resource, which typically has a URL like `/customers`.
   - The `CreateCustomer` class extends `Filament\Resources\Pages\CreateRecord`, which renders a form to create a new record for the resource's Eloquent model. Once the form is submitted, the resource will handle the creation of the record in the database. It is rendered to the `create` route of the resource, which typically has a URL like `/customers/create`.
   - The `EditCustomer` class extends `Filament\Resources\Pages\EditRecord`, which renders a form to edit an existing record for the resource's Eloquent model. The resource is responsible for loading the existing data into the form from the database and saving any updates to the database once the form is submitted. By default, there is a "delete" button on this page which opens a confirmation modal before eventually deleting the record from the database. It is rendered to the `edit` route of the resource, which typically has a URL like `/customers/{record}/edit`, where `{record}` is the primary key of the record being edited.
@@ -74,7 +74,7 @@ There is also an alternative form of resource, nicknamed a "simple" resource, wh
 As mentioned previously, pages inside a resource are not auto-discovered by a panel, and they are registered in the resource class. The resource is then auto-discovered or registered by the panel. The registration of resources is very similar to the registration of pages that don't belong to a resource, as shown in the following example:
 
 ```php
-use DanHarrin\FilamentUsers\Resources\UserResource;
+use DanHarrin\FilamentUsers\Resources\Users\UserResource;
 use Filament\Panel;
 use Filament\PanelProvider;
 

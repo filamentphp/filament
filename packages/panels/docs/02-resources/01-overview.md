@@ -381,7 +381,7 @@ Filament provides `getUrl()` static method on resource classes to generate URLs 
 The `getUrl()` method, without any arguments, will generate a URL to the resource's [List page](listing-records):
 
 ```php
-use App\Filament\Resources\CustomerResource;
+use App\Filament\Resources\Customers\CustomerResource;
 
 CustomerResource::getUrl(); // /admin/customers
 ```
@@ -389,7 +389,7 @@ CustomerResource::getUrl(); // /admin/customers
 You may also generate URLs to specific pages within the resource. The name of each page is the array key in the `getPages()` array of the resource. For example, to generate a URL to the [Create page](creating-records):
 
 ```php
-use App\Filament\Resources\CustomerResource;
+use App\Filament\Resources\Customers\CustomerResource;
 
 CustomerResource::getUrl('create'); // /admin/customers/create
 ```
@@ -397,7 +397,7 @@ CustomerResource::getUrl('create'); // /admin/customers/create
 Some pages in the `getPages()` method use URL parameters like `record`. To generate a URL to these pages and pass in a record, you should use the second argument:
 
 ```php
-use App\Filament\Resources\CustomerResource;
+use App\Filament\Resources\Customers\CustomerResource;
 
 CustomerResource::getUrl('edit', ['record' => $customer]); // /admin/customers/edit/1
 ```
@@ -411,7 +411,7 @@ This can be especially useful if you are using [simple resources](#simple-modal-
 To generate a URL for an action in the resource's table, you should pass the `tableAction` and `tableActionRecord` as URL parameters:
 
 ```php
-use App\Filament\Resources\CustomerResource;
+use App\Filament\Resources\Customers\CustomerResource;
 use Filament\Actions\EditAction;
 
 CustomerResource::getUrl(parameters: [
@@ -423,7 +423,7 @@ CustomerResource::getUrl(parameters: [
 Or if you want to generate a URL for an action on the page like a `CreateAction` in the header, you can pass it in to the `action` parameter:
 
 ```php
-use App\Filament\Resources\CustomerResource;
+use App\Filament\Resources\Customers\CustomerResource;
 use Filament\Actions\CreateAction;
 
 CustomerResource::getUrl(parameters: [
@@ -436,7 +436,7 @@ CustomerResource::getUrl(parameters: [
 If you have multiple panels in your app, `getUrl()` will generate a URL within the current panel. You can also indicate which panel the resource is associated with, by passing the panel ID to the `panel` argument:
 
 ```php
-use App\Filament\Resources\CustomerResource;
+use App\Filament\Resources\Customers\CustomerResource;
 
 CustomerResource::getUrl(panel: 'marketing');
 ```
@@ -499,7 +499,7 @@ Sub-navigation allows the user to navigate between different pages within a reso
 To add a sub-navigation to each "singular record" page in the resource, you can add the `getRecordSubNavigation()` method to the resource class:
 
 ```php
-use App\Filament\Resources\CustomerResource\Pages;
+use App\Filament\Resources\Customers\Pages;
 use Filament\Resources\Pages\Page;
 
 public static function getRecordSubNavigation(Page $page): array

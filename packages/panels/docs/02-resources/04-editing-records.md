@@ -370,7 +370,7 @@ public function form(Schema $form): Schema
 If you're using [resource sub-navigation](overview#resource-sub-navigation), you can register this page as normal in `getRecordSubNavigation()` of the resource:
 
 ```php
-use App\Filament\Resources\CustomerResource\Pages;
+use App\Filament\Resources\Customers\Pages;
 use Filament\Resources\Pages\Page;
 
 public static function getRecordSubNavigation(Page $page): array
