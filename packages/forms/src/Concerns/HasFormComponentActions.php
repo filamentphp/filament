@@ -278,7 +278,7 @@ trait HasFormComponentActions
         }
     }
 
-    public function unmountFormComponentAction(bool $shouldCancelParentActions = true): void
+    public function unmountFormComponentAction(bool $shouldCancelParentActions = true, bool $shouldDispatchCloseModal = true): void
     {
         $action = $this->getMountedFormComponentAction();
 
@@ -302,7 +302,9 @@ trait HasFormComponentActions
         }
 
         if (! count($this->mountedFormComponentActions)) {
-            $this->closeFormComponentActionModal();
+            if ($shouldDispatchCloseModal) {
+                $this->closeFormComponentActionModal();
+            }
 
             return;
         }
