@@ -114,7 +114,13 @@ trait HasRecords
     {
         $query = $this->getQuery();
 
-        return $query?->getModel()::class;
+        $model = $query?->getModel();
+
+        if (blank($model)) {
+            return null;
+        }
+
+        return $model::class;
     }
 
     public function allowsDuplicates(): bool
