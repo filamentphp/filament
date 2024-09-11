@@ -50,30 +50,21 @@ class Field extends Component implements Contracts\HasValidationRules
         $this->statePath($name);
     }
 
-    /**
-     * @param ?string $name
-     */
-    public static function make(...$arguments): static
+    public static function make(?string $name = null): static
     {
         $fieldClass = static::class;
 
-        $name = $arguments['name'] ?? $arguments[0] ?? static::getDefaultName();
+        $name ??= static::getDefaultName();
 
         if ($name === null) {
             throw new Exception("Field of class [$fieldClass] must have a unique name, passed to the [make()] method.");
         }
 
-        $static = app($fieldClass, [
-            'name' => $name,
-        ]);
+        $static = app($fieldClass, ['name' => $name]);
+
         $static->configure();
 
         return $static;
-    }
-
-    protected function getRequiredMakeArguments(): array
-    {
-        return [];
     }
 
     protected function setUp(): void
