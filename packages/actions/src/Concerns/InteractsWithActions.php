@@ -398,7 +398,7 @@ trait InteractsWithActions
         $this->mountedActionsData = [];
     }
 
-    public function unmountAction(bool $shouldCancelParentActions = true, bool $shouldDispatchCloseModal = true): void
+    public function unmountAction(bool $shouldCancelParentActions = true, bool $shouldCloseModal = true): void
     {
         $action = $this->getMountedAction();
 
@@ -422,7 +422,7 @@ trait InteractsWithActions
         }
 
         if (! count($this->mountedActions)) {
-            if ($shouldDispatchCloseModal) {
+            if ($shouldCloseModal) {
                 $this->closeActionModal();
             }
 

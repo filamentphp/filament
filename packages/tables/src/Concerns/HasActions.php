@@ -317,7 +317,7 @@ trait HasActions
         $this->mountedTableActionsData = [];
     }
 
-    public function unmountTableAction(bool $shouldCancelParentActions = true, bool $shouldDispatchCloseModal = true): void
+    public function unmountTableAction(bool $shouldCancelParentActions = true, bool $shouldCloseModal = true): void
     {
         $action = $this->getMountedTableAction();
 
@@ -341,7 +341,7 @@ trait HasActions
         }
 
         if (! count($this->mountedTableActions)) {
-            if ($shouldDispatchCloseModal) {
+            if ($shouldCloseModal) {
                 $this->closeTableActionModal();
             }
 

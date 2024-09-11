@@ -297,7 +297,7 @@ trait InteractsWithInfolists
         );
     }
 
-    public function unmountInfolistAction(bool $shouldCancelParentActions = true, bool $shouldDispatchCloseModal = true): void
+    public function unmountInfolistAction(bool $shouldCancelParentActions = true, bool $shouldCloseModal = true): void
     {
         $action = $this->getMountedInfolistAction();
 
@@ -327,7 +327,7 @@ trait InteractsWithInfolists
             $this->mountedInfolistActionsComponent = null;
             $this->mountedInfolistActionsInfolist = null;
 
-            if ($shouldDispatchCloseModal) {
+            if ($shouldCloseModal) {
                 $this->dispatch('close-modal', id: "{$this->getId()}-infolist-action");
             }
 
