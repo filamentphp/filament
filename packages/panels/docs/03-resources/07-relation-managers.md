@@ -295,6 +295,17 @@ AttachAction::make()
     ->preloadRecordSelect()
 ```
 
+### Defining a limit on the select options
+
+By default, the options limit is set to 50 and will load from the Select component. If you wish to set your own limit, define the options limit to the `AttachAction`
+
+```php
+use Filament\Tables\Actions\AttachAction;
+
+AttachAction::make()
+    ->optionsLimit(5)
+```
+
 ### Attaching with pivot attributes
 
 When you attach record with the `Attach` button, you may wish to define a custom form to add pivot attributes to the relationship:
