@@ -33,6 +33,8 @@ class AttachAction extends Action
 
     protected bool | Closure $isMultiple = false;
 
+    protected int | Closure $recordSelectOptionsLimit = 50;
+
     /**
      * @var array<string> | Closure | null
      */
@@ -51,7 +53,7 @@ class AttachAction extends Action
 
         $this->label(__('filament-actions::attach.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-actions::attach.single.modal.heading', ['label' => $this->getModelLabel()]));
+        $this->modalHeading(fn(): string => __('filament-actions::attach.single.modal.heading', ['label' => $this->getModelLabel()]));
 
         $this->modalSubmitActionLabel(__('filament-actions::attach.single.modal.actions.attach.label'));
 
@@ -68,11 +70,11 @@ class AttachAction extends Action
 
         $this->color('gray');
 
-        $this->form(fn (): array => [$this->getRecordSelect()]);
+        $this->form(fn(): array => [$this->getRecordSelect()]);
 
         $this->action(function (array $arguments, array $data, Form $form, Table $table): void {
             /** @var BelongsToMany $relationship */
-            $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+            $relationship = Relation::noConstraints(fn() => $table->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
@@ -138,7 +140,7 @@ class AttachAction extends Action
      */
     public function disableAttachAnother(bool | Closure $condition = true): static
     {
-        $this->attachAnother(fn (AttachAction $action): bool => ! $action->evaluate($condition));
+        $this->attachAnother(fn(AttachAction $action): bool => ! $action->evaluate($condition));
 
         return $this;
     }
@@ -146,6 +148,13 @@ class AttachAction extends Action
     public function preloadRecordSelect(bool | Closure $condition = true): static
     {
         $this->isRecordSelectPreloaded = $condition;
+
+        return $this;
+    }
+
+    public function optionsLimit(int | Closure $limit): static
+    {
+        $this->recordSelectOptionsLimit = $limit;
 
         return $this;
     }
@@ -190,13 +199,18 @@ class AttachAction extends Action
         return $this->evaluate($this->recordSelectSearchColumns);
     }
 
+    public function getOptionsLimit(): int
+    {
+        return $this->evaluate($this->recordSelectOptionsLimit);
+    }
+
     public function getRecordSelect(): Select
     {
         $table = $this->getTable();
 
         $getOptions = function (int $optionsLimit, ?string $search = null, ?array $searchColumns = []) use ($table): array {
             /** @var BelongsToMany $relationship */
-            $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+            $relationship = Relation::noConstraints(fn() => $table->getRelationship());
 
             $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
@@ -246,9 +260,9 @@ class AttachAction extends Action
             $relationshipQuery
                 ->when(
                     ! $table->allowsDuplicates(),
-                    fn (Builder $query): Builder => $query->whereDoesntHave(
+                    fn(Builder $query): Builder => $query->whereDoesntHave(
                         $table->getInverseRelationship(),
-                        fn (Builder $query): Builder => $query->where(
+                        fn(Builder $query): Builder => $query->where(
                             // https://github.com/filamentphp/filament/issues/8067
                             $relationship->getParent()->getTable() === $relationship->getRelated()->getTable() ?
                                 "{$relationCountHash}.{$relationship->getParent()->getKeyName()}" :
@@ -276,7 +290,7 @@ class AttachAction extends Action
 
             return $relationshipQuery
                 ->get()
-                ->mapWithKeys(fn (Model $record): array => [$record->{$relatedKeyName} => $this->getRecordTitle($record)])
+                ->mapWithKeys(fn(Model $record): array => [$record->{$relatedKeyName} => $this->getRecordTitle($record)])
                 ->all();
         };
 
@@ -285,24 +299,24 @@ class AttachAction extends Action
             ->required()
             ->multiple($this->isMultiple())
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
-            ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(optionsLimit: $component->getOptionsLimit(), search: $search, searchColumns: $component->getSearchColumns()))
+            ->getSearchResultsUsing(static fn(Select $component, string $search): array => $getOptions(optionsLimit: $this->getOptionsLimit(), search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(function ($value) use ($table): string {
-                $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+                $relationship = Relation::noConstraints(fn() => $table->getRelationship());
 
                 $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
                 return $this->getRecordTitle($relationshipQuery->find($value));
             })
             ->getOptionLabelsUsing(function (array $values) use ($table): array {
-                $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+                $relationship = Relation::noConstraints(fn() => $table->getRelationship());
 
                 $relationshipQuery = app(RelationshipJoiner::class)->prepareQueryForNoConstraints($relationship);
 
                 return $relationshipQuery->find($values)
-                    ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
+                    ->mapWithKeys(fn(Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
                     ->all();
             })
-            ->options(fn (Select $component): array => $this->isRecordSelectPreloaded() ? $getOptions(optionsLimit: $component->getOptionsLimit()) : [])
+            ->options(fn(Select $component): array => $this->isRecordSelectPreloaded() ? $getOptions(optionsLimit: $this->getOptionsLimit()) : [])
             ->hiddenLabel();
 
         if ($this->modifyRecordSelectUsing) {
