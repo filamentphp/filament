@@ -64,6 +64,8 @@ class Login extends SimplePage
             $this->throwFailureValidationException();
         }
 
+        session()->flush();
+
         $user = Filament::auth()->user();
 
         if (
