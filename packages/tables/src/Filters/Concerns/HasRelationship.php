@@ -2,8 +2,8 @@
 
 namespace Filament\Tables\Filters\Concerns;
 
-use Exception;
 use Closure;
+use Exception;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
