@@ -302,9 +302,7 @@ trait HasFormComponentActions
         }
 
         if (! count($this->mountedFormComponentActions)) {
-            if ($shouldCloseModal) {
-                $this->closeFormComponentActionModal();
-            }
+            $this->closeFormComponentActionModal($shouldCloseModal);
 
             return;
         }
@@ -314,9 +312,11 @@ trait HasFormComponentActions
         $this->openFormComponentActionModal();
     }
 
-    protected function closeFormComponentActionModal(): void
+    protected function closeFormComponentActionModal(bool $shouldCloseModal = true): void
     {
-        $this->dispatch('close-modal', id: "{$this->getId()}-form-component-action");
+        if ($shouldCloseModal) {
+            $this->dispatch('close-modal', id: "{$this->getId()}-form-component-action");
+        }
 
         $this->dispatch('closed-form-component-action-modal', id: $this->getId());
     }
