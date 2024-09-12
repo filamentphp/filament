@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters\Concerns;
 
+use Exception;
 use Closure;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
@@ -49,11 +50,15 @@ trait HasRelationship
 
     public function getRelationship(): Relation | Builder
     {
-        $record = app($this->getTable()->getModel());
+        $model = $this->getTable()->getModel();
+
+        $record = app($model);
 
         $relationship = null;
 
-        foreach (explode('.', $this->getRelationshipName()) as $nestedRelationshipName) {
+        $relationshipName = $this->getRelationshipName();
+
+        foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -62,6 +67,10 @@ trait HasRelationship
 
             $relationship = $record->{$nestedRelationshipName}();
             $record = $relationship->getRelated();
+        }
+
+        if (! $relationship) {
+            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$model}].");
         }
 
         return $relationship;
