@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters;
 
 use Closure;
+use Filament\Forms\Components\Concerns\CanAllowHtml;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -13,6 +14,7 @@ class SelectFilter extends BaseFilter
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
     use Concerns\HasRelationship;
+    use CanAllowHtml;
 
     protected string | Closure | null $attribute = null;
 
@@ -254,6 +256,7 @@ class SelectFilter extends BaseFilter
     public function getFormField(): Select
     {
         $field = Select::make($this->isMultiple() ? 'values' : 'value')
+            ->allowHtml($this->isHtmlAllowed())
             ->label($this->getLabel())
             ->multiple($this->isMultiple())
             ->placeholder($this->getPlaceholder())
