@@ -11,10 +11,10 @@ use Znck\Eloquent\Relations\BelongsToThrough;
 
 class SelectFilter extends BaseFilter
 {
+    use CanAllowHtml;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
     use Concerns\HasRelationship;
-    use CanAllowHtml;
 
     protected string | Closure | null $attribute = null;
 
