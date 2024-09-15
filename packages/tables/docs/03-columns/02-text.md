@@ -73,6 +73,15 @@ TextColumn::make('created_at')
     ->dateTime()
 ```
 
+You may use also the `dateIso()` and `dateTimeIso()` methods to format the column's state using [PHP date formatting macro-formats](https://carbon.nesbot.com/docs/#available-macro-formats):
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('created_at')
+    ->dateTimeIso()
+```
+
 You may use the `since()` method to format the column's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/docs/#api-humandiff):
 
 ```php
@@ -82,7 +91,7 @@ TextColumn::make('created_at')
     ->since()
 ```
 
-Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()` or `timeTooltip()` method to display a formatted date in a tooltip, often to provide extra information:
+Additionally, you can use the `dateTooltip()`, `dateTimeTooltip()`, `timeTooltip()`, `dateIsoTooltip()`, `dateTimeIsoTooltip()` or `timeIsoTooltip()` method to display a formatted date in a tooltip, often to provide extra information:
 
 ```php
 use Filament\Tables\Columns\TextColumn;

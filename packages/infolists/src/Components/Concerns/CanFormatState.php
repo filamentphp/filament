@@ -82,6 +82,35 @@ trait CanFormatState
         return $this;
     }
 
+    public function dateIso(?string $format = null): static
+    {
+        $this->isDate = true;
+
+        $format ??= Infolist::$defaultDateIsoDisplayFormat;
+
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($format): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->isoFormat($format);
+        });
+
+        return $this;
+    }
+
+    public function dateTimeIso(?string $format = null): static
+    {
+        $this->isDateTime = true;
+
+        $format ??= Infolist::$defaultDateTimeIsoDisplayFormat;
+
+        $this->dateIso($format);
+
+        return $this;
+    }
+
     public function since(?string $timezone = null): static
     {
         $this->isDateTime = true;
@@ -130,6 +159,40 @@ trait CanFormatState
         $format ??= Infolist::$defaultTimeDisplayFormat;
 
         $this->dateTooltip($format, $timezone);
+
+        return $this;
+    }
+
+    public function dateIsoTooltip(?string $format = null): static
+    {
+        $format ??= Infolist::$defaultDateIsoDisplayFormat;
+
+        $this->tooltip(static function (TextEntry $component, mixed $state) use ($format): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->isoFormat($format);
+        });
+
+        return $this;
+    }
+
+    public function dateTimeIsoTooltip(?string $format = null): static
+    {
+        $format ??= Infolist::$defaultDateTimeIsoDisplayFormat;
+
+        $this->dateIsoTooltip($format);
+
+        return $this;
+    }
+
+    public function timeIsoTooltip(?string $format = null): static
+    {
+        $format ??= Infolist::$defaultTimeIsoDisplayFormat;
+
+        $this->dateIsoTooltip($format);
 
         return $this;
     }
