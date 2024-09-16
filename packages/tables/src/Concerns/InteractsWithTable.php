@@ -105,6 +105,7 @@ trait InteractsWithTable
 
         if ($this->getTable()->isDefaultGroupSelectable()) {
             $this->tableGrouping = $this->getTable()->getDefaultGroup()->getId();
+            $this->tableGroupingDirection ??= $this->getTable()->getDefaultGroupingDirection();
         }
 
         $shouldPersistSearchInSession = $this->getTable()->persistsSearchInSession();
