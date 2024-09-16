@@ -1,11 +1,12 @@
 <?php
 
-use function Filament\Tests\livewire;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ViewPost;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Support\Str;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 

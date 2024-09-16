@@ -8,8 +8,9 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use function Laravel\Prompts\select;
 use Symfony\Component\Console\Attribute\AsCommand;
+
+use function Laravel\Prompts\select;
 
 #[AsCommand(name: 'make:filament-theme')]
 class MakeThemeCommand extends Command

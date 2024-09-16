@@ -90,7 +90,7 @@ const pluralize = function (text, number, variables) {
 
     function stripConditions(segments) {
         return segments.map((part) =>
-            part.replace(/^[\{\[]([^\[\]\{\}]*)[\}\]]/, '')
+            part.replace(/^[\{\[]([^\[\]\{\}]*)[\}\]]/, ''),
         )
     }
 
@@ -106,7 +106,7 @@ const pluralize = function (text, number, variables) {
 
     return replace(
         segments.length > 1 && number > 1 ? segments[1] : segments[0],
-        variables
+        variables,
     )
 }
 

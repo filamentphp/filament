@@ -115,7 +115,7 @@ class Notification {
                 detail: {
                     notification: this,
                 },
-            })
+            }),
         )
 
         return this

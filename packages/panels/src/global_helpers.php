@@ -4,7 +4,7 @@ use Filament\Contracts\Plugin;
 use Filament\FilamentManager;
 
 if (! function_exists('filament')) {
-    function filament(string $plugin = null): FilamentManager | Plugin
+    function filament(?string $plugin = null): FilamentManager | Plugin
     {
         /** @var FilamentManager $filament */
         $filament = app('filament');

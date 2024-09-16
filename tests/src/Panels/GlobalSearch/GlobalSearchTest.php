@@ -5,11 +5,12 @@ use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\GlobalSearch\GlobalSearchResults;
 use Filament\Livewire\GlobalSearch;
-use function Filament\Tests\livewire;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\GlobalSearch\TestCase;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Str;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 

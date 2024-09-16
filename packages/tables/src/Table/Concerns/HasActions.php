@@ -34,7 +34,7 @@ trait HasActions
     /**
      * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
-    public function actions(array | ActionGroup $actions, ActionsPosition | string | Closure $position = null): static
+    public function actions(array | ActionGroup $actions, ActionsPosition | string | Closure | null $position = null): static
     {
         $this->actions = [];
         $this->pushActions($actions);
@@ -85,14 +85,14 @@ trait HasActions
         return $this;
     }
 
-    public function actionsAlignment(string | Closure $alignment = null): static
+    public function actionsAlignment(string | Closure | null $alignment = null): static
     {
         $this->actionsAlignment = $alignment;
 
         return $this;
     }
 
-    public function actionsPosition(ActionsPosition | Closure $position = null): static
+    public function actionsPosition(ActionsPosition | Closure | null $position = null): static
     {
         $this->actionsPosition = $position;
 
@@ -185,7 +185,7 @@ trait HasActions
     /**
      * @param  array<string>  $modalActionNames
      */
-    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, Model $mountedRecord = null): ?Action
+    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, ?Model $mountedRecord = null): ?Action
     {
         $arguments = $this->getLivewire()->mountedTableActionsArguments ?? [];
 

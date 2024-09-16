@@ -64,7 +64,7 @@ class TestsColumns
 
     public function assertTableColumnExists(): Closure
     {
-        return function (string $name, Closure $checkColumnUsing = null, $record = null): static {
+        return function (string $name, ?Closure $checkColumnUsing = null, $record = null): static {
             $column = $this->instance()->getTable()->getColumn($name);
 
             $livewireClass = $this->instance()::class;
@@ -96,7 +96,7 @@ class TestsColumns
 
     public function assertTableColumnDoesNotExist(): Closure
     {
-        return function (string $name, Closure $checkColumnUsing = null, $record = null): static {
+        return function (string $name, ?Closure $checkColumnUsing = null, $record = null): static {
             $column = $this->instance()->getTable()->getColumn($name);
 
             $livewireClass = $this->instance()::class;
@@ -470,7 +470,7 @@ class TestsColumns
 
     public function sortTable(): Closure
     {
-        return function (string $name = null, string $direction = null): static {
+        return function (?string $name = null, ?string $direction = null): static {
             $this->call('sortTable', $name, $direction);
 
             return $this;
@@ -479,7 +479,7 @@ class TestsColumns
 
     public function searchTable(): Closure
     {
-        return function (string $search = null): static {
+        return function (?string $search = null): static {
             $this->set('tableSearch', $search);
 
             return $this;

@@ -103,7 +103,7 @@
                             @if ($isReorderable)
                                 x-bind:x-sortable-item="row.key"
                             @endif
-                            class="divide-x divide-gray-200 rtl:divide-x-reverse dark:divide-white/5"
+                            class="divide-x divide-gray-200 dark:divide-white/5 rtl:divide-x-reverse"
                         >
                             @if ($isReorderable && (! $isDisabled))
                                 <td class="p-0.5">

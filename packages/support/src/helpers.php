@@ -59,7 +59,7 @@ if (! function_exists('Filament\Support\get_color_css_variables')) {
      * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
      * @param  array<int>  $shades
      */
-    function get_color_css_variables(string | array | null $color, array $shades, string $alias = null): ?string
+    function get_color_css_variables(string | array | null $color, array $shades, ?string $alias = null): ?string
     {
         if ($color === null) {
             return null;
@@ -137,7 +137,7 @@ if (! function_exists('Filament\Support\is_app_url')) {
 }
 
 if (! function_exists('Filament\Support\generate_href_html')) {
-    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false, bool $shouldOpenInSpaMode = null): Htmlable
+    function generate_href_html(?string $url, bool $shouldOpenInNewTab = false, ?bool $shouldOpenInSpaMode = null): Htmlable
     {
         if (blank($url)) {
             return new HtmlString('');

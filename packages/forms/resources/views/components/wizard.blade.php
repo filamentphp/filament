@@ -199,7 +199,7 @@
                         @endif
                     </div>
 
-                    <div class="md:max-w-60 grid justify-items-start md:w-max">
+                    <div class="grid justify-items-start md:w-max md:max-w-60">
                         @if (! $step->isLabelHidden())
                             <span
                                 class="fi-fo-wizard-header-step-label text-sm font-medium"
@@ -234,7 +234,7 @@
                             fill="none"
                             preserveAspectRatio="none"
                             viewBox="0 0 22 80"
-                            class="h-full w-full text-gray-200 rtl:rotate-180 dark:text-white/5"
+                            class="h-full w-full text-gray-200 dark:text-white/5 rtl:rotate-180"
                         >
                             <path
                                 d="M0 -2L20 40L0 82"

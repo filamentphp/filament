@@ -7,7 +7,7 @@ use Filament\Notifications\Notification;
 /**
  * @return TestCall | TestCase | mixed
  */
-function assertNotified(Notification | string $notification = null)
+function assertNotified(Notification | string | null $notification = null)
 {
     Notification::assertNotified($notification);
 

@@ -167,7 +167,7 @@ trait HasState
     /**
      * @param  array<string, mixed> | null  $state
      */
-    public function fill(array $state = null, bool $andCallHydrationHooks = true, bool $andFillStateWithNull = true): static
+    public function fill(?array $state = null, bool $andCallHydrationHooks = true, bool $andFillStateWithNull = true): static
     {
         $hydratedDefaultState = null;
 
@@ -221,7 +221,7 @@ trait HasState
     /**
      * @return array<string, mixed>
      */
-    public function getState(bool $shouldCallHooksBefore = true, Closure $afterValidate = null): array
+    public function getState(bool $shouldCallHooksBefore = true, ?Closure $afterValidate = null): array
     {
         $state = $this->validate();
 

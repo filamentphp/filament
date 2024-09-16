@@ -3,9 +3,10 @@
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 use Filament\Tests\Forms\Fixtures\Actions;
-use function Filament\Tests\livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 

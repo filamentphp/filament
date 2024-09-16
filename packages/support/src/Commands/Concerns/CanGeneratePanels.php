@@ -6,13 +6,14 @@ use Filament\Facades\Filament;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\text;
 
 trait CanGeneratePanels
 {
     use CanManipulateFiles;
 
-    public function generatePanel(string $id = null, string $default = '', string $placeholder = '', bool $force = false): bool
+    public function generatePanel(?string $id = null, string $default = '', string $placeholder = '', bool $force = false): bool
     {
         $id = Str::lcfirst($id ?? text(
             label: 'What is the ID?',

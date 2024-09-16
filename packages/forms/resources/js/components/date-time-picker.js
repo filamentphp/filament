@@ -76,7 +76,7 @@ export default function dateTimePickerFormComponent({
 
             if (isAutofocused) {
                 this.$nextTick(() =>
-                    this.togglePanelVisibility(this.$refs.button)
+                    this.togglePanelVisibility(this.$refs.button),
                 )
             }
 
@@ -264,7 +264,7 @@ export default function dateTimePickerFormComponent({
                         }
 
                         return disabledDate.isSame(date, 'day')
-                    }
+                    },
                 )
             ) {
                 return true
@@ -428,20 +428,20 @@ export default function dateTimePickerFormComponent({
                 {
                     length: this.focusedDate.date(8 - firstDayOfWeek).day(),
                 },
-                (_, i) => i + 1
+                (_, i) => i + 1,
             )
 
             this.daysInFocusedMonth = Array.from(
                 {
                     length: this.focusedDate.daysInMonth(),
                 },
-                (_, i) => i + 1
+                (_, i) => i + 1,
             )
         },
 
         setFocusedDay: function (day) {
             this.focusedDate = (this.focusedDate ?? dayjs().tz(timezone)).date(
-                day
+                day,
             )
         },
 

@@ -4,10 +4,11 @@ namespace Filament\Actions\Exports\Http\Controllers;
 
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\Models\Export;
-use function Filament\authorize;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+
+use function Filament\authorize;
 
 class DownloadExport
 {

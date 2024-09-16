@@ -52,7 +52,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function date(string $format = null, string $timezone = null): static
+    public function date(?string $format = null, ?string $timezone = null): static
     {
         $this->isDate = true;
 
@@ -71,7 +71,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function dateTime(string $format = null, string $timezone = null): static
+    public function dateTime(?string $format = null, ?string $timezone = null): static
     {
         $this->isDateTime = true;
 
@@ -82,7 +82,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function since(string $timezone = null): static
+    public function since(?string $timezone = null): static
     {
         $this->isDateTime = true;
 
@@ -99,7 +99,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure $currency = null, int $divideBy = 0, string | Closure $locale = null): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
     {
         $this->isMoney = true;
 
@@ -124,7 +124,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function numeric(int | Closure $decimalPlaces = null, string | Closure | null | ArgumentValue $decimalSeparator = ArgumentValue::Default, string | Closure | null | ArgumentValue $thousandsSeparator = ArgumentValue::Default, int | Closure $maxDecimalPlaces = null, string | Closure $locale = null): static
+    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null | ArgumentValue $decimalSeparator = ArgumentValue::Default, string | Closure | null | ArgumentValue $thousandsSeparator = ArgumentValue::Default, int | Closure | null $maxDecimalPlaces = null, string | Closure | null $locale = null): static
     {
         $this->isNumeric = true;
 
@@ -159,7 +159,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function time(string $format = null, string $timezone = null): static
+    public function time(?string $format = null, ?string $timezone = null): static
     {
         $this->isTime = true;
 

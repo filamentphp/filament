@@ -10,11 +10,12 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Attribute\AsCommand;
+
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
-use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'make:filament-page')]
 class MakePageCommand extends Command

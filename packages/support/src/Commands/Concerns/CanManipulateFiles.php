@@ -3,8 +3,9 @@
 namespace Filament\Support\Commands\Concerns;
 
 use Illuminate\Filesystem\Filesystem;
-use function Laravel\Prompts\confirm;
 use ReflectionClass;
+
+use function Laravel\Prompts\confirm;
 
 trait CanManipulateFiles
 {

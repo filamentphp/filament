@@ -23,7 +23,7 @@ document.addEventListener('alpine:init', () => {
         toggleCollapsedGroup: function (group) {
             this.collapsedGroups = this.collapsedGroups.includes(group)
                 ? this.collapsedGroups.filter(
-                      (collapsedGroup) => collapsedGroup !== group
+                      (collapsedGroup) => collapsedGroup !== group,
                   )
                 : this.collapsedGroups.concat(group)
         },
@@ -40,7 +40,7 @@ document.addEventListener('alpine:init', () => {
     const theme =
         localStorage.getItem('theme') ??
         getComputedStyle(document.documentElement).getPropertyValue(
-            '--default-theme-mode'
+            '--default-theme-mode',
         )
 
     window.Alpine.store(
@@ -49,7 +49,7 @@ document.addEventListener('alpine:init', () => {
             (theme === 'system' &&
                 window.matchMedia('(prefers-color-scheme: dark)').matches)
             ? 'dark'
-            : 'light'
+            : 'light',
     )
 
     window.addEventListener('theme-changed', (event) => {

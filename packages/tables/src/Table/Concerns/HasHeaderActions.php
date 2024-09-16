@@ -19,7 +19,7 @@ trait HasHeaderActions
 
     protected HeaderActionsPosition | Closure | null $headerActionsPosition = null;
 
-    public function headerActionsPosition(HeaderActionsPosition | Closure $position = null): static
+    public function headerActionsPosition(HeaderActionsPosition | Closure | null $position = null): static
     {
         $this->headerActionsPosition = $position;
 
@@ -29,7 +29,7 @@ trait HasHeaderActions
     /**
      * @param  array<Action | BulkAction | ActionGroup> | ActionGroup  $actions
      */
-    public function headerActions(array | ActionGroup $actions, HeaderActionsPosition | Closure $position = null): static
+    public function headerActions(array | ActionGroup $actions, HeaderActionsPosition | Closure | null $position = null): static
     {
         $this->headerActions = [];
         $this->pushHeaderActions($actions);

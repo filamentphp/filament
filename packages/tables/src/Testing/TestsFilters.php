@@ -65,7 +65,7 @@ class TestsFilters
 
     public function removeTableFilter(): Closure
     {
-        return function (string $filter, string $field = null): static {
+        return function (string $filter, ?string $field = null): static {
             $this->call('removeTableFilter', $this->instance()->parseTableFilterName($filter), $field);
 
             return $this;

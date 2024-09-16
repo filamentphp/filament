@@ -35,12 +35,12 @@ class Summarizer extends ViewComponent
 
     protected ?Closure $using = null;
 
-    final public function __construct(string $id = null)
+    final public function __construct(?string $id = null)
     {
         $this->id($id);
     }
 
-    public static function make(string $id = null): static
+    public static function make(?string $id = null): static
     {
         $static = app(static::class, ['id' => $id]);
         $static->configure();

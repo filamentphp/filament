@@ -10,7 +10,7 @@ trait CanSortRecords
 
     public ?string $tableSortDirection = null;
 
-    public function sortTable(string $column = null, string $direction = null): void
+    public function sortTable(?string $column = null, ?string $direction = null): void
     {
         if ($column === $this->tableSortColumn) {
             $direction ??= match ($this->tableSortDirection) {

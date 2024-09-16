@@ -8,11 +8,12 @@ use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
-use function Filament\Tests\livewire;
 use Filament\Tests\Notifications\Fixtures\CustomNotification;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 

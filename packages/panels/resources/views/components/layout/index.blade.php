@@ -99,7 +99,7 @@
                 document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => {
                         let activeSidebarItem = document.querySelector(
-                            '.fi-main-sidebar .fi-sidebar-item.fi-active'
+                            '.fi-main-sidebar .fi-sidebar-item.fi-active',
                         )
 
                         if (
@@ -107,7 +107,7 @@
                             activeSidebarItem.offsetParent === null
                         ) {
                             activeSidebarItem = document.querySelector(
-                                '.fi-main-sidebar .fi-sidebar-group.fi-active'
+                                '.fi-main-sidebar .fi-sidebar-group.fi-active',
                             )
                         }
 
@@ -119,7 +119,7 @@
                         }
 
                         const sidebarWrapper = document.querySelector(
-                            '.fi-main-sidebar .fi-sidebar-nav'
+                            '.fi-main-sidebar .fi-sidebar-nav',
                         )
 
                         if (!sidebarWrapper) {
@@ -128,7 +128,8 @@
 
                         sidebarWrapper.scrollTo(
                             0,
-                            activeSidebarItem.offsetTop - window.innerHeight / 2
+                            activeSidebarItem.offsetTop -
+                                window.innerHeight / 2,
                         )
                     }, 10)
                 })

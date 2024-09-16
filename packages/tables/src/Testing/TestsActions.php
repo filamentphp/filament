@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Features\SupportTesting\Testable;
+
 use function Livewire\store;
 
 /**
@@ -138,7 +139,7 @@ class TestsActions
 
     public function assertTableActionExists(): Closure
     {
-        return function (string | array $name, Closure $checkActionUsing = null, $record = null): static {
+        return function (string | array $name, ?Closure $checkActionUsing = null, $record = null): static {
             $name = $this->parseNestedActionName($name);
 
             $action = $this->instance()->getTable()->getAction($name);
@@ -173,7 +174,7 @@ class TestsActions
 
     public function assertTableActionDoesNotExist(): Closure
     {
-        return function (string | array $name, Closure $checkActionUsing = null, $record = null): static {
+        return function (string | array $name, ?Closure $checkActionUsing = null, $record = null): static {
             $name = $this->parseNestedActionName($name);
 
             $action = $this->instance()->getTable()->getAction($name);

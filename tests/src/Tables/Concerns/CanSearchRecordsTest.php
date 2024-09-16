@@ -2,6 +2,7 @@
 
 use Filament\Tables\Concerns\CanSearchRecords;
 use Filament\Tests\Tables\TestCase;
+
 use function PHPUnit\Framework\assertCount;
 
 uses(TestCase::class);

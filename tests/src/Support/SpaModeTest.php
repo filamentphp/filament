@@ -1,8 +1,9 @@
 <?php
 
 use Filament\Support\Facades\FilamentView;
-use function Filament\Support\generate_href_html;
 use Filament\Tests\TestCase;
+
+use function Filament\Support\generate_href_html;
 
 uses(TestCase::class);
 

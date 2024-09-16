@@ -44,7 +44,7 @@ class PanelRegistry
         );
     }
 
-    public function get(string $id = null): Panel
+    public function get(?string $id = null): Panel
     {
         return $this->panels[$id] ?? $this->getDefault();
     }

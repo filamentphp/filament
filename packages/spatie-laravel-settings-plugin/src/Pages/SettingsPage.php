@@ -11,8 +11,9 @@ use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
-use function Filament\Support\is_app_url;
 use Throwable;
+
+use function Filament\Support\is_app_url;
 
 /**
  * @property ComponentContainer $form

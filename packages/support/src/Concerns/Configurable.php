@@ -7,7 +7,7 @@ use Filament\Support\Components\ComponentManager;
 
 trait Configurable
 {
-    public static function configureUsing(Closure $modifyUsing, Closure $during = null, bool $isImportant = false): mixed
+    public static function configureUsing(Closure $modifyUsing, ?Closure $during = null, bool $isImportant = false): mixed
     {
         return ComponentManager::resolve()->configureUsing(
             static::class,

@@ -8,9 +8,10 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use Symfony\Component\Console\Attribute\AsCommand;
+
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
-use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'make:livewire-form')]
 class MakeFormCommand extends Command

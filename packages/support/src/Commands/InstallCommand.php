@@ -8,8 +8,9 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
-use function Laravel\Prompts\confirm;
 use Symfony\Component\Console\Attribute\AsCommand;
+
+use function Laravel\Prompts\confirm;
 
 #[AsCommand(name: 'filament:install')]
 class InstallCommand extends Command

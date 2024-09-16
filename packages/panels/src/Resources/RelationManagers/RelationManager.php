@@ -4,7 +4,6 @@ namespace Filament\Resources\RelationManagers;
 
 use Closure;
 use Filament\Actions;
-use function Filament\authorize;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -22,6 +21,8 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
+
+use function Filament\authorize;
 
 class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
 {
@@ -313,7 +314,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canRestoreAny());
     }
 
-    protected function can(string $action, Model $record = null): bool
+    protected function can(string $action, ?Model $record = null): bool
     {
         if (static::shouldSkipAuthorization()) {
             return true;

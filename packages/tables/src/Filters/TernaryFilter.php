@@ -136,7 +136,7 @@ class TernaryFilter extends SelectFilter
         return $this;
     }
 
-    public function queries(Closure $true, Closure $false, Closure $blank = null): static
+    public function queries(Closure $true, Closure $false, ?Closure $blank = null): static
     {
         $this->query(function (Builder $query, array $data) use ($blank, $false, $true) {
             if (blank($data['value'] ?? null)) {

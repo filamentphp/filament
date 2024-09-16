@@ -3,8 +3,9 @@
 use Filament\Notifications\Notification;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\Actions\TestCase;
-use function Filament\Tests\livewire;
 use Illuminate\Support\Str;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 

@@ -5,13 +5,14 @@ namespace Filament\Tables\Table\Concerns;
 use BackedEnum;
 use Closure;
 use Filament\Support\Contracts\HasLabel;
-use function Filament\Support\get_model_label;
-use function Filament\Support\locale_has_pluralization;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+
+use function Filament\Support\get_model_label;
+use function Filament\Support\locale_has_pluralization;
 
 trait HasRecords
 {

@@ -508,12 +508,12 @@ trait CanImportRecords
         return $this->evaluate($this->headerOffset);
     }
 
-    public function getCsvDelimiter(CsvReader $reader = null): ?string
+    public function getCsvDelimiter(?CsvReader $reader = null): ?string
     {
         return $this->evaluate($this->csvDelimiter) ?? $this->guessCsvDelimiter($reader);
     }
 
-    protected function guessCsvDelimiter(CsvReader $reader = null): ?string
+    protected function guessCsvDelimiter(?CsvReader $reader = null): ?string
     {
         if (! $reader) {
             return null;

@@ -74,10 +74,10 @@ var isMobile = function () {
     ;(function (a) {
         if (
             /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(
-                a
+                a,
             ) ||
             /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw-(n|u)|c55\/|capi|ccwa|cdm-|cell|chtm|cldc|cmd-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc-s|devi|dica|dmob|do(c|p)o|ds(12|-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(-|_)|g1 u|g560|gene|gf-5|g-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd-(m|p|t)|hei-|hi(pt|ta)|hp( i|ip)|hs-c|ht(c(-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i-(20|go|ma)|i230|iac( |-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|-[a-w])|libw|lynx|m1-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|-([1-8]|c))|phil|pire|pl(ay|uc)|pn-2|po(ck|rt|se)|prox|psio|pt-g|qa-a|qc(07|12|21|32|60|-[2-7]|i-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h-|oo|p-)|sdk\/|se(c(-|0|1)|47|mc|nd|ri)|sgh-|shar|sie(-|m)|sk-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h-|v-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl-|tdg-|tel(i|m)|tim-|t-mo|to(pl|sh)|ts(70|m-|m3|m5)|tx-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas-|your|zeto|zte-/i.test(
-                a.substr(0, 4)
+                a.substr(0, 4),
             )
         )
             check = true
@@ -156,7 +156,7 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
         enableTooltips,
         shortcuts,
         'button',
-        parent
+        parent,
     )
     el.classList.add('easymde-dropdown')
 
@@ -181,7 +181,7 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
                 enableTooltips,
                 shortcuts,
                 'button',
-                parent
+                parent,
             )
         } else {
             childElement = createToolbarButton(
@@ -190,7 +190,7 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
                 enableTooltips,
                 shortcuts,
                 'button',
-                parent
+                parent,
             )
         }
 
@@ -199,7 +199,7 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
             function (e) {
                 e.stopPropagation()
             },
-            false
+            false,
         )
         content.appendChild(childElement)
     }
@@ -216,7 +216,7 @@ function createToolbarButton(
     enableTooltips,
     shortcuts,
     markup,
-    parent
+    parent,
 ) {
     options = options || {}
     var el = document.createElement(markup)
@@ -227,7 +227,7 @@ function createToolbarButton(
             if (
                 Object.prototype.hasOwnProperty.call(
                     options.attributes,
-                    attribute
+                    attribute,
                 )
             ) {
                 el.setAttribute(attribute, options.attributes[attribute])
@@ -554,7 +554,7 @@ function toggleCodeBlock(editor) {
         cm,
         cur_start,
         cur_end,
-        fenceCharsToInsert
+        fenceCharsToInsert,
     ) {
         var start_line_sel = cur_start.line + 1,
             end_line_sel = cur_end.line + 1,
@@ -578,7 +578,7 @@ function toggleCodeBlock(editor) {
             {
                 line: end_line_sel,
                 ch: 0,
-            }
+            },
         )
     }
 
@@ -606,7 +606,7 @@ function toggleCodeBlock(editor) {
             {
                 line: cur_start.line,
                 ch: 99999999999999,
-            }
+            },
         )
         cur_start.ch--
         if (cur_start !== cur_end) {
@@ -678,7 +678,7 @@ function toggleCodeBlock(editor) {
                     {
                         line: end_line + (end_text ? 0 : 1),
                         ch: 0,
-                    }
+                    },
                 )
                 cm.replaceRange(
                     start_text,
@@ -689,7 +689,7 @@ function toggleCodeBlock(editor) {
                     {
                         line: start_line + (start_text ? 0 : 1),
                         ch: 0,
-                    }
+                    },
                 )
             })
             cm.setSelection(
@@ -700,7 +700,7 @@ function toggleCodeBlock(editor) {
                 {
                     line: end_line + (start_text ? 1 : -1),
                     ch: 0,
-                }
+                },
             )
             cm.focus()
         } else {
@@ -751,7 +751,7 @@ function toggleCodeBlock(editor) {
                     {
                         line: block_start + 1,
                         ch: 0,
-                    }
+                    },
                 )
                 cm.replaceRange(
                     '',
@@ -762,7 +762,7 @@ function toggleCodeBlock(editor) {
                     {
                         line: block_end,
                         ch: 0,
-                    }
+                    },
                 )
             })
             cm.focus()
@@ -1009,14 +1009,14 @@ function afterImageUploaded(editor, url) {
     // Check if media is an image
     if (
         ['png', 'jpg', 'jpeg', 'gif', 'svg', 'apng', 'avif', 'webp'].includes(
-            ext
+            ext,
         )
     ) {
         _replaceSelection(
             cm,
             stat.image,
             options.insertTexts.uploadedImage,
-            url
+            url,
         )
     } else {
         var text_link = options.insertTexts.link
@@ -1029,8 +1029,8 @@ function afterImageUploaded(editor, url) {
         'upload-image',
         editor.options.imageTexts.sbOnUploaded.replace(
             '#image_name#',
-            imageName
-        )
+            imageName,
+        ),
     )
     setTimeout(function () {
         editor.updateStatusBar('upload-image', editor.options.imageTexts.sbInit)
@@ -1311,7 +1311,7 @@ function _toggleHeading(cm, direction, size) {
                 {
                     line: i,
                     ch: 99999999999999,
-                }
+                },
             )
         })(i)
     }
@@ -1402,7 +1402,7 @@ function _toggleLine(cm, name, liststyle) {
                 {
                     line: i,
                     ch: 99999999999999,
-                }
+                },
             )
         })(i)
     }
@@ -1450,7 +1450,7 @@ function _toggleLink(editor, type, startEnd, url) {
         {
             line: startPoint.line,
             ch: 99999999999999,
-        }
+        },
     )
 
     startPoint.ch -= startEnd[0].length
@@ -1503,7 +1503,7 @@ function _toggleBlock(editor, type, start_chars, end_chars) {
             {
                 line: startPoint.line,
                 ch: 99999999999999,
-            }
+            },
         )
 
         if (type == 'bold' || type == 'strikethrough') {
@@ -1563,7 +1563,7 @@ function _cleanBlock(cm) {
             {
                 line: line,
                 ch: 99999999999999,
-            }
+            },
         )
     }
 }
@@ -1594,7 +1594,7 @@ function _mergeProperties(target, source) {
         if (Object.prototype.hasOwnProperty.call(source, property)) {
             if (source[property] instanceof Array) {
                 target[property] = source[property].concat(
-                    target[property] instanceof Array ? target[property] : []
+                    target[property] instanceof Array ? target[property] : [],
                 )
             } else if (
                 source[property] !== null &&
@@ -1603,7 +1603,7 @@ function _mergeProperties(target, source) {
             ) {
                 target[property] = _mergeProperties(
                     target[property] || {},
-                    source[property]
+                    source[property],
                 )
             } else {
                 target[property] = source[property]
@@ -1937,7 +1937,7 @@ function EasyMDE(options) {
 
             if (
                 styleSheets[i].href.indexOf(
-                    '//maxcdn.bootstrapcdn.com/font-awesome/'
+                    '//maxcdn.bootstrapcdn.com/font-awesome/',
                 ) > -1
             ) {
                 autoDownloadFA = false
@@ -2015,7 +2015,7 @@ function EasyMDE(options) {
         {
             highlightFormatting: true, // needed for toggleCodeBlock to detect types of code
         },
-        options.parsingConfig || {}
+        options.parsingConfig || {},
     )
 
     // Merging the insertTexts, with the given options
@@ -2032,7 +2032,7 @@ function EasyMDE(options) {
         options.autosave.timeFormat = extend(
             {},
             timeFormat,
-            options.autosave.timeFormat || {}
+            options.autosave.timeFormat || {},
         )
     }
 
@@ -2067,7 +2067,7 @@ function EasyMDE(options) {
     options.errorMessages = extend(
         {},
         errorMessages,
-        options.errorMessages || {}
+        options.errorMessages || {},
     )
     options.imagePathAbsolute = options.imagePathAbsolute || false
     options.imageCSRFName = options.imageCSRFName || 'csrfmiddlewaretoken'
@@ -2109,7 +2109,7 @@ function EasyMDE(options) {
         this.codemirror.on('dragenter', function (cm, event) {
             self.updateStatusBar(
                 'upload-image',
-                self.options.imageTexts.sbOnDragEnter
+                self.options.imageTexts.sbOnDragEnter,
             )
             event.stopPropagation()
             event.preventDefault()
@@ -2128,7 +2128,7 @@ function EasyMDE(options) {
         this.codemirror.on('dragover', function (cm, event) {
             self.updateStatusBar(
                 'upload-image',
-                self.options.imageTexts.sbOnDragEnter
+                self.options.imageTexts.sbOnDragEnter,
             )
             event.stopPropagation()
             event.preventDefault()
@@ -2140,7 +2140,7 @@ function EasyMDE(options) {
             if (options.imageUploadFunction) {
                 self.uploadImagesUsingCustomFunction(
                     options.imageUploadFunction,
-                    event.dataTransfer.files
+                    event.dataTransfer.files,
                 )
             } else {
                 self.uploadImages(event.dataTransfer.files)
@@ -2151,7 +2151,7 @@ function EasyMDE(options) {
             if (options.imageUploadFunction) {
                 self.uploadImagesUsingCustomFunction(
                     options.imageUploadFunction,
-                    event.clipboardData.files
+                    event.clipboardData.files,
                 )
             } else {
                 self.uploadImages(event.clipboardData.files)
@@ -2184,8 +2184,8 @@ EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
         'upload-image',
         this.options.imageTexts.sbOnDrop.replace(
             '#images_names#',
-            names.join(', ')
-        )
+            names.join(', '),
+        ),
     )
 }
 
@@ -2201,7 +2201,7 @@ EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
  */
 EasyMDE.prototype.uploadImagesUsingCustomFunction = function (
     imageUploadFunction,
-    files
+    files,
 ) {
     if (files.length === 0) {
         return
@@ -2215,8 +2215,8 @@ EasyMDE.prototype.uploadImagesUsingCustomFunction = function (
         'upload-image',
         this.options.imageTexts.sbOnDrop.replace(
             '#images_names#',
-            names.join(', ')
-        )
+            names.join(', '),
+        ),
     )
 }
 
@@ -2240,7 +2240,7 @@ EasyMDE.prototype.updateStatusBar = function (itemName, content) {
         console.log(
             'EasyMDE: Several status bar items named ' +
                 itemName +
-                ' was found.'
+                ' was found.',
         )
     }
 }
@@ -2306,7 +2306,7 @@ EasyMDE.prototype.markdown = function (text) {
         ) {
             htmlText = this.options.renderingConfig.sanitizerFunction.call(
                 this,
-                htmlText
+                htmlText,
             )
         }
 
@@ -2379,10 +2379,10 @@ EasyMDE.prototype.render = function (el) {
             return CodeMirror.overlayMode(
                 CodeMirror.getMode(
                     config,
-                    options.spellChecker !== false ? 'spell-checker' : 'gfm'
+                    options.spellChecker !== false ? 'spell-checker' : 'gfm',
                 ),
                 options.overlayMode.mode,
-                options.overlayMode.combine
+                options.overlayMode.combine,
             )
         })
 
@@ -2448,8 +2448,8 @@ EasyMDE.prototype.render = function (el) {
             options.inputStyle != undefined
                 ? options.inputStyle
                 : isMobile()
-                ? 'contenteditable'
-                : 'textarea',
+                  ? 'contenteditable'
+                  : 'textarea',
         spellcheck:
             options.nativeSpellcheck != undefined
                 ? options.nativeSpellcheck
@@ -2492,11 +2492,14 @@ EasyMDE.prototype.render = function (el) {
         this.autosave() // use to load localstorage content
         this.codemirror.on('change', function () {
             clearTimeout(self._autosave_timeout)
-            self._autosave_timeout = setTimeout(function () {
-                self.autosave()
-            }, self.options.autosave.submit_delay ||
-                self.options.autosave.delay ||
-                1000)
+            self._autosave_timeout = setTimeout(
+                function () {
+                    self.autosave()
+                },
+                self.options.autosave.submit_delay ||
+                    self.options.autosave.delay ||
+                    1000,
+            )
         })
     }
 
@@ -2524,7 +2527,7 @@ EasyMDE.prototype.render = function (el) {
                 ');--width:' +
                 img.naturalWidth +
                 'px;--height:' +
-                calcHeight(img.naturalWidth, img.naturalHeight)
+                calcHeight(img.naturalWidth, img.naturalHeight),
         )
         _vm.codemirror.setSize()
     }
@@ -2553,7 +2556,7 @@ EasyMDE.prototype.render = function (el) {
 
                         if (options.imagesPreviewHandler) {
                             var newSrc = options.imagesPreviewHandler(
-                                srcAttr[1]
+                                srcAttr[1],
                             )
                             // defensive check making sure the handler provided by the user returns a string
                             if (typeof newSrc === 'string') {
@@ -2571,14 +2574,14 @@ EasyMDE.prototype.render = function (el) {
                                 }
                                 assignImageBlockAttributes(
                                     parentEl,
-                                    window.EMDEimagesCache[keySrc]
+                                    window.EMDEimagesCache[keySrc],
                                 )
                             }
                             img.src = keySrc
                         } else {
                             assignImageBlockAttributes(
                                 parentEl,
-                                window.EMDEimagesCache[keySrc]
+                                window.EMDEimagesCache[keySrc],
                             )
                         }
                     }
@@ -2603,7 +2606,7 @@ EasyMDE.prototype.render = function (el) {
         function () {
             temp_cm.refresh()
         }.bind(temp_cm),
-        0
+        0,
     )
 }
 
@@ -2636,7 +2639,7 @@ EasyMDE.prototype.autosave = function () {
             this.options.autosave.uniqueId == ''
         ) {
             console.log(
-                'EasyMDE: You must set a uniqueId to use the autosave feature'
+                'EasyMDE: You must set a uniqueId to use the autosave feature',
             )
             return
         }
@@ -2651,7 +2654,7 @@ EasyMDE.prototype.autosave = function () {
                     easyMDE.autosaveTimeoutId = undefined
 
                     localStorage.removeItem(
-                        'smde_' + easyMDE.options.autosave.uniqueId
+                        'smde_' + easyMDE.options.autosave.uniqueId,
                     )
                 })
             }
@@ -2662,16 +2665,16 @@ EasyMDE.prototype.autosave = function () {
         if (this.options.autosave.loaded !== true) {
             if (
                 typeof localStorage.getItem(
-                    'smde_' + this.options.autosave.uniqueId
+                    'smde_' + this.options.autosave.uniqueId,
                 ) == 'string' &&
                 localStorage.getItem(
-                    'smde_' + this.options.autosave.uniqueId
+                    'smde_' + this.options.autosave.uniqueId,
                 ) != ''
             ) {
                 this.codemirror.setValue(
                     localStorage.getItem(
-                        'smde_' + this.options.autosave.uniqueId
-                    )
+                        'smde_' + this.options.autosave.uniqueId,
+                    ),
                 )
                 this.options.autosave.foundSavedValue = true
             }
@@ -2683,7 +2686,7 @@ EasyMDE.prototype.autosave = function () {
         if (value !== '') {
             localStorage.setItem(
                 'smde_' + this.options.autosave.uniqueId,
-                value
+                value,
             )
         } else {
             localStorage.removeItem('smde_' + this.options.autosave.uniqueId)
@@ -2694,7 +2697,7 @@ EasyMDE.prototype.autosave = function () {
             var d = new Date()
             var dd = new Intl.DateTimeFormat(
                 [this.options.autosave.timeFormat.locale, 'en-US'],
-                this.options.autosave.timeFormat.format
+                this.options.autosave.timeFormat.format,
             ).format(d)
             var save =
                 this.options.autosave.text == undefined
@@ -2716,7 +2719,7 @@ EasyMDE.prototype.clearAutosavedValue = function () {
             this.options.autosave.uniqueId == ''
         ) {
             console.log(
-                'EasyMDE: You must set a uniqueId to clear the autosave value'
+                'EasyMDE: You must set a uniqueId to clear the autosave value',
             )
             return
         }
@@ -2740,7 +2743,7 @@ EasyMDE.prototype.openBrowseFileWindow = function (onSuccess, onError) {
         if (self.options.imageUploadFunction) {
             self.uploadImagesUsingCustomFunction(
                 self.options.imageUploadFunction,
-                event.target.files
+                event.target.files,
             )
         } else {
             self.uploadImages(event.target.files, onSuccess, onError)
@@ -2791,7 +2794,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
             .replace('#image_size#', humanFileSize(file.size, units))
             .replace(
                 '#image_max_size#',
-                humanFileSize(self.options.imageMaxSize, units)
+                humanFileSize(self.options.imageMaxSize, units),
             )
     }
 
@@ -2816,7 +2819,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
                 'upload-image',
                 self.options.imageTexts.sbProgress
                     .replace('#file_name#', file.name)
-                    .replace('#progress#', progress)
+                    .replace('#progress#', progress),
             )
         }
     }
@@ -2826,7 +2829,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     if (self.options.imageCSRFToken && self.options.imageCSRFHeader) {
         request.setRequestHeader(
             self.options.imageCSRFName,
-            self.options.imageCSRFToken
+            self.options.imageCSRFToken,
         )
     }
 
@@ -2848,7 +2851,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
             onSuccess(
                 (self.options.imagePathAbsolute
                     ? ''
-                    : window.location.origin + '/') + response.data.filePath
+                    : window.location.origin + '/') + response.data.filePath,
             )
         } else {
             if (
@@ -2857,7 +2860,9 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
             ) {
                 // preformatted error message
                 onErrorSup(
-                    fillErrorMessage(self.options.errorMessages[response.error])
+                    fillErrorMessage(
+                        self.options.errorMessages[response.error],
+                    ),
                 )
             } else if (response.error) {
                 // server side generated error message
@@ -2869,10 +2874,10 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
                         this.status +
                         ' (' +
                         this.statusText +
-                        ')'
+                        ')',
                 )
                 onErrorSup(
-                    fillErrorMessage(self.options.errorMessages.importError)
+                    fillErrorMessage(self.options.errorMessages.importError),
                 )
             }
         }
@@ -2884,7 +2889,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
                 event.target.status +
                 ' (' +
                 event.target.statusText +
-                ')'
+                ')',
         )
         onErrorSup(self.options.errorMessages.importError)
     }
@@ -2900,7 +2905,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
  */
 EasyMDE.prototype.uploadImageUsingCustomFunction = function (
     imageUploadFunction,
-    file
+    file,
 ) {
     var self = this
 
@@ -2928,7 +2933,7 @@ EasyMDE.prototype.uploadImageUsingCustomFunction = function (
             .replace('#image_size#', humanFileSize(file.size, units))
             .replace(
                 '#image_max_size#',
-                humanFileSize(self.options.imageMaxSize, units)
+                humanFileSize(self.options.imageMaxSize, units),
             )
     }
 
@@ -2943,7 +2948,7 @@ EasyMDE.prototype.setPreviewMaxHeight = function () {
     // Calc preview max height
     var paddingTop = parseInt(window.getComputedStyle(wrapper).paddingTop)
     var borderTopWidth = parseInt(
-        window.getComputedStyle(wrapper).borderTopWidth
+        window.getComputedStyle(wrapper).borderTopWidth,
     )
     var optionsMaxHeight = parseInt(this.options.maxHeight)
     var wrapperMaxHeight =
@@ -3080,7 +3085,7 @@ EasyMDE.prototype.createToolbar = function (items) {
                     item,
                     self.options.toolbarTips,
                     self.options.shortcuts,
-                    self
+                    self,
                 )
             } else {
                 el = createToolbarButton(
@@ -3089,7 +3094,7 @@ EasyMDE.prototype.createToolbar = function (items) {
                     self.options.toolbarTips,
                     self.options.shortcuts,
                     'button',
-                    self
+                    self,
                 )
             }
 
@@ -3243,7 +3248,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                     return function () {
                         item.onUpdate(el)
                     }
-                })(el, item)
+                })(el, item),
             )
         }
         if (typeof item.onActivity === 'function') {
@@ -3254,7 +3259,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                     return function () {
                         item.onActivity(el)
                     }
-                })(el, item)
+                })(el, item),
             )
         }
 

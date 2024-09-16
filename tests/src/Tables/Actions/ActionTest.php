@@ -2,11 +2,12 @@
 
 use Filament\Tables\Actions\AttachAction;
 use Filament\Tables\Actions\DeleteAction;
-use function Filament\Tests\livewire;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Str;
+
+use function Filament\Tests\livewire;
 use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);

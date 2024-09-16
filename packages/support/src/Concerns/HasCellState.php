@@ -155,7 +155,7 @@ trait HasCellState
         return $this->hasRelationship($record);
     }
 
-    public function getRelationship(Model $record, string $name = null): ?Relation
+    public function getRelationship(Model $record, ?string $name = null): ?Relation
     {
         if (blank($name) && (! str($this->getName())->contains('.'))) {
             return null;
@@ -181,7 +181,7 @@ trait HasCellState
      * @param  array<string> | null  $relationships
      * @return array<Model>
      */
-    public function getRelationshipResults(Model $record, array $relationships = null): array
+    public function getRelationshipResults(Model $record, ?array $relationships = null): array
     {
         $results = [];
 
@@ -231,7 +231,7 @@ trait HasCellState
         return $results;
     }
 
-    public function getRelationshipAttribute(string $name = null): string
+    public function getRelationshipAttribute(?string $name = null): string
     {
         $name ??= $this->getName();
 
@@ -282,7 +282,7 @@ trait HasCellState
         return implode('.', $inverseRelationships);
     }
 
-    public function getRelationshipName(string $name = null): ?string
+    public function getRelationshipName(?string $name = null): ?string
     {
         $name ??= $this->getName();
 

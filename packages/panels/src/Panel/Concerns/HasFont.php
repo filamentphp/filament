@@ -13,7 +13,7 @@ trait HasFont
 
     protected ?string $fontUrl = null;
 
-    public function font(string $family, string $url = null, string $provider = null): static
+    public function font(string $family, ?string $url = null, ?string $provider = null): static
     {
         $this->fontFamily = $family;
         $this->fontUrl = $url;

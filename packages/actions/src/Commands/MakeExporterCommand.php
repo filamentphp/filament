@@ -5,10 +5,11 @@ namespace Filament\Actions\Commands;
 use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
-use function Filament\Support\get_model_label;
 use Illuminate\Console\Command;
-use function Laravel\Prompts\text;
 use Symfony\Component\Console\Attribute\AsCommand;
+
+use function Filament\Support\get_model_label;
+use function Laravel\Prompts\text;
 
 #[AsCommand(name: 'make:filament-exporter')]
 class MakeExporterCommand extends Command

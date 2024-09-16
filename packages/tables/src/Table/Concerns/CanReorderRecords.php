@@ -26,7 +26,7 @@ trait CanReorderRecords
         return $this;
     }
 
-    public function reorderable(string | Closure $column = null, bool | Closure $condition = null): static
+    public function reorderable(string | Closure | null $column = null, bool | Closure | null $condition = null): static
     {
         $this->reorderColumn = $column;
 

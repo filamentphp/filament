@@ -17,7 +17,7 @@ trait HasStateBindingModifiers
 
     protected bool $isLiveOnBlur = false;
 
-    public function live(bool $onBlur = false, int | string $debounce = null, ?bool $condition = true): static
+    public function live(bool $onBlur = false, int | string | null $debounce = null, ?bool $condition = true): static
     {
         $this->isLive = $condition;
         $this->isLiveOnBlur = $onBlur;

@@ -43,13 +43,13 @@ export default function colorPickerFormComponent({
 
                         this.commitState()
                     },
-                    isLiveDebounced ? liveDebounce : 250
+                    isLiveDebounced ? liveDebounce : 250,
                 )
             })
 
             if (isLive || isLiveDebounced || isLiveOnBlur) {
                 new MutationObserver(() =>
-                    this.isOpen() ? null : this.commitState()
+                    this.isOpen() ? null : this.commitState(),
                 ).observe(this.$refs.panel, {
                     attributes: true,
                     childList: true,

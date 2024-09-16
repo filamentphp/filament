@@ -591,7 +591,7 @@ trait HasComponents
     /**
      * @return array<string | int, array<class-string> | class-string>
      */
-    public function getClusteredComponents(string $cluster = null): array
+    public function getClusteredComponents(?string $cluster = null): array
     {
         if (blank($cluster)) {
             return $this->clusteredComponents;

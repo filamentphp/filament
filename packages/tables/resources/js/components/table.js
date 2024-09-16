@@ -10,7 +10,7 @@ export default function table() {
 
         init: function () {
             this.$wire.$on('deselectAllTableRecords', () =>
-                this.deselectAllRecords()
+                this.deselectAllRecords(),
             )
 
             this.$watch('selectedRecords', () => {
@@ -53,14 +53,14 @@ export default function table() {
 
             if (this.areRecordsSelected(this.getRecordsInGroupOnPage(group))) {
                 this.deselectRecords(
-                    await this.$wire.getGroupedSelectableTableRecordKeys(group)
+                    await this.$wire.getGroupedSelectableTableRecordKeys(group),
                 )
 
                 return
             }
 
             this.selectRecords(
-                await this.$wire.getGroupedSelectableTableRecordKeys(group)
+                await this.$wire.getGroupedSelectableTableRecordKeys(group),
             )
 
             this.isLoading = false
@@ -70,7 +70,7 @@ export default function table() {
             const keys = []
 
             for (let checkbox of this.$root?.getElementsByClassName(
-                'fi-ta-record-checkbox'
+                'fi-ta-record-checkbox',
             ) ?? []) {
                 if (checkbox.dataset.group !== group) {
                     continue
@@ -86,7 +86,7 @@ export default function table() {
             const keys = []
 
             for (let checkbox of this.$root?.getElementsByClassName(
-                'fi-ta-record-checkbox'
+                'fi-ta-record-checkbox',
             ) ?? []) {
                 keys.push(checkbox.value)
             }
@@ -141,7 +141,7 @@ export default function table() {
             if (this.isGroupCollapsed(group)) {
                 this.collapsedGroups.splice(
                     this.collapsedGroups.indexOf(group),
-                    1
+                    1,
                 )
 
                 return

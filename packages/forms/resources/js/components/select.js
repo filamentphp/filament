@@ -129,7 +129,7 @@ export default function selectFormComponent({
                         })
 
                         this.isSearching = false
-                    }, searchDebounce)
+                    }, searchDebounce),
                 )
             }
 
@@ -148,7 +148,7 @@ export default function selectFormComponent({
                         await this.refreshChoices({
                             withInitialOptions: false,
                         })
-                    }
+                    },
                 )
             }
 
@@ -200,7 +200,7 @@ export default function selectFormComponent({
             const existingOptions = await this.getExistingOptions(config)
 
             return existingOptions.concat(
-                await this.getMissingOptions(existingOptions)
+                await this.getMissingOptions(existingOptions),
             )
         },
 
@@ -249,11 +249,10 @@ export default function selectFormComponent({
                 return
             }
 
-            this.$el.querySelector(
-                '.choices__list--single'
-            ).innerHTML = `<div class="choices__placeholder choices__item">${
-                placeholder ?? ''
-            }</div>`
+            this.$el.querySelector('.choices__list--single').innerHTML =
+                `<div class="choices__placeholder choices__item">${
+                    placeholder ?? ''
+                }</div>`
         },
 
         formatState: function (state) {
@@ -276,7 +275,7 @@ export default function selectFormComponent({
             existingOptions.forEach((existingOption) => {
                 if (existingOption.choices) {
                     existingOption.choices.forEach((groupedExistingOption) =>
-                        existingOptionValues.add(groupedExistingOption.value)
+                        existingOptionValues.add(groupedExistingOption.value),
                     )
 
                     return

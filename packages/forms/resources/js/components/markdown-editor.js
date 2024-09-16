@@ -131,7 +131,7 @@ export default function markdownEditorFormComponent({
 
             this.editor.codemirror.setOption(
                 'direction',
-                document.documentElement?.dir ?? 'ltr'
+                document.documentElement?.dir ?? 'ltr',
             )
 
             // When creating a link, highlight the URL instead of the label:
@@ -168,7 +168,7 @@ export default function markdownEditorFormComponent({
                                         ch:
                                             baseIndex +
                                             urlLineText.lastIndexOf(')'),
-                                    }
+                                    },
                                 )
                             }, 25)
                         }
@@ -190,12 +190,12 @@ export default function markdownEditorFormComponent({
                     if (isLiveDebounced) {
                         this.$wire.call('$refresh')
                     }
-                }, liveDebounce ?? 300)
+                }, liveDebounce ?? 300),
             )
 
             if (isLiveOnBlur) {
                 this.editor.codemirror.on('blur', () =>
-                    this.$wire.call('$refresh')
+                    this.$wire.call('$refresh'),
                 )
             }
 
@@ -254,7 +254,7 @@ export default function markdownEditorFormComponent({
 
             if (
                 ['bold', 'italic', 'strike', 'link'].some((button) =>
-                    toolbarButtons.includes(button)
+                    toolbarButtons.includes(button),
                 ) &&
                 ['heading'].some((button) => toolbarButtons.includes(button))
             ) {
@@ -272,7 +272,7 @@ export default function markdownEditorFormComponent({
             if (
                 ['heading'].some((button) => toolbarButtons.includes(button)) &&
                 ['blockquote', 'codeBlock', 'bulletList', 'orderedList'].some(
-                    (button) => toolbarButtons.includes(button)
+                    (button) => toolbarButtons.includes(button),
                 )
             ) {
                 toolbar.push('|')
@@ -312,10 +312,10 @@ export default function markdownEditorFormComponent({
 
             if (
                 ['blockquote', 'codeBlock', 'bulletList', 'orderedList'].some(
-                    (button) => toolbarButtons.includes(button)
+                    (button) => toolbarButtons.includes(button),
                 ) &&
                 ['table', 'attachFiles'].some((button) =>
-                    toolbarButtons.includes(button)
+                    toolbarButtons.includes(button),
                 )
             ) {
                 toolbar.push('|')
@@ -339,10 +339,10 @@ export default function markdownEditorFormComponent({
 
             if (
                 ['table', 'attachFiles'].some((button) =>
-                    toolbarButtons.includes(button)
+                    toolbarButtons.includes(button),
                 ) &&
                 ['undo', 'redo'].some((button) =>
-                    toolbarButtons.includes(button)
+                    toolbarButtons.includes(button),
                 )
             ) {
                 toolbar.push('|')

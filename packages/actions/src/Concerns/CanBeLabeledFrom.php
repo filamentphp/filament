@@ -8,7 +8,7 @@ trait CanBeLabeledFrom
 {
     protected string | Closure | null $labeledFrom = null;
 
-    public function labeledFrom(string | Closure $breakpoint = null): static
+    public function labeledFrom(string | Closure | null $breakpoint = null): static
     {
         $this->labeledFrom = $breakpoint;
 

@@ -9,8 +9,9 @@ use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Validation\ValidationException;
-use function Livewire\store;
 use Throwable;
+
+use function Livewire\store;
 
 /**
  * @property ComponentContainer $mountedFormComponentActionForm
@@ -176,7 +177,7 @@ trait HasFormComponentActions
         return null;
     }
 
-    protected function cacheMountedFormComponentActionForm(Action $mountedAction = null): void
+    protected function cacheMountedFormComponentActionForm(?Action $mountedAction = null): void
     {
         $this->cacheForm(
             'mountedFormComponentActionForm' . array_key_last($this->mountedFormComponentActions),
@@ -184,19 +185,19 @@ trait HasFormComponentActions
         );
     }
 
-    public function mountedFormComponentActionShouldOpenModal(Action $mountedAction = null): bool
+    public function mountedFormComponentActionShouldOpenModal(?Action $mountedAction = null): bool
     {
         return ($mountedAction ?? $this->getMountedFormComponentAction())->shouldOpenModal(
             checkForFormUsing: $this->mountedFormComponentActionHasForm(...),
         );
     }
 
-    public function mountedFormComponentActionHasForm(Action $mountedAction = null): bool
+    public function mountedFormComponentActionHasForm(?Action $mountedAction = null): bool
     {
         return (bool) count($this->getMountedFormComponentActionForm(mountedAction: $mountedAction)?->getComponents() ?? []);
     }
 
-    public function getMountedFormComponentAction(int $actionNestingIndex = null): ?Action
+    public function getMountedFormComponentAction(?int $actionNestingIndex = null): ?Action
     {
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
         $actionName = $this->mountedFormComponentActions[$actionNestingIndex] ?? null;
@@ -210,7 +211,7 @@ trait HasFormComponentActions
             ?->arguments($this->mountedFormComponentActionsArguments[$actionNestingIndex] ?? []);
     }
 
-    protected function getMountedFormComponentActionForm(int $actionNestingIndex = null, Action $mountedAction = null): ?Form
+    protected function getMountedFormComponentActionForm(?int $actionNestingIndex = null, ?Action $mountedAction = null): ?Form
     {
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
 
@@ -232,7 +233,7 @@ trait HasFormComponentActions
         );
     }
 
-    public function getMountedFormComponentActionComponent(int $actionNestingIndex = null): ?Component
+    public function getMountedFormComponentActionComponent(?int $actionNestingIndex = null): ?Component
     {
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
         $componentKey = $this->mountedFormComponentActionsComponents[$actionNestingIndex] ?? null;

@@ -114,7 +114,7 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
         };
     }
 
-    public function getRecordTitle(Model $record = null): string
+    public function getRecordTitle(?Model $record = null): string
     {
         $record ??= $this->getRecord();
 
