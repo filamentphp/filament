@@ -24,7 +24,7 @@ trait CanBeCollapsed
         return $this;
     }
 
-    public function isCollapsed(?ComponentContainer $item = null): bool
+    public function isCollapsed(ComponentContainer $item = null): bool
     {
         return (bool) $this->evaluate($this->isCollapsed, ['item' => $item]);
     }

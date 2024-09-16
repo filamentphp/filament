@@ -42,11 +42,11 @@ export default function statsOverviewStatChart({
 
         initChart: function () {
             Chart.defaults.backgroundColor = getComputedStyle(
-                this.$refs.backgroundColorElement,
+                this.$refs.backgroundColorElement
             ).color
 
             Chart.defaults.borderColor = getComputedStyle(
-                this.$refs.borderColorElement,
+                this.$refs.borderColorElement
             ).color
 
             return new Chart(this.$refs.canvas, {

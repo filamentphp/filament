@@ -59,7 +59,7 @@ class AssetManager
     /**
      * @param  array<string, mixed>  $variables
      */
-    public function registerCssVariables(array $variables, ?string $package = null): void
+    public function registerCssVariables(array $variables, string $package = null): void
     {
         $this->cssVariables[$package] = [
             ...($this->cssVariables[$package] ?? []),
@@ -70,7 +70,7 @@ class AssetManager
     /**
      * @param  array<string, mixed>  $data
      */
-    public function registerScriptData(array $data, ?string $package = null): void
+    public function registerScriptData(array $data, string $package = null): void
     {
         $this->scriptData[$package] = [
             ...($this->scriptData[$package] ?? []),
@@ -82,7 +82,7 @@ class AssetManager
      * @param  array<string> | null  $packages
      * @return array<Asset>
      */
-    public function getAlpineComponents(?array $packages = null): array
+    public function getAlpineComponents(array $packages = null): array
     {
         return $this->getAssets($this->alpineComponents, $packages);
     }
@@ -107,7 +107,7 @@ class AssetManager
      * @param  array<string> | null  $packages
      * @return array<string, mixed>
      */
-    public function getScriptData(?array $packages = null): array
+    public function getScriptData(array $packages = null): array
     {
         $data = [];
 
@@ -149,7 +149,7 @@ class AssetManager
      * @param  array<string> | null  $packages
      * @return array<Asset>
      */
-    public function getScripts(?array $packages = null, bool $withCore = true): array
+    public function getScripts(array $packages = null, bool $withCore = true): array
     {
         /** @var array<Js> $assets */
         $assets = $this->getAssets($this->scripts, $packages);
@@ -167,7 +167,7 @@ class AssetManager
     /**
      * @param  array<string> | null  $packages
      */
-    public function renderScripts(?array $packages = null, bool $withCore = false): string
+    public function renderScripts(array $packages = null, bool $withCore = false): string
     {
         /** @var array<Js> $assets */
         $assets = $this->getScripts($packages, $withCore);
@@ -189,7 +189,7 @@ class AssetManager
      * @param  array<string> | null  $packages
      * @return array<Asset>
      */
-    public function getStyles(?array $packages = null): array
+    public function getStyles(array $packages = null): array
     {
         return $this->getAssets($this->styles, $packages);
     }
@@ -214,7 +214,7 @@ class AssetManager
      * @param  array<string> | null  $packages
      * @return array<string, mixed>
      */
-    public function getCssVariables(?array $packages = null): array
+    public function getCssVariables(array $packages = null): array
     {
         $variables = [];
 
@@ -239,7 +239,7 @@ class AssetManager
     /**
      * @param  array<string> | null  $packages
      */
-    public function renderStyles(?array $packages = null): string
+    public function renderStyles(array $packages = null): string
     {
         $variables = $this->getCssVariables($packages);
 
@@ -273,7 +273,7 @@ class AssetManager
      * @param  array<string> | null  $packages
      * @return array<Asset>
      */
-    protected function getAssets(array $assets, ?array $packages = null): array
+    protected function getAssets(array $assets, array $packages = null): array
     {
         if ($packages !== null) {
             $assets = Arr::only($assets, $packages);

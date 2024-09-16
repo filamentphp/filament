@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\View\ComponentAttributeBag;
-
 use function Filament\Support\prepare_inherited_attributes;
+use Illuminate\View\ComponentAttributeBag;
 
 it('will prepare attributes', function () {
     $bag = new ComponentAttributeBag([

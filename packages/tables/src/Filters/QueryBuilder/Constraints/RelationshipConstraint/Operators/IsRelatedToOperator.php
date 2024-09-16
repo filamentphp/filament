@@ -148,7 +148,7 @@ class IsRelatedToOperator extends Operator
         return $this;
     }
 
-    public function modifyRelationshipQueryUsing(?Closure $modifyQueryUsing = null): static
+    public function modifyRelationshipQueryUsing(Closure $modifyQueryUsing = null): static
     {
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 

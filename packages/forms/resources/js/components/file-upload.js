@@ -140,7 +140,7 @@ export default function fileUploadFormComponent({
                         metadata,
                         load,
                         error,
-                        progress,
+                        progress
                     ) => {
                         this.shouldUpdateState = false
 
@@ -155,7 +155,7 @@ export default function fileUploadFormComponent({
                                 c ^
                                 (crypto.getRandomValues(new Uint8Array(1))[0] &
                                     (15 >> (c / 4)))
-                            ).toString(16),
+                            ).toString(16)
                         )
 
                         uploadUsing(
@@ -167,7 +167,7 @@ export default function fileUploadFormComponent({
                                 load(fileKey)
                             },
                             error,
-                            progress,
+                            progress
                         )
                     },
                     remove: async (source, load) => {
@@ -213,7 +213,7 @@ export default function fileUploadFormComponent({
                 if (
                     this.state !== null &&
                     Object.values(this.state).filter((file) =>
-                        file.startsWith('livewire-file:'),
+                        file.startsWith('livewire-file:')
                     ).length
                 ) {
                     this.lastState = null
@@ -236,14 +236,14 @@ export default function fileUploadFormComponent({
                     .map((file) =>
                         file.source instanceof File
                             ? file.serverId
-                            : this.uploadedFileIndex[file.source] ?? null,
+                            : this.uploadedFileIndex[file.source] ?? null
                     ) // file.serverId is null for a file that is not yet uploaded
                     .filter((fileKey) => fileKey)
 
                 await reorderUploadedFilesUsing(
                     shouldAppendFiles
                         ? orderedFileKeys
-                        : orderedFileKeys.reverse(),
+                        : orderedFileKeys.reverse()
                 )
             })
 
@@ -290,7 +290,7 @@ export default function fileUploadFormComponent({
                                 file.status ===
                                     FilePond.FileStatus.PROCESSING ||
                                 file.status ===
-                                    FilePond.FileStatus.PROCESSING_QUEUED,
+                                    FilePond.FileStatus.PROCESSING_QUEUED
                         ).length
                 ) {
                     return
@@ -319,7 +319,7 @@ export default function fileUploadFormComponent({
                     composed: true,
                     cancelable: true,
                     detail,
-                }),
+                })
             )
         },
 
@@ -453,7 +453,7 @@ export default function fileUploadFormComponent({
                     this.$refs.xPositionInput.value = Math.round(event.detail.x)
                     this.$refs.yPositionInput.value = Math.round(event.detail.y)
                     this.$refs.heightInput.value = Math.round(
-                        event.detail.height,
+                        event.detail.height
                     )
                     this.$refs.widthInput.value = Math.round(event.detail.width)
                     this.$refs.rotationInput.value = event.detail.rotate
@@ -493,7 +493,7 @@ export default function fileUploadFormComponent({
                 }
 
                 const viewBoxAttribute = ['viewBox', 'ViewBox', 'viewbox'].find(
-                    (attribute) => svgElement.hasAttribute(attribute),
+                    (attribute) => svgElement.hasAttribute(attribute)
                 )
 
                 if (!viewBoxAttribute) {
@@ -517,18 +517,18 @@ export default function fileUploadFormComponent({
                             new Blob(
                                 [
                                     new XMLSerializer().serializeToString(
-                                        svgElement,
+                                        svgElement
                                     ),
                                 ],
-                                { type: 'image/svg+xml' },
+                                { type: 'image/svg+xml' }
                             ),
                         ],
                         file.name,
                         {
                             type: 'image/svg+xml',
                             _relativePath: '',
-                        },
-                    ),
+                        }
+                    )
                 )
             }
 
@@ -576,7 +576,7 @@ export default function fileUploadFormComponent({
 
                     setTimeout(
                         () => this.editor.replace(event.target.result),
-                        200,
+                        200
                     )
                 }
 
@@ -604,7 +604,7 @@ export default function fileUploadFormComponent({
                 height / 2,
                 0,
                 0,
-                2 * Math.PI,
+                2 * Math.PI
             )
             context.fill()
 
@@ -641,9 +641,9 @@ export default function fileUploadFormComponent({
                                 .find(
                                     (uploadedFile) =>
                                         uploadedFile.filename ===
-                                        this.editingFile.name,
+                                        this.editingFile.name
                                 )?.id,
-                            { revert: true },
+                            { revert: true }
                         )
                     }
 
@@ -652,7 +652,7 @@ export default function fileUploadFormComponent({
 
                         let editingFileName = this.editingFile.name.slice(
                             0,
-                            this.editingFile.name.lastIndexOf('.'),
+                            this.editingFile.name.lastIndexOf('.')
                         )
                         let editingFileExtension = this.editingFile.name
                             .split('.')
@@ -671,7 +671,7 @@ export default function fileUploadFormComponent({
                                     const newNumber = Number(number) + 1
 
                                     return `-v${newNumber}`
-                                },
+                                }
                             )
                         } else {
                             editingFileName += '-v1'
@@ -690,8 +690,8 @@ export default function fileUploadFormComponent({
                                                 ? 'image/png'
                                                 : this.editingFile.type,
                                         lastModified: new Date().getTime(),
-                                    },
-                                ),
+                                    }
+                                )
                             )
                             .then(() => {
                                 this.closeEditor()
@@ -701,7 +701,7 @@ export default function fileUploadFormComponent({
                             })
                     })
                 },
-                hasCircleCropper ? 'image/png' : this.editingFile.type,
+                hasCircleCropper ? 'image/png' : this.editingFile.type
             )
         },
 

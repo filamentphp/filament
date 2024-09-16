@@ -14,9 +14,8 @@ use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Validation\ValidationException;
-use Throwable;
-
 use function Livewire\store;
+use Throwable;
 
 trait InteractsWithInfolists
 {
@@ -162,7 +161,7 @@ trait InteractsWithInfolists
         return $result;
     }
 
-    public function mountInfolistAction(string $name, ?string $component = null, ?string $infolist = null): mixed
+    public function mountInfolistAction(string $name, string $component = null, string $infolist = null): mixed
     {
         $this->mountedInfolistActions[] = $name;
         $this->mountedInfolistActionsData[] = [];
@@ -241,14 +240,14 @@ trait InteractsWithInfolists
         $this->dispatch('open-modal', id: "{$this->getId()}-infolist-action");
     }
 
-    public function mountedInfolistActionShouldOpenModal(?Action $mountedAction = null): bool
+    public function mountedInfolistActionShouldOpenModal(Action $mountedAction = null): bool
     {
         return ($mountedAction ?? $this->getMountedInfolistAction())->shouldOpenModal(
             checkForFormUsing: $this->mountedInfolistActionHasForm(...),
         );
     }
 
-    public function mountedInfolistActionHasForm(?Action $mountedAction = null): bool
+    public function mountedInfolistActionHasForm(Action $mountedAction = null): bool
     {
         return (bool) count($this->getMountedInfolistActionForm(mountedAction: $mountedAction)?->getComponents() ?? []);
     }
@@ -273,7 +272,7 @@ trait InteractsWithInfolists
         return $infolist->getComponent($this->mountedInfolistActionsComponent);
     }
 
-    public function getMountedInfolistActionForm(?Action $mountedAction = null): ?Form
+    public function getMountedInfolistActionForm(Action $mountedAction = null): ?Form
     {
         $mountedAction ??= $this->getMountedInfolistAction();
 

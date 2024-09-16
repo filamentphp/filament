@@ -16,7 +16,7 @@ class TestsNotifications
 {
     public function assertNotified(): Closure
     {
-        return function (Notification | string | null $notification = null): static {
+        return function (Notification | string $notification = null): static {
             Notification::assertNotified($notification);
 
             return $this;
@@ -25,7 +25,7 @@ class TestsNotifications
 
     public function assertNotNotified(): Closure
     {
-        return function (Notification | string | null $notification = null): static {
+        return function (Notification | string $notification = null): static {
             Notification::assertNotNotified($notification);
 
             return $this;

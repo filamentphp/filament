@@ -195,7 +195,7 @@ class Constraint extends Component
         return $this;
     }
 
-    public function relationship(string $name, string $titleAttribute, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string $name, string $titleAttribute, Closure $modifyQueryUsing = null): static
     {
         $this->attribute("{$name}.{$titleAttribute}");
 

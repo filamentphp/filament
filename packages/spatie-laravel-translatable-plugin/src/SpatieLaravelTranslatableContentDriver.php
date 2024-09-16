@@ -3,12 +3,11 @@
 namespace Filament;
 
 use Filament\Support\Contracts\TranslatableContentDriver;
+use function Filament\Support\generate_search_column_expression;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-
-use function Filament\Support\generate_search_column_expression;
 
 class SpatieLaravelTranslatableContentDriver implements TranslatableContentDriver
 {
@@ -110,7 +109,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         return $attributes;
     }
 
-    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, ?bool $isCaseInsensitivityForced = null): Builder
+    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause, bool $isCaseInsensitivityForced = null): Builder
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();

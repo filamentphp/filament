@@ -4,6 +4,7 @@ namespace Filament\Pages\Tenancy;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use function Filament\authorize;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -12,14 +13,12 @@ use Filament\Pages\Page;
 use Filament\Panel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
+use function Filament\Support\is_app_url;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Locked;
 use Throwable;
-
-use function Filament\authorize;
-use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form
@@ -55,7 +54,7 @@ abstract class EditTenantProfile extends Page
         return 'profile';
     }
 
-    public static function getRouteName(?string $panel = null): string
+    public static function getRouteName(string $panel = null): string
     {
         $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 

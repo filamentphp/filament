@@ -39,7 +39,7 @@ class ToggleButtons extends Field implements Contracts\CanDisableOptions
         return $this->view(static::GROUPED_VIEW);
     }
 
-    public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
+    public function boolean(string $trueLabel = null, string $falseLabel = null): static
     {
         $this->options([
             1 => $trueLabel ?? __('filament-forms::components.toggle_buttons.boolean.true'),

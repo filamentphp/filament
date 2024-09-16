@@ -10,7 +10,7 @@
 
                 document.addEventListener(
                     'submit',
-                    () => (formSubmitted = true),
+                    () => (formSubmitted = true)
                 )
 
                 shouldPreventNavigation = () => {
@@ -20,7 +20,7 @@
 
                     return (
                         window.jsMd5(
-                            JSON.stringify($wire.data).replace(/\\/g, ''),
+                            JSON.stringify($wire.data).replace(/\\/g, '')
                         ) !== $wire.savedDataHash ||
                         $wire?.__instance?.effects?.redirect
                     )
@@ -60,7 +60,7 @@
                 window.addEventListener('beforeunload', (event) => {
                     if (
                         window.jsMd5(
-                            JSON.stringify($wire.data).replace(/\\/g, ''),
+                            JSON.stringify($wire.data).replace(/\\/g, '')
                         ) === $wire.savedDataHash ||
                         $wire?.__instance?.effects?.redirect
                     ) {

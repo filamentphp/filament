@@ -183,7 +183,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
     /**
      * @deprecated Use `suffixIcon('heroicon-m-calendar')` instead.
      */
-    public function icon(string | bool | null $icon = null): static
+    public function icon(string | bool $icon = null): static
     {
         if ($icon === false) {
             return $this;

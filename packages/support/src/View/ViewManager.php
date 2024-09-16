@@ -3,11 +3,10 @@
 namespace Filament\Support\View;
 
 use Closure;
+use function Filament\Support\is_app_url;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
-
-use function Filament\Support\is_app_url;
 
 class ViewManager
 {
@@ -26,7 +25,7 @@ class ViewManager
     /**
      * @param  string | array<string> | null  $scopes
      */
-    public function registerRenderHook(string $name, Closure $hook, string | array | null $scopes = null): void
+    public function registerRenderHook(string $name, Closure $hook, string | array $scopes = null): void
     {
         if (! is_array($scopes)) {
             $scopes = [$scopes];
@@ -40,7 +39,7 @@ class ViewManager
     /**
      * @param  string | array<string> | null  $scopes
      */
-    public function renderHook(string $name, string | array | null $scopes = null): Htmlable
+    public function renderHook(string $name, string | array $scopes = null): Htmlable
     {
         $renderedHooks = [];
 
@@ -92,7 +91,7 @@ class ViewManager
         ];
     }
 
-    public function hasSpaMode(?string $url = null): bool
+    public function hasSpaMode(string $url = null): bool
     {
         if (! $this->hasSpaMode) {
             return false;

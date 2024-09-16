@@ -182,7 +182,7 @@ class QueryBuilder extends BaseFilter
     /**
      * @return array<string, int | string | null> | int | string | null
      */
-    public function getConstraintPickerColumns(?string $breakpoint = null): array | int | string | null
+    public function getConstraintPickerColumns(string $breakpoint = null): array | int | string | null
     {
         $columns = $this->constraintPickerColumns ?? [
             'default' => 1,

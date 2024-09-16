@@ -130,7 +130,7 @@ class ImportColumn extends Component
         return $this;
     }
 
-    public function numeric(bool | Closure $condition = true, int | Closure | null $decimalPlaces = null): static
+    public function numeric(bool | Closure $condition = true, int | Closure $decimalPlaces = null): static
     {
         $this->isNumeric = $condition;
         $this->decimalPlaces = $decimalPlaces;
@@ -440,7 +440,7 @@ class ImportColumn extends Component
     /**
      * @param  string | array<string> | Closure | null  $resolveUsing
      */
-    public function relationship(string | Closure | null $name = null, string | array | Closure | null $resolveUsing = null): static
+    public function relationship(string | Closure $name = null, string | array | Closure $resolveUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->resolveRelationshipUsing = $resolveUsing;

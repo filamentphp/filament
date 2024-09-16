@@ -52,7 +52,7 @@ class ComponentManager implements ScopedComponentManager
         return clone $this;
     }
 
-    public function configureUsing(string $component, Closure $modifyUsing, ?Closure $during = null, bool $isImportant = false): mixed
+    public function configureUsing(string $component, Closure $modifyUsing, Closure $during = null, bool $isImportant = false): mixed
     {
         if ($isImportant) {
             $this->importantConfigurations[$component] ??= [];

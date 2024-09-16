@@ -111,7 +111,7 @@ class Cluster extends Page
             ->slug();
     }
 
-    public static function getRouteName(?string $panel = null): string
+    public static function getRouteName(string $panel = null): string
     {
         $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 

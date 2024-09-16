@@ -3,6 +3,8 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use function Filament\Forms\array_move_after;
+use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
@@ -15,9 +17,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Str;
-
-use function Filament\Forms\array_move_after;
-use function Filament\Forms\array_move_before;
 
 class Repeater extends Field implements Contracts\CanConcealComponents, Contracts\HasExtraItemActions
 {
@@ -830,7 +829,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         return $this;
     }
 
-    public function relationship(string | Closure | null $name = null, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string | Closure $name = null, Closure $modifyQueryUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;

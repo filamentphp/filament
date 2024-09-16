@@ -71,7 +71,7 @@ trait HasFilters
     /**
      * @param  array<BaseFilter>  $filters
      */
-    public function filters(array $filters, FiltersLayout | string | Closure | null $layout = null): static
+    public function filters(array $filters, FiltersLayout | string | Closure $layout = null): static
     {
         $this->filters = [];
         $this->pushFilters($filters);

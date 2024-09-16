@@ -17,6 +17,7 @@ use Filament\Panel;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
+use function Filament\Support\is_app_url;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -25,8 +26,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Js;
 use Illuminate\Validation\Rules\Password;
 use Throwable;
-
-use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form
@@ -117,7 +116,7 @@ class EditProfile extends Page
         static::routes($panel);
     }
 
-    public static function getRouteName(?string $panel = null): string
+    public static function getRouteName(string $panel = null): string
     {
         $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 

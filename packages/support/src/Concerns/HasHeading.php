@@ -9,7 +9,7 @@ trait HasHeading
 {
     protected string | Htmlable | Closure | null $heading = null;
 
-    public function heading(string | Htmlable | Closure | null $heading = null): static
+    public function heading(string | Htmlable | Closure $heading = null): static
     {
         $this->heading = $heading;
 

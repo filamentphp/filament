@@ -3,6 +3,7 @@
 namespace Filament\Resources;
 
 use Exception;
+use function Filament\authorize;
 use Filament\Clusters\Cluster;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
@@ -18,6 +19,10 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
+use function Filament\Support\get_model_label;
+use function Filament\Support\locale_has_pluralization;
 use Filament\Tables\Table;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -35,12 +40,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Illuminate\Support\Traits\Macroable;
-
-use function Filament\authorize;
-use function Filament\Support\generate_search_column_expression;
-use function Filament\Support\generate_search_term_expression;
-use function Filament\Support\get_model_label;
-use function Filament\Support\locale_has_pluralization;
 
 abstract class Resource
 {
@@ -192,7 +191,7 @@ abstract class Resource
             ->first();
     }
 
-    public static function can(string $action, ?Model $record = null): bool
+    public static function can(string $action, Model $record = null): bool
     {
         if (static::shouldSkipAuthorization()) {
             return true;
@@ -210,7 +209,7 @@ abstract class Resource
     /**
      * @throws AuthorizationException
      */
-    public static function authorize(string $action, ?Model $record = null): ?Response
+    public static function authorize(string $action, Model $record = null): ?Response
     {
         if (static::shouldSkipAuthorization()) {
             return null;
@@ -578,7 +577,7 @@ abstract class Resource
         return [];
     }
 
-    public static function getRouteBaseName(?string $panel = null): string
+    public static function getRouteBaseName(string $panel = null): string
     {
         $panel = $panel ? Filament::getPanel($panel) : Filament::getCurrentPanel();
 
@@ -692,7 +691,7 @@ abstract class Resource
     /**
      * @param  array<mixed>  $parameters
      */
-    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, string $panel = null, Model $tenant = null): string
     {
         if (blank($panel) || Filament::getPanel($panel)->hasTenancy()) {
             $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());

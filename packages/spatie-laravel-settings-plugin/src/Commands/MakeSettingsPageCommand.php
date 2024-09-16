@@ -9,7 +9,6 @@ use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 

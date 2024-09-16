@@ -24,7 +24,7 @@ trait HasTheme
     /**
      * @param  string | array<string>  $theme
      */
-    public function viteTheme(string | array $theme, ?string $buildDirectory = null): static
+    public function viteTheme(string | array $theme, string $buildDirectory = null): static
     {
         $this->viteTheme = $theme;
         $this->viteThemeBuildDirectory = $buildDirectory;

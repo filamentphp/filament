@@ -4,6 +4,7 @@ namespace Filament\Pages\Tenancy;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use function Filament\authorize;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Pages\Concerns;
@@ -12,13 +13,11 @@ use Filament\Pages\SimplePage;
 use Filament\Panel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
+use function Filament\Support\is_app_url;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Throwable;
-
-use function Filament\authorize;
-use function Filament\Support\is_app_url;
 
 /**
  * @property Form $form

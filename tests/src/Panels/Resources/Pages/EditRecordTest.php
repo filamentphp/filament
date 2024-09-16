@@ -1,13 +1,12 @@
 <?php
 
 use Filament\Actions\DeleteAction;
+use function Filament\Tests\livewire;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\EditPost;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Support\Str;
-
-use function Filament\Tests\livewire;
 use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);

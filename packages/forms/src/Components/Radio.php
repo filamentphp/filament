@@ -26,7 +26,7 @@ class Radio extends Field implements Contracts\CanDisableOptions
         parent::setUp();
     }
 
-    public function boolean(?string $trueLabel = null, ?string $falseLabel = null): static
+    public function boolean(string $trueLabel = null, string $falseLabel = null): static
     {
         $this->options([
             1 => $trueLabel ?? __('filament-forms::components.radio.boolean.true'),

@@ -2,13 +2,12 @@
 
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use function Filament\Tests\livewire;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages\ListPosts;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
-
-use function Filament\Tests\livewire;
 use function Pest\Laravel\assertSoftDeleted;
 
 uses(TestCase::class);

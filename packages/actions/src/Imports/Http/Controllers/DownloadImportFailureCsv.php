@@ -4,13 +4,12 @@ namespace Filament\Actions\Imports\Http\Controllers;
 
 use Filament\Actions\Imports\Models\FailedImportRow;
 use Filament\Actions\Imports\Models\Import;
+use function Filament\authorize;
 use Illuminate\Support\Facades\Gate;
 use League\Csv\ByteSequence;
 use League\Csv\Writer;
 use SplTempFileObject;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-
-use function Filament\authorize;
 
 class DownloadImportFailureCsv
 {

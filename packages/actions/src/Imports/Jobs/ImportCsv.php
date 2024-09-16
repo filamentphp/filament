@@ -125,7 +125,7 @@ class ImportCsv implements ShouldQueue
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function logFailedRow(array $data, ?string $validationError = null): void
+    protected function logFailedRow(array $data, string $validationError = null): void
     {
         $failedRow = app(FailedImportRow::class);
         $failedRow->import()->associate($this->import);

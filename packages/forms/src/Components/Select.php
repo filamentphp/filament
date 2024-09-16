@@ -9,6 +9,8 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Facades\FilamentIcon;
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
 use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
@@ -27,9 +29,6 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Livewire\Component as LivewireComponent;
 use Znck\Eloquent\Relations\BelongsToThrough;
-
-use function Filament\Support\generate_search_column_expression;
-use function Filament\Support\generate_search_term_expression;
 
 class Select extends Field implements Contracts\CanDisableOptions, Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
@@ -198,7 +197,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         ]);
     }
 
-    public function boolean(?string $trueLabel = null, ?string $falseLabel = null, ?string $placeholder = null): static
+    public function boolean(string $trueLabel = null, string $falseLabel = null, string $placeholder = null): static
     {
         $this->options([
             1 => $trueLabel ?? __('filament-forms::components.select.boolean.true'),
@@ -689,7 +688,7 @@ class Select extends Field implements Contracts\CanDisableOptions, Contracts\Has
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
     }
 
-    public function relationship(string | Closure | null $name = null, string | Closure | null $titleAttribute = null, ?Closure $modifyQueryUsing = null, bool $ignoreRecord = false): static
+    public function relationship(string | Closure $name = null, string | Closure $titleAttribute = null, Closure $modifyQueryUsing = null, bool $ignoreRecord = false): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;

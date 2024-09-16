@@ -11,9 +11,8 @@ use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Url;
-use Throwable;
-
 use function Livewire\store;
+use Throwable;
 
 /**
  * @property Form $mountedTableActionForm
@@ -166,7 +165,7 @@ trait HasActions
     /**
      * @param  array<string, mixed>  $arguments
      */
-    public function mountTableAction(string $name, ?string $record = null, array $arguments = []): mixed
+    public function mountTableAction(string $name, string $record = null, array $arguments = []): mixed
     {
         $this->mountedTableActions[] = $name;
         $this->mountedTableActionsArguments[] = $arguments;
@@ -234,20 +233,20 @@ trait HasActions
     /**
      * @param  array<string, mixed>  $arguments
      */
-    public function replaceMountedTableAction(string $name, ?string $record = null, array $arguments = []): void
+    public function replaceMountedTableAction(string $name, string $record = null, array $arguments = []): void
     {
         $this->resetMountedTableActionProperties();
         $this->mountTableAction($name, $record ?? $this->mountedTableActionRecord, $arguments);
     }
 
-    public function mountedTableActionShouldOpenModal(?Action $mountedAction = null): bool
+    public function mountedTableActionShouldOpenModal(Action $mountedAction = null): bool
     {
         return ($mountedAction ?? $this->getMountedTableAction())->shouldOpenModal(
             checkForFormUsing: $this->mountedTableActionHasForm(...),
         );
     }
 
-    public function mountedTableActionHasForm(?Action $mountedAction = null): bool
+    public function mountedTableActionHasForm(Action $mountedAction = null): bool
     {
         return (bool) count($this->getMountedTableActionForm(mountedAction: $mountedAction)?->getComponents() ?? []);
     }
@@ -261,7 +260,7 @@ trait HasActions
         return $this->getTable()->getAction($this->mountedTableActions);
     }
 
-    public function getMountedTableActionForm(?Action $mountedAction = null): ?Form
+    public function getMountedTableActionForm(Action $mountedAction = null): ?Form
     {
         $mountedAction ??= $this->getMountedTableAction();
 
@@ -362,7 +361,7 @@ trait HasActions
         $this->openTableActionModal();
     }
 
-    protected function cacheMountedTableActionForm(?Action $mountedAction = null): void
+    protected function cacheMountedTableActionForm(Action $mountedAction = null): void
     {
         $this->cacheForm(
             'mountedTableActionForm',

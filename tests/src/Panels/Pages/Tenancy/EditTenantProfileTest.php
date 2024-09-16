@@ -2,12 +2,11 @@
 
 use Filament\Facades\Filament;
 use Filament\Pages\Tenancy\EditTenantProfile;
+use function Filament\Tests\livewire;
 use Filament\Tests\Models\Team;
 use Filament\Tests\Models\User;
 use Filament\Tests\Panels\Pages\TestCase;
 use Illuminate\Support\Facades\Gate;
-
-use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 

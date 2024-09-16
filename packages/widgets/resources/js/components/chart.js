@@ -43,17 +43,17 @@ export default function chart({ cachedData, options, type }) {
             Chart.defaults.animation.duration = 0
 
             Chart.defaults.backgroundColor = getComputedStyle(
-                this.$refs.backgroundColorElement,
+                this.$refs.backgroundColorElement
             ).color
 
             const borderColor = getComputedStyle(
-                this.$refs.borderColorElement,
+                this.$refs.borderColorElement
             ).color
 
             Chart.defaults.borderColor = borderColor
 
             Chart.defaults.color = getComputedStyle(
-                this.$refs.textColorElement,
+                this.$refs.textColorElement
             ).color
 
             Chart.defaults.font.family = getComputedStyle(this.$el).fontFamily
@@ -62,7 +62,7 @@ export default function chart({ cachedData, options, type }) {
             Chart.defaults.plugins.legend.position = 'bottom'
 
             const gridColor = getComputedStyle(
-                this.$refs.gridColorElement,
+                this.$refs.gridColorElement
             ).color
 
             options ??= {}

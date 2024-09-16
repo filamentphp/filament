@@ -54,7 +54,7 @@ export default function tagsInputFormComponent({ state, splitKeys }) {
 
                     const pattern = splitKeys
                         .map((key) =>
-                            key.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&'),
+                            key.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&')
                         )
                         .join('|')
 

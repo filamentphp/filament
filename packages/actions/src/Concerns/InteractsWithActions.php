@@ -12,9 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use Livewire\Attributes\Url;
-use Throwable;
-
 use function Livewire\store;
+use Throwable;
 
 /**
  * @property Form $mountedActionForm
@@ -218,14 +217,14 @@ trait InteractsWithActions
         $this->mountAction($name, $arguments);
     }
 
-    public function mountedActionShouldOpenModal(?Action $mountedAction = null): bool
+    public function mountedActionShouldOpenModal(Action $mountedAction = null): bool
     {
         return ($mountedAction ?? $this->getMountedAction())->shouldOpenModal(
             checkForFormUsing: $this->mountedActionHasForm(...),
         );
     }
 
-    public function mountedActionHasForm(?Action $mountedAction = null): bool
+    public function mountedActionHasForm(Action $mountedAction = null): bool
     {
         return (bool) count($this->getMountedActionForm(mountedAction: $mountedAction)?->getComponents() ?? []);
     }
@@ -271,7 +270,7 @@ trait InteractsWithActions
         ];
     }
 
-    public function getMountedActionForm(?Action $mountedAction = null): ?Form
+    public function getMountedActionForm(Action $mountedAction = null): ?Form
     {
         $mountedAction ??= $this->getMountedAction();
 
@@ -441,7 +440,7 @@ trait InteractsWithActions
         $this->openActionModal();
     }
 
-    protected function cacheMountedActionForm(?Action $mountedAction = null): void
+    protected function cacheMountedActionForm(Action $mountedAction = null): void
     {
         $this->cacheForm(
             'mountedActionForm',

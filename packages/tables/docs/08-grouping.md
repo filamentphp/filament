@@ -23,6 +23,18 @@ public function table(Table $table): Table
 }
 ```
 
+You can also define the default grouping order by passing a second argument to the `defaultGroup()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->defaultGroup('status', 'desc');
+}
+```
+
 <AutoScreenshot name="tables/grouping" alt="Table with grouping" version="3.x" />
 
 ## Allowing users to choose between groupings

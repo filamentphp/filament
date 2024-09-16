@@ -60,7 +60,7 @@ trait HasFilters
         $this->resetPage();
     }
 
-    public function removeTableFilter(string $filterName, ?string $field = null, bool $isRemovingAllFilters = false): void
+    public function removeTableFilter(string $filterName, string $field = null, bool $isRemovingAllFilters = false): void
     {
         $filter = $this->getTable()->getFilter($filterName);
         $filterResetState = $filter->getResetState();

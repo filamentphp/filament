@@ -19,7 +19,7 @@ class TagsColumn extends TextColumn
     /**
      * @deprecated Use `limitList()` instead.
      */
-    public function limit(int | Closure | null $length = 3, string | Closure | null $end = null): static
+    public function limit(int | Closure | null $length = 3, string | Closure $end = null): static
     {
         $this->limitList($length);
 

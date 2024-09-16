@@ -22,7 +22,7 @@
                             value="{{ $navigationItemChild->getUrl() }}"
                         >
                             @if ($loop->index)
-                                &ensp;&ensp;
+                                    &ensp;&ensp;
                             @endif
 
                             {{ $navigationItemChild->getLabel() }}

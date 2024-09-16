@@ -21,7 +21,7 @@ trait HasRelationship
 
     protected string | Closure | null $relationshipTitleAttribute = null;
 
-    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, Closure $modifyQueryUsing = null): static
     {
         $this->relationship = $name;
         $this->relationshipTitleAttribute = $titleAttribute;
@@ -101,7 +101,7 @@ trait HasRelationship
         return $relationshipQuery;
     }
 
-    public function getRelationshipKey(?Builder $query = null): ?string
+    public function getRelationshipKey(Builder $query = null): ?string
     {
         $relationship = $this->getRelationship();
 

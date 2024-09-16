@@ -1,10 +1,9 @@
 <?php
 
 use Filament\Tests\Infolists\Fixtures\Actions;
+use function Filament\Tests\livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
-
-use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 

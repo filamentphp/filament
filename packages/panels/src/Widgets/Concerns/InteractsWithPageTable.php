@@ -8,7 +8,6 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Reactive;
-
 use function Livewire\trigger;
 
 trait InteractsWithPageTable

@@ -27,7 +27,7 @@ trait CanBeSearchable
      */
     public function searchable(
         bool | array | string $condition = true,
-        ?Closure $query = null,
+        Closure $query = null,
         bool $isIndividual = false,
         bool $isGlobal = true,
     ): static {

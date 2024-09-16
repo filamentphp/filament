@@ -5,9 +5,8 @@ namespace Filament\Forms\Commands;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Attribute\AsCommand;
-
 use function Laravel\Prompts\text;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'make:form-layout')]
 class MakeLayoutComponentCommand extends Command

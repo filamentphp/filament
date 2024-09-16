@@ -36,7 +36,7 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     /**
      * @param  string | array<Component> | Htmlable | Closure | null  $heading
      */
-    final public function __construct(string | array | Htmlable | Closure | null $heading = null)
+    final public function __construct(string | array | Htmlable | Closure $heading = null)
     {
         is_array($heading)
             ? $this->childComponents($heading)
@@ -46,7 +46,7 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     /**
      * @param  string | array<Component> | Htmlable | Closure | null  $heading
      */
-    public static function make(string | array | Htmlable | Closure | null $heading = null): static
+    public static function make(string | array | Htmlable | Closure $heading = null): static
     {
         $static = app(static::class, ['heading' => $heading]);
         $static->configure();

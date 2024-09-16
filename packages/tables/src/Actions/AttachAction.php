@@ -7,6 +7,8 @@ use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Support\Enums\MaxWidth;
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
 use Filament\Support\Services\RelationshipJoiner;
 use Filament\Tables\Table;
 use Illuminate\Database\Connection;
@@ -15,9 +17,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
-
-use function Filament\Support\generate_search_column_expression;
-use function Filament\Support\generate_search_term_expression;
 
 class AttachAction extends Action
 {
@@ -194,7 +193,7 @@ class AttachAction extends Action
     {
         $table = $this->getTable();
 
-        $getOptions = function (int $optionsLimit, ?string $search = null, ?array $searchColumns = []) use ($table): array {
+        $getOptions = function (int $optionsLimit, string $search = null, ?array $searchColumns = []) use ($table): array {
             /** @var BelongsToMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 

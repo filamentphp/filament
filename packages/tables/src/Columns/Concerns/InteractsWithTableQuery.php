@@ -2,14 +2,13 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
-
-use function Filament\Support\generate_search_column_expression;
-use function Filament\Support\generate_search_term_expression;
 
 trait InteractsWithTableQuery
 {
@@ -139,7 +138,7 @@ trait InteractsWithTableQuery
     /**
      * @param  array<string> | null  $relationships
      */
-    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null): string | Builder
+    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, array $relationships = null): string | Builder
     {
         $relationships ??= ($relationshipName = $this->getRelationshipName()) ?
             explode('.', $relationshipName) :

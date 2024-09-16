@@ -14,9 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
-use Throwable;
-
 use function Livewire\store;
+use Throwable;
 
 /**
  * @property Form $mountedTableBulkActionForm
@@ -132,7 +131,7 @@ trait HasBulkActions
     /**
      * @param  array<int | string> | null  $selectedRecords
      */
-    public function mountTableBulkAction(string $name, ?array $selectedRecords = null): mixed
+    public function mountTableBulkAction(string $name, array $selectedRecords = null): mixed
     {
         $this->mountedTableBulkAction = $name;
 
@@ -185,7 +184,7 @@ trait HasBulkActions
         return null;
     }
 
-    protected function cacheMountedTableBulkActionForm(?BulkAction $mountedBulkAction = null): void
+    protected function cacheMountedTableBulkActionForm(BulkAction $mountedBulkAction = null): void
     {
         $this->cacheForm(
             'mountedTableBulkActionForm',
@@ -196,7 +195,7 @@ trait HasBulkActions
     /**
      * @param  array<int | string> | null  $selectedRecords
      */
-    public function replaceMountedTableBulkAction(string $name, ?array $selectedRecords = null): void
+    public function replaceMountedTableBulkAction(string $name, array $selectedRecords = null): void
     {
         $selectedRecords ??= $this->selectedTableRecords;
 
@@ -210,7 +209,7 @@ trait HasBulkActions
         $this->selectedTableRecords = [];
     }
 
-    public function mountedTableBulkActionShouldOpenModal(?BulkAction $mountedBulkAction = null): bool
+    public function mountedTableBulkActionShouldOpenModal(BulkAction $mountedBulkAction = null): bool
     {
         return ($mountedBulkAction ?? $this->getMountedTableBulkAction())->shouldOpenModal(
             checkForFormUsing: $this->mountedTableBulkActionHasForm(...),
@@ -226,7 +225,7 @@ trait HasBulkActions
         }
     }
 
-    public function mountedTableBulkActionHasForm(?BulkAction $mountedBulkAction = null): bool
+    public function mountedTableBulkActionHasForm(BulkAction $mountedBulkAction = null): bool
     {
         return (bool) count($this->getMountedTableBulkActionForm(mountedBulkAction: $mountedBulkAction)?->getComponents() ?? []);
     }
@@ -423,7 +422,7 @@ trait HasBulkActions
         return $this->getTable()->getBulkAction($this->mountedTableBulkAction);
     }
 
-    public function getMountedTableBulkActionForm(?BulkAction $mountedBulkAction = null): ?Form
+    public function getMountedTableBulkActionForm(BulkAction $mountedBulkAction = null): ?Form
     {
         $mountedBulkAction ??= $this->getMountedTableBulkAction();
 

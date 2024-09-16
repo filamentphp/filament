@@ -57,9 +57,9 @@ export default (Alpine) => {
                         this.$el,
                         value,
                         show,
-                        hide,
+                        hide
                     )
-                },
+                }
             )
 
             Alpine.effect(() => toggle(this.isShown))
@@ -99,7 +99,7 @@ export default (Alpine) => {
                                 {
                                     duration: this.transitionDuration,
                                     easing: this.transitionEasing,
-                                },
+                                }
                             )
                         }
 
@@ -111,7 +111,7 @@ export default (Alpine) => {
                     succeed(({ snapshot, effect }) => {
                         animation()
                     })
-                },
+                }
             )
         },
 
@@ -125,9 +125,9 @@ export default (Alpine) => {
                             detail: {
                                 id: notification.id,
                             },
-                        }),
+                        })
                     ),
-                this.transitionDuration,
+                this.transitionDuration
             )
         },
 
@@ -137,7 +137,7 @@ export default (Alpine) => {
                     detail: {
                         id: notification.id,
                     },
-                }),
+                })
             )
         },
 
@@ -147,7 +147,7 @@ export default (Alpine) => {
                     detail: {
                         id: notification.id,
                     },
-                }),
+                })
             )
         },
     }))

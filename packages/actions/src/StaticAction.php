@@ -60,7 +60,7 @@ class StaticAction extends ViewComponent
         $this->name($name);
     }
 
-    public static function make(?string $name = null): static
+    public static function make(string $name = null): static
     {
         $static = app(static::class, [
             'name' => $name ?? static::getDefaultName(),

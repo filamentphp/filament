@@ -48,7 +48,7 @@ class ResetPassword extends SimplePage
     #[Locked]
     public ?string $token = null;
 
-    public function mount(?string $email = null, ?string $token = null): void
+    public function mount(string $email = null, string $token = null): void
     {
         if (Filament::auth()->check()) {
             redirect()->intended(Filament::getUrl());

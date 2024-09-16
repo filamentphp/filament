@@ -134,7 +134,7 @@ class ImageEntry extends Entry
         return $this;
     }
 
-    public function getImageUrl(?string $state = null): ?string
+    public function getImageUrl(string $state = null): ?string
     {
         if ((filter_var($state, FILTER_VALIDATE_URL) !== false) || str($state)->startsWith('data:')) {
             return $state;
@@ -273,7 +273,7 @@ class ImageEntry extends Entry
         return $this->evaluate($this->limit);
     }
 
-    public function limitedRemainingText(bool | Closure $condition = true, bool | Closure $isSeparate = false, string | Closure | null $size = null): static
+    public function limitedRemainingText(bool | Closure $condition = true, bool | Closure $isSeparate = false, string | Closure $size = null): static
     {
         $this->hasLimitedRemainingText = $condition;
         $this->limitedRemainingTextSeparate($isSeparate);

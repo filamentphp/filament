@@ -49,7 +49,7 @@ class Notification extends ViewComponent implements Arrayable
         $this->id($id);
     }
 
-    public static function make(?string $id = null): static
+    public static function make(string $id = null): static
     {
         $static = app(static::class, ['id' => $id ?? Str::orderedUuid()]);
         $static->configure();
@@ -234,7 +234,7 @@ class Notification extends ViewComponent implements Arrayable
         return $static;
     }
 
-    public static function assertNotified(Notification | string | null $notification = null): void
+    public static function assertNotified(Notification | string $notification = null): void
     {
         $notificationsLivewireComponent = new Notifications();
         $notificationsLivewireComponent->mount();
@@ -270,7 +270,7 @@ class Notification extends ViewComponent implements Arrayable
         Assert::assertSame($expectedNotification->title, $notification);
     }
 
-    public static function assertNotNotified(Notification | string | null $notification = null): void
+    public static function assertNotNotified(Notification | string $notification = null): void
     {
         $notificationsLivewireComponent = new Notifications();
         $notificationsLivewireComponent->mount();

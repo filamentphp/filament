@@ -9,10 +9,9 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Symfony\Component\Console\Attribute\AsCommand;
-
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
+use Symfony\Component\Console\Attribute\AsCommand;
 
 #[AsCommand(name: 'make:filament-widget')]
 class MakeWidgetCommand extends Command

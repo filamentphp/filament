@@ -18,7 +18,7 @@ trait CanBeHidden
     /**
      * @param  Model | class-string | array<mixed> | null  $arguments
      */
-    public function authorize(mixed $abilities, Model | string | array | null $arguments = null): static
+    public function authorize(mixed $abilities, Model | string | array $arguments = null): static
     {
         if (is_string($abilities) || is_array($abilities)) {
             $this->authorization = [
@@ -37,7 +37,7 @@ trait CanBeHidden
      * @param  string | array<string>  $abilities
      * @param  Model | array<mixed> | null  $arguments
      */
-    public function authorizeAny(string | array $abilities, Model | array | null $arguments = null): static
+    public function authorizeAny(string | array $abilities, Model | array $arguments = null): static
     {
         $this->authorization = [
             'type' => 'any',

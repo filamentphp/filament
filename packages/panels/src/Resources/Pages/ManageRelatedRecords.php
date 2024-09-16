@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
+use function Filament\authorize;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
@@ -16,8 +17,6 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Url;
-
-use function Filament\authorize;
 
 class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 {
@@ -264,7 +263,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
             ->authorize(static fn (ManageRelatedRecords $livewire): bool => $livewire->canRestoreAny());
     }
 
-    protected function can(string $action, ?Model $record = null): bool
+    protected function can(string $action, Model $record = null): bool
     {
         if (static::shouldSkipAuthorization()) {
             return true;

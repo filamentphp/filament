@@ -35,7 +35,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0, string | Closure | null $locale = null): static
+    public function money(string | Closure $currency = null, int $divideBy = 0, string | Closure $locale = null): static
     {
         $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $divideBy, $locale): ?string {
             if (blank($state)) {
@@ -58,7 +58,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null | ArgumentValue $decimalSeparator = ArgumentValue::Default, string | Closure | null | ArgumentValue $thousandsSeparator = ArgumentValue::Default, int | Closure | null $maxDecimalPlaces = null, string | Closure | null $locale = null): static
+    public function numeric(int | Closure $decimalPlaces = null, string | Closure | null | ArgumentValue $decimalSeparator = ArgumentValue::Default, string | Closure | null | ArgumentValue $thousandsSeparator = ArgumentValue::Default, int | Closure $maxDecimalPlaces = null, string | Closure $locale = null): static
     {
         $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($decimalPlaces, $decimalSeparator, $locale, $maxDecimalPlaces, $thousandsSeparator): ?string {
             if (blank($state)) {
