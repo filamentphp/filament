@@ -22,7 +22,10 @@ class SelectFilter extends BaseFilter
 
     protected bool | Closure $isStatic = false;
 
-    protected bool | Closure $isSearchable = false;
+    /**
+     * @var bool|Closure|array<int, mixed>
+     */
+    protected bool | Closure | array $isSearchable = false;
 
     protected bool | Closure $canSelectPlaceholder = true;
 
@@ -257,7 +260,7 @@ class SelectFilter extends BaseFilter
             ->label($this->getLabel())
             ->multiple($this->isMultiple())
             ->placeholder($this->getPlaceholder())
-            ->searchable($this->isSearchable())
+            ->searchable($this->getIsSearchable())
             ->selectablePlaceholder($this->canSelectPlaceholder())
             ->preload($this->isPreloaded())
             ->native($this->isNative())
@@ -303,9 +306,12 @@ class SelectFilter extends BaseFilter
         return (bool) $this->evaluate($this->isMultiple);
     }
 
-    public function isSearchable(): bool
+    /**
+     * @return bool|Closure|array<int, mixed>
+     */
+    public function getIsSearchable(): bool | Closure | array
     {
-        return (bool) $this->evaluate($this->isSearchable);
+        return $this->evaluate($this->isSearchable);
     }
 
     public function canSelectPlaceholder(): bool
