@@ -12,6 +12,8 @@ trait CanGroupRecords
 {
     protected string | Group | null $defaultGroup = null;
 
+    protected string | Closure | null $defaultGroupingDirection = null;
+
     /**
      * @var array<string, Group>
      */
@@ -56,9 +58,17 @@ trait CanGroupRecords
         return $this;
     }
 
-    public function defaultGroup(string | Group | null $group): static
+    public function defaultGroup(string | Group | null $group, string | Closure $direction = 'asc'): static
     {
         $this->defaultGroup = $group;
+        $this->defaultGroupingDirection = $direction;
+
+        return $this;
+    }
+
+    public function defaultGroupingDirection(string | Closure $direction): static
+    {
+        $this->defaultGroupingDirection = $direction;
 
         return $this;
     }
@@ -147,6 +157,11 @@ trait CanGroupRecords
         }
 
         return Group::make($this->defaultGroup);
+    }
+
+    public function getDefaultGroupingDirection(): string
+    {
+        return $this->evaluate($this->defaultGroupingDirection) ?? 'asc';
     }
 
     /**

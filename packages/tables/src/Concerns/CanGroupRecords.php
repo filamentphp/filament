@@ -41,7 +41,7 @@ trait CanGroupRecords
         return match ($this->tableGroupingDirection) {
             'asc' => 'asc',
             'desc' => 'desc',
-            default => null,
+            default => $this->getTable()->getDefaultGroupingDirection(),
         };
     }
 
@@ -55,7 +55,7 @@ trait CanGroupRecords
 
         $group->applyEagerLoading($query);
 
-        $group->orderQuery($query, $this->getTableGroupingDirection() ?? 'asc');
+        $group->orderQuery($query, $this->getTableGroupingDirection());
 
         return $query;
     }
