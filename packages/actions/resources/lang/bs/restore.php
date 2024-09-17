@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Restaurirati',
+        'label' => 'Povrati',
 
         'modal' => [
 
-            'heading' => 'Restaurirati :label',
+            'heading' => 'Povrati :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restaurirati',
+                    'label' => 'Povrati',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Zapis restauriran',
+                'title' => 'Zapis vraćen',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Izabrani restaurirati',
+        'label' => 'Izabrani vratiti',
 
         'modal' => [
 
-            'heading' => 'Restaurirati izabrani :label',
+            'heading' => 'Povrati :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restaurirati',
+                    'label' => 'Povratiti',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Zapisi restaurirani',
+                'title' => 'Zapisi vraćen',
             ],
 
         ],
