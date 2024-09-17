@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Konačno izbrisat',
+        'label' => 'Izbrišite zauvijek',
 
         'modal' => [
 
-            'heading' => 'Konačno izbrisati :label',
+            'heading' => 'Izbrišite :label zauvijek',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Izbrasiti',
+                    'label' => 'Izbrišite',
                 ],
 
             ],
@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Izabrani konačno izbrisati',
+        'label' => 'Izabrano izbrišite zauvijek',
 
         'modal' => [
 
-            'heading' => 'Konačno izbrisati izabrani :label ',
+            'heading' => 'Zauvijek izbrišite :label ',
 
             'actions' => [
 
