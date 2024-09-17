@@ -114,6 +114,13 @@ class MakeWidgetCommand extends Command
             $widgetDirectories = $panel->getWidgetDirectories();
             $widgetNamespaces = $panel->getWidgetNamespaces();
 
+            foreach ($widgetDirectories as $widgetIndex => $widgetDirectory) {
+                if (str($widgetDirectory)->startsWith(base_path('vendor'))) {
+                    unset($widgetDirectories[$widgetIndex]);
+                    unset($widgetNamespaces[$widgetIndex]);
+                }
+            }
+
             $namespace = (count($widgetNamespaces) > 1) ?
                 select(
                     label: 'Which namespace would you like to create this in?',
@@ -126,6 +133,13 @@ class MakeWidgetCommand extends Command
         } else {
             $resourceDirectories = $panel->getResourceDirectories();
             $resourceNamespaces = $panel->getResourceNamespaces();
+
+            foreach ($resourceDirectories as $resourceIndex => $resourceDirectory) {
+                if (str($resourceDirectory)->startsWith(base_path('vendor'))) {
+                    unset($resourceDirectories[$resourceIndex]);
+                    unset($resourceNamespaces[$resourceIndex]);
+                }
+            }
 
             $resourceNamespace = (count($resourceNamespaces) > 1) ?
                 select(

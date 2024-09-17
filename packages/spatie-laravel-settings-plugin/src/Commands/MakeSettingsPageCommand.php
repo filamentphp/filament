@@ -70,6 +70,13 @@ class MakeSettingsPageCommand extends Command
         $pageDirectories = $panel->getPageDirectories();
         $pageNamespaces = $panel->getPageNamespaces();
 
+        foreach ($pageDirectories as $pageIndex => $pageDirectory) {
+            if (str($pageDirectory)->startsWith(base_path('vendor'))) {
+                unset($pageDirectories[$pageIndex]);
+                unset($pageNamespaces[$pageIndex]);
+            }
+        }
+
         $namespace = (count($pageNamespaces) > 1) ?
             select(
                 label: 'Which namespace would you like to create this in?',
