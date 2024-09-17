@@ -95,7 +95,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->query(fn (EloquentBuilder $query) => $query->where('is_published', true)),
                 Tables\Filters\SelectFilter::make('author')
                     ->relationship('author', 'name')
-                    ->searchable(fn () => ['name', 'email', 'job']),
+                    ->searchable(['name', 'email', 'job']),
                 Tables\Filters\SelectFilter::make('select_filter_attribute')
                     ->options([
                         true => 'Published',
