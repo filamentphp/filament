@@ -106,7 +106,7 @@ class MakeResourceCommand extends Command
         $resourceNamespaces = $panel->getResourceNamespaces();
 
         foreach ($resourceDirectories as $resourceIndex => $resourceDirectory) {
-            if (mb_strpos($resourceDirectory, base_path('vendor')) === 0) {
+            if (str($resourceDirectory)->startsWith(base_path('vendor'))) {
                 unset($resourceDirectories[$resourceIndex]);
                 unset($resourceNamespaces[$resourceIndex]);
             }
