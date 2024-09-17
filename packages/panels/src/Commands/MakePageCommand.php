@@ -70,10 +70,20 @@ class MakePageCommand extends Command
             )] : Arr::first($panels);
         }
 
+        $resourceDirectories = $panel->getResourceDirectories();
+        $resourceNamespaces = $panel->getResourceNamespaces();
+
+        foreach ($resourceDirectories as $resourceIndex => $resourceDirectory) {
+            if (str($resourceDirectory)->startsWith(base_path('vendor'))) {
+                unset($resourceDirectories[$resourceIndex]);
+                unset($resourceNamespaces[$resourceIndex]);
+            }
+        }
+
         $resourceInput = $this->option('resource') ?? suggest(
             label: 'Which resource would you like to create this in?',
             options: collect($panel->getResources())
-                ->filter(fn (string $namespace): bool => str($namespace)->contains('\\Resources\\'))
+                ->filter(fn (string $namespace): bool => str($namespace)->contains('\\Resources\\') && str($namespace)->startsWith($resourceNamespaces))
                 ->map(
                     fn (string $namespace): string => (string) str($namespace)
                         ->afterLast('\\Resources\\')
@@ -194,6 +204,13 @@ class MakePageCommand extends Command
         if (empty($resource)) {
             $pageDirectories = $panel->getPageDirectories();
             $pageNamespaces = $panel->getPageNamespaces();
+
+            foreach ($pageDirectories as $pageIndex => $pageDirectory) {
+                if (str($pageDirectory)->startsWith(base_path('vendor'))) {
+                    unset($pageDirectories[$pageIndex]);
+                    unset($pageNamespaces[$pageIndex]);
+                }
+            }
 
             $namespace = (count($pageNamespaces) > 1) ?
                 select(
