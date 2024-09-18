@@ -148,7 +148,7 @@ TextColumn::make('index')->getStateUsing(
         return (string) (
             $rowLoop->iteration +
             ($livewire->tableRecordsPerPage * (
-                $livewire->page - 1
+                $livewire->getPage() - 1
             ))
         );
     }
