@@ -10,190 +10,198 @@ use Filament\Tables\Grouping\Group;
 
 trait CanGroupRecords
 {
-    protected string | Group | null $defaultGroup = null;
+      protected string | Group | null $defaultGroup = null;
 
-    /**
-     * @var array<string, Group>
-     */
-    protected ?array $cachedGroups;
+      protected string | Closure | null $defaultGroupDirection = 'asc';
 
-    /**
-     * @var array<string | Group> | Closure
-     */
-    protected array | Closure $groups = [];
+      /**
+       * @var array<string, Group>
+       */
+      protected ?array $cachedGroups;
 
-    protected bool | Closure $isGroupsOnly = false;
+      /**
+       * @var array<string | Group> | Closure
+       */
+      protected array | Closure $groups = [];
 
-    protected bool | Closure $areGroupingSettingsInDropdownOnDesktop = false;
+      protected bool | Closure $isGroupsOnly = false;
 
-    protected bool | Closure $areGroupingSettingsHidden = false;
+      protected bool | Closure $areGroupingSettingsInDropdownOnDesktop = false;
 
-    protected bool | Closure $isGroupingDirectionSettingHidden = false;
+      protected bool | Closure $areGroupingSettingsHidden = false;
 
-    protected ?Closure $modifyGroupRecordsTriggerActionUsing = null;
+      protected bool | Closure $isGroupingDirectionSettingHidden = false;
 
-    public function groupRecordsTriggerAction(?Closure $callback): static
-    {
-        $this->modifyGroupRecordsTriggerActionUsing = $callback;
+      protected ?Closure $modifyGroupRecordsTriggerActionUsing = null;
 
-        return $this;
-    }
+      public function groupRecordsTriggerAction(?Closure $callback): static
+      {
+            $this->modifyGroupRecordsTriggerActionUsing = $callback;
 
-    public function groupingSettingsInDropdownOnDesktop(bool | Closure $condition = true): static
-    {
-        $this->areGroupingSettingsInDropdownOnDesktop = $condition;
+            return $this;
+      }
 
-        return $this;
-    }
+      public function groupingSettingsInDropdownOnDesktop(bool | Closure $condition = true): static
+      {
+            $this->areGroupingSettingsInDropdownOnDesktop = $condition;
 
-    /**
-     * @deprecated Use the `groupingSettingsInDropdownOnDesktop()` method instead.
-     */
-    public function groupsInDropdownOnDesktop(bool | Closure $condition = true): static
-    {
-        $this->groupingSettingsInDropdownOnDesktop($condition);
+            return $this;
+      }
 
-        return $this;
-    }
+      /**
+       * @deprecated Use the `groupingSettingsInDropdownOnDesktop()` method instead.
+       */
+      public function groupsInDropdownOnDesktop(bool | Closure $condition = true): static
+      {
+            $this->groupingSettingsInDropdownOnDesktop($condition);
 
-    public function groupingSettingsHidden(bool | Closure $condition = true): static
-    {
-        $this->areGroupingSettingsHidden = $condition;
+            return $this;
+      }
 
-        return $this;
-    }
+      public function groupingSettingsHidden(bool | Closure $condition = true): static
+      {
+            $this->areGroupingSettingsHidden = $condition;
 
-    public function groupingDirectionSettingHidden(bool | Closure $condition = true): static
-    {
-        $this->isGroupingDirectionSettingHidden = $condition;
+            return $this;
+      }
 
-        return $this;
-    }
+      public function groupingDirectionSettingHidden(bool | Closure $condition = true): static
+      {
+            $this->isGroupingDirectionSettingHidden = $condition;
 
-    public function defaultGroup(string | Group | null $group): static
-    {
-        $this->defaultGroup = $group;
+            return $this;
+      }
 
-        return $this;
-    }
+      public function defaultGroup(string | Group | null $group, string | Closure | null $direction): static
+      {
+            $this->defaultGroup = $group;
+            $this->defaultGroupDirection = $direction;
 
-    /**
-     * @param  array<string | Group> | Closure  $groups
-     */
-    public function groups(array | Closure $groups): static
-    {
-        $this->groups = $groups;
+            return $this;
+      }
 
-        return $this;
-    }
+      /**
+       * @param  array<string | Group> | Closure  $groups
+       */
+      public function groups(array | Closure $groups): static
+      {
+            $this->groups = $groups;
 
-    public function groupsOnly(bool | Closure $condition = true): static
-    {
-        $this->isGroupsOnly = $condition;
+            return $this;
+      }
 
-        return $this;
-    }
+      public function groupsOnly(bool | Closure $condition = true): static
+      {
+            $this->isGroupsOnly = $condition;
 
-    public function getGroupRecordsTriggerAction(): Action
-    {
-        $action = Action::make('groupRecords')
-            ->label(__('filament-tables::table.actions.group.label'))
-            ->iconButton()
-            ->icon(FilamentIcon::resolve('tables::actions.group') ?? 'heroicon-m-rectangle-stack')
-            ->color('gray')
-            ->livewireClickHandlerEnabled(false)
-            ->table($this);
+            return $this;
+      }
 
-        if ($this->modifyGroupRecordsTriggerActionUsing) {
-            $action = $this->evaluate($this->modifyGroupRecordsTriggerActionUsing, [
-                'action' => $action,
-            ]) ?? $action;
-        }
+      public function getGroupRecordsTriggerAction(): Action
+      {
+            $action = Action::make('groupRecords')
+                  ->label(__('filament-tables::table.actions.group.label'))
+                  ->iconButton()
+                  ->icon(FilamentIcon::resolve('tables::actions.group') ?? 'heroicon-m-rectangle-stack')
+                  ->color('gray')
+                  ->livewireClickHandlerEnabled(false)
+                  ->table($this);
 
-        if ($action->getView() === Action::BUTTON_VIEW) {
-            $action->defaultSize(ActionSize::Small);
-        }
+            if ($this->modifyGroupRecordsTriggerActionUsing) {
+                  $action = $this->evaluate($this->modifyGroupRecordsTriggerActionUsing, [
+                        'action' => $action,
+                  ]) ?? $action;
+            }
 
-        return $action;
-    }
+            if ($action->getView() === Action::BUTTON_VIEW) {
+                  $action->defaultSize(ActionSize::Small);
+            }
 
-    public function isDefaultGroupSelectable(): bool
-    {
-        $defaultGroup = $this->getDefaultGroup();
+            return $action;
+      }
 
-        if (! $defaultGroup) {
-            return false;
-        }
+      public function isDefaultGroupSelectable(): bool
+      {
+            $defaultGroup = $this->getDefaultGroup();
 
-        return $this->getGroup($defaultGroup->getId()) !== null;
-    }
+            if (! $defaultGroup) {
+                  return false;
+            }
 
-    public function areGroupingSettingsInDropdownOnDesktop(): bool
-    {
-        return (bool) $this->evaluate($this->areGroupingSettingsInDropdownOnDesktop);
-    }
+            return $this->getGroup($defaultGroup->getId()) !== null;
+      }
 
-    public function areGroupingSettingsHidden(): bool
-    {
-        return (bool) $this->evaluate($this->areGroupingSettingsHidden);
-    }
+      public function areGroupingSettingsInDropdownOnDesktop(): bool
+      {
+            return (bool) $this->evaluate($this->areGroupingSettingsInDropdownOnDesktop);
+      }
 
-    public function isGroupingDirectionSettingHidden(): bool
-    {
-        return (bool) $this->evaluate($this->isGroupingDirectionSettingHidden);
-    }
+      public function areGroupingSettingsHidden(): bool
+      {
+            return (bool) $this->evaluate($this->areGroupingSettingsHidden);
+      }
 
-    public function getDefaultGroup(): ?Group
-    {
-        if ($this->defaultGroup === null) {
-            return null;
-        }
+      public function isGroupingDirectionSettingHidden(): bool
+      {
+            return (bool) $this->evaluate($this->isGroupingDirectionSettingHidden);
+      }
 
-        if ($this->defaultGroup instanceof Group) {
-            return $this->defaultGroup;
-        }
+      public function getDefaultGroup(): ?Group
+      {
+            if ($this->defaultGroup === null) {
+                  return null;
+            }
 
-        $group = $this->getGroup($this->defaultGroup);
+            if ($this->defaultGroup instanceof Group) {
+                  return $this->defaultGroup;
+            }
 
-        if ($group) {
-            return $group;
-        }
+            $group = $this->getGroup($this->defaultGroup);
 
-        return Group::make($this->defaultGroup);
-    }
+            if ($group) {
+                  return $group;
+            }
 
-    /**
-     * @return array<string, Group>
-     */
-    public function getGroups(): array
-    {
-        return $this->cachedGroups ??= array_reduce(
-            $this->evaluate($this->groups),
-            function (array $carry, $group): array {
-                if (! $group instanceof Group) {
-                    $group = Group::make($group);
-                }
+            return Group::make($this->defaultGroup);
+      }
 
-                $carry[$group->getId()] = $group;
+      public function getDefaultGroupDirection(): ?string
+      {
+            return $this->evaluate($this->defaultGroupDirection);
+      }
 
-                return $carry;
-            },
-            initial: [],
-        );
-    }
+      /**
+       * @return array<string, Group>
+       */
+      public function getGroups(): array
+      {
+            return $this->cachedGroups ??= array_reduce(
+                  $this->evaluate($this->groups),
+                  function (array $carry, $group): array {
+                        if (! $group instanceof Group) {
+                              $group = Group::make($group);
+                        }
 
-    public function getGroup(string $id): ?Group
-    {
-        return $this->getGroups()[$id] ?? null;
-    }
+                        $carry[$group->getId()] = $group;
 
-    public function getGrouping(): ?Group
-    {
-        return $this->getLivewire()->getTableGrouping();
-    }
+                        return $carry;
+                  },
+                  initial: [],
+            );
+      }
 
-    public function isGroupsOnly(): bool
-    {
-        return (bool) $this->evaluate($this->isGroupsOnly);
-    }
+      public function getGroup(string $id): ?Group
+      {
+            return $this->getGroups()[$id] ?? null;
+      }
+
+      public function getGrouping(): ?Group
+      {
+            return $this->getLivewire()->getTableGrouping();
+      }
+
+      public function isGroupsOnly(): bool
+      {
+            return (bool) $this->evaluate($this->isGroupsOnly);
+      }
 }
