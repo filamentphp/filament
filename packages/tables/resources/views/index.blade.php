@@ -793,7 +793,7 @@
                                         {{ $actionsColumnLabel }}
                                     </x-filament-tables::header-cell>
                                 @else
-                                    <th class="w-1"></th>
+                                    <th class="w-1" aria-label="action"></th>
                                 @endif
                             @endif
 
@@ -828,7 +828,7 @@
                                         {{ $actionsColumnLabel }}
                                     </x-filament-tables::header-cell>
                                 @else
-                                    <th class="w-1"></th>
+                                    <th class="w-1" aria-label="action"></th>
                                 @endif
                             @endif
                         @endif
@@ -871,7 +871,7 @@
                                         {{ $actionsColumnLabel }}
                                     </x-filament-tables::header-cell>
                                 @else
-                                    <th class="w-1"></th>
+                                    <th class="w-1" aria-label="action"></th>
                                 @endif
                             @endif
 
@@ -908,7 +908,7 @@
                                         {{ $actionsColumnLabel }}
                                     </x-filament-tables::header-cell>
                                 @else
-                                    <th class="w-1"></th>
+                                    <th class="w-1" aria-label="action"></th>
                                 @endif
                             @endif
                         @endif
