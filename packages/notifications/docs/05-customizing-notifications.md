@@ -31,7 +31,7 @@ If your desired customization can't be achieved using the CSS classes above, you
 use Filament\Notifications\Notification;
 
 Notification::configureUsing(function (Notification $notification): void {
-    $notification->view('filament-notifications.notification');
+    $notification->view('notifications.notification');
 });
 ```
 
