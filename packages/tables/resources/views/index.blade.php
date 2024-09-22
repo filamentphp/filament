@@ -1128,17 +1128,20 @@
                                     @endif
 
                                     @if ($isSelectionEnabled && ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) && (! $isReordering))
-                                        <x-filament-tables::selection.cell>
+                                        <td class="fi-ta-cell">
                                             @if ($isRecordSelectable($record))
-                                                <x-filament-tables::selection.checkbox
-                                                    :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
-                                                    :value="$recordKey"
+                                                <input
+                                                    aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
+                                                    type="checkbox"
+                                                    value="{{ $recordKey }}"
                                                     x-model="selectedRecords"
-                                                    :data-group="$recordGroupKey"
-                                                    class="fi-ta-record-checkbox"
+                                                    data-group="{{ $recordGroupKey }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                    class="fi-ta-record-checkbox fi-checkbox-input"
                                                 />
                                             @endif
-                                        </x-filament-tables::selection.cell>
+                                        </td>
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns && (! $isReordering))
@@ -1164,34 +1167,65 @@
                                         @php
                                             $column->record($record);
                                             $column->rowLoop($loop->parent);
+
+                                            $columnAction = $column->getAction();
+                                            $columnUrl = $column->getUrl();
+                                            $isColumnClickDisabled = $column->isClickDisabled() || $isReordering;
+
+                                            $columnWrapperTag = match (true) {
+                                                ($columnUrl || ($recordUrl && $columnAction === null)) && (! $isColumnClickDisabled) => 'a',
+                                                ($columnAction || $recordAction) && (! $isColumnClickDisabled) => 'button',
+                                                default => 'div',
+                                            };
+
+                                            if ($columnWrapperTag === 'button') {
+                                                if ($columnAction instanceof \Filament\Actions\Action) {
+                                                    $columnWireClickAction = "mountTableAction('{$columnAction->getName()}', '{$recordKey}')";
+                                                } elseif ($columnAction) {
+                                                    $columnWireClickAction = "callTableColumnAction('{$column->getName()}', '{$recordKey}')";
+                                                } else {
+                                                    if ($this->getTable()->getAction($recordAction)) {
+                                                        $columnWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
+                                                    } else {
+                                                        $columnWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                    }
+                                                }
+                                            }
                                         @endphp
 
-                                        <x-filament-tables::cell
-                                            :wire:key="$this->getId() . '.table.record.' . $recordKey . '.column.' . $column->getName()"
-                                            :attributes="
-                                                \Filament\Support\prepare_inherited_attributes($column->getExtraCellAttributeBag())
-                                                    ->class([
-                                                        'fi-table-cell-' . str($column->getName())->camel()->kebab(),
-                                                        match ($column->getVerticalAlignment()) {
-                                                            VerticalAlignment::Start => 'align-top',
-                                                            VerticalAlignment::Center => 'align-middle',
-                                                            VerticalAlignment::End => 'align-bottom',
-                                                            default => null,
-                                                        },
-                                                        $getHiddenClasses($column),
-                                                    ])
-                                            "
+                                        <td
+                                            wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
+                                            {{ $column->getExtraCellAttributeBag()->class([
+                                                'fi-ta-cell',
+                                                'fi-table-cell-' . str($column->getName())->camel()->kebab(),
+                                                ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
+                                                ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
+                                                (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
+                                                (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
+                                            ]) }}
                                         >
-                                            <x-filament-tables::columns.column
-                                                :column="$column"
-                                                :is-click-disabled="$column->isClickDisabled() || $isReordering"
-                                                :record="$record"
-                                                :record-action="$recordAction"
-                                                :record-key="$recordKey"
-                                                :record-url="$recordUrl"
-                                                :should-open-record-url-in-new-tab="$openRecordUrlInNewTab"
-                                            />
-                                        </x-filament-tables::cell>
+                                            <{{ $columnWrapperTag }}
+                                                @if (filled($columnTooltip = $column->getTooltip()))
+                                                    x-tooltip="{
+                                                        content: @js($columnTooltip),
+                                                        theme: $store.theme,
+                                                    }"
+                                                @endif
+                                                @if ($columnWrapperTag === 'a')
+                                                    {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
+                                                @elseif ($columnWrapperTag === 'button')
+                                                    type="button"
+                                                    wire:click="{{ $columnWireClickAction }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="{{ $columnWireClickAction }}"
+                                                @endif
+                                                @class([
+                                                    'fi-ta-col-wrp',
+                                                ])
+                                            >
+                                                {{ $column->viewData(['recordKey' => $recordKey]) }}
+                                            </{{ $columnWrapperTag }}>
+                                        </td>
                                     @endforeach
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns && (! $isReordering))
@@ -1214,17 +1248,20 @@
                                     @endif
 
                                     @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells && (! $isReordering))
-                                        <x-filament-tables::selection.cell>
+                                        <td class="fi-ta-cell">
                                             @if ($isRecordSelectable($record))
-                                                <x-filament-tables::selection.checkbox
-                                                    :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
-                                                    :value="$recordKey"
+                                                <input
+                                                    aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
+                                                    type="checkbox"
+                                                    value="{{ $recordKey }}"
                                                     x-model="selectedRecords"
-                                                    :data-group="$recordGroupKey"
-                                                    class="fi-ta-record-checkbox"
+                                                    data-group="{{ $recordGroupKey }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                    class="fi-ta-record-checkbox fi-checkbox-input"
                                                 />
                                             @endif
-                                        </x-filament-tables::selection.cell>
+                                        </td>
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells && (! $isReordering))
