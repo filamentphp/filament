@@ -1,0 +1,15 @@
+.fi-ta-cell {
+    @apply p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3;
+
+    &:has(.fi-ta-reorder-handle) {
+        @apply px-3 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
+
+    &:has(.fi-ta-actions) {
+        @apply whitespace-nowrap px-3 py-4 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
+}
+
+.fi-ta-reorder-handle {
+    @apply cursor-move;
+}

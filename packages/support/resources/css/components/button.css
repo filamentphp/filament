@@ -1,20 +1,29 @@
 .fi-btn {
-    @apply relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 rounded-lg focus-visible:ring-2;
+    @apply inline-grid gap-1.5 px-3 py-2 text-sm relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 rounded-lg focus-visible:ring-2;
 
-    &.fi-disabled {
+    &.fi-disabled,
+    &[disabled] {
         @apply pointer-events-none opacity-70;
+    }
+
+    & > .fi-icon {
+        @apply transition duration-75 size-5;
     }
 
     &.fi-size-xs {
         @apply gap-1 px-2 py-1.5 text-xs;
+
+        & > .fi-icon {
+            @apply size-4;
+        }
     }
 
     &.fi-size-sm {
         @apply gap-1 px-2.5 py-1.5 text-sm;
-    }
 
-    &.fi-size-md {
-        @apply gap-1.5 px-3 py-2 text-sm;
+        & > .fi-icon {
+            @apply size-4;
+        }
     }
 
     &.fi-size-lg {
@@ -91,14 +100,8 @@
     }
 
     & > .fi-icon {
-        @apply transition duration-75;
-
         &.fi-size-sm {
             @apply size-4;
-        }
-
-        &.fi-size-md {
-            @apply size-5;
         }
 
         &.fi-size-lg {
@@ -121,7 +124,7 @@
         @apply [:checked+*>&]:text-white;
     }
 
-    & > .fi-badge-ctn {
+    & > .fi-btn-badge-ctn {
         @apply absolute start-full top-0 z-[1] w-max -translate-x-1/2 -translate-y-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2;
     }
 }

@@ -13,6 +13,11 @@
     $actionsAlignment = $getActionsAlignment();
     $actionsPosition = $getActionsPosition();
     $actionsColumnLabel = $getActionsColumnLabel();
+
+    if (! $actionsAlignment instanceof Alignment) {
+        $actionsAlignment = filled($actionsAlignment) ? (Alignment::tryFrom($actionsAlignment) ?? $actionsAlignment) : null;
+    }
+
     $activeFiltersCount = $getActiveFiltersCount();
     $columns = $getVisibleColumns();
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
@@ -439,7 +444,10 @@
                             @if ($recordGroupTitle !== $previousRecordGroupTitle)
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                     <x-filament-tables::table
-                                        class="col-span-full"
+                                        @class([
+                                            'col-span-full',
+                                            'fi-ta-table-reordering' => $isReordering,
+                                        ])
                                     >
                                         <x-filament-tables::summary.row
                                             :columns="$columns"
@@ -915,7 +923,7 @@
                     </x-slot>
 
                     @if ($isColumnSearchVisible)
-                        <x-filament-tables::row>
+                        <x-filament-tables::row class="fi-ta-row-not-reorderable">
                             @if ($isReordering)
                                 <td></td>
                             @else
@@ -973,6 +981,28 @@
                                 $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
                                 $recordGroupKey = $group?->getStringKey($record);
                                 $recordGroupTitle = $group?->getTitle($record);
+
+                                $recordActions = array_reduce(
+                                    $actions,
+                                    function (array $carry, $action) use ($record): array {
+                                        if (! $action instanceof \Filament\Actions\ActionGroup) {
+                                            $action = clone $action;
+                                        }
+
+                                        if (! $action instanceof \Filament\Actions\BulkAction) {
+                                            $action->record($record);
+                                        }
+
+                                        if ($action->isHidden()) {
+                                            return $carry;
+                                        }
+
+                                        $carry[] = $action;
+
+                                        return $carry;
+                                    },
+                                    initial: [],
+                                );
                             @endphp
 
                             @if ($recordGroupTitle !== $previousRecordGroupTitle)
@@ -1055,34 +1085,46 @@
                             @endif
 
                             @if (! $isGroupsOnly)
-                                <x-filament-tables::row
-                                    :alpine-hidden="($group?->isCollapsible() ? 'true' : 'false') . ' && isGroupCollapsed(' . \Illuminate\Support\Js::from($recordGroupTitle) . ')'"
-                                    :alpine-selected="'isRecordSelected(\'' . $recordKey . '\')'"
-                                    :record-action="$recordAction"
-                                    :record-url="$recordUrl"
-                                    :striped="$isStriped && $isRecordRowStriped"
-                                    :wire:key="$this->getId() . '.table.records.' . $recordKey"
-                                    :x-sortable-handle="$isReordering"
-                                    :x-sortable-item="$isReordering ? $recordKey : null"
+                                <tr
+                                    wire:key="{{ $this->getId() }}.table.records.{{ $recordKey }}"
+                                    {{ $isReordering ? 'x-sortable-handle' : null }}
+                                    {{ $isReordering ? "x-sortable-item=\"{$recordKey}\"" : null }}
+                                    x-bind:class="{
+                                        {{ $group?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . \Illuminate\Support\Js::from($recordGroupTitle) . '),' : '' }}
+                                        'fi-selected': isRecordSelected(@js($recordKey)),
+                                    }"
                                     @class([
-                                        'group cursor-move' => $isReordering,
+                                        'fi-ta-row',
+                                        'fi-clickable' => $recordAction || $recordUrl,
+                                        'fi-striped' => $isStriped && $isRecordRowStriped,
                                         ...$getRecordClasses($record),
                                     ])
                                 >
                                     @if ($isReordering)
-                                        <x-filament-tables::reorder.cell>
-                                            <x-filament-tables::reorder.handle />
-                                        </x-filament-tables::reorder.cell>
+                                        <td class="fi-ta-cell">
+                                            <button class="fi-ta-reorder-handle fi-icon-btn" type="button">
+                                                {{ \Filament\Support\generate_icon_html('heroicon-m-bars-2', alias: 'tables::reorder.handle') }}
+                                            </button>
+                                        </td>
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells && (! $isReordering))
-                                        <x-filament-tables::actions.cell>
-                                            <x-filament-tables::actions
-                                                :actions="$actions"
-                                                :alignment="$actionsAlignment"
-                                                :record="$record"
-                                            />
-                                        </x-filament-tables::actions.cell>
+                                        <td class="fi-ta-cell">
+                                            <div @class([
+                                                'fi-ta-actions',
+                                                match ($actionsAlignment) {
+                                                    Alignment::Center => 'fi-align-center',
+                                                    Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                    Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                    Alignment::End, Alignment::Right => '',
+                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                },
+                                            ])>
+                                                @foreach ($recordActions as $action)
+                                                    {{ $action }}
+                                                @endforeach
+                                            </div>
+                                        </td>
                                     @endif
 
                                     @if ($isSelectionEnabled && ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) && (! $isReordering))
@@ -1100,13 +1142,22 @@
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns && (! $isReordering))
-                                        <x-filament-tables::actions.cell>
-                                            <x-filament-tables::actions
-                                                :actions="$actions"
-                                                :alignment="$actionsAlignment"
-                                                :record="$record"
-                                            />
-                                        </x-filament-tables::actions.cell>
+                                        <td class="fi-ta-cell">
+                                            <div @class([
+                                                'fi-ta-actions',
+                                                match ($actionsAlignment) {
+                                                    Alignment::Center => 'fi-align-center',
+                                                    Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                    Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                    Alignment::End, Alignment::Right => '',
+                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                },
+                                            ])>
+                                                @foreach ($recordActions as $action)
+                                                    {{ $action }}
+                                                @endforeach
+                                            </div>
+                                        </td>
                                     @endif
 
                                     @foreach ($columns as $column)
@@ -1144,13 +1195,22 @@
                                     @endforeach
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns && (! $isReordering))
-                                        <x-filament-tables::actions.cell>
-                                            <x-filament-tables::actions
-                                                :actions="$actions"
-                                                :alignment="$actionsAlignment ?? Alignment::End"
-                                                :record="$record"
-                                            />
-                                        </x-filament-tables::actions.cell>
+                                        <td class="fi-ta-cell">
+                                            <div @class([
+                                                'fi-ta-actions',
+                                                match ($actionsAlignment) {
+                                                    Alignment::Center => 'fi-align-center',
+                                                    Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                    Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                    Alignment::End, Alignment::Right => '',
+                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                },
+                                            ])>
+                                                @foreach ($recordActions as $action)
+                                                    {{ $action }}
+                                                @endforeach
+                                            </div>
+                                        </td>
                                     @endif
 
                                     @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells && (! $isReordering))
@@ -1167,20 +1227,25 @@
                                         </x-filament-tables::selection.cell>
                                     @endif
 
-                                    @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
-                                        <x-filament-tables::actions.cell
-                                            @class([
-                                                'hidden' => $isReordering,
-                                            ])
-                                        >
-                                            <x-filament-tables::actions
-                                                :actions="$actions"
-                                                :alignment="$actionsAlignment ?? Alignment::End"
-                                                :record="$record"
-                                            />
-                                        </x-filament-tables::actions.cell>
+                                    @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells && (! $isReordering))
+                                        <td class="fi-ta-cell">
+                                            <div @class([
+                                                'fi-ta-actions',
+                                                match ($actionsAlignment) {
+                                                    Alignment::Center => 'fi-align-center',
+                                                    Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                    Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                    Alignment::End, Alignment::Right => '',
+                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                },
+                                            ])>
+                                                @foreach ($recordActions as $action)
+                                                    {{ $action }}
+                                                @endforeach
+                                            </div>
+                                        </td>
                                     @endif
-                                </x-filament-tables::row>
+                                </tr>
                             @endif
 
                             @php

@@ -264,7 +264,7 @@
     @endif
 
     @if (filled($badge))
-        <div class="fi-badge-ctn">
+        <div class="fi-btn-badge-ctn">
             <x-filament::badge :color="$badgeColor" :size="$badgeSize">
                 {{ $badge }}
             </x-filament::badge>

@@ -3,6 +3,7 @@
 namespace Filament\Support;
 
 use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
@@ -157,6 +158,33 @@ if (! function_exists('Filament\Support\generate_href_html')) {
         }
 
         return new HtmlString($html);
+    }
+}
+
+if (! function_exists('Filament\Support\generate_icon_html')) {
+    function generate_icon_html(string | Htmlable $icon, ?string $alias = null, string $class = ''): Htmlable
+    {
+        if (filled($alias)) {
+            $icon = FilamentIcon::resolve($alias) ?: $icon;
+        }
+
+        $class = "fi-icon {$class}";
+
+        if ($icon instanceof Htmlable) {
+            return new HtmlString(<<<HTML
+                <span class="{$class}">
+                    {$icon->toHtml()}
+                </span>
+                HTML);
+        }
+
+        if (str_contains($icon, '/')) {
+            return new HtmlString(<<<HTML
+                <img src="{$icon}" class="{$class}" />
+                HTML);
+        }
+
+        return svg($icon, $class);
     }
 }
 
