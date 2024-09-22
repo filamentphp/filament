@@ -1,0 +1,21 @@
+.fi-icon-btn {
+    &:has(+ .fi-btn.fi-labeled-from-sm) {
+        @apply sm:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-md) {
+        @apply md:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-lg) {
+        @apply lg:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-xl) {
+        @apply xl:hidden;
+    }
+
+    &:has(+ .fi-btn.fi-labeled-from-2xl) {
+        @apply 2xl:hidden;
+    }
+}

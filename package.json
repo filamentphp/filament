@@ -3,14 +3,14 @@
     "type": "module",
     "scripts": {
         "dev:js": "node bin/build.js --dev",
-        "dev:forms-css": "npx tailwindcss -c ./packages/support/tailwind.config.js -i ./packages/forms/dist/index.css -o ./packages/forms/dist/index.css --watch",
+        "dev:forms-css": "npx tailwindcss -c ./packages/support/tailwind.config.js -i ./packages/forms/dist/index.css -o ./packages/forms/dist/index.css --postcss=postcss.config.cjs --watch",
         "dev:panels-css": "npx tailwindcss -c ./packages/panels/tailwind.config.js -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --watch",
-        "dev:support-css": "npx tailwindcss -c ./packages/support/tailwind.config.js -i ./packages/support/dist/index.css -o ./packages/support/dist/index.css --watch",
+        "dev:support-css": "npx tailwindcss -c ./packages/support/tailwind.config.js -i ./packages/support/dist/index.css -o ./packages/support/dist/index.css --postcss=postcss.config.cjs --watch",
         "dev": "npm-run-all --parallel dev:*",
         "build:js": "node bin/build.js",
-        "build:forms-css": "npx tailwindcss -c ./packages/support/tailwind.config.js -i ./packages/forms/dist/index.css -o ./packages/forms/dist/index.css --minify",
+        "build:forms-css": "npx tailwindcss -c ./packages/support/tailwind.config.js -i ./packages/forms/dist/index.css -o ./packages/forms/dist/index.css --postcss=postcss.config.cjs --minify",
         "build:panels-css": "npx tailwindcss -c ./packages/panels/tailwind.config.js -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --minify",
-        "build:support-css": "npx tailwindcss -c ./packages/support/tailwind.config.js -i ./packages/support/dist/index.css -o ./packages/support/dist/index.css --minify",
+        "build:support-css": "npx tailwindcss -c ./packages/support/tailwind.config.js -i ./packages/support/dist/index.css -o ./packages/support/dist/index.css --postcss=postcss.config.cjs --minify",
         "build": "npm-run-all build:*",
         "build-demo": "npm run build && cd ../demo && php artisan filament:upgrade && cd ../filament && cd docs-assets/app && php artisan filament:upgrade && npm run build && cd ../../",
         "prettier": "npx prettier --write ."

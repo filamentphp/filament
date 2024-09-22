@@ -6,6 +6,7 @@
 
 @php
     $icon = ($alias ? \Filament\Support\Facades\FilamentIcon::resolve($alias) : null) ?: ($icon ?? $slot);
+    $class = "fi-icon {$class}";
 @endphp
 
 @if ($icon instanceof \Illuminate\Contracts\Support\Htmlable)

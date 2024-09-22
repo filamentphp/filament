@@ -2,7 +2,7 @@
     fill="none"
     viewBox="0 0 24 24"
     xmlns="http://www.w3.org/2000/svg"
-    {{ $attributes->class(['animate-spin']) }}
+    {{ $attributes->class(['fi-icon animate-spin']) }}
 >
     <path
         clip-rule="evenodd"

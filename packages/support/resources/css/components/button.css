@@ -1,0 +1,162 @@
+.fi-btn {
+    @apply relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 rounded-lg focus-visible:ring-2;
+
+    &.fi-disabled {
+        @apply pointer-events-none opacity-70;
+    }
+
+    &.fi-size-xs {
+        @apply gap-1 px-2 py-1.5 text-xs;
+    }
+
+    &.fi-size-sm {
+        @apply gap-1 px-2.5 py-1.5 text-sm;
+    }
+
+    &.fi-size-md {
+        @apply gap-1.5 px-3 py-2 text-sm;
+    }
+
+    &.fi-size-lg {
+        @apply gap-1.5 px-3.5 py-2.5 text-sm;
+    }
+
+    &.fi-size-xl {
+        @apply gap-1.5 px-4 py-3 text-sm;
+    }
+
+    &.fi-outlined {
+        @apply ring-1;
+
+        &.fi-color-custom {
+            @apply text-custom-600 ring-custom-600 hover:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-500;
+        }
+
+        &:not(.fi-color-custom) {
+            @apply text-gray-950 ring-gray-300 hover:bg-gray-400/10 focus-visible:ring-gray-400/40 dark:text-white dark:ring-gray-700;
+        }
+    }
+
+    &:not(.fi-outlined) {
+        &.fi-color-custom {
+            &label {
+                @apply [input:checked+&]:bg-custom-600 [input:checked+&]:text-white [input:checked+&]:ring-0 [input:checked+&]:hover:bg-custom-500 dark:[input:checked+&]:bg-custom-500 dark:[input:checked+&]:hover:bg-custom-400 [input:checked:focus-visible+&]:ring-custom-500/50 dark:[input:checked:focus-visible+&]:ring-custom-400/50 [input:focus-visible+&]:z-10 [input:focus-visible+&]:ring-2 [input:focus-visible+&]:ring-gray-950/10 dark:[input:focus-visible+&]:ring-white/20;
+            }
+
+            &:not(label) {
+                @apply bg-custom-600 text-white hover:bg-custom-500 focus-visible:ring-custom-500/50 dark:bg-custom-500 dark:hover:bg-custom-400 dark:focus-visible:ring-custom-400/50;
+            }
+        }
+
+        &:not(.fi-color-custom) {
+            @apply [input:checked+&]:bg-gray-400 [input:checked+&]:text-white [input:checked+&]:ring-0 [input:checked+&]:hover:bg-gray-300 dark:[input:checked+&]:bg-gray-600 dark:[input:checked+&]:hover:bg-gray-500;
+        }
+
+        &:not(.fi-color-custom),
+        &label {
+            @apply bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:hover:bg-white/10;
+        }
+    }
+
+    &label {
+        @apply cursor-pointer;
+    }
+
+    &.fi-labeled-from-sm,
+    &.fi-labeled-from-md,
+    &.fi-labeled-from-lg,
+    &.fi-labeled-from-xl,
+    &.fi-labeled-from-2xl {
+        @apply hidden;
+    }
+
+    &.fi-labeled-from-sm {
+        @apply sm:inline-grid;
+    }
+
+    &.fi-labeled-from-md {
+        @apply md:inline-grid;
+    }
+
+    &.fi-labeled-from-lg {
+        @apply lg:inline-grid;
+    }
+
+    &.fi-labeled-from-xl {
+        @apply xl:inline-grid;
+    }
+
+    &.fi-labeled-from-2xl {
+        @apply 2xl:inline-grid;
+    }
+
+    & > .fi-icon {
+        @apply transition duration-75;
+
+        &.fi-size-sm {
+            @apply size-4;
+        }
+
+        &.fi-size-md {
+            @apply size-5;
+        }
+
+        &.fi-size-lg {
+            @apply size-6;
+        }
+    }
+
+    &:not(.fi-color-custom),
+    &label {
+        & > .fi-icon {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+    }
+
+    &.fi-color-custom:not(label):not(.fi-outlined) > .fi-icon {
+        @apply text-white;
+    }
+
+    &label > .fi-icon {
+        @apply [:checked+*>&]:text-white;
+    }
+
+    & > .fi-badge-ctn {
+        @apply absolute start-full top-0 z-[1] w-max -translate-x-1/2 -translate-y-1/2 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/2;
+    }
+}
+
+.fi-btn-group > .fi-btn {
+    @apply rounded-none flex-1;
+
+    &:nth-child(1 of .fi-btn) {
+        @apply rounded-s-lg;
+    }
+
+    &:nth-last-child(1 of .fi-btn) {
+        @apply rounded-e-lg;
+    }
+
+    &:not(:nth-child(1 of .fi-btn)) {
+        @apply shadow-[-1px_0_0_0_theme(colors.gray.200)];
+    }
+
+    &:not(:nth-last-child(1 of .fi-btn)) {
+        @apply me-px dark:shadow-[-1px_0_0_0_theme(colors.white/20%)];
+    }
+
+    &.fi-processing:enabled {
+        @apply opacity-70 cursor-wait;
+    }
+}
+
+:not(.fi-btn-group) > .fi-btn {
+    &:not(.fi-outlined) {
+        @apply shadow-sm;
+    }
+
+    &:not(.fi-color-custom),
+    &label {
+        @apply ring-1 ring-gray-950/10 dark:ring-white/20;
+    }
+}
