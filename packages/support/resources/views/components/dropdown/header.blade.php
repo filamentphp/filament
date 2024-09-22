@@ -15,7 +15,7 @@
             ->class([
                 'fi-dropdown-header flex w-full gap-2 p-3 text-sm',
                 match ($color) {
-                    'gray' => null,
+                    'gray' => '',
                     default => 'fi-color-custom',
                 },
                 // @deprecated `fi-dropdown-header-color-*` has been replaced by `fi-color-*` and `fi-color-custom`.

@@ -117,7 +117,7 @@
                     'disabled' => $disabled,
                     'type' => 'button',
                     'wire:loading.attr' => 'disabled',
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                 ], escape: false)
                 ->class([$buttonClasses])
                 ->style([$buttonStyles])
@@ -131,7 +131,7 @@
                             'alias' => $iconAlias,
                             'icon' => $icon,
                             'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                         ])
                     )
                         ->class([$iconClasses])

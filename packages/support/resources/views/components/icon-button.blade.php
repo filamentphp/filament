@@ -42,6 +42,12 @@
         $iconSize = filled($iconSize) ? (IconSize::tryFrom($iconSize) ?? $iconSize) : null;
     }
 
+    $iconClasses = ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : (is_string($iconSize) ? $iconSize : '');
+
+    if (! $badgeSize instanceof ActionSize) {
+        $badgeSize = filled($badgeSize) ? (ActionSize::tryFrom($badgeSize) ?? $badgeSize) : null;
+    }
+
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
     $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
@@ -73,6 +79,7 @@
     {{
         $attributes
             ->merge([
+                'aria-label' => $label,
                 'disabled' => $disabled,
                 'form' => $formId,
                 'type' => $tag === 'button' ? $type : null,
@@ -85,11 +92,11 @@
                 'fi-icon-btn',
                 'fi-disabled' => $disabled,
                 match ($color) {
-                    'gray' => null,
+                    'gray' => '',
                     default => 'fi-color-custom',
                 },
                 is_string($color) ? "fi-color-{$color}" : null,
-                ($size instanceof ActionSize) ? "fi-size-{$size->value}" : null,
+                ($size instanceof ActionSize) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
             ])
             ->style([
                 \Filament\Support\get_color_css_variables(
@@ -100,43 +107,44 @@
             ])
     }}
 >
-    @if ($label)
-        <span class="sr-only">
-            {{ $label }}
-        </span>
-    @endif
-
-    <x-filament::icon
-        :attributes="
-            \Filament\Support\prepare_inherited_attributes(
-                new \Illuminate\View\ComponentAttributeBag([
-                    'alias' => $iconAlias,
-                    'icon' => $icon,
-                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
-                ])
-            )
-        "
-    />
+    {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+    ]))->class([$iconClasses])) }}
 
     @if ($hasLoadingIndicator)
-        <x-filament::loading-indicator
-            :attributes="
-                \Filament\Support\prepare_inherited_attributes(
-                    new \Illuminate\View\ComponentAttributeBag([
-                        'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                        'wire:target' => $loadingIndicatorTarget,
-                    ])
-                )
-            "
-        />
+        {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+            'wire:target' => $loadingIndicatorTarget,
+        ]))->class([$iconClasses])) }}
     @endif
 
     @if (filled($badge))
         <div class="fi-icon-btn-badge-ctn">
-            <x-filament::badge :color="$badgeColor" :size="$badgeSize">
+            <span
+                @class([
+                    'fi-badge',
+                    match ($badgeColor) {
+                        'gray' => '',
+                        default => 'fi-color-custom',
+                    },
+                    is_string($badgeColor) ? "fi-color-{$badgeColor}" : null,
+                    ($badgeSize instanceof ActionSize) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
+                ])
+                @style([
+                    \Filament\Support\get_color_css_variables(
+                        $badgeColor,
+                        shades: [
+                            50,
+                            400,
+                            600,
+                        ],
+                        alias: 'badge',
+                    ) => $badgeColor !== 'gray',
+                ])
+            >
                 {{ $badge }}
-            </x-filament::badge>
+            </span>
         </div>
     @endif
 </{{ $tag }}>

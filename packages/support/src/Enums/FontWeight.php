@@ -2,23 +2,23 @@
 
 namespace Filament\Support\Enums;
 
-enum FontWeight
+enum FontWeight: string
 {
-    case Thin;
+    case Thin = 'thin';
 
-    case ExtraLight;
+    case ExtraLight = 'extralight';
 
-    case Light;
+    case Light = 'light';
 
-    case Normal;
+    case Normal = 'normal';
 
-    case Medium;
+    case Medium = 'medium';
 
-    case SemiBold;
+    case SemiBold = 'semibold';
 
-    case Bold;
+    case Bold = 'bold';
 
-    case ExtraBold;
+    case ExtraBold = 'extrabold';
 
-    case Black;
+    case Black = 'black';
 }

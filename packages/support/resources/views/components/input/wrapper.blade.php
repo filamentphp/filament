@@ -130,7 +130,7 @@
                                 'alias' => $prefixIconAlias,
                                 'icon' => $prefixIcon,
                                 'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
                             ])
                         )
                             ->class([$getIconClasses($prefixIconColor)])

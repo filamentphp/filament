@@ -12,7 +12,6 @@
     'disabled' => false,
     'form' => null,
     'formId' => null,
-    'grouped' => false,
     'href' => null,
     'icon' => null,
     'iconAlias' => null,
@@ -48,6 +47,8 @@
     if (! $iconSize instanceof IconSize) {
         $iconSize = filled($iconSize) ? (IconSize::tryFrom($iconSize) ?? $iconSize) : null;
     }
+
+    $iconClasses = ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : (is_string($iconSize) ? $iconSize : '');
 
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
@@ -119,23 +120,25 @@
     {{
         $attributes
             ->merge([
+                'aria-label' => $labelSrOnly ? trim(strip_tags($slot->toHtml())) : null,
                 'disabled' => $disabled,
                 'form' => $formId,
                 'type' => $tag === 'button' ? $type : null,
                 'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
                 'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 'x-bind:disabled' => $hasFormProcessingLoadingIndicator ? 'isProcessing' : null,
+                'x-bind:aria-label' => ($labelSrOnly && $hasFormProcessingLoadingIndicator) ? ('isProcessing ? processingMessage : ' . \Illuminate\Support\Js::from(trim(strip_tags($slot->toHtml())))) : null,
             ], escape: false)
             ->class([
                 'fi-btn',
                 'fi-disabled' => $disabled,
                 'fi-outlined' => $outlined,
                 match ($color) {
-                    'gray' => null,
+                    'gray' => '',
                     default => 'fi-color-custom',
                 },
                 is_string($color) ? "fi-color-{$color}" : null,
-                ($size instanceof ActionSize) ? "fi-size-{$size->value}" : null,
+                ($size instanceof ActionSize) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
                 is_string($labeledFrom) ? "fi-labeled-from-{$labeledFrom}" : null,
             ])
             ->style([
@@ -149,125 +152,94 @@
 >
     @if ($iconPosition === IconPosition::Before)
         @if ($icon)
-            <x-filament::icon
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'alias' => $iconAlias,
-                            'icon' => $icon,
-                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
-                        ])
-                    )->class([
-                        ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : null,
-                    ])
-                "
-            />
+            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+            ]))->class([$iconClasses])) }}
         @endif
 
         @if ($hasLoadingIndicator)
-            <x-filament::loading-indicator
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => $loadingIndicatorTarget,
-                        ])
-                    )->class([
-                        'fi-icon',
-                        ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : null,
-                    ])
-                "
-            />
+            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                'wire:target' => $loadingIndicatorTarget,
+            ]))->class([$iconClasses])) }}
         @endif
 
         @if ($hasFormProcessingLoadingIndicator)
-            <x-filament::loading-indicator
-                x-cloak="x-cloak"
-                x-show="isProcessing"
-                :class="\Illuminate\Support\Arr::toCssClasses([
-                    'fi-icon',
-                    ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : null,
-                ])"
-            />
+            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                'x-cloak' => 'x-cloak',
+                'x-show' => 'isProcessing',
+            ]))->class([$iconClasses])) }}
         @endif
     @endif
 
-    <span
+    @if (! $labelSrOnly)
         @if ($hasFormProcessingLoadingIndicator)
-            x-show="! isProcessing"
+            <span x-show="! isProcessing">
+                {{ $slot }}
+            </span>
+        @else
+            {{ $slot }}
         @endif
-        @class([
-            'fi-btn-label',
-            'sr-only' => $labelSrOnly,
-        ])
-    >
-        {{ $slot }}
-    </span>
+    @endif
 
-    @if ($hasFormProcessingLoadingIndicator)
+    @if ($hasFormProcessingLoadingIndicator && (! $labelSrOnly))
         <span
             x-cloak
             x-show="isProcessing"
             x-text="processingMessage"
-            @class([
-                'fi-btn-label',
-                'sr-only' => $labelSrOnly,
-            ])
         ></span>
     @endif
 
     @if ($iconPosition === IconPosition::After)
         @if ($icon)
-            <x-filament::icon
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'alias' => $iconAlias,
-                            'icon' => $icon,
-                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
-                        ])
-                    )->class([
-                        ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : null,
-                    ])
-                "
-            />
+            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+            ]))->class([$iconClasses])) }}
         @endif
 
         @if ($hasLoadingIndicator)
-            <x-filament::loading-indicator
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => $loadingIndicatorTarget,
-                        ])
-                    )->class([
-                        'fi-icon',
-                        ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : null,
-                    ])
-                "
-            />
+            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                'wire:target' => $loadingIndicatorTarget,
+            ]))->class([$iconClasses])) }}
         @endif
 
         @if ($hasFormProcessingLoadingIndicator)
-            <x-filament::loading-indicator
-                x-cloak="x-cloak"
-                x-show="isProcessing"
-                :class="\Illuminate\Support\Arr::toCssClasses([
-                    'fi-icon',
-                    ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : null,
-                ])"
-            />
+            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                'x-cloak' => 'x-cloak',
+                'x-show' => 'isProcessing',
+            ]))->class([$iconClasses])) }}
         @endif
     @endif
 
     @if (filled($badge))
         <div class="fi-btn-badge-ctn">
-            <x-filament::badge :color="$badgeColor" :size="$badgeSize">
+            <span
+                @class([
+                    'fi-badge',
+                    match ($badgeColor) {
+                        'gray' => '',
+                        default => 'fi-color-custom',
+                    },
+                    is_string($badgeColor) ? "fi-color-{$badgeColor}" : null,
+                    ($badgeSize instanceof ActionSize) ? "fi-size-{$badgeSize->value}" : (is_string($badgeSize) ? $badgeSize : ''),
+                ])
+                @style([
+                    \Filament\Support\get_color_css_variables(
+                        $badgeColor,
+                        shades: [
+                            50,
+                            400,
+                            600,
+                        ],
+                        alias: 'badge',
+                    ) => $badgeColor !== 'gray',
+                ])
+            >
                 {{ $badge }}
-            </x-filament::badge>
+            </span>
         </div>
     @endif
 </{{ $tag }}>

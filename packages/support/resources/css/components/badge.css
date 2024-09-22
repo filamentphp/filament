@@ -1,0 +1,66 @@
+.fi-badge {
+    @apply flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset;
+
+    &.fi-disabled,
+    &[disabled] {
+        @apply pointer-events-none opacity-70;
+    }
+
+    & > .fi-icon {
+        @apply size-4;
+
+        &.fi-size-md {
+            @apply size-5;
+        }
+
+        &.fi-size-lg {
+            @apply size-6;
+        }
+    }
+
+    &.fi-size-xs {
+        @apply px-0.5 min-w-[theme(spacing.4)] tracking-tighter;
+    }
+
+    &.fi-size-sm {
+        @apply px-1.5 min-w-[theme(spacing.5)] py-0.5 tracking-tight;
+    }
+
+    &.fi-size-md,
+    &.fi-size-lg,
+    &.fi-size-xl {
+        @apply px-2 min-w-[theme(spacing.6)] py-1;
+    }
+
+    &.fi-color-custom {
+        @apply bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30;
+
+        & > .fi-icon {
+            @apply text-custom-500;
+        }
+
+        & > .fi-badge-delete-btn {
+            @apply text-custom-700/50 hover:text-custom-700/75 focus-visible:text-custom-700/75 dark:text-custom-300/50 dark:hover:text-custom-300/75 dark:focus-visible:text-custom-300/75;
+        }
+    }
+
+    &:not(.fi-color-custom) {
+        @apply bg-gray-50 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20;
+
+        & > .fi-icon {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+
+        & > .fi-badge-delete-btn {
+            @apply text-gray-700/50 hover:text-gray-700/75 focus-visible:text-gray-700/75 dark:text-gray-300/50 dark:hover:text-gray-300/75 dark:focus-visible:text-gray-300/75;
+        }
+    }
+
+    & > .fi-badge-delete-btn {
+        @apply -my-1 -me-2 -ms-1 flex items-center justify-center p-1 outline-none transition duration-75;
+
+        & > .fi-icon {
+            @apply size-3.5;
+        }
+    }
+}

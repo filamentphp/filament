@@ -162,17 +162,21 @@ if (! function_exists('Filament\Support\generate_href_html')) {
 }
 
 if (! function_exists('Filament\Support\generate_icon_html')) {
-    function generate_icon_html(string | Htmlable $icon, ?string $alias = null, string $class = ''): Htmlable
+    function generate_icon_html(string | Htmlable | null $icon, ?string $alias = null, ?ComponentAttributeBag $attributes = null): ?Htmlable
     {
         if (filled($alias)) {
             $icon = FilamentIcon::resolve($alias) ?: $icon;
         }
 
-        $class = "fi-icon {$class}";
+        if (blank($icon)) {
+            return null;
+        }
+
+        $attributes = ($attributes ?? new ComponentAttributeBag())->class(['fi-icon']);
 
         if ($icon instanceof Htmlable) {
             return new HtmlString(<<<HTML
-                <span class="{$class}">
+                <span {$attributes->toHtml()}>
                     {$icon->toHtml()}
                 </span>
                 HTML);
@@ -180,11 +184,39 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
 
         if (str_contains($icon, '/')) {
             return new HtmlString(<<<HTML
-                <img src="{$icon}" class="{$class}" />
+                <img src="{$icon}" {$attributes->toHtml()} />
                 HTML);
         }
 
-        return svg($icon, $class);
+        return svg($icon, $attributes->get('class'), $attributes->except('class')->getAttributes());
+    }
+}
+
+if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
+    function generate_loading_indicator_html(?ComponentAttributeBag $attributes = null): Htmlable
+    {
+        $attributes = ($attributes ?? new ComponentAttributeBag())->class(['fi-icon animate-spin']);
+
+        return new HtmlString(<<<HTML
+            <svg
+                fill="none"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                {$attributes->toHtml()}
+            >
+                <path
+                    clip-rule="evenodd"
+                    d="M12 19C15.866 19 19 15.866 19 12C19 8.13401 15.866 5 12 5C8.13401 5 5 8.13401 5 12C5 15.866 8.13401 19 12 19ZM12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                    fill-rule="evenodd"
+                    fill="currentColor"
+                    opacity="0.2"
+                ></path>
+                <path
+                    d="M2 12C2 6.47715 6.47715 2 12 2V5C8.13401 5 5 8.13401 5 12H2Z"
+                    fill="currentColor"
+                ></path>
+            </svg>
+            HTML);
     }
 }
 
