@@ -6,7 +6,6 @@ use BackedEnum;
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
 use Closure;
-use Exception;
 use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Tables\Table;
@@ -413,11 +412,9 @@ class Group extends Component
             return null;
         }
 
-        $relationshipName = $name ?? $this->getRelationshipName();
-
         $relationship = null;
 
-        foreach (explode('.', $relationshipName) as $nestedRelationshipName) {
+        foreach (explode('.', $name ?? $this->getRelationshipName()) as $nestedRelationshipName) {
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -426,10 +423,6 @@ class Group extends Component
 
             $relationship = $record->{$nestedRelationshipName}();
             $record = $relationship->getRelated();
-        }
-
-        if (! $relationship) {
-            throw new Exception("The relationship [{$relationshipName}] does not exist on the model [{$record}].");
         }
 
         return $relationship;
