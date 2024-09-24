@@ -3,6 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Filament\Support\Contracts\HasColor as ColorInterface;
 
 trait HasColor
 {
@@ -41,6 +42,16 @@ trait HasColor
      */
     public function getColor(): string | array | null
     {
-        return $this->evaluate($this->color) ?? $this->evaluate($this->defaultColor);
+        $color = $this->evaluate($this->color) ?? $this->evaluate($this->defaultColor);
+
+        if ($color instanceof ColorInterface) {
+            return $color->getColor();
+        }
+
+        if (filled($color)) {
+            return $color;
+        }
+
+        return null;
     }
 }

@@ -98,6 +98,8 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                         'red' => 'Red',
                         'blue' => 'Blue',
                     ]),
+                Tables\Columns\TextColumn::make('colour_red')
+                    ->color(fn (): ColorEnum => ColorEnum::Red),
                 Tables\Columns\TextColumn::make('title2')
                     ->sortable()
                     ->searchable()
@@ -157,6 +159,8 @@ class PostsTable extends Component implements HasActions, HasForms, Tables\Contr
                     ->label('My Action'),
                 Action::make('hasColor')
                     ->color('primary'),
+                Action::make('hasEnumColor')
+                    ->color(fn () => ColorEnum::Red),
                 Action::make('exists'),
                 Action::make('existsInOrder'),
                 Action::make('url')

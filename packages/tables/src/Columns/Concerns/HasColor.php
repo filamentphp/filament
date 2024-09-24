@@ -62,14 +62,14 @@ trait HasColor
             return null;
         }
 
-        if ($color instanceof ColorInterface) {
-            return $color->getColor();
-        }
-
         if (filled($color)) {
             return $color;
         }
 
-        return null;
+        if (! $state instanceof ColorInterface) {
+            return null;
+        }
+
+        return $state->getColor();
     }
 }
