@@ -216,7 +216,7 @@ class SelectFilter extends BaseFilter
     }
 
     /**
-     * @param bool | array<string> | Closure $condition
+     * @param  bool | array<string> | Closure  $condition
      */
     public function searchable(bool | array | Closure $condition = true): static
     {

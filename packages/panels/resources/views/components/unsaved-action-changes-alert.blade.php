@@ -7,7 +7,7 @@
                 }
 
                 if (
-                    (@js($this instanceof \Filament\Actions\Contracts\HasActions) ? $wire.mountedActions?.length ?? 0 : 0) &&
+                    (@js($this instanceof \Filament\Actions\Contracts\HasActions) ? ($wire.mountedActions?.length ?? 0) : 0) &&
                     !$wire?.__instance?.effects?.redirect
                 ) {
                     event.preventDefault()
