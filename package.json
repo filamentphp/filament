@@ -55,7 +55,7 @@
         "postcss-nesting": "^12.0.1",
         "prettier": "^3.1.1",
         "prettier-plugin-blade": "v2.0.0",
-        "prettier-plugin-tailwindcss": "^0.5.10",
+        "prettier-plugin-tailwindcss": "^0.6.8",
         "pusher-js": "^7.4.0",
         "sortablejs": "^1.15.0",
         "tailwindcss": "^3.4.0",
