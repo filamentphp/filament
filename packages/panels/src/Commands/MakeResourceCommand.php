@@ -28,7 +28,7 @@ class MakeResourceCommand extends Command
 
     protected $description = 'Create a new Filament resource class and default page classes';
 
-    protected $signature = 'make:filament-resource {name?} {--model-namespace=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--model} {--migration} {--factory} {--F|force}';
+    protected $signature = 'make:filament-resource {name?} {--model-namespace=} {--resource-namespace} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--model} {--migration} {--factory} {--F|force}';
 
     public function handle(): int
     {
@@ -112,12 +112,17 @@ class MakeResourceCommand extends Command
             }
         }
 
-        $namespace = (count($resourceNamespaces) > 1) ?
-            select(
-                label: 'Which namespace would you like to create this in?',
-                options: $resourceNamespaces
-            ) :
-            (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
+        if ($this->option('resource-namespace')) {
+            $namespace = (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
+        } else {
+            $namespace = (count($resourceNamespaces) > 1) ?
+                select(
+                    label: 'Which namespace would you like to create this in?',
+                    options: $resourceNamespaces,
+                ) :
+                (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
+        }
+
         $path = (count($resourceDirectories) > 1) ?
             $resourceDirectories[array_search($namespace, $resourceNamespaces)] :
             (Arr::first($resourceDirectories) ?? app_path('Filament/Resources/'));
