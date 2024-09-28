@@ -694,7 +694,7 @@ livewire(EditPost::class, ['record' => $post])
 $undoRepeaterFake();
 ```
 
-You may also find it useful to access test the number of items in a repeater by passing a function to the `assertFormSet()` method:
+You may also find it useful to assert the number of items in a repeater by passing a function to the `assertFormSet()` method:
 
 ```php
 use Filament\Forms\Components\Repeater;
