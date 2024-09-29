@@ -196,7 +196,7 @@ class TextColumn extends Column implements HasEmbeddedView
             }
         }
 
-        if ((! $isListWithLineBreaks) && (! $isBadge)) {
+        if (($stateCount > 1) && (! $isListWithLineBreaks) && (! $isBadge)) {
             $state = [
                 implode(
                     ', ',

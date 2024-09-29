@@ -79,16 +79,6 @@
         @apply text-sm text-gray-500 dark:text-gray-400;
     }
 
-    &.fi-align-start,
-    &.fi-align-left {
-        @apply text-start;
-
-        &ul,
-        & > ul {
-            @apply justify-start;
-        }
-    }
-
     &.fi-align-center {
         @apply text-center;
 
