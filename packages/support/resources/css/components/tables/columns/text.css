@@ -239,7 +239,7 @@
     }
 
     & > .fi-icon {
-        @apply size-4 inline-block -mt-1;
+        @apply -mt-1 inline-block size-4;
     }
 
     &:is(.fi-ta-col-wrap-has-column-url .fi-ta-text-item) {

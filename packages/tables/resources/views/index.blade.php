@@ -923,7 +923,9 @@
                     </x-slot>
 
                     @if ($isColumnSearchVisible)
-                        <x-filament-tables::row class="fi-ta-row-not-reorderable">
+                        <x-filament-tables::row
+                            class="fi-ta-row-not-reorderable"
+                        >
                             @if ($isReordering)
                                 <td></td>
                             @else
@@ -1102,7 +1104,10 @@
                                 >
                                     @if ($isReordering)
                                         <td class="fi-ta-cell">
-                                            <button class="fi-ta-reorder-handle fi-icon-btn" type="button">
+                                            <button
+                                                class="fi-ta-reorder-handle fi-icon-btn"
+                                                type="button"
+                                            >
                                                 {{ \Filament\Support\generate_icon_html('heroicon-m-bars-2', alias: 'tables::reorder.handle') }}
                                             </button>
                                         </td>
@@ -1110,16 +1115,18 @@
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells && (! $isReordering))
                                         <td class="fi-ta-cell">
-                                            <div @class([
-                                                'fi-ta-actions',
-                                                match ($actionsAlignment) {
-                                                    Alignment::Center => 'fi-align-center',
-                                                    Alignment::Start, Alignment::Left => 'fi-align-start',
-                                                    Alignment::Between, Alignment::Justify => 'fi-align-between',
-                                                    Alignment::End, Alignment::Right => '',
-                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
-                                                },
-                                            ])>
+                                            <div
+                                                @class([
+                                                    'fi-ta-actions',
+                                                    match ($actionsAlignment) {
+                                                        Alignment::Center => 'fi-align-center',
+                                                        Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                        Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                        Alignment::End, Alignment::Right => '',
+                                                        default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                    },
+                                                ])
+                                            >
                                                 @foreach ($recordActions as $action)
                                                     {{ $action }}
                                                 @endforeach
@@ -1146,16 +1153,18 @@
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns && (! $isReordering))
                                         <td class="fi-ta-cell">
-                                            <div @class([
-                                                'fi-ta-actions',
-                                                match ($actionsAlignment) {
-                                                    Alignment::Center => 'fi-align-center',
-                                                    Alignment::Start, Alignment::Left => 'fi-align-start',
-                                                    Alignment::Between, Alignment::Justify => 'fi-align-between',
-                                                    Alignment::End, Alignment::Right => '',
-                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
-                                                },
-                                            ])>
+                                            <div
+                                                @class([
+                                                    'fi-ta-actions',
+                                                    match ($actionsAlignment) {
+                                                        Alignment::Center => 'fi-align-center',
+                                                        Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                        Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                        Alignment::End, Alignment::Right => '',
+                                                        default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                    },
+                                                ])
+                                            >
                                                 @foreach ($recordActions as $action)
                                                     {{ $action }}
                                                 @endforeach
@@ -1195,14 +1204,16 @@
 
                                         <td
                                             wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
-                                            {{ $column->getExtraCellAttributeBag()->class([
-                                                'fi-ta-cell',
-                                                'fi-table-cell-' . str($column->getName())->camel()->kebab(),
-                                                ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
-                                                ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
-                                                (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
-                                                (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
-                                            ]) }}
+                                            {{
+                                                $column->getExtraCellAttributeBag()->class([
+                                                    'fi-ta-cell',
+                                                    'fi-table-cell-' . str($column->getName())->camel()->kebab(),
+                                                    ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
+                                                    ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
+                                                    (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
+                                                    (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
+                                                ])
+                                            }}
                                         >
                                             <{{ $columnWrapperTag }}
                                                 @if (filled($columnTooltip = $column->getTooltip()))
@@ -1231,16 +1242,18 @@
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns && (! $isReordering))
                                         <td class="fi-ta-cell">
-                                            <div @class([
-                                                'fi-ta-actions',
-                                                match ($actionsAlignment) {
-                                                    Alignment::Center => 'fi-align-center',
-                                                    Alignment::Start, Alignment::Left => 'fi-align-start',
-                                                    Alignment::Between, Alignment::Justify => 'fi-align-between',
-                                                    Alignment::End, Alignment::Right => '',
-                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
-                                                },
-                                            ])>
+                                            <div
+                                                @class([
+                                                    'fi-ta-actions',
+                                                    match ($actionsAlignment) {
+                                                        Alignment::Center => 'fi-align-center',
+                                                        Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                        Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                        Alignment::End, Alignment::Right => '',
+                                                        default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                    },
+                                                ])
+                                            >
                                                 @foreach ($recordActions as $action)
                                                     {{ $action }}
                                                 @endforeach
@@ -1267,16 +1280,18 @@
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells && (! $isReordering))
                                         <td class="fi-ta-cell">
-                                            <div @class([
-                                                'fi-ta-actions',
-                                                match ($actionsAlignment) {
-                                                    Alignment::Center => 'fi-align-center',
-                                                    Alignment::Start, Alignment::Left => 'fi-align-start',
-                                                    Alignment::Between, Alignment::Justify => 'fi-align-between',
-                                                    Alignment::End, Alignment::Right => '',
-                                                    default => is_string($actionsAlignment) ? $actionsAlignment : '',
-                                                },
-                                            ])>
+                                            <div
+                                                @class([
+                                                    'fi-ta-actions',
+                                                    match ($actionsAlignment) {
+                                                        Alignment::Center => 'fi-align-center',
+                                                        Alignment::Start, Alignment::Left => 'fi-align-start',
+                                                        Alignment::Between, Alignment::Justify => 'fi-align-between',
+                                                        Alignment::End, Alignment::Right => '',
+                                                        default => is_string($actionsAlignment) ? $actionsAlignment : '',
+                                                    },
+                                                ])
+                                            >
                                                 @foreach ($recordActions as $action)
                                                     {{ $action }}
                                                 @endforeach

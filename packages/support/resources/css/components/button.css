@@ -1,5 +1,5 @@
 .fi-btn {
-    @apply inline-grid gap-1.5 px-3 py-2 text-sm relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 rounded-lg focus-visible:ring-2;
+    @apply relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold outline-none transition duration-75 focus-visible:ring-2;
 
     &.fi-disabled,
     &[disabled] {
@@ -7,7 +7,7 @@
     }
 
     & > .fi-icon {
-        @apply transition duration-75 size-5;
+        @apply size-5 transition duration-75;
     }
 
     &.fi-size-xs {
@@ -130,7 +130,7 @@
 }
 
 .fi-btn-group > .fi-btn {
-    @apply rounded-none flex-1;
+    @apply flex-1 rounded-none;
 
     &:nth-child(1 of .fi-btn) {
         @apply rounded-s-lg;
@@ -149,7 +149,7 @@
     }
 
     &.fi-processing:enabled {
-        @apply opacity-70 cursor-wait;
+        @apply cursor-wait opacity-70;
     }
 }
 

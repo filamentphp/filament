@@ -90,46 +90,52 @@
             theme: $store.theme,
         }"
     @endif
-    {{ $attributes
-        ->merge([
-            'disabled' => $disabled,
-            'form' => $formId,
-            'type' => $tag === 'button' ? $type : null,
-            'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
-            'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-        ], escape: false)
-        ->class([
-            'fi-link',
-            'fi-disabled' => $disabled,
-            match ($color) {
-                'gray' => '',
-                default => 'fi-color-custom',
-            },
-            is_string($color) ? "fi-color-{$color}" : null,
-            ($size instanceof ActionSize) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
-            ($weight instanceof FontWeight) ? "fi-font-{$weight->value}" : (is_string($size) ? $size : ''),
-        ])
-        ->style([
-            \Filament\Support\get_color_css_variables(
-                $color,
-                shades: [400, 600],
-                alias: 'link.label',
-            ) => $color !== 'gray',
-        ]) }}
+    {{
+        $attributes
+            ->merge([
+                'disabled' => $disabled,
+                'form' => $formId,
+                'type' => $tag === 'button' ? $type : null,
+                'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
+                'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+            ], escape: false)
+            ->class([
+                'fi-link',
+                'fi-disabled' => $disabled,
+                match ($color) {
+                    'gray' => '',
+                    default => 'fi-color-custom',
+                },
+                is_string($color) ? "fi-color-{$color}" : null,
+                ($size instanceof ActionSize) ? "fi-size-{$size->value}" : (is_string($size) ? $size : ''),
+                ($weight instanceof FontWeight) ? "fi-font-{$weight->value}" : (is_string($size) ? $size : ''),
+            ])
+            ->style([
+                \Filament\Support\get_color_css_variables(
+                    $color,
+                    shades: [400, 600],
+                    alias: 'link.label',
+                ) => $color !== 'gray',
+            ])
+    }}
 >
     @if ($iconPosition === IconPosition::Before)
         @if ($icon)
-            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ]))->class([$iconClasses])->style([$iconStyles])) }}
+            {{
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
 
         @if ($hasLoadingIndicator)
-            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                'wire:target' => $loadingIndicatorTarget,
-            ]))->class([$iconClasses])->style([$iconStyles])) }}
+            {{
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                    'wire:target' => $loadingIndicatorTarget,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
     @endif
 
@@ -139,17 +145,21 @@
 
     @if ($iconPosition === IconPosition::After)
         @if ($icon)
-            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ]))->class([$iconClasses])->style([$iconStyles])) }}
+            {{
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
 
         @if ($hasLoadingIndicator)
-            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                'wire:target' => $loadingIndicatorTarget,
-            ]))->class([$iconClasses])->style([$iconStyles])) }}
+            {{
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                    'wire:target' => $loadingIndicatorTarget,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
     @endif
 

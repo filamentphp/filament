@@ -50,7 +50,7 @@
     }
 
     & > .fi-ta-col-wrp {
-        @apply flex justify-start text-start w-full disabled:pointer-events-none;
+        @apply flex w-full justify-start text-start disabled:pointer-events-none;
     }
 
     &:has(.fi-ta-reorder-handle) {

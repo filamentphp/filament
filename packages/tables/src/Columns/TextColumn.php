@@ -6,19 +6,18 @@ use Closure;
 use Filament\Support\Concerns\HasFontFamily;
 use Filament\Support\Concerns\HasLineClamp;
 use Filament\Support\Concerns\HasWeight;
-use Filament\Support\Contracts\HasLabel;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Columns\TextColumn\Enums\TextColumnSize;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
 use stdClass;
+
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\get_color_css_variables;
 
@@ -223,11 +222,11 @@ class TextColumn extends Column
             ob_start(); ?>
 
             <div <?= $attributes->toHtml() ?>>
-                <?php if (filled($placeholder !== null)): ?>
+                <?php if (filled($placeholder !== null)) { ?>
                     <p class="fi-ta-placeholder">
                         <?= e($placeholder) ?>
                     </p>
-                <?php endif; ?>
+                <?php } ?>
             </div>
 
             <?php return ob_get_clean();
@@ -246,11 +245,11 @@ class TextColumn extends Column
         $iconPosition = $this->getIconPosition();
         $isBulleted = $this->isBulleted();
 
-        $getStateItem = function (mixed $stateItem) use ($iconPosition, $isBadge, $isBulleted, $lineClamp): array {
+        $getStateItem = function (mixed $stateItem) use ($iconPosition, $isBadge, $lineClamp): array {
             $color = $this->getColor($stateItem) ?? ($isBadge ? 'primary' : null);
             $iconColor = $this->getIconColor($stateItem);
 
-            $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag())
+            $iconHtml = generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag)
                 ->class([
                     match ($iconColor) {
                         null, 'gray' => null,
@@ -259,7 +258,8 @@ class TextColumn extends Column
                     is_string($iconColor) ? "fi-color-{$iconColor}" : null,
                 ])
                 ->style([
-                    ...($isBadge
+                    ...(
+                        $isBadge
                         ? [
                             get_color_css_variables(
                                 $color,
@@ -269,7 +269,8 @@ class TextColumn extends Column
                         ]
                         : []
                     ),
-                    ...(((! $isBadge) && $iconColor)
+                    ...(
+                        ((! $isBadge) && $iconColor)
                         ? [
                             get_color_css_variables(
                                 $iconColor,
@@ -290,7 +291,7 @@ class TextColumn extends Column
             }
 
             return [
-                'attributes' => (new ComponentAttributeBag())
+                'attributes' => (new ComponentAttributeBag)
                     ->merge([
                         'x-on:click' => $isCopyable
                             ? <<<JS
@@ -327,7 +328,7 @@ class TextColumn extends Column
                         ] : []),
                     ]),
                 'badgeAttributes' => $isBadge
-                    ? (new ComponentAttributeBag())
+                    ? (new ComponentAttributeBag)
                         ->class([
                             'fi-badge',
                             match ($color ?? 'primary') {
@@ -376,17 +377,17 @@ class TextColumn extends Column
             <div <?= $attributes
                 ->merge($stateItemAttributes->getAttributes())
                 ->toHtml() ?>>
-                <?php if ($isBadge): ?>
+                <?php if ($isBadge) { ?>
                     <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                <?php endif; ?>
+                <?php } ?>
 
                 <?= $stateItemIconBeforeHtml ?>
                 <?= $formatState($stateItem) ?>
                 <?= $stateItemIconAfterHtml ?>
 
-                <?php if ($isBadge): ?>
+                <?php if ($isBadge) { ?>
                     </span>
-                <?php endif; ?>
+                <?php } ?>
             </div>
 
             <?php return ob_get_clean();
@@ -413,41 +414,41 @@ class TextColumn extends Column
             ob_start(); ?>
 
             <div <?= $attributes->toHtml() ?>>
-                <?php if (filled($descriptionAbove)): ?>
+                <?php if (filled($descriptionAbove)) { ?>
                     <p class="fi-ta-text-description">
                         <?= e($descriptionAbove) ?>
                     </p>
-                <?php endif; ?>
+                <?php } ?>
 
-                <?php if (($stateCount === 1) && (! $isBulleted)): ?>
+                <?php if (($stateCount === 1) && (! $isBulleted)) { ?>
                     <?php
                         $stateItem = Arr::first($state);
-                        [
-                            'attributes' => $stateItemAttributes,
-                            'badgeAttributes' => $stateItemBadgeAttributes,
-                            'iconAfterHtml' => $stateItemIconAfterHtml,
-                            'iconBeforeHtml' => $stateItemIconBeforeHtml,
-                        ] = $getStateItem($stateItem);
+                    [
+                        'attributes' => $stateItemAttributes,
+                        'badgeAttributes' => $stateItemBadgeAttributes,
+                        'iconAfterHtml' => $stateItemIconAfterHtml,
+                        'iconBeforeHtml' => $stateItemIconBeforeHtml,
+                    ] = $getStateItem($stateItem);
                     ?>
 
                     <p <?= $stateItemAttributes->toHtml() ?>>
-                        <?php if ($isBadge): ?>
+                        <?php if ($isBadge) { ?>
                             <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                        <?php endif; ?>
+                        <?php } ?>
 
                         <?= $stateItemIconBeforeHtml ?>
                         <?= $formatState($stateItem) ?>
                         <?= $stateItemIconAfterHtml ?>
 
-                        <?php if ($isBadge): ?>
+                        <?php if ($isBadge) { ?>
                             </span>
-                        <?php endif; ?>
+                        <?php } ?>
                     </p>
-                <?php else: ?>
+                <?php } else { ?>
                     <ul>
                         <?php $stateIteration = 1; ?>
 
-                        <?php foreach ($state as $stateItem): ?>
+                        <?php foreach ($state as $stateItem) { ?>
                             <?php [
                                 'attributes' => $stateItemAttributes,
                                 'badgeAttributes' => $stateItemBadgeAttributes,
@@ -456,34 +457,34 @@ class TextColumn extends Column
                             ] = $getStateItem($stateItem); ?>
 
                             <li
-                                <?php if ($stateIteration > $listLimit): ?>
+                                <?php if ($stateIteration > $listLimit) { ?>
                                     x-show="! isLimited"
                                     x-cloak
                                     x-transition
-                                <?php endif; ?>
+                                <?php } ?>
                                 <?= $stateItemAttributes->toHtml() ?>
                             >
-                                <?php if ($isBadge): ?>
+                                <?php if ($isBadge) { ?>
                                     <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                                <?php endif; ?>
+                                <?php } ?>
 
                                 <?= $stateItemIconBeforeHtml ?>
                                 <?= $formatState($stateItem) ?>
                                 <?= $stateItemIconAfterHtml ?>
 
-                                <?php if ($isBadge): ?>
+                                <?php if ($isBadge) { ?>
                                     </span>
-                                <?php endif; ?>
+                                <?php } ?>
                             </li>
 
                             <?php $stateIteration++ ?>
-                        <?php endforeach; ?>
+                        <?php } ?>
                     </ul>
-                <?php endif; ?>
+                <?php } ?>
 
-                <?php if ($stateOverLimitCount): ?>
+                <?php if ($stateOverLimitCount) { ?>
                     <p class="fi-ta-text-list-limited-message">
-                        <?php if ($isLimitedListExpandable): ?>
+                        <?php if ($isLimitedListExpandable) { ?>
                             <button
                                 type="button"
                                 x-on:click.prevent="isLimited = false"
@@ -502,17 +503,17 @@ class TextColumn extends Column
                             >
                                 <?= trans_choice('filament-tables::table.columns.text.actions.collapse_list', $stateOverLimitCount) ?>
                             </button>
-                        <?php else: ?>
+                        <?php } else { ?>
                             <?= trans_choice('filament-tables::table.columns.text.more_list_items', $stateOverLimitCount) ?>
-                        <?php endif; ?>
+                        <?php } ?>
                     </p>
-                <?php endif; ?>
+                <?php } ?>
 
-                <?php if (filled($descriptionBelow)): ?>
+                <?php if (filled($descriptionBelow)) { ?>
                     <p class="fi-ta-text-description">
                         <?= e($descriptionBelow) ?>
                     </p>
-                <?php endif; ?>
+                <?php } ?>
             </div>
 
             <?php return ob_get_clean();
@@ -521,7 +522,7 @@ class TextColumn extends Column
         ob_start(); ?>
 
         <ul <?= $attributes->toHtml() ?>>
-            <?php foreach ($state as $stateItem): ?>
+            <?php foreach ($state as $stateItem) { ?>
                 <?php [
                     'attributes' => $stateItemAttributes,
                     'badgeAttributes' => $stateItemBadgeAttributes,
@@ -530,19 +531,19 @@ class TextColumn extends Column
                 ] = $getStateItem($stateItem); ?>
 
                 <li <?= $stateItemAttributes->toHtml() ?>>
-                    <?php if ($isBadge): ?>
+                    <?php if ($isBadge) { ?>
                         <span <?= $stateItemBadgeAttributes->toHtml() ?>>
-                    <?php endif; ?>
+                    <?php } ?>
 
                     <?= $stateItemIconBeforeHtml ?>
                     <?= $formatState($stateItem) ?>
                     <?= $stateItemIconAfterHtml ?>
 
-                    <?php if ($isBadge): ?>
+                    <?php if ($isBadge) { ?>
                         </span>
-                    <?php endif; ?>
+                    <?php } ?>
                 </li>
-            <?php endforeach; ?>
+            <?php } ?>
         </ul>
 
         <?php return ob_get_clean();

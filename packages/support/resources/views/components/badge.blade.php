@@ -112,17 +112,21 @@
 >
     @if ($iconPosition === IconPosition::Before)
         @if ($icon)
-            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ]))->class([$iconClasses])->style([$iconStyles])) }}
+            {{
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
 
         @if ($hasLoadingIndicator)
-            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                'wire:target' => $loadingIndicatorTarget,
-            ]))->class([$iconClasses])->style([$iconStyles])) }}
+            {{
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                    'wire:target' => $loadingIndicatorTarget,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
     @endif
 
@@ -135,18 +139,20 @@
     @if ($isDeletable)
         <button
             type="button"
-            {{ $deleteButton->attributes
-                ->except(['label'])
-                ->class([
-                    'fi-badge-delete-btn',
-                ])
-                ->style([
-                    \Filament\Support\get_color_css_variables(
-                        $color,
-                        shades: [300, 700],
-                        alias: 'badge.delete-button',
-                    ) => $color !== 'gray',
-                ]) }}
+            {{
+                $deleteButton->attributes
+                    ->except(['label'])
+                    ->class([
+                        'fi-badge-delete-btn',
+                    ])
+                    ->style([
+                        \Filament\Support\get_color_css_variables(
+                            $color,
+                            shades: [300, 700],
+                            alias: 'badge.delete-button',
+                        ) => $color !== 'gray',
+                    ])
+            }}
         >
             {{ \Filament\Support\generate_icon_html('heroicon-m-x-mark', alias: 'badge.delete-button') }}
 
@@ -158,17 +164,21 @@
         </button>
     @elseif ($iconPosition === IconPosition::After)
         @if ($icon)
-            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ]))->class([$iconClasses])->style([$iconStyles])) }}
+            {{
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
 
         @if ($hasLoadingIndicator)
-            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                'wire:target' => $loadingIndicatorTarget,
-            ]))->class([$iconClasses])->style([$iconStyles])) }}
+            {{
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                    'wire:target' => $loadingIndicatorTarget,
+                ]))->class([$iconClasses])->style([$iconStyles]))
+            }}
         @endif
     @endif
 </{{ $tag }}>

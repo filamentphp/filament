@@ -152,24 +152,30 @@
 >
     @if ($iconPosition === IconPosition::Before)
         @if ($icon)
-            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ]))->class([$iconClasses])) }}
+            {{
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ]))->class([$iconClasses]))
+            }}
         @endif
 
         @if ($hasLoadingIndicator)
-            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                'wire:target' => $loadingIndicatorTarget,
-            ]))->class([$iconClasses])) }}
+            {{
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                    'wire:target' => $loadingIndicatorTarget,
+                ]))->class([$iconClasses]))
+            }}
         @endif
 
         @if ($hasFormProcessingLoadingIndicator)
-            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                'x-cloak' => 'x-cloak',
-                'x-show' => 'isProcessing',
-            ]))->class([$iconClasses])) }}
+            {{
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'x-cloak' => 'x-cloak',
+                    'x-show' => 'isProcessing',
+                ]))->class([$iconClasses]))
+            }}
         @endif
     @endif
 
@@ -193,24 +199,30 @@
 
     @if ($iconPosition === IconPosition::After)
         @if ($icon)
-            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ]))->class([$iconClasses])) }}
+            {{
+                \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ]))->class([$iconClasses]))
+            }}
         @endif
 
         @if ($hasLoadingIndicator)
-            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                'wire:target' => $loadingIndicatorTarget,
-            ]))->class([$iconClasses])) }}
+            {{
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                    'wire:target' => $loadingIndicatorTarget,
+                ]))->class([$iconClasses]))
+            }}
         @endif
 
         @if ($hasFormProcessingLoadingIndicator)
-            {{ \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
-                'x-cloak' => 'x-cloak',
-                'x-show' => 'isProcessing',
-            ]))->class([$iconClasses])) }}
+            {{
+                \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                    'x-cloak' => 'x-cloak',
+                    'x-show' => 'isProcessing',
+                ]))->class([$iconClasses]))
+            }}
         @endif
     @endif
 

@@ -23,7 +23,7 @@
         }
 
         & > *:first-child:before {
-            @apply absolute start-0 inset-y-0 w-0.5 bg-primary-600 dark:bg-primary-500;
+            @apply absolute inset-y-0 start-0 w-0.5 bg-primary-600 dark:bg-primary-500;
         }
     }
 }

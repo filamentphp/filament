@@ -1,5 +1,5 @@
 .fi-icon-btn {
-    @apply relative size-9 -m-2 flex items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2;
+    @apply relative -m-2 flex size-9 items-center justify-center rounded-lg outline-none transition duration-75 focus-visible:ring-2;
 
     & > .fi-icon {
         @apply size-5;

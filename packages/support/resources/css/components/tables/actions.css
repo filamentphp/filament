@@ -1,5 +1,5 @@
 .fi-ta-actions {
-    @apply flex shrink-0 items-center gap-3 justify-end;
+    @apply flex shrink-0 items-center justify-end gap-3;
 
     &.fi-wrapped {
         @apply flex-wrap;

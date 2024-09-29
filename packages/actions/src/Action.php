@@ -603,7 +603,7 @@ class Action extends ViewComponent implements Arrayable
     }
 
     /**
-     * @param array<string, mixed> $props
+     * @param  array<string, mixed>  $props
      */
     protected function renderActionBladeComponentView(array $props = []): View
     {
