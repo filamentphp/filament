@@ -4,6 +4,7 @@ namespace Filament\Support\Components;
 
 use Closure;
 use Exception;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\ComponentAttributeBag;
@@ -110,6 +111,10 @@ abstract class ViewComponent extends Component implements Htmlable
 
     public function toHtml(): string
     {
+        if (($this instanceof HasEmbeddedView) && (! $this->hasView())) {
+            return $this->toEmbeddedHtml();
+        }
+
         return $this->render()->render();
     }
 

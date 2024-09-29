@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasFontFamily;
 use Filament\Support\Concerns\HasLineClamp;
 use Filament\Support\Concerns\HasWeight;
@@ -21,7 +22,7 @@ use stdClass;
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\get_color_css_variables;
 
-class TextColumn extends Column
+class TextColumn extends Column implements HasEmbeddedView
 {
     use Concerns\CanBeCopied;
     use Concerns\CanFormatState;
@@ -164,7 +165,7 @@ class TextColumn extends Column
         return (bool) $this->evaluate($this->isLimitedListExpandable);
     }
 
-    protected function defaultToHtml(): string
+    public function toEmbeddedHtml(): string
     {
         $isBadge = $this->isBadge();
         $isListWithLineBreaks = $this->isListWithLineBreaks();
@@ -547,14 +548,5 @@ class TextColumn extends Column
         </ul>
 
         <?php return ob_get_clean();
-    }
-
-    public function toHtml(): string
-    {
-        if (! $this->hasView()) {
-            return $this->defaultToHtml();
-        }
-
-        return parent::toHtml();
     }
 }
