@@ -17,7 +17,7 @@
 
         name: @js($getName()),
 
-        recordKey: @js($recordKey),
+        recordKey: @js($getRecordKey()),
 
         state: @js($state),
     }"

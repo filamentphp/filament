@@ -1,15 +1,11 @@
 .fi-ta-cell {
     @apply p-0 first-of-type:ps-1 last-of-type:pe-1 sm:first-of-type:ps-3 sm:last-of-type:pe-3;
 
-    &.fi-align-top {
+    &.fi-align-start {
         @apply align-top;
     }
 
-    &.fi-align-middle {
-        @apply align-middle;
-    }
-
-    &.fi-align-bottom {
+    &.fi-align-end {
         @apply align-bottom;
     }
 
@@ -57,26 +53,6 @@
         @apply flex justify-start text-start w-full disabled:pointer-events-none;
     }
 
-    &.align-center {
-        & > .fi-ta-col-wrp {
-            @apply justify-center text-center;
-        }
-    }
-
-    &.align-end,
-    &.align-right {
-        & > .fi-ta-col-wrp {
-            @apply justify-end text-end;
-        }
-    }
-
-    &.align-between,
-    &.align-justify {
-        & > .fi-ta-col-wrp {
-            @apply justify-between text-justify;
-        }
-    }
-
     &:has(.fi-ta-reorder-handle) {
         @apply w-1 px-3 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
     }
@@ -87,6 +63,10 @@
 
     &:has(.fi-ta-record-checkbox) {
         @apply w-1 px-3 py-4 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
+
+    & .fi-ta-placeholder {
+        @apply text-sm leading-6 text-gray-400 dark:text-gray-500;
     }
 }
 

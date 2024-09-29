@@ -27,6 +27,8 @@ abstract class ViewComponent extends Component implements Htmlable
 
     protected string $viewIdentifier;
 
+    protected View $viewInstance;
+
     /**
      * @param  view-string | null  $view
      * @param  array<string, mixed>  $viewData
@@ -93,6 +95,11 @@ abstract class ViewComponent extends Component implements Htmlable
         throw new Exception('Class [' . static::class . '] extends [' . ViewComponent::class . '] but does not have a [$view] property defined.');
     }
 
+    public function hasView(): bool
+    {
+        return isset($this->view) || $this->getDefaultView();
+    }
+
     /**
      * @return view-string | null
      */
@@ -108,7 +115,7 @@ abstract class ViewComponent extends Component implements Htmlable
 
     public function render(): View
     {
-        return view(
+        return $this->viewInstance ??= view(
             $this->getView(),
             [
                 'attributes' => new ComponentAttributeBag,

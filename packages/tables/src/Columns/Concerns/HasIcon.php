@@ -74,8 +74,10 @@ trait HasIcon
         return $state->getIcon();
     }
 
-    public function getIconPosition(): IconPosition | string
+    public function getIconPosition(): IconPosition
     {
-        return $this->evaluate($this->iconPosition) ?? IconPosition::Before;
+        $position = $this->evaluate($this->iconPosition);
+
+        return IconPosition::tryFrom($position) ?? IconPosition::Before;
     }
 }

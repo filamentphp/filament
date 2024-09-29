@@ -1,5 +1,5 @@
 .fi-badge {
-    @apply flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset;
+    @apply inline-flex px-2 min-w-[theme(spacing.6)] py-1 items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset;
 
     &.fi-disabled,
     &[disabled] {
@@ -7,7 +7,7 @@
     }
 
     & > .fi-icon {
-        @apply size-4;
+        @apply size-4 shrink-0;
 
         &.fi-size-md {
             @apply size-5;
@@ -24,12 +24,6 @@
 
     &.fi-size-sm {
         @apply px-1.5 min-w-[theme(spacing.5)] py-0.5 tracking-tight;
-    }
-
-    &.fi-size-md,
-    &.fi-size-lg,
-    &.fi-size-xl {
-        @apply px-2 min-w-[theme(spacing.6)] py-1;
     }
 
     &.fi-color-custom {

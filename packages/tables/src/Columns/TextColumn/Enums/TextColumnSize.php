@@ -2,13 +2,13 @@
 
 namespace Filament\Tables\Columns\TextColumn\Enums;
 
-enum TextColumnSize
+enum TextColumnSize: string
 {
-    case ExtraSmall;
+    case ExtraSmall = 'xs';
 
-    case Small;
+    case Small = 'sm';
 
-    case Medium;
+    case Medium = 'md';
 
-    case Large;
+    case Large = 'lg';
 }

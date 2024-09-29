@@ -4,7 +4,7 @@
 @endphp
 
 <div
-    wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $getName() }}.toggle-column.{{ $state ? 'true' : 'false' }}"
+    wire:key="{{ $this->getId() }}.table.record.{{ $getRecordKey() }}.column.{{ $getName() }}.toggle-column.{{ $state ? 'true' : 'false' }}"
 >
     <div
         x-data="{
@@ -50,7 +50,7 @@
 
                     const response = await $wire.updateTableColumnState(
                         @js($getName()),
-                        @js($recordKey),
+                        @js($getRecordKey()),
                         updatedState,
                     )
 

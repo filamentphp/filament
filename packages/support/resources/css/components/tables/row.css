@@ -31,6 +31,5 @@
 .fi-ta-reordering {
     & .fi-ta-row:not(.fi-ta-row-not-reorderable) {
         @apply cursor-move;
-        /* @todo: should apply "group" here but can't, refactor if child elements use group */
     }
 }

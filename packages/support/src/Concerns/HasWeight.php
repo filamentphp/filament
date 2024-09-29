@@ -3,6 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
 
 trait HasWeight
@@ -18,8 +19,14 @@ trait HasWeight
 
     public function getWeight(mixed $state = null): FontWeight | string | null
     {
-        return $this->evaluate($this->weight, [
+        $weight = $this->evaluate($this->weight, [
             'state' => $state,
         ]);
+
+        if (! is_string($weight)) {
+            return $weight;
+        }
+
+        return FontWeight::tryFrom($weight) ?? $weight;
     }
 }

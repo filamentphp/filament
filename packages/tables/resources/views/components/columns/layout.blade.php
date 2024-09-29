@@ -65,7 +65,7 @@
                     :record-key="$recordKey"
                 />
             @else
-                {{ $layoutComponent->viewData(['recordKey' => $recordKey]) }}
+                {{ $layoutComponent->recordKey($recordKey) }}
             @endif
         </x-filament::grid.column>
     @endif

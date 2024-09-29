@@ -3,6 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\VerticalAlignment;
 
 trait HasVerticalAlignment

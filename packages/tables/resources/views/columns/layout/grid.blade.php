@@ -23,7 +23,7 @@
             :components="$getComponents()"
             grid
             :record="$getRecord()"
-            :record-key="$recordKey"
+            :record-key="$getRecordKey()"
         />
     </x-filament::grid>
 </div>

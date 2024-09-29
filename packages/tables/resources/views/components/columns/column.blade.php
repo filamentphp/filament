@@ -35,7 +35,7 @@
         },
     ]);
 
-    $slot = $column->viewData(['recordKey' => $recordKey]);
+    $slot = $column->recordKey($recordKey);
 @endphp
 
 <div

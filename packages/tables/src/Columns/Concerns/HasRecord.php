@@ -11,6 +11,8 @@ trait HasRecord
      */
     protected Model | array | null $record = null;
 
+    protected ?string $recordKey = null;
+
     /**
      * @param  Model | array<string, mixed>  $record
      */
@@ -19,6 +21,18 @@ trait HasRecord
         $this->record = $record;
 
         return $this;
+    }
+
+    public function recordKey(?string $recordKey): static
+    {
+        $this->recordKey = $recordKey;
+
+        return $this;
+    }
+
+    public function getRecordKey(): ?string
+    {
+        return $this->recordKey;
     }
 
     /**

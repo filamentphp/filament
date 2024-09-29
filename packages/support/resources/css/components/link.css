@@ -1,9 +1,5 @@
 .fi-link {
-    @apply relative inline-flex items-center justify-center outline-none gap-1.5;
-
-    & > * {
-        @apply hover:underline focus-visible:underline;
-    }
+    @apply relative inline-flex items-center justify-center outline-none gap-1.5 hover:underline focus-visible:underline;
 
     &.fi-disabled,
     &[disabled] {
@@ -11,7 +7,7 @@
     }
 
     & > .fi-icon {
-        @apply size-5 no-underline font-normal;
+        @apply size-5 font-normal;
     }
 
     &.fi-size-xs {
@@ -34,6 +30,42 @@
     &.fi-size-lg,
     &.fi-size-xl {
         @apply gap-1.5 text-sm;
+    }
+
+    &.fi-font-thin {
+        @apply font-thin;
+    }
+
+    &.fi-font-extralight {
+        @apply font-extralight;
+    }
+
+    &.fi-font-light {
+        @apply font-light;
+    }
+
+    &.fi-font-normal {
+        @apply font-normal;
+    }
+
+    &.fi-font-medium {
+        @apply font-medium;
+    }
+
+    &.fi-font-semibold {
+        @apply font-semibold;
+    }
+
+    &.fi-font-bold {
+        @apply font-bold;
+    }
+
+    &.fi-font-extrabold {
+        @apply font-extrabold;
+    }
+
+    &.fi-font-black {
+        @apply font-black;
     }
 
     &.fi-color-custom {
@@ -63,6 +95,6 @@
     }
 
     & > .fi-link-badge-ctn {
-        @apply no-underline font-normal absolute start-full top-0 z-[1] w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/4;
+        @apply hover:no-underline focus-visible:no-underline font-normal absolute start-full top-0 z-[1] w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white dark:bg-gray-900 rtl:translate-x-1/4;
     }
 }

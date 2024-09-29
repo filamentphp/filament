@@ -640,7 +640,7 @@
                                                     x-show="! isCollapsed"
                                                     class="{{ $recordContentHorizontalPaddingClasses }} mt-3"
                                                 >
-                                                    {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
+                                                    {{ $collapsibleColumnsLayout->recordKey($recordKey) }}
                                                 </div>
                                             @endif
                                         </div>
@@ -1221,9 +1221,10 @@
                                                 @endif
                                                 @class([
                                                     'fi-ta-col-wrp',
+                                                    'fi-ta-col-wrap-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
                                                 ])
                                             >
-                                                {{ $column->viewData(['recordKey' => $recordKey]) }}
+                                                {{ $column->recordKey($recordKey) }}
                                             </{{ $columnWrapperTag }}>
                                         </td>
                                     @endforeach
