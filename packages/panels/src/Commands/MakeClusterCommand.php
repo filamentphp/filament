@@ -76,6 +76,13 @@ class MakeClusterCommand extends Command
         $clusterDirectories = $panel->getClusterDirectories();
         $clusterNamespaces = $panel->getClusterNamespaces();
 
+        foreach ($clusterDirectories as $clusterIndex => $clusterDirectory) {
+            if (str($clusterDirectory)->startsWith(base_path('vendor'))) {
+                unset($clusterDirectories[$clusterIndex]);
+                unset($clusterNamespaces[$clusterIndex]);
+            }
+        }
+
         $namespace = (count($clusterNamespaces) > 1) ?
             select(
                 label: 'Which namespace would you like to create this in?',
