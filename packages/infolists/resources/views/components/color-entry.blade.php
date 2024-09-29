@@ -42,7 +42,7 @@
                         'cursor-pointer' => $itemIsCopyable,
                     ])
                     @style([
-                        "background-color: {$state}" => $state,
+                        'background-color: ' . e($state) => $state,
                     ])
                 ></div>
             @endforeach
