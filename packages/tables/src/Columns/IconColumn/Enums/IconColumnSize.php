@@ -2,19 +2,19 @@
 
 namespace Filament\Tables\Columns\IconColumn\Enums;
 
-enum IconColumnSize
+enum IconColumnSize: string
 {
-    case ExtraSmall;
+    case ExtraSmall = 'xs';
 
-    case Small;
+    case Small = 'sm';
 
-    case Medium;
+    case Medium = 'md';
 
-    case Large;
+    case Large = 'lg';
 
-    case ExtraLarge;
+    case ExtraLarge = 'xl';
 
-    case TwoExtraLarge;
+    case TwoExtraLarge = '2xl';
 
     /**
      * @deprecated Use `TwoExtraLarge` instead.

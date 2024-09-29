@@ -3,11 +3,18 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Columns\IconColumn\Enums\IconColumnSize;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Collection;
+use Illuminate\View\ComponentAttributeBag;
 
-class IconColumn extends Column
+use function Filament\Support\generate_icon_html;
+use function Filament\Support\get_color_css_variables;
+
+class IconColumn extends Column implements HasEmbeddedView
 {
     use Concerns\CanWrap;
     use Concerns\HasColor {
@@ -16,11 +23,6 @@ class IconColumn extends Column
     use Concerns\HasIcon {
         getIcon as getBaseIcon;
     }
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-tables::columns.icon-column';
 
     protected bool | Closure | null $isBoolean = null;
 
@@ -135,11 +137,25 @@ class IconColumn extends Column
         return $this;
     }
 
-    public function getSize(mixed $state): IconColumnSize | string | null
+    public function getSize(mixed $state): IconColumnSize | string
     {
-        return $this->evaluate($this->size, [
+        $size = $this->evaluate($this->size, [
             'state' => $state,
         ]);
+
+        if (blank($size)) {
+            return IconColumnSize::Large;
+        }
+
+        if (is_string($size)) {
+            $size = IconColumnSize::tryFrom($size) ?? $size;
+        }
+
+        if ($size === 'base') {
+            return IconColumnSize::Large;
+        }
+
+        return $size;
     }
 
     public function getIcon(mixed $state): ?string
@@ -221,5 +237,73 @@ class IconColumn extends Column
     public function isListWithLineBreaks(): bool
     {
         return (bool) $this->evaluate($this->isListWithLineBreaks);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $state = $this->getState();
+
+        if ($state instanceof Collection) {
+            $state = $state->all();
+        }
+
+        $attributes = $this->getExtraAttributeBag()
+            ->class([
+                'fi-ta-icon',
+                'fi-inline' => $this->isInline(),
+            ]);
+
+        if (empty($state)) {
+            $placeholder = $this->getPlaceholder();
+
+            ob_start(); ?>
+
+            <div <?= $attributes->toHtml() ?>>
+                <?php if (filled($placeholder !== null)) { ?>
+                    <p class="fi-ta-placeholder">
+                        <?= e($placeholder) ?>
+                    </p>
+                <?php } ?>
+            </div>
+
+            <?php return ob_get_clean();
+        }
+
+        $alignment = $this->getAlignment();
+
+        $attributes = $attributes
+            ->class([
+                'fi-ta-icon-has-line-breaks' => $this->isListWithLineBreaks(),
+                'fi-wrapped' => $this->canWrap(),
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
+            ]);
+
+        ob_start(); ?>
+        <div <?= $attributes->toHtml() ?>>
+            <?php foreach ($state as $stateItem) { ?>
+                <?php
+                    $color = $this->getColor($stateItem);
+                ?>
+
+                <?= generate_icon_html($this->getIcon($stateItem), attributes: (new ComponentAttributeBag)
+                    ->class([
+                        match ($color) {
+                            null, 'gray' => null,
+                            default => 'fi-color-custom',
+                        } => filled($color),
+                        is_string($color) ? "fi-color-{$color}" : null,
+                        (($size = $this->getSize($stateItem)) instanceof IconColumnSize) ? "fi-size-{$size->value}" : $size,
+                    ])
+                    ->style([
+                        get_color_css_variables(
+                            $color,
+                            shades: [400, 500],
+                            alias: 'tables::columns.icon-column.item',
+                        ) => $color !== 'gray',
+                    ]))
+                    ->toHtml() ?>
+            <?php } ?>
+        </div>
+        <?php return ob_get_clean();
     }
 }
