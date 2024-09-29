@@ -201,6 +201,12 @@ public function getStats(): array
 
 ### Low-impact changes
 
+<Disclosure x-show="packages.includes('tables') || packages.includes('infolists')">
+<span slot="summary">The `isSeparate` parameter of `ImageColumn::limitedRemainingText()` and `ImageEntry::limitedRemainingText()` has been removed</span>
+
+Previously, users were able to display the number of limited images separately to an image stack using the `isSeparate` parameter. Now the parameter has been removed, and if a stack exists, the text will always be stacked on top and not separate. If the images are not stacked, the text will be separate.
+</Disclosure>
+
 <Disclosure x-show="packages.includes('forms')">
 <span slot="summary">Overriding the `Field::make()`, `MorphToSelect::make()`, `Placeholder::make()`, or `Builder\Block::make()` methods</span>
 

@@ -279,6 +279,7 @@ class IconColumn extends Column implements HasEmbeddedView
             ]);
 
         ob_start(); ?>
+
         <div <?= $attributes->toHtml() ?>>
             <?php foreach ($state as $stateItem) { ?>
                 <?php
@@ -304,6 +305,7 @@ class IconColumn extends Column implements HasEmbeddedView
                     ->toHtml() ?>
             <?php } ?>
         </div>
+
         <?php return ob_get_clean();
     }
 }

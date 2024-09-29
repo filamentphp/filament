@@ -3,21 +3,20 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\ComponentAttributeBag;
 use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 
-class ImageColumn extends Column
+class ImageColumn extends Column implements HasEmbeddedView
 {
     use Concerns\CanWrap;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-tables::columns.image-column';
 
     protected string | Closure | null $disk = null;
 
@@ -47,8 +46,6 @@ class ImageColumn extends Column
     protected int | Closure | null $limit = null;
 
     protected bool | Closure $hasLimitedRemainingText = false;
-
-    protected bool | Closure $isLimitedRemainingTextSeparate = false;
 
     protected string | Closure | null $limitedRemainingTextSize = null;
 
@@ -301,18 +298,10 @@ class ImageColumn extends Column
         return $this->evaluate($this->limit);
     }
 
-    public function limitedRemainingText(bool | Closure $condition = true, bool | Closure $isSeparate = false, string | Closure | null $size = null): static
+    public function limitedRemainingText(bool | Closure $condition = true, string | Closure | null $size = null): static
     {
         $this->hasLimitedRemainingText = $condition;
-        $this->limitedRemainingTextSeparate($isSeparate);
         $this->limitedRemainingTextSize($size);
-
-        return $this;
-    }
-
-    public function limitedRemainingTextSeparate(bool | Closure $condition = true): static
-    {
-        $this->isLimitedRemainingTextSeparate = $condition;
 
         return $this;
     }
@@ -320,11 +309,6 @@ class ImageColumn extends Column
     public function hasLimitedRemainingText(): bool
     {
         return (bool) $this->evaluate($this->hasLimitedRemainingText);
-    }
-
-    public function isLimitedRemainingTextSeparate(): bool
-    {
-        return (bool) $this->evaluate($this->isLimitedRemainingTextSeparate);
     }
 
     public function limitedRemainingTextSize(string | Closure | null $size): static
@@ -349,5 +333,105 @@ class ImageColumn extends Column
     public function shouldCheckFileExistence(): bool
     {
         return (bool) $this->evaluate($this->shouldCheckFileExistence);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $state = $this->getState();
+
+        if ($state instanceof Collection) {
+            $state = $state->all();
+        }
+
+        $attributes = $this->getExtraAttributeBag()
+            ->class([
+                'fi-ta-image',
+                'fi-inline' => $this->isInline(),
+            ]);
+
+        if (empty($state)) {
+            $placeholder = $this->getPlaceholder();
+
+            ob_start(); ?>
+
+            <div <?= $attributes->toHtml() ?>>
+                <?php if (filled($placeholder !== null)) { ?>
+                    <p class="fi-ta-placeholder">
+                        <?= e($placeholder) ?>
+                    </p>
+                <?php } ?>
+            </div>
+
+            <?php return ob_get_clean();
+        }
+
+        $state = Arr::wrap($state);
+        $stateCount = count($state);
+
+        $limit = $this->getLimit() ?? $stateCount;
+
+        $stateOverLimitCount = ($limit && ($stateCount > $limit))
+            ? ($stateCount - $limit)
+            : 0;
+
+        if ($stateOverLimitCount) {
+            $state = array_slice($state, 0, $limit);
+        }
+
+        $alignment = $this->getAlignment();
+        $isCircular = $this->isCircular();
+        $isSquare = $this->isSquare();
+        $isStacked = $this->isStacked();
+        $hasLimitedRemainingText = $stateOverLimitCount && $this->hasLimitedRemainingText();
+        $limitedRemainingTextSize = $this->getLimitedRemainingTextSize();
+        $height = $this->getHeight() ?? ($isStacked ? '2rem' : '2.5rem');
+        $width = $this->getWidth() ?? (($isCircular || $isSquare) ? $height : null);
+
+        $defaultImageUrl = $this->getDefaultImageUrl();
+
+        $attributes = $attributes
+            ->class([
+                'fi-circular' => $isCircular,
+                'fi-wrapped' => $this->canWrap(),
+                'fi-stacked' => $isStacked,
+                ($isStacked && is_int($ring = $this->getRing())) ? "fi-ta-image-ring fi-ta-image-ring-{$ring}" : '',
+                ($isStacked && ($overlap = ($this->getOverlap() ?? 2))) ? "fi-ta-image-overlap-{$overlap}" : '',
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
+            ]);
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?php foreach ($state as $stateItem) { ?>
+                <img
+                    <?= $this->getExtraImgAttributeBag()
+                        ->merge([
+                            'src' => filled($stateItem) ? $this->getImageUrl($stateItem) : $defaultImageUrl,
+                        ])
+                        ->style([
+                            "height: {$height}" => $height,
+                            "width: {$width}" => $width,
+                        ])
+                        ->toHtml() ?>
+                />
+            <?php } ?>
+
+            <?php if ($hasLimitedRemainingText && $stateOverLimitCount) { ?>
+                <div <?= (new ComponentAttributeBag)
+                ->class([
+                    'fi-ta-image-limited-remaining-text',
+                    "fi-size-{$limitedRemainingTextSize}" => $limitedRemainingTextSize,
+                ])
+                ->style([
+                    "height: {$height}" => $height,
+                    "width: {$width}" => $width,
+                ])
+                ->toHtml() ?>>
+                    +<?= $stateOverLimitCount ?>
+                </div>
+            <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }

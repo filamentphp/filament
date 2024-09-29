@@ -1518,15 +1518,6 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'infolists/entries/image/limited-remaining-text-separately': {
-        url: 'infolists/entries',
-        selector: '#imageLimitedRemainingTextSeparately',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
     'infolists/entries/color/simple': {
         url: 'infolists/entries',
         selector: '#color',
@@ -2038,15 +2029,6 @@ export default {
     },
     'tables/columns/image/limited-remaining-text': {
         url: 'tables?table=imageColumnLimitedRemainingText',
-        selector: 'body',
-        viewport: {
-            width: 1080,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'tables/columns/image/limited-remaining-text-separately': {
-        url: 'tables?table=imageColumnLimitedRemainingTextSeparately',
         selector: 'body',
         viewport: {
             width: 1080,

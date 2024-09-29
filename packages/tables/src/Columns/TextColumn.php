@@ -183,10 +183,10 @@ class TextColumn extends Column implements HasEmbeddedView
         $stateCount = count($state);
 
         $listLimit = $this->getListLimit() ?? $stateCount;
-        $stateOverLimitCount = 0;
+        $stateOverListLimitCount = 0;
 
         if ($listLimit && ($stateCount > $listLimit)) {
-            $stateOverLimitCount = $stateCount - $listLimit;
+            $stateOverListLimitCount = $stateCount - $listLimit;
 
             if (
                 (! $isListWithLineBreaks) ||
@@ -400,16 +400,16 @@ class TextColumn extends Column implements HasEmbeddedView
                 'fi-ta-text-has-line-breaks' => $isListWithLineBreaks,
             ]);
 
-        if ($hasDescriptions || $stateOverLimitCount) {
+        if ($hasDescriptions || $stateOverListLimitCount) {
             $attributes = $attributes
                 ->merge([
-                    'x-data' => ($stateOverLimitCount && $isLimitedListExpandable)
+                    'x-data' => ($stateOverListLimitCount && $isLimitedListExpandable)
                         ? '{ isLimited: true }'
                         : null,
                 ])
                 ->class([
                     'fi-ta-text-has-descriptions' => $hasDescriptions,
-                    'fi-ta-text-list-limited' => $stateOverLimitCount,
+                    'fi-ta-text-list-limited' => $stateOverListLimitCount,
                 ]);
 
             ob_start(); ?>
@@ -483,7 +483,7 @@ class TextColumn extends Column implements HasEmbeddedView
                     </ul>
                 <?php } ?>
 
-                <?php if ($stateOverLimitCount) { ?>
+                <?php if ($stateOverListLimitCount) { ?>
                     <p class="fi-ta-text-list-limited-message">
                         <?php if ($isLimitedListExpandable) { ?>
                             <button
@@ -492,7 +492,7 @@ class TextColumn extends Column implements HasEmbeddedView
                                 x-show="isLimited"
                                 class="fi-link fi-size-xs"
                             >
-                                <?= trans_choice('filament-tables::table.columns.text.actions.expand_list', $stateOverLimitCount) ?>
+                                <?= trans_choice('filament-tables::table.columns.text.actions.expand_list', $stateOverListLimitCount) ?>
                             </button>
 
                             <button
@@ -502,10 +502,10 @@ class TextColumn extends Column implements HasEmbeddedView
                                 x-show="! isLimited"
                                 class="fi-link fi-size-xs"
                             >
-                                <?= trans_choice('filament-tables::table.columns.text.actions.collapse_list', $stateOverLimitCount) ?>
+                                <?= trans_choice('filament-tables::table.columns.text.actions.collapse_list', $stateOverListLimitCount) ?>
                             </button>
                         <?php } else { ?>
-                            <?= trans_choice('filament-tables::table.columns.text.more_list_items', $stateOverLimitCount) ?>
+                            <?= trans_choice('filament-tables::table.columns.text.more_list_items', $stateOverListLimitCount) ?>
                         <?php } ?>
                     </p>
                 <?php } ?>

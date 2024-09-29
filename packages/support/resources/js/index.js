@@ -15,6 +15,7 @@ import '../css/components/tables/actions.css'
 import '../css/components/tables/cell.css'
 import '../css/components/tables/columns/color.css'
 import '../css/components/tables/columns/icon.css'
+import '../css/components/tables/columns/image.css'
 import '../css/components/tables/columns/text.css'
 import '../css/components/tables/row.css'
 

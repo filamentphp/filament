@@ -175,22 +175,6 @@ ImageColumn::make('colleagues.avatar')
 
 <AutoScreenshot name="tables/columns/image/limited-remaining-text" alt="Limited image column with remaining text" version="4.x" />
 
-#### Showing the limited remaining text separately
-
-By default, `limitedRemainingText()` will display the count of remaining images as a number stacked on the other images. If you prefer to show the count as a number after the images, you may use the `isSeparate: true` parameter:
-
-```php
-use Filament\Tables\Columns\ImageColumn;
-
-ImageColumn::make('colleagues.avatar')
-    ->circular()
-    ->stacked()
-    ->limit(3)
-    ->limitedRemainingText(isSeparate: true)
-```
-
-<AutoScreenshot name="tables/columns/image/limited-remaining-text-separately" alt="Limited image column with remaining text separately" version="4.x" />
-
 #### Customizing the limited remaining text size
 
 By default, the size of the remaining text is `sm`. You can customize this to be `xs`, `md` or `lg` using the `size` parameter:
