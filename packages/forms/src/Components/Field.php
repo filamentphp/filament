@@ -2,9 +2,11 @@
 
 namespace Filament\Forms\Components;
 
+
 class Field extends Component implements Contracts\HasHintActions, Contracts\HasValidationRules
 {
     use Concerns\CanBeAutofocused;
+    use Concerns\CanGrammarlyBeDisabled;
     use Concerns\CanBeMarkedAsRequired;
     use Concerns\CanBeValidated;
     use Concerns\HasExtraFieldWrapperAttributes;

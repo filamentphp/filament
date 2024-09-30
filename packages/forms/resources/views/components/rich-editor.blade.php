@@ -489,6 +489,11 @@
                 </trix-toolbar>
 
                 <trix-editor
+                    @if($isGrammarlyDisabled())
+                        data-gramm="false"
+                        data-gramm_editor="false"
+                        data-enable-grammarly="false"
+                    @endif
                     @if ($isAutofocused())
                         autofocus
                     @endif
