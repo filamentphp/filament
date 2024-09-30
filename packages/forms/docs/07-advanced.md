@@ -258,7 +258,20 @@ TextInput::make('name')
     ->required()
     ->dehydrateStateUsing(fn (string $state): string => ucwords($state))
 ```
+#### Handling Nullable Unique Fields
 
+When using unique fields that are nullable (e.g., an `email` field), the dehydration process might set the field to an empty string if left blank, which can cause validation errors. To resolve this, you can ensure the field remains `null` when empty by using the `dehydrateStateUsing()` method.
+
+For example:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('email')
+    ->unique()
+    ->nullable()
+    ->dehydrateStateUsing(fn ($state) => $state ? strtolower($state) : null)
+```
 #### Preventing a field from being dehydrated
 
 You may also prevent a field from being dehydrated altogether using `dehydrated(false)`. In this example, the field will not be present in the array returned from `getState()`:
