@@ -52,40 +52,42 @@ class ColorColumn extends Column implements HasEmbeddedView
             ]);
 
         ob_start(); ?>
-            <div <?= $attributes->toHtml() ?>>
-                <?php foreach ($state as $stateItem) { ?>
-                    <?php
-                        $isCopyable = $this->isCopyable($stateItem);
 
-                    if ($isCopyable) {
-                        $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? $stateItem);
-                        $copyMessageJs = Js::from($this->getCopyMessage($stateItem));
-                        $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($stateItem));
-                    }
-                    ?>
+        <div <?= $attributes->toHtml() ?>>
+            <?php foreach ($state as $stateItem) { ?>
+                <?php
+                    $isCopyable = $this->isCopyable($stateItem);
 
-                    <div <?= (new ComponentAttributeBag)
-                        ->merge([
-                            'x-on:click' => $isCopyable
-                                ? <<<JS
-                                window.navigator.clipboard.writeText({$copyableStateJs})
-                                \$tooltip({$copyMessageJs}, {
-                                    theme: \$store.theme,
-                                    timeout: {$copyMessageDurationJs},
-                                })
-                                JS
-                                : null,
-                        ], escape: false)
-                        ->class([
-                            'fi-ta-color-item',
-                            'fi-copyable' => $isCopyable,
-                        ])
-                        ->style([
-                            'background-color: ' . e($stateItem) => $stateItem,
-                        ])
-                        ->toHtml() ?>></div>
-                <?php } ?>
-            </div>
+                if ($isCopyable) {
+                    $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? $stateItem);
+                    $copyMessageJs = Js::from($this->getCopyMessage($stateItem));
+                    $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($stateItem));
+                }
+                ?>
+
+                <div <?= (new ComponentAttributeBag)
+                    ->merge([
+                        'x-on:click' => $isCopyable
+                            ? <<<JS
+                            window.navigator.clipboard.writeText({$copyableStateJs})
+                            \$tooltip({$copyMessageJs}, {
+                                theme: \$store.theme,
+                                timeout: {$copyMessageDurationJs},
+                            })
+                            JS
+                            : null,
+                    ], escape: false)
+                    ->class([
+                        'fi-ta-color-item',
+                        'fi-copyable' => $isCopyable,
+                    ])
+                    ->style([
+                        'background-color: ' . e($stateItem) => $stateItem,
+                    ])
+                    ->toHtml() ?>></div>
+            <?php } ?>
+        </div>
+
         <?php return ob_get_clean();
     }
 }
