@@ -16,12 +16,12 @@ class MakeIssueCommand extends Command
     public function handle(): void
     {
         $url = 'https://github.com/filamentphp/filament/issues/new?' . http_build_query([
-                'template' => 'bug_report.yml',
-                'package-version' => InstalledVersions::getPrettyVersion('filament/support'),
-                'laravel-version' => InstalledVersions::getPrettyVersion('laravel/framework'),
-                'livewire-version' => InstalledVersions::getPrettyVersion('livewire/livewire'),
-                'php-version' => PHP_VERSION,
-            ]);
+            'template' => 'bug_report.yml',
+            'package-version' => InstalledVersions::getPrettyVersion('filament/support'),
+            'laravel-version' => InstalledVersions::getPrettyVersion('laravel/framework'),
+            'livewire-version' => InstalledVersions::getPrettyVersion('livewire/livewire'),
+            'php-version' => PHP_VERSION,
+        ]);
 
         $result = $this->openUrlInBrowser($url);
 
