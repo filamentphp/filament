@@ -8,6 +8,7 @@ use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables\Columns\IconColumn\Enums\IconColumnSize;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\View\ComponentAttributeBag;
 
@@ -268,6 +269,8 @@ class IconColumn extends Column implements HasEmbeddedView
 
             <?php return ob_get_clean();
         }
+
+        $state = Arr::wrap($state);
 
         $alignment = $this->getAlignment();
 

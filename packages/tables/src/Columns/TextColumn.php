@@ -177,6 +177,28 @@ class TextColumn extends Column implements HasEmbeddedView
             $state = $state->all();
         }
 
+        $attributes = $this->getExtraAttributeBag()
+            ->class([
+                'fi-ta-text',
+                'fi-inline' => $this->isInline(),
+            ]);
+
+        if (empty($state)) {
+            $placeholder = $this->getPlaceholder();
+
+            ob_start(); ?>
+
+            <div <?= $attributes->toHtml() ?>>
+                <?php if (filled($placeholder !== null)) { ?>
+                    <p class="fi-ta-placeholder">
+                        <?= e($placeholder) ?>
+                    </p>
+                <?php } ?>
+            </div>
+
+            <?php return ob_get_clean();
+        }
+
         $formatState = fn (mixed $stateItem): string => e($this->formatState($stateItem));
 
         $state = Arr::wrap($state);
@@ -209,28 +231,6 @@ class TextColumn extends Column implements HasEmbeddedView
 
             $stateCount = 1;
             $formatState = fn (mixed $stateItem): string => e($stateItem);
-        }
-
-        $attributes = $this->getExtraAttributeBag()
-            ->class([
-                'fi-ta-text',
-                'fi-inline' => $this->isInline(),
-            ]);
-
-        if (empty($state)) {
-            $placeholder = $this->getPlaceholder();
-
-            ob_start(); ?>
-
-            <div <?= $attributes->toHtml() ?>>
-                <?php if (filled($placeholder !== null)) { ?>
-                    <p class="fi-ta-placeholder">
-                        <?= e($placeholder) ?>
-                    </p>
-                <?php } ?>
-            </div>
-
-            <?php return ob_get_clean();
         }
 
         $alignment = $this->getAlignment();
