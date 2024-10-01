@@ -11,15 +11,64 @@ return [
             ],
 
             'add' => [
+
                 'label' => 'Додати до :label',
+
+                'modal' => [
+
+                    'heading' => 'Додати до :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Додати',
+                        ],
+
+                    ],
+
+                ],
             ],
 
             'add_between' => [
                 'label' => 'Вставити між',
+
+                'modal' => [
+
+                    'heading' => 'Додати до :label',
+
+                    'actions' => [
+
+                        'add' => [
+                            'label' => 'Додати',
+                        ],
+
+                    ],
+
+                ],
             ],
 
             'delete' => [
                 'label' => 'Видалити',
+            ],
+
+            'edit' => [
+
+                'label' => 'Змінити',
+
+                'modal' => [
+
+                    'heading' => 'Змінити блок',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Зберегти зміни',
+                        ],
+
+                    ],
+
+                ],
+
             ],
 
             'reorder' => [
