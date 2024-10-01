@@ -11,8 +11,15 @@ return [
         'form' => [
 
             'file' => [
+
                 'label' => 'Файл',
+
                 'placeholder' => 'Завантажити CSV-файл',
+
+                'rules' => [
+                    'duplicate_columns' => '{0} Файл не повинен містити більше ніж один пустий заголовок стовпця.|{1,*} Файл не повинен містити повторюваних заголовків стовпців: :columns.',
+                ],
+
             ],
 
             'columns' => [
@@ -72,6 +79,7 @@ return [
         'file_name' => 'import-:import_id-:csv_name-failed-rows',
         'error_header' => 'Помилка',
         'system_error' => 'Системна помилка, зверніться до служби підтримки.',
+        'column_mapping_required_for_new_record' => 'Стовпчик :attribute не було зіставлено зі стовпчиком у файлі, але він необхідний для створення нових записів.',
     ],
 
 ];

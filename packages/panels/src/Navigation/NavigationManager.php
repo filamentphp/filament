@@ -55,9 +55,9 @@ class NavigationManager
         return collect($this->getNavigationItems())
             ->filter(fn (NavigationItem $item): bool => $item->isVisible())
             ->sortBy(fn (NavigationItem $item): int => $item->getSort())
-            ->groupBy(fn (NavigationItem $item): ?string => $item->getGroup())
-            ->map(function (Collection $items, ?string $groupIndex) use ($groups): NavigationGroup {
-                $parentItems = $items->groupBy(fn (NavigationItem $item): ?string => $item->getParentItem());
+            ->groupBy(fn (NavigationItem $item): string => $item->getGroup() ?? '')
+            ->map(function (Collection $items, string $groupIndex) use ($groups): NavigationGroup {
+                $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '');
 
                 $items = $parentItems->get('')
                     ->keyBy(fn (NavigationItem $item): string => $item->getLabel());

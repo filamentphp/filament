@@ -80,9 +80,10 @@ If you want to start a component in a grid at a specific column, you can use the
 - `columnStart(['md' => 2, 'xl' => 4])` will make the component start at column 2 on medium devices, and at column 4 on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
 
 ```php
-use Filament\Schema\Components\Section;
+use Filament\Schema\Components\Grid;
+use Filament\Schema\Components\TextEntry;
 
-Section::make()
+Grid::make()
     ->columns([
         'sm' => 3,
         'xl' => 6,
