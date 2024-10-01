@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use OpenSpout\Common\Entity\Style\Style;
+use OpenSpout\Writer\XLSX\Options;
 
 abstract class Exporter
 {
@@ -179,6 +180,11 @@ abstract class Exporter
     }
 
     public function getXlsxHeaderCellStyle(): ?Style
+    {
+        return null;
+    }
+
+    public function getXlsxOptions(): ?Options 
     {
         return null;
     }
