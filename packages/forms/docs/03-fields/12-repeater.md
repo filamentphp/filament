@@ -65,7 +65,7 @@ Note that these default items are only created when the form is loaded without e
 
 An action button is displayed below the repeater to allow the user to add a new item.
 
-## Setting the add action button's label
+## Align the add action button
 
 You may set a label to customize the text that should be displayed in the button for adding a repeater item, using the `addActionLabel()` method:
 
