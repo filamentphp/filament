@@ -1,5 +1,6 @@
 @props([
     'contained' => false,
+    'vertical' => false,
     'label' => null,
 ])
 
@@ -12,8 +13,10 @@
             ])
             ->class([
                 'fi-tabs flex max-w-full gap-x-1 overflow-x-auto',
-                'fi-contained border-b border-gray-200 px-3 py-2.5 dark:border-white/10' => $contained,
+                'fi-contained border-b border-gray-200 px-3 py-2.5 dark:border-white/10' => $contained && ! $vertical,
+                'fi-contained border-r border-gray-200 px-3 py-2.5 dark:border-white/10' => $contained && $vertical,
                 'mx-auto rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => ! $contained,
+                'flex-col' => $vertical,
             ])
     }}
 >

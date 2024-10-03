@@ -2,9 +2,11 @@
     $id = $getId();
     $key = $getKey();
     $isContained = $getContainer()->getParentComponent()->isContained();
+    $isVertical = $getContainer()->getParentComponent()->isVertical();
 
     $activeTabClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-active',
+        'flex-1 px-6' => $isVertical,
         'p-6' => $isContained,
         'mt-6' => ! $isContained,
     ]);
