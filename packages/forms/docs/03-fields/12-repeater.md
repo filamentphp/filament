@@ -65,7 +65,7 @@ Note that these default items are only created when the form is loaded without e
 
 An action button is displayed below the repeater to allow the user to add a new item.
 
-## Align the add action button
+## Setting the add action button's label
 
 You may set a label to customize the text that should be displayed in the button for adding a repeater item, using the `addActionLabel()` method:
 
@@ -79,7 +79,7 @@ Repeater::make('members')
     ->addActionLabel('Add member')
 ```
 
-## Setting the add action button's label
+## Align the add action button
 
 By default, the add action is align in the center. You may adjust this using the `addActionAlignment()` method:
 
