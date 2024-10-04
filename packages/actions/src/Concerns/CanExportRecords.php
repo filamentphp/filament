@@ -171,8 +171,6 @@ trait CanExportRecords
             );
 
             $export->file_disk = $action->getFileDisk() ?? $exporter->getFileDisk();
-            $export->save();
-
             $export->file_name = $action->getFileName($export) ?? $exporter->getFileName($export);
             $export->save();
 
