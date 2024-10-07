@@ -192,11 +192,11 @@ trait HasState
             }
         }
 
-        foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
-            if ($container->getParentComponent()?->isHiddenAndNotDehydrated()) {
-                continue;
-            }
+        if ($this->isHiddenAndNotDehydrated()) {
+            return;
+        }
 
+        foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
             $container->dehydrateState($state, $isDehydrated);
         }
     }
