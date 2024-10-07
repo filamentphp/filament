@@ -92,7 +92,7 @@
             >
                 @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly))
                     <span
-                        class="fi-ta-summary-heading flex px-3 py-4 text-sm font-medium text-gray-950 dark:text-white"
+                        class="fi-ta-summary-row-heading flex px-3 py-4 text-sm font-medium text-gray-950 dark:text-white"
                     >
                         {{ $heading }}
                     </span>
