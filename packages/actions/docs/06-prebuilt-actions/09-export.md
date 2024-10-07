@@ -551,7 +551,7 @@ public static function getCsvDelimiter(): string
 
 You can only specify a single character, otherwise an exception will be thrown.
 
-## Styling XLSX cells
+## Customizing XLSX files
 
 If you want to style the cells of the XLSX file, you may override the `getXlsxCellStyle()` method on the exporter class, returning an [OpenSpout `Style` object](https://github.com/openspout/openspout/blob/4.x/docs/documentation.md#styling):
 
@@ -585,6 +585,21 @@ public function getXlsxHeaderCellStyle(): ?Style
         ->setBackgroundColor(Color::rgb(0, 0, 0))
         ->setCellAlignment(CellAlignment::CENTER)
         ->setCellVerticalAlignment(CellVerticalAlignment::CENTER);
+}
+```
+
+Alternatively, if you want to pass "options" to the [OpenSpout XLSX `Writer`](https://github.com/openspout/openspout/blob/4.x/docs/documentation.md#column-widths), you can return an `OpenSpout\Writer\XLSX\Options` instance from the `getXlsxWriterOptions()` method of the exporter class:
+
+```php
+use OpenSpout\Writer\XLSX\Options;
+
+public function getXlsxWriterOptions(): ?Options
+{
+    $options = new Options();
+    $options->setColumnWidth(10, 1);
+    $options->setColumnWidthForRange(12, 2, 3);
+    
+    return $options;
 }
 ```
 
