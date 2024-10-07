@@ -184,7 +184,7 @@ abstract class Exporter
         return null;
     }
 
-    public function getXlsxOptions(): ?Options
+    public function getXlsxWriterOptions(): ?Options
     {
         return null;
     }
