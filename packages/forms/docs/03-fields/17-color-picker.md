@@ -33,3 +33,26 @@ ColorPicker::make('rgb_color')
 ColorPicker::make('rgba_color')
     ->rgba()
 ```
+
+## Color picker validation
+
+You may use Laravel's validation rules to validate the values of the color picker:
+
+```php
+use Filament\Forms\Components\ColorPicker;
+
+ColorPicker::make('hex_color')
+    ->regex('/^#([a-f0-9]{6}|[a-f0-9]{3})\b$/')
+
+ColorPicker::make('hsl_color')
+    ->hsl()
+    ->regex('/^hsl\(\s*(\d+)\s*,\s*(\d*(?:\.\d+)?%)\s*,\s*(\d*(?:\.\d+)?%)\)$/')
+
+ColorPicker::make('rgb_color')
+    ->rgb()
+    ->regex('/^rgb\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3})\)$/')
+
+ColorPicker::make('rgba_color')
+    ->rgba()
+    ->regex('/^rgba\((\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(\d*(?:\.\d+)?)\)$/')
+```

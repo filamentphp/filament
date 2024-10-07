@@ -28,7 +28,7 @@ You may create your own custom component classes and views, which you can reuse 
 
 > If you're just creating a simple custom component to use once, you could instead use a [view component](#view) to render any custom Blade file.
 
-To create a custom column class and view, you may use the following command:
+To create a custom component class and view, you may use the following command:
 
 ```bash
 php artisan make:infolist-layout Box

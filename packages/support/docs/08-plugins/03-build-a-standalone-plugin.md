@@ -60,7 +60,7 @@ Normally, Filament v3 recommends that users style their plugins with a custom fi
         "cssnano": "^6.0.1",
         "postcss": "^8.4.27",
         "postcss-cli": "^10.1.0",
-        "postcss-nesting": "^12.0.0"
+        "postcss-nesting": "^13.0.0"
     }
 }
 ```

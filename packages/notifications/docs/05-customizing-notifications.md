@@ -31,11 +31,11 @@ If your desired customization can't be achieved using the CSS classes above, you
 use Filament\Notifications\Notification;
 
 Notification::configureUsing(function (Notification $notification): void {
-    $notification->view('filament-notifications.notification');
+    $notification->view('filament.notifications.notification');
 });
 ```
 
-Next, create the view, in this example `resources/views/notifications/notification.blade.php`. The view should use the package's base notification component for the notification functionality and pass the available `$notification` variable through the `notification` attribute. This is the bare minimum required to create your own notification view:
+Next, create the view, in this example `resources/views/filament/notifications/notification.blade.php`. The view should use the package's base notification component for the notification functionality and pass the available `$notification` variable through the `notification` attribute. This is the bare minimum required to create your own notification view:
 
 ```blade
 <x-filament-notifications::notification :notification="$notification">
