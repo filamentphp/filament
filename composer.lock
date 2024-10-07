@@ -1385,7 +1385,7 @@
         },
         {
             "name": "filament/support",
-            "version": "3.x-dev",
+            "version": "4.x-dev",
             "dist": {
                 "type": "path",
                 "url": "packages/support",

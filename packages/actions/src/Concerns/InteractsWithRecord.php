@@ -3,7 +3,8 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Actions\Contracts\HasRecord;
+use Exception;
+use Filament\Support\ArrayRecord;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -12,8 +13,16 @@ use function Filament\Support\locale_has_pluralization;
 
 trait InteractsWithRecord
 {
-    protected Model | Closure | null $record = null;
+    /**
+     * @var Model | class-string<Model> | array<string, mixed> | Closure | null
+     */
+    protected Model | string | array | Closure | null $record = null;
 
+    protected ?Closure $resolveRecordUsing = null;
+
+    /**
+     * @var class-string<Model>|Closure|null
+     */
     protected string | Closure | null $model = null;
 
     protected string | Closure | null $modelLabel = null;
@@ -24,13 +33,26 @@ trait InteractsWithRecord
 
     protected string | Closure | null $recordTitleAttribute = null;
 
-    public function record(Model | Closure | null $record): static
+    /**
+     * @param  Model | string | array<string, mixed> | Closure | null  $record
+     */
+    public function record(Model | string | array | Closure | null $record): static
     {
         $this->record = $record;
 
         return $this;
     }
 
+    public function resolveRecordUsing(?Closure $callback): static
+    {
+        $this->resolveRecordUsing = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @param  class-string<Model>|Closure|null  $model
+     */
     public function model(string | Closure | null $model): static
     {
         $this->model = $model;
@@ -66,26 +88,55 @@ trait InteractsWithRecord
         return $this;
     }
 
-    public function getRecord(): ?Model
+    /**
+     * @return Model | array<string, mixed> | null
+     *
+     * @throws Exception
+     */
+    public function getRecord(): Model | array | null
     {
         $record = $this->evaluate($this->record);
+
+        $isRecordKey = filled($record) && (! $record instanceof Model) && (! is_array($record));
+
+        if ($isRecordKey && (! $this->resolveRecordUsing)) {
+            throw new Exception("Could not resolve record from key [{$record}] without a [resolveRecordUsing()] callback.");
+        }
+
+        if ($isRecordKey) {
+            $record = $this->evaluate($this->resolveRecordUsing, [
+                'key' => $record,
+            ]);
+        }
+
+        if ($isRecordKey && $record && (! $this->record instanceof Closure)) {
+            $this->record = $record;
+        }
 
         if ($record) {
             return $record;
         }
 
-        $group = $this->getGroup();
-
-        if (! ($group instanceof HasRecord)) {
-            return null;
-        }
-
-        return $group->getRecord();
+        return $this->getGroup()?->getRecord();
     }
 
     public function getRecordTitle(?Model $record = null): ?string
     {
-        return $this->getCustomRecordTitle($record) ?? $this->getModelLabel();
+        $record ??= $this->getRecord();
+
+        return $this->getCustomRecordTitle($record) ?? $this->getTable()?->getRecordTitle($record) ?? $this->getModelLabel();
+    }
+
+    /**
+     * @param  Model | array<string, mixed>  $record
+     */
+    public function resolveRecordKey(Model | array $record): string
+    {
+        if (is_array($record)) {
+            return $record[ArrayRecord::getKeyName()] ?? throw new Exception('Record arrays must have a unique [' . ArrayRecord::getKeyName() . '] entry for identification.');
+        }
+
+        return $record->getKey();
     }
 
     public function getCustomRecordTitle(?Model $record = null): ?string
@@ -97,10 +148,10 @@ trait InteractsWithRecord
             namedInjections: [
                 'record' => $record,
             ],
-            typedInjections: [
+            typedInjections: ($record instanceof Model) ? [
                 Model::class => $record,
                 $record::class => $record,
-            ],
+            ] : [],
         );
 
         if (filled($title)) {
@@ -114,6 +165,11 @@ trait InteractsWithRecord
         }
 
         return $record->getAttributeValue($titleAttribute);
+    }
+
+    public function getRecordTitleAttribute(): ?string
+    {
+        return $this->getCustomRecordTitleAttribute() ?? $this->getTable()?->getRecordTitleAttribute();
     }
 
     public function getCustomRecordTitleAttribute(): ?string
@@ -136,6 +192,11 @@ trait InteractsWithRecord
         return $this->record !== null;
     }
 
+    /**
+     * @return class-string<Model>|null
+     *
+     * @throws Exception
+     */
     public function getModel(): ?string
     {
         $model = $this->getCustomModel();
@@ -144,15 +205,24 @@ trait InteractsWithRecord
             return $model;
         }
 
+        $model = $this->getTable()?->getModel();
+
+        if (filled($model)) {
+            return $model;
+        }
+
         $record = $this->getRecord();
 
-        if (! $record) {
+        if (! ($record instanceof Model)) {
             return null;
         }
 
         return $record::class;
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getCustomModel(): ?string
     {
         return $this->evaluate($this->model);
@@ -161,6 +231,12 @@ trait InteractsWithRecord
     public function getModelLabel(): ?string
     {
         $label = $this->getCustomModelLabel();
+
+        if (filled($label)) {
+            return $label;
+        }
+
+        $label = $this->getTable()?->getModelLabel();
 
         if (filled($label)) {
             return $label;
@@ -188,6 +264,12 @@ trait InteractsWithRecord
             return $label;
         }
 
+        $label = $this->getTable()?->getPluralModelLabel();
+
+        if (filled($label)) {
+            return $label;
+        }
+
         $singularLabel = $this->getModelLabel();
 
         if (blank($singularLabel)) {
@@ -204,20 +286,5 @@ trait InteractsWithRecord
     public function getCustomPluralModelLabel(): ?string
     {
         return $this->evaluate($this->pluralModelLabel);
-    }
-
-    /**
-     * @param  array<mixed>  $arguments
-     * @return array<mixed>
-     */
-    protected function parseAuthorizationArguments(array $arguments): array
-    {
-        if ($record = $this->getRecord()) {
-            array_unshift($arguments, $record);
-        } elseif ($model = $this->getModel()) {
-            array_unshift($arguments, $model);
-        }
-
-        return $arguments;
     }
 }

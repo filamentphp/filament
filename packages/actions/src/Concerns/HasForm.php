@@ -3,9 +3,8 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Form;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 
 trait HasForm
 {
@@ -14,28 +13,24 @@ trait HasForm
      */
     protected array $formData = [];
 
-    /**
-     * @var array<Component> | Closure | null
-     */
-    protected array | Closure | null $form = null;
-
-    protected bool | Closure $isFormDisabled = false;
-
     protected ?Closure $mutateFormDataUsing = null;
 
     /**
-     * @deprecated Use `disabledForm() instead.
+     * @deprecated Use `disabledSchema() instead.
      */
     public function disableForm(bool | Closure $condition = true): static
     {
-        $this->disabledForm($condition);
+        $this->disabledSchema($condition);
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `disabledSchema() instead.
+     */
     public function disabledForm(bool | Closure $condition = true): static
     {
-        $this->isFormDisabled = $condition;
+        $this->disabledSchema($condition);
 
         return $this;
     }
@@ -45,52 +40,17 @@ trait HasForm
      */
     public function form(array | Closure | null $form): static
     {
-        $this->form = $form;
+        $this->schema($form);
 
         return $this;
     }
 
-    public function getForm(Form $form): ?Form
+    /**
+     * @deprecated Use `getSchema()` instead.
+     */
+    public function getForm(Schema $form): ?Schema
     {
-        $modifiedForm = $this->evaluate($this->form, [
-            'form' => $form,
-        ]);
-
-        if ($modifiedForm === null) {
-            return null;
-        }
-
-        if (is_array($modifiedForm) && (! count($modifiedForm))) {
-            return null;
-        }
-
-        if (is_array($modifiedForm) && $this->isWizard()) {
-            $wizard = Wizard::make($modifiedForm)
-                ->contained(false)
-                ->startOnStep($this->getWizardStartStep())
-                ->cancelAction($this->getModalCancelAction())
-                ->submitAction($this->getModalSubmitAction())
-                ->skippable($this->isWizardSkippable())
-                ->disabled($this->isFormDisabled());
-
-            if ($this->modifyWizardUsing) {
-                $wizard = $this->evaluate($this->modifyWizardUsing, [
-                    'wizard' => $wizard,
-                ]) ?? $wizard;
-            }
-
-            $modifiedForm = [$wizard];
-        }
-
-        if (is_array($modifiedForm)) {
-            $modifiedForm = $form->schema($modifiedForm);
-        }
-
-        if ($this->isFormDisabled()) {
-            return $modifiedForm->disabled();
-        }
-
-        return $modifiedForm;
+        return $this->getSchema($form);
     }
 
     public function mutateFormDataUsing(?Closure $callback): static
@@ -131,8 +91,19 @@ trait HasForm
         return $this->formData;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function getRawFormData(): array
+    {
+        return $this->getLivewire()->mountedActions[$this->getNestingIndex()]['data'] ?? [];
+    }
+
+    /**
+     * @deprecated Use `isSchemaDisabled()` instead.
+     */
     public function isFormDisabled(): bool
     {
-        return (bool) $this->evaluate($this->isFormDisabled);
+        return $this->isSchemaDisabled();
     }
 }

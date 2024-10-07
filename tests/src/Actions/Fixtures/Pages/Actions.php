@@ -3,10 +3,10 @@
 namespace Filament\Tests\Actions\Fixtures\Pages;
 
 use Filament\Actions\Action;
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schema\Schema;
 
 class Actions extends Page
 {
@@ -20,7 +20,7 @@ class Actions extends Page
                     $this->dispatch('simple-called');
                 }),
             Action::make('data')
-                ->mountUsing(fn (ComponentContainer $form) => $form->fill(['foo' => 'bar']))
+                ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
                 ->form([
                     TextInput::make('payload')->required(),
                 ])
@@ -45,6 +45,67 @@ class Actions extends Page
                         ->action(function (array $arguments) {
                             $this->dispatch('nested-called', arguments: $arguments);
                         }),
+                ]),
+            Action::make('parent')
+                ->schema([
+                    TextInput::make('foo')
+                        ->required()
+                        ->registerActions([
+                            Action::make('nested')
+                                ->schema([
+                                    TextInput::make('bar')
+                                        ->required(),
+                                ])
+                                ->action(fn () => null),
+                            Action::make('cancelParent')
+                                ->schema([
+                                    TextInput::make('bar')
+                                        ->required(),
+                                ])
+                                ->action(fn () => null)
+                                ->cancelParentActions(),
+                        ]),
+                ])
+                ->action(function (array $data) {
+                    $this->dispatch('parent-called', foo: $data['foo']);
+                })
+                ->extraModalFooterActions([
+                    Action::make('footer')
+                        ->schema([
+                            TextInput::make('bar')
+                                ->required(),
+                        ])
+                        ->action(fn () => null),
+                ])
+                ->registerModalActions([
+                    Action::make('manuallyRegisteredModal')
+                        ->schema([
+                            TextInput::make('bar')
+                                ->required(),
+                        ])
+                        ->registerModalActions([
+                            Action::make('testData')
+                                ->schema([
+                                    TextInput::make('baz')
+                                        ->required(),
+                                ])
+                                ->action(fn (array $mountedActions) => $this->dispatch(
+                                    'data-test-called',
+                                    foo: $mountedActions[0]->getRawFormData()['foo'],
+                                    bar: $mountedActions[1]->getRawFormData()['bar'],
+                                    baz: $mountedActions[2]->getRawFormData()['baz'],
+                                )),
+                            Action::make('testArguments')
+                                ->action(function (array $mountedActions, Action $action) {
+                                    $this->dispatch(
+                                        'arguments-test-called',
+                                        foo: $mountedActions[0]->getArguments()['foo'],
+                                        bar: $mountedActions[1]->getArguments()['bar'],
+                                        baz: $mountedActions[2]->getArguments()['baz'],
+                                    );
+                                }),
+                        ])
+                        ->action(fn () => null),
                 ]),
             Action::make('halt')
                 ->requiresConfirmation()

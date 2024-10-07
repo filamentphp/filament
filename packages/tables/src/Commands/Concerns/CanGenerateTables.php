@@ -3,10 +3,14 @@
 namespace Filament\Tables\Commands\Concerns;
 
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 trait CanGenerateTables
 {
+    /**
+     * @param  string|class-string<Model>  $model
+     */
     protected function getResourceTableColumns(string $model): string
     {
         $model = $this->getModel($model);

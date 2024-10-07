@@ -35,7 +35,7 @@ abstract class BasePage extends Component implements HasActions, HasForms, HasIn
 
     public static ?Closure $reportValidationErrorUsing = null;
 
-    protected ?string $maxContentWidth = null;
+    protected MaxWidth | string | null $maxContentWidth = null;
 
     /**
      * @var array<mixed>

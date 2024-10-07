@@ -762,8 +762,8 @@ import km from 'filepond/locale/km-km'
 import nl from 'filepond/locale/nl-nl'
 import no from 'filepond/locale/no_nb'
 import pl from 'filepond/locale/pl-pl'
+import pt from 'filepond/locale/pt-pt'
 import pt_BR from 'filepond/locale/pt-br'
-import pt_PT from 'filepond/locale/pt-br'
 import ro from 'filepond/locale/ro-ro'
 import ru from 'filepond/locale/ru-ru'
 import sv from 'filepond/locale/sv_se'
@@ -792,8 +792,8 @@ const locales = {
     nl,
     no,
     pl,
+    pt,
     pt_BR,
-    pt_PT,
     ro,
     ru,
     sv,

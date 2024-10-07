@@ -21,6 +21,10 @@ trait HasOptions
     {
         $this->options = $options;
 
+        if (is_string($options) && enum_exists($options)) {
+            $this->enum($options);
+        }
+
         return $this;
     }
 
@@ -29,7 +33,7 @@ trait HasOptions
      */
     public function getOptions(): array
     {
-        $options = $this->evaluate($this->options) ?? [];
+        $options = $this->evaluate($this->options) ?? $this->getEnum() ?? [];
 
         if (
             is_string($options) &&

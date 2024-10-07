@@ -3,9 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Actions\Contracts\HasRecord;
-use Filament\Actions\MountableAction;
-use Filament\Actions\StaticAction;
+use Filament\Actions\Action;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\View\Components\Modal;
@@ -15,12 +13,12 @@ use Illuminate\Contracts\View\View;
 trait CanOpenModal
 {
     /**
-     * @var array<string, StaticAction>
+     * @var array<string, Action>
      */
     protected array $cachedExtraModalFooterActions;
 
     /**
-     * @var array<StaticAction> | Closure
+     * @var array<Action> | Closure
      */
     protected array | Closure $extraModalFooterActions = [];
 
@@ -29,12 +27,12 @@ trait CanOpenModal
     protected bool | Closure | null $isModalHeaderSticky = null;
 
     /**
-     * @var array<string, StaticAction>
+     * @var array<string, Action>
      */
     protected array $cachedModalActions;
 
     /**
-     * @var array<StaticAction>
+     * @var array<Action>
      */
     protected array $modalActions = [];
 
@@ -43,22 +41,22 @@ trait CanOpenModal
     protected Alignment | string | Closure | null $modalAlignment = null;
 
     /**
-     * @var array<string, StaticAction>
+     * @var array<string, Action>
      */
     protected array $cachedModalFooterActions;
 
     /**
-     * @var array<StaticAction> | Closure | null
+     * @var array<Action> | Closure | null
      */
     protected array | Closure | null $modalFooterActions = null;
 
     protected Alignment | string | Closure | null $modalFooterActionsAlignment = null;
 
-    protected StaticAction | bool | Closure | null $modalCancelAction = null;
+    protected Action | bool | Closure | null $modalCancelAction = null;
 
     protected string | Closure | null $modalCancelActionLabel = null;
 
-    protected StaticAction | bool | Closure | null $modalSubmitAction = null;
+    protected Action | bool | Closure | null $modalSubmitAction = null;
 
     protected string | Closure | null $modalSubmitActionLabel = null;
 
@@ -163,9 +161,9 @@ trait CanOpenModal
     }
 
     /**
-     * @deprecated Use `modalFooterActions()` instead.
+     * @param  array<Action> | Closure | null  $actions
      *
-     * @param  array<StaticAction> | Closure | null  $actions
+     *@deprecated Use `modalFooterActions()` instead.
      */
     public function modalActions(array | Closure | null $actions = null): static
     {
@@ -175,7 +173,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param  array<StaticAction> | Closure | null  $actions
+     * @param  array<Action> | Closure | null  $actions
      */
     public function modalFooterActions(array | Closure | null $actions = null): static
     {
@@ -192,9 +190,9 @@ trait CanOpenModal
     }
 
     /**
-     * @deprecated Use `extraModalFooterActions()` instead.
+     * @param  array<Action> | Closure  $actions
      *
-     * @param  array<StaticAction> | Closure  $actions
+     *@deprecated Use `extraModalFooterActions()` instead.
      */
     public function extraModalActions(array | Closure $actions): static
     {
@@ -204,7 +202,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param  array<StaticAction> | Closure  $actions
+     * @param  array<Action> | Closure  $actions
      */
     public function extraModalFooterActions(array | Closure $actions): static
     {
@@ -214,7 +212,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param  array<StaticAction>  $actions
+     * @param  array<Action>  $actions
      */
     public function registerModalActions(array $actions): static
     {
@@ -226,14 +224,14 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalSubmitAction(StaticAction | bool | Closure | null $action = null): static
+    public function modalSubmitAction(Action | bool | Closure | null $action = null): static
     {
         $this->modalSubmitAction = $action;
 
         return $this;
     }
 
-    public function modalCancelAction(StaticAction | bool | Closure | null $action = null): static
+    public function modalCancelAction(Action | bool | Closure | null $action = null): static
     {
         $this->modalCancelAction = $action;
 
@@ -337,7 +335,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<string, StaticAction>
+     * @return array<string, Action>
      */
     public function getModalFooterActions(): array
     {
@@ -387,7 +385,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<string, StaticAction>
+     * @return array<string, Action>
      */
     public function getModalActions(): array
     {
@@ -404,57 +402,50 @@ trait CanOpenModal
         return $this->cachedModalActions = $actions;
     }
 
-    public function getModalAction(string $name): ?StaticAction
+    public function getModalAction(string $name): ?Action
     {
         return $this->getModalActions()[$name] ?? null;
     }
 
-    public function getMountableModalAction(string $name): ?MountableAction
+    public function getMountableModalAction(string $name): ?Action
     {
         $action = $this->getModalAction($name);
 
-        if (! $action) {
-            return null;
-        }
-
-        if (! $action instanceof MountableAction) {
+        if (! $action instanceof Action) {
             return null;
         }
 
         return $action;
     }
 
-    public function prepareModalAction(StaticAction $action): StaticAction
+    public function prepareModalAction(Action $action): Action
     {
-        if (! $action instanceof MountableAction) {
+        if (! $action instanceof Action) {
             return $action;
         }
 
-        $action->livewire($this->getLivewire());
-
-        if (
-            ($this instanceof HasRecord) &&
-            ($action instanceof HasRecord) &&
-            (! $action->hasRecord())
-        ) {
-            $action->record($this->getRecord());
-        }
-
-        return $action;
+        return $action
+            ->schemaComponent($this->getSchemaComponent())
+            ->livewire($this->getLivewire())
+            ->when(
+                ! $action->hasRecord(),
+                fn (Action $action) => $action->record($this->getRecord()),
+            )
+            ->table($this->getTable());
     }
 
     /**
-     * @return array<StaticAction>
+     * @return array<Action>
      */
     public function getVisibleModalFooterActions(): array
     {
         return array_filter(
             $this->getModalFooterActions(),
-            fn (StaticAction $action): bool => $action->isVisible(),
+            fn (Action $action): bool => $action->isVisible(),
         );
     }
 
-    public function getModalSubmitAction(): ?StaticAction
+    public function getModalSubmitAction(): ?Action
     {
         $action = static::makeModalAction('submit')
             ->label($this->getModalSubmitActionLabel())
@@ -475,7 +466,7 @@ trait CanOpenModal
         return $action;
     }
 
-    public function getModalCancelAction(): ?StaticAction
+    public function getModalCancelAction(): ?Action
     {
         $action = static::makeModalAction('cancel')
             ->label($this->getModalCancelActionLabel())
@@ -494,7 +485,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<StaticAction>
+     * @return array<Action>
      */
     public function getExtraModalFooterActions(): array
     {
@@ -591,7 +582,7 @@ trait CanOpenModal
         return (bool) $this->evaluate($this->isModalSlideOver);
     }
 
-    public function shouldOpenModal(?Closure $checkForFormUsing = null): bool
+    public function shouldOpenModal(?Closure $checkForSchemaUsing = null): bool
     {
         if (is_bool($hasModal = $this->evaluate($this->hasModal))) {
             return $hasModal;
@@ -605,8 +596,7 @@ trait CanOpenModal
             $this->hasModalDescription() ||
             $this->hasModalContent() ||
             $this->hasModalContentFooter() ||
-            $this->getInfolist() ||
-            (value($checkForFormUsing, $this) ?? false);
+            (value($checkForSchemaUsing, $this) ?? false);
     }
 
     public function hasModalCloseButton(): bool
@@ -634,7 +624,7 @@ trait CanOpenModal
      *
      * @param  array<string, mixed> | null  $arguments
      */
-    public function makeExtraModalAction(string $name, ?array $arguments = null): StaticAction
+    public function makeExtraModalAction(string $name, ?array $arguments = null): Action
     {
         return $this->makeModalSubmitAction($name, $arguments);
     }
@@ -642,7 +632,7 @@ trait CanOpenModal
     /**
      * @param  array<string, mixed> | null  $arguments
      */
-    public function makeModalSubmitAction(string $name, ?array $arguments = null): StaticAction
+    public function makeModalSubmitAction(string $name, ?array $arguments = null): Action
     {
         return static::makeModalAction($name)
             ->callParent($this->getLivewireCallMountedActionName())
@@ -650,9 +640,9 @@ trait CanOpenModal
             ->color('gray');
     }
 
-    public function makeModalAction(string $name): StaticAction
+    public function makeModalAction(string $name): Action
     {
-        return StaticAction::make($name)
+        return Action::make($name)
             ->button();
     }
 

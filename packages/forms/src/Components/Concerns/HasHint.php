@@ -3,19 +3,16 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Components\Actions\Action;
-use Filament\Support\Enums\ActionSize;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Placeholder;
+use Filament\Schema\Components\Decorations\IconDecoration;
+use Filament\Schema\Components\Decorations\TextDecoration;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
 
 trait HasHint
 {
     protected string | Htmlable | Closure | null $hint = null;
-
-    /**
-     * @var array<Action> | null
-     */
-    protected ?array $cachedHintActions = null;
 
     /**
      * @var array<Action | Closure>
@@ -30,6 +27,32 @@ trait HasHint
     protected string | Closure | null $hintIcon = null;
 
     protected string | Closure | null $hintIconTooltip = null;
+
+    protected function setUpHint(): void
+    {
+        $this->afterLabel(function (Field | Placeholder $component): array {
+            $decorations = [];
+
+            $hint = $component->getHint();
+
+            if (filled($hint)) {
+                $decorations[] = TextDecoration::make($hint)
+                    ->color($component->getHintColor());
+            }
+
+            $hintIcon = $component->getHintIcon();
+
+            if (filled($hintIcon)) {
+                $decorations[] = IconDecoration::make($hintIcon)
+                    ->tooltip($component->getHintIconTooltip());
+            }
+
+            return [
+                ...$decorations,
+                ...$component->getHintActions(),
+            ];
+        });
+    }
 
     public function hint(string | Htmlable | Closure | null $hint): static
     {
@@ -111,26 +134,6 @@ trait HasHint
      */
     public function getHintActions(): array
     {
-        return $this->cachedHintActions ?? $this->cacheHintActions();
-    }
-
-    /**
-     * @return array<Action>
-     */
-    public function cacheHintActions(): array
-    {
-        $this->cachedHintActions = [];
-
-        foreach ($this->hintActions as $hintAction) {
-            foreach (Arr::wrap($this->evaluate($hintAction)) as $action) {
-                $this->cachedHintActions[$action->getName()] = $this->prepareAction(
-                    $action
-                        ->defaultSize(ActionSize::Small)
-                        ->defaultView(Action::LINK_VIEW),
-                );
-            }
-        }
-
-        return $this->cachedHintActions;
+        return $this->evaluate($this->hintActions);
     }
 }

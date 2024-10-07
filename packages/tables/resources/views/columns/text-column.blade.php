@@ -3,7 +3,7 @@
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconPosition;
-    use Filament\Tables\Columns\TextColumn\TextColumnSize;
+    use Filament\Tables\Columns\TextColumn\Enums\TextColumnSize;
 
     $alignment = $getAlignment();
     $canWrap = $canWrap();
@@ -127,7 +127,7 @@
                         $weight = $getWeight($state);
 
                         $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-                            'fi-ta-text-item-icon h-5 w-5',
+                            'fi-ta-text-item-icon size-5',
                             match ($iconColor) {
                                 'gray', null => 'text-gray-400 dark:text-gray-500',
                                 default => 'text-custom-500',

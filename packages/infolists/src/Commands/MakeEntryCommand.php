@@ -9,14 +9,33 @@ use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:infolist-entry')]
+#[AsCommand(name: 'make:filament-infolist-entry', aliases: [
+    'filament:entry',
+    'filament:infolist-entry',
+    'infolists:entry',
+    'infolists:make-entry',
+    'make:filament-entry',
+    'make:infolist-entry',
+])]
 class MakeEntryCommand extends Command
 {
     use CanManipulateFiles;
 
     protected $description = 'Create a new infolist entry class and view';
 
-    protected $signature = 'make:infolist-entry {name?} {--F|force}';
+    protected $signature = 'make:filament-infolist-entry {name?} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:entry',
+        'filament:infolist-entry',
+        'infolists:entry',
+        'infolists:make-entry',
+        'make:filament-entry',
+        'make:infolist-entry',
+    ];
 
     public function handle(): int
     {
@@ -35,14 +54,14 @@ class MakeEntryCommand extends Command
             '';
 
         $view = str($entry)
-            ->prepend('infolists\\components\\')
+            ->prepend('filament\\infolists\\components\\')
             ->explode('\\')
             ->map(fn ($segment) => Str::kebab($segment))
             ->implode('.');
 
         $path = app_path(
             (string) str($entry)
-                ->prepend('Infolists\\Components\\')
+                ->prepend('Filament\\Infolists\\Components\\')
                 ->replace('\\', '/')
                 ->append('.php'),
         );
@@ -61,7 +80,7 @@ class MakeEntryCommand extends Command
 
         $this->copyStubToApp('Entry', $path, [
             'class' => $entryClass,
-            'namespace' => 'App\\Infolists\\Components' . ($entryNamespace !== '' ? "\\{$entryNamespace}" : ''),
+            'namespace' => 'App\\Filament\\Infolists\\Components' . ($entryNamespace !== '' ? "\\{$entryNamespace}" : ''),
             'view' => $view,
         ]);
 

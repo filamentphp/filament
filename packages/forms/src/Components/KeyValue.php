@@ -3,7 +3,8 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
+use Filament\Schema\Components\StateCasts\KeyValueStateCast;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
@@ -54,13 +55,6 @@ class KeyValue extends Field
         parent::setUp();
 
         $this->default([]);
-
-        $this->dehydrateStateUsing(static function (?array $state) {
-            return collect($state ?? [])
-                ->filter(static fn (?string $value, ?string $key): bool => filled($key))
-                ->map(static fn (?string $value): ?string => filled($value) ? $value : null)
-                ->all();
-        });
 
         $this->registerActions([
             fn (KeyValue $component): Action => $component->getAddAction(),
@@ -375,5 +369,13 @@ class KeyValue extends Field
     public function isReorderable(): bool
     {
         return (bool) $this->evaluate($this->isReorderable);
+    }
+
+    public function getDefaultStateCasts(): array
+    {
+        return [
+            ...parent::getDefaultStateCasts(),
+            app(KeyValueStateCast::class),
+        ];
     }
 }

@@ -5,10 +5,11 @@ namespace Filament\Forms\Components;
 use Closure;
 use Exception;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
+use Filament\Schema\Components\Contracts\HasAffixActions;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\RawJs;
 
-class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, Contracts\HasAffixActions
+class TextInput extends Field implements CanHaveNumericState, Contracts\CanBeLengthConstrained, HasAffixActions
 {
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;

@@ -3,9 +3,9 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Actions\Action;
 
 trait CanReorderRecords
 {

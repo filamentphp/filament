@@ -6,11 +6,12 @@ use Carbon\CarbonInterface;
 use Carbon\Exceptions\InvalidFormatException;
 use Closure;
 use DateTime;
+use Filament\Schema\Components\Contracts\HasAffixActions;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Carbon;
 use Illuminate\View\ComponentAttributeBag;
 
-class DateTimePicker extends Field implements Contracts\HasAffixActions
+class DateTimePicker extends Field implements HasAffixActions
 {
     use Concerns\CanBeNative;
     use Concerns\CanBeReadOnly;

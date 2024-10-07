@@ -1,6 +1,6 @@
 {
     "name": "filament/upgrade",
-    "description": "Upgrade Filament v2 code to Filament v3.",
+    "description": "Upgrade Filament v3 code to Filament v4.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {
@@ -18,7 +18,7 @@
         }
     },
     "bin": [
-        "bin/filament-v3"
+        "bin/filament-v4"
     ],
     "config": {
         "sort-packages": true

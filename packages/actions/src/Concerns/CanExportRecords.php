@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
 use Closure;
 use Filament\Actions\ExportAction;
+use Filament\Actions\ExportBulkAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
@@ -13,12 +14,11 @@ use Filament\Actions\Exports\Jobs\ExportCompletion;
 use Filament\Actions\Exports\Jobs\PrepareCsvExport;
 use Filament\Actions\Exports\Models\Export;
 use Filament\Forms;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Split;
 use Filament\Notifications\Notification;
+use Filament\Schema\Components\Fieldset;
+use Filament\Schema\Components\Split;
+use Filament\Schema\Components\Utilities\Get;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Actions\ExportAction as ExportTableAction;
-use Filament\Tables\Actions\ExportBulkAction as ExportTableBulkAction;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Bus\PendingBatch;
 use Illuminate\Foundation\Bus\PendingChain;
@@ -66,15 +66,15 @@ trait CanExportRecords
     {
         parent::setUp();
 
-        $this->label(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): string => __('filament-actions::export.label', ['label' => $action->getPluralModelLabel()]));
+        $this->label(fn (ExportAction | ExportBulkAction $action): string => __('filament-actions::export.label', ['label' => $action->getPluralModelLabel()]));
 
-        $this->modalHeading(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): string => __('filament-actions::export.modal.heading', ['label' => $action->getPluralModelLabel()]));
+        $this->modalHeading(fn (ExportAction | ExportBulkAction $action): string => __('filament-actions::export.modal.heading', ['label' => $action->getPluralModelLabel()]));
 
         $this->modalSubmitActionLabel(__('filament-actions::export.modal.actions.export.label'));
 
         $this->groupedIcon(FilamentIcon::resolve('actions::export-action.grouped') ?? 'heroicon-m-arrow-down-tray');
 
-        $this->form(fn (ExportAction | ExportTableAction | ExportTableBulkAction $action): array => [
+        $this->form(fn (ExportAction | ExportBulkAction $action): array => [
             ...($action->hasColumnMapping() ? [Fieldset::make(__('filament-actions::export.modal.form.columns.label'))
                 ->columns(1)
                 ->inlineLabel()
@@ -92,8 +92,8 @@ trait CanExportRecords
                                 ->hiddenLabel()
                                 ->default($column->getLabel())
                                 ->placeholder($column->getLabel())
-                                ->disabled(fn (Forms\Get $get): bool => ! $get('isEnabled'))
-                                ->required(fn (Forms\Get $get): bool => (bool) $get('isEnabled')),
+                                ->disabled(fn (Get $get): bool => ! $get('isEnabled'))
+                                ->required(fn (Get $get): bool => (bool) $get('isEnabled')),
                         ])
                             ->verticallyAlignCenter()
                             ->statePath($column->getName()),
@@ -104,7 +104,7 @@ trait CanExportRecords
             ...$action->getExporter()::getOptionsFormComponents(),
         ]);
 
-        $this->action(function (ExportAction | ExportTableAction | ExportTableBulkAction $action, array $data, Component $livewire) {
+        $this->action(function (ExportAction | ExportBulkAction $action, array $data, Component $livewire) {
             $exporter = $action->getExporter();
 
             if ($livewire instanceof HasTable) {
@@ -121,7 +121,7 @@ trait CanExportRecords
                 ]) ?? $query;
             }
 
-            $records = $action instanceof ExportTableBulkAction ? $action->getRecords() : null;
+            $records = $action instanceof ExportBulkAction ? $action->getSelectedRecords() : null;
 
             $totalRows = $records ? $records->count() : $query->count();
             $maxRows = $action->getMaxRows() ?? $totalRows;
@@ -204,8 +204,9 @@ trait CanExportRecords
                     'columnMap' => $columnMap,
                     'options' => $options,
                     'chunkSize' => $action->getChunkSize(),
-                    'records' => $action instanceof ExportTableBulkAction ? $action->getRecords()->all() : null,
+                    'records' => $action instanceof ExportBulkAction ? $action->getSelectedRecords()->all() : null,
                 ])])
+                    ->allowFailures()
                     ->when(
                         filled($jobQueue),
                         fn (PendingBatch $batch) => $batch->onQueue($jobQueue),
@@ -217,8 +218,7 @@ trait CanExportRecords
                     ->when(
                         filled($jobBatchName),
                         fn (PendingBatch $batch) => $batch->name($jobBatchName),
-                    )
-                    ->allowFailures(),
+                    ),
                 ...(($hasXlsx && (! $hasCsv)) ? [$makeCreateXlsxFileJob()] : []),
                 app(ExportCompletion::class, [
                     'export' => $export,
@@ -253,8 +253,8 @@ trait CanExportRecords
 
         $this->successNotificationTitle(__('filament-actions::export.notifications.started.title'));
 
-        if (! $this instanceof ExportTableBulkAction) {
-            $this->model(fn (ExportAction | ExportTableAction $action): string => $action->getExporter()::getModel());
+        if (! $this instanceof ExportBulkAction) {
+            $this->model(fn (ExportAction $action): string => $action->getExporter()::getModel());
         }
     }
 

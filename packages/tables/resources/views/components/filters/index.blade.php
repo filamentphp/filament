@@ -35,7 +35,7 @@
                             'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
                             'wire:target' => 'tableFilters,applyTableFilters,resetTableFiltersForm',
                         ])
-                    )->class(['h-5 w-5 text-gray-400 dark:text-gray-500'])
+                    )->class(['size-5 text-gray-400 dark:text-gray-500'])
                 "
             />
         </div>

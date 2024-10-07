@@ -39,7 +39,6 @@ class Radio extends Field implements Contracts\CanDisableOptions
     public function inline(bool | Closure $condition = true): static
     {
         $this->isInline = $condition;
-        $this->inlineLabel(fn (Radio $component): ?bool => $component->evaluate($condition) ? true : null);
 
         return $this;
     }
@@ -58,5 +57,19 @@ class Radio extends Field implements Contracts\CanDisableOptions
         }
 
         return $state;
+    }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getInValidationRuleValues(): ?array
+    {
+        $values = parent::getInValidationRuleValues();
+
+        if ($values !== null) {
+            return $values;
+        }
+
+        return array_keys($this->getEnabledOptions());
     }
 }

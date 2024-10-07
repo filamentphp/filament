@@ -2,11 +2,17 @@
 
 namespace Filament\GlobalSearch;
 
-use Filament\GlobalSearch\Actions\Action;
+use Filament\Actions\Action;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 
 class GlobalSearchResult
 {
+    /**
+     * @var array<Action>
+     */
+    public readonly array $actions;
+
     /**
      * @param  array<string, string>  $details
      * @param  array<Action>  $actions
@@ -15,6 +21,13 @@ class GlobalSearchResult
         readonly public string | Htmlable $title,
         readonly public string $url,
         readonly public array $details = [],
-        readonly public array $actions = [],
-    ) {}
+        array $actions = [],
+    ) {
+        $this->actions = array_map(
+            fn (Action $action) => $action
+                ->defaultView(Action::LINK_VIEW)
+                ->defaultSize(ActionSize::Small),
+            $actions,
+        );
+    }
 }

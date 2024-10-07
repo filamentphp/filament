@@ -1,5 +1,5 @@
 <div>
-    @foreach ($this->getCachedForms() as $form)
-        {{ $form }}
+    @foreach ($this->getCachedSchemas() as $schema)
+        {{ $schema }}
     @endforeach
 </div>

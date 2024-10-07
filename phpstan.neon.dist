@@ -13,11 +13,11 @@ parameters:
         - '#Unable to resolve the template type TKey in call to function collect#'
         - '#Unable to resolve the template type TValue in call to function collect#'
         -
-            message: "#^Parameter \\#1 \\$value of method Filament\\\\Support\\\\Components\\\\Component\\:\\:evaluate\\(\\) expects \\(callable\\(\\)\\: void\\)\\|void, Closure\\(Filament\\\\Forms\\\\Components\\\\BaseFileUpload, Filament\\\\Forms\\\\Get, Filament\\\\Forms\\\\Set\\)\\: void given\\.$#"
+            message: "#^Parameter \\#1 \\$value of method Filament\\\\Support\\\\Components\\\\Component\\:\\:evaluate\\(\\) expects \\(callable\\(\\)\\: void\\)\\|void, Closure\\(Filament\\\\Forms\\\\Components\\\\BaseFileUpload, Filament\\\\Schema\\\\Components\\\\Utilities\\\\Get, Filament\\\\Schema\\\\Components\\\\Utilities\\\\Set\\)\\: void given\\.$#"
             count: 2
             path: packages/forms/src/Components/BaseFileUpload.php
         -
-            message: "#^Parameter \\#1 \\$value of method Filament\\\\Support\\\\Components\\\\Component\\:\\:evaluate\\(\\) expects \\(callable\\(\\)\\: \\(string\\|null\\)\\)\\|string\\|null, Closure\\(Filament\\\\Forms\\\\Get\\)\\: \\(string\\|null\\) given\\.$#"
+            message: "#^Parameter \\#1 \\$value of method Filament\\\\Support\\\\Components\\\\Component\\:\\:evaluate\\(\\) expects \\(callable\\(\\)\\: \\(string\\|null\\)\\)\\|string\\|null, Closure\\(Filament\\\\Schema\\\\Components\\\\Utilities\\\\Get\\)\\: \\(string\\|null\\) given\\.$#"
             count: 1
             path: packages/forms/src/Components/MorphToSelect.php
         -

@@ -4,6 +4,7 @@ namespace Filament;
 
 use Closure;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\Events\ServingFilament;
@@ -17,6 +18,7 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Support\Facades\FilamentAsset;
@@ -156,9 +158,29 @@ class FilamentManager
         return $this->getCurrentPanel()->getFontFamily();
     }
 
+    public function getMonoFontFamily(): string
+    {
+        return $this->getCurrentPanel()->getMonoFontFamily();
+    }
+
+    public function getSerifFontFamily(): string
+    {
+        return $this->getCurrentPanel()->getSerifFontFamily();
+    }
+
     public function getFontHtml(): Htmlable
     {
         return $this->getCurrentPanel()->getFontHtml();
+    }
+
+    public function getMonoFontHtml(): Htmlable
+    {
+        return $this->getCurrentPanel()->getMonoFontHtml();
+    }
+
+    public function getSerifFontHtml(): Htmlable
+    {
+        return $this->getCurrentPanel()->getSerifFontHtml();
     }
 
     public function getFontProvider(): string
@@ -166,9 +188,29 @@ class FilamentManager
         return $this->getCurrentPanel()->getFontProvider();
     }
 
+    public function getMonoFontProvider(): string
+    {
+        return $this->getCurrentPanel()->getMonoFontProvider();
+    }
+
+    public function getSerifFontProvider(): string
+    {
+        return $this->getCurrentPanel()->getSerifFontProvider();
+    }
+
     public function getFontUrl(): ?string
     {
         return $this->getCurrentPanel()->getFontUrl();
+    }
+
+    public function getMonoFontUrl(): ?string
+    {
+        return $this->getCurrentPanel()->getMonoFontUrl();
+    }
+
+    public function getSerifFontUrl(): ?string
+    {
+        return $this->getCurrentPanel()->getSerifFontUrl();
     }
 
     public function getGlobalSearchDebounce(): string
@@ -204,6 +246,11 @@ class FilamentManager
         return $this->getCurrentPanel()?->getId();
     }
 
+    public function getSubNavigationPosition(): SubNavigationPosition
+    {
+        return $this->getCurrentPanel()?->getSubNavigationPosition();
+    }
+
     /**
      * @param  array<mixed>  $parameters
      */
@@ -225,6 +272,9 @@ class FilamentManager
         return $this->getCurrentPanel()->getMaxContentWidth();
     }
 
+    /**
+     * @param  class-string<Model>|Model  $model
+     */
     public function getModelResource(string | Model $model): ?string
     {
         return $this->getCurrentPanel()->getModelResource($model);
@@ -389,13 +439,16 @@ class FilamentManager
     }
 
     /**
-     * @return array<MenuItem>
+     * @return array<Action>
      */
     public function getTenantMenuItems(): array
     {
         return $this->getCurrentPanel()->getTenantMenuItems();
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getTenantModel(): ?string
     {
         return $this->getCurrentPanel()->getTenantModel();
@@ -485,7 +538,7 @@ class FilamentManager
     }
 
     /**
-     * @return array<MenuItem>
+     * @return array<Action>
      */
     public function getUserMenuItems(): array
     {

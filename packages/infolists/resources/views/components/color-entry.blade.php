@@ -29,7 +29,6 @@
 
                 <div
                     @if ($itemIsCopyable)
-                        x-data="{}"
                         x-on:click="
                             window.navigator.clipboard.writeText(@js($copyableState))
                             $tooltip(@js($copyMessage), {
@@ -39,7 +38,7 @@
                         "
                     @endif
                     @class([
-                        'fi-in-color-item h-6 w-6 rounded-md',
+                        'fi-in-color-item size-6 rounded-md',
                         'cursor-pointer' => $itemIsCopyable,
                     ])
                     @style([

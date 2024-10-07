@@ -9,14 +9,27 @@ use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:table-column')]
+#[AsCommand(name: 'make:filament-table-column', aliases: [
+    'filament:column',
+    'filament:table-column',
+    'make:table-column',
+])]
 class MakeColumnCommand extends Command
 {
     use CanManipulateFiles;
 
     protected $description = 'Create a new table column class and cell view';
 
-    protected $signature = 'make:table-column {name?} {--F|force}';
+    protected $signature = 'make:filament-table-column {name?} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:column',
+        'filament:table-column',
+        'make:table-column',
+    ];
 
     public function handle(): int
     {
@@ -35,14 +48,14 @@ class MakeColumnCommand extends Command
             '';
 
         $view = str($column)
-            ->prepend('tables\\columns\\')
+            ->prepend('filament\\tables\\columns\\')
             ->explode('\\')
             ->map(fn ($segment) => Str::kebab($segment))
             ->implode('.');
 
         $path = app_path(
             (string) str($column)
-                ->prepend('Tables\\Columns\\')
+                ->prepend('Filament\\Tables\\Columns\\')
                 ->replace('\\', '/')
                 ->append('.php'),
         );
@@ -61,7 +74,7 @@ class MakeColumnCommand extends Command
 
         $this->copyStubToApp('Column', $path, [
             'class' => $columnClass,
-            'namespace' => 'App\\Tables\\Columns' . ($columnNamespace !== '' ? "\\{$columnNamespace}" : ''),
+            'namespace' => 'App\\Filament\\Tables\\Columns' . ($columnNamespace !== '' ? "\\{$columnNamespace}" : ''),
             'view' => $view,
         ]);
 

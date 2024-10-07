@@ -1,8 +1,8 @@
 <?php
 
+use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;

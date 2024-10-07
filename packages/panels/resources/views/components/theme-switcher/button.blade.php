@@ -25,6 +25,6 @@
     <x-filament::icon
         :alias="'panels::theme-switcher.' . $theme . '-button'"
         :icon="$icon"
-        class="h-5 w-5"
+        class="size-5"
     />
 </button>

@@ -6,6 +6,7 @@
     $imageResizeTargetHeight = $getImageResizeTargetHeight();
     $imageResizeTargetWidth = $getImageResizeTargetWidth();
     $isAvatar = $isAvatar();
+    $key = $getKey();
     $statePath = $getStatePath();
     $isDisabled = $isDisabled();
     $hasImageEditor = $hasImageEditor();
@@ -37,10 +38,17 @@
                     imageEditorViewportHeight: @js($getImageEditorViewportHeight()),
                     imageEditorViewportWidth: @js($getImageEditorViewportWidth()),
                     deleteUploadedFileUsing: async (fileKey) => {
-                        return await $wire.deleteUploadedFile(@js($statePath), fileKey)
+                        return await $wire.callSchemaComponentMethod(
+                            @js($key),
+                            'deleteUploadedFile',
+                            { fileKey },
+                        )
                     },
                     getUploadedFilesUsing: async () => {
-                        return await $wire.getFormUploadedFiles(@js($statePath))
+                        return await $wire.callSchemaComponentMethod(
+                            @js($key),
+                            'getUploadedFiles',
+                        )
                     },
                     hasImageEditor: @js($hasImageEditor),
                     hasCircleCropper: @js($hasCircleCropper),
@@ -72,11 +80,19 @@
                     maxSize: @js(($size = $getMaxSize()) ? "{$size}KB" : null),
                     minSize: @js(($size = $getMinSize()) ? "{$size}KB" : null),
                     removeUploadedFileUsing: async (fileKey) => {
-                        return await $wire.removeFormUploadedFile(@js($statePath), fileKey)
+                        return await $wire.callSchemaComponentMethod(
+                            @js($key),
+                            'removeUploadedFile',
+                            { fileKey },
+                        )
                     },
                     removeUploadedFileButtonPosition: @js($getRemoveUploadedFileButtonPosition()),
-                    reorderUploadedFilesUsing: async (files) => {
-                        return await $wire.reorderFormUploadedFiles(@js($statePath), files)
+                    reorderUploadedFilesUsing: async (fileKeys) => {
+                        return await $wire.callSchemaComponentMethod(
+                            @js($key),
+                            'reorderUploadedFiles',
+                            { fileKeys },
+                        )
                     },
                     shouldAppendFiles: @js($shouldAppendFiles()),
                     shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
@@ -248,7 +264,7 @@
                                             </div>
 
                                             <div class="space-y-3">
-                                                @foreach ($getImageEditorActions(iconSizeClasses: 'h-5 w-5 mx-auto') as $groupedActions)
+                                                @foreach ($getImageEditorActions(iconSizeClasses: 'size-5 mx-auto') as $groupedActions)
                                                     <x-filament::button.group
                                                         class="w-full"
                                                     >

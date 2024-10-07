@@ -78,27 +78,21 @@ export default function keyValueFormComponent({ state }) {
                 return
             }
 
-            let rows = []
-
-            for (let [key, value] of Object.entries(this.state ?? {})) {
-                rows.push({
-                    key,
-                    value,
-                })
-            }
-
-            this.rows = rows
+            this.rows = Alpine.raw(this.state)
         },
 
         updateState: function () {
-            let state = {}
+            let state = []
 
             this.rows.forEach((row) => {
                 if (row.key === '' || row.key === null) {
                     return
                 }
 
-                state[row.key] = row.value
+                state.push({
+                    key: row.key,
+                    value: row.value,
+                })
             })
 
             // This is a hack to prevent the component from updating rows again

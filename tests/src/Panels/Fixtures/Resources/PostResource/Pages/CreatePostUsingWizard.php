@@ -3,9 +3,9 @@
 namespace Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages;
 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Resources\Pages\Concerns\HasWizard;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schema\Components\Wizard\Step;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 
 class CreatePostUsingWizard extends CreateRecord

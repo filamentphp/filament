@@ -1,5 +1,5 @@
 @php
-    use Filament\Forms\Components\Actions\Action;
+    use Filament\Actions\Action;
 
     $containers = $getChildComponentContainers();
     $blockPickerBlocks = $getBlockPickerBlocks();
@@ -30,12 +30,12 @@
     $collapseAllActionIsVisible = $isCollapsible && $collapseAllAction->isVisible();
     $expandAllActionIsVisible = $isCollapsible && $expandAllAction->isVisible();
 
+    $key = $getKey();
     $statePath = $getStatePath();
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <div
-        x-data="{}"
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
@@ -71,7 +71,7 @@
             <ul
                 x-sortable
                 data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
-                wire:end.stop="{{ 'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })' }}"
+                wire:end.stop="mountAction('reorder', { items: $event.target.sortable.toArray() }, { schemaComponent: '{{ $key }}' })'"
                 class="space-y-4"
             >
                 @php
@@ -100,7 +100,7 @@
                     @endphp
 
                     <li
-                        wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
+                        wire:key="{{ $item->getLivewireKey() }}.item"
                         x-data="{
                             isCollapsed: @js($isCollapsed($item)),
                         }"
@@ -151,7 +151,7 @@
                                 @if ($hasBlockIcons && filled($blockIcon))
                                     <x-filament::icon
                                         :icon="$blockIcon"
-                                        class="fi-fo-builder-item-header-icon h-5 w-5 text-gray-400 dark:text-gray-500"
+                                        class="fi-fo-builder-item-header-icon size-5 text-gray-400 dark:text-gray-500"
                                     />
                                 @endif
 
@@ -268,7 +268,7 @@
                                             :after-item="$uuid"
                                             :columns="$blockPickerColumns"
                                             :blocks="$blockPickerBlocks"
-                                            :state-path="$statePath"
+                                            :key="$key"
                                             :width="$blockPickerWidth"
                                         >
                                             <x-slot name="trigger">
@@ -299,7 +299,7 @@
                 :action="$addAction"
                 :blocks="$blockPickerBlocks"
                 :columns="$blockPickerColumns"
-                :state-path="$statePath"
+                :key="$key"
                 :width="$blockPickerWidth"
                 class="flex justify-center"
             >

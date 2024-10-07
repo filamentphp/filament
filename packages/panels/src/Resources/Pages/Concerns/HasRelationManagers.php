@@ -2,7 +2,7 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
-use Filament\Resources\Pages\ContentTabPosition;
+use Filament\Resources\Pages\Enums\ContentTabPosition;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;

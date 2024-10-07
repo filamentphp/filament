@@ -17,7 +17,10 @@ use function Laravel\Prompts\select;
 use function Laravel\Prompts\suggest;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-page')]
+#[AsCommand(name: 'make:filament-page', aliases: [
+    'filament:make-page',
+    'filament:page',
+])]
 class MakePageCommand extends Command
 {
     use CanIndentStrings;
@@ -26,6 +29,14 @@ class MakePageCommand extends Command
     protected $description = 'Create a new Filament page class and view';
 
     protected $signature = 'make:filament-page {name?} {--R|resource=} {--T|type=} {--panel=} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:make-page',
+        'filament:page',
+    ];
 
     public function handle(): int
     {
@@ -139,12 +150,12 @@ class MakePageCommand extends Command
 
                 $tableHeaderActions = [];
 
-                $tableHeaderActions[] = 'Tables\Actions\CreateAction::make(),';
+                $tableHeaderActions[] = 'Actions\CreateAction::make(),';
 
                 if ($hasAssociateAction = confirm('Is this a one-to-many relationship where the related records can be associated?')) {
-                    $tableHeaderActions[] = 'Tables\Actions\AssociateAction::make(),';
+                    $tableHeaderActions[] = 'Actions\AssociateAction::make(),';
                 } elseif ($hasAttachAction = confirm('Is this a many-to-many relationship where the related records can be attached?')) {
-                    $tableHeaderActions[] = 'Tables\Actions\AttachAction::make(),';
+                    $tableHeaderActions[] = 'Actions\AttachAction::make(),';
                 }
 
                 $tableHeaderActions = implode(PHP_EOL, $tableHeaderActions);
@@ -152,24 +163,24 @@ class MakePageCommand extends Command
                 $tableActions = [];
 
                 if (confirm('Would you like an action to open each record in a read-only View modal?')) {
-                    $tableActions[] = 'Tables\Actions\ViewAction::make(),';
+                    $tableActions[] = 'Actions\ViewAction::make(),';
                 }
 
-                $tableActions[] = 'Tables\Actions\EditAction::make(),';
+                $tableActions[] = 'Actions\EditAction::make(),';
 
                 if ($hasAssociateAction) {
-                    $tableActions[] = 'Tables\Actions\DissociateAction::make(),';
+                    $tableActions[] = 'Actions\DissociateAction::make(),';
                 }
 
                 if ($hasAttachAction ?? false) {
-                    $tableActions[] = 'Tables\Actions\DetachAction::make(),';
+                    $tableActions[] = 'Actions\DetachAction::make(),';
                 }
 
-                $tableActions[] = 'Tables\Actions\DeleteAction::make(),';
+                $tableActions[] = 'Actions\DeleteAction::make(),';
 
                 if ($hasSoftDeletes = confirm('Can the related records be soft deleted?')) {
-                    $tableActions[] = 'Tables\Actions\ForceDeleteAction::make(),';
-                    $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
+                    $tableActions[] = 'Actions\ForceDeleteAction::make(),';
+                    $tableActions[] = 'Actions\RestoreAction::make(),';
                 }
 
                 $tableActions = implode(PHP_EOL, $tableActions);
@@ -177,14 +188,14 @@ class MakePageCommand extends Command
                 $tableBulkActions = [];
 
                 if ($hasAssociateAction) {
-                    $tableBulkActions[] = 'Tables\Actions\DissociateBulkAction::make(),';
+                    $tableBulkActions[] = 'Actions\DissociateBulkAction::make(),';
                 }
 
                 if ($hasAttachAction ?? false) {
-                    $tableBulkActions[] = 'Tables\Actions\DetachBulkAction::make(),';
+                    $tableBulkActions[] = 'Actions\DetachBulkAction::make(),';
                 }
 
-                $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
+                $tableBulkActions[] = 'Actions\DeleteBulkAction::make(),';
 
                 $modifyQueryUsing = '';
 
@@ -193,8 +204,8 @@ class MakePageCommand extends Command
                     $modifyQueryUsing .= PHP_EOL . '    SoftDeletingScope::class,';
                     $modifyQueryUsing .= PHP_EOL . ']))';
 
-                    $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
-                    $tableBulkActions[] = 'Tables\Actions\ForceDeleteBulkAction::make(),';
+                    $tableBulkActions[] = 'Actions\RestoreBulkAction::make(),';
+                    $tableBulkActions[] = 'Actions\ForceDeleteBulkAction::make(),';
                 }
 
                 $tableBulkActions = implode(PHP_EOL, $tableBulkActions);

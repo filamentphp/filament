@@ -3,6 +3,7 @@
 namespace {{ namespace }};
 
 use App\Models\{{ model }};
+use Filament\Actions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables;
@@ -32,7 +33,7 @@ class {{ class }} extends Component implements HasForms, HasTable
                 //
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
                     //
                 ]),
             ]);

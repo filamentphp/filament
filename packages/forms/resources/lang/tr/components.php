@@ -397,20 +397,4 @@ return [
         'placeholder' => 'Yeni etiket',
     ],
 
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Geri',
-            ],
-
-            'next_step' => [
-                'label' => 'İleri',
-            ],
-
-        ],
-
-    ],
-
 ];

@@ -1,5 +1,5 @@
 @php
-    use Filament\Infolists\Components\TextEntry\TextEntrySize;
+    use Filament\Infolists\Components\TextEntry\Enums\TextEntrySize;
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
@@ -131,7 +131,7 @@
                                 ]);
 
                                 $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-                                    'fi-in-text-item-icon h-5 w-5 shrink-0',
+                                    'fi-in-text-item-icon size-5 shrink-0',
                                     match ($iconColor) {
                                         'gray', null => 'text-gray-400 dark:text-gray-500',
                                         default => 'text-custom-500',

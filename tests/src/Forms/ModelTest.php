@@ -1,7 +1,7 @@
 <?php
 
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Models\User;
@@ -10,7 +10,7 @@ use Filament\Tests\TestCase;
 uses(TestCase::class);
 
 test('containers can store a record', function () {
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->model($record = new Post);
 
     expect($container)
@@ -18,7 +18,7 @@ test('containers can store a record', function () {
 });
 
 test('containers can get their model class', function () {
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->model($model = Post::class);
 
     expect($container)
@@ -31,7 +31,7 @@ test('containers can get their model class', function () {
 });
 
 test('containers can get an instance of their model', function () {
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->model($modelInstance = new Post);
 
     expect($container)
@@ -45,7 +45,7 @@ test('containers can get an instance of their model', function () {
 
 test('components can store a record', function () {
     $component = (new Component)
-        ->container(ComponentContainer::make(Livewire::make()))
+        ->container(Schema::make(Livewire::make()))
         ->model($record = new Post);
 
     expect($component)
@@ -54,7 +54,7 @@ test('components can store a record', function () {
 
 test('components can get their model class', function () {
     $component = (new Component)
-        ->container(ComponentContainer::make(Livewire::make()))
+        ->container(Schema::make(Livewire::make()))
         ->model($model = Post::class);
 
     expect($component)
@@ -63,7 +63,7 @@ test('components can get their model class', function () {
 
 test('components can get an instance of their model', function () {
     $component = (new Component)
-        ->container(ComponentContainer::make(Livewire::make()))
+        ->container(Schema::make(Livewire::make()))
         ->model($model = Post::class);
 
     expect($component)
@@ -73,7 +73,7 @@ test('components can get an instance of their model', function () {
 test('components can inherit their container record', function () {
     $component = (new Component)
         ->container(
-            ComponentContainer::make(Livewire::make())
+            Schema::make(Livewire::make())
                 ->model($record = new Post),
         );
 
@@ -84,7 +84,7 @@ test('components can inherit their container record', function () {
 test('components can inherit their container model class', function () {
     $component = (new Component)
         ->container(
-            ComponentContainer::make(Livewire::make())
+            Schema::make(Livewire::make())
                 ->model($model = Post::class),
         );
 
@@ -96,7 +96,7 @@ test('components can inherit their container model class', function () {
 test('components do not inherit their container record if they have their own model defined', function () {
     $component = (new Component)
         ->container(
-            ComponentContainer::make(Livewire::make())
+            Schema::make(Livewire::make())
                 ->model(new User),
         )
         ->model($model = Post::class);

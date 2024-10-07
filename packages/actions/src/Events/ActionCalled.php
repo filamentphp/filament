@@ -2,7 +2,7 @@
 
 namespace Filament\Actions\Events;
 
-use Filament\Actions\MountableAction;
+use Filament\Actions\Action;
 use Illuminate\Foundation\Events\Dispatchable;
 
 class ActionCalled
@@ -10,10 +10,10 @@ class ActionCalled
     use Dispatchable;
 
     public function __construct(
-        protected MountableAction $action,
+        protected Action $action,
     ) {}
 
-    public function getAction(): MountableAction
+    public function getAction(): Action
     {
         return $this->action;
     }

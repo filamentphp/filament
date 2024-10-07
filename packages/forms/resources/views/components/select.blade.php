@@ -5,6 +5,7 @@
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
     $isSuffixInline = $isSuffixInline();
+    $key = $getKey();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
@@ -121,16 +122,26 @@
                             canSelectPlaceholder: @js($canSelectPlaceholder),
                             isHtmlAllowed: @js($isHtmlAllowed()),
                             getOptionLabelUsing: async () => {
-                                return await $wire.getFormSelectOptionLabel(@js($statePath))
+                                return await $wire.callSchemaComponentMethod(@js($key), 'getOptionLabel')
                             },
                             getOptionLabelsUsing: async () => {
-                                return await $wire.getFormSelectOptionLabels(@js($statePath))
+                                return await $wire.callSchemaComponentMethod(
+                                    @js($key),
+                                    'getOptionLabelsForJs',
+                                )
                             },
                             getOptionsUsing: async () => {
-                                return await $wire.getFormSelectOptions(@js($statePath))
+                                return await $wire.callSchemaComponentMethod(
+                                    @js($key),
+                                    'getOptionsForJs',
+                                )
                             },
                             getSearchResultsUsing: async (search) => {
-                                return await $wire.getFormSelectSearchResults(@js($statePath), search)
+                                return await $wire.callSchemaComponentMethod(
+                                    @js($key),
+                                    'getSearchResultsForJs',
+                                    { search },
+                                )
                             },
                             isAutofocused: @js($isAutofocused()),
                             isMultiple: @js($isMultiple()),

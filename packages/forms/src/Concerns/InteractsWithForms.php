@@ -4,367 +4,86 @@ namespace Filament\Forms\Concerns;
 
 use Closure;
 use Exception;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
-use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
-use Filament\Support\Contracts\TranslatableContentDriver;
+use Filament\Actions\Action;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Concerns\InteractsWithSchemas;
+use Filament\Schema\Schema;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Validation\ValidationException;
-use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-use Livewire\WithFileUploads;
 
 trait InteractsWithForms
 {
-    use HasFormComponentActions;
-    use ResolvesDynamicLivewireProperties;
-    use WithFileUploads;
-
-    /**
-     * @var array <string, TemporaryUploadedFile | null>
-     */
-    public array $componentFileAttachments = [];
-
-    /**
-     * @var array<string, Form>
-     */
-    protected ?array $cachedForms = null;
+    use InteractsWithSchemas {
+        getCachedSchemas as baseGetCachedSchemas;
+    }
 
     protected bool $hasCachedForms = false;
 
-    protected bool $isCachingForms = false;
-
-    protected bool $hasFormsModalRendered = false;
-
     /**
-     * @var array<string, mixed>
+     * @return array<string, Schema>
      */
-    protected array $oldFormState = [];
-
-    public function dispatchFormEvent(mixed ...$args): void
+    public function getCachedSchemas(): array
     {
-        foreach ($this->getCachedForms() as $form) {
-            $form->dispatchEvent(...$args);
+        if (! $this->hasCachedForms) {
+            $this->cacheForms();
         }
+
+        return $this->baseGetCachedSchemas();
     }
 
     /**
-     * @param  array<mixed>  $state
+     * @deprecated Use `cacheSchema()` instead.
      */
-    public function fillFormDataForTesting(array $state = []): void
+    protected function cacheForm(string $name, Schema | Closure | null $form): ?Schema
     {
-        if (! app()->runningUnitTests()) {
-            return;
-        }
-
-        foreach (Arr::dot($state) as $statePath => $value) {
-            $this->updatingInteractsWithForms($statePath);
-
-            data_set($this, $statePath, $value);
-
-            $this->updatedInteractsWithForms($statePath);
-        }
-
-        foreach ($state as $statePath => $value) {
-            if (! is_array($value)) {
-                continue;
-            }
-
-            $this->unsetMissingNumericArrayKeys($this->{$statePath}, $value);
-        }
+        return $this->cacheSchema($name, $form);
     }
 
     /**
-     * @param  array<mixed>  $target
-     * @param  array<mixed>  $state
-     */
-    protected function unsetMissingNumericArrayKeys(array &$target, array $state): void
-    {
-        foreach ($target as $key => $value) {
-            if (is_numeric($key) && (! array_key_exists($key, $state))) {
-                unset($target[$key]);
-
-                continue;
-            }
-
-            if (is_array($value) && is_array($state[$key] ?? null)) {
-                $this->unsetMissingNumericArrayKeys($target[$key], $state[$key]);
-            }
-        }
-    }
-
-    public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
-    {
-        return data_get($this->componentFileAttachments, $statePath);
-    }
-
-    #[Renderless]
-    public function getFormComponentFileAttachmentUrl(string $statePath): ?string
-    {
-        foreach ($this->getCachedForms() as $form) {
-            if ($url = $form->getComponentFileAttachmentUrl($statePath)) {
-                return $url;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @return array<array{'label': string, 'value': string}>
-     */
-    #[Renderless]
-    public function getFormSelectOptionLabels(string $statePath): array
-    {
-        foreach ($this->getCachedForms() as $form) {
-            if ($labels = $form->getSelectOptionLabels($statePath)) {
-                return $labels;
-            }
-        }
-
-        return [];
-    }
-
-    #[Renderless]
-    public function getFormSelectOptionLabel(string $statePath): ?string
-    {
-        foreach ($this->getCachedForms() as $form) {
-            if ($label = $form->getSelectOptionLabel($statePath)) {
-                return $label;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @return array<array{'label': string, 'value': string}>
-     */
-    #[Renderless]
-    public function getFormSelectOptions(string $statePath): array
-    {
-        foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getSelectOptions($statePath)) {
-                return $results;
-            }
-        }
-
-        return [];
-    }
-
-    /**
-     * @return array<array{'label': string, 'value': string}>
-     */
-    #[Renderless]
-    public function getFormSelectSearchResults(string $statePath, string $search): array
-    {
-        foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getSelectSearchResults($statePath, $search)) {
-                return $results;
-            }
-        }
-
-        return [];
-    }
-
-    public function deleteUploadedFile(string $statePath, string $fileKey): void
-    {
-        foreach ($this->getCachedForms() as $form) {
-            $form->deleteUploadedFile($statePath, $fileKey);
-        }
-    }
-
-    /**
-     * @return array<array{name: string, size: int, type: string, url: string} | null> | null
-     */
-    #[Renderless]
-    public function getFormUploadedFiles(string $statePath): ?array
-    {
-        foreach ($this->getCachedForms() as $form) {
-            if ($files = $form->getUploadedFiles($statePath)) {
-                return $files;
-            }
-        }
-
-        return null;
-    }
-
-    public function removeFormUploadedFile(string $statePath, string $fileKey): void
-    {
-        foreach ($this->getCachedForms() as $form) {
-            $form->removeUploadedFile($statePath, $fileKey);
-        }
-    }
-
-    public function reorderFormUploadedFiles(string $statePath, array $fileKeys): void
-    {
-        foreach ($this->getCachedForms() as $form) {
-            $form->reorderUploadedFiles($statePath, $fileKeys);
-        }
-    }
-
-    /**
-     * @param  array<string, array<mixed>> | null  $rules
-     * @param  array<string, string>  $messages
-     * @param  array<string, string>  $attributes
-     * @return array<string, mixed>
-     */
-    public function validate($rules = null, $messages = [], $attributes = []): array
-    {
-        try {
-            return parent::validate($rules, $messages, $attributes);
-        } catch (ValidationException $exception) {
-            $this->onValidationError($exception);
-
-            $this->dispatch('form-validation-error', livewireId: $this->getId());
-
-            throw $exception;
-        }
-    }
-
-    /**
-     * @param  string  $field
-     * @param  array<string, array<mixed>>  $rules
-     * @param  array<string, string>  $messages
-     * @param  array<string, string>  $attributes
-     * @param  array<string, string>  $dataOverrides
-     * @return array<string, mixed>
-     */
-    public function validateOnly($field, $rules = null, $messages = [], $attributes = [], $dataOverrides = [])
-    {
-        try {
-            return parent::validateOnly($field, $rules, $messages, $attributes, $dataOverrides);
-        } catch (ValidationException $exception) {
-            $this->onValidationError($exception);
-
-            $this->dispatch('form-validation-error', livewireId: $this->getId());
-
-            throw $exception;
-        }
-    }
-
-    protected function onValidationError(ValidationException $exception): void {}
-
-    /**
-     * @param  array<string, mixed>  $attributes
-     * @return array<string, mixed>
-     */
-    protected function prepareForValidation($attributes): array
-    {
-        foreach ($this->getCachedForms() as $form) {
-            $attributes = $form->mutateStateForValidation($attributes);
-        }
-
-        return $attributes;
-    }
-
-    /**
-     * @return class-string<TranslatableContentDriver> | null
-     */
-    public function getFilamentTranslatableContentDriver(): ?string
-    {
-        return null;
-    }
-
-    public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver
-    {
-        $driver = $this->getFilamentTranslatableContentDriver();
-
-        if (! $driver) {
-            return null;
-        }
-
-        return app($driver, ['activeLocale' => $this->getActiveFormsLocale() ?? app()->getLocale()]);
-    }
-
-    public function getActiveFormsLocale(): ?string
-    {
-        return null;
-    }
-
-    public function updatingInteractsWithForms(string $statePath): void
-    {
-        $statePath = (string) str($statePath)->before('.');
-
-        $this->oldFormState[$statePath] = data_get($this, $statePath);
-    }
-
-    public function getOldFormState(string $statePath): mixed
-    {
-        return data_get($this->oldFormState, $statePath);
-    }
-
-    public function updatedInteractsWithForms(string $statePath): void
-    {
-        foreach ($this->getCachedForms() as $form) {
-            $form->callAfterStateUpdated($statePath);
-        }
-    }
-
-    protected function cacheForm(string $name, Form | Closure | null $form): ?Form
-    {
-        $this->isCachingForms = true;
-
-        $form = value($form);
-
-        if ($form) {
-            $this->cachedForms[$name] = $form;
-        } else {
-            unset($this->cachedForms[$name]);
-        }
-
-        $this->isCachingForms = false;
-
-        return $form;
-    }
-
-    /**
-     * @return array<string, Form>
+     * @deprecated You do not need to register forms in the `getForms()` method any longer. Define a method of the form's name and return the form from it.
+     *
+     * @return array<string, Schema>
      */
     protected function cacheForms(): array
     {
-        $this->isCachingForms = true;
+        $this->isCachingSchemas = true;
 
-        $this->cachedForms = collect($this->getForms())
-            ->merge($this->getTraitForms())
-            ->mapWithKeys(function (Form | string | null $form, string | int $formName): array {
-                if ($form === null) {
-                    return ['' => null];
-                }
+        $this->cachedSchemas = [
+            ...$this->cachedSchemas,
+            ...collect($this->getForms())
+                ->merge($this->getTraitForms())
+                ->mapWithKeys(function (Schema | string | null $form, string | int $formName): array {
+                    if ($form === null) {
+                        return ['' => null];
+                    }
 
-                if (is_string($formName)) {
-                    return [$formName => $form];
-                }
+                    if (is_string($formName)) {
+                        return [$formName => $form];
+                    }
 
-                if (! method_exists($this, $form)) {
-                    $livewireClass = $this::class;
+                    if (! method_exists($this, $form)) {
+                        $livewireClass = $this::class;
 
-                    throw new Exception("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
-                }
+                        throw new Exception("Form configuration method [{$form}()] is missing from Livewire component [{$livewireClass}].");
+                    }
 
-                return [$form => $this->{$form}($this->makeForm())];
-            })
-            ->forget('')
-            ->all();
+                    return [$form => $this->{$form}($this->makeSchema())];
+                })
+                ->forget('')
+                ->map(fn (Schema $form, string $formName) => $form->key($formName))
+                ->all(),
+        ];
 
-        $this->isCachingForms = false;
-
+        $this->isCachingSchemas = false;
         $this->hasCachedForms = true;
 
-        foreach ($this->mountedFormComponentActions as $actionNestingIndex => $actionName) {
-            $this->cacheForm(
-                "mountedFormComponentActionForm{$actionNestingIndex}",
-                $this->getMountedFormComponentActionForm($actionNestingIndex),
-            );
-        }
-
-        return $this->cachedForms;
+        return $this->cachedSchemas;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @deprecated You do not need to register forms in the `getForms()` method any longer. Define a method of the form's name and return the form from it.
+     *
+     * @return array<int | string, string | Schema>
      */
     public function getTraitForms(): array
     {
@@ -382,30 +101,36 @@ trait InteractsWithForms
         return $forms;
     }
 
+    /**
+     * @deprecated Use `hasCachedSchema()` instead.
+     */
     protected function hasCachedForm(string $name): bool
     {
-        return array_key_exists($name, $this->getCachedForms());
-    }
-
-    public function getForm(string $name): ?Form
-    {
-        return $this->getCachedForms()[$name] ?? null;
+        return $this->hasCachedSchema($name);
     }
 
     /**
-     * @return array<string, Form>
+     * @deprecated Use `getSchema()` instead.
+     */
+    public function getForm(string $name): ?Schema
+    {
+        return $this->getSchema($name);
+    }
+
+    /**
+     * @return array<string, Schema>
+     *
+     *@deprecated Use `getCachedSchemas()` instead.
      */
     public function getCachedForms(): array
     {
-        if (! $this->hasCachedForms) {
-            return $this->cacheForms();
-        }
-
-        return $this->cachedForms;
+        return $this->getCachedSchemas();
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @deprecated You do not need to register forms in the `getForms()` method any longer. Define a method of the form's name and return the form from it.
+     *
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
@@ -414,7 +139,7 @@ trait InteractsWithForms
         ];
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema($this->getFormSchema())
@@ -425,6 +150,8 @@ trait InteractsWithForms
 
     /**
      * @deprecated Override the `form()` method to configure the default form.
+     *
+     * @return Model|class-string<Model>|null
      */
     protected function getFormModel(): Model | string | null
     {
@@ -458,51 +185,88 @@ trait InteractsWithForms
     }
 
     /**
-     * @return array<string, array<mixed>>
+     * @deprecated Use `isCachingSchemas()` instead.
      */
-    public function getRules(): array
+    public function isCachingForms(): bool
     {
-        $rules = parent::getRules();
-
-        foreach ($this->getCachedForms() as $form) {
-            $rules = [
-                ...$rules,
-                ...$form->getValidationRules(),
-            ];
-        }
-
-        return $rules;
+        return $this->isCachingSchemas();
     }
 
     /**
-     * @return array<string, string>
+     * @deprecated Use `getSchemaComponentFileAttachment()` instead.
      */
-    protected function getValidationAttributes(): array
+    public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
     {
-        $attributes = parent::getValidationAttributes();
-
-        foreach ($this->getCachedForms() as $form) {
-            $attributes = [
-                ...$attributes,
-                ...$form->getValidationAttributes(),
-            ];
-        }
-
-        return $attributes;
+        return $this->getSchemaComponentFileAttachment($statePath);
     }
 
-    protected function makeForm(): Form
+    /**
+     * @deprecated Use `getActiveSchemaLocale()` instead.
+     */
+    public function getActiveFormsLocale(): ?string
     {
-        return Form::make($this);
+        return $this->getActiveSchemaLocale();
     }
 
-    public function isCachingForms(): bool
+    /**
+     * @deprecated Use `getOldSchemaState()` instead.
+     */
+    public function getOldFormState(string $statePath): mixed
     {
-        return $this->isCachingForms;
+        return $this->getOldSchemaState($statePath);
     }
 
-    public function mountedFormComponentActionInfolist(): Infolist
+    /**
+     * @deprecated Use `callMountedAction()` instead.
+     *
+     * @param  array<string, mixed>  $arguments
+     */
+    public function callMountedFormComponentAction(array $arguments = []): mixed
     {
-        return $this->getMountedFormComponentAction()->getInfolist();
+        return $this->callMountedAction($arguments);
+    }
+
+    /**
+     * @deprecated Use `mountAction()` instead.
+     *
+     * @param  array<string, mixed>  $arguments
+     */
+    public function mountFormComponentAction(string $component, string $name, array $arguments = []): mixed
+    {
+        return $this->mountAction($name, $arguments, context: [
+            'schemaComponent' => $component,
+        ]);
+    }
+
+    /**
+     * @deprecated Use `mountedActionShouldOpenModal()` instead.
+     */
+    public function mountedFormComponentActionShouldOpenModal(?Action $mountedAction = null): bool
+    {
+        return $this->mountedActionShouldOpenModal($mountedAction);
+    }
+
+    /**
+     * @deprecated Use `mountedActionHasForm()` instead.
+     */
+    public function mountedFormComponentActionHasForm(?Action $mountedAction = null): bool
+    {
+        return $this->mountedActionHasSchema($mountedAction);
+    }
+
+    /**
+     * @deprecated Use `getMountedAction()` instead.
+     */
+    public function getMountedFormComponentAction(?int $actionNestingIndex = null): ?Action
+    {
+        return $this->getMountedAction($actionNestingIndex);
+    }
+
+    /**
+     * @deprecated Use `unmountAction()` instead.
+     */
+    public function unmountFormComponentAction(bool $shouldCancelParentActions = true): void
+    {
+        $this->unmountAction($shouldCancelParentActions);
     }
 }

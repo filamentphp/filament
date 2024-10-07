@@ -13,7 +13,9 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:livewire-form')]
+#[AsCommand(name: 'make:filament-livewire-form', aliases: [
+    'make:livewire-form',
+])]
 class MakeFormCommand extends Command
 {
     use CanGenerateForms;
@@ -23,7 +25,14 @@ class MakeFormCommand extends Command
 
     protected $description = 'Create a new Livewire component containing a Filament form';
 
-    protected $signature = 'make:livewire-form {name?} {model?} {--E|edit} {--G|generate} {--F|force}';
+    protected $signature = 'make:filament-livewire-form {name?} {model?} {--E|edit} {--G|generate} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'make:livewire-form',
+    ];
 
     public function handle(): int
     {

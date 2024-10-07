@@ -4,11 +4,10 @@ namespace Filament\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\HasUnsavedDataChangesAlert;
+use Filament\Schema\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Throwable;
@@ -16,7 +15,7 @@ use Throwable;
 use function Filament\Support\is_app_url;
 
 /**
- * @property ComponentContainer $form
+ * @property Schema $form
  */
 class SettingsPage extends Page
 {
@@ -170,19 +169,19 @@ class SettingsPage extends Page
         return $this->getSaveFormAction();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->schema($this->getFormSchema())
                     ->statePath('data')
                     ->columns(2)

@@ -3,15 +3,16 @@
 namespace Filament\Facades;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Billing\Providers\Contracts\Provider as BillingProvider;
 use Filament\Contracts\Plugin;
 use Filament\Enums\ThemeMode;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasTenants;
-use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Panel;
 use Filament\PanelRegistry;
 use Filament\Support\Assets\Theme;
@@ -47,9 +48,17 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getEmailVerifiedMiddleware()
  * @method static string | null getFavicon()
  * @method static string getFontFamily()
+ * @method static string getMonoFontFamily()
+ * @method static string getSerifFontFamily()
  * @method static Htmlable getFontHtml()
+ * @method static Htmlable getMonoFontHtml()
+ * @method static Htmlable getSerifFontHtml()
  * @method static string getFontProvider()
+ * @method static string getMonoFontProvider()
+ * @method static string getSerifFontProvider()
  * @method static string | null getFontUrl()
+ * @method static string | null getMonoFontUrl()
+ * @method static string | null getSerifFontUrl()
  * @method static string getGlobalSearchDebounce()
  * @method static array<string> getGlobalSearchKeyBindings()
  * @method static GlobalSearchProvider | null getGlobalSearchProvider()
@@ -73,11 +82,12 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getResources()
  * @method static array getResourceUrl(string | Model $model, string $name = 'index', array $parameters = [], bool $isAbsolute = false, ?Model $tenant = null)
  * @method static string getSidebarWidth()
+ * @method static SubNavigationPosition getSubNavigationPosition()
  * @method static Model | null getTenant()
  * @method static string | null getTenantAvatarUrl(Model $tenant)
  * @method static BillingProvider | null getTenantBillingProvider()
  * @method static string | null getTenantBillingUrl(array $parameters = [], Model | null $tenant = null)
- * @method static array<MenuItem> getTenantMenuItems()
+ * @method static array<Action> getTenantMenuItems()
  * @method static string | null getTenantModel()
  * @method static string getTenantName(Model $tenant)
  * @method static string getTenantOwnershipRelationshipName()
@@ -89,7 +99,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static ThemeMode getDefaultThemeMode()
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
  * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)
- * @method static array<MenuItem> getUserMenuItems()
+ * @method static array<Action> getUserMenuItems()
  * @method static string getUserName(Model | Authenticatable $user)
  * @method static array<Model> getUserTenants(HasTenants | Model | Authenticatable $user)
  * @method static string | null getUrl(Model | null $tenant = null)

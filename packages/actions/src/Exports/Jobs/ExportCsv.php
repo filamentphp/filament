@@ -4,7 +4,6 @@ namespace Filament\Actions\Exports\Jobs;
 
 use AnourValar\EloquentSerialize\Facades\EloquentSerializeFacade;
 use Carbon\CarbonInterface;
-use Exception;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
 use Illuminate\Bus\Batchable;
@@ -15,7 +14,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use League\Csv\Writer;
 use SplTempFileObject;
 use Throwable;
@@ -31,6 +30,8 @@ class ExportCsv implements ShouldQueue
     public bool $deleteWhenMissingModels = true;
 
     protected Exporter $exporter;
+
+    public ?int $maxExceptions = 5;
 
     /**
      * @param  array<mixed>  $records
@@ -64,13 +65,7 @@ class ExportCsv implements ShouldQueue
         /** @var Authenticatable $user */
         $user = $this->export->user;
 
-        if (method_exists(auth()->guard(), 'login')) {
-            auth()->login($user);
-        } else {
-            auth()->setUser($user);
-        }
-
-        $exceptions = [];
+        auth()->setUser($user);
 
         $processedRows = 0;
         $successfulRows = 0;
@@ -91,14 +86,11 @@ class ExportCsv implements ShouldQueue
 
                 $successfulRows++;
             } catch (Throwable $exception) {
-                $exceptions[$exception::class] = $exception;
+                report($exception);
             }
 
             $processedRows++;
         }
-
-        $filePath = $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . str_pad(strval($this->page), 16, '0', STR_PAD_LEFT) . '.csv';
-        $this->export->getFileDisk()->put($filePath, $csv->toString(), Filesystem::VISIBILITY_PRIVATE);
 
         $this->export->refresh();
 
@@ -112,9 +104,13 @@ class ExportCsv implements ShouldQueue
             $exportSuccessfulRows :
             $this->export->total_rows;
 
-        $this->export->save();
+        $filePath = $this->export->getFileDirectory() . DIRECTORY_SEPARATOR . str_pad(strval($this->page), 16, '0', STR_PAD_LEFT) . '.csv';
 
-        $this->handleExceptions($exceptions);
+        DB::transaction(function () use ($csv, $filePath) {
+            $this->export->save();
+
+            $this->export->getFileDisk()->put($filePath, $csv->toString(), Filesystem::VISIBILITY_PRIVATE);
+        });
     }
 
     public function retryUntil(): ?CarbonInterface
@@ -123,26 +119,18 @@ class ExportCsv implements ShouldQueue
     }
 
     /**
+     * @return int | array<int> | null
+     */
+    public function backoff(): int | array | null
+    {
+        return $this->exporter->getJobBackoff();
+    }
+
+    /**
      * @return array<int, string>
      */
     public function tags(): array
     {
         return $this->exporter->getJobTags();
-    }
-
-    /**
-     * @param  array<Throwable>  $exceptions
-     */
-    protected function handleExceptions(array $exceptions): void
-    {
-        if (empty($exceptions)) {
-            return;
-        }
-
-        if (count($exceptions) > 1) {
-            throw new Exception('Multiple types of exceptions occurred: [' . implode('], [', array_keys($exceptions)) . ']');
-        }
-
-        throw Arr::first($exceptions);
     }
 }

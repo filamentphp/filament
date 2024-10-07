@@ -48,9 +48,9 @@
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item-icon',
         match ($iconSize) {
-            IconSize::Small, 'sm' => 'h-4 w-4',
-            IconSize::Medium, 'md' => 'h-5 w-5',
-            IconSize::Large, 'lg' => 'h-6 w-6',
+            IconSize::Small, 'sm' => 'size-4',
+            IconSize::Medium, 'md' => 'size-5',
+            IconSize::Large, 'lg' => 'size-6',
             default => $iconSize,
         },
         match ($iconColor) {
@@ -67,7 +67,7 @@
         ) => $iconColor !== 'gray',
     ]);
 
-    $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 rounded-full bg-cover bg-center';
+    $imageClasses = 'fi-dropdown-list-item-image size-5 rounded-full bg-cover bg-center';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item-label flex-1 truncate text-start',

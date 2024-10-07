@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\Enums\PaginationMode;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,13 +31,28 @@ trait CanPaginateRecords
     {
         $perPage = $this->getTableRecordsPerPage();
 
+        $mode = $this->getTable()->getPaginationMode();
+
+        if ($mode === PaginationMode::Simple) {
+            return $query->simplePaginate(
+                perPage: ($perPage === 'all') ? $query->toBase()->getCountForPagination() : $perPage,
+                pageName: $this->getTablePaginationPageName(),
+            );
+        }
+
+        if ($mode === PaginationMode::Cursor) {
+            return $query->cursorPaginate(
+                perPage: ($perPage === 'all') ? $query->toBase()->getCountForPagination() : $perPage,
+                cursorName: $this->getTablePaginationPageName(),
+            );
+        }
+
         if (version_compare(App::version(), '11.0', '>=')) {
             $total = $query->toBase()->getCountForPagination();
 
             /** @var LengthAwarePaginator $records */
             $records = $query->paginate(
                 perPage: ($perPage === 'all') ? $total : $perPage,
-                columns: ['*'],
                 pageName: $this->getTablePaginationPageName(),
                 total: $total,
             );
@@ -44,7 +60,6 @@ trait CanPaginateRecords
             /** @var LengthAwarePaginator $records */
             $records = $query->paginate(
                 perPage: ($perPage === 'all') ? $query->toBase()->getCountForPagination() : $perPage,
-                columns: ['*'],
                 pageName: $this->getTablePaginationPageName(),
             );
         }

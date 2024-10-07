@@ -1,7 +1,7 @@
 <?php
 
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
@@ -10,7 +10,7 @@ uses(TestCase::class);
 
 it('belongs to container', function () {
     $component = (new Component)
-        ->container($container = ComponentContainer::make(Livewire::make()));
+        ->container($container = Schema::make(Livewire::make()));
 
     expect($component)
         ->getContainer()->toBe($container);
@@ -18,7 +18,7 @@ it('belongs to container', function () {
 
 it('can access container\'s Livewire component', function () {
     $component = (new Component)
-        ->container(ComponentContainer::make($livewire = Livewire::make()));
+        ->container(Schema::make($livewire = Livewire::make()));
 
     expect($component)
         ->getLivewire()->toBe($livewire);
@@ -32,7 +32,7 @@ it('has child components', function () {
     }
 
     $componentsBoundToContainer = ($parentComponent = new Component)
-        ->container(ComponentContainer::make(Livewire::make()))
+        ->container(Schema::make(Livewire::make()))
         ->childComponents($components)
         ->getChildComponentContainer()
         ->getComponents();
@@ -48,7 +48,7 @@ it('has child components', function () {
 
 it('has a label', function () {
     $component = (new Component)
-        ->container(ComponentContainer::make(Livewire::make()))
+        ->container(Schema::make(Livewire::make()))
         ->label($label = Str::random());
 
     expect($component)

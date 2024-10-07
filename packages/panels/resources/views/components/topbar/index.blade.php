@@ -1,7 +1,3 @@
-@props([
-    'navigation',
-])
-
 <div
     {{
         $attributes->class([
@@ -23,7 +19,6 @@
                 icon-size="lg"
                 :label="__('filament-panels::layout.actions.sidebar.expand.label')"
                 x-cloak
-                x-data="{}"
                 x-on:click="$store.sidebar.open()"
                 x-show="! $store.sidebar.isOpen"
                 @class([
@@ -39,7 +34,6 @@
                 icon-size="lg"
                 :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
                 x-cloak
-                x-data="{}"
                 x-on:click="$store.sidebar.close()"
                 x-show="$store.sidebar.isOpen"
                 class="fi-topbar-close-sidebar-btn lg:hidden"
@@ -63,7 +57,7 @@
 
             @if (filament()->hasNavigation())
                 <ul class="me-4 hidden items-center gap-x-4 lg:flex">
-                    @foreach ($navigation as $group)
+                    @foreach (filament()->getNavigation() as $group)
                         @if ($groupLabel = $group->getLabel())
                             <x-filament::dropdown
                                 placement="bottom-start"

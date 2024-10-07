@@ -3,6 +3,7 @@
 namespace Filament\Actions\Imports;
 
 use Closure;
+use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Support\Components\Component;
 use Illuminate\Contracts\Support\Htmlable;
@@ -85,12 +86,25 @@ class ImportColumn extends Component
         $this->name($name);
     }
 
-    public static function make(string $name): static
+    public static function make(?string $name = null): static
     {
-        $static = app(static::class, ['name' => $name]);
+        $importColumnClass = static::class;
+
+        $name ??= static::getDefaultName();
+
+        if (blank($name)) {
+            throw new Exception("Import column of class [$importColumnClass] must have a unique name, passed to the [make()] method.");
+        }
+
+        $static = app($importColumnClass, ['name' => $name]);
         $static->configure();
 
         return $static;
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return null;
     }
 
     public function getSelect(): Select

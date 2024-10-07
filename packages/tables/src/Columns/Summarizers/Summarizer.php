@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
@@ -98,7 +99,10 @@ class Summarizer extends ViewComponent
                         $relatedQuery->mergeConstraintsFrom($query);
 
                         if ($baseQuery->limit !== null) {
-                            $relatedQuery->whereKey($this->getTable()->getRecords()->modelKeys());
+                            /** @var Collection $records */
+                            $records = $this->getTable()->getRecords();
+
+                            $relatedQuery->whereKey($records->modelKeys());
                         }
 
                         return $relatedQuery;

@@ -11,7 +11,9 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Filament\Support\get_model_label;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-exporter')]
+#[AsCommand(name: 'make:filament-exporter', aliases: [
+    'filament:exporter',
+])]
 class MakeExporterCommand extends Command
 {
     use CanIndentStrings;
@@ -22,6 +24,13 @@ class MakeExporterCommand extends Command
     protected $description = 'Create a new Filament exporter class';
 
     protected $signature = 'make:filament-exporter {name?} {--G|generate} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:exporter',
+    ];
 
     public function handle(): int
     {

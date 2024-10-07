@@ -4,7 +4,7 @@ namespace Filament\Tables\Columns;
 
 use Closure;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Columns\IconColumn\IconColumnSize;
+use Filament\Tables\Columns\IconColumn\Enums\IconColumnSize;
 use Illuminate\Contracts\Support\Arrayable;
 
 class IconColumn extends Column

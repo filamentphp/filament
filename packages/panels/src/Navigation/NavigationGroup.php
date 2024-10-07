@@ -3,9 +3,9 @@
 namespace Filament\Navigation;
 
 use Closure;
+use Filament\Navigation\Concerns\HasExtraSidebarAttributes;
+use Filament\Navigation\Concerns\HasExtraTopbarAttributes;
 use Filament\Support\Components\Component;
-use Filament\Support\Concerns\HasExtraSidebarAttributes;
-use Filament\Support\Concerns\HasExtraTopbarAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 
 class NavigationGroup extends Component

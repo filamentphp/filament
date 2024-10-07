@@ -16,6 +16,116 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(Tooltip)
 })
 
+document.addEventListener('livewire:init', () => {
+    Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+        respond(() => {
+            queueMicrotask(() => {
+                if (component.effects.html) {
+                    return
+                }
+
+                for (const [name, html] of Object.entries(
+                    component.effects.partials ?? {},
+                )) {
+                    let el = component.el.querySelector(
+                        '[wire\\:partial="' + name + '"]',
+                    )
+
+                    if (!el) {
+                        continue
+                    }
+
+                    let wrapperTag = el.parentElement
+                        ? // If the root element is a "tr", we need the wrapper to be a "table"...
+                          el.parentElement.tagName.toLowerCase()
+                        : 'div'
+
+                    let wrapper = document.createElement(wrapperTag)
+
+                    wrapper.innerHTML = html
+                    let parentComponent
+
+                    try {
+                        parentComponent = closestComponent(el.parentElement)
+                    } catch (exception) {}
+
+                    parentComponent && (wrapper.__livewire = parentComponent)
+
+                    let to = wrapper.firstElementChild
+
+                    to.__livewire = component
+
+                    window.Alpine.morph(el, to, {
+                        updating: (el, toEl, childrenOnly, skip) => {
+                            if (isntElement(el)) {
+                                return
+                            }
+
+                            if (el.__livewire_ignore === true) {
+                                return skip()
+                            }
+
+                            if (el.__livewire_ignore_self === true) {
+                                childrenOnly()
+                            }
+
+                            if (
+                                isComponentRootEl(el) &&
+                                el.getAttribute('wire:id') !== component.id
+                            ) {
+                                return skip()
+                            }
+
+                            if (isComponentRootEl(el)) {
+                                toEl.__livewire = component
+                            }
+                        },
+
+                        key: (el) => {
+                            if (isntElement(el)) {
+                                return
+                            }
+
+                            if (el.hasAttribute(`wire:key`)) {
+                                return el.getAttribute(`wire:key`)
+                            }
+
+                            if (el.hasAttribute(`wire:id`)) {
+                                return el.getAttribute(`wire:id`)
+                            }
+
+                            return el.id
+                        },
+
+                        lookahead: false,
+                    })
+                }
+            })
+        })
+
+        function isntElement(el) {
+            return typeof el.hasAttribute !== 'function'
+        }
+
+        function isComponentRootEl(el) {
+            return el.hasAttribute('wire:id')
+        }
+
+        function closestComponent(el, strict = true) {
+            let closestRoot = Alpine.findClosest(el, (i) => i.__livewire)
+
+            if (!closestRoot) {
+                if (strict)
+                    throw 'Could not find Livewire component in DOM tree'
+
+                return
+            }
+
+            return closestRoot.__livewire
+        }
+    })
+})
+
 // https://github.com/laravel/framework/blob/5299c22321c0f1ea8ff770b84a6c6469c4d6edec/src/Illuminate/Translation/MessageSelector.php#L15
 const pluralize = function (text, number, variables) {
     function extract(segments, number) {

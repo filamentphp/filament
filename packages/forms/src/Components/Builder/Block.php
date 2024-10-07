@@ -3,8 +3,9 @@
 namespace Filament\Forms\Components\Builder;
 
 use Closure;
-use Filament\Forms\Components\Component;
+use Exception;
 use Filament\Forms\Components\Concerns;
+use Filament\Schema\Components\Component;
 use Illuminate\Contracts\Support\Htmlable;
 
 class Block extends Component
@@ -23,12 +24,25 @@ class Block extends Component
         $this->name($name);
     }
 
-    public static function make(string $name): static
+    public static function make(?string $name = null): static
     {
-        $static = app(static::class, ['name' => $name]);
+        $blockClass = static::class;
+
+        $name ??= static::getDefaultName();
+
+        if (blank($name)) {
+            throw new Exception("Block of class [$blockClass] must have a unique name, passed to the [make()] method.");
+        }
+
+        $static = app($blockClass, ['name' => $name]);
         $static->configure();
 
         return $static;
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return null;
     }
 
     public function icon(string | Closure | null $icon): static

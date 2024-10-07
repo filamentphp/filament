@@ -55,7 +55,7 @@
                 :alias="$activelySorted && $sortDirection === 'asc' ? 'tables::header-cell.sort-asc-button' : 'tables::header-cell.sort-desc-button'"
                 :icon="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
                 @class([
-                    'fi-ta-header-cell-sort-icon h-5 w-5 shrink-0 transition duration-75',
+                    'fi-ta-header-cell-sort-icon size-5 shrink-0 transition duration-75',
                     'text-gray-950 dark:text-white' => $activelySorted,
                     'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 group-focus-visible:text-gray-500 dark:group-hover:text-gray-400 dark:group-focus-visible:text-gray-400' => ! $activelySorted,
                 ])

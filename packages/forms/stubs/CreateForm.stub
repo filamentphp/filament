@@ -6,7 +6,7 @@ use App\Models\{{ model }};
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 
@@ -21,7 +21,7 @@ class {{ class }} extends Component implements HasForms
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([

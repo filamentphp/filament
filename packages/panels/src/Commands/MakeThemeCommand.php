@@ -12,7 +12,10 @@ use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\select;
 
-#[AsCommand(name: 'make:filament-theme')]
+#[AsCommand(name: 'make:filament-theme', aliases: [
+    'filament:make-theme',
+    'filament:theme',
+])]
 class MakeThemeCommand extends Command
 {
     use CanManipulateFiles;
@@ -20,6 +23,14 @@ class MakeThemeCommand extends Command
     protected $description = 'Create a new Filament panel theme';
 
     protected $signature = 'make:filament-theme {panel?} {--pm=} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:make-theme',
+        'filament:theme',
+    ];
 
     public function handle(): int
     {

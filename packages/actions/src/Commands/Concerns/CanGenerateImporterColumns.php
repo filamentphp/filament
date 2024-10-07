@@ -2,10 +2,14 @@
 
 namespace Filament\Actions\Commands\Concerns;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 trait CanGenerateImporterColumns
 {
+    /**
+     * @param  string|class-string<Model>  $model
+     */
     protected function getImporterColumns(string $model): string
     {
         $model = $this->getModel($model);

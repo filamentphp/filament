@@ -3,7 +3,6 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -62,7 +61,7 @@ trait HasQuery
         return $query;
     }
 
-    public function getQuery(): Builder | Relation
+    public function getQuery(): Builder | Relation | null
     {
         if ($query = $this->evaluate($this->query)) {
             return $this->applyQueryScopes($query->clone());
@@ -72,9 +71,7 @@ trait HasQuery
             return $this->applyQueryScopes($query->clone());
         }
 
-        $livewireClass = $this->getLivewire()::class;
-
-        throw new Exception("Table [{$livewireClass}] must have a [query()].");
+        return null;
     }
 
     public function getRelationshipQuery(): ?Builder

@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Gate;
 
 if (! function_exists('Filament\authorize')) {
     /**
+     * @param  Model|class-string<Model>  $model
+     *
      * @throws AuthorizationException
      */
     function authorize(string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response

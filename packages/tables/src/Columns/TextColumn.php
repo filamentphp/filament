@@ -3,8 +3,10 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\Support\Concerns\HasFontFamily;
 use Filament\Support\Concerns\HasLineClamp;
-use Filament\Tables\Columns\TextColumn\TextColumnSize;
+use Filament\Support\Concerns\HasWeight;
+use Filament\Tables\Columns\TextColumn\Enums\TextColumnSize;
 use Filament\Tables\Contracts\HasTable;
 use stdClass;
 
@@ -14,11 +16,11 @@ class TextColumn extends Column
     use Concerns\CanFormatState;
     use Concerns\HasColor;
     use Concerns\HasDescription;
-    use Concerns\HasFontFamily;
     use Concerns\HasIcon;
     use Concerns\HasIconColor;
-    use Concerns\HasWeight;
+    use HasFontFamily;
     use HasLineClamp;
+    use HasWeight;
 
     /**
      * @var view-string

@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Resources\Form;
+use Filament\Schema\Schema;
 
 function (Form $form) {
     //
@@ -9,8 +10,6 @@ function (Form $form) {
 ?>
 -----
 <?php
-
-use Filament\Forms\Form;
 
 function (Form $form) {
     //

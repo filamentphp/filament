@@ -9,15 +9,15 @@ use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Events\Auth\Registered;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
 use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\CanUseDatabaseTransactions;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 class Register extends SimplePage
 {
@@ -45,6 +45,9 @@ class Register extends SimplePage
      */
     public ?array $data = [];
 
+    /**
+     * @var class-string<Model>
+     */
     protected string $userModel;
 
     public function mount(): void
@@ -145,19 +148,19 @@ class Register extends SimplePage
         $user->notify($notification);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->schema([
                         $this->getNameFormComponent(),
                         $this->getEmailFormComponent(),
@@ -219,6 +222,9 @@ class Register extends SimplePage
             ->url(filament()->getLoginUrl());
     }
 
+    /**
+     * @return class-string<Model>
+     */
     protected function getUserModel(): string
     {
         if (isset($this->userModel)) {

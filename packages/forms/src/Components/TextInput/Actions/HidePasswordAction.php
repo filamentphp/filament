@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components\TextInput\Actions;
 
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Support\Facades\FilamentIcon;
 
 class HidePasswordAction extends Action

@@ -2,9 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\BulkAction;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
@@ -32,7 +31,7 @@ trait HasHeader
     /**
      * @deprecated Override the `table()` method to configure the table.
      *
-     * @return array<Action | BulkAction | ActionGroup>
+     * @return array<Action | ActionGroup>
      */
     protected function getTableHeaderActions(): array
     {

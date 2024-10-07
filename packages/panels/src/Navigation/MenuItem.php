@@ -3,9 +3,14 @@
 namespace Filament\Navigation;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Support\Components\Component;
+use Illuminate\Support\Str;
 use Laravel\SerializableClosure\Serializers\Native;
 
+/**
+ * @deprecated Use `Filament\Actions\Action` instead.
+ */
 class MenuItem extends Component
 {
     /**
@@ -156,5 +161,20 @@ class MenuItem extends Component
     public function shouldOpenUrlInNewTab(): bool
     {
         return (bool) $this->evaluate($this->shouldOpenUrlInNewTab);
+    }
+
+    public function toAction(?Action $action = null): Action
+    {
+        $label = $this->getLabel();
+        $postAction = $this->getPostAction();
+
+        return ($action ?? Action::make(Str::slug($label)))
+            ->color($this->getColor())
+            ->icon($this->getIcon())
+            ->label($label)
+            ->postToUrl(filled($postAction))
+            ->sort($this->getSort())
+            ->visible($this->isVisible())
+            ->url($this->getUrl() ?? $postAction, $this->shouldOpenUrlInNewTab());
     }
 }

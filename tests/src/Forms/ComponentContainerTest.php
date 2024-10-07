@@ -1,11 +1,11 @@
 <?php
 
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Fieldset;
+use Filament\Schema\Components\Section;
+use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
 uses(TestCase::class);
 
 it('belongs to Livewire component', function () {
-    $container = ComponentContainer::make($livewire = Livewire::make());
+    $container = Schema::make($livewire = Livewire::make());
 
     expect($container)
         ->getLivewire()->toBe($livewire);
@@ -26,7 +26,7 @@ it('has components', function () {
         $components[] = new Component;
     }
 
-    $componentsBoundToContainer = ($container = ComponentContainer::make(Livewire::make()))
+    $componentsBoundToContainer = ($container = Schema::make(Livewire::make()))
         ->components($components)
         ->getComponents();
 
@@ -46,7 +46,7 @@ it('has dynamic components', function () {
         $components[] = new Component;
     }
 
-    $componentsBoundToContainer = ($container = ComponentContainer::make(Livewire::make()))
+    $componentsBoundToContainer = ($container = Schema::make(Livewire::make()))
         ->components(fn (): array => $components)
         ->getComponents();
 
@@ -60,7 +60,7 @@ it('has dynamic components', function () {
 });
 
 it('belongs to parent component', function () {
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->parentComponent($component = new Component);
 
     expect($container)
@@ -68,7 +68,7 @@ it('belongs to parent component', function () {
 });
 
 it('can return a component by name and callback', function () {
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->components([
             $input = Field::make($statePath = Str::random()),
         ]);
@@ -79,48 +79,48 @@ it('can return a component by name and callback', function () {
 });
 
 it('can return a flat array of components', function () {
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->components([
             $fieldset = Fieldset::make(Str::random())
                 ->schema([
-                    $field = TextInput::make(Str::random()),
+                    $field = TextInput::make($fieldName = Str::random()),
                 ]),
-            $section = Section::make(Str::random()),
+            $section = Section::make($sectionHeading = Str::random()),
         ]);
 
     expect($container)
         ->getFlatComponents()
         ->toHaveCount(3)
-        ->toMatchArray([
+        ->toBe([
             $fieldset,
-            $field,
-            $section,
+            $fieldName => $field,
+            Str::slug($sectionHeading) => $section,
         ]);
 });
 
 it('can return a flat array of components with hidden components', function () {
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->components([
             $fieldset = Fieldset::make(Str::random())
                 ->hidden()
                 ->schema([
-                    $field = TextInput::make(Str::random()),
+                    $field = TextInput::make($fieldName = Str::random()),
                 ]),
-            $section = Section::make(Str::random()),
+            $section = Section::make($sectionHeading = Str::random()),
         ]);
 
     expect($container)
         ->getFlatComponents(withHidden: true)
         ->toHaveCount(3)
-        ->toMatchArray([
+        ->toBe([
             $fieldset,
-            $field,
-            $section,
+            $fieldName => $field,
+            Str::slug($sectionHeading) => $section,
         ]);
 });
 
 it('can return a flat array of fields', function () {
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->components([
             Fieldset::make(Str::random())
                 ->schema([
@@ -139,7 +139,7 @@ it('can return a flat array of fields', function () {
 });
 
 it('can return a flat array of fields with hidden fields', function () {
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->components([
             Fieldset::make(Str::random())
                 ->hidden()
@@ -159,7 +159,7 @@ it('can return a flat array of fields with hidden fields', function () {
 });
 
 it('can return a flat array of fields with nested path keys', function () {
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->components([
             Fieldset::make(Str::random())
                 ->schema([
@@ -179,7 +179,7 @@ it('can return a flat array of fields with nested path keys', function () {
 });
 
 it('can return a flat array of fields with absolute path keys', function () {
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->components([
             Fieldset::make(Str::random())
                 ->schema([
@@ -190,7 +190,7 @@ it('can return a flat array of fields with absolute path keys', function () {
         ->statePath($containerStatePath = Str::random());
 
     expect($container)
-        ->getFlatFields(withAbsolutePathKeys: true)
+        ->getFlatFields(withAbsoluteKeys: true)
         ->toHaveCount(1)
         ->toMatchArray([
             "{$containerStatePath}.{$name}" => $field,

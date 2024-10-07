@@ -7,17 +7,10 @@ use Illuminate\Contracts\Support\Htmlable;
 
 trait HasHelperText
 {
-    protected string | Htmlable | Closure | null $helperText = null;
-
     public function helperText(string | Htmlable | Closure | null $text): static
     {
-        $this->helperText = $text;
+        $this->belowContent($text);
 
         return $this;
-    }
-
-    public function getHelperText(): string | Htmlable | null
-    {
-        return $this->evaluate($this->helperText);
     }
 }

@@ -18,6 +18,7 @@ return [
             ],
 
             'more_list_items' => 'và :count cột khác',
+
         ],
 
     ],
@@ -223,5 +224,7 @@ return [
         ],
 
     ],
+
+    'default_model_label' => 'bản ghi',
 
 ];

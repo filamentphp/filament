@@ -5,7 +5,7 @@ namespace {{ namespace }};
 use {{ resource }};
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 use {{ baseResourcePage }};
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -25,7 +25,7 @@ class {{ resourcePageClass }} extends {{ baseResourcePageClass }}
         return '{{ title }}';
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -52,7 +52,7 @@ class {{ resourcePageClass }} extends {{ baseResourcePageClass }}
 {{ tableActions }}
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
 {{ tableBulkActions }}
                 ]),
             ]){{ modifyQueryUsing }};

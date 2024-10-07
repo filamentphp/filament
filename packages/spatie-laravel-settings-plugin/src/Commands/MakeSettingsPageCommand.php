@@ -22,6 +22,15 @@ class MakeSettingsPageCommand extends Command
 
     protected $signature = 'make:filament-settings-page {name?} {settingsClass?} {--panel=} {--F|force}';
 
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:settings',
+        'filament:settings-page',
+        'make:filament-settings',
+    ];
+
     public function handle(): int
     {
         $page = (string) str($this->argument('name') ?? text(

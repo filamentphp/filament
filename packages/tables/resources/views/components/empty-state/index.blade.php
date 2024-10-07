@@ -20,7 +20,7 @@
         >
             <x-filament::icon
                 :icon="$icon"
-                class="fi-ta-empty-state-icon h-6 w-6 text-gray-500 dark:text-gray-400"
+                class="fi-ta-empty-state-icon size-6 text-gray-500 dark:text-gray-400"
             />
         </div>
 

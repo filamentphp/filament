@@ -100,7 +100,7 @@ class SpatieTagsInput extends TagsInput
         }
 
         $model = $this->getModel();
-        $tagClass = $model ? $model::getTagClassName() : config('tags.tag_model', Tag::class);
+        $tagClass = ($model && method_exists($model, 'getTagClassName')) ? $model::getTagClassName() : config('tags.tag_model', Tag::class);
         $type = $this->getType();
         $query = $tagClass::query();
 

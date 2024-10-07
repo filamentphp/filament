@@ -11,7 +11,9 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Filament\Support\get_model_label;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-importer')]
+#[AsCommand(name: 'make:filament-importer', aliases: [
+    'filament:exporter',
+])]
 class MakeImporterCommand extends Command
 {
     use CanIndentStrings;
@@ -22,6 +24,13 @@ class MakeImporterCommand extends Command
     protected $description = 'Create a new Filament importer class';
 
     protected $signature = 'make:filament-importer {name?} {--G|generate} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:exporter',
+    ];
 
     public function handle(): int
     {

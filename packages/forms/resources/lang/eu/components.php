@@ -274,20 +274,4 @@ return [
         'placeholder' => 'Etiketa berria',
     ],
 
-    'wizard' => [
-
-        'actions' => [
-
-            'previous_step' => [
-                'label' => 'Aurrekoa',
-            ],
-
-            'next_step' => [
-                'label' => 'Hurrengoa',
-            ],
-
-        ],
-
-    ],
-
 ];

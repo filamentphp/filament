@@ -2,7 +2,7 @@
 
 namespace Filament\Pages\Dashboard\Concerns;
 
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 
 trait HasFiltersForm
 {
@@ -15,18 +15,19 @@ trait HasFiltersForm
         ];
     }
 
-    public function filtersForm(Form $form): Form
+    public function filtersForm(Schema $form): Schema
     {
         return $form;
     }
 
-    public function getFiltersForm(): Form
+    public function getFiltersForm(): Schema
     {
-        if ((! $this->isCachingForms) && $this->hasCachedForm('filtersForm')) {
-            return $this->getForm('filtersForm');
+        if ((! $this->isCachingSchemas) && $this->hasCachedSchema('filtersForm')) {
+            return $this->getSchema('filtersForm');
         }
 
-        return $this->filtersForm($this->makeForm()
+        return $this->filtersForm($this->makeSchema()
+            ->extraAttributes(['wire:partial' => 'table-filters-form'])
             ->columns([
                 'md' => 2,
                 'xl' => 3,

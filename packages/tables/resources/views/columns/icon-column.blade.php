@@ -1,5 +1,5 @@
 @php
-    use Filament\Tables\Columns\IconColumn\IconColumnSize;
+    use Filament\Tables\Columns\IconColumn\Enums\IconColumnSize;
 
     $arrayState = $getState();
 
@@ -35,12 +35,12 @@
                     @class([
                         'fi-ta-icon-item',
                         match ($size) {
-                            IconColumnSize::ExtraSmall, 'xs' => 'fi-ta-icon-item-size-xs h-3 w-3',
-                            IconColumnSize::Small, 'sm' => 'fi-ta-icon-item-size-sm h-4 w-4',
-                            IconColumnSize::Medium, 'md' => 'fi-ta-icon-item-size-md h-5 w-5',
-                            IconColumnSize::Large, 'lg' => 'fi-ta-icon-item-size-lg h-6 w-6',
-                            IconColumnSize::ExtraLarge, 'xl' => 'fi-ta-icon-item-size-xl h-7 w-7',
-                            IconColumnSize::TwoExtraLarge, IconColumnSize::ExtraExtraLarge, '2xl' => 'fi-ta-icon-item-size-2xl h-8 w-8',
+                            IconColumnSize::ExtraSmall, 'xs' => 'fi-ta-icon-item-size-xs size-3',
+                            IconColumnSize::Small, 'sm' => 'fi-ta-icon-item-size-sm size-4',
+                            IconColumnSize::Medium, 'md' => 'fi-ta-icon-item-size-md size-5',
+                            IconColumnSize::Large, 'lg' => 'fi-ta-icon-item-size-lg size-6',
+                            IconColumnSize::ExtraLarge, 'xl' => 'fi-ta-icon-item-size-xl size-7',
+                            IconColumnSize::TwoExtraLarge, IconColumnSize::ExtraExtraLarge, '2xl' => 'fi-ta-icon-item-size-2xl size-8',
                             default => $size,
                         },
                         match ($color) {

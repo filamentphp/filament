@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands;
 
+use Composer\InstalledVersions;
 use Filament\PanelProvider;
 use Filament\Support\Commands\Concerns\CanGeneratePanels;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
@@ -18,7 +19,7 @@ class InstallCommand extends Command
     use CanGeneratePanels;
     use CanManipulateFiles;
 
-    protected $signature = 'filament:install {--scaffold} {--actions} {--forms} {--infolists} {--notifications} {--panels} {--tables} {--widgets} {--F|force}';
+    protected $signature = 'filament:install {--scaffold} {--notifications} {--F|force}';
 
     protected $description = 'Install Filament.';
 
@@ -86,11 +87,12 @@ class InstallCommand extends Command
         $filesystem->delete(resource_path('js/bootstrap.js'));
         $filesystem->copyDirectory(__DIR__ . '/../../stubs/scaffolding', base_path());
 
-        // Install filament/notifications into the layout Blade file
         if (
-            $this->option('actions') ||
-            $this->option('notifications') ||
-            $this->option('tables')
+            InstalledVersions::isInstalled('filament/notifications') &&
+            ($this->option('notifications') || confirm(
+                label: 'Would you like to be able to send flash notifications using Filament? If so, we will install the notification Livewire component into the base layout file.',
+                default: true,
+            ))
         ) {
             $layout = $filesystem->get(resource_path('views/components/layouts/app.blade.php'));
             $layout = (string) str($layout)

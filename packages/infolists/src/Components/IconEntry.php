@@ -3,7 +3,7 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Filament\Infolists\Components\IconEntry\IconEntrySize;
+use Filament\Infolists\Components\IconEntry\Enums\IconEntrySize;
 use Filament\Support\Facades\FilamentIcon;
 
 class IconEntry extends Entry

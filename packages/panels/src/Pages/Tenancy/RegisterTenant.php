@@ -5,11 +5,11 @@ namespace Filament\Pages\Tenancy;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
 use Filament\Pages\Concerns;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Filament\Panel;
+use Filament\Schema\Schema;
 use Filament\Support\Exceptions\Halt;
 use Filament\Support\Facades\FilamentView;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -21,7 +21,7 @@ use function Filament\authorize;
 use function Filament\Support\is_app_url;
 
 /**
- * @property Form $form
+ * @property Schema $form
  */
 abstract class RegisterTenant extends SimplePage
 {
@@ -123,25 +123,28 @@ abstract class RegisterTenant extends SimplePage
         return Filament::getUrl($this->tenant);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form;
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {
         return [
             'form' => $this->form(
-                $this->makeForm()
+                $this->makeSchema()
                     ->model($this->getModel())
                     ->statePath('data'),
             ),
         ];
     }
 
+    /**
+     * @return class-string<Model>
+     */
     public function getModel(): string
     {
         return Filament::getTenantModel();

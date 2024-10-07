@@ -3,7 +3,7 @@
 ])
 
 @php
-    $iconClasses = 'fi-breadcrumbs-item-separator flex h-5 w-5 text-gray-400 dark:text-gray-500';
+    $iconClasses = 'fi-breadcrumbs-item-separator flex size-5 text-gray-400 dark:text-gray-500';
     $itemLabelClasses = 'fi-breadcrumbs-item-label text-sm font-medium text-gray-500 dark:text-gray-400';
 @endphp
 

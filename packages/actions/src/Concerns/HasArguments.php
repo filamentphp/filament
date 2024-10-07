@@ -44,7 +44,18 @@ trait HasArguments
      */
     public function getArguments(): array
     {
-        return $this->arguments ?? [];
+        $arguments = $this->arguments ?? [];
+
+        $nestingIndex = $this->getNestingIndex();
+
+        if (blank($nestingIndex)) {
+            return $arguments;
+        }
+
+        return [
+            ...$this->getLivewire()->mountedActions[$nestingIndex]['arguments'] ?? [],
+            ...$arguments,
+        ];
     }
 
     public function resetArguments(): static

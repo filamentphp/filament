@@ -14,12 +14,7 @@ trait InteractsWithHeaderActions
      */
     protected array $cachedHeaderActions = [];
 
-    public function bootedInteractsWithHeaderActions(): void
-    {
-        $this->cacheHeaderActions();
-    }
-
-    protected function cacheHeaderActions(): void
+    public function cacheInteractsWithHeaderActions(): void
     {
         /** @var array<string, Action | ActionGroup> */
         $actions = Action::configureUsing(

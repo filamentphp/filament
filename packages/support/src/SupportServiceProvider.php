@@ -7,7 +7,6 @@ use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\ColorManager;
-use Filament\Support\Commands\Aliases\MakeIssueCommand as MakeIssueCommandAlias;
 use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
@@ -19,6 +18,8 @@ use Filament\Support\Components\ComponentManager;
 use Filament\Support\Components\Contracts\ScopedComponentManager;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
+use Filament\Support\Overrides\DataStoreOverride;
+use Filament\Support\Partials\SupportPartials;
 use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
@@ -26,6 +27,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Laravel\Octane\Events\RequestReceived;
+use Livewire\Livewire;
+use Livewire\Mechanisms\DataStore;
+use Livewire\Mechanisms\PersistentMiddleware\PersistentMiddleware;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
@@ -43,7 +47,6 @@ class SupportServiceProvider extends PackageServiceProvider
                 CheckTranslationsCommand::class,
                 InstallCommand::class,
                 MakeIssueCommand::class,
-                MakeIssueCommandAlias::class,
                 OptimizeClearCommand::class,
                 OptimizeCommand::class,
                 UpgradeCommand::class,
@@ -94,10 +97,33 @@ class SupportServiceProvider extends PackageServiceProvider
                     ->withMaxInputLength(500000),
             ),
         );
+
+        $this->app->scoped(
+            'originalRequest',
+            function () {
+                if (! Livewire::isLivewireRequest()) {
+                    return request();
+                }
+
+                $persistentMiddleware = app(PersistentMiddleware::class);
+
+                /** @phpstan-ignore-next-line */
+                $request = invade($persistentMiddleware)->makeFakeRequest();
+
+                /** @phpstan-ignore-next-line */
+                invade($persistentMiddleware)->getRouteFromRequest($request);
+
+                return $request;
+            },
+        );
+
+        $this->app->bind(DataStore::class, DataStoreOverride::class);
     }
 
     public function packageBooted(): void
     {
+        app('livewire')->componentHook(new SupportPartials);
+
         FilamentAsset::register([
             Js::make('async-alpine', __DIR__ . '/../dist/async-alpine.js'),
             Css::make('support', __DIR__ . '/../dist/index.css'),

@@ -2,13 +2,13 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Forms\Form;
+use Filament\Schema\Schema;
 use Filament\Tables\Filters\BaseFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 /**
- * @property Form $tableFiltersForm
+ * @property Schema $tableFiltersForm
  */
 trait HasFilters
 {
@@ -22,18 +22,27 @@ trait HasFilters
      */
     public ?array $tableDeferredFilters = null;
 
-    public function getTableFiltersForm(): Form
+    public function getTableFiltersForm(): Schema
     {
-        if ((! $this->isCachingForms) && $this->hasCachedForm('tableFiltersForm')) {
-            return $this->getForm('tableFiltersForm');
+        if ((! $this->isCachingSchemas) && $this->hasCachedSchema('tableFiltersForm')) {
+            return $this->getSchema('tableFiltersForm');
         }
 
-        return $this->makeForm()
-            ->schema($this->getTable()->getFiltersFormSchema())
-            ->columns($this->getTable()->getFiltersFormColumns())
-            ->model($this->getTable()->getModel())
-            ->statePath($this->getTable()->hasDeferredFilters() ? 'tableDeferredFilters' : 'tableFilters')
-            ->when(! $this->getTable()->hasDeferredFilters(), fn (Form $form) => $form->live());
+        $table = $this->getTable();
+
+        return $this->makeSchema()
+            ->schema($table->getFiltersFormSchema())
+            ->columns($table->getFiltersFormColumns())
+            ->model($table->getModel())
+            ->when(
+                $table->hasDeferredFilters(),
+                fn (Schema $schema) => $schema
+                    ->statePath('tableDeferredFilters')
+                    ->partiallyRender(),
+                fn (Schema $schema) => $schema
+                    ->statePath('tableFilters')
+                    ->live(),
+            );
     }
 
     public function updatedTableFilters(): void

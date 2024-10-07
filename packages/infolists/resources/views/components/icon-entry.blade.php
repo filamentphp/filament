@@ -1,5 +1,5 @@
 @php
-    use Filament\Infolists\Components\IconEntry\IconEntrySize;
+    use Filament\Infolists\Components\IconEntry\Enums\IconEntrySize;
 @endphp
 
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
@@ -35,12 +35,12 @@
                         @class([
                             'fi-in-icon-item',
                             match ($size) {
-                                IconEntrySize::ExtraSmall, 'xs' => 'fi-in-icon-item-size-xs h-3 w-3',
-                                IconEntrySize::Small, 'sm' => 'fi-in-icon-item-size-sm h-4 w-4',
-                                IconEntrySize::Medium, 'md' => 'fi-in-icon-item-size-md h-5 w-5',
-                                IconEntrySize::Large, 'lg' => 'fi-in-icon-item-size-lg h-6 w-6',
-                                IconEntrySize::ExtraLarge, 'xl' => 'fi-in-icon-item-size-xl h-7 w-7',
-                                IconEntrySize::TwoExtraLarge, IconEntrySize::ExtraExtraLarge, '2xl' => 'fi-in-icon-item-size-2xl h-8 w-8',
+                                IconEntrySize::ExtraSmall, 'xs' => 'fi-in-icon-item-size-xs size-3',
+                                IconEntrySize::Small, 'sm' => 'fi-in-icon-item-size-sm size-4',
+                                IconEntrySize::Medium, 'md' => 'fi-in-icon-item-size-md size-5',
+                                IconEntrySize::Large, 'lg' => 'fi-in-icon-item-size-lg size-6',
+                                IconEntrySize::ExtraLarge, 'xl' => 'fi-in-icon-item-size-xl size-7',
+                                IconEntrySize::TwoExtraLarge, IconEntrySize::ExtraExtraLarge, '2xl' => 'fi-in-icon-item-size-2xl size-8',
                                 default => $size,
                             },
                             match ($color) {

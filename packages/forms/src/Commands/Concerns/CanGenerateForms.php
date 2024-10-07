@@ -3,10 +3,14 @@
 namespace Filament\Forms\Commands\Concerns;
 
 use Filament\Forms;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 trait CanGenerateForms
 {
+    /**
+     * @param  string|class-string<Model>  $model
+     */
     protected function getResourceFormSchema(string $model): string
     {
         $model = $this->getModel($model);

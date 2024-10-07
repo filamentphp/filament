@@ -6,11 +6,9 @@ use Filament\Actions;
 use Filament\Forms;
 use Filament\Infolists;
 use Filament\Tables;
+use Filament\Tables\Enums\PaginationMode;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Pagination\CursorPaginator;
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Builder;
 
 class TableWidget extends Widget implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Infolists\Contracts\HasInfolists, Tables\Contracts\HasTable
 {
@@ -31,14 +29,6 @@ class TableWidget extends Widget implements Actions\Contracts\HasActions, Forms\
      */
     protected static ?string $heading = null;
 
-    protected function paginateTableQuery(Builder $query): Paginator | CursorPaginator
-    {
-        return $query->simplePaginate(
-            perPage: ($this->getTableRecordsPerPage() === 'all') ? $query->count() : $this->getTableRecordsPerPage(),
-            pageName: $this->getTablePaginationPageName(),
-        );
-    }
-
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
@@ -56,6 +46,7 @@ class TableWidget extends Widget implements Actions\Contracts\HasActions, Forms\
                     ->kebab()
                     ->replace('-', ' ')
                     ->title(),
-            );
+            )
+            ->paginationMode(PaginationMode::Simple);
     }
 }

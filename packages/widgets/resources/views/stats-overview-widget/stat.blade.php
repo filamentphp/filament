@@ -11,7 +11,7 @@
     $dataChecksum = $generateDataChecksum();
 
     $descriptionIconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-wi-stats-overview-stat-description-icon h-5 w-5',
+        'fi-wi-stats-overview-stat-description-icon size-5',
         match ($descriptionColor) {
             'gray' => 'text-gray-400 dark:text-gray-500',
             default => 'text-custom-500',
@@ -43,7 +43,7 @@
             @if ($icon = $getIcon())
                 <x-filament::icon
                     :icon="$icon"
-                    class="fi-wi-stats-overview-stat-icon h-5 w-5 text-gray-400 dark:text-gray-500"
+                    class="fi-wi-stats-overview-stat-icon size-5 text-gray-400 dark:text-gray-500"
                 />
             @endif
 

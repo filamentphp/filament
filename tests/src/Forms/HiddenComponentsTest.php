@@ -1,8 +1,8 @@
 <?php
 
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
@@ -11,7 +11,7 @@ uses(TestCase::class);
 
 test('components can be hidden', function () {
     $component = (new Component)
-        ->container(ComponentContainer::make(Livewire::make()))
+        ->container(Schema::make(Livewire::make()))
         ->hidden();
 
     expect($component)
@@ -21,7 +21,7 @@ test('components can be hidden', function () {
 test('components can be hidden based on condition', function () {
     $statePath = Str::random();
 
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->components([
             (new Component)
                 ->visible(fn (callable $get) => $get($statePath) === false),
@@ -85,7 +85,7 @@ test('hidden components are not returned from container', function () {
         $components[] = (new Component)->hidden();
     }
 
-    $componentsBoundToContainer = ($container = ComponentContainer::make(Livewire::make()))
+    $componentsBoundToContainer = ($container = Schema::make(Livewire::make()))
         ->components($components)
         ->getComponents();
 
@@ -100,7 +100,7 @@ test('hidden components are not returned from container', function () {
 });
 
 test('components can be hidden based on Livewire component', function () {
-    $components = ComponentContainer::make(Foo::make())
+    $components = Schema::make(Foo::make())
         ->components([
             TextInput::make('foo')
                 ->hiddenOn(Foo::class),
@@ -110,7 +110,7 @@ test('components can be hidden based on Livewire component', function () {
     expect($components)
         ->toHaveLength(0);
 
-    $components = ComponentContainer::make(Bar::make())
+    $components = Schema::make(Bar::make())
         ->components([
             TextInput::make('foo')
                 ->hiddenOn(Foo::class),
@@ -125,7 +125,7 @@ test('components can be hidden based on Livewire component', function () {
                 ->isHidden()->toBeFalse()
         );
 
-    $components = ComponentContainer::make(Bar::make())
+    $components = Schema::make(Bar::make())
         ->components([
             TextInput::make('foo')
                 ->hiddenOn([Foo::class, Bar::class]),
@@ -137,7 +137,7 @@ test('components can be hidden based on Livewire component', function () {
 });
 
 test('components can be visible based on Livewire component', function () {
-    $components = ComponentContainer::make(Foo::make())
+    $components = Schema::make(Foo::make())
         ->components([
             TextInput::make('foo')
                 ->visibleOn(Foo::class),
@@ -147,7 +147,7 @@ test('components can be visible based on Livewire component', function () {
     expect($components)
         ->toHaveLength(1);
 
-    $components = ComponentContainer::make(Bar::make())
+    $components = Schema::make(Bar::make())
         ->components([
             TextInput::make('foo')
                 ->visibleOn(Foo::class),
@@ -162,7 +162,7 @@ test('components can be visible based on Livewire component', function () {
                 ->isHidden()->toBeFalse()
         );
 
-    $components = ComponentContainer::make(Bar::make())
+    $components = Schema::make(Bar::make())
         ->components([
             TextInput::make('foo')
                 ->visibleOn([Foo::class, Bar::class]),

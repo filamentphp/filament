@@ -1,13 +1,11 @@
 <?php
 
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard;
-use Filament\Forms\Components\Wizard\Step;
-use Filament\Forms\Form;
+use Filament\Schema\Components\Section;
+use Filament\Schema\Components\Wizard;
+use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
-use Illuminate\Contracts\View\View;
 
 use function Filament\Tests\livewire;
 
@@ -100,11 +98,8 @@ it('can have visible fields on multiple forms', function () {
 it('has layout components', function () {
     livewire(TestComponentWithForm::class)
         ->assertFormComponentExists('section')
-        ->assertFormComponentExists('disabled-section', function (Section $section): bool {
-            return $section->isDisabled();
-        })
-        ->assertFormComponentExists('nested.section')
-        ->assertFormComponentExists('nested.section', function (Section $section): bool {
+        ->assertFormComponentExists('section.nested.section')
+        ->assertFormComponentExists('section.nested.section', function (Section $section): bool {
             return $section->getHeading() === 'I am nested';
         });
 });
@@ -127,7 +122,7 @@ it('can go to next wizard step on multiple forms', function () {
 
 class TestComponentWithForm extends Livewire
 {
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -151,16 +146,7 @@ class TestComponentWithForm extends Livewire
                         Section::make('I am nested')
                             ->key('nested.section'),
                     ]),
-
-                Section::make()
-                    ->key('disabled-section')
-                    ->disabled(),
             ]);
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
     }
 }
 
@@ -180,14 +166,14 @@ class TestComponentWithMultipleForms extends Livewire
         ];
     }
 
-    public function fooForm(Form $form): Form
+    public function fooForm(Schema $form): Schema
     {
         return $form
             ->schema($this->getSchemaForForms())
             ->statePath('data');
     }
 
-    public function barForm(Form $form): Form
+    public function barForm(Schema $form): Schema
     {
         return $form
             ->schema($this->getSchemaForForms())
@@ -209,11 +195,6 @@ class TestComponentWithMultipleForms extends Livewire
 
             TextInput::make('visible'),
         ];
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
     }
 }
 
@@ -237,14 +218,14 @@ class TestComponentWithMultipleWizardForms extends Livewire
         ];
     }
 
-    public function fooForm(Form $form): Form
+    public function fooForm(Schema $form): Schema
     {
         return $form
             ->schema($this->getSchemaForForms())
             ->statePath('fooData');
     }
 
-    public function barForm(Form $form): Form
+    public function barForm(Schema $form): Schema
     {
         return $form
             ->schema($this->getSchemaForForms())
@@ -255,18 +236,13 @@ class TestComponentWithMultipleWizardForms extends Livewire
     {
         return [
             Wizard::make([
-                Step::make('step 1')->schema([
+                Wizard\Step::make('step 1')->schema([
                     TextInput::make('title')->required(),
                 ]),
-                Step::make('step 2')->schema([
+                Wizard\Step::make('step 2')->schema([
                     TextInput::make('content')->required(),
                 ]),
             ]),
         ];
-    }
-
-    public function render(): View
-    {
-        return view('forms.fixtures.form');
     }
 }

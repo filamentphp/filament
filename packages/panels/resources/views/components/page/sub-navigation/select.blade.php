@@ -10,7 +10,6 @@
     "
 >
     <x-filament::input.select
-        x-data="{}"
         x-on:change="window.location.href = $event.target.value"
     >
         @foreach ($navigation as $navigationGroup)

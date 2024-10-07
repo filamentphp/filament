@@ -1,7 +1,7 @@
 <?php
 
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Field;
+use Filament\Schema\Schema;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\Support\Arrayable;
@@ -15,7 +15,7 @@ test('fields can be required', function () {
     $rules = [];
 
     try {
-        ComponentContainer::make(Livewire::make())
+        Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
                 $field = (new Field(Str::random()))
@@ -34,7 +34,7 @@ test('fields use custom validation rules', function () {
     $rules = [];
 
     try {
-        ComponentContainer::make(Livewire::make())
+        Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
                 $field = (new Field(Str::random()))
@@ -55,7 +55,7 @@ test('fields can be conditionally validated', function () {
     $rules = [];
 
     try {
-        ComponentContainer::make(Livewire::make())
+        Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
                 $field = (new Field(Str::random()))
@@ -75,12 +75,54 @@ test('fields can be conditionally validated', function () {
     }
 });
 
+test('fields are validated if they are not dehydrated', function () {
+    $rules = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Field(Str::random()))
+                ->required()
+                ->dehydrated(false),
+        ])
+        ->getValidationRules();
+
+    expect($rules)
+        ->not->toBeEmpty();
+});
+
+test('fields are not validated if they are not dehydrated and configured as such', function () {
+    $rules = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Field(Str::random()))
+                ->required()
+                ->dehydrated(false)
+                ->validatedWhenNotDehydrated(false),
+        ])
+        ->getValidationRules();
+
+    expect($rules)
+        ->toBeEmpty();
+
+    $rules = Schema::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Field(Str::random()))
+                ->required()
+                ->dehydrated()
+                ->validatedWhenNotDehydrated(false),
+        ])
+        ->getValidationRules();
+
+    expect($rules)
+        ->not->toBeEmpty();
+});
+
 test('fields can be required if', function () {
     $rules = [];
     $errors = [];
 
     try {
-        ComponentContainer::make(Livewire::make())
+        Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
                 $field1 = (new Field('one'))
@@ -107,7 +149,7 @@ test('fields can be required unless', function () {
     $errors = [];
 
     try {
-        ComponentContainer::make(Livewire::make())
+        Schema::make(Livewire::make())
             ->statePath('data')
             ->components([
                 $field1 = (new Field('one'))
@@ -139,7 +181,7 @@ test('the `in()` rule behaves the same as Laravel\'s', function (?string $input,
     $component = Livewire::make()->data([$fieldName => $input]);
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -151,7 +193,7 @@ test('the `in()` rule behaves the same as Laravel\'s', function (?string $input,
     }
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -196,10 +238,6 @@ test('the `in()` rule behaves the same as Laravel\'s', function (?string $input,
         'allowed' => '',
     ],
     [
-        'input' => 'foo',
-        'allowed' => fn () => (fn () => null),
-    ],
-    [
         'input' => null,
         'allowed' => [],
     ],
@@ -239,7 +277,7 @@ test('the `in()` rule can be conditionally validated', function () {
     $fieldName = Str::random();
 
     try {
-        ComponentContainer::make(Livewire::make()->data([$fieldName => 'foo']))
+        Schema::make(Livewire::make()->data([$fieldName => 'foo']))
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -264,7 +302,7 @@ test('the `notIn()` rule behaves the same as Laravel\'s', function (?string $inp
     $component = Livewire::make()->data([$fieldName => $input]);
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -276,7 +314,7 @@ test('the `notIn()` rule behaves the same as Laravel\'s', function (?string $inp
     }
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -364,7 +402,7 @@ test('the `notIn()` rule can be conditionally validated', function () {
     $fieldName = Str::random();
 
     try {
-        ComponentContainer::make(Livewire::make()->data([$fieldName => 'foo']))
+        Schema::make(Livewire::make()->data([$fieldName => 'foo']))
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -389,7 +427,7 @@ test('the `startsWith()` rule behaves the same as Laravel\'s', function (?string
     $component = Livewire::make()->data([$fieldName => $input]);
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -413,7 +451,7 @@ test('the `startsWith()` rule behaves the same as Laravel\'s', function (?string
     }
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field->rule('starts_with:' . $allowed),
@@ -498,7 +536,7 @@ test('the `startsWith()` rule can be conditionally validated', function () {
     $fieldName = Str::random();
 
     try {
-        ComponentContainer::make(Livewire::make()->data([$fieldName => 'foo']))
+        Schema::make(Livewire::make()->data([$fieldName => 'foo']))
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -523,7 +561,7 @@ test('the `doesntStartWith()` rule behaves the same as Laravel\'s', function (?s
     $component = Livewire::make()->data([$fieldName => $input]);
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -547,7 +585,7 @@ test('the `doesntStartWith()` rule behaves the same as Laravel\'s', function (?s
     }
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field->rule('doesnt_start_with:' . $allowed),
@@ -632,7 +670,7 @@ test('the `doesntStartWith()` rule can be conditionally validated', function () 
     $fieldName = Str::random();
 
     try {
-        ComponentContainer::make(Livewire::make()->data([$fieldName => 'foo']))
+        Schema::make(Livewire::make()->data([$fieldName => 'foo']))
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -657,7 +695,7 @@ test('the `endsWith()` rule behaves the same as Laravel\'s', function (?string $
     $component = Livewire::make()->data([$fieldName => $input]);
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -681,7 +719,7 @@ test('the `endsWith()` rule behaves the same as Laravel\'s', function (?string $
     }
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field->rule('ends_with:' . $allowed),
@@ -766,7 +804,7 @@ test('the `endsWith()` rule can be conditionally validated', function () {
     $fieldName = Str::random();
 
     try {
-        ComponentContainer::make(Livewire::make()->data([$fieldName => 'foo']))
+        Schema::make(Livewire::make()->data([$fieldName => 'foo']))
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -791,7 +829,7 @@ test('the `doesntEndWith()` rule behaves the same as Laravel\'s', function (?str
     $component = Livewire::make()->data([$fieldName => $input]);
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))
@@ -815,7 +853,7 @@ test('the `doesntEndWith()` rule behaves the same as Laravel\'s', function (?str
     }
 
     try {
-        ComponentContainer::make($component)
+        Schema::make($component)
             ->statePath('data')
             ->components([
                 $field->rule('doesnt_end_with:' . $allowed),
@@ -900,7 +938,7 @@ test('the `doesntEndWith()` rule can be conditionally validated', function () {
     $fieldName = Str::random();
 
     try {
-        ComponentContainer::make(Livewire::make()->data([$fieldName => 'foo']))
+        Schema::make(Livewire::make()->data([$fieldName => 'foo']))
             ->statePath('data')
             ->components([
                 $field = (new Field($fieldName))

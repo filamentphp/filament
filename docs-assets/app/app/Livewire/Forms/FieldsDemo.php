@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Forms;
 
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
@@ -10,7 +10,6 @@ use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Group;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Radio;
@@ -25,7 +24,8 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
+use Filament\Schema\Components\Group;
+use Filament\Schema\Schema;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
@@ -40,7 +40,7 @@ class FieldsDemo extends Component implements HasForms
         $this->form->fill();
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->statePath('data')
@@ -54,53 +54,6 @@ class FieldsDemo extends Component implements HasForms
                         TextInput::make('simple')
                             ->label('Name')
                             ->default('Dan Harrin'),
-                    ]),
-                Group::make()
-                    ->id('helperText')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
-                    ->schema([
-                        TextInput::make('helperText')
-                            ->label('Name')
-                            ->default('Dan Harrin')
-                            ->helperText(str('Your **full name** here, including any middle names.')->inlineMarkdown()->toHtmlString()),
-                    ]),
-                Group::make()
-                    ->id('hint')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
-                    ->schema([
-                        TextInput::make('hint')
-                            ->label('Password')
-                            ->password()
-                            ->default('password')
-                            ->hint(str('[Forgotten your password?](forgotten-password)')->inlineMarkdown()->toHtmlString()),
-                    ]),
-                Group::make()
-                    ->id('hintColor')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-5xl',
-                    ])
-                    ->schema([
-                        RichEditor::make('hintColor')
-                            ->label('Content')
-                            ->default('Filament es el mejor.')
-                            ->hint('Translatable')
-                            ->hintColor('primary'),
-                    ]),
-                Group::make()
-                    ->id('hintIcon')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-5xl',
-                    ])
-                    ->schema([
-                        RichEditor::make('hintIcon')
-                            ->label('Content')
-                            ->default('Filament es el mejor.')
-                            ->hint('Translatable')
-                            ->hintIcon('heroicon-m-language'),
                     ]),
                 Group::make()
                     ->id('disabled')
@@ -564,19 +517,6 @@ class FieldsDemo extends Component implements HasForms
                             ->label('Like this post?')
                             ->boolean()
                             ->inline()
-                            ->default(true),
-                    ]),
-                Group::make()
-                    ->id('inlineRadioUnderLabel')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
-                    ->schema([
-                        Radio::make('inlineRadioUnderLabel')
-                            ->label('Like this post?')
-                            ->boolean()
-                            ->inline()
-                            ->inlineLabel(false)
                             ->default(true),
                     ]),
                 Group::make()
@@ -1393,21 +1333,6 @@ class FieldsDemo extends Component implements HasForms
                             ->prefix('€')
                             ->default('22.66')
                             ->suffixAction(
-                                Action::make('copyCostToPrice')
-                                    ->icon('heroicon-m-clipboard'),
-                            ),
-                    ]),
-                Group::make()
-                    ->id('hintAction')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                    ])
-                    ->schema([
-                        TextInput::make('hintAction')
-                            ->label('Cost')
-                            ->prefix('€')
-                            ->default('22.66')
-                            ->hintAction(
                                 Action::make('copyCostToPrice')
                                     ->icon('heroicon-m-clipboard'),
                             ),

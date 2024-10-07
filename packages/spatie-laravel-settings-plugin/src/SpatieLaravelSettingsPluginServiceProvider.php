@@ -10,7 +10,9 @@ class SpatieLaravelSettingsPluginServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->commands($this->getCommands());
+            $this->commands([
+                Commands\MakeSettingsPageCommand::class,
+            ]);
 
             $this->publishes([
                 __DIR__ . '/../resources/views' => resource_path('views/vendor/filament-spatie-laravel-settings-plugin'),
@@ -25,32 +27,5 @@ class SpatieLaravelSettingsPluginServiceProvider extends ServiceProvider
 
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'filament-spatie-laravel-settings-plugin');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament-spatie-laravel-settings-plugin');
-    }
-
-    /**
-     * @return array<class-string>
-     */
-    protected function getCommands(): array
-    {
-        $commands = [
-            Commands\MakeSettingsPageCommand::class,
-        ];
-
-        $aliases = [];
-
-        foreach ($commands as $command) {
-            $class = 'Filament\\Commands\\Aliases\\' . class_basename($command);
-
-            if (! class_exists($class)) {
-                continue;
-            }
-
-            $aliases[] = $class;
-        }
-
-        return [
-            ...$commands,
-            ...$aliases,
-        ];
     }
 }

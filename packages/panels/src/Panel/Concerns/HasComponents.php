@@ -7,6 +7,9 @@ use Filament\Clusters\Cluster;
 use Filament\Livewire\DatabaseNotifications;
 use Filament\Livewire\GlobalSearch;
 use Filament\Livewire\Notifications;
+use Filament\Livewire\Sidebar;
+use Filament\Livewire\SimpleUserMenu;
+use Filament\Livewire\Topbar;
 use Filament\Pages\Auth\EditProfile;
 use Filament\Pages\Page;
 use Filament\Resources\Pages\Page as ResourcePage;
@@ -142,6 +145,9 @@ trait HasComponents
         return $this;
     }
 
+    /**
+     * @param  class-string<Model>|Model  $model
+     */
     public function getModelResource(string | Model $model): ?string
     {
         if ($model instanceof Model) {
@@ -486,6 +492,9 @@ trait HasComponents
             $this->queueLivewireComponentForRegistration(EditProfile::class);
             $this->queueLivewireComponentForRegistration(GlobalSearch::class);
             $this->queueLivewireComponentForRegistration(Notifications::class);
+            $this->queueLivewireComponentForRegistration(Sidebar::class);
+            $this->queueLivewireComponentForRegistration(SimpleUserMenu::class);
+            $this->queueLivewireComponentForRegistration(Topbar::class);
 
             if ($this->hasEmailVerification() && is_subclass_of($emailVerificationRouteAction = $this->getEmailVerificationPromptRouteAction(), Component::class)) {
                 $this->queueLivewireComponentForRegistration($emailVerificationRouteAction);

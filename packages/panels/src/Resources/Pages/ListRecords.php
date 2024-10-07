@@ -3,16 +3,24 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
-use Filament\Actions\Contracts\HasRecord;
+use Filament\Actions\BulkAction;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
-use Filament\Infolists\Infolist;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Concerns\HasTabs;
+use Filament\Schema\Schema;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
-use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
@@ -78,7 +86,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     public function table(Table $table): Table
     {
-        return static::getResource()::table($table);
+        return $table;
     }
 
     public function getTitle(): string | Htmlable
@@ -94,17 +102,17 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         };
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return static::getResource()::form($form);
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $infolist): Schema
     {
         return static::getResource()::infolist($infolist);
     }
 
-    protected function configureCreateAction(CreateAction | Tables\Actions\CreateAction $action): void
+    protected function configureCreateAction(CreateAction $action): void
     {
         $resource = static::getResource();
 
@@ -112,111 +120,121 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->authorize($resource::canCreate())
             ->model($this->getModel())
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->schema(fn (Schema $schema): Schema => $this->form($schema->columns(2)));
 
-        if (($action instanceof CreateAction) && static::getResource()::isScopedToTenant()) {
+        if ($parentRecord = $this->getParentRecord()) {
+            $action->relationship(fn (): Relation => $resource::getParentResourceRegistration()->getRelationship($parentRecord));
+        } elseif (static::getResource()::isScopedToTenant()) {
             $action->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null);
         }
 
         if ($resource::hasPage('create')) {
-            $action->url(fn (): string => $resource::getUrl('create'));
+            $action->url(fn (): string => $this->getResourceUrl('create'));
         }
     }
 
-    protected function configureTableAction(Tables\Actions\Action $action): void
+    protected function configureTableAction(Action $action): void
     {
         match (true) {
-            $action instanceof Tables\Actions\CreateAction => $this->configureCreateAction($action),
-            $action instanceof Tables\Actions\DeleteAction => $this->configureDeleteAction($action),
-            $action instanceof Tables\Actions\EditAction => $this->configureEditAction($action),
-            $action instanceof Tables\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
-            $action instanceof Tables\Actions\ReplicateAction => $this->configureReplicateAction($action),
-            $action instanceof Tables\Actions\RestoreAction => $this->configureRestoreAction($action),
-            $action instanceof Tables\Actions\ViewAction => $this->configureViewAction($action),
+            $action instanceof CreateAction => $this->configureCreateAction($action),
+            $action instanceof DeleteAction => $this->configureDeleteAction($action),
+            $action instanceof EditAction => $this->configureEditAction($action),
+            $action instanceof ForceDeleteAction => $this->configureForceDeleteAction($action),
+            $action instanceof ReplicateAction => $this->configureReplicateAction($action),
+            $action instanceof RestoreAction => $this->configureRestoreAction($action),
+            $action instanceof ViewAction => $this->configureViewAction($action),
             default => null,
         };
     }
 
-    protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
+    protected function configureDeleteAction(DeleteAction $action): void
     {
         $action
-            ->authorize(fn (Model $record): bool => static::getResource()::canDelete($record));
+            ->authorize(fn (Model $record): bool => static::getResource()::canDelete($record))
+            ->icon(FilamentIcon::resolve('actions::delete-action') ?? 'heroicon-m-trash');
     }
 
-    protected function configureEditAction(Tables\Actions\EditAction $action): void
+    protected function configureEditAction(EditAction $action): void
     {
         $resource = static::getResource();
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canEdit($record))
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->schema(fn (Schema $schema): Schema => $this->form($schema->columns(2)))
+            ->icon(FilamentIcon::resolve('actions::edit-action') ?? 'heroicon-m-pencil-square');
 
         if ($resource::hasPage('edit')) {
-            $action->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]));
+            $action->url(fn (Model $record): string => $this->getResourceUrl('edit', ['record' => $record]));
         }
     }
 
-    protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
+    protected function configureForceDeleteAction(ForceDeleteAction $action): void
     {
         $action
-            ->authorize(fn (Model $record): bool => static::getResource()::canForceDelete($record));
+            ->authorize(fn (Model $record): bool => static::getResource()::canForceDelete($record))
+            ->icon(FilamentIcon::resolve('actions::force-delete-action') ?? 'heroicon-m-trash');
     }
 
-    protected function configureReplicateAction(Tables\Actions\ReplicateAction $action): void
+    protected function configureReplicateAction(ReplicateAction $action): void
     {
         $action
-            ->authorize(fn (Model $record): bool => static::getResource()::canReplicate($record));
+            ->authorize(fn (Model $record): bool => static::getResource()::canReplicate($record))
+            ->icon(FilamentIcon::resolve('actions::replicate-action') ?? 'heroicon-m-square-2-stack');
     }
 
-    protected function configureRestoreAction(Tables\Actions\RestoreAction $action): void
+    protected function configureRestoreAction(RestoreAction $action): void
     {
         $action
-            ->authorize(fn (Model $record): bool => static::getResource()::canRestore($record));
+            ->authorize(fn (Model $record): bool => static::getResource()::canRestore($record))
+            ->icon(FilamentIcon::resolve('actions::restore-action') ?? 'heroicon-m-arrow-uturn-left');
     }
 
-    protected function configureViewAction(Tables\Actions\ViewAction $action): void
+    protected function configureViewAction(ViewAction $action): void
     {
         $resource = static::getResource();
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canView($record))
-            ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->icon(FilamentIcon::resolve('actions::view-action') ?? 'heroicon-m-eye')
+            ->schema(fn (Schema $schema): Schema => $this->infolist($this->form($schema->columns(2))));
 
         if ($resource::hasPage('view')) {
-            $action->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]));
+            $action->url(fn (Model $record): string => $this->getResourceUrl('view', ['record' => $record]));
         }
     }
 
     protected function configureTableBulkAction(BulkAction $action): void
     {
         match (true) {
-            $action instanceof Tables\Actions\DeleteBulkAction => $this->configureDeleteBulkAction($action),
-            $action instanceof Tables\Actions\ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
-            $action instanceof Tables\Actions\RestoreBulkAction => $this->configureRestoreBulkAction($action),
+            $action instanceof DeleteBulkAction => $this->configureDeleteBulkAction($action),
+            $action instanceof ForceDeleteBulkAction => $this->configureForceDeleteBulkAction($action),
+            $action instanceof RestoreBulkAction => $this->configureRestoreBulkAction($action),
             default => null,
         };
     }
 
-    protected function configureDeleteBulkAction(Tables\Actions\DeleteBulkAction $action): void
+    protected function configureDeleteBulkAction(DeleteBulkAction $action): void
     {
         $action
             ->authorize(static::getResource()::canDeleteAny());
     }
 
-    protected function configureForceDeleteBulkAction(Tables\Actions\ForceDeleteBulkAction $action): void
+    protected function configureForceDeleteBulkAction(ForceDeleteBulkAction $action): void
     {
         $action
             ->authorize(static::getResource()::canForceDeleteAny());
     }
 
-    protected function configureRestoreBulkAction(Tables\Actions\RestoreBulkAction $action): void
+    protected function configureRestoreBulkAction(RestoreBulkAction $action): void
     {
         $action
             ->authorize(static::getResource()::canRestoreAny());
     }
 
-    protected function getMountedActionFormModel(): Model | string | null
+    /**
+     * @return Model|class-string<Model>|null
+     */
+    protected function getMountedActionSchemaModel(): Model | string | null
     {
         return $this->getModel();
     }
@@ -239,11 +257,17 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function makeTable(): Table
     {
-        return $this->makeBaseTable()
+        $table = $this->makeBaseTable()
             ->query(fn (): Builder => $this->getTableQuery())
+            ->when(
+                $this->getParentRecord(),
+                fn (Table $table, Model $parentRecord): Table => $table->modifyQueryUsing(
+                    fn (Builder $query) => static::getResource()::scopeEloquentQueryToParent($query, $parentRecord),
+                ),
+            )
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
-            ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
-            ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
+            ->when($this->getModelLabel(), fn (Table $table, string $modelLabel): Table => $table->modelLabel($modelLabel))
+            ->when($this->getPluralModelLabel(), fn (Table $table, string $pluralModelLabel): Table => $table->pluralModelLabel($pluralModelLabel))
             ->recordAction(function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
@@ -253,10 +277,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                     }
 
                     $action->record($record);
-
-                    if (($actionGroup = $action->getGroup()) instanceof HasRecord) {
-                        $actionGroup->record($record);
-                    }
+                    $action->getGroup()?->record($record);
 
                     if ($action->isHidden()) {
                         continue;
@@ -271,7 +292,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
                 return null;
             })
-            ->recordTitle(fn (Model $record): string => static::getResource()::getRecordTitle($record))
             ->recordUrl($this->getTableRecordUrlUsing() ?? function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
@@ -280,11 +300,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                         continue;
                     }
 
-                    $action->record($record);
+                    $action = clone $action;
 
-                    if (($actionGroup = $action->getGroup()) instanceof HasRecord) {
-                        $actionGroup->record($record);
-                    }
+                    $action->record($record);
+                    $action->getGroup()?->record($record);
 
                     if ($action->isHidden()) {
                         continue;
@@ -310,12 +329,15 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                         continue;
                     }
 
-                    return $resource::getUrl($action, ['record' => $record]);
+                    return $this->getResourceUrl($action, ['record' => $record]);
                 }
 
                 return null;
-            })
-            ->authorizeReorder(static::getResource()::canReorder());
+            });
+
+        static::getResource()::configureTable($table);
+
+        return $table;
     }
 
     /**
@@ -327,7 +349,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     }
 
     /**
-     * @return array<int | string, string | Form>
+     * @return array<int | string, string | Schema>
      */
     protected function getForms(): array
     {

@@ -42,8 +42,8 @@ trait HasIcons
         }
 
         if (
-            is_string($this->options) &&
-            enum_exists($enum = $this->options) &&
+            blank($icons) &&
+            filled($enum = $this->getEnum()) &&
             is_a($enum, IconInterface::class, allow_string: true)
         ) {
             return array_reduce($enum::cases(), function (array $carry, IconInterface & UnitEnum $case): array {

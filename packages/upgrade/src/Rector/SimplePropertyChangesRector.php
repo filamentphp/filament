@@ -7,7 +7,6 @@ use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
-use PhpParser\Node\VarLikeIdentifier;
 use Rector\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -25,34 +24,9 @@ class SimplePropertyChangesRector extends AbstractRector
     {
         return [
             [
-                'class' => [
-                    'Filament\\Pages\\Dashboard',
-                    'Filament\\Pages\\Page',
-                    'Filament\\Pages\\SettingsPage',
-                    'Filament\\Resources\\Pages\\CreateRecord',
-                    'Filament\\Resources\\Pages\\EditRecord',
-                    'Filament\\Resources\\Pages\\ListRecords',
-                    'Filament\\Resources\\Pages\\ManageRecords',
-                    'Filament\\Resources\\Pages\\Page',
-                    'Filament\\Resources\\Pages\\ViewRecord',
-                    'Filament\\Resources\\Resource',
-                ],
-                'classIdentifier' => 'extends',
                 'changes' => [
-                    'middlewares' => function (Property $node) {
-                        $node->props[0]->name = new VarLikeIdentifier('routeMiddleware');
-                    },
-                ],
-            ],
-            [
-                'class' => [
-                    'Filament\\Resources\\Resource',
-                    'Filament\\Resources\\RelationManagers\\RelationManager',
-                ],
-                'classIdentifier' => 'extends',
-                'changes' => [
-                    'shouldIgnorePolicies' => function (Property $node) {
-                        $node->props[0]->name = new VarLikeIdentifier('shouldSkipAuthorization');
+                    'subNavigationPosition' => function (Property $node) {
+                        $node->type = new Name('?\Filament\Pages\Enums\SubNavigationPosition');
                     },
                 ],
             ],
@@ -113,6 +87,10 @@ class SimplePropertyChangesRector extends AbstractRector
      */
     public function isClassMatchingChange(Class_ $class, array $change): bool
     {
+        if (! array_key_exists('class', $change)) {
+            return true;
+        }
+
         $classes = is_array($change['class']) ?
             $change['class'] :
             [$change['class']];

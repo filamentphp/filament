@@ -13,7 +13,10 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-relation-manager')]
+#[AsCommand(name: 'make:filament-relation-manager', aliases: [
+    'filament:make-relation-manager',
+    'filament:relation-manager',
+])]
 class MakeRelationManagerCommand extends Command
 {
     use CanIndentStrings;
@@ -22,6 +25,14 @@ class MakeRelationManagerCommand extends Command
     protected $description = 'Create a new Filament relation manager class for a resource';
 
     protected $signature = 'make:filament-relation-manager {resource?} {relationship?} {recordTitleAttribute?} {--attach} {--associate} {--soft-deletes} {--view} {--panel=} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:make-relation-manager',
+        'filament:relation-manager',
+    ];
 
     public function handle(): int
     {
@@ -112,14 +123,14 @@ class MakeRelationManagerCommand extends Command
 
         $tableHeaderActions = [];
 
-        $tableHeaderActions[] = 'Tables\Actions\CreateAction::make(),';
+        $tableHeaderActions[] = 'Actions\CreateAction::make(),';
 
         if ($this->option('associate')) {
-            $tableHeaderActions[] = 'Tables\Actions\AssociateAction::make(),';
+            $tableHeaderActions[] = 'Actions\AssociateAction::make(),';
         }
 
         if ($this->option('attach')) {
-            $tableHeaderActions[] = 'Tables\Actions\AttachAction::make(),';
+            $tableHeaderActions[] = 'Actions\AttachAction::make(),';
         }
 
         $tableHeaderActions = implode(PHP_EOL, $tableHeaderActions);
@@ -127,24 +138,24 @@ class MakeRelationManagerCommand extends Command
         $tableActions = [];
 
         if ($this->option('view')) {
-            $tableActions[] = 'Tables\Actions\ViewAction::make(),';
+            $tableActions[] = 'Actions\ViewAction::make(),';
         }
 
-        $tableActions[] = 'Tables\Actions\EditAction::make(),';
+        $tableActions[] = 'Actions\EditAction::make(),';
 
         if ($this->option('associate')) {
-            $tableActions[] = 'Tables\Actions\DissociateAction::make(),';
+            $tableActions[] = 'Actions\DissociateAction::make(),';
         }
 
         if ($this->option('attach')) {
-            $tableActions[] = 'Tables\Actions\DetachAction::make(),';
+            $tableActions[] = 'Actions\DetachAction::make(),';
         }
 
-        $tableActions[] = 'Tables\Actions\DeleteAction::make(),';
+        $tableActions[] = 'Actions\DeleteAction::make(),';
 
         if ($this->option('soft-deletes')) {
-            $tableActions[] = 'Tables\Actions\ForceDeleteAction::make(),';
-            $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
+            $tableActions[] = 'Actions\ForceDeleteAction::make(),';
+            $tableActions[] = 'Actions\RestoreAction::make(),';
         }
 
         $tableActions = implode(PHP_EOL, $tableActions);
@@ -152,14 +163,14 @@ class MakeRelationManagerCommand extends Command
         $tableBulkActions = [];
 
         if ($this->option('associate')) {
-            $tableBulkActions[] = 'Tables\Actions\DissociateBulkAction::make(),';
+            $tableBulkActions[] = 'Actions\DissociateBulkAction::make(),';
         }
 
         if ($this->option('attach')) {
-            $tableBulkActions[] = 'Tables\Actions\DetachBulkAction::make(),';
+            $tableBulkActions[] = 'Actions\DetachBulkAction::make(),';
         }
 
-        $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
+        $tableBulkActions[] = 'Actions\DeleteBulkAction::make(),';
 
         $modifyQueryUsing = '';
 
@@ -168,8 +179,8 @@ class MakeRelationManagerCommand extends Command
             $modifyQueryUsing .= PHP_EOL . '    SoftDeletingScope::class,';
             $modifyQueryUsing .= PHP_EOL . ']))';
 
-            $tableBulkActions[] = 'Tables\Actions\ForceDeleteBulkAction::make(),';
-            $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
+            $tableBulkActions[] = 'Actions\ForceDeleteBulkAction::make(),';
+            $tableBulkActions[] = 'Actions\RestoreBulkAction::make(),';
         }
 
         $tableBulkActions = implode(PHP_EOL, $tableBulkActions);

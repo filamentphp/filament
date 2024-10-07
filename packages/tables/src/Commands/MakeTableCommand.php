@@ -12,7 +12,9 @@ use Symfony\Component\Console\Attribute\AsCommand;
 
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:livewire-table')]
+#[AsCommand(name: 'make:filament-livewire-table', aliases: [
+    'make:livewire-table',
+])]
 class MakeTableCommand extends Command
 {
     use CanGenerateTables;
@@ -22,7 +24,14 @@ class MakeTableCommand extends Command
 
     protected $description = 'Create a new Livewire component containing a Filament table';
 
-    protected $signature = 'make:livewire-table {name?} {model?} {--G|generate} {--F|force}';
+    protected $signature = 'make:filament-livewire-table {name?} {model?} {--G|generate} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'make:livewire-table',
+    ];
 
     public function handle(): int
     {

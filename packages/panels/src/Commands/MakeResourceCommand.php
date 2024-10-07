@@ -17,7 +17,10 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-resource')]
+#[AsCommand(name: 'make:filament-resource', aliases: [
+    'filament:make-resource',
+    'filament:resource',
+])]
 class MakeResourceCommand extends Command
 {
     use CanGenerateForms;
@@ -29,6 +32,14 @@ class MakeResourceCommand extends Command
     protected $description = 'Create a new Filament resource class and default page classes';
 
     protected $signature = 'make:filament-resource {name?} {--model-namespace=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--model} {--migration} {--factory} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:make-resource',
+        'filament:resource',
+    ];
 
     public function handle(): int
     {
@@ -174,19 +185,19 @@ class MakeResourceCommand extends Command
         $tableActions = [];
 
         if ($this->option('view')) {
-            $tableActions[] = 'Tables\Actions\ViewAction::make(),';
+            $tableActions[] = 'Actions\ViewAction::make(),';
         }
 
-        $tableActions[] = 'Tables\Actions\EditAction::make(),';
+        $tableActions[] = 'Actions\EditAction::make(),';
 
         $relations = '';
 
         if ($this->option('simple')) {
-            $tableActions[] = 'Tables\Actions\DeleteAction::make(),';
+            $tableActions[] = 'Actions\DeleteAction::make(),';
 
             if ($this->option('soft-deletes')) {
-                $tableActions[] = 'Tables\Actions\ForceDeleteAction::make(),';
-                $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
+                $tableActions[] = 'Actions\ForceDeleteAction::make(),';
+                $tableActions[] = 'Actions\RestoreAction::make(),';
             }
         } else {
             $relations .= PHP_EOL . 'public static function getRelations(): array';
@@ -201,13 +212,13 @@ class MakeResourceCommand extends Command
 
         $tableBulkActions = [];
 
-        $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
+        $tableBulkActions[] = 'Actions\DeleteBulkAction::make(),';
 
         $eloquentQuery = '';
 
         if ($this->option('soft-deletes')) {
-            $tableBulkActions[] = 'Tables\Actions\ForceDeleteBulkAction::make(),';
-            $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
+            $tableBulkActions[] = 'Actions\ForceDeleteBulkAction::make(),';
+            $tableBulkActions[] = 'Actions\RestoreBulkAction::make(),';
 
             $eloquentQuery .= PHP_EOL . PHP_EOL . 'public static function getEloquentQuery(): Builder';
             $eloquentQuery .= PHP_EOL . '{';

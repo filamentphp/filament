@@ -13,7 +13,7 @@ trait HasDescription
 
     public function description(string | Htmlable | Closure | null $description, string | Closure | null $position = 'below'): static
     {
-        if ($position == 'above') {
+        if ($position === 'above') {
             $this->descriptionAbove = $description;
         } else {
             $this->descriptionBelow = $description;

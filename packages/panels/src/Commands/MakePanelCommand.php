@@ -8,7 +8,10 @@ use Illuminate\Console\Command;
 use ReflectionClass;
 use Symfony\Component\Console\Attribute\AsCommand;
 
-#[AsCommand(name: 'make:filament-panel')]
+#[AsCommand(name: 'make:filament-panel', aliases: [
+    'filament:make-panel',
+    'filament:panel',
+])]
 class MakePanelCommand extends Command
 {
     use CanGeneratePanels;
@@ -17,6 +20,14 @@ class MakePanelCommand extends Command
     protected $description = 'Create a new Filament panel';
 
     protected $signature = 'make:filament-panel {id?} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:make-panel',
+        'filament:panel',
+    ];
 
     public function handle(): int
     {

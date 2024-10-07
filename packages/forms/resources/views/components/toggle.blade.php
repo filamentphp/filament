@@ -72,7 +72,7 @@
             }}
         >
             <span
-                class="pointer-events-none relative inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
+                class="pointer-events-none relative inline-block size-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"
                 x-bind:class="{
                     'translate-x-5 rtl:-translate-x-5': state,
                     'translate-x-0': ! state,
@@ -90,7 +90,7 @@
                         <x-filament::icon
                             :icon="$getOffIcon()"
                             @class([
-                                'fi-fo-toggle-off-icon h-3 w-3',
+                                'fi-fo-toggle-off-icon size-3',
                                 match ($offColor) {
                                     'gray' => 'text-gray-400 dark:text-gray-700',
                                     default => 'text-custom-600',
@@ -113,7 +113,7 @@
                             :icon="$getOnIcon()"
                             x-cloak="x-cloak"
                             @class([
-                                'fi-fo-toggle-on-icon h-3 w-3',
+                                'fi-fo-toggle-on-icon size-3',
                                 match ($onColor) {
                                     'gray' => 'text-gray-400 dark:text-gray-700',
                                     default => 'text-custom-600',

@@ -3,10 +3,14 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
+use Filament\Actions\Action;
 use Filament\Billing\Providers\Contracts\Provider as BillingProvider;
+use Filament\Facades\Filament;
 use Filament\Navigation\MenuItem;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 trait HasTenancy
@@ -21,6 +25,9 @@ trait HasTenancy
 
     protected ?string $tenantDomain = null;
 
+    /**
+     * @var class-string<Model>|null
+     */
     protected ?string $tenantModel = null;
 
     protected ?string $tenantProfilePage = null;
@@ -32,7 +39,7 @@ trait HasTenancy
     protected ?string $tenantOwnershipRelationshipName = null;
 
     /**
-     * @var array<MenuItem>
+     * @var array<Action | Closure | MenuItem>
      */
     protected array $tenantMenuItems = [];
 
@@ -46,7 +53,7 @@ trait HasTenancy
     }
 
     /**
-     * @param  array<MenuItem>  $items
+     * @param  array<Action | Closure | MenuItem>  $items
      */
     public function tenantMenuItems(array $items): static
     {
@@ -65,6 +72,9 @@ trait HasTenancy
         return $this;
     }
 
+    /**
+     * @param  class-string<Model>|null  $model
+     */
     public function tenant(?string $model, ?string $slugAttribute = null, ?string $ownershipRelationship = null): static
     {
         $this->tenantModel = $model;
@@ -195,6 +205,9 @@ trait HasTenancy
         return $record;
     }
 
+    /**
+     * @return class-string<Model>|null
+     */
     public function getTenantModel(): ?string
     {
         return $this->tenantModel;
@@ -249,20 +262,108 @@ trait HasTenancy
         return (bool) $this->evaluate($this->hasTenantMenu);
     }
 
+    protected function getTenantProfileMenuItem(Action | Closure | MenuItem | null $item = null): Action
+    {
+        $currentTenant = Filament::getTenant();
+
+        $page = Filament::getTenantProfilePage();
+
+        $action = Action::make('profile')
+            ->label($page ? $page::getLabel() : Filament::getTenantName($currentTenant))
+            ->icon(FilamentIcon::resolve('panels::tenant-menu.profile-button') ?? 'heroicon-m-cog-6-tooth')
+            ->url($url = Filament::getTenantProfileUrl())
+            ->visible(filament()->hasTenantProfile() && filled($url) && (blank($page) || $page::canView($currentTenant)))
+            ->sort(-2);
+
+        if ($item instanceof MenuItem) {
+            return $item->toAction($action);
+        }
+
+        return $this->evaluate($item, [
+            'action' => $action,
+        ]) ?? $action;
+    }
+
+    protected function getTenantBillingMenuItem(Action | Closure | MenuItem | null $item = null): Action
+    {
+        $action = Action::make('billing')
+            ->label(__('filament-panels::layout.actions.billing.label'))
+            ->color('gray')
+            ->icon(FilamentIcon::resolve('panels::tenant-menu.billing-button') ?? 'heroicon-m-credit-card')
+            ->url($url = Filament::getTenantBillingUrl())
+            ->visible(filament()->hasTenantBilling() && filled($url))
+            ->sort(-1);
+
+        if ($item instanceof MenuItem) {
+            return $item->toAction($action);
+        }
+
+        return $this->evaluate($item, [
+            'action' => $action,
+        ]) ?? $action;
+    }
+
+    protected function getTenantRegistrationMenuItem(Action | Closure | MenuItem | null $item = null): Action
+    {
+        $page = Filament::getTenantRegistrationPage();
+
+        $action = Action::make('register')
+            ->label($page ? $page::getLabel() : null)
+            ->icon(FilamentIcon::resolve('panels::tenant-menu.registration-button') ?? 'heroicon-m-plus')
+            ->url($url = Filament::getTenantRegistrationUrl())
+            ->visible(filament()->hasTenantRegistration() && filled($url) && (blank($page) || $page::canView(Filament::getTenant())))
+            ->sort(PHP_INT_MAX);
+
+        if ($item instanceof MenuItem) {
+            return $item->toAction($action);
+        }
+
+        return $this->evaluate($item, [
+            'action' => $action,
+        ]) ?? $action;
+    }
+
     /**
-     * @return array<MenuItem>
+     * @return array<Action>
      */
     public function getTenantMenuItems(): array
     {
         return collect($this->tenantMenuItems)
-            ->filter(function (MenuItem $item, string | int $key): bool {
-                if (in_array($key, ['billing', 'profile', 'register'])) {
-                    return true;
+            ->mapWithKeys(function (Action | Closure | MenuItem $item, int | string $key): array {
+                if ($item instanceof Action) {
+                    return [$item->getName() => $item];
                 }
 
-                return $item->isVisible();
+                if ($key === 'profile') {
+                    return ['profile' => $this->getTenantProfileMenuItem($item)];
+                }
+
+                if ($key === 'billing') {
+                    return ['billing' => $this->getTenantBillingMenuItem($item)];
+                }
+
+                if ($key === 'register') {
+                    return ['register' => $this->getTenantRegistrationMenuItem($item)];
+                }
+
+                $action = $this->evaluate($item);
+
+                return [$action->getName() => $action];
             })
-            ->sort(fn (MenuItem $item): int => $item->getSort())
+            ->when(
+                fn (Collection $items): bool => ! $items->has('profile'),
+                fn (Collection $items): Collection => $items->put('profile', $this->getTenantProfileMenuItem()),
+            )
+            ->when(
+                fn (Collection $items): bool => ! $items->has('billing'),
+                fn (Collection $items): Collection => $items->put('billing', $this->getTenantBillingMenuItem()),
+            )
+            ->when(
+                fn (Collection $items): bool => ! $items->has('register'),
+                fn (Collection $items): Collection => $items->put('register', $this->getTenantRegistrationMenuItem()),
+            )
+            ->filter(fn (Action $item): bool => $item->isVisible())
+            ->sort(fn (Action $item): int => $item->getSort())
             ->all();
     }
 

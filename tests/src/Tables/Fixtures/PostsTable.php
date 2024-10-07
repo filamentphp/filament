@@ -2,10 +2,22 @@
 
 namespace Filament\Tests\Tables\Fixtures;
 
-use Filament\Forms\ComponentContainer;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\AttachAction;
+use Filament\Actions\BulkAction;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\RestoreAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schema\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
@@ -15,8 +27,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder;
 use Livewire\Component;
 
-class PostsTable extends Component implements HasForms, Tables\Contracts\HasTable
+class PostsTable extends Component implements HasActions, HasForms, Tables\Contracts\HasTable
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use Tables\Concerns\InteractsWithTable;
 
@@ -36,7 +49,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->sortable()
                     ->searchable()
                     ->action(
-                        Tables\Actions\Action::make('column-action-object')
+                        Action::make('column-action-object')
                             ->action(fn () => $this->dispatch('column-action-object-called')),
                     )
                     ->summarize([
@@ -106,62 +119,62 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
             ])
             ->persistFiltersInSession()
             ->headerActions([
-                Tables\Actions\Action::make('data')
-                    ->mountUsing(fn (ComponentContainer $form) => $form->fill(['foo' => 'bar']))
+                Action::make('data')
+                    ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
                     ->form([
                         TextInput::make('payload')->required(),
                     ])
                     ->action(function (array $data) {
                         $this->dispatch('data-called', data: $data);
                     }),
-                Tables\Actions\Action::make('arguments')
+                Action::make('arguments')
                     ->requiresConfirmation()
                     ->action(function (array $arguments) {
                         $this->dispatch('arguments-called', arguments: $arguments);
                     }),
-                Tables\Actions\Action::make('halt')
+                Action::make('halt')
                     ->requiresConfirmation()
-                    ->action(function (Tables\Actions\Action $action) {
+                    ->action(function (Action $action) {
                         $this->dispatch('halt-called');
 
                         $action->halt();
                     }),
-                Tables\Actions\Action::make('visible'),
-                Tables\Actions\Action::make('hidden')
+                Action::make('visible'),
+                Action::make('hidden')
                     ->hidden(),
-                Tables\Actions\Action::make('enabled'),
-                Tables\Actions\Action::make('disabled')
+                Action::make('enabled'),
+                Action::make('disabled')
                     ->disabled(),
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\Action::make('groupedWithVisibleGroupCondition'),
+                ActionGroup::make([
+                    Action::make('groupedWithVisibleGroupCondition'),
                 ])->visible(fn (?Model $record): bool => $record !== null),
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\Action::make('groupedWithHiddenGroupCondition'),
+                ActionGroup::make([
+                    Action::make('groupedWithHiddenGroupCondition'),
                 ])->hidden(fn (?Model $record): bool => $record !== null),
-                Tables\Actions\Action::make('hasIcon')
+                Action::make('hasIcon')
                     ->icon('heroicon-m-pencil-square'),
-                Tables\Actions\Action::make('hasLabel')
+                Action::make('hasLabel')
                     ->label('My Action'),
-                Tables\Actions\Action::make('hasColor')
+                Action::make('hasColor')
                     ->color('primary'),
-                Tables\Actions\Action::make('exists'),
-                Tables\Actions\Action::make('existsInOrder'),
-                Tables\Actions\Action::make('url')
+                Action::make('exists'),
+                Action::make('existsInOrder'),
+                Action::make('url')
                     ->url('https://filamentphp.com'),
-                Tables\Actions\Action::make('urlInNewTab')
+                Action::make('urlInNewTab')
                     ->url('https://filamentphp.com', true),
-                Tables\Actions\Action::make('urlNotInNewTab')
+                Action::make('urlNotInNewTab')
                     ->url('https://filamentphp.com'),
-                Tables\Actions\AttachAction::make(),
-                Tables\Actions\AttachAction::make('attachMultiple')
+                AttachAction::make(),
+                AttachAction::make('attachMultiple')
                     ->multiple(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\ForceDeleteAction::make(),
-                Tables\Actions\RestoreAction::make(),
-                Tables\Actions\ReplicateAction::make()
+                EditAction::make(),
+                DeleteAction::make(),
+                ForceDeleteAction::make(),
+                RestoreAction::make(),
+                ReplicateAction::make()
                     ->mutateRecordDataUsing(function (array $data): array {
                         $data['title'] = $data['title'] . ' (Copy)';
 
@@ -171,52 +184,130 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                         TextInput::make('title')
                             ->required(),
                     ]),
-                Tables\Actions\ActionGroup::make([
-                    Tables\Actions\DeleteAction::make('groupedDelete'),
-                    Tables\Actions\ForceDeleteAction::make('groupedForceDelete'),
-                    Tables\Actions\RestoreAction::make('groupedRestore'),
+                Action::make('parent')
+                    ->schema([
+                        TextInput::make('foo')
+                            ->required()
+                            ->registerActions([
+                                Action::make('nested')
+                                    ->schema([
+                                        TextInput::make('bar')
+                                            ->required(),
+                                    ])
+                                    ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                                Action::make('cancelParent')
+                                    ->schema([
+                                        TextInput::make('bar')
+                                            ->required(),
+                                    ])
+                                    ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey()))
+                                    ->cancelParentActions(),
+                            ]),
+                    ])
+                    ->action(function (array $data, Post $record) {
+                        $this->dispatch('parent-called', foo: $data['foo'], recordKey: $record->getKey());
+                    })
+                    ->extraModalFooterActions([
+                        Action::make('footer')
+                            ->schema([
+                                TextInput::make('bar')
+                                    ->required(),
+                            ])
+                            ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                    ])
+                    ->registerModalActions([
+                        Action::make('manuallyRegisteredModal')
+                            ->schema([
+                                TextInput::make('bar')
+                                    ->required(),
+                            ])
+                            ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                    ]),
+                ActionGroup::make([
+                    DeleteAction::make('groupedDelete'),
+                    ForceDeleteAction::make('groupedForceDelete'),
+                    RestoreAction::make('groupedRestore'),
+                    Action::make('groupedParent')
+                        ->schema([
+                            TextInput::make('foo')
+                                ->required()
+                                ->registerActions([
+                                    Action::make('nested')
+                                        ->schema([
+                                            TextInput::make('bar')
+                                                ->required(),
+                                        ])
+                                        ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                                    Action::make('cancelParent')
+                                        ->schema([
+                                            TextInput::make('bar')
+                                                ->required(),
+                                        ])
+                                        ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey()))
+                                        ->cancelParentActions(),
+                                ]),
+                        ])
+                        ->action(function (array $data, Post $record) {
+                            $this->dispatch('grouped-parent-called', foo: $data['foo'], recordKey: $record->getKey());
+                        })
+                        ->extraModalFooterActions([
+                            Action::make('footer')
+                                ->schema([
+                                    TextInput::make('bar')
+                                        ->required(),
+                                ])
+                                ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                        ])
+                        ->registerModalActions([
+                            Action::make('manuallyRegisteredModal')
+                                ->schema([
+                                    TextInput::make('bar')
+                                        ->required(),
+                                ])
+                                ->action(fn (array $data, Post $record) => $this->dispatch('nested-called', bar: $data['bar'], recordKey: $record->getKey())),
+                        ]),
                 ]),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
-                Tables\Actions\BulkAction::make('data')
-                    ->mountUsing(fn (ComponentContainer $form) => $form->fill(['foo' => 'bar']))
+                DeleteBulkAction::make(),
+                BulkAction::make('data')
+                    ->mountUsing(fn (Schema $form) => $form->fill(['foo' => 'bar']))
                     ->form([
                         TextInput::make('payload')->required(),
                     ])
                     ->action(function (array $data) {
                         $this->dispatch('data-called', data: $data);
                     }),
-                Tables\Actions\BulkAction::make('arguments')
+                BulkAction::make('arguments')
                     ->requiresConfirmation()
                     ->action(function (array $arguments) {
                         $this->dispatch('arguments-called', arguments: $arguments);
                     }),
-                Tables\Actions\BulkAction::make('halt')
+                BulkAction::make('halt')
                     ->requiresConfirmation()
-                    ->action(function (Tables\Actions\BulkAction $action) {
+                    ->action(function (BulkAction $action) {
                         $this->dispatch('halt-called');
 
                         $action->halt();
                     }),
-                Tables\Actions\BulkAction::make('visible'),
-                Tables\Actions\BulkAction::make('hidden')
+                BulkAction::make('visible'),
+                BulkAction::make('hidden')
                     ->hidden(),
-                Tables\Actions\BulkAction::make('enabled'),
-                Tables\Actions\BulkAction::make('disabled')
+                BulkAction::make('enabled'),
+                BulkAction::make('disabled')
                     ->disabled(),
-                Tables\Actions\BulkAction::make('hasIcon')
+                BulkAction::make('hasIcon')
                     ->icon('heroicon-m-pencil-square'),
-                Tables\Actions\BulkAction::make('hasLabel')
+                BulkAction::make('hasLabel')
                     ->label('My Action'),
-                Tables\Actions\BulkAction::make('hasColor')
+                BulkAction::make('hasColor')
                     ->color('primary'),
-                Tables\Actions\BulkAction::make('exists'),
-                Tables\Actions\BulkAction::make('existsInOrder'),
+                BulkAction::make('exists'),
+                BulkAction::make('existsInOrder'),
             ])
             ->emptyStateActions([
-                Tables\Actions\Action::make('emptyExists'),
-                Tables\Actions\Action::make('emptyExistsInOrder'),
+                Action::make('emptyExists'),
+                Action::make('emptyExistsInOrder'),
             ]);
     }
 

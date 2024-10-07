@@ -2,9 +2,10 @@
 
 namespace {{ namespace }};
 
+use Filament\Actions;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schema\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +15,7 @@ class {{ managerClass }} extends RelationManager
 {
     protected static string $relationship = '{{ relationship }}';
 
-    public function form(Form $form): Form
+    public function form(Schema $form): Schema
     {
         return $form
             ->schema([
@@ -41,7 +42,7 @@ class {{ managerClass }} extends RelationManager
 {{ tableActions }}
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
+                Actions\BulkActionGroup::make([
 {{ tableBulkActions }}
                 ]),
             ]){{ modifyQueryUsing }};

@@ -12,6 +12,7 @@
     'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
     'closeByEscaping' => \Filament\Support\View\Components\Modal::$isClosedByEscaping,
     'closeEventName' => 'close-modal',
+    'closeQuietlyEventName' => 'close-modal-quietly',
     'description' => null,
     'displayClasses' => 'inline-block',
     'extraModalWindowAttributeBag' => null,
@@ -60,6 +61,7 @@
         aria-labelledby="{{ "{$id}.heading" }}"
     @endif
     aria-modal="true"
+    id="{{ $id }}"
     role="dialog"
     x-data="{
         isOpen: false,
@@ -67,11 +69,15 @@
         livewire: null,
 
         close: function () {
-            this.isOpen = false
+            this.closeQuietly()
 
             this.$refs.modalContainer.dispatchEvent(
                 new CustomEvent('modal-closed', { id: '{{ $id }}' }),
             )
+        },
+
+        closeQuietly: function () {
+            this.isOpen = false
         },
 
         open: function () {
@@ -81,16 +87,13 @@
                 @if (FilamentView::hasSpaMode())
                     this.$dispatch('ax-modal-opened')
                 @endif
-
-                this.$refs.modalContainer.dispatchEvent(
-                    new CustomEvent('modal-opened', { id: '{{ $id }}' }),
-                )
             })
         },
     }"
     @if ($id)
-        x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') close()"
-        x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
+        x-on:{{ $closeEventName }}.window="if (($event.detail.id === '{{ $id }}') && isOpen) close()"
+        x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === '{{ $id }}') && isOpen) closeQuietly()"
+        x-on:{{ $openEventName }}.window="if (($event.detail.id === '{{ $id }}') && (! isOpen)) open()"
     @endif
     x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     x-bind:class="{
@@ -278,7 +281,7 @@
                                                 :alias="$iconAlias"
                                                 :icon="$icon"
                                                 @class([
-                                                    'fi-modal-icon h-6 w-6',
+                                                    'fi-modal-icon size-6',
                                                     match ($iconColor) {
                                                         'gray' => 'text-gray-500 dark:text-gray-400',
                                                         default => 'text-custom-600 dark:text-custom-400',

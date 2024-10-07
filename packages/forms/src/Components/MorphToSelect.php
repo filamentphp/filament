@@ -3,9 +3,11 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Exception;
 use Filament\Forms\Components\MorphToSelect\Type;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schema\Components\Component;
+use Filament\Schema\Components\Utilities\Get;
+use Filament\Schema\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class MorphToSelect extends Component
@@ -36,12 +38,25 @@ class MorphToSelect extends Component
         $this->name($name);
     }
 
-    public static function make(string $name): static
+    public static function make(?string $name = null): static
     {
-        $static = app(static::class, ['name' => $name]);
+        $morphToSelectClass = static::class;
+
+        $name ??= static::getDefaultName();
+
+        if (blank($name)) {
+            throw new Exception("MorphToSelect of class [$morphToSelectClass] must have a unique name, passed to the [make()] method.");
+        }
+
+        $static = app($morphToSelectClass, ['name' => $name]);
         $static->configure();
 
         return $static;
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return null;
     }
 
     /**

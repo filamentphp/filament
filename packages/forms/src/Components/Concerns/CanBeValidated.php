@@ -6,12 +6,14 @@ use Closure;
 use Filament\Forms\Components\Contracts\CanBeLengthConstrained;
 use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
+use Filament\Schema\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\In;
 use Illuminate\Validation\Rules\Unique;
 
 trait CanBeValidated
@@ -19,6 +21,11 @@ trait CanBeValidated
     protected bool | Closure $isRequired = false;
 
     protected string | Closure | null $regexPattern = null;
+
+    /**
+     * @var array<string> | Arrayable | string | Closure | null
+     */
+    protected array | Arrayable | string | Closure | null $inValidationRuleValues = null;
 
     /**
      * @var array<mixed>
@@ -140,17 +147,6 @@ trait CanBeValidated
         return $this;
     }
 
-    public function enum(string | Closure $enum): static
-    {
-        $this->rule(static function (Field $component) use ($enum) {
-            $enum = $component->evaluate($enum);
-
-            return new Enum($enum);
-        }, static fn (Field $component): bool => filled($component->evaluate($enum)));
-
-        return $this;
-    }
-
     public function exists(string | Closure | null $table = null, string | Closure | null $column = null, ?Closure $modifyRuleUsing = null): static
     {
         $this->rule(static function (Field $component, ?string $model) use ($column, $modifyRuleUsing, $table) {
@@ -188,21 +184,23 @@ trait CanBeValidated
     /**
      * @param  array<scalar> | Arrayable | string | Closure  $values
      */
-    public function in(array | Arrayable | string | Closure $values, bool | Closure $condition = true): static
+    public function in(array | Arrayable | string | Closure | null $values, bool | Closure $condition = true): static
     {
-        $this->rule(static function (Field $component) use ($values) {
-            $values = $component->evaluate($values);
+        if (! $condition) {
+            $values = null;
+        } elseif ($condition instanceof Closure) {
+            $values = fn (Component $component): array | Arrayable | string | Closure | null => $component->evaluate($condition) ? $values : null;
+        }
 
-            if ($values instanceof Arrayable) {
-                $values = $values->toArray();
-            }
+        $this->inValidationRuleValues = $values;
 
-            if (is_string($values)) {
-                $values = array_map('trim', explode(',', $values));
-            }
-
-            return Rule::in($values);
-        }, $condition);
+        match ($condition) {
+            true => $this->inValidationRuleValues = $values,
+            false => null,
+            default => $this->inValidationRuleValues = fn (Component $component): array | Arrayable | string | Closure | null => $component->evaluate($condition) ?
+                $values :
+                null,
+        };
 
         return $this;
     }
@@ -663,6 +661,44 @@ trait CanBeValidated
         return array_filter($messages);
     }
 
+    public function getInValidationRule(): In | Enum | null
+    {
+        $values = $this->getInValidationRuleValues();
+
+        if ($values !== null) {
+            return Rule::in($values);
+        }
+
+        if (filled($enum = $this->getEnum())) {
+            return Rule::enum($enum);
+        }
+
+        return null;
+    }
+
+    /**
+     * @return ?array<string>
+     */
+    public function getInValidationRuleValues(): ?array
+    {
+        $values = $this->evaluate($this->inValidationRuleValues);
+
+        if ($values instanceof Arrayable) {
+            $values = $values->toArray();
+        }
+
+        if (is_string($values)) {
+            $values = array_map('trim', explode(',', $values));
+        }
+
+        return $values;
+    }
+
+    public function hasInValidationOnMultipleValues(): bool
+    {
+        return false;
+    }
+
     /**
      * @return array<mixed>
      */
@@ -671,6 +707,7 @@ trait CanBeValidated
         $rules = [
             $this->getRequiredValidationRule(),
             ...($this instanceof CanBeLengthConstrained ? $this->getLengthValidationRules() : []),
+            ...(($inRule = $this->getInValidationRule()) ? [$inRule] : []),
         ];
 
         if (filled($regexPattern = $this->getRegexPattern())) {
@@ -730,6 +767,13 @@ trait CanBeValidated
             $rules[$statePath] = $componentRules;
         }
 
+        if (
+            $this->hasInValidationOnMultipleValues() &&
+            filled($inValidationRuleValues = $this->getInValidationRuleValues())
+        ) {
+            $rules["{$statePath}.*"] = [Rule::in($inValidationRuleValues)];
+        }
+
         if (! $this instanceof HasNestedRecursiveValidationRules) {
             return;
         }
@@ -740,7 +784,10 @@ trait CanBeValidated
             return;
         }
 
-        $rules["{$statePath}.*"] = $nestedRecursiveValidationRules;
+        $rules["{$statePath}.*"] = [
+            ...$rules["{$statePath}.*"] ?? [],
+            ...$nestedRecursiveValidationRules,
+        ];
     }
 
     public function dehydrateValidationAttributes(array &$attributes): void

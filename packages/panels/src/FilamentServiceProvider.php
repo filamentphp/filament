@@ -19,6 +19,7 @@ use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Http\Responses\Auth\PasswordResetResponse;
 use Filament\Http\Responses\Auth\RegistrationResponse;
 use Filament\Navigation\NavigationManager;
+use Filament\Support\Assets\Font;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
@@ -36,7 +37,17 @@ class FilamentServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-panels')
-            ->hasCommands($this->getCommands())
+            ->hasCommands([
+                Commands\CacheComponentsCommand::class,
+                Commands\ClearCachedComponentsCommand::class,
+                Commands\MakeClusterCommand::class,
+                Commands\MakePageCommand::class,
+                Commands\MakePanelCommand::class,
+                Commands\MakeRelationManagerCommand::class,
+                Commands\MakeResourceCommand::class,
+                Commands\MakeThemeCommand::class,
+                Commands\MakeUserCommand::class,
+            ])
             ->hasRoutes('web')
             ->hasTranslations()
             ->hasViews();
@@ -73,6 +84,7 @@ class FilamentServiceProvider extends PackageServiceProvider
         ]);
 
         FilamentAsset::register([
+            Font::make('inter', __DIR__ . '/../dist/fonts/inter'),
             Js::make('app', __DIR__ . '/../dist/index.js')->core(),
             Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
             Theme::make('app', __DIR__ . '/../dist/theme.css'),
@@ -97,40 +109,5 @@ class FilamentServiceProvider extends PackageServiceProvider
                 ], 'filament-stubs');
             }
         }
-    }
-
-    /**
-     * @return array<class-string>
-     */
-    protected function getCommands(): array
-    {
-        $commands = [
-            Commands\CacheComponentsCommand::class,
-            Commands\ClearCachedComponentsCommand::class,
-            Commands\MakeClusterCommand::class,
-            Commands\MakePageCommand::class,
-            Commands\MakePanelCommand::class,
-            Commands\MakeRelationManagerCommand::class,
-            Commands\MakeResourceCommand::class,
-            Commands\MakeThemeCommand::class,
-            Commands\MakeUserCommand::class,
-        ];
-
-        $aliases = [];
-
-        foreach ($commands as $command) {
-            $class = 'Filament\\Commands\\Aliases\\' . class_basename($command);
-
-            if (! class_exists($class)) {
-                continue;
-            }
-
-            $aliases[] = $class;
-        }
-
-        return [
-            ...$commands,
-            ...$aliases,
-        ];
     }
 }

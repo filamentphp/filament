@@ -13,7 +13,10 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-#[AsCommand(name: 'make:filament-cluster')]
+#[AsCommand(name: 'make:filament-cluster', aliases: [
+    'filament:cluster',
+    'filament:make-cluster',
+])]
 class MakeClusterCommand extends Command
 {
     use CanIndentStrings;
@@ -22,6 +25,14 @@ class MakeClusterCommand extends Command
     protected $description = 'Create a new Filament cluster class';
 
     protected $signature = 'make:filament-cluster {name?} {--panel=} {--F|force}';
+
+    /**
+     * @var array<string>
+     */
+    protected $aliases = [
+        'filament:cluster',
+        'filament:make-cluster',
+    ];
 
     public function handle(): int
     {

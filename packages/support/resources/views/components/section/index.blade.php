@@ -1,19 +1,19 @@
 @php
     use Filament\Support\Enums\Alignment;
     use Filament\Support\Enums\IconSize;
+
+    use function Filament\Support\is_slot_empty;
 @endphp
 
 @props([
+    'afterHeader' => null,
     'aside' => false,
     'collapsed' => false,
     'collapsible' => false,
     'compact' => false,
     'contentBefore' => false,
     'description' => null,
-    'footerActions' => [],
-    'footerActionsAlignment' => Alignment::Start,
-    'headerActions' => [],
-    'headerEnd' => null,
+    'footer' => null,
     'heading' => null,
     'icon' => null,
     'iconColor' => 'gray',
@@ -25,30 +25,7 @@
     $hasDescription = filled((string) $description);
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
-
-    if (is_array($headerActions)) {
-        $headerActions = array_filter(
-            $headerActions,
-            fn ($headerAction): bool => $headerAction->isVisible(),
-        );
-    }
-
-    if (is_array($footerActions)) {
-        $footerActions = array_filter(
-            $footerActions,
-            fn ($footerAction): bool => $footerAction->isVisible(),
-        );
-    }
-
-    $hasHeaderActions = $headerActions instanceof \Illuminate\Contracts\Support\Htmlable
-        ? ! \Filament\Support\is_slot_empty($headerActions)
-        : filled($headerActions);
-
-    $hasFooterActions = $footerActions instanceof \Illuminate\Contracts\Support\Htmlable
-        ? ! \Filament\Support\is_slot_empty($footerActions)
-        : filled($footerActions);
-
-    $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || $hasHeaderActions || filled((string) $headerEnd);
+    $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || (! is_slot_empty($afterHeader));
 @endphp
 
 <section
@@ -99,9 +76,9 @@
                             },
                             is_string($iconColor) ? "fi-color-{$iconColor}" : null,
                             match ($iconSize) {
-                                IconSize::Small, 'sm' => 'h-4 w-4 mt-1',
-                                IconSize::Medium, 'md' => 'h-5 w-5 mt-0.5',
-                                IconSize::Large, 'lg' => 'h-6 w-6',
+                                IconSize::Small, 'sm' => 'size-4 mt-1',
+                                IconSize::Medium, 'md' => 'size-5 mt-0.5',
+                                IconSize::Large, 'lg' => 'size-6',
                                 default => $iconSize,
                             },
                         ])
@@ -131,17 +108,7 @@
                     </div>
                 @endif
 
-                @if ($hasHeaderActions)
-                    <div class="hidden sm:block">
-                        <x-filament::actions
-                            :actions="$headerActions"
-                            :alignment="\Filament\Support\Enums\Alignment::Start"
-                            x-on:click.stop=""
-                        />
-                    </div>
-                @endif
-
-                {{ $headerEnd }}
+                {{ $afterHeader }}
 
                 @if ($collapsible)
                     <x-filament::icon-button
@@ -153,16 +120,6 @@
                     />
                 @endif
             </div>
-
-            @if ($hasHeaderActions)
-                <div class="sm:hidden">
-                    <x-filament::actions
-                        :actions="$headerActions"
-                        :alignment="\Filament\Support\Enums\Alignment::Start"
-                        x-on:click.stop=""
-                    />
-                </div>
-            @endif
         </header>
     @endif
 
@@ -195,7 +152,7 @@
             {{ $slot }}
         </div>
 
-        @if ($hasFooterActions)
+        @if (! is_slot_empty($footer))
             <footer
                 @class([
                     'fi-section-footer border-t border-gray-200 dark:border-white/10',
@@ -203,10 +160,7 @@
                     'px-4 py-2.5' => $compact,
                 ])
             >
-                <x-filament::actions
-                    :actions="$footerActions"
-                    :alignment="$footerActionsAlignment"
-                />
+                {{ $footer }}
             </footer>
         @endif
     </div>

@@ -8,7 +8,7 @@ function (\Closure $get, \Closure $set) {
 -----
 <?php
 
-function (\Filament\Forms\Get $get, \Filament\Forms\Set $set) {
+function (\Filament\Schema\Components\Utilities\Get $get, \Filament\Schema\Components\Utilities\Set $set) {
     //
 }
 

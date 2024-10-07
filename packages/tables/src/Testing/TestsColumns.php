@@ -120,6 +120,12 @@ class TestsColumns
                     $checkColumnUsing($column),
                     "Failed asserting that a column with the name [{$name}] and provided configuration does not exist on the [{$livewireClass}] component."
                 );
+            } else {
+                Assert::assertNotInstanceOf(
+                    Column::class,
+                    $column,
+                    message: "Failed asserting that a table column with name [{$name}] does not exist on the [{$livewireClass}] component.",
+                );
             }
 
             return $this;
@@ -226,8 +232,9 @@ class TestsColumns
                 $value = json_encode($value);
             }
 
-            Assert::assertFalse(
-                $state == $value,
+            Assert::assertNotEquals(
+                $value,
+                $state,
                 message: "Failed asserting that a table column with name [{$name}] does not have a value of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
@@ -279,8 +286,9 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
-            Assert::assertFalse(
-                $column->formatState($column->getState()) == $value,
+            Assert::assertNotEquals(
+                $value,
+                $column->formatState($column->getState()),
                 message: "Failed asserting that a table column with name [{$name}] does not have a formatted state of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
@@ -334,8 +342,9 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
-            Assert::assertFalse(
-                $column->getExtraAttributes() == $attributes,
+            Assert::assertNotEquals(
+                $attributes,
+                $column->getExtraAttributes(),
                 message: "Failed asserting that a table column with name [{$name}] does not have extra attributes [{$attributesString}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
@@ -391,8 +400,9 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
-            Assert::assertFalse(
-                $actualDescription == $description,
+            Assert::assertNotEquals(
+                $description,
+                $actualDescription,
                 message: "Failed asserting that a table column with name [{$name}] does not have description [{$description}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
@@ -448,8 +458,9 @@ class TestsColumns
 
             $livewireClass = $this->instance()::class;
 
-            Assert::assertFalse(
-                $column->getOptions() == $options,
+            Assert::assertNotEquals(
+                $options,
+                $column->getOptions(),
                 message: "Failed asserting that a table column with name [{$name}] does not have options [{$optionsString}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 

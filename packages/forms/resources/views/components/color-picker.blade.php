@@ -86,7 +86,7 @@
                 x-on:click="togglePanelVisibility()"
             >
                 <div
-                    class="h-5 w-5 select-none rounded-full"
+                    class="size-5 select-none rounded-full"
                     x-bind:class="{
                         'ring-1 ring-inset ring-gray-200 dark:ring-white/10': ! state,
                     }"
@@ -96,7 +96,7 @@
 
             <div
                 wire:ignore.self
-                wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.panel"
+                wire:key="{{ $getLivewireKey() }}.panel"
                 x-cloak
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 x-ref="panel"

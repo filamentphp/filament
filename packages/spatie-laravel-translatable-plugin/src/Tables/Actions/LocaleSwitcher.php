@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Actions\Concerns\HasTranslatableLocaleOptions;
+use Filament\Actions\SelectAction;
 
 class LocaleSwitcher extends SelectAction
 {

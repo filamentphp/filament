@@ -2,7 +2,7 @@
 
 namespace Filament\Forms;
 
-use Filament\Forms\Testing\TestsComponentActions;
+use Filament\Forms\Testing\TestsFormComponentActions;
 use Filament\Forms\Testing\TestsForms;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Css;
@@ -18,7 +18,10 @@ class FormsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-forms')
-            ->hasCommands($this->getCommands())
+            ->hasCommands([
+                Commands\MakeFieldCommand::class,
+                Commands\MakeFormCommand::class,
+            ])
             ->hasTranslations()
             ->hasViews();
     }
@@ -47,35 +50,6 @@ class FormsServiceProvider extends PackageServiceProvider
         }
 
         Testable::mixin(new TestsForms);
-        Testable::mixin(new TestsComponentActions);
-    }
-
-    /**
-     * @return array<class-string>
-     */
-    protected function getCommands(): array
-    {
-        $commands = [
-            Commands\MakeFieldCommand::class,
-            Commands\MakeFormCommand::class,
-            Commands\MakeLayoutComponentCommand::class,
-        ];
-
-        $aliases = [];
-
-        foreach ($commands as $command) {
-            $class = 'Filament\\Forms\\Commands\\Aliases\\' . class_basename($command);
-
-            if (! class_exists($class)) {
-                continue;
-            }
-
-            $aliases[] = $class;
-        }
-
-        return [
-            ...$commands,
-            ...$aliases,
-        ];
+        Testable::mixin(new TestsFormComponentActions);
     }
 }
