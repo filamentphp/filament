@@ -10,6 +10,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -68,15 +69,7 @@ class PrepareCsvExport implements ShouldQueue
         $databaseConnection = $query->getConnection();
 
         if ($databaseConnection->getDriverName() === 'pgsql') {
-            $originalOrders = collect($query->getQuery()->orders)
-                ->reject(fn (array $order): bool => in_array($order['column'] ?? null, [$keyName, $qualifiedKeyName]))
-                ->unique('column');
-
-            $query->reorder($qualifiedKeyName);
-
-            foreach ($originalOrders as $order) {
-                $query->orderBy($order['column'], $order['direction']);
-            }
+            $this->queryReorder($query, $keyName, $qualifiedKeyName);
         }
 
         $exportCsvJob = $this->getExportCsvJob();
@@ -162,6 +155,28 @@ class PrepareCsvExport implements ShouldQueue
                 column: $keyName,
                 descending: ($baseQueryOrders[0]['direction'] ?? 'asc') === 'desc',
             );
+    }
+
+    public function queryReorder(Builder $query, string $keyName, string $qualifiedKeyName): void
+    {
+        $originalOrders = collect($query->getQuery()->orders)
+            ->reject(fn (array $order): bool => in_array($order['column'] ?? null, [$keyName, $qualifiedKeyName]))
+            ->unique('column');
+
+        $beforeReorderBindings = $query->getrawbindings();
+
+        $query->reorder($qualifiedKeyName);
+        foreach ($originalOrders as $order) {
+            $query->orderBy($order['column'], $order['direction']);
+        }
+
+        $afterReorderBindings = $query->getrawbindings();
+
+        foreach ($beforeReorderBindings as $key => $value) {
+            if ($diffBinding = array_diff($value, $afterReorderBindings[$key])) {
+                $query->addBinding($diffBinding, $key);
+            }
+        }
     }
 
     public function getExportCsvJob(): string
