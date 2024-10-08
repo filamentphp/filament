@@ -244,7 +244,7 @@
                 match ($getAddActionAlignment()) {
                     Alignment::Start, Alignment::Left => 'justify-start',
                     Alignment::Center, null => 'justify-center',
-                    Alignment::End, Alignment::Right => 'flex-row-reverse',
+                    Alignment::End, Alignment::Right => 'justify-end',
                     Alignment::Between, Alignment::Justify => 'justify-between',
                     default => $alignment,
                 },
