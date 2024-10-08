@@ -73,18 +73,20 @@ class PrepareCsvExport implements ShouldQueue
                 ->reject(fn (array $order): bool => in_array($order['column'] ?? null, [$keyName, $qualifiedKeyName]))
                 ->unique('column');
 
-            /** @var array $beforeReorderBindings */
-            $beforeReorderBindings = $query->getRawBindings();
+            /** @var array<string, mixed> $originalBindings */
+            $originalBindings = $query->getRawBindings();
 
             $query->reorder($qualifiedKeyName);
+            
             foreach ($originalOrders as $order) {
                 $query->orderBy($order['column'], $order['direction']);
             }
 
-            $afterReorderBindings = $query->getRawBindings();
-            foreach ($beforeReorderBindings as $key => $value) {
-                if ($diffBinding = array_diff($value, $afterReorderBindings[$key])) {
-                    $query->addBinding($diffBinding, $key);
+            $newBindings = $query->getRawBindings();
+            
+            foreach ($originalBindings as $key => $value) {
+                if ($binding = array_diff($value, $newBindings[$key])) {
+                    $query->addBinding($binding, $key);
                 }
             }
         }
