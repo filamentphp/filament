@@ -69,7 +69,24 @@ class PrepareCsvExport implements ShouldQueue
         $databaseConnection = $query->getConnection();
 
         if ($databaseConnection->getDriverName() === 'pgsql') {
-            $this->queryReorder($query, $keyName, $qualifiedKeyName);
+            $originalOrders = collect($query->getQuery()->orders)
+                ->reject(fn (array $order): bool => in_array($order['column'] ?? null, [$keyName, $qualifiedKeyName]))
+                ->unique('column');
+
+            $beforeReorderBindings = $query->getRawBindings();
+
+            $query->reorder($qualifiedKeyName);
+            foreach ($originalOrders as $order) {
+                $query->orderBy($order['column'], $order['direction']);
+            }
+
+            $afterReorderBindings = $query->getRawBindings();
+
+            foreach ($beforeReorderBindings as $key => $value) {
+                if ($diffBinding = array_diff($value, $afterReorderBindings[$key])) {
+                    $query->addBinding($diffBinding, $key);
+                }
+            }
         }
 
         $exportCsvJob = $this->getExportCsvJob();
@@ -155,28 +172,6 @@ class PrepareCsvExport implements ShouldQueue
                 column: $keyName,
                 descending: ($baseQueryOrders[0]['direction'] ?? 'asc') === 'desc',
             );
-    }
-
-    public function queryReorder(Builder $query, string $keyName, string $qualifiedKeyName): void
-    {
-        $originalOrders = collect($query->getQuery()->orders)
-            ->reject(fn (array $order): bool => in_array($order['column'] ?? null, [$keyName, $qualifiedKeyName]))
-            ->unique('column');
-
-        $beforeReorderBindings = $query->getRawBindings();
-
-        $query->reorder($qualifiedKeyName);
-        foreach ($originalOrders as $order) {
-            $query->orderBy($order['column'], $order['direction']);
-        }
-
-        $afterReorderBindings = $query->getRawBindings();
-
-        foreach ($beforeReorderBindings as $key => $value) {
-            if ($diffBinding = array_diff($value, $afterReorderBindings[$key])) {
-                $query->addBinding($diffBinding, $key);
-            }
-        }
     }
 
     public function getExportCsvJob(): string
