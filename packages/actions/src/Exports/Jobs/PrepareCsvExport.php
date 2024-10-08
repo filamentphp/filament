@@ -10,6 +10,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -72,10 +73,21 @@ class PrepareCsvExport implements ShouldQueue
                 ->reject(fn (array $order): bool => in_array($order['column'] ?? null, [$keyName, $qualifiedKeyName]))
                 ->unique('column');
 
-            $query->reorder($qualifiedKeyName);
+            /** @var array<string, mixed> $originalBindings */
+            $originalBindings = $query->getRawBindings();
 
+            $query->reorder($qualifiedKeyName);
+            
             foreach ($originalOrders as $order) {
                 $query->orderBy($order['column'], $order['direction']);
+            }
+
+            $newBindings = $query->getRawBindings();
+            
+            foreach ($originalBindings as $key => $value) {
+                if ($binding = array_diff($value, $newBindings[$key])) {
+                    $query->addBinding($binding, $key);
+                }
             }
         }
 
