@@ -240,12 +240,11 @@
 
         @if ($isAddable && $addAction->isVisible())
             <div @class([
-                "flex",
+                'flex',
                 match ($getAddActionAlignment()) {
                     Alignment::Start, Alignment::Left => 'justify-start',
                     Alignment::Center, null => 'justify-center',
                     Alignment::End, Alignment::Right => 'justify-end',
-                    Alignment::Between, Alignment::Justify => 'justify-between',
                     default => $alignment,
                 },
             ])>

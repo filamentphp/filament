@@ -210,10 +210,11 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     {
         $alignment = $this->evaluate($this->addActionAlignment);
 
-        return is_string($alignment)
-            ? Alignment::tryFrom($alignment) ?? $alignment
-            : $alignment;
+        if (is_string($alignment)) {
+            $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+        }
 
+        return $alignment;
     }
 
     public function addAction(?Closure $callback): static

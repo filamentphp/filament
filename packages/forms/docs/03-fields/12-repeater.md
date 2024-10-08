@@ -79,9 +79,9 @@ Repeater::make('members')
     ->addActionLabel('Add member')
 ```
 
-## Align the add action button
+### Aligning the add action button
 
-By default, the add action is align in the center. You may adjust this using the `addActionAlignment()` method:
+By default, the add action is aligned in the center. You may adjust this using the `addActionAlignment()` method, passing an `Alignment` option of `Alignment::Start` or `Alignment::End`:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -91,7 +91,7 @@ Repeater::make('members')
     ->schema([
         // ...
     ])
-    ->addActionAlignment(Alignment::Left)
+    ->addActionAlignment(Alignment::Start)
 ```
 
 ### Preventing the user from adding items
