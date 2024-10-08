@@ -4,7 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 
-trait CanGrammarlyBeDisabled
+trait CanDisableGrammarly
 {
     protected bool | Closure $isGrammarlyDisabled = false;
 
