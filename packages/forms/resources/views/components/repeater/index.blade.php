@@ -239,15 +239,17 @@
         @endif
 
         @if ($isAddable && $addAction->isVisible())
-            <div @class([
-                'flex',
-                match ($getAddActionAlignment()) {
-                    Alignment::Start, Alignment::Left => 'justify-start',
-                    Alignment::Center, null => 'justify-center',
-                    Alignment::End, Alignment::Right => 'justify-end',
-                    default => $alignment,
-                },
-            ])>
+            <div
+                @class([
+                    'flex',
+                    match ($getAddActionAlignment()) {
+                        Alignment::Start, Alignment::Left => 'justify-start',
+                        Alignment::Center, null => 'justify-center',
+                        Alignment::End, Alignment::Right => 'justify-end',
+                        default => $alignment,
+                    },
+                ])
+            >
                 {{ $addAction }}
             </div>
         @endif
