@@ -903,7 +903,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
                 ->each(static fn (Model $record) => $record->delete());
 
             $childComponentContainers = $component->getChildComponentContainers(
-                $component->shouldSaveRelationshipsWhenHidden()
+                withHidden: $component->shouldSaveRelationshipsWhenHidden(),
             );
 
             $itemOrder = 1;
