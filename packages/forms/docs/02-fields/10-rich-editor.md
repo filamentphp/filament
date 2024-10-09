@@ -67,3 +67,14 @@ RichEditor::make('content')
     ->fileAttachmentsDirectory('attachments')
     ->fileAttachmentsVisibility('private')
 ```
+
+## Disabling Grammarly checks
+
+If the user has Grammarly installed and you would like to prevent it from analyzing the contents of the editor, you can use the `disableGrammarly()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->disableGrammarly()
+```

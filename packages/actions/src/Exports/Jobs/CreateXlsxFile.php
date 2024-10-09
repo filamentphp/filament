@@ -47,7 +47,7 @@ class CreateXlsxFile implements ShouldQueue
     {
         $disk = $this->export->getFileDisk();
 
-        $writer = app(Writer::class);
+        $writer = app(Writer::class, ['options' => $this->exporter->getXlsxWriterOptions()]);
         $writer->openToFile($temporaryFile = tempnam(sys_get_temp_dir(), $this->export->file_name));
 
         $csvDelimiter = $this->exporter::getCsvDelimiter();
