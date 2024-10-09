@@ -11,6 +11,7 @@ use Filament\Schema\Components\Contracts\HasExtraItemActions;
 use Filament\Schema\Schema;
 use Filament\Support\Concerns\HasReorderAnimationDuration;
 use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
@@ -57,6 +58,8 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
     protected string | Closure | null $itemLabel = null;
 
     protected Field | Closure | null $simpleField = null;
+
+    protected Alignment | string | Closure | null $addActionAlignment = null;
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
@@ -199,6 +202,24 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
         }
 
         return $action;
+    }
+
+    public function addActionAlignment(Alignment | string | Closure | null $addActionAlignment): static
+    {
+        $this->addActionAlignment = $addActionAlignment;
+
+        return $this;
+    }
+
+    public function getAddActionAlignment(): Alignment | string | null
+    {
+        $alignment = $this->evaluate($this->addActionAlignment);
+
+        if (is_string($alignment)) {
+            $alignment = Alignment::tryFrom($alignment) ?? $alignment;
+        }
+
+        return $alignment;
     }
 
     public function addAction(?Closure $callback): static
@@ -919,7 +940,9 @@ class Repeater extends Field implements CanConcealComponents, HasExtraItemAction
                 ->get()
                 ->each(static fn (Model $record) => $record->delete());
 
-            $childComponentContainers = $component->getChildComponentContainers();
+            $childComponentContainers = $component->getChildComponentContainers(
+                withHidden: $component->shouldSaveRelationshipsWhenHidden(),
+            );
 
             $itemOrder = 1;
             $orderColumn = $component->getOrderColumn();
