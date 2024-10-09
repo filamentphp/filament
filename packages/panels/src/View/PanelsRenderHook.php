@@ -86,6 +86,8 @@ class PanelsRenderHook
 
     const RESOURCE_PAGES_MANAGE_RELATED_RECORDS_TABLE_BEFORE = 'panels::resource.pages.manage-related-records.table.before';
 
+    const RESOURCE_PAGES_VIEW_RECORD_END = 'panels::resource.pages.view-record.end';
+
     const RESOURCE_RELATION_MANAGER_AFTER = 'panels::resource.relation-manager.after';
 
     const RESOURCE_RELATION_MANAGER_BEFORE = 'panels::resource.relation-manager.before';
