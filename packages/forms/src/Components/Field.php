@@ -15,15 +15,20 @@ class Field extends Component implements Contracts\HasHintActions, Contracts\Has
 
     protected string $viewIdentifier = 'field';
 
-    final public function __construct(string $name)
+    final public function __construct(string $name, ?string $label = null)
     {
         $this->name($name);
+
+        if(!is_null($label)) {
+            $this->label($label);
+        }
+
         $this->statePath($name);
     }
 
-    public static function make(string $name): static
+    public static function make(string $name, ?string $label = null): static
     {
-        $static = app(static::class, ['name' => $name]);
+        $static = app(static::class, ['name' => $name, 'label' => $label]);
         $static->configure();
 
         return $static;
