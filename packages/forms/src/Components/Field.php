@@ -19,7 +19,7 @@ class Field extends Component implements Contracts\HasHintActions, Contracts\Has
     {
         $this->name($name);
 
-        if(!is_null($label)) {
+        if (! is_null($label)) {
             $this->label($label);
         }
 

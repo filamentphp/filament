@@ -57,7 +57,7 @@ class Column extends ViewComponent
     {
         $this->name($name);
 
-        if(!is_null($label)) {
+        if (! is_null($label)) {
             $this->label($label);
         }
     }
