@@ -75,6 +75,7 @@
     $toggleColumnsTriggerAction = $getToggleColumnsTriggerAction();
     $page = $this->getTablePage();
     $defaultSortOptionLabel = $getDefaultSortOptionLabel();
+    $sortDirection = $getSortDirection();
 
     if (count($actions) && (! $isReordering)) {
         $columnsCount++;
@@ -737,43 +738,21 @@
                                     @endif
                                 @elseif ($columnGroup instanceof ColumnGroup)
                                     @php
-                                        $columnGroupAlignment = $columnGroup->getAlignment();
                                         $columnGroupColumnsCount = count($columnGroup->getVisibleColumns());
-                                        $isColumnGroupHeaderWrapped = $columnGroup->isHeaderWrapped();
                                     @endphp
 
                                     @if ($columnGroupColumnsCount)
                                         <th
                                             colspan="{{ $columnGroupColumnsCount }}"
-                                            {{
-                                                $columnGroup->getExtraHeaderAttributeBag()->class([
-                                                    'fi-table-header-group-cell border-gray-200 px-3 py-2 dark:border-white/5 sm:first-of-type:ps-6 sm:last-of-type:pe-6 [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e',
-                                                ])
-                                            }}
+                                            {{ $columnGroup->getExtraHeaderAttributeBag()->class([
+                                                'fi-ta-header-group-cell',
+                                                'fi-wrapped' => $columnGroup->isHeaderWrapped(),
+                                                ((($columnGroupAlignment = $columnGroup->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnGroupAlignment->value}" : (is_string($columnGroupAlignment) ? $columnGroupAlignment : '')),
+                                                (filled($columnGroupHiddenFrom = $columnGroup->getHiddenFrom()) ? "{$columnGroupHiddenFrom}:fi-hidden" : ''),
+                                                (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnGroupVisibleFrom}:fi-visible" : ''),
+                                            ]) }}
                                         >
-                                            <div
-                                                @class([
-                                                    'flex w-full items-center',
-                                                    'whitespace-nowrap' => ! $isColumnGroupHeaderWrapped,
-                                                    'whitespace-normal' => $isColumnGroupHeaderWrapped,
-                                                    match ($columnGroupAlignment) {
-                                                        Alignment::Start => 'justify-start',
-                                                        Alignment::Center => 'justify-center',
-                                                        Alignment::End => 'justify-end',
-                                                        Alignment::Left => 'justify-start rtl:flex-row-reverse',
-                                                        Alignment::Right => 'justify-end rtl:flex-row-reverse',
-                                                        Alignment::Justify, Alignment::Between => 'justify-between',
-                                                        default => $columnGroupAlignment,
-                                                    },
-                                                    $getHiddenClasses($columnGroup),
-                                                ])
-                                            >
-                                                <span
-                                                    class="text-sm font-semibold text-gray-950 dark:text-white"
-                                                >
-                                                    {{ $columnGroup->getLabel() }}
-                                                </span>
-                                            </div>
+                                            {{ $columnGroup->getLabel() }}
                                         </th>
                                     @endif
                                 @endif
@@ -797,20 +776,19 @@
                         @else
                             @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
                                 @if ($actionsColumnLabel)
-                                    <x-filament-tables::header-cell>
+                                    <th class="fi-ta-header-cell">
                                         {{ $actionsColumnLabel }}
-                                    </x-filament-tables::header-cell>
+                                    </th>
                                 @else
-                                    <th class="w-1"></th>
+                                    <th class="fi-ta-empty-header-cell"></th>
                                 @endif
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                <x-filament-tables::selection.cell tag="th">
-                                    <x-filament-tables::selection.checkbox
-                                        {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
-                                        :wire:key="$this->getId() . '.table.bulk-select-page.checkbox.' . Str::random()"
-                                        :label="__('filament-tables::table.fields.bulk_select_page.label')"
+                                <th class="fi-ta-cell fi-ta-selection-cell">
+                                    <input
+                                        aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
+                                        type="checkbox"
                                         x-bind:checked="
                                             const recordsOnPage = getRecordsOnPage()
 
@@ -825,70 +803,89 @@
                                             return null
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
-                                        class="fi-ta-page-checkbox"
+                                        {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
+                                        wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
+                                        wire:loading.attr="disabled"
+                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                        class="fi-ta-page-checkbox fi-checkbox-input"
                                     />
-                                </x-filament-tables::selection.cell>
+                                </th>
                             @endif
 
                             @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
                                 @if ($actionsColumnLabel)
-                                    <x-filament-tables::header-cell>
+                                    <th class="fi-ta-header-cell">
                                         {{ $actionsColumnLabel }}
-                                    </x-filament-tables::header-cell>
+                                    </th>
                                 @else
-                                    <th class="w-1"></th>
+                                    <th class="fi-ta-empty-header-cell"></th>
                                 @endif
                             @endif
                         @endif
 
                         @foreach ($columns as $column)
                             @php
+                                $columnName = $column->getName();
+                                $columnLabel = $column->getLabel();
+                                $columnAlignment = $column->getAlignment();
                                 $columnWidth = $column->getWidth();
+                                $isColumnActivelySorted = $getSortColumn() === $column->getName();
+                                $isColumnSortable = $column->isSortable() && (! $isReordering);
                             @endphp
 
-                            <x-filament-tables::header-cell
-                                :actively-sorted="$getSortColumn() === $column->getName()"
-                                :alignment="$column->getAlignment()"
-                                :name="$column->getName()"
-                                :sortable="$column->isSortable() && (! $isReordering)"
-                                :sort-direction="$getSortDirection()"
-                                :wrap="$column->isHeaderWrapped()"
-                                :attributes="
-                                    \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
-                                        ->class([
-                                            'fi-table-header-cell-' . str($column->getName())->camel()->kebab(),
-                                            'w-full' => blank($columnWidth) && $column->canGrow(default: false),
-                                            '[&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e border-gray-200 dark:border-white/5' => $column->getGroup(),
-                                            $getHiddenClasses($column),
-                                        ])
-                                        ->style([
-                                            ('width: ' . $columnWidth) => filled($columnWidth),
-                                        ])
-                                "
+                            <th
+                                @if ($isColumnActivelySorted)
+                                    aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
+                                @endif
+                                {{ $column->getExtraHeaderAttributeBag()
+                                    ->class([
+                                        'fi-ta-header-cell',
+                                        'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
+                                        'fi-grow' => blank($columnWidth) && $column->canGrow(default: false),
+                                        'fi-grouped' => $column->getGroup(),
+                                        'fi-wrapped' => $column->isHeaderWrapped(),
+                                        'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
+                                        ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
+                                        (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
+                                        (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
+                                    ])
+                                    ->style([
+                                        ('width: ' . $columnWidth) => filled($columnWidth),
+                                    ]) }}
                             >
-                                {{ $column->getLabel() }}
-                            </x-filament-tables::header-cell>
+                                @if ($isColumnSortable)
+                                    <button
+                                        aria-label="{{ trim(strip_tags($columnLabel)) }}"
+                                        type="button"
+                                        wire:click="sortTable('{{ $columnName }}')"
+                                        class="fi-ta-header-cell-sort-btn"
+                                    >
+                                        {{ $columnLabel }}
+
+                                        {{ \Filament\Support\generate_icon_html(($isColumnActivelySorted && $sortDirection === 'asc') ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down', alias: ($isColumnActivelySorted && $sortDirection === 'asc') ? 'tables::header-cell.sort-asc-button' : 'tables::header-cell.sort-desc-button') }}
+                                    </button>
+                                @else
+                                    {{ $columnLabel }}
+                                @endif
+                            </th>
                         @endforeach
 
                         @if (! $isReordering)
                             @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
                                 @if ($actionsColumnLabel)
-                                    <x-filament-tables::header-cell
-                                        :alignment="Alignment::Right"
-                                    >
+                                    <th class="fi-ta-header-cell fi-align-end">
                                         {{ $actionsColumnLabel }}
-                                    </x-filament-tables::header-cell>
+                                    </th>
                                 @else
-                                    <th class="w-1"></th>
+                                    <th class="fi-ta-empty-header-cell"></th>
                                 @endif
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                <x-filament-tables::selection.cell tag="th">
-                                    <x-filament-tables::selection.checkbox
-                                        {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
-                                        :wire:key="$this->getId() . '.table.bulk-select-page.checkbox.' . Str::random()"
-                                        :label="__('filament-tables::table.fields.bulk_select_page.label')"
+                                <th class="fi-ta-cell fi-ta-selection-cell">
+                                    <input
+                                        aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
+                                        type="checkbox"
                                         x-bind:checked="
                                             const recordsOnPage = getRecordsOnPage()
 
@@ -903,29 +900,29 @@
                                             return null
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
-                                        class="fi-ta-page-checkbox"
+                                        {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
+                                        wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
+                                        wire:loading.attr="disabled"
+                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                        class="fi-ta-page-checkbox fi-checkbox-input"
                                     />
-                                </x-filament-tables::selection.cell>
+                                </th>
                             @endif
 
                             @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
                                 @if ($actionsColumnLabel)
-                                    <x-filament-tables::header-cell
-                                        :alignment="Alignment::Right"
-                                    >
+                                    <th class="fi-ta-header-cell fi-align-end">
                                         {{ $actionsColumnLabel }}
-                                    </x-filament-tables::header-cell>
+                                    </th>
                                 @else
-                                    <th class="w-1"></th>
+                                    <th class="fi-ta-empty-header-cell"></th>
                                 @endif
                             @endif
                         @endif
                     </x-slot>
 
                     @if ($isColumnSearchVisible)
-                        <x-filament-tables::row
-                            class="fi-ta-row-not-reorderable"
-                        >
+                        <tr class="fi-ta-row fi-ta-row-not-reorderable">
                             @if ($isReordering)
                                 <td></td>
                             @else
@@ -939,10 +936,10 @@
                             @endif
 
                             @foreach ($columns as $column)
-                                <x-filament-tables::cell
+                                <td
                                     @class([
-                                        'fi-table-individual-search-cell-' . str($column->getName())->camel()->kebab(),
-                                        'px-3 py-2',
+                                        'fi-ta-cell fi-ta-individual-search-cell',
+                                        'fi-ta-individual-search-cell-' . str($column->getName())->camel()->kebab(),
                                     ])
                                 >
                                     @if ($column->isIndividuallySearchable())
@@ -952,7 +949,7 @@
                                             wire-model="tableColumnSearches.{{ $column->getName() }}"
                                         />
                                     @endif
-                                </x-filament-tables::cell>
+                                </td>
                             @endforeach
 
                             @if (! $isReordering)
@@ -964,7 +961,7 @@
                                     <td></td>
                                 @endif
                             @endif
-                        </x-filament-tables::row>
+                        </tr>
                     @endif
 
                     @if (($records !== null) && count($records))
@@ -1281,7 +1278,7 @@
                                             {{
                                                 $column->getExtraCellAttributeBag()->class([
                                                     'fi-ta-cell',
-                                                    'fi-table-cell-' . str($column->getName())->camel()->kebab(),
+                                                    'fi-ta-cell-' . str($column->getName())->camel()->kebab(),
                                                     ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
                                                     ((($columnVerticalAlignment = $column->getVerticalAlignment()) instanceof \Filament\Support\Enums\VerticalAlignment) ? "fi-vertical-align-{$columnVerticalAlignment->value}" : (is_string($columnVerticalAlignment) ? $columnVerticalAlignment : '')),
                                                     (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),

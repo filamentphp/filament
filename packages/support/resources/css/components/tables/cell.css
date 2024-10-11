@@ -110,11 +110,19 @@
         }
     }
 
+    &.fi-table-individual-search-cell {
+        @apply px-3 py-2;
+    }
+
     & .fi-ta-reorder-handle {
         @apply cursor-move;
     }
 
     &.fi-ta-group-selection-cell {
         @apply w-1 px-3 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
+
+    &.fi-ta-selection-cell {
+        @apply w-1 px-3 py-4;
     }
 }

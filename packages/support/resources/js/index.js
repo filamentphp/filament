@@ -17,6 +17,7 @@ import '../css/components/tables/columns/color.css'
 import '../css/components/tables/columns/icon.css'
 import '../css/components/tables/columns/image.css'
 import '../css/components/tables/columns/text.css'
+import '../css/components/tables/header-cell.css'
 import '../css/components/tables/row.css'
 
 import 'tippy.js/dist/tippy.css'
