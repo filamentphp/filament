@@ -299,7 +299,7 @@ trait HasState
             }
         }
 
-        if ($this->isHiddenAndNotDehydrated()) {
+        if ($this->isHiddenAndNotDehydratedWhenHidden()) {
             return;
         }
 
