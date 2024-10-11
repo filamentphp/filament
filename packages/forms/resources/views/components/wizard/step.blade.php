@@ -13,13 +13,7 @@
 
 <div
     x-init="
-        const allChildren = $el.getElementsByTagName('*')
-
-        for (const el of allChildren) {
-            if (el.hasAttribute('autofocus')) {
-                return
-            }
-        }
+        if ($el.querySelector('[autofocus]')) return
 
         $el.setAttribute('tabindex', '0')
     "
