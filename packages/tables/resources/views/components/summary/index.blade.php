@@ -28,8 +28,8 @@
 @endphp
 
 @if ($hasPageSummary)
-    <x-filament-tables::row
-        class="fi-ta-summary-header-row bg-gray-50 dark:bg-white/5"
+    <tr
+        class="fi-ta-row fi-ta-summary-header-row fi-striped"
     >
         @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
             <td></td>
@@ -40,9 +40,9 @@
         @endif
 
         @if ($extraHeadingColumn)
-            <x-filament-tables::summary.header-cell>
+            <td class="fi-ta-cell fi-ta-summary-header-cell">
                 {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
-            </x-filament-tables::summary.header-cell>
+            </td>
         @endif
 
         @foreach ($columns as $column)
@@ -57,30 +57,19 @@
                     $hasColumnHeaderLabel = (! $placeholderColumns) || $column->hasSummary();
                 @endphp
 
-                <x-filament-tables::summary.header-cell
-                    :attributes="
-                        \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
-                            ->class([
-                                'whitespace-nowrap' => ! $column->isHeaderWrapped(),
-                                'whitespace-normal' => $column->isHeaderWrapped(),
-                                match ($alignment) {
-                                    Alignment::Start => 'text-start',
-                                    Alignment::Center => 'text-center',
-                                    Alignment::End => 'text-end',
-                                    Alignment::Left => 'text-left',
-                                    Alignment::Right => 'text-right',
-                                    Alignment::Justify, Alignment::Between => 'text-justify',
-                                    default => $alignment,
-                                } => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
-                            ])
-                    "
+                <td
+                    {{ $column->getExtraHeaderAttributeBag()->class([
+                        'fi-ta-cell fi-ta-summary-header-cell',
+                        'fi-wrapped' => $column->isHeaderWrapped(),
+                        (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')) => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
+                    ]) }}
                 >
                     @if ($loop->first && (! $extraHeadingColumn))
                         {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
                     @elseif ($hasColumnHeaderLabel)
                         {{ $column->getLabel() }}
                     @endif
-                </x-filament-tables::summary.header-cell>
+                </td>
             @endif
         @endforeach
 
@@ -91,7 +80,7 @@
         @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
             <td></td>
         @endif
-    </x-filament-tables::row>
+    </tr>
 
     @php
         $query = $this->getPageTableSummaryQuery();
@@ -130,6 +119,6 @@
     :selected-state="$selectedState"
     :selection-enabled="$selectionEnabled"
     @class([
-        'bg-gray-50 dark:bg-white/5' => ! $hasPageSummary,
+        'fi-striped' => ! $hasPageSummary,
     ])
 />

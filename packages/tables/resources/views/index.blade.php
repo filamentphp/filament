@@ -1047,7 +1047,7 @@
                                                 <td></td>
                                             @endif
 
-                                            <td class="fi-ta-group-selection-cell">
+                                            <td class="fi-ta-cell fi-ta-group-selection-cell">
                                                 <input
                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                     type="checkbox"
@@ -1117,7 +1117,7 @@
                                         </td>
 
                                         @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                            <td class="fi-ta-group-selection-cell">
+                                            <td class="fi-ta-cell fi-ta-group-selection-cell">
                                                 <input
                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                     type="checkbox"

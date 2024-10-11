@@ -26,12 +26,7 @@
     }
 @endphp
 
-<x-filament-tables::row
-    :attributes="
-        \Filament\Support\prepare_inherited_attributes($attributes)
-            ->class(['fi-ta-summary-row'])
-    "
->
+<tr {{ $attributes->class(['fi-ta-row fi-ta-summary-row']) }}>
     @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
         <td></td>
     @endif
@@ -41,13 +36,11 @@
     @endif
 
     @if ($extraHeadingColumn || $groupsOnly)
-        <x-filament-tables::cell
-            class="text-sm font-medium text-gray-950 dark:text-white"
+        <td
+            class="fi-ta-cell fi-ta-summary-row-heading-cell"
         >
-            <span class="fi-ta-summary-row-heading px-3 py-4">
-                {{ $heading }}
-            </span>
-        </x-filament-tables::cell>
+            {{ $heading }}
+        </td>
     @else
         @php
             $headingColumnSpan = 1;
@@ -76,32 +69,22 @@
                 }
             @endphp
 
-            <x-filament-tables::cell
-                :colspan="($loop->first && (! $extraHeadingColumn) && (! $groupsOnly) && ($headingColumnSpan > 1)) ? $headingColumnSpan : null"
+            <td
+                colspan="{{ ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly) && ($headingColumnSpan > 1)) ? $headingColumnSpan : null }}"
                 @class([
-                    match ($alignment) {
-                        Alignment::Start => 'text-start',
-                        Alignment::Center => 'text-center',
-                        Alignment::End => 'text-end',
-                        Alignment::Left => 'text-left',
-                        Alignment::Right => 'text-right',
-                        Alignment::Justify, Alignment::Between => 'text-justify',
-                        default => $alignment,
-                    },
+                    'fi-ta-cell',
+                    ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : ''),
+                    'fi-ta-summary-row-heading-cell' => $loop->first && (! $extraHeadingColumn) && (! $groupsOnly),
                 ])
             >
                 @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly))
-                    <span
-                        class="fi-ta-summary-row-heading flex px-3 py-4 text-sm font-medium text-gray-950 dark:text-white"
-                    >
-                        {{ $heading }}
-                    </span>
+                    {{ $heading }}
                 @elseif ((! $placeholderColumns) || $column->hasSummary())
                     @foreach ($column->getSummarizers() as $summarizer)
                         {{ $summarizer->query($query)->selectedState($selectedState) }}
                     @endforeach
                 @endif
-            </x-filament-tables::cell>
+            </td>
         @endif
     @endforeach
 
@@ -112,4 +95,4 @@
     @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
         <td></td>
     @endif
-</x-filament-tables::row>
+</tr>

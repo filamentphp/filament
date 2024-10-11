@@ -68,12 +68,53 @@
     & .fi-ta-placeholder {
         @apply text-sm leading-6 text-gray-400 dark:text-gray-500;
     }
-}
 
-.fi-ta-reorder-handle {
-    @apply cursor-move;
-}
+    &.fi-ta-summary-row-heading-cell {
+        @apply text-sm font-medium text-gray-950 dark:text-white px-3 py-4;
+    }
 
-.fi-ta-group-selection-cell {
-    @apply w-1 px-3 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    &.fi-align-start {
+        @apply text-start;
+    }
+
+    &.fi-align-center {
+        @apply text-center;
+    }
+
+    &.fi-align-end {
+        @apply text-end;
+    }
+
+    &.fi-align-left {
+        @apply text-left;
+    }
+
+    &.fi-align-right {
+        @apply text-right;
+    }
+
+    &.fi-align-justify,
+    &.fi-align-between {
+        @apply text-justify;
+    }
+
+    &.fi-ta-summary-header-cell {
+        @apply px-3 py-2 text-sm font-medium text-gray-950 dark:text-white sm:first-of-type:ps-6;
+
+        &.fi-wrapped {
+            @apply whitespace-nowrap;
+        }
+
+        &:not(.fi-wrapped) {
+            @apply whitespace-nowrap;
+        }
+    }
+
+    & .fi-ta-reorder-handle {
+        @apply cursor-move;
+    }
+
+    &.fi-ta-group-selection-cell {
+        @apply w-1 px-3 first-of-type:ps-4 last-of-type:pe-4 sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    }
 }
