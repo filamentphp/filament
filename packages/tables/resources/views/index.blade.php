@@ -1024,7 +1024,9 @@
                                 @endif
 
                                 @if (! $isGroupsOnly)
-                                    <tr class="fi-ta-row fi-ta-group-header-row">
+                                    <tr
+                                        class="fi-ta-row fi-ta-group-header-row"
+                                    >
                                         @php
                                             $isRecordGroupCollapsible = $group?->isCollapsible();
                                             $groupHeaderColspan = $columnsCount;
@@ -1047,7 +1049,9 @@
                                                 <td></td>
                                             @endif
 
-                                            <td class="fi-ta-cell fi-ta-group-selection-cell">
+                                            <td
+                                                class="fi-ta-cell fi-ta-group-selection-cell"
+                                            >
                                                 <input
                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                     type="checkbox"
@@ -1088,16 +1092,20 @@
                                                 ])
                                             >
                                                 <div>
-                                                    <h4 class="fi-ta-group-heading">
+                                                    <h4
+                                                        class="fi-ta-group-heading"
+                                                    >
                                                         @if (filled($recordGroupLabel = ($group->isTitlePrefixedWithLabel() ? $group->getLabel() : null)))
-                                                            {{ $recordGroupLabel }}:
+                                                                {{ $recordGroupLabel }}:
                                                         @endif
 
                                                         {{ $recordGroupTitle }}
                                                     </h4>
 
                                                     @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
-                                                        <p class="fi-ta-group-description">
+                                                        <p
+                                                            class="fi-ta-group-description"
+                                                        >
                                                             {{ $recordGroupDescription }}
                                                         </p>
                                                     @endif
@@ -1117,7 +1125,9 @@
                                         </td>
 
                                         @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                            <td class="fi-ta-cell fi-ta-group-selection-cell">
+                                            <td
+                                                class="fi-ta-cell fi-ta-group-selection-cell"
+                                            >
                                                 <input
                                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
                                                     type="checkbox"

@@ -28,9 +28,7 @@
 @endphp
 
 @if ($hasPageSummary)
-    <tr
-        class="fi-ta-row fi-ta-summary-header-row fi-striped"
-    >
+    <tr class="fi-ta-row fi-ta-summary-header-row fi-striped">
         @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
             <td></td>
         @endif
@@ -58,11 +56,13 @@
                 @endphp
 
                 <td
-                    {{ $column->getExtraHeaderAttributeBag()->class([
-                        'fi-ta-cell fi-ta-summary-header-cell',
-                        'fi-wrapped' => $column->isHeaderWrapped(),
-                        (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')) => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
-                    ]) }}
+                    {{
+                        $column->getExtraHeaderAttributeBag()->class([
+                            'fi-ta-cell fi-ta-summary-header-cell',
+                            'fi-wrapped' => $column->isHeaderWrapped(),
+                            (($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : '')) => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
+                        ])
+                    }}
                 >
                     @if ($loop->first && (! $extraHeadingColumn))
                         {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}

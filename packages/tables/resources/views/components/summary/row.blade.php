@@ -36,9 +36,7 @@
     @endif
 
     @if ($extraHeadingColumn || $groupsOnly)
-        <td
-            class="fi-ta-cell fi-ta-summary-row-heading-cell"
-        >
+        <td class="fi-ta-cell fi-ta-summary-row-heading-cell">
             {{ $heading }}
         </td>
     @else
