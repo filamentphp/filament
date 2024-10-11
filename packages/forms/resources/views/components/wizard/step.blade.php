@@ -17,7 +17,7 @@
 
         for (const el of allChildren) {
             if (el.hasAttribute('autofocus')) {
-                return;
+                return
             }
         }
 
