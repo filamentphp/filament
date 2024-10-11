@@ -13,6 +13,34 @@
         @apply hidden;
     }
 
+    &.fi-ta-group-header-row {
+        & > td {
+            @apply bg-gray-50 dark:bg-white/5;
+
+            &.fi-ta-group-header-cell {
+                & .fi-ta-group-header {
+                    @apply flex w-full items-center gap-x-3 px-3 py-2;
+
+                    &.fi-collapsible {
+                        @apply cursor-pointer;
+
+                        &.fi-collapsed .fi-icon-btn {
+                            @apply -rotate-180;
+                        }
+                    }
+
+                    & .fi-ta-group-heading {
+                        @apply text-sm font-medium text-gray-950 dark:text-white;
+                    }
+
+                    & .fi-ta-group-description {
+                        @apply text-sm text-gray-500 dark:text-gray-400;
+                    }
+                }
+            }
+        }
+    }
+
     &.fi-selected {
         &:not(.fi-striped) {
             @apply bg-gray-50 dark:bg-white/5;

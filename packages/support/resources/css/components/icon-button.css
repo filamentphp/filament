@@ -44,10 +44,6 @@
         &:has(.fi-icon.fi-size-lg) {
             @apply -m-1;
         }
-
-        & > .fi-icon {
-            @apply size-5;
-        }
     }
 
     &.fi-size-md {

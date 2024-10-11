@@ -1024,8 +1024,9 @@
                                 @endif
 
                                 @if (! $isGroupsOnly)
-                                    <x-filament-tables::row>
+                                    <tr class="fi-ta-row fi-ta-group-header-row">
                                         @php
+                                            $isRecordGroupCollapsible = $group?->isCollapsible();
                                             $groupHeaderColspan = $columnsCount;
 
                                             if ($isSelectionEnabled) {
@@ -1043,42 +1044,105 @@
 
                                         @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                             @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
-                                                <td
-                                                    class="bg-gray-50 dark:bg-white/5"
-                                                ></td>
+                                                <td></td>
                                             @endif
 
-                                            <x-filament-tables::selection.group-cell>
-                                                <x-filament-tables::selection.group-checkbox
-                                                    :page="$page"
-                                                    :key="$recordGroupKey"
-                                                    :title="$recordGroupTitle"
+                                            <td class="fi-ta-group-selection-cell">
+                                                <input
+                                                    aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
+                                                    type="checkbox"
+                                                    x-bind:checked="
+                                                        const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+
+                                                        if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
+                                                            $el.checked = true
+
+                                                            return 'checked'
+                                                        }
+
+                                                        $el.checked = false
+
+                                                        return null
+                                                    "
+                                                    x-on:click="toggleSelectRecordsInGroup(@js($recordGroupKey))"
+                                                    wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                    class="fi-ta-record-checkbox fi-ta-group-checkbox fi-checkbox-input"
                                                 />
-                                            </x-filament-tables::selection.group-cell>
+                                            </td>
                                         @endif
 
                                         <td
                                             colspan="{{ $groupHeaderColspan }}"
-                                            class="p-0"
+                                            class="fi-ta-group-header-cell"
                                         >
-                                            <x-filament-tables::group.header
-                                                :collapsible="$group->isCollapsible()"
-                                                :description="$group->getDescription($record, $recordGroupTitle)"
-                                                :label="$group->isTitlePrefixedWithLabel() ? $group->getLabel() : null"
-                                                :title="$recordGroupTitle"
-                                            />
+                                            <div
+                                                @if ($isRecordGroupCollapsible)
+                                                    x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
+                                                    x-bind:class="isGroupCollapsed(@js($recordGroupTitle)) ? 'fi-collapsed' : null"
+                                                @endif
+                                                @class([
+                                                    'fi-ta-group-header',
+                                                    'fi-collapsible' => $isRecordGroupCollapsible,
+                                                ])
+                                            >
+                                                <div>
+                                                    <h4 class="fi-ta-group-heading">
+                                                        @if (filled($recordGroupLabel = ($group->isTitlePrefixedWithLabel() ? $group->getLabel() : null)))
+                                                            {{ $recordGroupLabel }}:
+                                                        @endif
+
+                                                        {{ $recordGroupTitle }}
+                                                    </h4>
+
+                                                    @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
+                                                        <p class="fi-ta-group-description">
+                                                            {{ $recordGroupDescription }}
+                                                        </p>
+                                                    @endif
+                                                </div>
+
+                                                @if ($isRecordGroupCollapsible)
+                                                    <button
+                                                        aria-label="{{ filled($recordGroupLabel) ? ($recordGroupLabel . ': ' . $recordGroupTitle) : $recordGroupTitle }}"
+                                                        x-bind:aria-expanded="! isGroupCollapsed(@js($recordGroupTitle))"
+                                                        type="button"
+                                                        class="fi-icon-btn fi-size-sm"
+                                                    >
+                                                        {{ \Filament\Support\generate_icon_html('heroicon-m-chevron-up', alias: 'tables::grouping.collapse-button') }}
+                                                    </button>
+                                                @endif
+                                            </div>
                                         </td>
 
                                         @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                            <x-filament-tables::selection.group-cell>
-                                                <x-filament-tables::selection.group-checkbox
-                                                    :page="$page"
-                                                    :key="$recordGroupKey"
-                                                    :title="$recordGroupTitle"
+                                            <td class="fi-ta-group-selection-cell">
+                                                <input
+                                                    aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
+                                                    type="checkbox"
+                                                    x-bind:checked="
+                                                        const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+
+                                                        if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
+                                                            $el.checked = true
+
+                                                            return 'checked'
+                                                        }
+
+                                                        $el.checked = false
+
+                                                        return null
+                                                    "
+                                                    x-on:click="toggleSelectRecordsInGroup(@js($recordGroupKey))"
+                                                    wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                                    class="fi-ta-record-checkbox fi-ta-group-checkbox fi-checkbox-input"
                                                 />
-                                            </x-filament-tables::selection.group-cell>
+                                            </td>
                                         @endif
-                                    </x-filament-tables::row>
+                                    </tr>
                                 @endif
 
                                 @php
