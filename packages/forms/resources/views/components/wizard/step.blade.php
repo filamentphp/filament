@@ -12,6 +12,17 @@
 @endphp
 
 <div
+    x-init="
+        const allChildren = $el.getElementsByTagName('*')
+
+        for (const el of allChildren) {
+            if (el.hasAttribute('autofocus')) {
+                return;
+            }
+        }
+
+        $el.setAttribute('tabindex', '0')
+    "
     x-bind:class="{
         @js($activeStepClasses): step === @js($id),
         @js($inactiveStepClasses): step !== @js($id),
