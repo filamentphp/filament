@@ -4,23 +4,23 @@ return [
 
     'modal' => [
 
-        'heading' => 'Notifications',
+        'heading' => 'შეტყობინებები',
 
         'actions' => [
 
             'clear' => [
-                'label' => 'Clear',
+                'label' => 'გასუფთავება',
             ],
 
             'mark_all_as_read' => [
-                'label' => 'Mark all as read',
+                'label' => 'ყველას წაკითხულად მონიშვნა',
             ],
 
         ],
 
         'empty' => [
-            'heading' => 'No notifications',
-            'description' => 'Please check again later.',
+            'heading' => 'შეტყობინებები არ არის',
+            'description' => 'გთხოვთ, შეამოწმოთ მოგვიანებით.',
         ],
 
     ],
