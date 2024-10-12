@@ -284,8 +284,12 @@
         @endif
 
         <div
-            @if ((! $isReordering) && ($pollingInterval = $getPollingInterval()))
-                wire:poll.{{ $pollingInterval }}
+            @if(! $isReordering)
+                @if($pollingInterval = $getPollingInterval() && $pollingAction = $getPollingAction())
+                    wire:poll.{{ $pollingInterval }}="{{ $pollingAction }}"
+                @elseif($pollingInterval = $getPollingInterval())
+                    wire:poll.{{ $pollingInterval }}
+                @endif
             @endif
             @class([
                 'fi-ta-content relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10',
