@@ -5,7 +5,7 @@ return [
     'actions' => [
 
         'close' => [
-            'label' => 'Close',
+            'label' => 'დახურვა',
         ],
 
     ],
