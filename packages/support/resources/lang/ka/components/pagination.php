@@ -2,18 +2,18 @@
 
 return [
 
-    'label' => 'გვერდებზე ნავიგაცია',
+    'label' => 'Pagination navigation',
 
-    'overview' => '{1} ნაჩვენებია ერთი შედეგი|[2,*] ნაჩვენებია :first-დან :last-მდე :total-დან',
+    'overview' => '{1} Showing 1 result|[2,*] Showing :first to :last of :total results',
 
     'fields' => [
 
         'records_per_page' => [
 
-            'label' => 'ჩანაწერი თითო გვერდზე',
+            'label' => 'Per page',
 
             'options' => [
-                'all' => 'ყველა',
+                'all' => 'All',
             ],
 
         ],
@@ -22,16 +22,24 @@ return [
 
     'actions' => [
 
+        'first' => [
+            'label' => 'First',
+        ],
+
         'go_to_page' => [
-            'label' => '{1} :page-ელ გვერდზე გადასვლა|[2,*] მე-:page გვერდზე გადასვლა',
+            'label' => 'Go to page :page',
+        ],
+
+        'last' => [
+            'label' => 'Last',
         ],
 
         'next' => [
-            'label' => 'შემდეგი',
+            'label' => 'Next',
         ],
 
         'previous' => [
-            'label' => 'წინა',
+            'label' => 'Previous',
         ],
 
     ],
