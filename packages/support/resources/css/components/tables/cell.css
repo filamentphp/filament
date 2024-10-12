@@ -110,7 +110,7 @@
         }
     }
 
-    &.fi-table-individual-search-cell {
+    &.fi-ta-individual-search-cell {
         @apply px-3 py-2;
     }
 
