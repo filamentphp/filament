@@ -7,21 +7,21 @@ return [
         'actions' => [
 
             'clone' => [
-                'label' => 'Clone',
+                'label' => 'კლონირება',
             ],
 
             'add' => [
 
-                'label' => 'Add to :label',
+                'label' => 'დამატება :label-ში',
 
                 'modal' => [
 
-                    'heading' => 'Add to :label',
+                    'heading' => 'დამატება :label-ში',
 
                     'actions' => [
 
                         'add' => [
-                            'label' => 'Add',
+                            'label' => 'დამატება',
                         ],
 
                     ],
@@ -32,16 +32,16 @@ return [
 
             'add_between' => [
 
-                'label' => 'Insert between blocks',
+                'label' => 'ბლოკებს შორის ჩასმა',
 
                 'modal' => [
 
-                    'heading' => 'Add to :label',
+                    'heading' => 'დამატება :label-ში',
 
                     'actions' => [
 
                         'add' => [
-                            'label' => 'Add',
+                            'label' => 'დამატება',
                         ],
 
                     ],
@@ -51,21 +51,21 @@ return [
             ],
 
             'delete' => [
-                'label' => 'Delete',
+                'label' => 'წაშლა',
             ],
 
             'edit' => [
 
-                'label' => 'Edit',
+                'label' => 'რედაქტირება',
 
                 'modal' => [
 
-                    'heading' => 'Edit block',
+                    'heading' => 'ბლოკის რედაქტირება',
 
                     'actions' => [
 
                         'save' => [
-                            'label' => 'Save changes',
+                            'label' => 'ცვლილებების შენახვა',
                         ],
 
                     ],
@@ -75,31 +75,31 @@ return [
             ],
 
             'reorder' => [
-                'label' => 'Move',
+                'label' => 'გადაადგილება',
             ],
 
             'move_down' => [
-                'label' => 'Move down',
+                'label' => 'გადაადგილება ქვემოთ',
             ],
 
             'move_up' => [
-                'label' => 'Move up',
+                'label' => 'გადაადგილება ზემოთ',
             ],
 
             'collapse' => [
-                'label' => 'Collapse',
+                'label' => 'შეკუმშვა',
             ],
 
             'expand' => [
-                'label' => 'Expand',
+                'label' => 'გაფართოება',
             ],
 
             'collapse_all' => [
-                'label' => 'Collapse all',
+                'label' => 'ყველას შეკუმშვა',
             ],
 
             'expand_all' => [
-                'label' => 'Expand all',
+                'label' => 'ყველას გაფართოება',
             ],
 
         ],
@@ -111,11 +111,11 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'Deselect all',
+                'label' => 'ყველას არჩევის გაუქმება',
             ],
 
             'select_all' => [
-                'label' => 'Select all',
+                'label' => 'ყველას არჩევა',
             ],
 
         ],
@@ -129,71 +129,71 @@ return [
             'actions' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'გაუქმება',
                 ],
 
                 'drag_crop' => [
-                    'label' => 'Drag mode "crop"',
+                    'label' => 'რეჟიმი "მოჭრა"',
                 ],
 
                 'drag_move' => [
-                    'label' => 'Drag mode "move"',
+                    'label' => 'რეჟიმი "გადაადგილება"',
                 ],
 
                 'flip_horizontal' => [
-                    'label' => 'Flip image horizontally',
+                    'label' => 'სურათის ჰორიზონტალური გადატრიალება',
                 ],
 
                 'flip_vertical' => [
-                    'label' => 'Flip image vertically',
+                    'label' => 'სურათის ვერტიკალური გადატრიალება',
                 ],
 
                 'move_down' => [
-                    'label' => 'Move image down',
+                    'label' => 'სურათის გადაადგილება ქვემოთ',
                 ],
 
                 'move_left' => [
-                    'label' => 'Move image to left',
+                    'label' => 'სურათის გადაადგილება მარცხნივ',
                 ],
 
                 'move_right' => [
-                    'label' => 'Move image to right',
+                    'label' => 'სურათის გადაადგილება მარჯვნივ',
                 ],
 
                 'move_up' => [
-                    'label' => 'Move image up',
+                    'label' => 'სურათის გადაადგილება ზემოთ',
                 ],
 
                 'reset' => [
-                    'label' => 'Reset',
+                    'label' => 'გადატვირთვა',
                 ],
 
                 'rotate_left' => [
-                    'label' => 'Rotate image to left',
+                    'label' => 'სურათის მარცხნივ გადატრიალება',
                 ],
 
                 'rotate_right' => [
-                    'label' => 'Rotate image to right',
+                    'label' => 'სურათის მარჯვნივ გადატრიალება',
                 ],
 
                 'set_aspect_ratio' => [
-                    'label' => 'Set aspect ratio to :ratio',
+                    'label' => 'პროპორციის დაყენება :ratio',
                 ],
 
                 'save' => [
-                    'label' => 'Save',
+                    'label' => 'შენახვა',
                 ],
 
                 'zoom_100' => [
-                    'label' => 'Zoom image to 100%',
+                    'label' => 'ზუმი 100%',
                 ],
 
                 'zoom_in' => [
-                    'label' => 'Zoom in',
+                    'label' => 'ზუმირება',
                 ],
 
                 'zoom_out' => [
-                    'label' => 'Zoom out',
+                    'label' => 'გამოზუმვა',
                 ],
 
             ],
@@ -201,17 +201,17 @@ return [
             'fields' => [
 
                 'height' => [
-                    'label' => 'Height',
+                    'label' => 'სიმაღლე',
                     'unit' => 'px',
                 ],
 
                 'rotation' => [
-                    'label' => 'Rotation',
-                    'unit' => 'deg',
+                    'label' => 'ბრუნვა',
+                    'unit' => 'გრად',
                 ],
 
                 'width' => [
-                    'label' => 'Width',
+                    'label' => 'სიგანე',
                     'unit' => 'px',
                 ],
 
@@ -229,10 +229,10 @@ return [
 
             'aspect_ratios' => [
 
-                'label' => 'Aspect ratios',
+                'label' => 'პროპორციები',
 
                 'no_fixed' => [
-                    'label' => 'Free',
+                    'label' => 'თავისუფალი',
                 ],
 
             ],
@@ -240,8 +240,9 @@ return [
             'svg' => [
 
                 'messages' => [
-                    'confirmation' => 'Editing SVG files is not recommended as it can result in quality loss when scaling.\n Are you sure you want to continue?',
-                    'disabled' => 'Editing SVG files is disabled as it can result in quality loss when scaling.',
+                    'confirmation' => 'SVG ფაილების რედაქტირება არ არის რეკომენდებული, რადგან მასშტაბირებისას შეიძლება ხარისხის დაკარგვა.
+ დარწმუნებული ხართ, რომ გსურთ გაგრძელება?',
+                    'disabled' => 'SVG ფაილების რედაქტირება გამორთულია, რადგან მასშტაბირებისას შეიძლება ხარისხის დაკარგვა.',
                 ],
 
             ],
@@ -255,15 +256,15 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'Add row',
+                'label' => 'ჩანაწერის დამატება',
             ],
 
             'delete' => [
-                'label' => 'Delete row',
+                'label' => 'ჩანაწერის წაშლა',
             ],
 
             'reorder' => [
-                'label' => 'Reorder row',
+                'label' => 'ჩანაწერის გადალაგება',
             ],
 
         ],
@@ -271,11 +272,11 @@ return [
         'fields' => [
 
             'key' => [
-                'label' => 'Key',
+                'label' => 'იდენტიფიკატორი',
             ],
 
             'value' => [
-                'label' => 'Value',
+                'label' => 'მნიშვნელობა',
             ],
 
         ],
@@ -285,19 +286,19 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Attach files',
-            'blockquote' => 'Blockquote',
-            'bold' => 'Bold',
-            'bullet_list' => 'Bullet list',
-            'code_block' => 'Code block',
-            'heading' => 'Heading',
-            'italic' => 'Italic',
-            'link' => 'Link',
-            'ordered_list' => 'Numbered list',
-            'redo' => 'Redo',
-            'strike' => 'Strikethrough',
-            'table' => 'Table',
-            'undo' => 'Undo',
+            'attach_files' => 'ფაილების მიმაგრება',
+            'blockquote' => 'ციტატა',
+            'bold' => 'მსხვილი',
+            'bullet_list' => 'მარკირებული სია',
+            'code_block' => 'კოდის ბლოკი',
+            'heading' => 'სათაური',
+            'italic' => 'ტალღოვანი',
+            'link' => 'ბმული',
+            'ordered_list' => 'ნუმერირებული სია',
+            'redo' => 'გადამეორება',
+            'strike' => 'გადახაზული',
+            'table' => 'ცხრილი',
+            'undo' => 'გაუქმება',
         ],
 
     ],
@@ -305,8 +306,8 @@ return [
     'radio' => [
 
         'boolean' => [
-            'true' => 'Yes',
-            'false' => 'No',
+            'true' => 'კი',
+            'false' => 'არა',
         ],
 
     ],
@@ -316,47 +317,47 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'Add to :label',
+                'label' => 'დამატება :label-ში',
             ],
 
             'add_between' => [
-                'label' => 'Insert between',
+                'label' => 'ჩასმა შორის',
             ],
 
             'delete' => [
-                'label' => 'Delete',
+                'label' => 'წაშლა',
             ],
 
             'clone' => [
-                'label' => 'Clone',
+                'label' => 'კლონირება',
             ],
 
             'reorder' => [
-                'label' => 'Move',
+                'label' => 'გადაადგილება',
             ],
 
             'move_down' => [
-                'label' => 'Move down',
+                'label' => 'გადაადგილება ქვემოთ',
             ],
 
             'move_up' => [
-                'label' => 'Move up',
+                'label' => 'გადაადგილება ზემოთ',
             ],
 
             'collapse' => [
-                'label' => 'Collapse',
+                'label' => 'შეკუმშვა',
             ],
 
             'expand' => [
-                'label' => 'Expand',
+                'label' => 'გაფართოება',
             ],
 
             'collapse_all' => [
-                'label' => 'Collapse all',
+                'label' => 'ყველას შეკუმშვა',
             ],
 
             'expand_all' => [
-                'label' => 'Expand all',
+                'label' => 'ყველას გაფართოება',
             ],
 
         ],
@@ -370,34 +371,34 @@ return [
             'link' => [
 
                 'actions' => [
-                    'link' => 'Link',
-                    'unlink' => 'Unlink',
+                    'link' => 'ბმული',
+                    'unlink' => 'ბმულის მოხსნა',
                 ],
 
                 'label' => 'URL',
 
-                'placeholder' => 'Enter a URL',
+                'placeholder' => 'შეიყვანეთ URL',
 
             ],
 
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'Attach files',
-            'blockquote' => 'Blockquote',
-            'bold' => 'Bold',
-            'bullet_list' => 'Bullet list',
-            'code_block' => 'Code block',
-            'h1' => 'Title',
-            'h2' => 'Heading',
-            'h3' => 'Subheading',
-            'italic' => 'Italic',
-            'link' => 'Link',
-            'ordered_list' => 'Numbered list',
-            'redo' => 'Redo',
-            'strike' => 'Strikethrough',
-            'underline' => 'Underline',
-            'undo' => 'Undo',
+            'attach_files' => 'ფაილების მიმაგრება',
+            'blockquote' => 'ციტატა',
+            'bold' => 'მსხვილი',
+            'bullet_list' => 'მარკირებული სია',
+            'code_block' => 'კოდის ბლოკი',
+            'h1' => 'სათაური',
+            'h2' => 'სათაური 2',
+            'h3' => 'ქვესათაური',
+            'italic' => 'ტალღოვანი',
+            'link' => 'ბმული',
+            'ordered_list' => 'ნუმერირებული სია',
+            'redo' => 'გადამეორება',
+            'strike' => 'გადახაზული',
+            'underline' => 'დახაზული',
+            'undo' => 'გაუქმება',
         ],
 
     ],
@@ -410,16 +411,16 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'Create',
+                    'heading' => 'შექმნა',
 
                     'actions' => [
 
                         'create' => [
-                            'label' => 'Create',
+                            'label' => 'შექმნა',
                         ],
 
                         'create_another' => [
-                            'label' => 'Create & create another',
+                            'label' => 'შექმნა & ახალი შექმნა',
                         ],
 
                     ],
@@ -432,12 +433,12 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'Edit',
+                    'heading' => 'რედაქტირება',
 
                     'actions' => [
 
                         'save' => [
-                            'label' => 'Save',
+                            'label' => 'შენახვა',
                         ],
 
                     ],
@@ -449,26 +450,26 @@ return [
         ],
 
         'boolean' => [
-            'true' => 'Yes',
-            'false' => 'No',
+            'true' => 'კი',
+            'false' => 'არა',
         ],
 
-        'loading_message' => 'Loading...',
+        'loading_message' => 'იტვირთება...',
 
-        'max_items_message' => 'Only :count can be selected.',
+        'max_items_message' => 'შეიძლება მხოლოდ :count აირჩიოთ.',
 
-        'no_search_results_message' => 'No options match your search.',
+        'no_search_results_message' => 'არჩევანი ვერ მოიძებნა.',
 
-        'placeholder' => 'Select an option',
+        'placeholder' => 'აირჩიეთ ვარიანტი',
 
-        'searching_message' => 'Searching...',
+        'searching_message' => 'ძიება...',
 
-        'search_prompt' => 'Start typing to search...',
+        'search_prompt' => 'მოძიების დასაწყებად აკრიფეთ...',
 
     ],
 
     'tags_input' => [
-        'placeholder' => 'New tag',
+        'placeholder' => 'ახალი თაგი',
     ],
 
     'text_input' => [
@@ -476,11 +477,11 @@ return [
         'actions' => [
 
             'hide_password' => [
-                'label' => 'Hide password',
+                'label' => 'პაროლის დამალვა',
             ],
 
             'show_password' => [
-                'label' => 'Show password',
+                'label' => 'პაროლის ჩვენება',
             ],
 
         ],
@@ -490,8 +491,8 @@ return [
     'toggle_buttons' => [
 
         'boolean' => [
-            'true' => 'Yes',
-            'false' => 'No',
+            'true' => 'კი',
+            'false' => 'არა',
         ],
 
     ],
@@ -501,11 +502,11 @@ return [
         'actions' => [
 
             'previous_step' => [
-                'label' => 'Back',
+                'label' => 'უკან',
             ],
 
             'next_step' => [
-                'label' => 'Next',
+                'label' => 'შემდეგი',
             ],
 
         ],
