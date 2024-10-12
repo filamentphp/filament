@@ -2,29 +2,29 @@
 
 return [
 
-    'label' => 'Import :label',
+    'label' => 'იმპორტი :label',
 
     'modal' => [
 
-        'heading' => 'Import :label',
+        'heading' => 'იმპორტი :label',
 
         'form' => [
 
             'file' => [
 
-                'label' => 'File',
+                'label' => 'ფაილი',
 
-                'placeholder' => 'Upload a CSV file',
+                'placeholder' => 'ატვირთეთ CSV ფაილი',
 
                 'rules' => [
-                    'duplicate_columns' => '{0} The file must not contain more than one empty column header.|{1,*} The file must not contain duplicate column headers: :columns.',
+                    'duplicate_columns' => '{0} ფაილში არ უნდა იყოს ერთზე მეტი ცარიელი სვეტი სათაურში.|{1,*} ფაილში არ უნდა იყოს დუბლირებული სვეტის სათაურები: :columns.',
                 ],
 
             ],
 
             'columns' => [
-                'label' => 'Columns',
-                'placeholder' => 'Select a column',
+                'label' => 'სვეტები',
+                'placeholder' => 'აირჩიეთ სვეტი',
             ],
 
         ],
@@ -32,11 +32,11 @@ return [
         'actions' => [
 
             'download_example' => [
-                'label' => 'Download example CSV file',
+                'label' => 'გადმოწერეთ მაგალითი(CSV ფაილი)',
             ],
 
             'import' => [
-                'label' => 'Import',
+                'label' => 'იმპორტი',
             ],
 
         ],
@@ -47,12 +47,12 @@ return [
 
         'completed' => [
 
-            'title' => 'Import completed',
+            'title' => 'იმპორტი დასრულდა',
 
             'actions' => [
 
                 'download_failed_rows_csv' => [
-                    'label' => 'Download information about the failed row|Download information about the failed rows',
+                    'label' => 'გადმოწერეთ ინფორმაცია შეცდომით ჩანაწერის შესახებ|გადმოწერეთ ინფორმაცია შეცდომით ჩანაწერების შესახებ',
                 ],
 
             ],
@@ -60,13 +60,13 @@ return [
         ],
 
         'max_rows' => [
-            'title' => 'Uploaded CSV file is too large',
-            'body' => 'You may not import more than 1 row at once.|You may not import more than :count rows at once.',
+            'title' => 'ატვირთული CSV ფაილი ზედმეტად დიდია',
+            'body' => 'თქვენ არ შეგიძლიათ ერთდროულად ერთზე მეტი ჩანაწერის იმპორტი.|თქვენ არ შეგიძლიათ ერთდროულად :count -ზე მეტი  ჩანაწერის იმპორტი.',
         ],
 
         'started' => [
-            'title' => 'Import started',
-            'body' => 'Your import has begun and 1 row will be processed in the background.|Your import has begun and :count rows will be processed in the background.',
+            'title' => 'იმპორტი დაწყებულია',
+            'body' => 'იმპორტი დაიწყო და 1 ჩანაწერი დამუშავდება სერვერზე.|იმპორტი დაიწყო და :count ჩანაწერი დამუშავდება სერვერზე.',
         ],
 
     ],
@@ -76,10 +76,10 @@ return [
     ],
 
     'failure_csv' => [
-        'file_name' => 'import-:import_id-:csv_name-failed-rows',
-        'error_header' => 'error',
-        'system_error' => 'System error, please contact support.',
-        'column_mapping_required_for_new_record' => 'The :attribute column was not mapped to a column in the file, but it is required for creating new records.',
+        'file_name' => 'იმპორტი-:import_id-:csv_name-შეცდომები',
+        'error_header' => 'შეცდომა',
+        'system_error' => 'სისტემური შეცდომა, გთხოვთ დაუკავშირდეთ მხარდაჭერის სამსახურს.',
+        'column_mapping_required_for_new_record' => ':attribute სვეტი არ მიესადაგებული ფაილის სვეტს, მაგრამ ის საჭიროა ახალი ჩანაწერების შესაქმნელად.',
     ],
 
 ];

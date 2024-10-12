@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Delete',
+        'label' => 'წაშლა',
 
         'modal' => [
 
-            'heading' => 'Delete :label',
+            'heading' => 'შლით :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'წაშლა',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => 'წაშლილია',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Delete selected',
+        'label' => 'არჩეულიების წაშლა',
 
         'modal' => [
 
-            'heading' => 'Delete selected :label',
+            'heading' => 'მონიშნულების წაშლა :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'წაშლა',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => 'წაშლილია',
             ],
 
         ],

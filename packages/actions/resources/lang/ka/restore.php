@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Restore',
+        'label' => 'აღდგენა',
 
         'modal' => [
 
-            'heading' => 'Restore :label',
+            'heading' => 'აღადგენთ :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restore',
+                    'label' => 'აღდგენა',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Restored',
+                'title' => 'აღდგენილია',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Restore selected',
+        'label' => 'არჩეულიების აღდგენა',
 
         'modal' => [
 
-            'heading' => 'Restore selected :label',
+            'heading' => 'არჩეულიების აღდგენა :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restore',
+                    'label' => 'აღდგენა',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Restored',
+                'title' => 'აღდგენილია',
             ],
 
         ],

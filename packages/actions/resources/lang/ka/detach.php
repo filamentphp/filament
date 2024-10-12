@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Detach',
+        'label' => 'მოშორება',
 
         'modal' => [
 
-            'heading' => 'Detach :label',
+            'heading' => 'აშორებთ :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Detach',
+                    'label' => 'მოშორება',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Detached',
+                'title' => 'მოშორებულია',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Detach selected',
+        'label' => 'არჩეულიების მოშორება',
 
         'modal' => [
 
-            'heading' => 'Detach selected :label',
+            'heading' => 'არჩეულიების მოშორება :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Detach',
+                    'label' => 'მოშორება',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Detached',
+                'title' => 'მოშორებულია',
             ],
 
         ],

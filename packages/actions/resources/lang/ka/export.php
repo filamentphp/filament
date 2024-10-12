@@ -2,26 +2,26 @@
 
 return [
 
-    'label' => 'Export :label',
+    'label' => 'ექსპორტი :label',
 
     'modal' => [
 
-        'heading' => 'Export :label',
+        'heading' => 'ექსპორტდება :label',
 
         'form' => [
 
             'columns' => [
 
-                'label' => 'Columns',
+                'label' => 'სვეტები',
 
                 'form' => [
 
                     'is_enabled' => [
-                        'label' => ':column enabled',
+                        'label' => ':column ჩართულია',
                     ],
 
                     'label' => [
-                        'label' => ':column label',
+                        'label' => ':column დასახელება',
                     ],
 
                 ],
@@ -33,7 +33,7 @@ return [
         'actions' => [
 
             'export' => [
-                'label' => 'Export',
+                'label' => 'ექსპორტი',
             ],
 
         ],
@@ -44,16 +44,16 @@ return [
 
         'completed' => [
 
-            'title' => 'Export completed',
+            'title' => 'ექსპორტი დასრულებულია',
 
             'actions' => [
 
                 'download_csv' => [
-                    'label' => 'Download .csv',
+                    'label' => 'გადმოწერეთ .csv',
                 ],
 
                 'download_xlsx' => [
-                    'label' => 'Download .xlsx',
+                    'label' => 'გადმოწერეთ .xlsx',
                 ],
 
             ],
@@ -61,17 +61,17 @@ return [
         ],
 
         'max_rows' => [
-            'title' => 'Export is too large',
-            'body' => 'You may not export more than 1 row at once.|You may not export more than :count rows at once.',
+            'title' => 'ექსპორტი ზედმეტად დიდია',
+            'body' => 'შეგიძლიათ მაქსიმუმ 1 ჩანაწერის ექსპორტი ერთდროულად.|შეგიძლიათ მაქსიმუმ :count ჩანაწერის ექსპორტი ერთდროულად.',
         ],
 
         'started' => [
-            'title' => 'Export started',
-            'body' => 'Your export has begun and 1 row will be processed in the background. You will receive a notification with the download link when it is complete.|Your export has begun and :count rows will be processed in the background. You will receive a notification with the download link when it is complete.',
+            'title' => 'ექსპორტი დაწყებულია',
+            'body' => 'თქვენი ექსპორტი დაიწყო და 1 ჩანაწერი დამუშავდება სერვერის მიერ. თქვენ მიიღებთ შეტყობინებას გადმოწერის ბმულთან ერთად, როდესაც ის დასრულდება.|თქვენი ექსპორტი დაიწყო და :count ჩანაწერი დამუშავდება სერვერზე. თქვენ მიიღებთ შეტყობინებას გადმოწერის ბმულთან ერთად, როდესაც ის დასრულდება.',
         ],
 
     ],
 
-    'file_name' => 'export-:export_id-:model',
+    'file_name' => 'ექსპორტი-:export_id-:model',
 
 ];

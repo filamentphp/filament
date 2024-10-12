@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Dissociate',
+        'label' => 'განკავშირება',
 
         'modal' => [
 
-            'heading' => 'Dissociate :label',
+            'heading' => 'განკავშირება :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociate',
+                    'label' => 'განკავშირება',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissociated',
+                'title' => 'განკავშირებულია',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Dissociate selected',
+        'label' => 'არჩეულიების განკავშირება',
 
         'modal' => [
 
-            'heading' => 'Dissociate selected :label',
+            'heading' => 'არჩეულიების განკავშირება :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociate',
+                    'label' => 'განკავშირება',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissociated',
+                'title' => 'განკავშირებულია',
             ],
 
         ],

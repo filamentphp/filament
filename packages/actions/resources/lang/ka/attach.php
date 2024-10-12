@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Attach',
+        'label' => 'მიმაგრება',
 
         'modal' => [
 
-            'heading' => 'Attach :label',
+            'heading' => 'ამაგრებთ :label',
 
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Record',
+                    'label' => 'ჩანაწერი',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Attach',
+                    'label' => 'მიმაგრება',
                 ],
 
                 'attach_another' => [
-                    'label' => 'Attach & attach another',
+                    'label' => 'მიმაგრება და ახალი მიმაგრება',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'attached' => [
-                'title' => 'Attached',
+                'title' => 'მიმაგრება',
             ],
 
         ],

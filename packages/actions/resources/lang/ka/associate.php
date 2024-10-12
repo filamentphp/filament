@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Associate',
+        'label' => 'დაკავშირება',
 
         'modal' => [
 
-            'heading' => 'Associate :label',
+            'heading' => 'აკავშირებ :label',
 
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Record',
+                    'label' => 'ჩანაწერი',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Associate',
+                    'label' => 'დაკავშირება',
                 ],
 
                 'associate_another' => [
-                    'label' => 'Associate & associate another',
+                    'label' => 'დაკავშირება და ახალი დაკავშირება',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'associated' => [
-                'title' => 'Associated',
+                'title' => 'დაკავშირებულია',
             ],
 
         ],

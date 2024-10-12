@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Edit',
+        'label' => 'რედაქტირება',
 
         'modal' => [
 
-            'heading' => 'Edit :label',
+            'heading' => 'არედაქტირებ :label',
 
             'actions' => [
 
                 'save' => [
-                    'label' => 'Save changes',
+                    'label' => 'ცვლილებების შენახვა',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'saved' => [
-                'title' => 'Saved',
+                'title' => 'შენახულია',
             ],
 
         ],

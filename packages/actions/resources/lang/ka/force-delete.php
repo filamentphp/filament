@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Force delete',
+        'label' => 'ფორსირებული წაშლა',
 
         'modal' => [
 
-            'heading' => 'Force delete :label',
+            'heading' => 'ფორსირებით შლით :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'წაშლა',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => 'წაშლილია',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Force delete selected',
+        'label' => 'ფორსირებით წასაშლელად არჩეულია',
 
         'modal' => [
 
-            'heading' => 'Force delete selected :label',
+            'heading' => 'ფორსირებით წასაშლელად არჩეულია :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'წაშლა',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => 'წაშლილია',
             ],
 
         ],

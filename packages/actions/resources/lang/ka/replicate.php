@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Replicate',
+        'label' => 'დუბლირება',
 
         'modal' => [
 
-            'heading' => 'Replicate :label',
+            'heading' => 'ადუბლირებთ :label',
 
             'actions' => [
 
                 'replicate' => [
-                    'label' => 'Replicate',
+                    'label' => 'დუბლირება',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'replicated' => [
-                'title' => 'Replicated',
+                'title' => 'დუბლირებულია',
             ],
 
         ],

@@ -2,20 +2,20 @@
 
 return [
 
-    'confirmation' => 'Are you sure you would like to do this?',
+    'confirmation' => 'დარწმუნებული ხართ, რომ გსურთ ამის გაკეთება?',
 
     'actions' => [
 
         'cancel' => [
-            'label' => 'Cancel',
+            'label' => 'გაუქმება',
         ],
 
         'confirm' => [
-            'label' => 'Confirm',
+            'label' => 'დადასტურება',
         ],
 
         'submit' => [
-            'label' => 'Submit',
+            'label' => 'დადასტურება',
         ],
 
     ],

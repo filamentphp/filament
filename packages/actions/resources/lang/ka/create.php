@@ -4,20 +4,20 @@ return [
 
     'single' => [
 
-        'label' => 'New :label',
+        'label' => 'ახალი :label',
 
         'modal' => [
 
-            'heading' => 'Create :label',
+            'heading' => 'ქმნით :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'Create',
+                    'label' => 'შექმნა',
                 ],
 
                 'create_another' => [
-                    'label' => 'Create & create another',
+                    'label' => 'შექმნა და ახალი შექმნა',
                 ],
 
             ],
@@ -27,7 +27,7 @@ return [
         'notifications' => [
 
             'created' => [
-                'title' => 'Created',
+                'title' => 'შექმნილია',
             ],
 
         ],

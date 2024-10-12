@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'View',
+        'label' => 'დათვალიერება',
 
         'modal' => [
 
-            'heading' => 'View :label',
+            'heading' => 'ათვალიერებთ :label',
 
             'actions' => [
 
                 'close' => [
-                    'label' => 'Close',
+                    'label' => 'დახურვა',
                 ],
 
             ],
