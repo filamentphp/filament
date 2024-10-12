@@ -2,20 +2,20 @@
 
 return [
 
-    'label' => 'Query builder',
+    'label' => 'კვერის შემქმნელი',
 
     'form' => [
 
         'operator' => [
-            'label' => 'Operator',
+            'label' => 'ოპერატორი',
         ],
 
         'or_groups' => [
 
-            'label' => 'Groups',
+            'label' => 'ჯგუფები',
 
             'block' => [
-                'label' => 'Disjunction (OR)',
+                'label' => 'დისიუნქცია (OR)',
                 'or' => 'OR',
             ],
 
@@ -23,7 +23,7 @@ return [
 
         'rules' => [
 
-            'label' => 'Rules',
+            'label' => 'წესები',
 
             'item' => [
                 'and' => 'AND',
@@ -33,7 +33,7 @@ return [
 
     ],
 
-    'no_rules' => '(No rules)',
+    'no_rules' => '(არ არის წესები)',
 
     'item_separators' => [
         'and' => 'AND',
@@ -45,13 +45,13 @@ return [
         'is_filled' => [
 
             'label' => [
-                'direct' => 'Is filled',
-                'inverse' => 'Is blank',
+                'direct' => 'შევსებულია',
+                'inverse' => 'ცარიელია',
             ],
 
             'summary' => [
-                'direct' => ':attribute is filled',
-                'inverse' => ':attribute is blank',
+                'direct' => ':attribute შევსებულია',
+                'inverse' => ':attribute ცარიელია',
             ],
 
         ],
@@ -61,13 +61,13 @@ return [
             'is_true' => [
 
                 'label' => [
-                    'direct' => 'Is true',
-                    'inverse' => 'Is false',
+                    'direct' => 'მართალია',
+                    'inverse' => 'მცდარია',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is true',
-                    'inverse' => ':attribute is false',
+                    'direct' => ':attribute მართალია',
+                    'inverse' => ':attribute მცდარია',
                 ],
 
             ],
@@ -79,13 +79,13 @@ return [
             'is_after' => [
 
                 'label' => [
-                    'direct' => 'Is after',
-                    'inverse' => 'Is not after',
+                    'direct' => 'შემდეგია',
+                    'inverse' => 'არ არის შემდეგი',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is after :date',
-                    'inverse' => ':attribute is not after :date',
+                    'direct' => ':attribute შემდეგია :date-ის შემდეგ',
+                    'inverse' => ':attribute არ არის შემდეგი :date-ის შემდეგ',
                 ],
 
             ],
@@ -93,13 +93,13 @@ return [
             'is_before' => [
 
                 'label' => [
-                    'direct' => 'Is before',
-                    'inverse' => 'Is not before',
+                    'direct' => 'მანამდეა',
+                    'inverse' => 'არ არის მანამდე',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is before :date',
-                    'inverse' => ':attribute is not before :date',
+                    'direct' => ':attribute მანამდეა :date-მდე',
+                    'inverse' => ':attribute არ არის მანამდე :date-მდე',
                 ],
 
             ],
@@ -107,13 +107,13 @@ return [
             'is_date' => [
 
                 'label' => [
-                    'direct' => 'Is date',
-                    'inverse' => 'Is not date',
+                    'direct' => 'არის თარიღი',
+                    'inverse' => 'არ არის თარიღი',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is :date',
-                    'inverse' => ':attribute is not :date',
+                    'direct' => ':attribute არის :date',
+                    'inverse' => ':attribute არ არის :date',
                 ],
 
             ],
@@ -121,13 +121,13 @@ return [
             'is_month' => [
 
                 'label' => [
-                    'direct' => 'Is month',
-                    'inverse' => 'Is not month',
+                    'direct' => 'არის თვე',
+                    'inverse' => 'არ არის თვე',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is :month',
-                    'inverse' => ':attribute is not :month',
+                    'direct' => ':attribute არის :month',
+                    'inverse' => ':attribute არ არის :month',
                 ],
 
             ],
@@ -135,13 +135,13 @@ return [
             'is_year' => [
 
                 'label' => [
-                    'direct' => 'Is year',
-                    'inverse' => 'Is not year',
+                    'direct' => 'არის წელი',
+                    'inverse' => 'არ არის წელი',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is :year',
-                    'inverse' => ':attribute is not :year',
+                    'direct' => ':attribute არის :year',
+                    'inverse' => ':attribute არ არის :year',
                 ],
 
             ],
@@ -149,15 +149,15 @@ return [
             'form' => [
 
                 'date' => [
-                    'label' => 'Date',
+                    'label' => 'თარიღი',
                 ],
 
                 'month' => [
-                    'label' => 'Month',
+                    'label' => 'თვე',
                 ],
 
                 'year' => [
-                    'label' => 'Year',
+                    'label' => 'წელი',
                 ],
 
             ],
@@ -169,13 +169,13 @@ return [
             'equals' => [
 
                 'label' => [
-                    'direct' => 'Equals',
-                    'inverse' => 'Does not equal',
+                    'direct' => 'თანაბარია',
+                    'inverse' => 'არ არის თანაბარი',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute equals :number',
-                    'inverse' => ':attribute does not equal :number',
+                    'direct' => ':attribute თანაბარია :number',
+                    'inverse' => ':attribute არ არის თანაბარი :number',
                 ],
 
             ],
@@ -183,13 +183,13 @@ return [
             'is_max' => [
 
                 'label' => [
-                    'direct' => 'Is maximum',
-                    'inverse' => 'Is greater than',
+                    'direct' => 'არის მაქსიმუმი',
+                    'inverse' => 'მეტია ვიდრე',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is maximum :number',
-                    'inverse' => ':attribute is greater than :number',
+                    'direct' => ':attribute არის მაქსიმუმი :number',
+                    'inverse' => ':attribute მეტია ვიდრე :number',
                 ],
 
             ],
@@ -197,13 +197,13 @@ return [
             'is_min' => [
 
                 'label' => [
-                    'direct' => 'Is minimum',
-                    'inverse' => 'Is less than',
+                    'direct' => 'არის მინიმუმი',
+                    'inverse' => 'ნაკლებია ვიდრე',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is minimum :number',
-                    'inverse' => ':attribute is less than :number',
+                    'direct' => ':attribute არის მინიმუმი :number',
+                    'inverse' => ':attribute ნაკლებია ვიდრე :number',
                 ],
 
             ],
@@ -211,23 +211,23 @@ return [
             'aggregates' => [
 
                 'average' => [
-                    'label' => 'Average',
-                    'summary' => 'Average :attribute',
+                    'label' => 'საშუალო',
+                    'summary' => 'საშუალო :attribute',
                 ],
 
                 'max' => [
-                    'label' => 'Max',
-                    'summary' => 'Max :attribute',
+                    'label' => 'მაქსიმუმი',
+                    'summary' => 'მაქსიმუმი :attribute',
                 ],
 
                 'min' => [
-                    'label' => 'Min',
-                    'summary' => 'Min :attribute',
+                    'label' => 'მინიმუმი',
+                    'summary' => 'მინიმუმი :attribute',
                 ],
 
                 'sum' => [
-                    'label' => 'Sum',
-                    'summary' => 'Sum of :attribute',
+                    'label' => 'ჯამი',
+                    'summary' => ':attribute ჯამი',
                 ],
 
             ],
@@ -235,15 +235,14 @@ return [
             'form' => [
 
                 'aggregate' => [
-                    'label' => 'Aggregate',
+                    'label' => 'აგრეგატი',
                 ],
 
                 'number' => [
-                    'label' => 'Number',
+                    'label' => 'რიცხვი',
                 ],
 
             ],
-
         ],
 
         'relationship' => [
@@ -251,13 +250,13 @@ return [
             'equals' => [
 
                 'label' => [
-                    'direct' => 'Has',
-                    'inverse' => 'Does not have',
+                    'direct' => 'აქვს',
+                    'inverse' => 'არ აქვს',
                 ],
 
                 'summary' => [
-                    'direct' => 'Has :count :relationship',
-                    'inverse' => 'Does not have :count :relationship',
+                    'direct' => 'აქვს :count :relationship',
+                    'inverse' => 'არ აქვს :count :relationship',
                 ],
 
             ],
@@ -265,13 +264,13 @@ return [
             'has_max' => [
 
                 'label' => [
-                    'direct' => 'Has maximum',
-                    'inverse' => 'Has more than',
+                    'direct' => 'აქვს მაქსიმუმი',
+                    'inverse' => 'მეტია ვიდრე',
                 ],
 
                 'summary' => [
-                    'direct' => 'Has maximum :count :relationship',
-                    'inverse' => 'Has more than :count :relationship',
+                    'direct' => 'აქვს მაქსიმუმი :count :relationship',
+                    'inverse' => 'მეტია ვიდრე :count :relationship',
                 ],
 
             ],
@@ -279,13 +278,13 @@ return [
             'has_min' => [
 
                 'label' => [
-                    'direct' => 'Has minimum',
-                    'inverse' => 'Has less than',
+                    'direct' => 'აქვს მინიმუმი',
+                    'inverse' => 'ნაკლებია ვიდრე',
                 ],
 
                 'summary' => [
-                    'direct' => 'Has minimum :count :relationship',
-                    'inverse' => 'Has less than :count :relationship',
+                    'direct' => 'აქვს მინიმუმი :count :relationship',
+                    'inverse' => 'ნაკლებია ვიდრე :count :relationship',
                 ],
 
             ],
@@ -293,13 +292,13 @@ return [
             'is_empty' => [
 
                 'label' => [
-                    'direct' => 'Is empty',
-                    'inverse' => 'Is not empty',
+                    'direct' => 'ცარიელია',
+                    'inverse' => 'არ არის ცარიელი',
                 ],
 
                 'summary' => [
-                    'direct' => ':relationship is empty',
-                    'inverse' => ':relationship is not empty',
+                    'direct' => ':relationship ცარიელია',
+                    'inverse' => ':relationship არ არის ცარიელი',
                 ],
 
             ],
@@ -309,13 +308,13 @@ return [
                 'label' => [
 
                     'single' => [
-                        'direct' => 'Is',
-                        'inverse' => 'Is not',
+                        'direct' => 'არის',
+                        'inverse' => 'არ არის',
                     ],
 
                     'multiple' => [
-                        'direct' => 'Contains',
-                        'inverse' => 'Does not contain',
+                        'direct' => 'შეიცავს',
+                        'inverse' => 'არ შეიცავს',
                     ],
 
                 ],
@@ -323,18 +322,18 @@ return [
                 'summary' => [
 
                     'single' => [
-                        'direct' => ':relationship is :values',
-                        'inverse' => ':relationship is not :values',
+                        'direct' => ':relationship არის :values',
+                        'inverse' => ':relationship არ არის :values',
                     ],
 
                     'multiple' => [
-                        'direct' => ':relationship contains :values',
-                        'inverse' => ':relationship does not contain :values',
+                        'direct' => ':relationship შეიცავს :values',
+                        'inverse' => ':relationship არ შეიცავს :values',
                     ],
 
                     'values_glue' => [
                         0 => ', ',
-                        'final' => ' or ',
+                        'final' => ' ან ',
                     ],
 
                 ],
@@ -342,11 +341,11 @@ return [
                 'form' => [
 
                     'value' => [
-                        'label' => 'Value',
+                        'label' => 'მნიშვნელობა',
                     ],
 
                     'values' => [
-                        'label' => 'Values',
+                        'label' => 'მნიშვნელობები',
                     ],
 
                 ],
@@ -356,7 +355,7 @@ return [
             'form' => [
 
                 'count' => [
-                    'label' => 'Count',
+                    'label' => 'რაოდენობა',
                 ],
 
             ],
@@ -368,27 +367,27 @@ return [
             'is' => [
 
                 'label' => [
-                    'direct' => 'Is',
-                    'inverse' => 'Is not',
+                    'direct' => 'არის',
+                    'inverse' => 'არ არის',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute is :values',
-                    'inverse' => ':attribute is not :values',
+                    'direct' => ':attribute არის :values',
+                    'inverse' => ':attribute არ არის :values',
                     'values_glue' => [
                         ', ',
-                        'final' => ' or ',
+                        'final' => ' ან ',
                     ],
                 ],
 
                 'form' => [
 
                     'value' => [
-                        'label' => 'Value',
+                        'label' => 'მნიშვნელობა',
                     ],
 
                     'values' => [
-                        'label' => 'Values',
+                        'label' => 'მნიშვნელობები',
                     ],
 
                 ],
@@ -402,13 +401,13 @@ return [
             'contains' => [
 
                 'label' => [
-                    'direct' => 'Contains',
-                    'inverse' => 'Does not contain',
+                    'direct' => 'შეიცავს',
+                    'inverse' => 'არ შეიცავს',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute contains :text',
-                    'inverse' => ':attribute does not contain :text',
+                    'direct' => ':attribute შეიცავს :text',
+                    'inverse' => ':attribute არ შეიცავს :text',
                 ],
 
             ],
@@ -416,13 +415,13 @@ return [
             'ends_with' => [
 
                 'label' => [
-                    'direct' => 'Ends with',
-                    'inverse' => 'Does not end with',
+                    'direct' => 'მთავრდება',
+                    'inverse' => 'არ მთავრდება',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute ends with :text',
-                    'inverse' => ':attribute does not end with :text',
+                    'direct' => ':attribute მთავრდება :text-ზე',
+                    'inverse' => ':attribute არ მთავრდება :text-ზე',
                 ],
 
             ],
@@ -430,13 +429,13 @@ return [
             'equals' => [
 
                 'label' => [
-                    'direct' => 'Equals',
-                    'inverse' => 'Does not equal',
+                    'direct' => 'თანაბარია',
+                    'inverse' => 'არ არის თანაბარი',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute equals :text',
-                    'inverse' => ':attribute does not equal :text',
+                    'direct' => ':attribute თანაბარია :text',
+                    'inverse' => ':attribute არ არის თანაბარი :text',
                 ],
 
             ],
@@ -444,13 +443,13 @@ return [
             'starts_with' => [
 
                 'label' => [
-                    'direct' => 'Starts with',
-                    'inverse' => 'Does not start with',
+                    'direct' => 'იწყება',
+                    'inverse' => 'არ იწყება',
                 ],
 
                 'summary' => [
-                    'direct' => ':attribute starts with :text',
-                    'inverse' => ':attribute does not start with :text',
+                    'direct' => ':attribute იწყება :text-ით',
+                    'inverse' => ':attribute არ იწყება :text-ით',
                 ],
 
             ],
@@ -458,7 +457,7 @@ return [
             'form' => [
 
                 'text' => [
-                    'label' => 'Text',
+                    'label' => 'ტექსტი',
                 ],
 
             ],
@@ -470,11 +469,11 @@ return [
     'actions' => [
 
         'add_rule' => [
-            'label' => 'Add rule',
+            'label' => 'დამატება წესის',
         ],
 
         'add_rule_group' => [
-            'label' => 'Add rule group',
+            'label' => 'დამატება წესების ჯგუფის',
         ],
 
     ],

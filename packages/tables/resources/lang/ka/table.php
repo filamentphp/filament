@@ -4,7 +4,7 @@ return [
 
     'column_toggle' => [
 
-        'heading' => 'Columns',
+        'heading' => 'სვეტები',
 
     ],
 
@@ -13,11 +13,11 @@ return [
         'text' => [
 
             'actions' => [
-                'collapse_list' => 'Show :count less',
-                'expand_list' => 'Show :count more',
+                'collapse_list' => 'აჩვენეთ :count ნაკლები',
+                'expand_list' => 'აჩვენეთ :count მეტი',
             ],
 
-            'more_list_items' => 'and :count more',
+            'more_list_items' => 'და კიდევ :count',
 
         ],
 
@@ -26,47 +26,47 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Select/deselect all items for bulk actions.',
+            'label' => 'მონიშნეთ/გაუქმეთ ყველა ელემენტი საერთო ქმედებებისთვის.',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Select/deselect item :key for bulk actions.',
+            'label' => 'მონიშნეთ/გაუქმეთ ელემენტი :key საერთო ქმედებებისთვის.',
         ],
 
         'bulk_select_group' => [
-            'label' => 'Select/deselect group :title for bulk actions.',
+            'label' => 'მონიშნეთ/გაუქმეთ ჯგუფი :title საერთო ქმედებებისთვის.',
         ],
 
         'search' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
-            'indicator' => 'Search',
+            'label' => 'ძებნა',
+            'placeholder' => 'ძებნა',
+            'indicator' => 'ძებნა',
         ],
 
     ],
 
     'summary' => [
 
-        'heading' => 'Summary',
+        'heading' => 'შეჯამება',
 
         'subheadings' => [
-            'all' => 'All :label',
-            'group' => ':group summary',
-            'page' => 'This page',
+            'all' => 'ყველა :label',
+            'group' => ':group შეჯამება',
+            'page' => 'ეს გვერდი',
         ],
 
         'summarizers' => [
 
             'average' => [
-                'label' => 'Average',
+                'label' => 'საშუალო',
             ],
 
             'count' => [
-                'label' => 'Count',
+                'label' => 'რაოდენობა',
             ],
 
             'sum' => [
-                'label' => 'Sum',
+                'label' => 'ჯამი',
             ],
 
         ],
@@ -76,36 +76,36 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Finish reordering records',
+            'label' => 'დასრულება ჩანაწერების გადალაგების',
         ],
 
         'enable_reordering' => [
-            'label' => 'Reorder records',
+            'label' => 'ჩანაწერების გადალაგება',
         ],
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'ფილტრი',
         ],
 
         'group' => [
-            'label' => 'Group',
+            'label' => 'ჯგუფი',
         ],
 
         'open_bulk_actions' => [
-            'label' => 'Bulk actions',
+            'label' => 'საერთო ქმედებები',
         ],
 
         'toggle_columns' => [
-            'label' => 'Toggle columns',
+            'label' => 'სვეტების გადართვა',
         ],
 
     ],
 
     'empty' => [
 
-        'heading' => 'No :model',
+        'heading' => 'არაა :model',
 
-        'description' => 'Create a :model to get started.',
+        'description' => 'შექმენით :model რომ დაიწყოთ.',
 
     ],
 
@@ -114,45 +114,45 @@ return [
         'actions' => [
 
             'apply' => [
-                'label' => 'Apply filters',
+                'label' => 'ფილტრების გამოყენება',
             ],
 
             'remove' => [
-                'label' => 'Remove filter',
+                'label' => 'ფილტრის ამოღება',
             ],
 
             'remove_all' => [
-                'label' => 'Remove all filters',
-                'tooltip' => 'Remove all filters',
+                'label' => 'ყველა ფილტრის ამოღება',
+                'tooltip' => 'ყველა ფილტრის ამოღება',
             ],
 
             'reset' => [
-                'label' => 'Reset',
+                'label' => 'გადატვირთვა',
             ],
 
         ],
 
-        'heading' => 'Filters',
+        'heading' => 'ფილტრები',
 
-        'indicator' => 'Active filters',
+        'indicator' => 'აქტიური ფილტრები',
 
         'multi_select' => [
-            'placeholder' => 'All',
+            'placeholder' => 'ყველა',
         ],
 
         'select' => [
-            'placeholder' => 'All',
+            'placeholder' => 'ყველა',
         ],
 
         'trashed' => [
 
-            'label' => 'Deleted records',
+            'label' => 'წაშლილი ჩანაწერები',
 
-            'only_trashed' => 'Only deleted records',
+            'only_trashed' => 'მხოლოდ წაშლილი ჩანაწერები',
 
-            'with_trashed' => 'With deleted records',
+            'with_trashed' => 'წაშლილ ჩანაწერებთან ერთად',
 
-            'without_trashed' => 'Without deleted records',
+            'without_trashed' => 'წაშლილი ჩანაწერების გარეშე',
 
         ],
 
@@ -163,17 +163,17 @@ return [
         'fields' => [
 
             'group' => [
-                'label' => 'Group by',
-                'placeholder' => 'Group by',
+                'label' => 'ჯგუფის მიხედვით',
+                'placeholder' => 'ჯგუფის მიხედვით',
             ],
 
             'direction' => [
 
-                'label' => 'Group direction',
+                'label' => 'ჯგუფის მიმართულება',
 
                 'options' => [
-                    'asc' => 'Ascending',
-                    'desc' => 'Descending',
+                    'asc' => 'ზრდადი',
+                    'desc' => 'კლებადი',
                 ],
 
             ],
@@ -182,20 +182,20 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Drag and drop the records into order.',
+    'reorder_indicator' => 'ჩანაწერების გადათრევა და ჩამოშვება რიგში.',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 record selected|:count records selected',
+        'selected_count' => '1 ჩანაწერი მონიშნულია|:count ჩანაწერები მონიშნულია',
 
         'actions' => [
 
             'select_all' => [
-                'label' => 'Select all :count',
+                'label' => 'მონიშნეთ ყველა :count',
             ],
 
             'deselect_all' => [
-                'label' => 'Deselect all',
+                'label' => 'ყველას მონიშვნის გაუქმება',
             ],
 
         ],
@@ -207,16 +207,16 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'Sort by',
+                'label' => 'დალაგების მიხედვით',
             ],
 
             'direction' => [
 
-                'label' => 'Sort direction',
+                'label' => 'დალაგების მიმართულება',
 
                 'options' => [
-                    'asc' => 'Ascending',
-                    'desc' => 'Descending',
+                    'asc' => 'ზრდადი',
+                    'desc' => 'კლებადი',
                 ],
 
             ],
