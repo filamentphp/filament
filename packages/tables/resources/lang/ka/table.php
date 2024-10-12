@@ -2,19 +2,73 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Columns',
+
+    ],
+
     'columns' => [
 
-        'tags' => [
-            'more' => 'და კიდევ :count',
+        'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Show :count less',
+                'expand_list' => 'Show :count more',
+            ],
+
+            'more_list_items' => 'and :count more',
+
         ],
 
     ],
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Select/deselect all items for bulk actions.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Select/deselect item :key for bulk actions.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Select/deselect group :title for bulk actions.',
+        ],
+
         'search' => [
-            'label' => 'ძიება',
-            'placeholder' => 'ძიება',
+            'label' => 'Search',
+            'placeholder' => 'Search',
+            'indicator' => 'Search',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Summary',
+
+        'subheadings' => [
+            'all' => 'All :label',
+            'group' => ':group summary',
+            'page' => 'This page',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Average',
+            ],
+
+            'count' => [
+                'label' => 'Count',
+            ],
+
+            'sum' => [
+                'label' => 'Sum',
+            ],
+
         ],
 
     ],
@@ -22,30 +76,36 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'ჩანაწერების გადანაცვლების დასრულება',
+            'label' => 'Finish reordering records',
         ],
 
         'enable_reordering' => [
-            'label' => 'ჩანაწერების გადანაცვლება',
+            'label' => 'Reorder records',
         ],
 
         'filter' => [
-            'label' => 'ფილტრი',
+            'label' => 'Filter',
         ],
 
-        'open_actions' => [
-            'label' => 'ქმედებები',
+        'group' => [
+            'label' => 'Group',
+        ],
+
+        'open_bulk_actions' => [
+            'label' => 'Bulk actions',
         ],
 
         'toggle_columns' => [
-            'label' => 'სვეტების დამალვა/გამოჩენა',
+            'label' => 'Toggle columns',
         ],
 
     ],
 
     'empty' => [
 
-        'heading' => 'ჩანაწერები ვერ მოიძებნა',
+        'heading' => 'No :model',
+
+        'description' => 'Create a :model to get started.',
 
     ],
 
@@ -53,59 +113,89 @@ return [
 
         'actions' => [
 
+            'apply' => [
+                'label' => 'Apply filters',
+            ],
+
             'remove' => [
-                'label' => 'ფილტრის მოხსნა',
+                'label' => 'Remove filter',
             ],
 
             'remove_all' => [
-                'label' => 'ყველა ფილტრის მოხსნა',
-                'tooltip' => 'ყველა ფილტრის მოხსნა',
+                'label' => 'Remove all filters',
+                'tooltip' => 'Remove all filters',
             ],
 
             'reset' => [
-                'label' => 'ფილტრების გაუქმება',
+                'label' => 'Reset',
             ],
 
         ],
 
-        'indicator' => 'აქტიური ფილტრები',
+        'heading' => 'Filters',
+
+        'indicator' => 'Active filters',
 
         'multi_select' => [
-            'placeholder' => 'ყველა',
+            'placeholder' => 'All',
         ],
 
         'select' => [
-            'placeholder' => 'ყველა',
+            'placeholder' => 'All',
         ],
 
         'trashed' => [
 
-            'label' => 'წაშლილი ჩანაწერები',
+            'label' => 'Deleted records',
 
-            'only_trashed' => 'მხოლოდ წაშლილი ჩანაწერები',
+            'only_trashed' => 'Only deleted records',
 
-            'with_trashed' => 'წაშლილი ჩანაწერებიანა',
+            'with_trashed' => 'With deleted records',
 
-            'without_trashed' => 'წაშლილი ჩანაწერების გარეშე',
+            'without_trashed' => 'Without deleted records',
 
         ],
 
     ],
 
-    'reorder_indicator' => 'გადაადგილე ჩანაწერები.',
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Group by',
+                'placeholder' => 'Group by',
+            ],
+
+            'direction' => [
+
+                'label' => 'Group direction',
+
+                'options' => [
+                    'asc' => 'Ascending',
+                    'desc' => 'Descending',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
+    'reorder_indicator' => 'Drag and drop the records into order.',
 
     'selection_indicator' => [
 
-        'selected_count' => 'მონიშნულია :count ჩანაწერი',
+        'selected_count' => '1 record selected|:count records selected',
 
         'actions' => [
 
             'select_all' => [
-                'label' => '{1} მონიშნე ყველა|[2,*] მონიშნე :count-ივე',
+                'label' => 'Select all :count',
             ],
 
             'deselect_all' => [
-                'label' => 'მონიშვნების მოხსნა',
+                'label' => 'Deselect all',
             ],
 
         ],
@@ -117,16 +207,16 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'სორტირება',
+                'label' => 'Sort by',
             ],
 
             'direction' => [
 
-                'label' => 'სორტირების მიმართულება',
+                'label' => 'Sort direction',
 
                 'options' => [
-                    'asc' => 'ზრდადობით',
-                    'desc' => 'კლებადობით',
+                    'asc' => 'Ascending',
+                    'desc' => 'Descending',
                 ],
 
             ],
