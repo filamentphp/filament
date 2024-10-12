@@ -2,10 +2,10 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Set;
 use Illuminate\Support\Arr;
-use Closure;
 
 trait CanFixIndistinctState
 {
