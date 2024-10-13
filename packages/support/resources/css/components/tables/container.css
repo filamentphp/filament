@@ -18,7 +18,10 @@
                     @apply sm:ms-auto;
                 }
 
-                &:not(:has(.fi-ta-header-heading)):not(:has(.fi-ta-header-description)) {
+                &:not(
+                        :has(.fi-ta-header-heading),
+                        :has(.fi-ta-header-description)
+                    ) {
                     & .fi-ta-actions {
                         @apply ms-auto;
                     }

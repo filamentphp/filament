@@ -5,9 +5,7 @@
 
 <div {{ $attributes->class(['fi-ta-filters']) }}>
     <div class="fi-ta-filters-header">
-        <h4
-            class="fi-ta-filters-heading"
-        >
+        <h4 class="fi-ta-filters-heading">
             {{ __('filament-tables::table.filters.heading') }}
         </h4>
 
@@ -28,10 +26,12 @@
                 {{ __('filament-tables::table.filters.actions.reset.label') }}
             </x-filament::link>
 
-            {{ \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
-                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                'wire:target' => 'tableFilters,applyTableFilters,resetTableFiltersForm',
-            ])) }}
+            {{
+                \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
+                    'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                    'wire:target' => 'tableFilters,applyTableFilters,resetTableFiltersForm',
+                ]))
+            }}
         </div>
     </div>
 
