@@ -49,6 +49,7 @@
     $isReordering = $isReordering();
     $areGroupingSettingsVisible = (! $isReordering) && count($groups) && (! $areGroupingSettingsHidden());
     $isGroupingDirectionSettingHidden = $isGroupingDirectionSettingHidden();
+    $areGroupingSettingsInDropdownOnDesktop = $areGroupingSettingsInDropdownOnDesktop();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
     $isSearchOnBlur = $isSearchOnBlur();
@@ -119,24 +120,22 @@
             @if ($header)
                 {{ $header }}
             @elseif (($heading || $description || $headerActions) && ! $isReordering)
-                <div @class([
-                    'fi-ta-header',
-                    'fi-ta-header-adaptive-actions-position' => $headerActions && ($headerActionsPosition === HeaderActionsPosition::Adaptive),
-                ])>
+                <div
+                    @class([
+                        'fi-ta-header',
+                        'fi-ta-header-adaptive-actions-position' => $headerActions && ($headerActionsPosition === HeaderActionsPosition::Adaptive),
+                    ])
+                >
                     @if ($heading || $description)
                         <div>
                             @if ($heading)
-                                <h3
-                                    class="fi-ta-header-heading"
-                                >
+                                <h3 class="fi-ta-header-heading">
                                     {{ $heading }}
                                 </h3>
                             @endif
 
                             @if ($description)
-                                <p
-                                    class="fi-ta-header-description"
-                                >
+                                <p class="fi-ta-header-description">
                                     {{ $description }}
                                 </p>
                             @endif
@@ -216,12 +215,144 @@
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_BEFORE, scopes: static::class) }}
 
                     @if ($areGroupingSettingsVisible)
-                        <x-filament-tables::groups
-                            :direction-setting="$isGroupingDirectionSettingHidden"
-                            :dropdown-on-desktop="$areGroupingSettingsInDropdownOnDesktop()"
-                            :groups="$groups"
-                            :trigger-action="$getGroupRecordsTriggerAction()"
-                        />
+                        <div
+                            x-data="{
+                                direction: $wire.$entangle('tableGroupingDirection', true),
+                                group: $wire.$entangle('tableGrouping', true),
+                            }"
+                            x-init="
+                                $watch('group', function (newGroup, oldGroup) {
+                                    if (newGroup && direction) {
+                                        return
+                                    }
+
+                                    if (! newGroup) {
+                                        direction = null
+
+                                        return
+                                    }
+
+                                    if (oldGroup) {
+                                        return
+                                    }
+
+                                    direction = 'asc'
+                                })
+                            "
+                            class="fi-ta-grouping-settings"
+                        >
+                            <x-filament::dropdown
+                                placement="bottom-start"
+                                shift
+                                width="xs"
+                                wire:key="{{ $this->getId() }}.table.grouping"
+                                @class([
+                                    'sm:fi-hidden' => ! $areGroupingSettingsInDropdownOnDesktop,
+                                ])
+                            >
+                                <x-slot name="trigger">
+                                    {{ $getGroupRecordsTriggerAction() }}
+                                </x-slot>
+
+                                <div class="fi-ta-grouping-settings-fields">
+                                    <label>
+                                        <span>
+                                            {{ __('filament-tables::table.grouping.fields.group.label') }}
+                                        </span>
+
+                                        <x-filament::input.wrapper>
+                                            <x-filament::input.select
+                                                x-model="group"
+                                                x-on:change="resetCollapsedGroups()"
+                                            >
+                                                <option value="">-</option>
+
+                                                @foreach ($groups as $group)
+                                                    <option
+                                                        value="{{ $group->getId() }}"
+                                                    >
+                                                        {{ $group->getLabel() }}
+                                                    </option>
+                                                @endforeach
+                                            </x-filament::input.select>
+                                        </x-filament::input.wrapper>
+                                    </label>
+
+                                    @if (! $isGroupingDirectionSettingHidden)
+                                        <label x-cloak x-show="group">
+                                            <span>
+                                                {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                                            </span>
+
+                                            <x-filament::input.wrapper>
+                                                <x-filament::input.select
+                                                    x-model="direction"
+                                                >
+                                                    <option value="asc">
+                                                        {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                                                    </option>
+
+                                                    <option value="desc">
+                                                        {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                                                    </option>
+                                                </x-filament::input.select>
+                                            </x-filament::input.wrapper>
+                                        </label>
+                                    @endif
+                                </div>
+                            </x-filament::dropdown>
+
+                            @if (! $areGroupingSettingsInDropdownOnDesktop)
+                                <div class="fi-ta-grouping-settings-fields">
+                                    <label>
+                                        <span class="sr-only">
+                                            {{ __('filament-tables::table.grouping.fields.group.label') }}
+                                        </span>
+
+                                        <x-filament::input.wrapper>
+                                            <x-filament::input.select
+                                                x-model="group"
+                                                x-on:change="resetCollapsedGroups()"
+                                            >
+                                                <option value="">
+                                                    {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
+                                                </option>
+
+                                                @foreach ($groups as $group)
+                                                    <option
+                                                        value="{{ $group->getId() }}"
+                                                    >
+                                                        {{ $group->getLabel() }}
+                                                    </option>
+                                                @endforeach
+                                            </x-filament::input.select>
+                                        </x-filament::input.wrapper>
+                                    </label>
+
+                                    @if (! $isGroupingDirectionSettingHidden)
+                                        <label x-cloak x-show="group">
+                                            <span class="sr-only">
+                                                {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                                            </span>
+
+                                            <x-filament::input.wrapper>
+                                                <x-filament::input.select
+                                                    x-model="direction"
+                                                >
+                                                    <option value="asc">
+                                                        {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                                                    </option>
+
+                                                    <option value="desc">
+                                                        {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                                                    </option>
+                                                </x-filament::input.select>
+                                            </x-filament::input.wrapper>
+                                        </label>
+                                    @endif
+                                </div>
+                            @endif
+                        </div>
                     @endif
 
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_GROUPING_SELECTOR_AFTER, scopes: static::class) }}
@@ -243,26 +374,80 @@
 
                         @if ($hasFiltersDialog || $hasColumnToggleDropdown)
                             @if ($hasFiltersDialog)
-                                <x-filament-tables::filters.dialog
-                                    :active-filters-count="$activeFiltersCount"
-                                    :apply-action="$getFiltersApplyAction()"
-                                    :form="$getFiltersForm()"
-                                    :layout="$filtersLayout"
-                                    :max-height="$getFiltersFormMaxHeight()"
-                                    :trigger-action="$filtersTriggerAction"
-                                    :width="$getFiltersFormWidth()"
-                                />
+                                @if (($filtersLayout === FiltersLayout::Modal) || $filtersTriggerAction->isModalSlideOver())
+                                    <x-filament::modal
+                                        :alignment="$filtersTriggerAction->getModalAlignment()"
+                                        :autofocus="$filtersTriggerAction->isModalAutofocused()"
+                                        :close-button="$filtersTriggerAction->hasModalCloseButton()"
+                                        :close-by-clicking-away="$filtersTriggerAction->isModalClosedByClickingAway()"
+                                        :close-by-escaping="$filtersTriggerAction?->isModalClosedByEscaping()"
+                                        :description="$filtersTriggerAction->getModalDescription()"
+                                        :footer-actions="$filtersTriggerAction->getVisibleModalFooterActions()"
+                                        :footer-actions-alignment="$filtersTriggerAction->getModalFooterActionsAlignment()"
+                                        :heading="$filtersTriggerAction->getCustomModalHeading() ?? __('filament-tables::table.filters.heading')"
+                                        :icon="$filtersTriggerAction->getModalIcon()"
+                                        :icon-color="$filtersTriggerAction->getModalIconColor()"
+                                        :slide-over="$filtersTriggerAction->isModalSlideOver()"
+                                        :sticky-footer="$filtersTriggerAction->isModalFooterSticky()"
+                                        :sticky-header="$filtersTriggerAction->isModalHeaderSticky()"
+                                        :width="$getFiltersFormWidth()"
+                                        wire:key="{{ $this->getId() }}.table.filters"
+                                        class="fi-ta-filters-modal"
+                                    >
+                                        <x-slot name="trigger">
+                                            {{ $filtersTriggerAction->badge($activeFiltersCount) }}
+                                        </x-slot>
+
+                                        {{ $filtersTriggerAction->getModalContent() }}
+
+                                        {{ $getFiltersForm() }}
+
+                                        {{ $filtersTriggerAction->getModalContentFooter() }}
+                                    </x-filament::modal>
+                                @else
+                                    <x-filament::dropdown
+                                        :max-height="$getFiltersFormMaxHeight()"
+                                        placement="bottom-end"
+                                        shift
+                                        :width="$getFiltersFormWidth()"
+                                        wire:key="{{ $this->getId() }}.table.filters"
+                                        class="fi-ta-filters-dropdown"
+                                    >
+                                        <x-slot name="trigger">
+                                            {{ $filtersTriggerAction->badge($activeFiltersCount) }}
+                                        </x-slot>
+
+                                        <x-filament-tables::filters
+                                            :apply-action="$getFiltersApplyAction()"
+                                            :form="$getFiltersForm()"
+                                        />
+                                    </x-filament::dropdown>
+                                @endif
                             @endif
 
                             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_BEFORE, scopes: static::class) }}
 
                             @if ($hasColumnToggleDropdown)
-                                <x-filament-tables::column-toggle.dropdown
-                                    :form="$getColumnToggleForm()"
+                                <x-filament::dropdown
                                     :max-height="$getColumnToggleFormMaxHeight()"
-                                    :trigger-action="$toggleColumnsTriggerAction"
+                                    placement="bottom-end"
+                                    shift
                                     :width="$getColumnToggleFormWidth()"
-                                />
+                                    wire:key="{{ $this->getId() }}.table.column-toggle"
+                                    class="fi-ta-col-toggle"
+                                >
+                                    <x-slot name="trigger">
+                                        {{ $toggleColumnsTriggerAction }}
+                                    </x-slot>
+
+                                    <div class="fi-ta-col-toggle-form-ctn">
+                                        <h4 class="fi-ta-col-toggle-heading">
+                                            {{ __('filament-tables::table.column_toggle.heading') }}
+                                        </h4>
+
+                                        {{ $getColumnToggleForm() }}
+                                    </div>
+                                </x-filament::dropdown>
                             @endif
 
                             {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_TOGGLE_COLUMN_TRIGGER_AFTER, scopes: static::class) }}
@@ -766,13 +951,15 @@
                                         @if ($columnGroupColumnsCount)
                                             <th
                                                 colspan="{{ $columnGroupColumnsCount }}"
-                                                {{ $columnGroup->getExtraHeaderAttributeBag()->class([
-                                                    'fi-ta-header-group-cell',
-                                                    'fi-wrapped' => $columnGroup->isHeaderWrapped(),
-                                                    ((($columnGroupAlignment = $columnGroup->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnGroupAlignment->value}" : (is_string($columnGroupAlignment) ? $columnGroupAlignment : '')),
-                                                    (filled($columnGroupHiddenFrom = $columnGroup->getHiddenFrom()) ? "{$columnGroupHiddenFrom}:fi-hidden" : ''),
-                                                    (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnGroupVisibleFrom}:fi-visible" : ''),
-                                                ]) }}
+                                                {{
+                                                    $columnGroup->getExtraHeaderAttributeBag()->class([
+                                                        'fi-ta-header-group-cell',
+                                                        'fi-wrapped' => $columnGroup->isHeaderWrapped(),
+                                                        ((($columnGroupAlignment = $columnGroup->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnGroupAlignment->value}" : (is_string($columnGroupAlignment) ? $columnGroupAlignment : '')),
+                                                        (filled($columnGroupHiddenFrom = $columnGroup->getHiddenFrom()) ? "{$columnGroupHiddenFrom}:fi-hidden" : ''),
+                                                        (filled($columnGroupVisibleFrom = $columnGroup->getVisibleFrom()) ? "{$columnGroupVisibleFrom}:fi-visible" : ''),
+                                                    ])
+                                                }}
                                             >
                                                 {{ $columnGroup->getLabel() }}
                                             </th>
@@ -802,7 +989,9 @@
                                             {{ $actionsColumnLabel }}
                                         </th>
                                     @else
-                                        <th class="fi-ta-empty-header-cell"></th>
+                                        <th
+                                            class="fi-ta-empty-header-cell"
+                                        ></th>
                                     @endif
                                 @endif
 
@@ -840,7 +1029,9 @@
                                             {{ $actionsColumnLabel }}
                                         </th>
                                     @else
-                                        <th class="fi-ta-empty-header-cell"></th>
+                                        <th
+                                            class="fi-ta-empty-header-cell"
+                                        ></th>
                                     @endif
                                 @endif
                             @endif
@@ -859,21 +1050,23 @@
                                     @if ($isColumnActivelySorted)
                                         aria-sort="{{ $sortDirection === 'asc' ? 'ascending' : 'descending' }}"
                                     @endif
-                                    {{ $column->getExtraHeaderAttributeBag()
-                                        ->class([
-                                            'fi-ta-header-cell',
-                                            'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
-                                            'fi-grow' => blank($columnWidth) && $column->canGrow(default: false),
-                                            'fi-grouped' => $column->getGroup(),
-                                            'fi-wrapped' => $column->isHeaderWrapped(),
-                                            'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
-                                            ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
-                                            (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
-                                            (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
-                                        ])
-                                        ->style([
-                                            ('width: ' . $columnWidth) => filled($columnWidth),
-                                        ]) }}
+                                    {{
+                                        $column->getExtraHeaderAttributeBag()
+                                            ->class([
+                                                'fi-ta-header-cell',
+                                                'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
+                                                'fi-grow' => blank($columnWidth) && $column->canGrow(default: false),
+                                                'fi-grouped' => $column->getGroup(),
+                                                'fi-wrapped' => $column->isHeaderWrapped(),
+                                                'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
+                                                ((($columnAlignment = $column->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$columnAlignment->value}" : (is_string($columnAlignment) ? $columnAlignment : '')),
+                                                (filled($columnHiddenFrom = $column->getHiddenFrom()) ? "{$columnHiddenFrom}:fi-hidden" : ''),
+                                                (filled($columnVisibleFrom = $column->getVisibleFrom()) ? "{$columnVisibleFrom}:fi-visible" : ''),
+                                            ])
+                                            ->style([
+                                                ('width: ' . $columnWidth) => filled($columnWidth),
+                                            ])
+                                    }}
                                 >
                                     @if ($isColumnSortable)
                                         <button
@@ -895,11 +1088,15 @@
                             @if (! $isReordering)
                                 @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
                                     @if ($actionsColumnLabel)
-                                        <th class="fi-ta-header-cell fi-align-end">
+                                        <th
+                                            class="fi-ta-header-cell fi-align-end"
+                                        >
                                             {{ $actionsColumnLabel }}
                                         </th>
                                     @else
-                                        <th class="fi-ta-empty-header-cell"></th>
+                                        <th
+                                            class="fi-ta-empty-header-cell"
+                                        ></th>
                                     @endif
                                 @endif
 
@@ -933,11 +1130,15 @@
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
                                     @if ($actionsColumnLabel)
-                                        <th class="fi-ta-header-cell fi-align-end">
+                                        <th
+                                            class="fi-ta-header-cell fi-align-end"
+                                        >
                                             {{ $actionsColumnLabel }}
                                         </th>
                                     @else
-                                        <th class="fi-ta-empty-header-cell"></th>
+                                        <th
+                                            class="fi-ta-empty-header-cell"
+                                        ></th>
                                     @endif
                                 @endif
                             @endif
@@ -1432,20 +1633,20 @@
                                     :selection-enabled="$isSelectionEnabled"
                                 />
                             @endif
-                        </tbody>
-
-                        @if ($contentFooter)
-                            <tfoot>
-                                <tr>
-                                    {{
-                                        $contentFooter->with([
-                                            'columns' => $columns,
-                                            'records' => $records,
-                                        ])
-                                    }}
-                                </tr>
-                            </tfoot>
                         @endif
+                    </tbody>
+
+                    @if (($records !== null) && count($records) && $contentFooter)
+                        <tfoot>
+                            <tr>
+                                {{
+                                    $contentFooter->with([
+                                        'columns' => $columns,
+                                        'records' => $records,
+                                    ])
+                                }}
+                            </tr>
+                        </tfoot>
                     @endif
                 </table>
             @elseif ($records === null)

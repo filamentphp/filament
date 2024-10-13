@@ -51,6 +51,42 @@
             & > :nth-child(2) {
                 @apply ms-auto;
             }
+
+            & .fi-ta-grouping-settings {
+                & .fi-dropdown {
+                    &.sm\:fi-hidden {
+                        @apply sm:hidden;
+                    }
+
+                    & .fi-ta-grouping-settings-fields {
+                        @apply grid gap-y-6 p-6;
+
+                        & label {
+                            @apply grid gap-y-2 text-sm font-medium leading-6 text-gray-950 dark:text-white;
+                        }
+                    }
+                }
+
+                & > .fi-ta-grouping-settings-fields {
+                    @apply hidden items-center gap-x-3 sm:flex;
+                }
+            }
+
+            & .fi-ta-filters-dropdown {
+                & .fi-ta-filters {
+                    @apply p-6;
+                }
+            }
+
+            & .fi-ta-col-toggle {
+                & .fi-ta-col-toggle-form-ctn {
+                    @apply grid gap-y-4 p-6;
+
+                    & .fi-ta-col-toggle-heading {
+                        @apply text-base font-semibold leading-6 text-gray-950 dark:text-white;
+                    }
+                }
+            }
         }
     }
 
