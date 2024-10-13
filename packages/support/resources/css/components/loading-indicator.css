@@ -1,0 +1,3 @@
+.fi-loading-indicator {
+    @apply animate-spin;
+}

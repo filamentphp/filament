@@ -1,0 +1,101 @@
+.fi-ta-ctn {
+    @apply divide-y divide-gray-200 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10;
+
+    &.fi-loading {
+        @apply animate-pulse;
+    }
+
+    & .fi-ta-header-ctn {
+        @apply divide-y divide-gray-200 dark:divide-white/10;
+
+        & .fi-ta-header {
+            @apply flex flex-col gap-3 p-4 sm:px-6;
+
+            &.fi-ta-header-adaptive-actions-position {
+                @apply sm:flex-row sm:items-center;
+
+                & .fi-ta-actions {
+                    @apply sm:ms-auto;
+                }
+
+                &:not(:has(.fi-ta-header-heading)):not(:has(.fi-ta-header-description)) {
+                    & .fi-ta-actions {
+                        @apply ms-auto;
+                    }
+                }
+            }
+
+            & .fi-ta-header-heading {
+                @apply text-base font-semibold leading-6 text-gray-950 dark:text-white;
+            }
+
+            & .fi-ta-header-description {
+                @apply mt-1 text-sm text-gray-600 dark:text-gray-400;
+            }
+        }
+
+        & .fi-ta-header-toolbar {
+            @apply flex items-center justify-between gap-x-4 px-4 py-3 sm:px-6;
+
+            & > * {
+                @apply flex items-center gap-x-4;
+            }
+
+            & > :nth-child(1) {
+                @apply shrink-0;
+            }
+
+            & > :nth-child(2) {
+                @apply ms-auto;
+            }
+        }
+    }
+
+    & .fi-ta-filters {
+        @apply grid gap-y-4;
+
+        &.fi-ta-filters-below-content {
+            @apply p-4 sm:px-6;
+        }
+
+        & .fi-ta-filters-header {
+            @apply flex items-center justify-between;
+
+            & .fi-ta-filters-heading {
+                @apply text-base font-semibold leading-6 text-gray-950 dark:text-white;
+            }
+
+            & .fi-loading-indicator {
+                @apply size-5 text-gray-400 dark:text-gray-500;
+            }
+        }
+    }
+
+    & .fi-ta-filters-above-content-ctn {
+        @apply grid px-4 py-4 sm:px-6;
+
+        & .fi-ta-filters-trigger-action-ctn {
+            @apply ms-auto;
+        }
+
+        &.fi-open:has(.fi-ta-filters-apply-action-ctn) {
+            & .fi-ta-filters-trigger-action-ctn {
+                @apply -mt-7;
+            }
+        }
+
+        &.fi-open:not(:has(.fi-ta-filters-apply-action-ctn)) {
+            & .fi-ta-filters-trigger-action-ctn {
+                @apply mt-3;
+            }
+        }
+    }
+
+    & .fi-ta-pagination {
+        @apply px-3 py-3 sm:px-6;
+    }
+
+    & .fi-ta-table-loading-spacer {
+        @apply h-32;
+    }
+}

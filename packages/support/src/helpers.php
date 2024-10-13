@@ -195,7 +195,7 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
 if (! function_exists('Filament\Support\generate_loading_indicator_html')) {
     function generate_loading_indicator_html(?ComponentAttributeBag $attributes = null): Htmlable
     {
-        $attributes = ($attributes ?? new ComponentAttributeBag)->class(['fi-icon animate-spin']);
+        $attributes = ($attributes ?? new ComponentAttributeBag)->class(['fi-icon fi-loading-indicator']);
 
         return new HtmlString(<<<HTML
             <svg

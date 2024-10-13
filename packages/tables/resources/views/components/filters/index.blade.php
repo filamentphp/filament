@@ -3,10 +3,10 @@
     'form',
 ])
 
-<div {{ $attributes->class(['fi-ta-filters grid gap-y-4']) }}>
-    <div class="flex items-center justify-between">
+<div {{ $attributes->class(['fi-ta-filters']) }}>
+    <div class="fi-ta-filters-header">
         <h4
-            class="text-base font-semibold leading-6 text-gray-950 dark:text-white"
+            class="fi-ta-filters-heading"
         >
             {{ __('filament-tables::table.filters.heading') }}
         </h4>
@@ -28,23 +28,17 @@
                 {{ __('filament-tables::table.filters.actions.reset.label') }}
             </x-filament::link>
 
-            <x-filament::loading-indicator
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => 'tableFilters,applyTableFilters,resetTableFiltersForm',
-                        ])
-                    )->class(['size-5 text-gray-400 dark:text-gray-500'])
-                "
-            />
+            {{ \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
+                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                'wire:target' => 'tableFilters,applyTableFilters,resetTableFiltersForm',
+            ])) }}
         </div>
     </div>
 
     {{ $form }}
 
     @if ($applyAction->isVisible())
-        <div>
+        <div class="fi-ta-filters-apply-action-ctn">
             {{ $applyAction }}
         </div>
     @endif

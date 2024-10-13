@@ -7,17 +7,17 @@
 ])
 
 <table
-    {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
+    {{ $attributes->class(['fi-ta-table']) }}
 >
     @if ($header)
-        <thead class="divide-y divide-gray-200 dark:divide-white/5">
+        <thead>
             @if ($headerGroups)
-                <tr class="bg-gray-100 dark:bg-transparent">
+                <tr class="fi-ta-table-head-groups-row">
                     {{ $headerGroups }}
                 </tr>
             @endif
 
-            <tr class="bg-gray-50 dark:bg-white/5">
+            <tr>
                 {{ $header }}
             </tr>
         </thead>
@@ -34,13 +34,12 @@
             x-sortable
             data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
         @endif
-        class="divide-y divide-gray-200 whitespace-nowrap dark:divide-white/5"
     >
         {{ $slot }}
     </tbody>
 
     @if ($footer)
-        <tfoot class="bg-gray-50 dark:bg-white/5">
+        <tfoot>
             <tr>
                 {{ $footer }}
             </tr>
