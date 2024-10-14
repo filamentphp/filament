@@ -106,30 +106,30 @@ class TernaryFilter extends SelectFilter
         return $this;
     }
 
-    public function boolean(): static
+    public function boolean(bool $isNumeric = false) : static
     {
         $this->queries(
-            true: function (Builder $query): Builder {
+            true: function (Builder $query) use ($isNumeric) : Builder {
                 if ($this->queriesRelationships()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
                         $this->getRelationshipTitleAttribute(),
-                        true,
+                        $isNumeric ? 1 : true,
                     );
                 }
 
-                return $query->where($this->getAttribute(), true);
+                return $query->where($this->getAttribute(), $isNumeric ? 1 : true);
             },
-            false: function (Builder $query): Builder {
+            false: function (Builder $query) use ($isNumeric) : Builder {
                 if ($this->queriesRelationships()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
                         $this->getRelationshipTitleAttribute(),
-                        false,
+                        $isNumeric ? 0 : false,
                     );
                 }
 
-                return $query->where($this->getAttribute(), false);
+                return $query->where($this->getAttribute(), $isNumeric ? 0 : false);
             },
         );
 
