@@ -720,8 +720,30 @@
                                 $recordGroupTitle = $group?->getTitle($record);
                                 $isRecordGroupCollapsible = $group?->isCollapsible();
 
-                                $collapsibleColumnsLayout?->record($record);
+                                $collapsibleColumnsLayout?->record($record)->recordKey($recordKey);
                                 $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
+
+                                $recordActions = array_reduce(
+                                    $actions,
+                                    function (array $carry, $action) use ($record): array {
+                                        if (! $action instanceof \Filament\Actions\ActionGroup) {
+                                            $action = clone $action;
+                                        }
+
+                                        if (! $action instanceof \Filament\Actions\BulkAction) {
+                                            $action->record($record);
+                                        }
+
+                                        if ($action->isHidden()) {
+                                            return $carry;
+                                        }
+
+                                        $carry[] = $action;
+
+                                        return $carry;
+                                    },
+                                    initial: [],
+                                );
                             @endphp
 
                             @if ($recordGroupTitle !== $previousRecordGroupTitle)
@@ -844,7 +866,6 @@
                                 @php
                                     $hasItemBeforeRecordContent = $isReordering || ($isSelectionEnabled && $isRecordSelectable($record));
                                     $hasItemAfterRecordContent = $hasCollapsibleColumnsLayout && (! $isReordering);
-                                    $recordHasActions = count($actions) && (! $isReordering);
                                 @endphp
 
                                 @if ($isReordering)
@@ -919,42 +940,35 @@
                                                 x-show="! isCollapsed"
                                                 class="fi-ta-record-content fi-collapsible"
                                             >
-                                                {{ $collapsibleColumnsLayout->recordKey($recordKey) }}
+                                                {{ $collapsibleColumnsLayout }}
                                             </div>
                                         @endif
                                     </div>
 
-                                    @if ($recordHasActions)
-                                        <x-filament-tables::actions
-                                            :actions="$actions"
-                                            :alignment="(! $contentGrid) ? 'start md:end' : Alignment::Start"
-                                            :record="$record"
-                                            wrap="-sm"
+                                    @if ($recordActions && (! $isReordering))
+                                        <div
                                             @class([
-                                                'md:ps-3' => (! $contentGrid),
-                                                'order-first' => $actionsPosition === ActionsPosition::BeforeColumns,
-                                                'ps-3' => (! $contentGrid) && $hasItemBeforeRecordContent,
-                                                'ps-4 sm:ps-6' => (! $contentGrid) && (! $hasItemBeforeRecordContent),
-                                                'pe-3' => (! $contentGrid) && $hasItemAfterRecordContent,
-                                                'pe-4 sm:pe-6' => (! $contentGrid) && (! $hasItemAfterRecordContent),
-                                                'ps-2' => $contentGrid && $hasItemBeforeRecordContent,
-                                                'ps-4' => $contentGrid && (! $hasItemBeforeRecordContent),
-                                                'pe-2' => $contentGrid && $hasItemAfterRecordContent,
-                                                'pe-4' => $contentGrid && (! $hasItemAfterRecordContent),
+                                                'fi-ta-actions fi-wrapped sm:fi-not-wrapped',
+                                                'fi-align-start' => $contentGrid,
+                                                'md:fi-align-end' => ! $contentGrid,
+                                                'fi-ta-actions-before-columns-position' => $actionsPosition === ActionsPosition::BeforeColumns,
                                             ])
-                                        />
+                                        >
+                                            @foreach ($recordActions as $action)
+                                                {{ $action }}
+                                            @endforeach
+                                        </div>
                                     @endif
                                 </div>
 
                                 @if ($hasCollapsibleColumnsLayout && (! $isReordering))
-                                    <x-filament::icon-button
-                                        color="gray"
-                                        icon-alias="tables::columns.collapse-button"
-                                        icon="heroicon-m-chevron-down"
+                                    <button
+                                        type="button"
                                         x-on:click="isCollapsed = ! isCollapsed"
-                                        class="mx-1 my-2 shrink-0"
-                                        x-bind:class="{ 'rotate-180': isCollapsed }"
-                                    />
+                                        class="fi-ta-record-collapse-btn fi-icon-btn"
+                                    >
+                                        {{ \Filament\Support\generate_icon_html('heroicon-m-chevron-down', alias: 'tables::columns.collapse-button') }}
+                                    </button>
                                 @endif
                             </div>
 
@@ -1150,7 +1164,7 @@
                                             ->class([
                                                 'fi-ta-header-cell',
                                                 'fi-ta-header-cell-' . str($columnName)->camel()->kebab(),
-                                                'fi-grow' => blank($columnWidth) && $column->canGrow(default: false),
+                                                'fi-growable' => blank($columnWidth) && $column->canGrow(default: false),
                                                 'fi-grouped' => $column->getGroup(),
                                                 'fi-wrapped' => $column->isHeaderWrapped(),
                                                 'fi-ta-header-cell-sorted' => $isColumnActivelySorted,
@@ -1567,6 +1581,7 @@
                                             @php
                                                 $column->record($record);
                                                 $column->rowLoop($loop->parent);
+                                                $column->recordKey($recordKey);
 
                                                 $columnAction = $column->getAction();
                                                 $columnUrl = $column->getUrl();
@@ -1626,7 +1641,7 @@
                                                         'fi-ta-col-wrap-has-column-url' => ($columnWrapperTag === 'a') && filled($columnUrl),
                                                     ])
                                                 >
-                                                    {{ $column->recordKey($recordKey) }}
+                                                    {{ $column }}
                                                 </{{ $columnWrapperTag }}>
                                             </td>
                                         @endforeach

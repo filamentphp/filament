@@ -1,7 +1,7 @@
 .fi-ta-header-cell {
     @apply px-3 py-3.5 text-sm font-semibold text-gray-950 dark:text-white sm:first-of-type:ps-6 sm:last-of-type:pe-6;
 
-    &.fi-grow {
+    &.fi-growable {
         @apply w-full;
     }
 

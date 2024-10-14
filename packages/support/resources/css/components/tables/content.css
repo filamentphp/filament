@@ -206,6 +206,127 @@
                             @apply sm:pe-6;
                         }
                     }
+
+                    & .fi-growable {
+                        @apply w-full flex-1;
+                    }
+
+                    & .sm\:fi-hidden {
+                        @apply sm:hidden;
+                    }
+
+                    & .md\:fi-hidden {
+                        @apply md:hidden;
+                    }
+
+                    & .lg\:fi-hidden {
+                        @apply lg:hidden;
+                    }
+
+                    & .xl\:fi-hidden {
+                        @apply xl:hidden;
+                    }
+
+                    & .\32xl\:fi-hidden {
+                        @apply 2xl:hidden;
+                    }
+
+                    & .sm\:fi-visible {
+                        @apply hidden sm:block;
+                    }
+
+                    & .md\:fi-visible {
+                        @apply hidden md:block;
+                    }
+
+                    & .lg\:fi-visible {
+                        @apply hidden lg:block;
+                    }
+
+                    & .xl\:fi-visible {
+                        @apply hidden xl:block;
+                    }
+
+                    & .\32xl\:fi-visible {
+                        @apply hidden 2xl:block;
+                    }
+
+                    & .fi-ta-col-wrp {
+                        @apply flex w-full justify-start text-start disabled:pointer-events-none;
+
+                        &.fi-align-center {
+                            @apply justify-center text-center;
+                        }
+
+                        &.fi-align-end {
+                            @apply justify-end text-end;
+                        }
+
+                        &.fi-align-left {
+                            @apply justify-start text-left;
+                        }
+
+                        &.fi-align-right {
+                            @apply justify-end text-right;
+                        }
+
+                        &.fi-align-justify,
+                        &.fi-align-between {
+                            @apply justify-between text-justify;
+                        }
+                    }
+                }
+            }
+
+            & .fi-ta-record-collapse-btn {
+                @apply mx-1 my-2 shrink-0;
+
+                &:is(.fi-ta-record.fi-collapsed .fi-ta-record-collapse-btn) {
+                    @apply rotate-180;
+                }
+            }
+
+            & .fi-ta-actions {
+                &.fi-ta-actions-before-columns-position {
+                    @apply order-first;
+                }
+
+                &:not(.fi-ta-record-with-content-prefix .fi-ta-actions) {
+                    @apply ps-4;
+                }
+
+                &:not(.fi-ta-record-with-content-suffix .fi-ta-actions) {
+                    @apply pe-4;
+                }
+
+                &:is(.fi-ta-content-grid .fi-ta-actions) {
+                    &:is(.fi-ta-record-with-content-prefix .fi-ta-actions) {
+                        @apply ps-2;
+                    }
+
+                    &:is(.fi-ta-record-with-content-suffix .fi-ta-actions) {
+                        @apply pe-2;
+                    }
+                }
+
+                &:not(.fi-ta-content-grid .fi-ta-actions) {
+                    @apply md:ps-3;
+
+                    &:is(.fi-ta-record-with-content-prefix .fi-ta-actions) {
+                        @apply ps-3;
+                    }
+
+                    &:is(.fi-ta-record-with-content-suffix .fi-ta-actions) {
+                        @apply pe-3;
+                    }
+
+                    &:not(.fi-ta-record-with-content-prefix .fi-ta-actions) {
+                        @apply sm:ps-6;
+                    }
+
+                    &:not(.fi-ta-record-with-content-suffix .fi-ta-actions) {
+                        @apply sm:pe-6;
+                    }
                 }
             }
         }

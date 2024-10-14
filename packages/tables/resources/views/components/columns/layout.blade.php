@@ -5,38 +5,11 @@
     'rowLoop' => null,
 ])
 
-@php
-    $getHiddenClasses = function (Filament\Tables\Columns\Column | Filament\Tables\Columns\Layout\Component $layoutComponent): ?string {
-        if ($breakpoint = $layoutComponent->getHiddenFrom()) {
-            return match ($breakpoint) {
-                'sm' => 'sm:hidden',
-                'md' => 'md:hidden',
-                'lg' => 'lg:hidden',
-                'xl' => 'xl:hidden',
-                '2xl' => '2xl:hidden',
-            };
-        }
-
-        if ($breakpoint = $layoutComponent->getVisibleFrom()) {
-            return match ($breakpoint) {
-                'sm' => 'hidden sm:block',
-                'md' => 'hidden md:block',
-                'lg' => 'hidden lg:block',
-                'xl' => 'hidden xl:block',
-                '2xl' => 'hidden 2xl:block',
-            };
-        }
-
-        return null;
-    };
-@endphp
-
 @foreach ($components as $layoutComponent)
     @php
         $layoutComponent->record($record);
         $layoutComponent->rowLoop($rowLoop);
-
-        $isColumn = $layoutComponent instanceof \Filament\Tables\Columns\Column;
+        $layoutComponent->recordKey($recordKey);
     @endphp
 
     @if ($layoutComponent->isVisible())
@@ -54,18 +27,59 @@
             :xlStart="$layoutComponent->getColumnStart('xl')"
             :twoXlStart="$layoutComponent->getColumnStart('2xl')"
             @class([
-                'flex-1 w-full' => $layoutComponent->canGrow(),
-                $getHiddenClasses($layoutComponent),
+                'fi-growable' => $layoutComponent->canGrow(),
+                (filled($layoutComponentHiddenFrom = $layoutComponent->getHiddenFrom()) ? "{$layoutComponentHiddenFrom}:fi-hidden" : ''),
+                (filled($layoutComponentVisibleFrom = $layoutComponent->getVisibleFrom()) ? "{$layoutComponentVisibleFrom}:fi-visible" : ''),
             ])
         >
-            @if ($isColumn)
-                <x-filament-tables::columns.column
-                    :column="$layoutComponent->inline()"
-                    :record="$record"
-                    :record-key="$recordKey"
-                />
+            @if ($layoutComponent instanceof \Filament\Tables\Columns\Column)
+                @php
+                    $layoutComponent->inline();
+
+                    $layoutComponentAction = $layoutComponent->getAction();
+                    $layoutComponentUrl = $layoutComponent->getUrl();
+                    $isLayoutComponentClickDisabled = $layoutComponent->isClickDisabled();
+
+                    $layoutComponentWrapperTag = match (true) {
+                        $layoutComponentUrl && (! $isLayoutComponentClickDisabled) => 'a',
+                        $layoutComponentAction && (! $isLayoutComponentClickDisabled) => 'button',
+                        default => 'div',
+                    };
+
+                    if ($layoutComponentWrapperTag === 'button') {
+                        if ($layoutComponentAction instanceof \Filament\Actions\Action) {
+                            $layoutComponentWireClickAction = "mountTableAction('{$layoutComponentAction->getName()}', '{$recordKey}')";
+                        } elseif ($layoutComponentAction) {
+                            $layoutComponentWireClickAction = "callTableColumnAction('{$layoutComponent->getName()}', '{$recordKey}')";
+                        }
+                    }
+                @endphp
+
+                <{{ $layoutComponentWrapperTag }}
+                    @if (filled($layoutComponentTooltip = $layoutComponent->getTooltip()))
+                        x-tooltip="{
+                            content: @js($layoutComponentTooltip),
+                            theme: $store.theme,
+                        }"
+                    @endif
+                    @if ($layoutComponentWrapperTag === 'a')
+                        {{ \Filament\Support\generate_href_html($layoutComponentUrl, $layoutComponent->shouldOpenUrlInNewTab()) }}
+                    @elseif ($layoutComponentWrapperTag === 'button')
+                        type="button"
+                        wire:click="{{ $layoutComponentWireClickAction }}"
+                        wire:loading.attr="disabled"
+                        wire:target="{{ $layoutComponentWireClickAction }}"
+                    @endif
+                    @class([
+                        'fi-ta-col-wrp',
+                        ((($layoutComponentAlignment = $layoutComponent->getAlignment()) instanceof \Filament\Support\Enums\Alignment) ? "fi-align-{$layoutComponentAlignment->value}" : (is_string($layoutComponentAlignment) ? $layoutComponentAlignment : '')),
+                        'fi-ta-col-wrap-has-column-url' => ($layoutComponentWrapperTag === 'a') && filled($layoutComponentUrl),
+                    ])
+                >
+                    {{ $layoutComponent }}
+                </{{ $layoutComponentWrapperTag }}>
             @else
-                {{ $layoutComponent->recordKey($recordKey) }}
+                {{ $layoutComponent }}
             @endif
         </x-filament::grid.column>
     @endif
