@@ -24,10 +24,42 @@
             &.fi-ta-content-grouped {
                 @apply pt-0;
             }
+
+            & .fi-ta-group-header {
+                @apply -mx-4 w-[calc(100%+2rem)] border-y border-gray-200 first:border-t-0 dark:border-white/5 sm:-mx-6 sm:w-[calc(100%+3rem)];
+            }
         }
 
         &:not(.fi-ta-content-grid) {
             @apply gap-y-px bg-gray-200 dark:bg-white/5;
+        }
+
+        & .fi-ta-group-header {
+            @apply col-span-full flex w-full items-center gap-x-3 bg-gray-50 px-3 py-2 dark:bg-white/5;
+
+            &.fi-collapsible {
+                @apply cursor-pointer;
+
+                &.fi-collapsed {
+                    @apply -mb-4 border-b-0;
+
+                    & .fi-icon-btn {
+                        @apply -rotate-180;
+                    }
+                }
+            }
+
+            & .fi-ta-group-heading {
+                @apply text-sm font-medium text-gray-950 dark:text-white;
+            }
+
+            & .fi-ta-group-description {
+                @apply text-sm text-gray-500 dark:text-gray-400;
+            }
+
+            & .fi-ta-group-checkbox {
+                @apply px-3;
+            }
         }
 
         & .fi-ta-table {

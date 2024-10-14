@@ -588,9 +588,7 @@
                     @endphp
 
                     @if ($isSelectionEnabled || count($sortableColumns))
-                        <div
-                            class="fi-ta-content-header"
-                        >
+                        <div class="fi-ta-content-header">
                             @if ($isSelectionEnabled && (! $isReordering))
                                 <input
                                     aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
@@ -720,6 +718,7 @@
                                 $openRecordUrlInNewTab = $shouldOpenRecordUrlInNewTab($record);
                                 $recordGroupKey = $group?->getStringKey($record);
                                 $recordGroupTitle = $group?->getTitle($record);
+                                $isRecordGroupCollapsible = $group?->isCollapsible();
 
                                 $collapsibleColumnsLayout?->record($record);
                                 $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
@@ -751,29 +750,70 @@
                                     </table>
                                 @endif
 
-                                <x-filament-tables::group.header
-                                    :collapsible="$group->isCollapsible()"
-                                    :description="$group->getDescription($record, $recordGroupTitle)"
-                                    :label="$group->isTitlePrefixedWithLabel() ? $group->getLabel() : null"
-                                    :title="$recordGroupTitle"
+                                <div
+                                    @if ($isRecordGroupCollapsible = $group->isCollapsible())
+                                        x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
+                                        @if (! $hasSummary)
+                                            x-bind:class="{ 'fi-collapsed': isGroupCollapsed(@js($recordGroupTitle)) }"
+                                        @endif
+                                    @endif
                                     @class([
-                                        'col-span-full',
-                                        '-mx-4 w-[calc(100%+2rem)] border-y border-gray-200 first:border-t-0 dark:border-white/5 sm:-mx-6 sm:w-[calc(100%+3rem)]' => $contentGrid,
+                                        'fi-ta-group-header',
+                                        'fi-collapsible' => $isRecordGroupCollapsible,
                                     ])
-                                    :x-bind:class="$hasSummary ? null : '{ \'-mb-4 border-b-0\': isGroupCollapsed(' . \Illuminate\Support\Js::from($recordGroupTitle) . ') }'"
                                 >
                                     @if ($isSelectionEnabled)
-                                        <x-slot name="start">
-                                            <div class="px-3">
-                                                <x-filament-tables::selection.group-checkbox
-                                                    :page="$page"
-                                                    :key="$recordGroupKey"
-                                                    :title="$recordGroupTitle"
-                                                />
-                                            </div>
-                                        </x-slot>
+                                        <input
+                                            aria-label="{{ __('filament-tables::table.fields.bulk_select_group.label', ['title' => $recordGroupTitle]) }}"
+                                            type="checkbox"
+                                            x-bind:checked="
+                                                const recordsInGroup = getRecordsInGroupOnPage(@js($recordGroupKey))
+
+                                                if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
+                                                    $el.checked = true
+
+                                                    return 'checked'
+                                                }
+
+                                                $el.checked = false
+
+                                                return null
+                                            "
+                                            x-on:click="toggleSelectRecordsInGroup(@js($recordGroupKey))"
+                                            wire:key="{{ $this->getId() }}.table.bulk_select_group.checkbox.{{ $page }}"
+                                            wire:loading.attr="disabled"
+                                            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                            class="fi-ta-record-checkbox fi-ta-group-checkbox fi-checkbox-input"
+                                        />
                                     @endif
-                                </x-filament-tables::group.header>
+
+                                    <div>
+                                        <h4 class="fi-ta-group-heading">
+                                            @if (filled($recordGroupLabel = ($group->isTitlePrefixedWithLabel() ? $group->getLabel() : null)))
+                                                    {{ $recordGroupLabel }}:
+                                            @endif
+
+                                            {{ $recordGroupTitle }}
+                                        </h4>
+
+                                        @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
+                                            <p class="fi-ta-group-description">
+                                                {{ $recordGroupDescription }}
+                                            </p>
+                                        @endif
+                                    </div>
+
+                                    @if ($isRecordGroupCollapsible)
+                                        <button
+                                            aria-label="{{ filled($recordGroupLabel) ? ($recordGroupLabel . ': ' . $recordGroupTitle) : $recordGroupTitle }}"
+                                            x-bind:aria-expanded="! isGroupCollapsed(@js($recordGroupTitle))"
+                                            type="button"
+                                            class="fi-icon-btn fi-size-sm"
+                                        >
+                                            {{ \Filament\Support\generate_icon_html('heroicon-m-chevron-up', alias: 'tables::grouping.collapse-button') }}
+                                        </button>
+                                    @endif
+                                </div>
                             @endif
 
                             <div
