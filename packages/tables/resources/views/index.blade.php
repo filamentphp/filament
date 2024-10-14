@@ -1764,21 +1764,38 @@
             @elseif ($emptyState = $getEmptyState())
                 {{ $emptyState }}
             @else
-                <tr>
-                    <td colspan="{{ $columnsCount }}">
-                        <x-filament-tables::empty-state
-                            :actions="
-                                array_filter(
-                                    $getEmptyStateActions(),
-                                    fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
-                                )
-                            "
-                            :description="$getEmptyStateDescription()"
-                            :heading="$getEmptyStateHeading()"
-                            :icon="$getEmptyStateIcon()"
-                        />
-                    </td>
-                </tr>
+                <div class="fi-ta-empty-state">
+                    <div
+                        class="fi-ta-empty-state-content"
+                    >
+                        <div
+                            class="fi-ta-empty-state-icon-ctn"
+                        >
+                            {{ \Filament\Support\generate_icon_html($getEmptyStateIcon()) }}
+                        </div>
+
+                        <h4 class="fi-ta-empty-state-heading">
+                            {{ $getEmptyStateHeading() }}
+                        </h4>
+
+                        @if ($emptyStateDescription = $getEmptyStateDescription())
+                            <p class="fi-ta-empty-state-description">
+                                {{ $description }}
+                            </p>
+                        @endif
+
+                        @if ($emptyStateActions = array_filter(
+                            $getEmptyStateActions(),
+                            fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
+                        ))
+                            <div class="fi-ta-actions fi-align-center fi-wrapped">
+                                @foreach ($emptyStateActions as $action)
+                                    {{ $action }}
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                </div>
             @endif
         </div>
 
