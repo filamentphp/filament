@@ -35,12 +35,11 @@
         @endif
 
         @if ($actions)
-            <x-filament-tables::actions
-                :actions="$actions"
-                :alignment="Alignment::Center"
-                wrap
-                class="mt-6"
-            />
+            <div class="fi-ta-actions fi-align-center fi-wrapped mt-6">
+                @foreach ($actions as $action)
+                    {{ $action }}
+                @endforeach
+            </div>
         @endif
     </div>
 </div>

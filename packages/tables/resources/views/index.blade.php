@@ -830,172 +830,132 @@
                                     x-sortable-handle
                                 @endif
                                 @class([
-                                    'fi-ta-record relative h-full bg-white transition duration-75 dark:bg-gray-900',
-                                    'hover:bg-gray-50 dark:hover:bg-white/5' => ($recordUrl || $recordAction) && (! $contentGrid),
-                                    'hover:bg-gray-50 dark:hover:bg-white/10 dark:hover:ring-white/20' => ($recordUrl || $recordAction) && $contentGrid,
-                                    'rounded-xl shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10' => $contentGrid,
+                                    'fi-ta-record',
+                                    'fi-clickable' => $recordUrl || $recordAction,
+                                    'fi-ta-record-with-content-prefix' => $isReordering || ($isSelectionEnabled && $isRecordSelectable($record)),
+                                    'fi-ta-record-with-content-suffix' => $hasCollapsibleColumnsLayout && (! $isReordering),
                                     ...$getRecordClasses($record),
                                 ])
                                 x-bind:class="{
-                                    'hidden':
-                                        {{ $group?->isCollapsible() ? 'true' : 'false' }} &&
-                                        isGroupCollapsed(
-                                            {{ \Illuminate\Support\Js::from($recordGroupTitle) }},
-                                        ),
-                                    {{ ($contentGrid ? '\'bg-gray-50 dark:bg-white/10 dark:ring-white/20\'' : '\'bg-gray-50 dark:bg-white/5 before:absolute before:start-0 before:inset-y-0 before:w-0.5 before:bg-primary-600 dark:before:bg-primary-500\'') . ': isRecordSelected(\'' . $recordKey . '\')' }},
-                                    {{ $contentGrid ? '\'bg-white dark:bg-white/5 dark:ring-white/10\': ! isRecordSelected(\'' . $recordKey . '\')' : '\'\':\'\'' }},
+                                    {{ $group?->isCollapsible() ? '\'fi-collapsed\': isGroupCollapsed(' . \Illuminate\Support\Js::from($recordGroupTitle) . '),' : '' }}
+                                    'fi-selected': isRecordSelected(@js($recordKey)),
                                 }"
                             >
                                 @php
                                     $hasItemBeforeRecordContent = $isReordering || ($isSelectionEnabled && $isRecordSelectable($record));
-                                    $isRecordCollapsible = $hasCollapsibleColumnsLayout && (! $isReordering);
-                                    $hasItemAfterRecordContent = $isRecordCollapsible;
+                                    $hasItemAfterRecordContent = $hasCollapsibleColumnsLayout && (! $isReordering);
                                     $recordHasActions = count($actions) && (! $isReordering);
-
-                                    $recordContentHorizontalPaddingClasses = \Illuminate\Support\Arr::toCssClasses([
-                                        'ps-3' => (! $contentGrid) && $hasItemBeforeRecordContent,
-                                        'ps-4 sm:ps-6' => (! $contentGrid) && (! $hasItemBeforeRecordContent),
-                                        'pe-3' => (! $contentGrid) && $hasItemAfterRecordContent,
-                                        'pe-4 sm:pe-6' => (! $contentGrid) && (! $hasItemAfterRecordContent),
-                                        'ps-2' => $contentGrid && $hasItemBeforeRecordContent,
-                                        'ps-4' => $contentGrid && (! $hasItemBeforeRecordContent),
-                                        'pe-2' => $contentGrid && $hasItemAfterRecordContent,
-                                        'pe-4' => $contentGrid && (! $hasItemAfterRecordContent),
-                                    ]);
-
-                                    $recordActionsClasses = \Illuminate\Support\Arr::toCssClasses([
-                                        'md:ps-3' => (! $contentGrid),
-                                        'order-first' => $actionsPosition === ActionsPosition::BeforeColumns,
-                                        'ps-3' => (! $contentGrid) && $hasItemBeforeRecordContent,
-                                        'ps-4 sm:ps-6' => (! $contentGrid) && (! $hasItemBeforeRecordContent),
-                                        'pe-3' => (! $contentGrid) && $hasItemAfterRecordContent,
-                                        'pe-4 sm:pe-6' => (! $contentGrid) && (! $hasItemAfterRecordContent),
-                                        'ps-2' => $contentGrid && $hasItemBeforeRecordContent,
-                                        'ps-4' => $contentGrid && (! $hasItemBeforeRecordContent),
-                                        'pe-2' => $contentGrid && $hasItemAfterRecordContent,
-                                        'pe-4' => $contentGrid && (! $hasItemAfterRecordContent),
-                                    ]);
                                 @endphp
 
-                                <div
-                                    @class([
-                                        'flex items-center',
-                                        'ps-1 sm:ps-3' => (! $contentGrid) && $hasItemBeforeRecordContent,
-                                        'pe-1 sm:pe-3' => (! $contentGrid) && $hasItemAfterRecordContent,
-                                        'ps-1' => $contentGrid && $hasItemBeforeRecordContent,
-                                        'pe-1' => $contentGrid && $hasItemAfterRecordContent,
-                                    ])
-                                >
-                                    @if ($isReordering)
-                                        <button
-                                            class="fi-ta-reorder-handle fi-icon-btn mx-1 my-2"
-                                            type="button"
-                                        >
-                                            {{ \Filament\Support\generate_icon_html('heroicon-m-bars-2', alias: 'tables::reorder.handle') }}
-                                        </button>
-                                    @elseif ($isSelectionEnabled && $isRecordSelectable($record))
-                                        <x-filament-tables::selection.checkbox
-                                            :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
-                                            :value="$recordKey"
-                                            x-model="selectedRecords"
-                                            :data-group="$recordGroupKey"
-                                            class="fi-ta-record-checkbox mx-3 my-4"
-                                        />
-                                    @endif
-
-                                    @php
-                                        $recordContentClasses = \Illuminate\Support\Arr::toCssClasses([
-                                            $recordContentHorizontalPaddingClasses,
-                                            'block w-full',
-                                        ]);
-                                    @endphp
-
-                                    <div
-                                        @class([
-                                            'flex w-full flex-col gap-y-3 py-4',
-                                            'md:flex-row md:items-center' => ! $contentGrid,
-                                        ])
+                                @if ($isReordering)
+                                    <button
+                                        class="fi-ta-reorder-handle fi-icon-btn"
+                                        type="button"
                                     >
-                                        <div class="flex-1">
-                                            @if ($recordUrl)
-                                                <a
-                                                    {{ \Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab) }}
-                                                    class="{{ $recordContentClasses }}"
-                                                >
-                                                    <x-filament-tables::columns.layout
-                                                        :components="$columnsLayout"
-                                                        :record="$record"
-                                                        :record-key="$recordKey"
-                                                        :row-loop="$loop"
-                                                    />
-                                                </a>
-                                            @elseif ($recordAction)
-                                                @php
-                                                    $recordWireClickAction = $getAction($recordAction)
-                                                        ? "mountTableAction('{$recordAction}', '{$recordKey}')"
-                                                        : $recordWireClickAction = "{$recordAction}('{$recordKey}')";
-                                                @endphp
+                                        {{ \Filament\Support\generate_icon_html('heroicon-m-bars-2', alias: 'tables::reorder.handle') }}
+                                    </button>
+                                @elseif ($isSelectionEnabled && $isRecordSelectable($record))
+                                    <input
+                                        aria-label="{{ __('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey]) }}"
+                                        type="checkbox"
+                                        value="{{ $recordKey }}"
+                                        x-model="selectedRecords"
+                                        data-group="{{ $recordGroupKey }}"
+                                        wire:loading.attr="disabled"
+                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                        class="fi-ta-record-checkbox fi-checkbox-input"
+                                    />
+                                @endif
 
-                                                <button
-                                                    type="button"
-                                                    wire:click="{{ $recordWireClickAction }}"
-                                                    wire:loading.attr="disabled"
-                                                    wire:target="{{ $recordWireClickAction }}"
-                                                    class="{{ $recordContentClasses }}"
-                                                >
-                                                    <x-filament-tables::columns.layout
-                                                        :components="$columnsLayout"
-                                                        :record="$record"
-                                                        :record-key="$recordKey"
-                                                        :row-loop="$loop"
-                                                    />
-                                                </button>
-                                            @else
-                                                <div
-                                                    class="{{ $recordContentClasses }}"
-                                                >
-                                                    <x-filament-tables::columns.layout
-                                                        :components="$columnsLayout"
-                                                        :record="$record"
-                                                        :record-key="$recordKey"
-                                                        :row-loop="$loop"
-                                                    />
-                                                </div>
-                                            @endif
+                                <div class="fi-ta-record-content-ctn">
+                                    <div>
+                                        @if ($recordUrl)
+                                            <a
+                                                {{ \Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab) }}
+                                                class="fi-ta-record-content"
+                                            >
+                                                <x-filament-tables::columns.layout
+                                                    :components="$columnsLayout"
+                                                    :record="$record"
+                                                    :record-key="$recordKey"
+                                                    :row-loop="$loop"
+                                                />
+                                            </a>
+                                        @elseif ($recordAction)
+                                            @php
+                                                $recordWireClickAction = $getAction($recordAction)
+                                                    ? "mountTableAction('{$recordAction}', '{$recordKey}')"
+                                                    : $recordWireClickAction = "{$recordAction}('{$recordKey}')";
+                                            @endphp
 
-                                            @if ($hasCollapsibleColumnsLayout && (! $isReordering))
-                                                <div
-                                                    x-collapse
-                                                    x-show="! isCollapsed"
-                                                    class="{{ $recordContentHorizontalPaddingClasses }} mt-3"
-                                                >
-                                                    {{ $collapsibleColumnsLayout->recordKey($recordKey) }}
-                                                </div>
-                                            @endif
-                                        </div>
+                                            <button
+                                                type="button"
+                                                wire:click="{{ $recordWireClickAction }}"
+                                                wire:loading.attr="disabled"
+                                                wire:target="{{ $recordWireClickAction }}"
+                                                class="fi-ta-record-content"
+                                            >
+                                                <x-filament-tables::columns.layout
+                                                    :components="$columnsLayout"
+                                                    :record="$record"
+                                                    :record-key="$recordKey"
+                                                    :row-loop="$loop"
+                                                />
+                                            </button>
+                                        @else
+                                            <div class="fi-ta-record-content">
+                                                <x-filament-tables::columns.layout
+                                                    :components="$columnsLayout"
+                                                    :record="$record"
+                                                    :record-key="$recordKey"
+                                                    :row-loop="$loop"
+                                                />
+                                            </div>
+                                        @endif
 
-                                        @if ($recordHasActions)
-                                            <x-filament-tables::actions
-                                                :actions="$actions"
-                                                :alignment="(! $contentGrid) ? 'start md:end' : Alignment::Start"
-                                                :record="$record"
-                                                wrap="-sm"
-                                                :class="$recordActionsClasses"
-                                            />
+                                        @if ($hasCollapsibleColumnsLayout && (! $isReordering))
+                                            <div
+                                                x-collapse
+                                                x-show="! isCollapsed"
+                                                class="fi-ta-record-content fi-collapsible"
+                                            >
+                                                {{ $collapsibleColumnsLayout->recordKey($recordKey) }}
+                                            </div>
                                         @endif
                                     </div>
 
-                                    @if ($isRecordCollapsible)
-                                        <x-filament::icon-button
-                                            color="gray"
-                                            icon-alias="tables::columns.collapse-button"
-                                            icon="heroicon-m-chevron-down"
-                                            x-on:click="isCollapsed = ! isCollapsed"
-                                            class="mx-1 my-2 shrink-0"
-                                            x-bind:class="{ 'rotate-180': isCollapsed }"
+                                    @if ($recordHasActions)
+                                        <x-filament-tables::actions
+                                            :actions="$actions"
+                                            :alignment="(! $contentGrid) ? 'start md:end' : Alignment::Start"
+                                            :record="$record"
+                                            wrap="-sm"
+                                            @class([
+                                                'md:ps-3' => (! $contentGrid),
+                                                'order-first' => $actionsPosition === ActionsPosition::BeforeColumns,
+                                                'ps-3' => (! $contentGrid) && $hasItemBeforeRecordContent,
+                                                'ps-4 sm:ps-6' => (! $contentGrid) && (! $hasItemBeforeRecordContent),
+                                                'pe-3' => (! $contentGrid) && $hasItemAfterRecordContent,
+                                                'pe-4 sm:pe-6' => (! $contentGrid) && (! $hasItemAfterRecordContent),
+                                                'ps-2' => $contentGrid && $hasItemBeforeRecordContent,
+                                                'ps-4' => $contentGrid && (! $hasItemBeforeRecordContent),
+                                                'pe-2' => $contentGrid && $hasItemAfterRecordContent,
+                                                'pe-4' => $contentGrid && (! $hasItemAfterRecordContent),
+                                            ])
                                         />
                                     @endif
                                 </div>
+
+                                @if ($hasCollapsibleColumnsLayout && (! $isReordering))
+                                    <x-filament::icon-button
+                                        color="gray"
+                                        icon-alias="tables::columns.collapse-button"
+                                        icon="heroicon-m-chevron-down"
+                                        x-on:click="isCollapsed = ! isCollapsed"
+                                        class="mx-1 my-2 shrink-0"
+                                        x-bind:class="{ 'rotate-180': isCollapsed }"
+                                    />
+                                @endif
                             </div>
 
                             @php
@@ -1792,7 +1752,12 @@
                 <tr>
                     <td colspan="{{ $columnsCount }}">
                         <x-filament-tables::empty-state
-                            :actions="$getEmptyStateActions()"
+                            :actions="
+                                array_filter(
+                                    $getEmptyStateActions(),
+                                    fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
+                                )
+                            "
                             :description="$getEmptyStateDescription()"
                             :heading="$getEmptyStateHeading()"
                             :icon="$getEmptyStateIcon()"
