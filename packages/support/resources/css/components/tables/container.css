@@ -130,6 +130,58 @@
         }
     }
 
+    & .fi-ta-reorder-indicator {
+        @apply flex gap-x-3 bg-gray-50 px-3 py-1.5 text-sm font-medium leading-6 text-gray-700 dark:bg-white/5 dark:text-gray-200 sm:px-6;
+
+        & .fi-loading-indicator {
+            @apply size-5 text-gray-400 dark:text-gray-500;
+        }
+    }
+
+    & .fi-ta-selection-indicator {
+        @apply flex flex-col justify-between gap-y-1 bg-gray-50 px-3 py-2 dark:bg-white/5 sm:flex-row sm:items-center sm:px-6 sm:py-1.5;
+
+        & .fi-loading-indicator {
+            @apply size-5 text-gray-400 dark:text-gray-500;
+        }
+
+        & .fi-ta-selection-indicator-actions-ctn {
+            @apply flex gap-x-3;
+        }
+
+        & > * {
+            @apply flex gap-x-3;
+        }
+
+        & > :nth-child(1) {
+            @apply text-sm font-medium leading-6 text-gray-700 dark:text-gray-200;
+        }
+
+        & > :nth-child(2) {
+            @apply ms-auto;
+        }
+    }
+
+    & .fi-ta-filter-indicators {
+        @apply flex items-start justify-between gap-x-3 bg-gray-50 px-3 py-1.5 dark:bg-white/5 sm:px-6;
+
+        & > :nth-child(1) {
+            @apply flex flex-col gap-x-3 gap-y-1 sm:flex-row;
+
+            & .fi-ta-filter-indicators-label {
+                @apply whitespace-nowrap text-sm font-medium leading-6 text-gray-700 dark:text-gray-200;
+            }
+
+            & .fi-ta-filter-indicators-badges-ctn {
+                @apply flex flex-wrap gap-1.5;
+            }
+        }
+
+        & > :nth-child(2) {
+            @apply mt-0.5;
+        }
+    }
+
     & .fi-ta-pagination {
         @apply px-3 py-3 sm:px-6;
     }

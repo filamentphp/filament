@@ -109,7 +109,12 @@
         'fi-loading' => $records === null,
     ])
 >
-    <div class="fi-ta-ctn">
+    <div
+        @class([
+            'fi-ta-ctn',
+            'fi-ta-ctn-with-header' => $hasHeader,
+        ])
+    >
         <div
             @if (! $hasHeader) x-cloak @endif
             x-show="@js($hasHeader) || (selectedRecords.length && @js(count($bulkActions)))"
@@ -462,32 +467,116 @@
         </div>
 
         @if ($isReordering)
-            <x-filament-tables::reorder.indicator :colspan="$columnsCount" />
+            <div
+                x-cloak
+                wire:key="{{ $this->getId() }}.table.reorder.indicator"
+                class="fi-ta-reorder-indicator"
+            >
+                {{
+                    \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
+                        'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                        'wire:target' => 'reorderTable',
+                    ]))
+                }}
+
+                {{ __('filament-tables::table.reorder_indicator') }}
+            </div>
         @elseif ($isSelectionEnabled && $isLoaded)
-            <x-filament-tables::selection.indicator
-                :all-selectable-records-count="$allSelectableRecordsCount"
-                :colspan="$columnsCount"
-                :page="$page"
-                :select-current-page-only="$selectsCurrentPageOnly"
+            <div
+                x-cloak
                 x-bind:hidden="! selectedRecords.length"
                 x-show="selectedRecords.length"
-            />
+                wire:key="{{ $this->getId() }}.table.selection.indicator"
+                class="fi-ta-selection-indicator"
+            >
+                <div>
+                    {{
+                        \Filament\Support\generate_loading_indicator_html(new \Illuminate\View\ComponentAttributeBag([
+                            'x-show' => 'isLoading',
+                        ]))
+                    }}
+
+                    <span
+                        x-text="
+                            window.pluralize(@js(__('filament-tables::table.selection_indicator.selected_count')), selectedRecords.length, {
+                                count: selectedRecords.length,
+                            })
+                        "
+                    ></span>
+                </div>
+
+                <div>
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::SELECTION_INDICATOR_ACTIONS_BEFORE, scopes: static::class) }}
+
+                    <div class="fi-ta-selection-indicator-actions-ctn">
+                        <x-filament::link
+                            color="primary"
+                            tag="button"
+                            x-on:click="selectAllRecords"
+                            :x-show="$selectsCurrentPageOnly ? '! areRecordsSelected(getRecordsOnPage())' : $allSelectableRecordsCount . ' !== selectedRecords.length'"
+                            {{-- Make sure the Alpine attributes get re-evaluated after a Livewire request: --}}
+                            :wire:key="$this->getId() . 'table.selection.indicator.actions.select-all.' . $allSelectableRecordsCount . '.' . $page"
+                        >
+                            {{ trans_choice('filament-tables::table.selection_indicator.actions.select_all.label', $allSelectableRecordsCount) }}
+                        </x-filament::link>
+
+                        <x-filament::link
+                            color="danger"
+                            tag="button"
+                            x-on:click="deselectAllRecords"
+                        >
+                            {{ __('filament-tables::table.selection_indicator.actions.deselect_all.label') }}
+                        </x-filament::link>
+                    </div>
+
+                    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::SELECTION_INDICATOR_ACTIONS_AFTER, scopes: static::class) }}
+                </div>
+            </div>
         @endif
 
-        @if (count($filterIndicators))
-            <x-filament-tables::filters.indicators
-                :indicators="$filterIndicators"
-            />
+        @if ($filterIndicators)
+            <div class="fi-ta-filter-indicators">
+                <div>
+                    <span class="fi-ta-filter-indicators-label">
+                        {{ __('filament-tables::table.filters.indicator') }}
+                    </span>
+
+                    <div class="fi-ta-filter-indicators-badges-ctn">
+                        @foreach ($filterIndicators as $indicator)
+                            <x-filament::badge :color="$indicator->getColor()">
+                                {{ $indicator->getLabel() }}
+
+                                @if ($indicator->isRemovable())
+                                    <x-slot
+                                        name="deleteButton"
+                                        :label="__('filament-tables::table.filters.actions.remove.label')"
+                                        wire:click="{{ $indicator->getRemoveLivewireClickHandler() }}"
+                                        wire:loading.attr="disabled"
+                                        wire:target="removeTableFilter"
+                                    ></x-slot>
+                                @endif
+                            </x-filament::badge>
+                        @endforeach
+                    </div>
+                </div>
+
+                <x-filament::icon-button
+                    color="gray"
+                    icon="heroicon-m-x-mark"
+                    icon-alias="tables::filters.remove-all-button"
+                    size="sm"
+                    :tooltip="__('filament-tables::table.filters.actions.remove_all.tooltip')"
+                    wire:click="removeTableFilters"
+                    wire:target="removeTableFilters,removeTableFilter"
+                />
+            </div>
         @endif
 
         <div
             @if ((! $isReordering) && ($pollingInterval = $getPollingInterval()))
                 wire:poll.{{ $pollingInterval }}
             @endif
-            @class([
-                'fi-ta-content relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10',
-                '!border-t-0' => ! $hasHeader,
-            ])
+            class="fi-ta-content-ctn"
         >
             @if (($content || $hasColumnsLayout) && ($records !== null) && count($records))
                 @if (! $isReordering)
@@ -500,13 +589,12 @@
 
                     @if ($isSelectionEnabled || count($sortableColumns))
                         <div
-                            class="flex items-center gap-4 gap-x-6 bg-gray-50 px-4 dark:bg-white/5 sm:px-6"
+                            class="fi-ta-content-header"
                         >
                             @if ($isSelectionEnabled && (! $isReordering))
-                                <x-filament-tables::selection.checkbox
-                                    {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
-                                    :wire:key="$this->getId() . '.table.bulk-select-page.checkbox.' . Str::random()"
-                                    :label="__('filament-tables::table.fields.bulk_select_page.label')"
+                                <input
+                                    aria-label="{{ __('filament-tables::table.fields.bulk_select_page.label') }}"
+                                    type="checkbox"
                                     x-bind:checked="
                                         const recordsOnPage = getRecordsOnPage()
 
@@ -521,7 +609,11 @@
                                         return null
                                     "
                                     x-on:click="toggleSelectRecordsOnPage"
-                                    class="fi-ta-page-checkbox my-4"
+                                    {{-- Make sure the "checked" state gets re-evaluated after a Livewire request: --}}
+                                    wire:key="{{ $this->getId() }}.table.bulk-select-page.checkbox.{{ \Illuminate\Support\Str::random() }}"
+                                    wire:loading.attr="disabled"
+                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                    class="fi-ta-page-checkbox fi-checkbox-input"
                                 />
                             @endif
 
@@ -546,7 +638,7 @@
                                             direction = 'asc'
                                         })
                                     "
-                                    class="flex gap-x-3 py-3"
+                                    class="fi-ta-sorting-settings"
                                 >
                                     <label>
                                         <x-filament::input.wrapper
@@ -609,9 +701,9 @@
                         x-sortable
                         :data-sortable-animation-duration="$getReorderAnimationDuration()"
                         @class([
-                            'fi-ta-content-grid gap-4 p-4 sm:px-6' => $contentGrid,
-                            'pt-0' => $contentGrid && $this->getTableGrouping(),
-                            'gap-y-px bg-gray-200 dark:bg-white/5' => ! $contentGrid,
+                            'fi-ta-content',
+                            'fi-ta-content-grid' => $contentGrid,
+                            'fi-ta-content-grouped' => $this->getTableGrouping(),
                         ])
                     >
                         @php
@@ -637,7 +729,7 @@
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                     <table
                                         @class([
-                                            'fi-ta-table col-span-full',
+                                            'fi-ta-table',
                                             'fi-ta-table-reordering' => $isReordering,
                                         ])
                                     >
@@ -755,9 +847,12 @@
                                     ])
                                 >
                                     @if ($isReordering)
-                                        <x-filament-tables::reorder.handle
-                                            class="mx-1 my-2"
-                                        />
+                                        <button
+                                            class="fi-ta-reorder-handle fi-icon-btn mx-1 my-2"
+                                            type="button"
+                                        >
+                                            {{ \Filament\Support\generate_icon_html('heroicon-m-bars-2', alias: 'tables::reorder.handle') }}
+                                        </button>
                                     @elseif ($isSelectionEnabled && $isRecordSelectable($record))
                                         <x-filament-tables::selection.checkbox
                                             :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
@@ -871,7 +966,7 @@
                         @endforeach
 
                         @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
-                            <table class="fi-ta-table col-span-full">
+                            <table class="fi-ta-table">
                                 <tbody>
                                     <x-filament-tables::summary.row
                                         :columns="$columns"

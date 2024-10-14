@@ -1,0 +1,37 @@
+.fi-ta-content-ctn {
+    @apply relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10 dark:border-t-white/10;
+
+    & .fi-ta-content-header {
+        @apply flex items-center gap-4 gap-x-6 bg-gray-50 px-4 dark:bg-white/5 sm:px-6;
+
+        & .fi-ta-page-checkbox {
+            @apply my-4;
+        }
+
+        & .fi-ta-sorting-settings {
+            @apply flex gap-x-3 py-3;
+        }
+    }
+
+    &:not(.fi-ta-ctn-with-header .fi-ta-content-ctn) {
+        @apply border-t-0;
+    }
+
+    & .fi-ta-content {
+        &.fi-ta-content-grid {
+            @apply gap-4 p-4 sm:px-6;
+
+            &.fi-ta-content-grouped {
+                @apply pt-0;
+            }
+        }
+
+        &:not(.fi-ta-content-grid) {
+            @apply gap-y-px bg-gray-200 dark:bg-white/5;
+        }
+
+        & .fi-ta-table {
+            @apply col-span-full;
+        }
+    }
+}
