@@ -560,15 +560,18 @@
                     </div>
                 </div>
 
-                <x-filament::icon-button
-                    color="gray"
-                    icon="heroicon-m-x-mark"
-                    icon-alias="tables::filters.remove-all-button"
-                    size="sm"
-                    :tooltip="__('filament-tables::table.filters.actions.remove_all.tooltip')"
+                <button
+                    type="button"
+                    x-tooltip="{
+                        content: @js(__('filament-tables::table.filters.actions.remove_all.tooltip')),
+                        theme: $store.theme,
+                    }"
                     wire:click="removeTableFilters"
                     wire:target="removeTableFilters,removeTableFilter"
-                />
+                    class="fi-icon-btn fi-size-sm"
+                >
+                    {{ \Filament\Support\generate_icon_html('heroicon-m-x-mark', alias: 'tables::filters.remove-all-button') }}
+                </button>
             </div>
         @endif
 
