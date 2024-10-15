@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns;
 
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
@@ -42,6 +43,8 @@ class ColorColumn extends Column implements HasEmbeddedView
 
             <?php return ob_get_clean();
         }
+
+        $state = Arr::wrap($state);
 
         $alignment = $this->getAlignment();
 
