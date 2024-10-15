@@ -128,6 +128,32 @@ Action::make('edit')
 
 <AutoScreenshot name="actions/trigger-button/icon-after" alt="Trigger with icon after the label" version="3.x" />
 
+## Using a different icon inside an action group
+
+Actions may have a different icon when they are placed inside an [action group](https://filamentphp.com/docs/3.x/actions/grouping-actions). This may be useful if you need to adapt or remove the icon inside an action group. If you do not set a grouped icon, the action will fall back to its regular icon. **Note:** [Prebuilt actions](https://filamentphp.com/docs/3.x/actions/prebuilt-actions/create) (and subclasses you create) have a [default `groupedIcon`](https://github.com/filamentphp/filament/blob/459c21543377267b8fbbd24bd02e4d8cf6313d42/packages/actions/src/CreateAction.php#L46), so you need to override both `icon()` and `groupedIcon()` if you want consistent icons.
+
+You can set the grouped icon using the `groupedIcon()` method:
+
+```php
+ActionGroup::make([
+    Action::make('suspend')
+        ->icon('heroicon-o-moon'), // outlined moon icon inside action group as well as on single action
+
+    Action::make('suspend')
+        ->icon('heroicon-o-moon')  // outlined moon in single action trigger button …
+        ->groupedIcon('heroicon-s-mooon'), // solid moon inside an action group
+
+    // outlined folder on trigger button, but default `heroicon-m-plus` icon inside an action group!
+    CreateAction::make()
+        ->icon('heroicon-o-folder-plus'),
+
+    // outlined folder in both cases
+    CreateAction::make()
+        ->icon('heroicon-o-folder-plus')
+        ->groupedIcon('heroicon-o-folder-plus'),
+])
+```
+
 ## Authorization
 
 You may conditionally show or hide actions for certain users. To do this, you can use either the `visible()` or `hidden()` methods:
