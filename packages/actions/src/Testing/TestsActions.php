@@ -307,6 +307,30 @@ class TestsActions
         };
     }
 
+    public function assertActionHasGroupedIcon(): Closure
+    {
+        return function (string | array $name, string $icon, $record = null): static {
+            /** @var array<string> $name */
+            /** @phpstan-ignore-next-line */
+            $name = $this->parseNestedActionName($name);
+
+            /** @phpstan-ignore-next-line */
+            $this->assertActionExists($name);
+
+            $action = $this->instance()->getAction($name);
+
+            $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
+
+            Assert::assertTrue(
+                $action->getGroupedIcon() === $icon,
+                message: "Failed asserting that an action with name [{$prettyName}] has grouped icon [{$icon}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function assertActionDoesNotHaveIcon(): Closure
     {
         return function (string | array $name, string $icon, $record = null): static {
