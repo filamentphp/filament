@@ -9,6 +9,7 @@
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Illuminate\Support\Str;
+    use Illuminate\View\ComponentAttributeBag;
 
     $actions = $getActions();
     $actionsAlignment = $getActionsAlignment();
@@ -691,21 +692,26 @@
                 @if ($content)
                     {{ $content->with(['records' => $records]) }}
                 @else
-                    <x-filament::grid
-                        :default="$contentGrid['default'] ?? 1"
-                        :sm="$contentGrid['sm'] ?? null"
-                        :md="$contentGrid['md'] ?? null"
-                        :lg="$contentGrid['lg'] ?? null"
-                        :xl="$contentGrid['xl'] ?? null"
-                        :two-xl="$contentGrid['2xl'] ?? null"
-                        x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray(), $event.item.getAttribute('x-sortable-item'))"
-                        x-sortable
-                        :data-sortable-animation-duration="$getReorderAnimationDuration()"
-                        @class([
-                            'fi-ta-content',
-                            'fi-ta-content-grid' => $contentGrid,
-                            'fi-ta-content-grouped' => $this->getTableGrouping(),
-                        ])
+                    <div
+                        @if ($isReorderable)
+                            x-on:end.stop="
+                                $wire.reorderTable(
+                                    $event.target.sortable.toArray(),
+                                    $event.item.getAttribute('x-sortable-item'),
+                                )
+                            "
+                            x-sortable
+                            data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
+                        @endif
+                        {{
+                            (new ComponentAttributeBag)
+                                ->when($contentGrid, fn (ComponentAttributeBag $attributes) => $attributes->grid($contentGrid))
+                                ->class([
+                                    'fi-ta-content',
+                                    'fi-ta-content-grid' => $contentGrid,
+                                    'fi-ta-content-grouped' => $this->getTableGrouping(),
+                                ])
+                        }}
                     >
                         @php
                             $previousRecord = null;
@@ -847,7 +853,7 @@
                                     x-init="$dispatch('collapsible-table-row-initialized')"
                                     x-on:collapse-all-table-rows.window="isCollapsed = true"
                                     x-on:expand-all-table-rows.window="isCollapsed = false"
-                                    x-bind:class="isCollapsed && 'fi-collapsed'"
+                                    x-bind:class="isCollapsed && 'fi-ta-record-collapsed'"
                                 @endif
                                 wire:key="{{ $this->getId() }}.table.records.{{ $recordKey }}"
                                 @if ($isReordering)
@@ -996,7 +1002,7 @@
                                 </tbody>
                             </table>
                         @endif
-                    </x-filament::grid>
+                    </div>
                 @endif
 
                 @if (($content || $hasColumnsLayout) && $contentFooter)
@@ -1626,10 +1632,11 @@
                                             >
                                                 <{{ $columnWrapperTag }}
                                                     @if (filled($columnTooltip = $column->getTooltip()))
-                                                        x-tooltip="{
-                                                            content: @js($columnTooltip),
-                                                            theme: $store.theme,
-                                                        }"
+                                                        x-tooltip
+                                                        ="{
+                                                                                                                                                    content: @js($columnTooltip),
+                                                                                                                                                    theme: $store.theme,
+                                                                                                                                                    }"
                                                     @endif
                                                     @if ($columnWrapperTag === 'a')
                                                         {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
@@ -1768,12 +1775,8 @@
                 {{ $emptyState }}
             @else
                 <div class="fi-ta-empty-state">
-                    <div
-                        class="fi-ta-empty-state-content"
-                    >
-                        <div
-                            class="fi-ta-empty-state-icon-ctn"
-                        >
+                    <div class="fi-ta-empty-state-content">
+                        <div class="fi-ta-empty-state-icon-ctn">
                             {{ \Filament\Support\generate_icon_html($getEmptyStateIcon()) }}
                         </div>
 
@@ -1788,10 +1791,12 @@
                         @endif
 
                         @if ($emptyStateActions = array_filter(
-                            $getEmptyStateActions(),
-                            fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
-                        ))
-                            <div class="fi-ta-actions fi-align-center fi-wrapped">
+                                 $getEmptyStateActions(),
+                                 fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
+                             ))
+                            <div
+                                class="fi-ta-actions fi-align-center fi-wrapped"
+                            >
                                 @foreach ($emptyStateActions as $action)
                                     {{ $action }}
                                 @endforeach

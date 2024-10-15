@@ -1,3 +1,7 @@
+@php
+    use Illuminate\View\ComponentAttributeBag;
+@endphp
+
 @props([
     'components',
     'record',
@@ -13,24 +17,19 @@
     @endphp
 
     @if ($layoutComponent->isVisible())
-        <x-filament::grid.column
-            :default="$layoutComponent->getColumnSpan('default')"
-            :sm="$layoutComponent->getColumnSpan('sm')"
-            :md="$layoutComponent->getColumnSpan('md')"
-            :lg="$layoutComponent->getColumnSpan('lg')"
-            :xl="$layoutComponent->getColumnSpan('xl')"
-            :twoXl="$layoutComponent->getColumnSpan('2xl')"
-            :defaultStart="$layoutComponent->getColumnStart('default')"
-            :smStart="$layoutComponent->getColumnStart('sm')"
-            :mdStart="$layoutComponent->getColumnStart('md')"
-            :lgStart="$layoutComponent->getColumnStart('lg')"
-            :xlStart="$layoutComponent->getColumnStart('xl')"
-            :twoXlStart="$layoutComponent->getColumnStart('2xl')"
-            @class([
-                'fi-growable' => $layoutComponent->canGrow(),
-                (filled($layoutComponentHiddenFrom = $layoutComponent->getHiddenFrom()) ? "{$layoutComponentHiddenFrom}:fi-hidden" : ''),
-                (filled($layoutComponentVisibleFrom = $layoutComponent->getVisibleFrom()) ? "{$layoutComponentVisibleFrom}:fi-visible" : ''),
-            ])
+        <div
+            {{
+                (new ComponentAttributeBag)
+                    ->gridColumn(
+                        $layoutComponent->getColumnSpan(),
+                        $layoutComponent->getColumnStart(),
+                    )
+                    ->class([
+                        'fi-growable' => $layoutComponent->canGrow(),
+                        (filled($layoutComponentHiddenFrom = $layoutComponent->getHiddenFrom()) ? "{$layoutComponentHiddenFrom}:fi-hidden" : ''),
+                        (filled($layoutComponentVisibleFrom = $layoutComponent->getVisibleFrom()) ? "{$layoutComponentVisibleFrom}:fi-visible" : ''),
+                    ])
+            }}
         >
             @if ($layoutComponent instanceof \Filament\Tables\Columns\Column)
                 @php
@@ -81,6 +80,6 @@
             @else
                 {{ $layoutComponent }}
             @endif
-        </x-filament::grid.column>
+        </div>
     @endif
 @endforeach

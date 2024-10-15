@@ -281,7 +281,7 @@
             & .fi-ta-record-collapse-btn {
                 @apply mx-1 my-2 shrink-0;
 
-                &:is(.fi-ta-record.fi-collapsed .fi-ta-record-collapse-btn) {
+                &:is(.fi-ta-record.fi-ta-record-collapsed .fi-ta-record-collapse-btn) {
                     @apply rotate-180;
                 }
             }

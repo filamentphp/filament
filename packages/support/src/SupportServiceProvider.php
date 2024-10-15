@@ -16,6 +16,7 @@ use Filament\Support\Commands\OptimizeCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Components\ComponentManager;
 use Filament\Support\Components\Contracts\ScopedComponentManager;
+use Filament\Support\Enums\GridDirection;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
 use Filament\Support\Overrides\DataStoreOverride;
@@ -26,6 +27,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use Illuminate\View\ComponentAttributeBag;
 use Laravel\Octane\Events\RequestReceived;
 use Livewire\Livewire;
 use Livewire\Mechanisms\DataStore;
@@ -144,6 +146,75 @@ class SupportServiceProvider extends PackageServiceProvider
 
         Blade::extend(function ($view) {
             return preg_replace('/\s*@trim\s*/m', '', $view);
+        });
+
+        ComponentAttributeBag::macro('grid', function (array $columns = [], GridDirection $direction = GridDirection::Row): ComponentAttributeBag {
+            $columns = array_filter($columns);
+
+            $columns['default'] ??= 1;
+
+            return $this
+                ->class([
+                    'fi-grid',
+                    'fi-grid-direction-col' => $direction === GridDirection::Column,
+                    ...array_map(
+                        fn (string $breakpoint): string => match ($breakpoint) {
+                            'default' => '',
+                            default => "{$breakpoint}:fi-grid-cols",
+                        },
+                        array_keys($columns),
+                    ),
+                ])
+                ->style(array_map(
+                    fn (string $breakpoint, int $columns): string => match ($direction) {
+                        GridDirection::Row => "--cols-{$breakpoint}: repeat({$columns}, minmax(0, 1fr))",
+                        GridDirection::Column => "--cols-{$breakpoint}: {$columns}",
+                    },
+                    array_keys($columns),
+                    array_values($columns),
+                ));
+        });
+
+        ComponentAttributeBag::macro('gridColumn', function (array $span = [], array $start = [], bool $isHidden = false): ComponentAttributeBag {
+            $span = array_filter($span);
+            $start = array_filter($start);
+
+            $span['default'] ??= 1;
+
+            return $this
+                ->class([
+                    'fi-grid-col',
+                    'fi-hidden' => $isHidden || ($span['default'] === 'hidden'),
+                    ...array_map(
+                        fn (string $breakpoint): string => match ($breakpoint) {
+                            'default' => '',
+                            default => "{$breakpoint}:fi-grid-col-span",
+                        },
+                        array_keys($span),
+                    ),
+                    ...array_map(
+                        fn (string $breakpoint): string => match ($breakpoint) {
+                            'default' => 'fi-grid-col-start',
+                            default => "{$breakpoint}:fi-grid-col-start",
+                        },
+                        array_keys($start),
+                    ),
+                ])
+                ->style([
+                    ...array_map(
+                        fn (string $breakpoint, int | string $span): string => "--col-span-{$breakpoint}: " . match ($span) {
+                            'full' => '1 / -1',
+                            default => "span {$span} / span {$span}",
+                        },
+                        array_keys($span),
+                        array_values($span),
+                    ),
+                    ...array_map(
+                        fn (string $breakpoint, int $start): string => "--col-start-{$breakpoint}: {$start}",
+                        array_keys($start),
+                        array_values($start),
+                    ),
+                ]);
         });
 
         Str::macro('sanitizeHtml', function (string $html): string {
