@@ -250,7 +250,7 @@ it('send action has correct label', function () {
 });
 ```
 
-To ensure an action's button is showing the correct icon, you can use `assertActionHasIcon()` or `assertActionDoesNotHaveIcon()`:
+To ensure an action's button is showing the correct icon, you can use `assertActionHasIcon()`, `assertActionHasGroupedIcon()` or `assertActionDoesNotHaveIcon()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -263,6 +263,7 @@ it('when enabled the send button has correct icon', function () {
     ])
         ->assertActionEnabled('send')
         ->assertActionHasIcon('send', 'envelope-open')
+        ->assertActionHasGroupedIcon('send', 'envelope-open-outlined')
         ->assertActionDoesNotHaveIcon('send', 'envelope');
 });
 ```
