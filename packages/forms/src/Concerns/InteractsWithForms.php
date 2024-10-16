@@ -288,7 +288,9 @@ trait InteractsWithForms
     {
         $statePath = (string) str($statePath)->before('.');
 
-        $this->oldFormState[$statePath] = data_get($this, $statePath);
+        if (! Arr::has($this->oldFormState, $statePath)) {
+            $this->oldFormState[$statePath] = data_get($this, $statePath);
+        }
     }
 
     public function getOldFormState(string $statePath): mixed
