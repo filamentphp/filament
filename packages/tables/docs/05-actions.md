@@ -250,6 +250,27 @@ public function table(Table $table): Table
 }
 ```
 
+### Displaying bulk actions below the table
+
+By default, the bulk actions are rendered above the table. Alternatively, you can move them below the table:
+
+```php
+use Filament\Tables\Table;
+use Filament\Tables\Enums\BulkActionsPosition;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->bulkActions([
+            // ...
+        ])
+        ->bulkActionsPosition(BulkActionsPosition::BelowTable);
+}
+```
+
+Or display bulk actions both above and below the table, with the `BulkActionsPosition::AboveAndBelowTable` 
+position option.
+
 ## Header actions
 
 Both [row actions](#row-actions) and [bulk actions](#bulk-actions) can be rendered in the header of the table. You can put them in the `$table->headerActions()` method:
