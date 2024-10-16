@@ -4,16 +4,21 @@ namespace Filament\Forms\Components\Concerns;
 
 use Filament\Schema\Components\Component;
 use Filament\Schema\Components\Utilities\Set;
+use Closure;
 use Illuminate\Support\Arr;
 
 trait CanFixIndistinctState
 {
-    public function fixIndistinctState(): static
+    public function fixIndistinctState(bool | Closure $condition = true): static
     {
-        $this->distinct();
-        $this->live();
+        $this->distinct($condition);
+        $this->live(condition: $condition);
 
-        $this->afterStateUpdated(static function (Component $component, mixed $state, Set $set) {
+        $this->afterStateUpdated(static function (Component $component, mixed $state, Set $set) use ($condition) {
+            if (! $component->evaluate($condition)) {
+                return;
+            }
+
             if (blank($state)) {
                 return;
             }
