@@ -3,6 +3,7 @@
 namespace Filament\Notifications\Livewire;
 
 use Carbon\CarbonInterface;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -27,6 +28,8 @@ class DatabaseNotifications extends Component
     public static ?string $pollingInterval = '30s';
 
     public static ?string $authGuard = null;
+
+    public static ?Action $markAllNotificationsAsReadAction = null;
 
     #[On('databaseNotificationsSent')]
     public function refresh(): void {}
@@ -111,6 +114,19 @@ class DatabaseNotifications extends Component
         }
 
         return view($viewPath);
+    }
+
+    public function getMarkAllNotificationsAsReadAction(): Action
+    {
+        if ($action = static::$markAllNotificationsAsReadAction) {
+            return $action;
+        }
+
+        return Action::make('markAllNotificationsAsRead')
+            ->link()
+            ->label(__('filament-notifications::database.modal.actions.mark_all_as_read.label'))
+            ->extraAttributes(['tabindex' => '-1'])
+            ->action('markAllNotificationsAsRead');
     }
 
     public function getUser(): Model | Authenticatable | null

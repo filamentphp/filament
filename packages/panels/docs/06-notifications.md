@@ -33,6 +33,27 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Customizing the "Mark All as Read" Action
+
+To customize the "Mark All as Read" button, you can use the `databaseNotificationsMarkAllAsReadAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../../actions/trigger-button) can be used:
+
+```php
+use Filament\Actions\Action;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->databaseNotifications()
+        ->databaseNotificationsMarkAllAsReadAction(fn (Action $action) => $action
+            ->button()
+            ->color('success')
+            ->label('Read All')
+        );
+}
+```
+
 ## Setting up websockets in a panel
 
 The Panel Builder comes with a level of inbuilt support for real-time broadcast and database notifications. However there are a number of areas you will need to install and configure to wire everything up and get it working.
