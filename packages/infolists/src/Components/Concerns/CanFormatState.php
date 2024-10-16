@@ -82,6 +82,35 @@ trait CanFormatState
         return $this;
     }
 
+    public function isoDate(?string $format = null): static
+    {
+        $this->isDate = true;
+
+        $format ??= Schema::$defaultIsoDateDisplayFormat;
+
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($format): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->isoFormat($format);
+        });
+
+        return $this;
+    }
+
+    public function isoDateTime(?string $format = null): static
+    {
+        $this->isDateTime = true;
+
+        $format ??= Schema::$defaultIsoDateTimeDisplayFormat;
+
+        $this->isoDate($format);
+
+        return $this;
+    }
+
     public function since(?string $timezone = null): static
     {
         $this->isDateTime = true;
@@ -145,6 +174,40 @@ trait CanFormatState
                 ->setTimezone($timezone ?? $component->getTimezone())
                 ->diffForHumans();
         });
+
+        return $this;
+    }
+
+    public function isoDateTooltip(?string $format = null): static
+    {
+        $format ??= Schema::$defaultIsoDateDisplayFormat;
+
+        $this->tooltip(static function (TextEntry $component, mixed $state) use ($format): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->isoFormat($format);
+        });
+
+        return $this;
+    }
+
+    public function isoDateTimeTooltip(?string $format = null): static
+    {
+        $format ??= Schema::$defaultIsoDateTimeDisplayFormat;
+
+        $this->isoDateTooltip($format);
+
+        return $this;
+    }
+
+    public function isoTimeTooltip(?string $format = null): static
+    {
+        $format ??= Schema::$defaultIsoTimeDisplayFormat;
+
+        $this->isoDateTooltip($format);
 
         return $this;
     }
