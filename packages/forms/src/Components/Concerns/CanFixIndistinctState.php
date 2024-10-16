@@ -11,16 +11,14 @@ trait CanFixIndistinctState
 {
     public function fixIndistinctState(bool | Closure $condition = true): static
     {
-        $shouldApplyFixIndistinctState = is_callable($condition) ? $condition() : $condition;
-
-        if (! $shouldApplyFixIndistinctState) {
-            return $this;
-        }
-
         $this->distinct($condition);
-        $this->live();
+        $this->live(condition: $condition);
 
-        $this->afterStateUpdated(static function (Component $component, mixed $state, Set $set) {
+        $this->afterStateUpdated(static function (Component $component, mixed $state, Set $set) use ($condition) {
+            if (! $component->evaluate($condition)) {
+                return;
+            }
+
             if (blank($state)) {
                 return;
             }
