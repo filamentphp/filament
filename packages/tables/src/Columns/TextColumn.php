@@ -39,6 +39,8 @@ class TextColumn extends Column
 
     protected bool | Closure $isLimitedListExpandable = false;
 
+    protected string | Closure | null $itemTooltip = null;
+
     public function badge(bool | Closure $condition = true): static
     {
         $this->isBadge = $condition;
@@ -140,5 +142,19 @@ class TextColumn extends Column
     public function isLimitedListExpandable(): bool
     {
         return (bool) $this->evaluate($this->isLimitedListExpandable);
+    }
+
+    public function itemTooltip(string | Closure | null $tooltip): static
+    {
+        $this->itemTooltip = $tooltip;
+
+        return $this;
+    }
+
+    public function getItemTooltip(mixed $state): ?string
+    {
+        return $this->evaluate($this->itemTooltip, [
+            'state' => $state,
+        ]);
     }
 }
