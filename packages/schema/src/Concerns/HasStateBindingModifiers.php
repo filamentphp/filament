@@ -2,8 +2,8 @@
 
 namespace Filament\Schema\Concerns;
 
-use Filament\Schema\Components\Component;
 use Closure;
+use Filament\Schema\Components\Component;
 
 trait HasStateBindingModifiers
 {
