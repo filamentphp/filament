@@ -7,12 +7,12 @@ use Closure;
 trait HasContainerGridLayout
 {
     /**
-     * @var array<string, int | string | null> | null
+     * @var array<string, int | string | null> | int | string | Closure | null
      */
     protected array | int | string | Closure | null $gridColumns = null;
 
     /**
-     * @param  array<string, int | string | null> | int | string | null  $columns
+     * @param  array<string, int | string | null> | int | string | Closure | null  $columns
      */
     public function grid(array | int | string | Closure | null $columns = 2): static
     {
