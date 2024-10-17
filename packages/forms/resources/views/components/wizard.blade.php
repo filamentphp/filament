@@ -262,7 +262,10 @@
             'mt-6' => ! $isContained,
         ])
     >
-        <span x-cloak x-on:click="previousStep" x-show="! isFirstStep()">
+        <span x-cloak x-on:click="
+            if (!$el.querySelector('button').disabled){
+                previousStep();
+            }" x-show="! isFirstStep()">
             {{ $getAction('previous') }}
         </span>
 
@@ -273,11 +276,13 @@
         <span
             x-cloak
             x-on:click="
-                $wire.dispatchFormEvent(
-                    'wizard::nextStep',
-                    '{{ $statePath }}',
-                    getStepIndex(step),
-                )
+                if (!$el.querySelector('button').disabled){
+                    $wire.dispatchFormEvent(
+                        'wizard::nextStep',
+                        '{{ $statePath }}',
+                        getStepIndex(step),
+                    )
+                }
             "
             x-show="! isLastStep()"
         >
