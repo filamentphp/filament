@@ -18,6 +18,7 @@ trait HasContainerGridLayout
     {
         if (is_string($columns) && $columns === 'auto') {
             $this->gridColumns = fn ($component) => count($component->getState());
+
             return $this;
         }
 
