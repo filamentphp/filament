@@ -2,28 +2,26 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait HasContainerGridLayout
 {
     /**
      * @var array<string, int | string | null> | null
      */
-    protected ?array $gridColumns = null;
+    protected array | int | string | Closure | null $gridColumns = null;
 
     /**
      * @param  array<string, int | string | null> | int | string | null  $columns
      */
-    public function grid(array | int | string | null $columns = 2): static
+    public function grid(array | int | string | Closure | null $columns = 2): static
     {
-        if (! is_array($columns)) {
-            $columns = [
-                'lg' => $columns,
-            ];
+        if (is_string($columns) && $columns === 'auto') {
+            $this->gridColumns = fn ($component) => count($component->getState());
+            return $this;
         }
 
-        $this->gridColumns = [
-            ...($this->gridColumns ?? []),
-            ...$columns,
-        ];
+        $this->gridColumns = $columns;
 
         return $this;
     }
@@ -33,7 +31,15 @@ trait HasContainerGridLayout
      */
     public function getGridColumns(?string $breakpoint = null): array | int | string | null
     {
-        $columns = $this->gridColumns ?? [
+        $gridColumns = $this->evaluate($this->gridColumns);
+
+        if (! is_array($gridColumns)) {
+            $gridColumns = [
+                'lg' => $gridColumns,
+            ];
+        }
+
+        $columns = $gridColumns ?? [
             'default' => 1,
             'sm' => null,
             'md' => null,
