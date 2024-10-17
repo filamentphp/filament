@@ -1,3 +1,5 @@
+{{-- @deprecated Copy the code from this view directly into your own view to improve performance. --}}
+
 @props([
     'components',
     'record',
