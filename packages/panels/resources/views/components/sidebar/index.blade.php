@@ -142,6 +142,7 @@
                             ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
                             ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
                             ->values()
+                            ->all()
                     )),
                 )
             }
