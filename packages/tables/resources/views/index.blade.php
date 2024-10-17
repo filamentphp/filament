@@ -273,11 +273,11 @@
                                             >
                                                 <option value="">-</option>
 
-                                                @foreach ($groups as $group)
+                                                @foreach ($groups as $groupOption)
                                                     <option
-                                                        value="{{ $group->getId() }}"
+                                                        value="{{ $groupOption->getId() }}"
                                                     >
-                                                        {{ $group->getLabel() }}
+                                                        {{ $groupOption->getLabel() }}
                                                     </option>
                                                 @endforeach
                                             </x-filament::input.select>
@@ -324,11 +324,11 @@
                                                     {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
                                                 </option>
 
-                                                @foreach ($groups as $group)
+                                                @foreach ($groups as $groupOption)
                                                     <option
-                                                        value="{{ $group->getId() }}"
+                                                        value="{{ $groupOption->getId() }}"
                                                     >
-                                                        {{ $group->getLabel() }}
+                                                        {{ $groupOption->getLabel() }}
                                                     </option>
                                                 @endforeach
                                             </x-filament::input.select>
