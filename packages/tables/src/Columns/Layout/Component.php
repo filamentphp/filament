@@ -16,6 +16,8 @@ use Filament\Tables\Columns\Concerns\HasRecord;
 use Filament\Tables\Columns\Concerns\HasRowLoopObject;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\HtmlString;
+use Illuminate\View\ComponentAttributeBag;
 
 class Component extends ViewComponent
 {
@@ -157,5 +159,31 @@ class Component extends ViewComponent
             Model::class, $record::class => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
+    }
+
+    public function renderInLayout(): ?HtmlString
+    {
+        if ($this->isHidden()) {
+            return null;
+        }
+
+        $attributes = (new ComponentAttributeBag)
+            ->gridColumn(
+                $this->getColumnSpan(),
+                $this->getColumnStart(),
+            )
+            ->class([
+                'fi-growable' => $this->canGrow(),
+                (filled($hiddenFrom = $this->getHiddenFrom()) ? "{$hiddenFrom}:fi-hidden" : ''),
+                (filled($visibleFrom = $this->getVisibleFrom()) ? "{$visibleFrom}:fi-visible" : ''),
+            ]);
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?= $this->toHtml() ?>
+        </div>
+
+        <?php return new HtmlString(ob_get_clean());
     }
 }

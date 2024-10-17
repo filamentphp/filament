@@ -179,12 +179,14 @@ class SupportServiceProvider extends PackageServiceProvider
             $span = array_filter($span);
             $start = array_filter($start);
 
-            $span['default'] ??= 1;
+            if (($span['default'] ?? null) === 1) {
+                unset($span['default']);
+            }
 
             return $this
                 ->class([
                     'fi-grid-col',
-                    'fi-hidden' => $isHidden || ($span['default'] === 'hidden'),
+                    'fi-hidden' => $isHidden || (($span['default'] ?? null) === 'hidden'),
                     ...array_map(
                         fn (string $breakpoint): string => match ($breakpoint) {
                             'default' => '',

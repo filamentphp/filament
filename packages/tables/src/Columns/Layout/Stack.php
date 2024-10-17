@@ -3,19 +3,16 @@
 namespace Filament\Tables\Columns\Layout;
 
 use Closure;
+use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Concerns\HasAlignment;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Concerns\HasSpace;
 
-class Stack extends Component
+class Stack extends Component implements HasEmbeddedView
 {
     use HasAlignment;
     use HasSpace;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-tables::columns.layout.stack';
 
     /**
      * @param  array<Column | Component> | Closure  $schema
@@ -34,5 +31,40 @@ class Stack extends Component
         $static->configure();
 
         return $static;
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $alignment = $this->getAlignment() ?? Alignment::Start;
+
+        if (! $alignment instanceof Alignment) {
+            $alignment = filled($alignment) ? (Alignment::tryFrom($alignment) ?? $alignment) : null;
+        }
+
+        $attributes = $this->getExtraAttributeBag()
+            ->class([
+                'fi-ta-stack',
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : $alignment,
+                match ($space = $this->getSpace()) {
+                    1 => 'fi-gap-sm',
+                    2 => 'fi-gap-md',
+                    3 => 'fi-gap-lg',
+                    default => $space,
+                },
+            ]);
+
+        $record = $this->getRecord();
+        $recordKey = $this->getRecordKey();
+        $rowLoop = $this->getRowLoop();
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?php foreach ($this->getComponents() as $component) { ?>
+                <?= $component->record($record)->recordKey($recordKey)->rowLoop($rowLoop)->renderInLayout() ?>
+            <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }

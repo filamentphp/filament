@@ -904,12 +904,15 @@
                                                 {{ \Filament\Support\generate_href_html($recordUrl, $openRecordUrlInNewTab) }}
                                                 class="fi-ta-record-content"
                                             >
-                                                <x-filament-tables::columns.layout
-                                                    :components="$columnsLayout"
-                                                    :record="$record"
-                                                    :record-key="$recordKey"
-                                                    :row-loop="$loop"
-                                                />
+                                                @foreach ($columnsLayout as $columnsLayoutComponent)
+                                                    {{
+                                                        $columnsLayoutComponent
+                                                            ->record($record)
+                                                            ->recordKey($recordKey)
+                                                            ->rowLoop($loop)
+                                                            ->renderInLayout()
+                                                    }}
+                                                @endforeach
                                             </a>
                                         @elseif ($recordAction)
                                             @php
@@ -925,21 +928,27 @@
                                                 wire:target="{{ $recordWireClickAction }}"
                                                 class="fi-ta-record-content"
                                             >
-                                                <x-filament-tables::columns.layout
-                                                    :components="$columnsLayout"
-                                                    :record="$record"
-                                                    :record-key="$recordKey"
-                                                    :row-loop="$loop"
-                                                />
+                                                @foreach ($columnsLayout as $columnsLayoutComponent)
+                                                    {{
+                                                        $columnsLayoutComponent
+                                                            ->record($record)
+                                                            ->recordKey($recordKey)
+                                                            ->rowLoop($loop)
+                                                            ->renderInLayout()
+                                                    }}
+                                                @endforeach
                                             </button>
                                         @else
                                             <div class="fi-ta-record-content">
-                                                <x-filament-tables::columns.layout
-                                                    :components="$columnsLayout"
-                                                    :record="$record"
-                                                    :record-key="$recordKey"
-                                                    :row-loop="$loop"
-                                                />
+                                                @foreach ($columnsLayout as $columnsLayoutComponent)
+                                                    {{
+                                                        $columnsLayoutComponent
+                                                            ->record($record)
+                                                            ->recordKey($recordKey)
+                                                            ->rowLoop($loop)
+                                                            ->renderInLayout()
+                                                    }}
+                                                @endforeach
                                             </div>
                                         @endif
 
@@ -1634,9 +1643,9 @@
                                                     @if (filled($columnTooltip = $column->getTooltip()))
                                                         x-tooltip
                                                         ="{
-                                                                                                                                                    content: @js($columnTooltip),
-                                                                                                                                                    theme: $store.theme,
-                                                                                                                                                    }"
+                                                                                                                                                                                                        content: @js($columnTooltip),
+                                                                                                                                                                                                        theme: $store.theme,
+                                                                                                                                                                                                        }"
                                                     @endif
                                                     @if ($columnWrapperTag === 'a')
                                                         {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
