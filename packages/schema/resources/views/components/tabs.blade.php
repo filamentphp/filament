@@ -2,6 +2,7 @@
     use Filament\Schema\Components\Tabs\Tab;
 
     $isContained = $isContained();
+    $isVertical = $isVertical();
 @endphp
 
 <div
@@ -63,8 +64,9 @@
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
             ->class([
-                'fi-fo-tabs flex flex-col',
+                'fi-fo-tabs',
                 'fi-contained rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $isContained,
+                'flex' => $isVertical,
             ])
     }}
 >
@@ -80,7 +82,7 @@
         x-ref="tabsData"
     />
 
-    <x-filament::tabs :contained="$isContained" :label="$getLabel()">
+    <x-filament::tabs :contained="$isContained" :vertical="$isVertical" :label="$getLabel()">
         @foreach ($getChildComponentContainer()->getComponents() as $tab)
             @php
                 $tabKey = $tab->getKey();

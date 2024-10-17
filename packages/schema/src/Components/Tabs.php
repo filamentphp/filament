@@ -12,6 +12,7 @@ class Tabs extends Component
 {
     use CanPersistTab;
     use Concerns\CanBeContained;
+    use Concerns\CanBeVertical;
     use Concerns\HasExtraAlpineAttributes;
 
     /**
