@@ -1,0 +1,13 @@
+.fi-ta-values-summary {
+    @apply grid gap-y-1 px-3 py-4 text-sm text-gray-500 dark:text-gray-400;
+
+    & > .fi-ta-values-summary-label {
+        @apply font-medium text-gray-950 dark:text-white;
+    }
+
+    & > ul {
+        &.fi-bulleted {
+            @apply list-inside list-disc;
+        }
+    }
+}

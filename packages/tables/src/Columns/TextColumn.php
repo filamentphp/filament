@@ -333,7 +333,7 @@ class TextColumn extends Column implements HasEmbeddedView
                         ->class([
                             'fi-badge',
                             match ($color ?? 'primary') {
-                                'gray' => '',
+                                null, 'gray' => null,
                                 default => 'fi-color-custom',
                             },
                             is_string($color) ? "fi-color-{$color}" : null,

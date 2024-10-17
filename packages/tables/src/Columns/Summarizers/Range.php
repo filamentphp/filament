@@ -10,11 +10,6 @@ use Illuminate\Support\Str;
 
 class Range extends Summarizer
 {
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-tables::columns.summaries.range';
-
     protected bool | Closure $shouldExcludeNull = true;
 
     /**
@@ -137,5 +132,37 @@ class Range extends Summarizer
     public function shouldExcludeNull(): bool
     {
         return (bool) $this->evaluate($this->shouldExcludeNull);
+    }
+
+    public function toEmbeddedHtml(): string
+    {
+        $attributes = $this->getExtraAttributeBag()
+            ->class(['fi-ta-range-summary']);
+
+        $state = $this->formatState($this->getState());
+        $from = $state[0] ?? null;
+        $to = $state[1] ?? null;
+
+        ob_start(); ?>
+
+        <div <?= $attributes->toHtml() ?>>
+            <?php if (filled($label = $this->getLabel())) { ?>
+                <span class="fi-ta-range-summary-label">
+                    <?= $label ?>
+                </span>
+            <?php } ?>
+
+            <?php if (filled($from) || filled($to)) { ?>
+                <span>
+                    <?= $from ?>
+
+                    <?= (filled($from) && filled($to)) ? '-' : '' ?>
+
+                    <?= $to ?>
+                </span>
+            <?php } ?>
+        </div>
+
+        <?php return ob_get_clean();
     }
 }
