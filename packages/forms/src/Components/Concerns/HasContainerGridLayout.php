@@ -33,7 +33,7 @@ trait HasContainerGridLayout
     {
         $gridColumns = $this->evaluate($this->gridColumns);
 
-        if (! is_array($gridColumns)) {
+        if (isset($gridColumns) && ! is_array($gridColumns)) {
             $gridColumns = [
                 'lg' => $gridColumns,
             ];
