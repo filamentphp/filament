@@ -1,5 +1,8 @@
-<p
-    {{ $attributes->class(['fi-ta-empty-state-description text-sm text-gray-500 dark:text-gray-400']) }}
+<x-filament::empty-state.description
+    :attributes="
+        \Filament\Support\prepare_inherited_attributes($attributes)
+            ->class(['fi-ta-empty-state-description'])
+    "
 >
     {{ $slot }}
-</p>
+</x-filament::empty-state.description>
