@@ -7,7 +7,7 @@ title: Listing records
 You can add tabs above the table, which can be used to filter the records based on some predefined conditions. Each tab can scope the Eloquent query of the table in a different way. To register tabs, add a `getTabs()` method to the List page class, and return an array of `Tab` objects:
 
 ```php
-use Filament\Resources\Pages\ListRecords\Tab;
+use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
 public function getTabs(): array
@@ -27,7 +27,7 @@ public function getTabs(): array
 The keys of the array will be used as identifiers for the tabs, so they can be persisted in the URL's query string. The label of each tab is also generated from the key, but you can override that by passing a label into the `make()` method of the tab:
 
 ```php
-use Filament\Resources\Pages\ListRecords\Tab;
+use Filament\Resources\Components\Tab;
 use Illuminate\Database\Eloquent\Builder;
 
 public function getTabs(): array
@@ -47,7 +47,7 @@ public function getTabs(): array
 You can add icons to the tabs by passing an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) into the `icon()` method of the tab:
 
 ```php
-use Filament\Resources\Pages\ListRecords\Tab;
+use use Filament\Resources\Components\Tab;
 
 Tab::make()
     ->icon('heroicon-m-user-group')
@@ -68,7 +68,7 @@ Tab::make()
 You can add badges to the tabs by passing a string into the `badge()` method of the tab:
 
 ```php
-use Filament\Resources\Pages\ListRecords\Tab;
+use Filament\Resources\Components\Tab;
 
 Tab::make()
     ->badge(Customer::query()->where('active', true)->count())
@@ -79,7 +79,7 @@ Tab::make()
 The color of a badge may be changed using the `badgeColor()` method:
 
 ```php
-use Filament\Resources\Pages\ListRecords\Tab;
+use Filament\Resources\Components\Tab;
 
 Tab::make()
     ->badge(Customer::query()->where('active', true)->count())
@@ -91,7 +91,7 @@ Tab::make()
 You may also pass extra HTML attributes to filter tabs using `extraAttributes()`:
 
 ```php
-use Filament\Resources\Pages\ListRecords\Tab;
+use Filament\Resources\Components\Tab;
 
 Tab::make()
     ->extraAttributes(['data-cy' => 'statement-confirmed-tab'])
@@ -102,7 +102,7 @@ Tab::make()
 To customize the default tab that is selected when the page is loaded, you can return the array key of the tab from the `getDefaultActiveTab()` method:
 
 ```php
-use Filament\Resources\Pages\ListRecords\Tab;
+use Filament\Resources\Components\Tab;
 
 public function getTabs(): array
 {
