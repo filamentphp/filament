@@ -492,7 +492,7 @@ test('hidden components are excluded from state dehydration except if they are m
     expect($container)
         ->dehydrateState()->not()->toBe([]);
 
-    $container = ComponentContainer::make(Livewire::make())
+    $container = Schema::make(Livewire::make())
         ->statePath('data')
         ->components([
             (new Component)
