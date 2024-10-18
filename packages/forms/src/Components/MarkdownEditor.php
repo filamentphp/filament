@@ -38,4 +38,32 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
         'table',
         'undo',
     ];
+
+    protected array | Closure | null $options = null;
+
+    protected array | Closure | null $extensions = null;
+
+    public function options(array | Closure | null $options): static
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    public function getOptions(): ?array
+    {
+        return $this->evaluate($this->options);
+    }
+
+    public function extensions(array | Closure | null $extensions): static
+    {
+        $this->extensions = $extensions;
+
+        return $this;
+    }
+
+    public function getExtensions(): ?array
+    {
+        return $this->evaluate($this->extensions);
+    }
 }
