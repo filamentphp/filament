@@ -112,7 +112,7 @@ export default function markdownEditorFormComponent({
                 autoRefresh: true,
                 autoSave: false,
                 element: this.$refs.editor,
-                imageAccept: 'image/png, image/jpeg, image/gif, image/avif',
+                imageAccept: 'image/png, image/jpeg, image/gif, image/avif, image/webp',
                 imageUploadFunction: uploadFileAttachmentUsing,
                 initialValue: this.state ?? '',
                 maxHeight,
