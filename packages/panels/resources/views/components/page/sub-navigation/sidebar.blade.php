@@ -2,20 +2,27 @@
     'navigation',
 ])
 
-<ul
-    wire:ignore
-    {{ $attributes->class(['fi-page-sub-navigation-sidebar hidden w-72 flex-col gap-y-7 md:flex']) }}
->
-    @foreach ($navigation as $navigationGroup)
-        <x-filament-panels::sidebar.group
-            :active="$navigationGroup->isActive()"
-            :collapsible="$navigationGroup->isCollapsible()"
-            :icon="$navigationGroup->getIcon()"
-            :items="$navigationGroup->getItems()"
-            :label="$navigationGroup->getLabel()"
-            :sidebar-collapsible="false"
-            sub-navigation
-            :attributes="\Filament\Support\prepare_inherited_attributes($navigationGroup->getExtraSidebarAttributeBag())"
-        />
-    @endforeach
-</ul>
+<div {{ $attributes->class(['fi-page-sub-navigation-sidebar hidden w-72 flex-col gap-y-7 md:flex']) }}>
+
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_TOP, scopes: $this->getRenderHookScopes()) }}
+
+    <ul
+        wire:ignore
+    >
+        @foreach ($navigation as $navigationGroup)
+            <x-filament-panels::sidebar.group
+                :active="$navigationGroup->isActive()"
+                :collapsible="$navigationGroup->isCollapsible()"
+                :icon="$navigationGroup->getIcon()"
+                :items="$navigationGroup->getItems()"
+                :label="$navigationGroup->getLabel()"
+                :sidebar-collapsible="false"
+                sub-navigation
+                :attributes="\Filament\Support\prepare_inherited_attributes($navigationGroup->getExtraSidebarAttributeBag())"
+            />
+        @endforeach
+    </ul>
+
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_BOTTOM, scopes: $this->getRenderHookScopes()) }}
+
+</div>
