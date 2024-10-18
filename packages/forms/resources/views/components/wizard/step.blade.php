@@ -12,7 +12,7 @@
 @endphp
 
 <div
-    x-bind:tabindex="$el.querySelector('[autofocus]') || '0'"
+    x-bind:tabindex="$el.querySelector('[autofocus]') ? '-1' : '0'"
     x-bind:class="{
         @js($activeStepClasses): step === @js($id),
         @js($inactiveStepClasses): step !== @js($id),
