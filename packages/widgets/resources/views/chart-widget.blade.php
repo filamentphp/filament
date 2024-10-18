@@ -5,6 +5,7 @@
     $heading = $this->getHeading();
     $description = $this->getDescription();
     $filters = $this->getFilters();
+    $empty = $this->isEmpty();
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart">
@@ -35,79 +36,94 @@
                 wire:poll.{{ $pollingInterval }}="updateChartData"
             @endif
         >
-            <div
-                @if (FilamentView::hasSpaMode())
-                    ax-load="visible"
+            @if ($empty)
+                @if ($emptyState = $this->getEmptyState())
+                    {{ $emptyState }}
                 @else
-                    ax-load
+                    <div>
+                        <x-filament-widgets::empty-state
+                            :actions="$this->getEmptyStateActions()"
+                            :description="$this->getEmptyStateDescription()"
+                            :heading="$this->getEmptyStateHeading()"
+                            :icon="$this->getEmptyStateIcon()"
+                        />
+                    </div>
                 @endif
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
-                wire:ignore
-                x-data="chart({
-                            cachedData: @js($this->getCachedData()),
-                            options: @js($this->getOptions()),
-                            type: @js($this->getType()),
-                        })"
-                x-ignore
-                @class([
-                    match ($color) {
-                        'gray' => null,
-                        default => 'fi-color-custom',
-                    },
-                    is_string($color) ? "fi-color-{$color}" : null,
-                ])
-            >
-                <canvas
-                    x-ref="canvas"
-                    @if ($maxHeight = $this->getMaxHeight())
-                        style="max-height: {{ $maxHeight }}"
+            @else
+                <div
+                    @if (FilamentView::hasSpaMode())
+                        ax-load="visible"
+                    @else
+                        ax-load
                     @endif
-                ></canvas>
-
-                <span
-                    x-ref="backgroundColorElement"
+                    ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
+                    wire:ignore
+                    x-data="chart({
+                                cachedData: @js($this->getCachedData()),
+                                options: @js($this->getOptions()),
+                                type: @js($this->getType()),
+                            })"
+                    x-ignore
                     @class([
                         match ($color) {
-                            'gray' => 'text-gray-100 dark:text-gray-800',
-                            default => 'text-custom-50 dark:text-custom-400/10',
+                            'gray' => null,
+                            default => 'fi-color-custom',
                         },
+                        is_string($color) ? "fi-color-{$color}" : null,
                     ])
-                    @style([
-                        \Filament\Support\get_color_css_variables(
-                            $color,
-                            shades: [50, 400],
-                            alias: 'widgets::chart-widget.background',
-                        ) => $color !== 'gray',
-                    ])
-                ></span>
+                >
+                    <canvas
+                        x-ref="canvas"
+                        @if ($maxHeight = $this->getMaxHeight())
+                            style="max-height: {{ $maxHeight }}"
+                        @endif
+                    ></canvas>
 
-                <span
-                    x-ref="borderColorElement"
-                    @class([
-                        match ($color) {
-                            'gray' => 'text-gray-400',
-                            default => 'text-custom-500 dark:text-custom-400',
-                        },
-                    ])
-                    @style([
-                        \Filament\Support\get_color_css_variables(
-                            $color,
-                            shades: [400, 500],
-                            alias: 'widgets::chart-widget.border',
-                        ) => $color !== 'gray',
-                    ])
-                ></span>
+                    <span
+                        x-ref="backgroundColorElement"
+                        @class([
+                            match ($color) {
+                                'gray' => 'text-gray-100 dark:text-gray-800',
+                                default => 'text-custom-50 dark:text-custom-400/10',
+                            },
+                        ])
+                        @style([
+                            \Filament\Support\get_color_css_variables(
+                                $color,
+                                shades: [50, 400],
+                                alias: 'widgets::chart-widget.background',
+                            ) => $color !== 'gray',
+                        ])
+                    ></span>
 
-                <span
-                    x-ref="gridColorElement"
-                    class="text-gray-200 dark:text-gray-800"
-                ></span>
+                    <span
+                        x-ref="borderColorElement"
+                        @class([
+                            match ($color) {
+                                'gray' => 'text-gray-400',
+                                default => 'text-custom-500 dark:text-custom-400',
+                            },
+                        ])
+                        @style([
+                            \Filament\Support\get_color_css_variables(
+                                $color,
+                                shades: [400, 500],
+                                alias: 'widgets::chart-widget.border',
+                            ) => $color !== 'gray',
+                        ])
+                    ></span>
 
-                <span
-                    x-ref="textColorElement"
-                    class="text-gray-500 dark:text-gray-400"
-                ></span>
-            </div>
+                    <span
+                        x-ref="gridColorElement"
+                        class="text-gray-200 dark:text-gray-800"
+                    ></span>
+
+                    <span
+                        x-ref="textColorElement"
+                        class="text-gray-500 dark:text-gray-400"
+                    ></span>
+                </div>
+            @endif
         </div>
     </x-filament::section>
 </x-filament-widgets::widget>

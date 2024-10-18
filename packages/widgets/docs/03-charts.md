@@ -319,3 +319,72 @@ FilamentAsset::register([
 ```
 
 You can find out more about [asset registration](../support/assets), and even [register assets for a specific panel](../panels/configuration#registering-assets-for-a-panel).
+
+---
+
+## Empty state
+
+The chart's "empty state" is rendered when there are is no data to display.
+By default, the chart will not display this by itself. You have to figure out when to display it and simply call `$this->empty()` from another method of a Chart Widget.
+Usually, you would call this method from the `getData()` method, when there is no data to display.
+
+```php
+protected function getData(): array
+{
+    ...
+    if ($noData) {
+        $this->empty();
+    }
+}
+```
+
+## Setting the empty state heading
+
+To customize the heading of the empty state, set `$emptyStateHeading`:
+
+```php
+protected string | Htmlable | Closure | null $emptyStateHeading = 'No data to display :(';
+```
+
+## Setting the empty state description
+
+To customize the description of the empty state, set `$emptyStateDescription`:
+
+```php
+protected string | Htmlable | Closure | null $emptyStateDescription = 'You will see data here once you added some more of it.';
+```
+
+## Setting the empty state icon
+
+To customize the [icon](https://blade-ui-kit.com/blade-icons?set=1#search) of the empty state, set `$emptyStateIcon`:
+
+```php
+protected string | Closure | null $emptyStateIcon = 'heroicon-o-chart-pie';
+```
+
+## Adding empty state actions
+
+You can add Actions or Action Groups to the empty state to prompt users to take action. Simply override the `getEmptyStateActions()` method:
+
+```php
+use Filament\Actions\Action;
+
+public function getEmptyStateActions(): array
+{
+    return [
+            Action::make('create')
+                ->label('Create post')
+                ->url(route('posts.create'))
+                ->icon('heroicon-m-plus')
+                ->button(),
+    ];
+}
+```
+
+## Using a custom empty state view
+
+You may use a completely custom empty state view by passing it to the `$emptyState`:
+
+```php
+protected View | Htmlable | Closure | null $emptyState = view('empty-state');
+```
