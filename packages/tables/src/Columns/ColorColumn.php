@@ -61,11 +61,15 @@ class ColorColumn extends Column implements HasEmbeddedView
                 <?php
                     $isCopyable = $this->isCopyable($stateItem);
 
-                if ($isCopyable) {
-                    $copyableStateJs = Js::from($this->getCopyableState($stateItem) ?? $stateItem);
-                    $copyMessageJs = Js::from($this->getCopyMessage($stateItem));
-                    $copyMessageDurationJs = Js::from($this->getCopyMessageDuration($stateItem));
-                }
+                    $copyableStateJs = $isCopyable
+                        ? Js::from($this->getCopyableState($stateItem) ?? $stateItem)
+                        : null;
+                    $copyMessageJs = $isCopyable
+                        ? Js::from($this->getCopyMessage($stateItem))
+                        : null;
+                    $copyMessageDurationJs = $isCopyable
+                        ? Js::from($this->getCopyMessageDuration($stateItem))
+                        : null;
                 ?>
 
                 <div <?= (new ComponentAttributeBag)

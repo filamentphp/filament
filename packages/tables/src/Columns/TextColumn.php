@@ -325,7 +325,7 @@ class TextColumn extends Column implements HasEmbeddedView
                                 shades: [400, 600],
                                 alias: 'tables::columns.text-column.item',
                             ) => ! in_array($color, [null, 'gray']),
-                            "--line-clamp: {$lineClamp}" => $lineClamp && (! $isBadge),
+                            "--line-clamp: {$lineClamp}" => $lineClamp,
                         ] : []),
                     ]),
                 'badgeAttributes' => $isBadge
@@ -333,7 +333,7 @@ class TextColumn extends Column implements HasEmbeddedView
                         ->class([
                             'fi-badge',
                             match ($color ?? 'primary') {
-                                null, 'gray' => null,
+                                'gray' => null,
                                 default => 'fi-color-custom',
                             },
                             is_string($color) ? "fi-color-{$color}" : null,

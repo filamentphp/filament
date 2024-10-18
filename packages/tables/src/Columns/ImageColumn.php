@@ -416,7 +416,7 @@ class ImageColumn extends Column implements HasEmbeddedView
                 />
             <?php } ?>
 
-            <?php if ($hasLimitedRemainingText && $stateOverLimitCount) { ?>
+            <?php if ($hasLimitedRemainingText) { ?>
                 <div <?= (new ComponentAttributeBag)
                 ->class([
                     'fi-ta-image-limited-remaining-text',
