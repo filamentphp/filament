@@ -29,6 +29,8 @@ namespace Livewire\Features\SupportTesting {
 
         public function assertActionHasIcon(string | array $name, string $icon): static {}
 
+        public function assertActionHasGroupedIcon(string | array $name, string $icon): static {}
+
         public function assertActionDoesNotHaveIcon(string | array $name, string $icon): static {}
 
         public function assertActionHasLabel(string | array $name, string $label): static {}
