@@ -99,6 +99,8 @@ return [
             'label' => 'Toggle columns',
         ],
 
+        'label' => 'action|actions',
+
     ],
 
     'empty' => [
