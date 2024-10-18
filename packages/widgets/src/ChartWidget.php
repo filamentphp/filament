@@ -9,6 +9,7 @@ use Livewire\Attributes\Locked;
 abstract class ChartWidget extends Widget
 {
     use Concerns\CanPoll;
+    use Concerns\HasEmptyState;
 
     /**
      * @var array<string, mixed> | null
