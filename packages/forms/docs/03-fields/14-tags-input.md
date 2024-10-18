@@ -34,6 +34,37 @@ class Post extends Model
 
 > Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/plugins/filament-spatie-tags) for more information.
 
+## Using a relationship
+
+If you're using a `BelongsToMany` relationship to store your tags, you can call the `relationship()` method to define the relationship:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->relationship(),
+```
+
+By default, this will look for a method on the model that matches a snake cased version of the field name.
+If your method name is different, you can pass the method name as an argument:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->relationship(relationship: 'myRelationshipName'),
+```
+
+Likewise, by default it'll use the column `name` to determine the tag label to use. If you need to use a different
+column, you can pass the column name as an argument:
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->relationship(column: 'a_different_column'),
+```
+
 ## Comma-separated tags
 
 You may allow the tags to be stored in a separated string, instead of JSON. To set this up, pass the separating character to the `separator()` method:
