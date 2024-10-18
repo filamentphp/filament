@@ -1,0 +1,5 @@
+.fi-ta-toggle {
+    &:not(.fi-inline) {
+        @apply px-3 py-4;
+    }
+}

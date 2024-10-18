@@ -150,8 +150,7 @@ class Count extends Summarizer
                                                     shades: [400, 500],
                                                     alias: 'tables::columns.summaries.icon-count.icon',
                                                 ) => $color !== 'gray',
-                    ]),
-                                    )->toHtml() ?>
+                                        ]))->toHtml() ?>
                                 </li>
                             <?php } ?>
                         <?php } ?>

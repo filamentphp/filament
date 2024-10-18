@@ -7,6 +7,7 @@ use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Renderless;
 
 trait HasColumns
 {

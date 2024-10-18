@@ -142,6 +142,18 @@ compile({
 
 compile({
     ...defaultOptions,
+    entryPoints: [`./packages/tables/resources/js/components/columns/checkbox.js`],
+    outfile: `./packages/tables/dist/components/columns/checkbox.js`,
+})
+
+compile({
+    ...defaultOptions,
+    entryPoints: [`./packages/tables/resources/js/components/columns/toggle.js`],
+    outfile: `./packages/tables/dist/components/columns/toggle.js`,
+})
+
+compile({
+    ...defaultOptions,
     entryPoints: [`./packages/widgets/resources/js/components/chart.js`],
     outfile: `./packages/widgets/dist/components/chart.js`,
 })

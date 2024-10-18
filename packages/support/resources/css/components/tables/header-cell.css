@@ -1,5 +1,5 @@
 .fi-ta-header-cell {
-    @apply px-3 py-3.5 text-sm font-semibold text-gray-950 dark:text-white sm:first-of-type:ps-6 sm:last-of-type:pe-6;
+    @apply px-3 py-3.5 text-start text-sm font-semibold text-gray-950 dark:text-white sm:first-of-type:ps-6 sm:last-of-type:pe-6;
 
     &.fi-growable {
         @apply w-full;
@@ -7,10 +7,6 @@
 
     &.fi-grouped {
         @apply border-gray-200 dark:border-white/5 [&:not(:first-of-type)]:border-s [&:not(:last-of-type)]:border-e;
-    }
-
-    &.fi-align-start {
-        @apply text-start;
     }
 
     &.fi-align-center {
