@@ -72,6 +72,9 @@ public function table(Table $table): Table
 
 The ["exporter" class needs to be created](#creating-an-exporter) to tell Filament how to export each row.
 
+## Note
+Created export files are the user's responsibility to delete/manage. Filament does not automatically delete them.
+
 ## Creating an exporter
 
 To create an exporter class for a model, you may use the `make:filament-exporter` command, passing the name of a model:
