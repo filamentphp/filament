@@ -38,11 +38,11 @@
             @apply translate-x-5 rtl:-translate-x-5;
 
             & > :first-child {
-                @apply opacity-0 ease-out duration-100;
+                @apply opacity-0 duration-100 ease-out;
             }
 
             & > :last-child {
-                @apply opacity-100 ease-in duration-200;
+                @apply opacity-100 duration-200 ease-in;
             }
         }
     }
@@ -52,11 +52,11 @@
             @apply translate-x-0;
 
             & > :first-child {
-                @apply opacity-100 ease-in duration-200;
+                @apply opacity-100 duration-200 ease-in;
             }
 
             & > :last-child {
-                @apply opacity-0 ease-out duration-100;
+                @apply opacity-0 duration-100 ease-out;
             }
         }
     }

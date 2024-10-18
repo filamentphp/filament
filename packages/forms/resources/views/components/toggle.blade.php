@@ -3,7 +3,7 @@
 
     $statePath = $getStatePath();
 
-    $toggleAttributes = (new ComponentAttributeBag())
+    $toggleAttributes = (new ComponentAttributeBag)
         ->merge([
             'aria-checked' => 'false',
             'autofocus' => $isAutofocused(),
