@@ -34,6 +34,8 @@ class TablesServiceProvider extends PackageServiceProvider
         FilamentAsset::register([
             AlpineComponent::make('table', __DIR__ . '/../dist/components/table.js'),
             AlpineComponent::make('columns/checkbox', __DIR__ . '/../dist/components/columns/checkbox.js'),
+            AlpineComponent::make('columns/select', __DIR__ . '/../dist/components/columns/select.js'),
+            AlpineComponent::make('columns/text-input', __DIR__ . '/../dist/components/columns/text-input.js'),
             AlpineComponent::make('columns/toggle', __DIR__ . '/../dist/components/columns/toggle.js'),
         ], 'filament/tables');
 

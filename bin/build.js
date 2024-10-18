@@ -151,6 +151,22 @@ compile({
 compile({
     ...defaultOptions,
     entryPoints: [
+        `./packages/tables/resources/js/components/columns/select.js`,
+    ],
+    outfile: `./packages/tables/dist/components/columns/select.js`,
+})
+
+compile({
+    ...defaultOptions,
+    entryPoints: [
+        `./packages/tables/resources/js/components/columns/text-input.js`,
+    ],
+    outfile: `./packages/tables/dist/components/columns/text-input.js`,
+})
+
+compile({
+    ...defaultOptions,
+    entryPoints: [
         `./packages/tables/resources/js/components/columns/toggle.js`,
     ],
     outfile: `./packages/tables/dist/components/columns/toggle.js`,

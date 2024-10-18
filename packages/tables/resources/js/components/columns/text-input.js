@@ -1,4 +1,4 @@
-export default function checkboxTableColumn({ name, recordKey, state }) {
+export default function textInputTableColumn({ name, recordKey, state }) {
     return {
         error: undefined,
 
@@ -29,7 +29,7 @@ export default function checkboxTableColumn({ name, recordKey, state }) {
 
                             if (
                                 serverState === undefined ||
-                                Alpine.raw(this.state) === serverState
+                                this.getNormalizedState() === serverState
                             ) {
                                 return
                             }
@@ -45,7 +45,7 @@ export default function checkboxTableColumn({ name, recordKey, state }) {
 
                 if (
                     serverState === undefined ||
-                    Alpine.raw(this.state) === serverState
+                    this.getNormalizedState() === serverState
                 ) {
                     return
                 }
@@ -61,7 +61,7 @@ export default function checkboxTableColumn({ name, recordKey, state }) {
                 this.error = response?.error ?? undefined
 
                 if (!this.error && this.$refs.serverState) {
-                    this.$refs.serverState.value = this.state ? '1' : '0'
+                    this.$refs.serverState.value = this.getNormalizedState()
                 }
 
                 this.isLoading = false
@@ -73,7 +73,19 @@ export default function checkboxTableColumn({ name, recordKey, state }) {
                 return undefined
             }
 
-            return this.$refs.serverState.value ? true : false
+            return [null, undefined].includes(this.$refs.serverState.value)
+                ? ''
+                : this.$refs.serverState.value
+        },
+
+        getNormalizedState: function () {
+            const state = Alpine.raw(this.state)
+
+            if ([null, undefined].includes(state)) {
+                return ''
+            }
+
+            return state
         },
     }
 }
