@@ -11,6 +11,7 @@ use Filament\Tables\Columns\Contracts\Editable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Js;
 use Illuminate\View\ComponentAttributeBag;
+
 use function Filament\Support\generate_icon_html;
 use function Filament\Support\get_color_css_variables;
 
@@ -38,7 +39,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
         $onIcon = $this->getOnIcon();
         $state = (bool) $this->getState();
 
-        $attributes = (new ComponentAttributeBag())
+        $attributes = (new ComponentAttributeBag)
             ->merge([
                 'ax-load' => FilamentView::hasSpaMode()
                     ? 'visible || event (ax-modal-opened)'
@@ -56,7 +57,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                 'fi-inline' => $this->isInline(),
             ]);
 
-        $buttonAttributes = (new ComponentAttributeBag())
+        $buttonAttributes = (new ComponentAttributeBag)
             ->merge([
                 'disabled' => $this->isDisabled(),
             ], escape: false)
@@ -118,7 +119,7 @@ class ToggleColumn extends Column implements Editable, HasEmbeddedView
                     <div aria-hidden="true">
                         <?= generate_icon_html(
                             $onIcon,
-                            attributes: (new ComponentattributeBag())->merge(['x-cloak' => true], escape: false),
+                            attributes: (new ComponentattributeBag)->merge(['x-cloak' => true], escape: false),
                         )?->toHtml() ?>
                     </div>
                 </div>
