@@ -403,6 +403,8 @@ Repeater::make('qualifications')
 
 This method accepts the same options as the `columns()` method of the [grid](../layout/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
 
+You can configure the grid to automatically adjust its size based on the number of items in the repeater by passing `'auto'` to the `grid()` method. Alternatively, you can provide a closure to calculate the grid size dynamically, allowing for custom logic based on the repeater's state or other conditions.
+
 ## Adding a label to repeater items based on their content
 
 You may add a label for repeater items using the `itemLabel()` method. This method accepts a closure that receives the current item's data in a `$state` variable. You must return a string to be used as the item label:
