@@ -145,15 +145,19 @@
             @endif
         @endif
 
-        <div {{ $getExtraAttributeBag()
-            ->grid($getColumns(), $gridDirection)
-            ->merge([
-                'x-show' => $isSearchable ? 'visibleCheckboxListOptions.length' : null,
-            ], escape: false)
-            ->class([
-                'fi-fo-checkbox-list gap-4',
-                '-mt-4' => $gridDirection === GridDirection::Column,
-            ]) }}>
+        <div
+            {{
+                $getExtraAttributeBag()
+                    ->grid($getColumns(), $gridDirection)
+                    ->merge([
+                        'x-show' => $isSearchable ? 'visibleCheckboxListOptions.length' : null,
+                    ], escape: false)
+                    ->class([
+                        'fi-fo-checkbox-list gap-4',
+                        '-mt-4' => $gridDirection === GridDirection::Column,
+                    ])
+            }}
+        >
             @forelse ($getOptions() as $value => $label)
                 <div
                     wire:key="{{ $getLivewireKey() }}.options.{{ $value }}"

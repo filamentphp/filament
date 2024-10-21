@@ -33,13 +33,16 @@
             <ul>
                 <div
                     x-sortable
-                    {{ (new ComponentAttributeBag())
-                        ->grid($getGridColumns())
-                        ->merge([
-                            'data-sortable-animation-duration' => $getReorderAnimationDuration(),
-                            'wire:end.stop' => 'mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
-                        ], escape: false)
-                        ->class(['gap-4']) }}>
+                    {{
+                        (new ComponentAttributeBag)
+                            ->grid($getGridColumns())
+                            ->merge([
+                                'data-sortable-animation-duration' => $getReorderAnimationDuration(),
+                                'wire:end.stop' => 'mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                            ], escape: false)
+                            ->class(['gap-4'])
+                    }}
+                >
                     @foreach ($containers as $uuid => $item)
                         @php
                             $visibleExtraItemActions = array_filter(

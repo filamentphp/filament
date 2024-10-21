@@ -22,7 +22,9 @@
     </x-slot>
 
     <x-filament::dropdown.list>
-        <div {{ (new ComponentAttributeBag())->grid($columns, GridDirection::Column) }}>
+        <div
+            {{ (new ComponentAttributeBag)->grid($columns, GridDirection::Column) }}
+        >
             @foreach ($blocks as $block)
                 @php
                     $wireClickActionArguments = ['block' => $block->getName()];
