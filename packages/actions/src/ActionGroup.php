@@ -17,7 +17,6 @@ use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 use Illuminate\View\ComponentSlot;
@@ -274,7 +273,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
     {
         $static = static::make(
             array_map(
-                fn (array $action): Action |ActionGroup => match (array_key_exists('actions', $action)) {
+                fn (array $action): Action | ActionGroup => match (array_key_exists('actions', $action)) {
                     true => ActionGroup::fromArray($action),
                     false => Action::fromArray($action),
                 },
@@ -380,7 +379,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
         $maxHeight = $this->getDropdownMaxHeight();
         $width = $this->getDropdownWidth();
 
-        $panelAttributes = (new ComponentAttributeBag())
+        $panelAttributes = (new ComponentAttributeBag)
             ->class([
                 'fi-dropdown-panel',
                 ($width instanceof MaxWidth) ? "fi-width-{$width->value}" : (is_string($width) ? $width : 'fi-width-default'),
@@ -408,13 +407,13 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 x-transition:leave-end="fi-opacity-0"
                 <?= $panelAttributes->toHtml() ?>
             >
-                <?php foreach ($actionLists as $actions): ?>
+                <?php foreach ($actionLists as $actions) { ?>
                     <div class="fi-dropdown-list">
-                        <?php foreach ($actions as $action): ?>
+                        <?php foreach ($actions as $action) { ?>
                             <?= $action->toHtml() ?>
-                        <?php endforeach; ?>
+                        <?php } ?>
                     </div>
-                <?php endforeach; ?>
+                <?php } ?>
             </div>
         </div>
 
@@ -514,7 +513,7 @@ class ActionGroup extends ViewComponent implements Arrayable, HasEmbeddedView
                 static::ICON_BUTTON_VIEW => $this->getIconButtonTriggerViewData(),
                 static::LINK_VIEW => $this->getLinkTriggerViewData(),
                 default => [],
-            }
+            },
         ];
     }
 

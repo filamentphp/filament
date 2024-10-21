@@ -1,5 +1,5 @@
 .fi-dropdown-list-item {
-    @apply flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70;
+    @apply flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm outline-none transition-colors duration-75 disabled:pointer-events-none disabled:opacity-70;
 
     &.fi-disabled,
     &[disabled] {
