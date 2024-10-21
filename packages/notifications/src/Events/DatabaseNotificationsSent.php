@@ -16,7 +16,7 @@ class DatabaseNotificationsSent implements ShouldBroadcast
     use InteractsWithSockets;
     use SerializesModels;
 
-    public Model | Authenticatable $user;
+    protected Model | Authenticatable $user;
 
     public function __construct(Model | Authenticatable $user)
     {
