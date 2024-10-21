@@ -74,9 +74,9 @@ class PanelsRenderHook
 
     const PAGE_SUB_NAVIGATION_END_BEFORE = 'panels::page.sub-navigation.end.before';
 
-    const PAGE_SUB_NAVIGATION_SIDEBAR_START = 'panels::page.sub-navigation.top';
+    const PAGE_SUB_NAVIGATION_SIDEBAR_START = 'panels::page.sub-navigation.sidebar.start';
 
-    const PAGE_SUB_NAVIGATION_SIDEBAR_END = 'panels::page.sub-navigation.bottom';
+    const PAGE_SUB_NAVIGATION_SIDEBAR_END = 'panels::page.sub-navigation.sidebar.end';
 
     const RESOURCE_PAGES_LIST_RECORDS_TABLE_AFTER = 'panels::resource.pages.list-records.table.after';
 
