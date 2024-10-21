@@ -85,7 +85,7 @@
     @endif
     {{
         $attributes
-            ->except(['wire:target'])
+            ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75',
                 $enabledWrapperClasses => (! $hasAlpineClasses) && (! $disabled),
