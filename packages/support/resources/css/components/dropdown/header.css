@@ -1,0 +1,39 @@
+.fi-dropdown-header {
+    @apply flex w-full gap-2 p-3 text-sm;
+
+    & .fi-icon {
+        @apply size-5;
+
+        &.fi-size-sm {
+            @apply size-4;
+        }
+
+        &.fi-size-lg {
+            @apply size-6;
+        }
+    }
+
+    & span {
+        @apply flex-1 truncate text-start;
+    }
+
+    &.fi-color-custom {
+        & .fi-icon {
+            @apply text-custom-500 dark:text-custom-400;
+        }
+
+        & span {
+            @apply text-custom-600 dark:text-custom-400;
+        }
+    }
+
+    &:not(.fi-color-custom) {
+        & .fi-icon {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+
+        & span {
+            @apply text-gray-700 dark:text-gray-200;
+        }
+    }
+}

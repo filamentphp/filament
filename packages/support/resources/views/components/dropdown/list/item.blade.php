@@ -1,10 +1,12 @@
 @php
+    use Filament\Support\Enums\ActionSize;
     use Filament\Support\Enums\IconSize;
+    use Illuminate\View\ComponentAttributeBag;
 @endphp
 
 @props([
     'badge' => null,
-    'badgeColor' => null,
+    'badgeColor' => 'primary',
     'badgeTooltip' => null,
     'color' => 'gray',
     'disabled' => false,
@@ -12,7 +14,7 @@
     'icon' => null,
     'iconAlias' => null,
     'iconColor' => null,
-    'iconSize' => IconSize::Medium,
+    'iconSize' => null,
     'image' => null,
     'keyBindings' => null,
     'loadingIndicator' => true,
@@ -23,40 +25,20 @@
 ])
 
 @php
-    $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70',
-        'pointer-events-none opacity-70' => $disabled,
-        match ($color) {
-            'gray' => 'hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5',
-            default => 'fi-color-custom hover:bg-custom-50 focus-visible:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus-visible:bg-custom-400/10',
-        },
-        // @deprecated `fi-dropdown-list-item-color-*` has been replaced by `fi-color-*` and `fi-color-custom`.
-        is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
-        is_string($color) ? "fi-color-{$color}" : null,
-    ]);
-
-    $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables(
-            $color,
-            shades: [50, 400],
-            alias: 'dropdown.list.item',
-        ) => $color !== 'gray',
-    ]);
+    if (! $iconSize instanceof IconSize) {
+        $iconSize = filled($iconSize) ? (IconSize::tryFrom($iconSize) ?? $iconSize) : null;
+    }
 
     $iconColor ??= $color;
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item-icon',
-        match ($iconSize) {
-            IconSize::Small, 'sm' => 'size-4',
-            IconSize::Medium, 'md' => 'size-5',
-            IconSize::Large, 'lg' => 'size-6',
-            default => $iconSize,
-        },
+        ($iconSize instanceof IconSize) ? ('fi-size-' . $iconSize->value) : (is_string($iconSize) ? $iconSize : ''),
         match ($iconColor) {
-            'gray' => 'text-gray-400 dark:text-gray-500',
-            default => 'text-custom-500 dark:text-custom-400',
+            'gray' => '',
+            default => 'fi-color-custom',
         },
+        is_string($iconColor) ? "fi-color-{$iconColor}" : null,
     ]);
 
     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
@@ -67,24 +49,6 @@
         ) => $iconColor !== 'gray',
     ]);
 
-    $imageClasses = 'fi-dropdown-list-item-image size-5 rounded-full bg-cover bg-center';
-
-    $labelClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-dropdown-list-item-label flex-1 truncate text-start',
-        match ($color) {
-            'gray' => 'text-gray-700 dark:text-gray-200',
-            default => 'text-custom-600 dark:text-custom-400 ',
-        },
-    ]);
-
-    $labelStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables(
-            $color,
-            shades: [400, 600],
-            alias: 'dropdown.list.item.label',
-        ) => $color !== 'gray',
-    ]);
-
     $wireTarget = $loadingIndicator ? $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first() : null;
 
     $hasLoadingIndicator = filled($wireTarget);
@@ -92,184 +56,135 @@
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
     }
-
-    $hasTooltip = filled($tooltip);
 @endphp
 
-@if ($tag === 'button')
-    <button
-        @if ($keyBindings || $hasTooltip)
-            x-data="{}"
-        @endif
-        @if ($keyBindings)
-            x-bind:id="$id('key-bindings')"
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
-        @endif
-        @if ($hasTooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
-        @endif
-        {{
-            $attributes
-                ->merge([
-                    'disabled' => $disabled,
-                    'type' => 'button',
-                    'wire:loading.attr' => 'disabled',
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ], escape: false)
-                ->class([$buttonClasses])
-                ->style([$buttonStyles])
-        }}
-    >
-        @if ($icon)
-            <x-filament::icon
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'alias' => $iconAlias,
-                            'icon' => $icon,
-                            'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                            'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                        ])
-                    )
-                        ->class([$iconClasses])
-                        ->style([$iconStyles])
-                "
-            />
-        @endif
+{!! ($tag === 'form') ? ('<form ' . $attributes->only(['action', 'class', 'method', 'wire:submit'])->toHtml() . '>') : '' !!}
 
-        @if ($image)
-            <div
-                class="{{ $imageClasses }}"
-                style="background-image: url('{{ $image }}')"
-            ></div>
-        @endif
+@if ($tag === 'form')
+    @csrf
+@endif
 
-        @if ($hasLoadingIndicator)
-            <x-filament::loading-indicator
-                :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        new \Illuminate\View\ComponentAttributeBag([
-                            'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
-                            'wire:target' => $loadingIndicatorTarget,
-                        ])
-                    )
-                        ->class([$iconClasses])
-                        ->style([$iconStyles])
-                "
-            />
-        @endif
-
-        <span class="{{ $labelClasses }}" style="{{ $labelStyles }}">
-            {{ $slot }}
-        </span>
-
-        @if (filled($badge))
-            <x-filament::badge
-                :color="$badgeColor"
-                size="sm"
-                :tooltip="$badgeTooltip"
-            >
-                {{ $badge }}
-            </x-filament::badge>
-        @endif
-    </button>
-@elseif ($tag === 'a')
-    <a
+<{{ ($tag === 'form') ? 'button' : $tag }}
+    @if ($tag === 'a')
         {{ \Filament\Support\generate_href_html($href, $target === '_blank', $spaMode) }}
-        @if ($keyBindings || $hasTooltip)
-            x-data="{}"
-        @endif
-        @if ($keyBindings)
-            x-bind:id="$id('key-bindings')"
-            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
-        @endif
-        @if ($hasTooltip)
-            x-tooltip="{
-                content: @js($tooltip),
-                theme: $store.theme,
-            }"
-        @endif
+    @endif
+    @if ($keyBindings)
+        x-bind:id="$id('key-bindings')"
+        x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
+    @endif
+    @if (filled($tooltip))
+        x-tooltip="{
+            content: @js($tooltip),
+            theme: $store.theme,
+        }"
+    @endif
+    {{
+        $attributes
+            ->when(
+                $tag === 'form',
+                fn (ComponentAttributeBag $attributes) => $attributes->except(['action', 'class', 'method', 'wire:submit']),
+            )
+            ->merge([
+                'disabled' => $disabled,
+                'type' => match ($tag) {
+                    'button' => 'button',
+                    'form' => 'submit',
+                    default => null,
+                },
+                'wire:loading.attr' => $tag === 'button' ? 'disabled' : null,
+                'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+            ], escape: false)
+            ->class([
+                'fi-dropdown-list-item',
+                'fi-disabled' => $disabled,
+                match ($color) {
+                    'gray' => '',
+                    default => 'fi-color-custom',
+                },
+                is_string($color) ? "fi-color-{$color}" : null,
+            ])
+            ->style([
+                \Filament\Support\get_color_css_variables(
+                    $color,
+                    shades: [50, 400],
+                    alias: 'dropdown.list.item',
+                ) => $color !== 'gray',
+            ])
+    }}
+>
+    @if ($icon)
         {{
-            $attributes
-                ->class([$buttonClasses])
-                ->style([$buttonStyles])
+            \Filament\Support\generate_icon_html($icon, $iconAlias, (new ComponentAttributeBag([
+                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+            ]))->class([$iconClasses])->style([$iconStyles]))
         }}
-    >
-        @if ($icon)
-            <x-filament::icon
-                :alias="$iconAlias"
-                :icon="$icon"
-                :class="$iconClasses"
-                :style="$iconStyles"
-            />
-        @endif
+    @endif
 
-        @if ($image)
-            <div
-                class="{{ $imageClasses }}"
-                style="background-image: url('{{ $image }}')"
-            ></div>
-        @endif
-
-        <span class="{{ $labelClasses }}" style="{{ $labelStyles }}">
-            {{ $slot }}
-        </span>
-
-        @if (filled($badge))
-            <x-filament::badge :color="$badgeColor" size="sm">
-                {{ $badge }}
-            </x-filament::badge>
-        @endif
-    </a>
-@elseif ($tag === 'form')
-    <form
-        {{ $attributes->only(['action', 'class', 'method', 'wire:submit']) }}
-    >
-        @csrf
-
-        <button
-            @if ($keyBindings || $hasTooltip)
-                x-data="{}"
+    @if ($image)
+        <div
+            class="fi-dropdown-list-item-image"
+            style="background-image: url('{{ $image }}')"
+            @if ($hasLoadingIndicator)
+                wire:loading.remove.delay.{{ config('filament.livewire_loading_delay', 'default') }}
+                wire:target="{{ $loadingIndicatorTarget }}"
             @endif
-            @if ($keyBindings)
-                x-bind:id="$id('key-bindings')"
-                x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="document.getElementById($el.id).click()"
-            @endif
-            @if ($hasTooltip)
+        ></div>
+    @endif
+
+    @if ($hasLoadingIndicator)
+        {{
+            \Filament\Support\generate_loading_indicator_html((new ComponentAttributeBag([
+                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => '',
+                'wire:target' => $loadingIndicatorTarget,
+            ]))->class([$iconClasses])->style([$iconStyles]))
+        }}
+    @endif
+
+    <span
+        class="fi-dropdown-list-item-label"
+        @style([
+            \Filament\Support\get_color_css_variables(
+                $color,
+                shades: [400, 600],
+                alias: 'dropdown.list.item.label',
+            ) => $color !== 'gray',
+        ])
+    >
+        {{ $slot }}
+    </span>
+
+    @if (filled($badge))
+        <span
+            @if ($badgeTooltip)
                 x-tooltip="{
-                    content: @js($tooltip),
+                    content: @js($badgeTooltip),
                     theme: $store.theme,
                 }"
             @endif
-            type="submit"
-            {{
-                $attributes
-                    ->except(['action', 'class', 'method', 'wire:submit'])
-                    ->class([$buttonClasses])
-                    ->style([$buttonStyles])
-            }}
+            @class([
+                'fi-badge',
+                match ($badgeColor) {
+                    'gray' => '',
+                    default => 'fi-color-custom',
+                },
+                is_string($badgeColor) ? "fi-color-{$badgeColor}" : null,
+            ])
+            @style([
+                \Filament\Support\get_color_css_variables(
+                    $badgeColor,
+                    shades: [
+                        50,
+                        400,
+                        600,
+                    ],
+                    alias: 'badge',
+                ) => $badgeColor !== 'gray',
+            ])
         >
-            @if ($icon)
-                <x-filament::icon
-                    :alias="$iconAlias"
-                    :icon="$icon"
-                    :class="$iconClasses"
-                    :style="$iconStyles"
-                />
-            @endif
+            {{ $badge }}
+        </span>
+    @endif
+</{{ ($tag === 'form') ? 'button' : $tag }}>
 
-            <span class="{{ $labelClasses }}" style="{{ $labelStyles }}">
-                {{ $slot }}
-            </span>
-
-            @if (filled($badge))
-                <x-filament::badge :color="$badgeColor" size="sm">
-                    {{ $badge }}
-                </x-filament::badge>
-            @endif
-        </button>
-    </form>
-@endif
+{!! ($tag === 'form') ? '</form>' : '' !!}

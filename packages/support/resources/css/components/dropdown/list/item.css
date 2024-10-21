@@ -1,0 +1,82 @@
+.fi-dropdown-list-item {
+    @apply flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70;
+
+    &.fi-disabled,
+    &[disabled] {
+        @apply pointer-events-none opacity-70;
+    }
+
+    & > .fi-icon {
+        @apply size-5 transition duration-75;
+    }
+
+    & > .fi-dropdown-list-item-image {
+        @apply size-5 rounded-full bg-cover bg-center;
+    }
+
+    & > .fi-dropdown-list-item-label {
+        @apply flex-1 truncate text-start;
+    }
+
+    &.fi-size-xs {
+        @apply gap-1 px-2 py-1.5 text-xs;
+
+        & > .fi-icon {
+            @apply size-4;
+        }
+    }
+
+    &.fi-size-sm {
+        @apply gap-1 px-2.5 py-1.5 text-sm;
+
+        & > .fi-icon {
+            @apply size-4;
+        }
+    }
+
+    &.fi-size-lg {
+        @apply gap-1.5 px-3.5 py-2.5 text-sm;
+    }
+
+    &.fi-size-xl {
+        @apply gap-1.5 px-4 py-3 text-sm;
+    }
+
+    & > .fi-icon {
+        &.fi-size-sm {
+            @apply size-4;
+        }
+
+        &.fi-size-lg {
+            @apply size-6;
+        }
+
+        &.fi-color-custom {
+            @apply text-custom-500 dark:text-custom-400;
+        }
+
+        &:not(.fi-color-custom) {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+    }
+
+    &.fi-color-custom {
+        @apply hover:bg-custom-50 focus-visible:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus-visible:bg-custom-400/10;
+
+        & > .fi-dropdown-list-item-label {
+            @apply text-custom-600 dark:text-custom-400;
+        }
+    }
+
+    &:not(.fi-color-custom) {
+        @apply hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
+
+        & > .fi-dropdown-list-item-label {
+            @apply text-gray-700 dark:text-gray-200;
+        }
+    }
+
+    & > .fi-badge {
+        @apply min-w-[theme(spacing.5)] px-1.5 py-0.5 tracking-tight;
+    }
+}

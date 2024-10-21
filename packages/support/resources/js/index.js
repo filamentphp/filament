@@ -3,10 +3,15 @@ import AlpineLazyLoadAssets from 'alpine-lazy-load-assets'
 import { md5 } from 'js-md5'
 import Sortable from './sortable'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
+import dropdown from './components/dropdown.js'
 
 import '../css/components/badge.css'
 import '../css/components/button.css'
 import '../css/components/button-group.css'
+import '../css/components/dropdown/header.css'
+import '../css/components/dropdown/index.css'
+import '../css/components/dropdown/list/index.css'
+import '../css/components/dropdown/list/item.css'
 import '../css/components/grid.css'
 import '../css/components/icon-button.css'
 import '../css/components/input/checkbox.css'
@@ -52,6 +57,7 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(AlpineLazyLoadAssets)
     window.Alpine.plugin(Sortable)
     window.Alpine.plugin(Tooltip)
+    window.Alpine.data('filamentDropdown', dropdown)
 })
 
 document.addEventListener('livewire:init', () => {

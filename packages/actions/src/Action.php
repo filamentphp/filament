@@ -615,13 +615,13 @@ class Action extends ViewComponent implements Arrayable
             $this->getView(),
             [
                 'attributes' => (new ComponentAttributeBag([
+                    'action' => $shouldPostToUrl ? $url : null,
                     'method' => $shouldPostToUrl ? 'post' : null,
                     'wire:click' => $this->getLivewireClickHandler(),
                     'x-on:click' => $this->getAlpineClickHandler(),
                 ]))
                     ->merge($this->getExtraAttributes(), escape: false)
                     ->class($props['class'] ?? []),
-                'action' => $shouldPostToUrl ? $url : null,
                 'color' => $this->getColor(),
                 'disabled' => $isDisabled,
                 'form' => $this->getFormToSubmit(),
