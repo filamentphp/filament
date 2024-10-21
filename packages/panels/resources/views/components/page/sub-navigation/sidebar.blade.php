@@ -4,7 +4,7 @@
 
 <div {{ $attributes->class(['fi-page-sub-navigation-sidebar hidden w-72 flex-col gap-y-7 md:flex']) }}>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_TOP, scopes: $this->getRenderHookScopes()) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_SIDEBAR_START, scopes: $this->getRenderHookScopes()) }}
 
     <ul
         wire:ignore
@@ -23,6 +23,6 @@
         @endforeach
     </ul>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_BOTTOM, scopes: $this->getRenderHookScopes()) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\View\PanelsRenderHook::PAGE_SUB_NAVIGATION_SIDEBAR_END, scopes: $this->getRenderHookScopes()) }}
 
 </div>
