@@ -31,18 +31,15 @@
     >
         @if (count($containers))
             <ul>
-                <x-filament::grid
-                    :default="$getGridColumns('default')"
-                    :sm="$getGridColumns('sm')"
-                    :md="$getGridColumns('md')"
-                    :lg="$getGridColumns('lg')"
-                    :xl="$getGridColumns('xl')"
-                    :two-xl="$getGridColumns('2xl')"
-                    :wire:end.stop="'mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })'"
+                <div
                     x-sortable
-                    :data-sortable-animation-duration="$getReorderAnimationDuration()"
-                    class="gap-4"
-                >
+                    {{ (new ComponentAttributeBag())
+                        ->grid($getGridColumns())
+                        ->merge([
+                            'data-sortable-animation-duration' => $getReorderAnimationDuration(),
+                            'wire:end.stop' => 'mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                        ], escape: false)
+                        ->class(['gap-4']) }}>
                     @foreach ($containers as $uuid => $item)
                         @php
                             $visibleExtraItemActions = array_filter(
@@ -112,7 +109,7 @@
                             @endif
                         </li>
                     @endforeach
-                </x-filament::grid>
+                </div>
             </ul>
         @endif
 

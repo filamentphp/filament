@@ -1,3 +1,8 @@
+@php
+    use Filament\Support\Enums\GridDirection;
+    use Illuminate\View\ComponentAttributeBag;
+@endphp
+
 @props([
     'action',
     'afterItem' => null,
@@ -17,15 +22,7 @@
     </x-slot>
 
     <x-filament::dropdown.list>
-        <x-filament::grid
-            :default="$columns['default'] ?? 1"
-            :sm="$columns['sm'] ?? null"
-            :md="$columns['md'] ?? null"
-            :lg="$columns['lg'] ?? null"
-            :xl="$columns['xl'] ?? null"
-            :two-xl="$columns['2xl'] ?? null"
-            direction="column"
-        >
+        <div {{ (new ComponentAttributeBag())->grid($columns, GridDirection::Column) }}>
             @foreach ($blocks as $block)
                 @php
                     $wireClickActionArguments = ['block' => $block->getName()];
@@ -47,6 +44,6 @@
                     {{ $block->getLabel() }}
                 </x-filament::dropdown.list.item>
             @endforeach
-        </x-filament::grid>
+        </div>
     </x-filament::dropdown.list>
 </x-filament::dropdown>

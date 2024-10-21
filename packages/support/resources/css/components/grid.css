@@ -46,58 +46,58 @@
             @apply 2xl:columns-[--cols-2xl];
         }
     }
+}
 
-    & .fi-grid-col {
-        &:not(.fi-hidden) {
-            @apply col-[--col-span-default];
+.fi-grid-col {
+    &:not(.fi-hidden) {
+        @apply col-[--col-span-default];
 
-            &.sm\:fi-grid-col-span {
-                @apply sm:col-[--col-span-sm];
-            }
-
-            &.md\:fi-grid-col-span {
-                @apply md:col-[--col-span-md];
-            }
-
-            &.lg\:fi-grid-col-span {
-                @apply lg:col-[--col-span-lg];
-            }
-
-            &.xl\:fi-grid-col-span {
-                @apply xl:col-[--col-span-xl];
-            }
-
-            &.\32xl\:fi-grid-col-span {
-                @apply 2xl:col-[--col-span-2xl];
-            }
-
-            &.fi-grid-col-start {
-                @apply col-start-[--col-start-default];
-            }
-
-            &.sm\:fi-grid-col-start {
-                @apply sm:col-start-[--col-start-sm];
-            }
-
-            &.md\:fi-grid-col-start {
-                @apply md:col-start-[--col-start-md];
-            }
-
-            &.lg\:fi-grid-col-start {
-                @apply lg:col-start-[--col-start-lg];
-            }
-
-            &.xl\:fi-grid-col-start {
-                @apply xl:col-start-[--col-start-xl];
-            }
-
-            &.\32xl\:fi-grid-col-start {
-                @apply 2xl:col-start-[--col-start-2xl];
-            }
+        &.sm\:fi-grid-col-span {
+            @apply sm:col-[--col-span-sm];
         }
 
-        &.fi-hidden {
-            @apply hidden;
+        &.md\:fi-grid-col-span {
+            @apply md:col-[--col-span-md];
         }
+
+        &.lg\:fi-grid-col-span {
+            @apply lg:col-[--col-span-lg];
+        }
+
+        &.xl\:fi-grid-col-span {
+            @apply xl:col-[--col-span-xl];
+        }
+
+        &.\32xl\:fi-grid-col-span {
+            @apply 2xl:col-[--col-span-2xl];
+        }
+
+        &.fi-grid-col-start {
+            @apply col-start-[--col-start-default];
+        }
+
+        &.sm\:fi-grid-col-start {
+            @apply sm:col-start-[--col-start-sm];
+        }
+
+        &.md\:fi-grid-col-start {
+            @apply md:col-start-[--col-start-md];
+        }
+
+        &.lg\:fi-grid-col-start {
+            @apply lg:col-start-[--col-start-lg];
+        }
+
+        &.xl\:fi-grid-col-start {
+            @apply xl:col-start-[--col-start-xl];
+        }
+
+        &.\32xl\:fi-grid-col-start {
+            @apply 2xl:col-start-[--col-start-2xl];
+        }
+    }
+
+    &.fi-hidden {
+        @apply hidden;
     }
 }

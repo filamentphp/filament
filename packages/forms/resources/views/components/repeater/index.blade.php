@@ -1,6 +1,7 @@
 @php
     use Filament\Actions\Action;
     use Filament\Support\Enums\Alignment;
+    use Illuminate\View\ComponentAttributeBag;
 
     $containers = $getChildComponentContainers();
 
@@ -64,18 +65,15 @@
 
         @if (count($containers))
             <ul>
-                <x-filament::grid
-                    :default="$getGridColumns('default')"
-                    :sm="$getGridColumns('sm')"
-                    :md="$getGridColumns('md')"
-                    :lg="$getGridColumns('lg')"
-                    :xl="$getGridColumns('xl')"
-                    :two-xl="$getGridColumns('2xl')"
-                    :wire:end.stop="'mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })'"
+                <div
                     x-sortable
-                    :data-sortable-animation-duration="$getReorderAnimationDuration()"
-                    class="items-start gap-4"
-                >
+                    {{ (new ComponentAttributeBag())
+                        ->grid($getGridColumns())
+                        ->merge([
+                            'data-sortable-animation-duration' => $getReorderAnimationDuration(),
+                            'wire:end.stop' => 'mountAction(\'reorder\', { items: $event.target.sortable.toArray() }, { schemaComponent: \'' . $key . '\' })',
+                        ], escape: false)
+                        ->class(['items-start gap-4']) }}>
                     @foreach ($containers as $uuid => $item)
                         @php
                             $itemLabel = $getItemLabel($uuid);
@@ -234,7 +232,7 @@
                             @endif
                         @endif
                     @endforeach
-                </x-filament::grid>
+                </div>
             </ul>
         @endif
 

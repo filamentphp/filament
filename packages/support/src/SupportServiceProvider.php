@@ -191,10 +191,6 @@ class SupportServiceProvider extends PackageServiceProvider
             $span = array_filter($span);
             $start = array_filter($start);
 
-            if (($span['default'] ?? null) === 1) {
-                unset($span['default']);
-            }
-
             return $this
                 ->class([
                     'fi-grid-col',
