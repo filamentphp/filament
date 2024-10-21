@@ -18,7 +18,9 @@
     >
         @if (count($childComponentContainers = $getChildComponentContainers()))
             <ul>
-                <div {{ (new \Illuminate\View\ComponentAttributeBag())->grid($getGridColumns())->class(['gap-4']) }}>
+                <div
+                    {{ (new \Illuminate\View\ComponentAttributeBag)->grid($getGridColumns())->class(['gap-4']) }}
+                >
                     @foreach ($childComponentContainers as $container)
                         <li
                             @class([

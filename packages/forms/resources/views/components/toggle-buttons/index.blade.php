@@ -25,13 +25,15 @@
     </x-slot>
 
     <div
-        {{ $getExtraAttributeBag()
-            ->when(! $isInline, fn (ComponentAttributeBag $attributes) => $attributes->grid($getColumns(), $gridDirection))
-            ->class([
-                'fi-fo-toggle-buttons gap-3',
-                '-mt-3' => (! $isInline) && ($gridDirection === GridDirection::Column),
-                'flex flex-wrap' => $isInline,
-            ]) }}
+        {{
+            $getExtraAttributeBag()
+                ->when(! $isInline, fn (ComponentAttributeBag $attributes) => $attributes->grid($getColumns(), $gridDirection))
+                ->class([
+                    'fi-fo-toggle-buttons gap-3',
+                    '-mt-3' => (! $isInline) && ($gridDirection === GridDirection::Column),
+                    'flex flex-wrap' => $isInline,
+                ])
+        }}
     >
         @foreach ($getOptions() as $value => $label)
             @php

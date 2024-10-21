@@ -7,13 +7,15 @@
 @endphp
 
 <div
-    {{ $getExtraAttributeBag()
-        ->grid($getColumns())
-        ->merge([
-            'x-data' => $isRoot ? 'filamentSchema({ livewireId: ' . Js::from($this->getId()) . ' })' : null,
-            'x-on:form-validation-error.window' => $isRoot ? 'handleFormValidationError' : null,
-        ], escape: false)
-        ->class(['fi-fo-component-ctn gap-6']) }}
+    {{
+        $getExtraAttributeBag()
+            ->grid($getColumns())
+            ->merge([
+                'x-data' => $isRoot ? 'filamentSchema({ livewireId: ' . Js::from($this->getId()) . ' })' : null,
+                'x-on:form-validation-error.window' => $isRoot ? 'handleFormValidationError' : null,
+            ], escape: false)
+            ->class(['fi-fo-component-ctn gap-6'])
+    }}
 >
     @foreach ($getComponents(withHidden: true) as $schemaComponent)
         @php
@@ -34,27 +36,29 @@
         @endphp
 
         <div
-            {{ (new ComponentAttributeBag())
-                ->gridColumn($schemaComponent->getColumnSpan(), $schemaComponent->getColumnStart(), $isHidden)
-                ->merge([
-                    'wire:key' => $schemaComponent->getLivewireKey(),
-                ], escape: false)
-                ->class([
-                    match ($maxWidth = $schemaComponent->getMaxWidth()) {
-                        MaxWidth::ExtraSmall, 'xs' => 'max-w-xs',
-                        MaxWidth::Small, 'sm' => 'max-w-sm',
-                        MaxWidth::Medium, 'md' => 'max-w-md',
-                        MaxWidth::Large, 'lg' => 'max-w-lg',
-                        MaxWidth::ExtraLarge, 'xl' => 'max-w-xl',
-                        MaxWidth::TwoExtraLarge, '2xl' => 'max-w-2xl',
-                        MaxWidth::ThreeExtraLarge, '3xl' => 'max-w-3xl',
-                        MaxWidth::FourExtraLarge, '4xl' => 'max-w-4xl',
-                        MaxWidth::FiveExtraLarge, '5xl' => 'max-w-5xl',
-                        MaxWidth::SixExtraLarge, '6xl' => 'max-w-6xl',
-                        MaxWidth::SevenExtraLarge, '7xl' => 'max-w-7xl',
-                        default => $maxWidth,
-                    },
-                ]) }}
+            {{
+                (new ComponentAttributeBag)
+                    ->gridColumn($schemaComponent->getColumnSpan(), $schemaComponent->getColumnStart(), $isHidden)
+                    ->merge([
+                        'wire:key' => $schemaComponent->getLivewireKey(),
+                    ], escape: false)
+                    ->class([
+                        match ($maxWidth = $schemaComponent->getMaxWidth()) {
+                            MaxWidth::ExtraSmall, 'xs' => 'max-w-xs',
+                            MaxWidth::Small, 'sm' => 'max-w-sm',
+                            MaxWidth::Medium, 'md' => 'max-w-md',
+                            MaxWidth::Large, 'lg' => 'max-w-lg',
+                            MaxWidth::ExtraLarge, 'xl' => 'max-w-xl',
+                            MaxWidth::TwoExtraLarge, '2xl' => 'max-w-2xl',
+                            MaxWidth::ThreeExtraLarge, '3xl' => 'max-w-3xl',
+                            MaxWidth::FourExtraLarge, '4xl' => 'max-w-4xl',
+                            MaxWidth::FiveExtraLarge, '5xl' => 'max-w-5xl',
+                            MaxWidth::SixExtraLarge, '6xl' => 'max-w-6xl',
+                            MaxWidth::SevenExtraLarge, '7xl' => 'max-w-7xl',
+                            default => $maxWidth,
+                        },
+                    ])
+            }}
         >
             @if (! $isHidden)
                 <div
@@ -73,7 +77,7 @@
                     }"
                     @if ($afterStateUpdatedJs = $schemaComponent->getAfterStateUpdatedJs())
                         {{-- format-ignore-start --}}x-init="@foreach ($afterStateUpdatedJs as $js) $wire.$watch({{ $jsStatePath }}, ($state, $old) => eval(@js($js))); @endforeach"
-                    {{-- format-ignore-end --}}
+                                        {{-- format-ignore-end --}}
                     @endif
                     @if (filled($xShow = match ([filled($hiddenJs), filled($visibleJs)]) {
                              [true, true] => "(! {$hiddenJs}) && ({$visibleJs})",
@@ -82,7 +86,7 @@
                              default => null,
                          }))
                         x-show="{{ $xShow }}"
-                    x-cloak
+                        x-cloak
                     @endif
                 >
                     {{ $schemaComponent }}
