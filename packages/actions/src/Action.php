@@ -563,7 +563,7 @@ class Action extends ViewComponent implements Arrayable
      */
     protected static function isViewSafe(string $view): bool
     {
-        return Str::startsWith($view, 'filament-actions::');
+        return Str::startsWith($view, 'filament::');
     }
 
     public function shouldMarkAsRead(): bool
@@ -647,7 +647,7 @@ class Action extends ViewComponent implements Arrayable
             'class' => 'fi-ac-badge-action',
             'iconPosition' => $this->getIconPosition(),
             'size' => $this->getSize(),
-            'slot' => new ComponentSlot($this->getLabel()),
+            'slot' => new ComponentSlot(e($this->getLabel())),
         ]);
     }
 
@@ -661,7 +661,7 @@ class Action extends ViewComponent implements Arrayable
             'labeledFrom' => $this->getLabeledFromBreakpoint(),
             'outlined' => $this->isOutlined(),
             'size' => $this->getSize(),
-            'slot' => new ComponentSlot($this->getLabel()),
+            'slot' => new ComponentSlot(e($this->getLabel())),
         ]);
     }
 
@@ -672,7 +672,7 @@ class Action extends ViewComponent implements Arrayable
             'badgeColor' => $this->getBadgeColor(),
             'class' => 'fi-ac-grouped-action',
             'icon' => $this->getGroupedIcon(),
-            'slot' => new ComponentSlot($this->getLabel()),
+            'slot' => new ComponentSlot(e($this->getLabel())),
         ]);
     }
 
@@ -695,7 +695,7 @@ class Action extends ViewComponent implements Arrayable
             'class' => 'fi-ac-link-action',
             'iconPosition' => $this->getIconPosition(),
             'size' => $this->getSize(),
-            'slot' => new ComponentSlot($this->getLabel()),
+            'slot' => new ComponentSlot(e($this->getLabel())),
         ]);
     }
 

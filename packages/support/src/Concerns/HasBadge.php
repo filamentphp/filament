@@ -22,7 +22,7 @@ trait HasBadge
     {
         if (func_num_args() === 0) {
             /** @phpstan-ignore-next-line */
-            return $this->view(static::BADGE_VIEW);
+            return $this->triggerView(static::BADGE_VIEW);
         }
 
         $this->badge = $badge;

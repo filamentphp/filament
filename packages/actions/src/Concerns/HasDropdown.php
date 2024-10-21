@@ -69,7 +69,13 @@ trait HasDropdown
 
     public function getDropdownWidth(): MaxWidth | string | null
     {
-        return $this->evaluate($this->dropdownWidth);
+        $width = $this->evaluate($this->dropdownWidth);
+
+        if (! ($width instanceof MaxWidth)) {
+            $width = MaxWidth::tryFrom($width) ?? $width;
+        }
+
+        return $width;
     }
 
     public function hasDropdown(): bool

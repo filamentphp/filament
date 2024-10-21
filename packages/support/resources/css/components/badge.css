@@ -6,6 +6,14 @@
         @apply pointer-events-none opacity-70;
     }
 
+    & > .fi-badge-label-ctn {
+        @apply grid;
+
+        & > .fi-badge-label {
+            @apply truncate;
+        }
+    }
+
     & > .fi-icon {
         @apply size-4 shrink-0;
 

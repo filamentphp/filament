@@ -130,8 +130,8 @@
         @endif
     @endif
 
-    <span class="grid">
-        <span class="truncate">
+    <span class="fi-badge-label-ctn">
+        <span class="fi-badge-label">
             {{ $slot }}
         </span>
     </span>
