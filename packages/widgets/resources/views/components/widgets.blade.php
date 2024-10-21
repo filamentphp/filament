@@ -7,7 +7,9 @@
 ])
 
 @php
-    $columns['lg'] ??= ($columns ? (is_array($columns) ? null : $columns) : 2);
+    if (is_array($columns)) {
+        $columns['lg'] ??= ($columns ? (is_array($columns) ? null : $columns) : 2);
+    }
 @endphp
 
 <div {{ $attributes->grid($columns)->class(['fi-wi gap-6']) }}>

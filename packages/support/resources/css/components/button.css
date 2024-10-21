@@ -120,8 +120,8 @@
         @apply text-white;
     }
 
-    &label > .fi-icon {
-        @apply [:checked+*>&]:text-white;
+    &label > .fi-icon:is(:checked + label > .fi-icon) {
+        @apply text-white;
     }
 
     & > .fi-btn-badge-ctn {
