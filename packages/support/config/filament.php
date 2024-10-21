@@ -86,4 +86,17 @@ return [
 
     'livewire_loading_delay' => 'default',
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Supports Stream Downloads
+    |--------------------------------------------------------------------------
+    |
+    | Some hosting environments (Like Vapor/Bref) don't support streaming.
+    |
+    | Setting this to 'false' makes sure a file is first written to disk before being downloaded
+    */
+
+    'supports_stream_downloads' => true,
+    'temp_directory' => storage_path('tmp'),
 ];
