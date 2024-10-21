@@ -31,7 +31,7 @@ class XlsxDownloader implements Downloader
         $writer = app(Writer::class);
         $csvDelimiter = $export->exporter::getCsvDelimiter();
 
-        if (!config('filament.supports_stream_downloads', true)) {
+        if (! config('filament.supports_stream_downloads', true)) {
             return $this->handleNonStreamedDownload($disk, $directory, $fileName, $filePath, $writer, $csvDelimiter);
         }
 
@@ -69,7 +69,7 @@ class XlsxDownloader implements Downloader
         $this->writeRowsFromFile($writer, $disk, $directory . DIRECTORY_SEPARATOR . 'headers.csv', $csvDelimiter);
 
         foreach ($disk->files($directory) as $file) {
-            if (!$this->shouldProcessFile($file)) {
+            if (! $this->shouldProcessFile($file)) {
                 continue;
             }
             $this->writeRowsFromFile($writer, $disk, $file, $csvDelimiter);
@@ -89,7 +89,7 @@ class XlsxDownloader implements Downloader
 
     private function shouldProcessFile($file): bool
     {
-        return !str($file)->endsWith('headers.csv') && str($file)->endsWith('.csv');
+        return ! str($file)->endsWith('headers.csv') && str($file)->endsWith('.csv');
     }
 
     private function getTempFilePath($fileName): string

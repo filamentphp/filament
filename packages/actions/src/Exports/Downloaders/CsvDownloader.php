@@ -24,7 +24,7 @@ class CsvDownloader implements Downloader
             return $disk->download($filePath);
         }
 
-        if (!config('filament.supports_stream_downloads', true)) {
+        if (! config('filament.supports_stream_downloads', true)) {
             return $this->handleNonStreamedDownload($disk, $directory, $fileName, $filePath);
         }
 
@@ -35,7 +35,7 @@ class CsvDownloader implements Downloader
     {
         $tempPath = $this->getTempFilePath($fileName);
 
-        $this->writeCsvContent($disk, $directory, function($content) use ($tempPath) {
+        $this->writeCsvContent($disk, $directory, function ($content) use ($tempPath) {
             file_put_contents($tempPath, $content, FILE_APPEND);
         });
 
@@ -48,7 +48,7 @@ class CsvDownloader implements Downloader
     private function handleStreamedDownload($disk, $directory, $fileName): StreamedResponse
     {
         return response()->streamDownload(function () use ($disk, $directory) {
-            $this->writeCsvContent($disk, $directory, function($content) {
+            $this->writeCsvContent($disk, $directory, function ($content) {
                 echo $content;
                 flush();
             });
@@ -70,7 +70,7 @@ class CsvDownloader implements Downloader
 
     private function shouldProcessFile($file): bool
     {
-        return !str($file)->endsWith('headers.csv') && str($file)->endsWith('.csv');
+        return ! str($file)->endsWith('headers.csv') && str($file)->endsWith('.csv');
     }
 
     private function getTempFilePath($fileName): string

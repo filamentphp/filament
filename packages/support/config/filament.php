@@ -86,7 +86,6 @@ return [
 
     'livewire_loading_delay' => 'default',
 
-
     /*
     |--------------------------------------------------------------------------
     | Supports Stream Downloads
