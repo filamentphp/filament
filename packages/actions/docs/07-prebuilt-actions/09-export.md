@@ -691,3 +691,8 @@ public function view(User $user, Export $export): bool
     return $export->user()->is($user);
 }
 ```
+
+## Streamed downloads
+
+Some hosting environments do not support streamed downloads. If you encounter issues with downloading files, you can disable streamed downloads by setting the `filament.supports_stream_downloads` config variable to `false`.
+It is possible to define the location of the temporary file used for generating downloads by setting the `filament.temp_directory` config variable to the desired path.
