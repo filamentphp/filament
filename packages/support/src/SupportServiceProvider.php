@@ -148,7 +148,11 @@ class SupportServiceProvider extends PackageServiceProvider
             return preg_replace('/\s*@trim\s*/m', '', $view);
         });
 
-        ComponentAttributeBag::macro('grid', function (array $columns = [], GridDirection $direction = GridDirection::Row): ComponentAttributeBag {
+        ComponentAttributeBag::macro('grid', function (array | int | null $columns = [], GridDirection $direction = GridDirection::Row): ComponentAttributeBag {
+            if (! is_array($columns)) {
+                $columns = ['lg' => $columns];
+            }
+
             $columns = array_filter($columns);
 
             $columns['default'] ??= 1;
@@ -175,7 +179,15 @@ class SupportServiceProvider extends PackageServiceProvider
                 ));
         });
 
-        ComponentAttributeBag::macro('gridColumn', function (array $span = [], array $start = [], bool $isHidden = false): ComponentAttributeBag {
+        ComponentAttributeBag::macro('gridColumn', function (array | int | string | null $span = [], array | int | null $start = [], bool $isHidden = false): ComponentAttributeBag {
+            if (! is_array($span)) {
+                $span = ['default' => $span];
+            }
+
+            if (! is_array($start)) {
+                $start = ['default' => $start];
+            }
+
             $span = array_filter($span);
             $start = array_filter($start);
 
