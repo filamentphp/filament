@@ -1641,11 +1641,7 @@
                                             >
                                                 <{{ $columnWrapperTag }}
                                                     @if (filled($columnTooltip = $column->getTooltip()))
-                                                        x-tooltip
-                                                        ="{
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    content: @js($columnTooltip),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    theme: $store.theme,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    }"
+                                                        x-tooltip="{ content: @js($columnTooltip), theme: $store.theme }"
                                                     @endif
                                                     @if ($columnWrapperTag === 'a')
                                                         {{ \Filament\Support\generate_href_html($columnUrl ?: $recordUrl, $columnUrl ? $column->shouldOpenUrlInNewTab() : $openRecordUrlInNewTab) }}
