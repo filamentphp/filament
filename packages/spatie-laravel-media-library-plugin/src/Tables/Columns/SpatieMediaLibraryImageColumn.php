@@ -3,17 +3,21 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\Resources\Concerns\HasMediaFilter;
 use Filament\SpatieLaravelMediaLibraryPlugin\Collections\AllMediaCollections;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn
 {
+    use HasMediaFilter;
+
     protected string | AllMediaCollections | Closure | null $collection = null;
 
     protected string | Closure | null $conversion = null;
@@ -66,6 +70,13 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     public function conversion(string | Closure | null $conversion): static
     {
         $this->conversion = $conversion;
+
+        return $this;
+    }
+
+    public function filterMediaUsing(?Closure $callback): static
+    {
+        $this->filterMediaUsing = $callback;
 
         return $this;
     }
@@ -144,6 +155,10 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
                     ->when(
                         ! $collection instanceof AllMediaCollections,
                         fn (MediaCollection $mediaCollection) => $mediaCollection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
+                    )
+                    ->when(
+                        $this->hasMediaFilter(),
+                        fn (Collection $media) => $this->filterMedia($media)
                     )
                     ->sortBy('order_column')
                     ->pluck('uuid')
