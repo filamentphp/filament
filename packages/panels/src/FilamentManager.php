@@ -566,6 +566,16 @@ class FilamentManager
         return $this->getCurrentPanel()->hasDatabaseNotifications();
     }
 
+    public function hasDatabaseNotifications(): bool
+    {
+        return $this->getCurrentPanel()->hasDatabaseNotifications();
+    }
+
+    public function hasLazyLoadedDatabaseNotifications(): bool
+    {
+        return $this->getCurrentPanel()->hasLazyLoadedDatabaseNotifications();
+    }
+
     public function hasEmailVerification(): bool
     {
         return $this->getCurrentPanel()->hasEmailVerification();
