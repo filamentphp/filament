@@ -227,7 +227,7 @@ can filter the media collection using the `filterMediaUsing()` method. This meth
 `$media` collection and manipulates it. You can use
 any [collection method](https://laravel.com/docs/collections#available-methods) to filter it.
 
-For example, you could scope the field to only display media that has certain custom properties:
+For example, you could scope the column to only display media that has certain custom properties:
 
 ```php
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
@@ -294,7 +294,7 @@ can filter the media collection using the `filterMediaUsing()` method. This meth
 `$media` collection and manipulates it. You can use
 any [collection method](https://laravel.com/docs/collections#available-methods) to filter it.
 
-For example, you could scope the field to only display media that has certain custom properties:
+For example, you could scope the entry to only display media that has certain custom properties:
 
 ```php
 use Filament\Tables\Columns\SpatieMediaLibraryImageEntry;
