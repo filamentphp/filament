@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Resources\Concerns;
+namespace Filament\Support\Concerns;
 
 use Closure;
 use Illuminate\Support\Collection;

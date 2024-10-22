@@ -3,8 +3,8 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Filament\Resources\Concerns\HasMediaFilter;
 use Filament\SpatieLaravelMediaLibraryPlugin\Collections\AllMediaCollections;
+use Filament\Support\Concerns\HasMediaFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;

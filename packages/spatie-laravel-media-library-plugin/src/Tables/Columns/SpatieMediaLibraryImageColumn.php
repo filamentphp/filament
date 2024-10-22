@@ -3,8 +3,8 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
-use Filament\Resources\Concerns\HasMediaFilter;
 use Filament\SpatieLaravelMediaLibraryPlugin\Collections\AllMediaCollections;
+use Filament\Support\Concerns\HasMediaFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -70,13 +70,6 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     public function conversion(string | Closure | null $conversion): static
     {
         $this->conversion = $conversion;
-
-        return $this;
-    }
-
-    public function filterMediaUsing(?Closure $callback): static
-    {
-        $this->filterMediaUsing = $callback;
 
         return $this;
     }

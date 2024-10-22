@@ -3,7 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Resources\Concerns\HasMediaFilter;
+use Filament\Support\Concerns\HasMediaFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use League\Flysystem\UnableToCheckFileExistence;
