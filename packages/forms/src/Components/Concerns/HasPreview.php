@@ -16,6 +16,11 @@ trait HasPreview
         return $this;
     }
 
+    public function hasPreview(): bool
+    {
+        return (bool) filled($this->evaluate($this->preview));
+    }
+
     /**
      * @param  array<string, mixed>  $data
      */
