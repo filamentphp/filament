@@ -62,6 +62,10 @@ class PanelsRenderHook
 
     const PAGE_SUB_NAVIGATION_SELECT_BEFORE = 'panels::page.sub-navigation.select.before';
 
+    const PAGE_SUB_NAVIGATION_SIDEBAR_AFTER = 'panels::page.sub-navigation.sidebar.after';
+
+    const PAGE_SUB_NAVIGATION_SIDEBAR_BEFORE = 'panels::page.sub-navigation.sidebar.before';
+
     const PAGE_SUB_NAVIGATION_START_AFTER = 'panels::page.sub-navigation.start.after';
 
     const PAGE_SUB_NAVIGATION_START_BEFORE = 'panels::page.sub-navigation.start.before';
