@@ -264,11 +264,13 @@
             'mt-6' => ! $isContained,
         ])
     >
-        <span x-cloak
-        @if (!$previousAction->isDisabled())
-            x-on:click="previousStep"
-        @endif
-        x-show="! isFirstStep()">
+        <span
+            x-cloak
+            @if (! $previousAction->isDisabled())
+                x-on:click="previousStep"
+            @endif
+            x-show="! isFirstStep()"
+        >
             {{ $previousAction }}
         </span>
 
@@ -278,14 +280,12 @@
 
         <span
             x-cloak
-            @if (!$nextAction->isDisabled())
-                x-on:click="
-                        $wire.dispatchFormEvent(
-                            'wizard::nextStep',
-                            '{{ $statePath }}',
-                            getStepIndex(step),
-                        )
-                "
+            @if (! $nextAction->isDisabled())
+                x-on:click="$wire.dispatchFormEvent(
+                    'wizard::nextStep',
+                    '{{ $statePath }}',
+                    getStepIndex(step),
+                )"
             @endif
             x-show="! isLastStep()"
         >
