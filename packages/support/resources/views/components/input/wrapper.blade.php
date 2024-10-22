@@ -35,15 +35,13 @@
     $hasAlpineValidClasses = filled($alpineValid);
     $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
 
-    $actionsClasses = 'flex items-center gap-3';
-    $labelClasses = 'fi-input-wrp-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
-
     $getIconClasses = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssClasses([
-        'fi-input-wrp-icon size-5',
+        'fi-input-wrp-icon',
         match ($color) {
-            'gray' => 'text-gray-400 dark:text-gray-500',
-            default => 'text-custom-500',
+            'gray' => '',
+            default => 'fi-color-custom',
         },
+        is_string($color) ? "fi-color-{$color}" : null,
     ]);
 
     $getIconStyles = fn (string | array $color = 'gray'): string => \Illuminate\Support\Arr::toCssStyles([
@@ -89,37 +87,26 @@
             @endif
             @class([
                 'fi-input-wrp-prefix',
-                'flex' => $hasPrefix,
-                'hidden' => ! $hasPrefix,
-                'pe-1' => $inlinePrefix && filled($prefix),
-                'pe-2' => $inlinePrefix && blank($prefix),
-                'border-e border-gray-200 pe-3 ps-3 dark:border-white/10' => ! $inlinePrefix,
+                'fi-input-wrp-prefix-has-content' => $hasPrefix,
+                'fi-inline' => $inlinePrefix,
+                'fi-input-wrp-prefix-has-label' => filled($prefix),
             ])
         >
             @if (count($prefixActions))
-                <div class="{{ $actionsClasses }}">
+                <div class="fi-input-wrp-actions">
                     @foreach ($prefixActions as $prefixAction)
                         {{ $prefixAction }}
                     @endforeach
                 </div>
             @endif
 
-            @if ($prefixIcon)
-                <x-filament::icon
-                    :attributes="
-                        \Filament\Support\prepare_inherited_attributes(
-                            new \Illuminate\View\ComponentAttributeBag([
-                                'alias' => $prefixIconAlias,
-                                'icon' => $prefixIcon,
-                                'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                            ])
-                        )
-                            ->class([$getIconClasses($prefixIconColor)])
-                            ->style([$getIconStyles($prefixIconColor)])
-                    "
-                />
-            @endif
+            {{ \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new \Illuminate\View\ComponentAttributeBag())
+                ->merge([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ], escape: false)
+                ->class([$getIconClasses($prefixIconColor)])
+                ->style([$getIconStyles($prefixIconColor)])) }}
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
@@ -135,55 +122,56 @@
             @endif
 
             @if (filled($prefix))
-                <span class="{{ $labelClasses }}">
+                <span class="fi-input-wrp-label">
                     {{ $prefix }}
                 </span>
             @endif
         </div>
     @endif
 
-    <div
-        @if ($hasLoadingIndicator && (! $hasPrefix))
-            @if ($inlinePrefix)
-                wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="ps-3"
+    @if ($hasPrefix || $hasLoadingIndicator || $hasSuffix)
+        <div
+            @if ($hasLoadingIndicator && (! $hasPrefix))
+                @if ($inlinePrefix)
+                    wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="ps-3"
+                @endif
+                wire:target="{{ $loadingIndicatorTarget }}"
             @endif
-
-            wire:target="{{ $loadingIndicatorTarget }}"
-        @endif
-        @class([
-            'min-w-0 flex-1',
-            'ps-3' => $hasLoadingIndicator && (! $hasPrefix) && $inlinePrefix,
-        ])
-    >
+            @class([
+                'fi-input-wrp-content-ctn',
+                'fi-input-wrp-content-ctn-ps' => $hasLoadingIndicator && (! $hasPrefix) && $inlinePrefix,
+            ])
+        >
+            {{ $slot }}
+        </div>
+    @else
         {{ $slot }}
-    </div>
+    @endif
 
     @if ($hasSuffix)
         <div
             @class([
                 'fi-input-wrp-suffix',
-                'ps-1' => $inlineSuffix && filled($suffix),
-                'ps-2' => $inlineSuffix && blank($suffix),
-                'border-s border-gray-200 ps-3 dark:border-white/10' => ! $inlineSuffix,
+                'fi-inline' => $inlineSuffix,
+                'fi-input-wrp-suffix-has-label' => filled($suffix),
             ])
         >
             @if (filled($suffix))
-                <span class="{{ $labelClasses }}">
+                <span class="fi-input-wrp-label">
                     {{ $suffix }}
                 </span>
             @endif
 
-            @if ($suffixIcon)
-                <x-filament::icon
-                    :alias="$suffixIconAlias"
-                    :icon="$suffixIcon"
-                    :class="$getIconClasses($suffixIconColor)"
-                    :style="$getIconStyles($suffixIconColor)"
-                />
-            @endif
+            {{ \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new \Illuminate\View\ComponentAttributeBag())
+                ->merge([
+                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                ], escape: false)
+                ->class([$getIconClasses($suffixIconColor)])
+                ->style([$getIconStyles($suffixIconColor)])) }}
 
             @if (count($suffixActions))
-                <div class="{{ $actionsClasses }}">
+                <div class="fi-input-wrp-actions">
                     @foreach ($suffixActions as $suffixAction)
                         {{ $suffixAction }}
                     @endforeach

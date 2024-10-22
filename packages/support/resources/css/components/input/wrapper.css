@@ -18,10 +18,66 @@
     }
 
     & > .fi-input-wrp-prefix {
-        @apply items-center gap-x-3 ps-3;
+        @apply hidden items-center gap-x-3 ps-3;
+
+        &.fi-input-wrp-prefix-has-content {
+            @apply flex;
+        }
+
+        &.fi-inline {
+            @apply pe-2;
+
+            &.fi-input-wrp-prefix-has-label {
+                @apply pe-1;
+            }
+        }
+
+        &:not(.fi-inline) {
+            @apply border-e border-gray-200 pe-3 ps-3 dark:border-white/10;
+        }
+    }
+
+    & > .fi-input-wrp-content-ctn {
+        @apply min-w-0 flex-1;
+
+        &.fi-input-wrp-content-ctn-ps {
+            @apply ps-3;
+        }
     }
 
     & > .fi-input-wrp-suffix {
         @apply flex items-center gap-x-3 pe-3;
+
+        &.fi-inline {
+            @apply ps-2;
+
+            &.fi-input-wrp-prefix-has-label {
+                @apply ps-1;
+            }
+        }
+
+        &:not(.fi-inline) {
+            @apply border-s border-gray-200 ps-3 dark:border-white/10;
+        }
+    }
+
+    & .fi-input-wrp-actions {
+        @apply flex items-center gap-3;
+    }
+
+    & .fi-input-wrp-label {
+        @apply whitespace-nowrap text-sm text-gray-500 dark:text-gray-400;
+    }
+
+    & .fi-input-wrp-icon {
+        @apply size-5;
+
+        &.fi-color-custom {
+            @apply text-custom-500;
+        }
+
+        &:not(.fi-color-custom) {
+            @apply text-gray-400 dark:text-gray-500;
+        }
     }
 }
