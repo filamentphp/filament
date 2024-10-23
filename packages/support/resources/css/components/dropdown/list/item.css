@@ -6,15 +6,15 @@
         @apply pointer-events-none opacity-70;
     }
 
-    & > .fi-icon {
+    & .fi-icon {
         @apply size-5 transition duration-75;
     }
 
-    & > .fi-dropdown-list-item-image {
+    & .fi-dropdown-list-item-image {
         @apply size-5 rounded-full bg-cover bg-center;
     }
 
-    & > .fi-dropdown-list-item-label {
+    & .fi-dropdown-list-item-label {
         @apply flex-1 truncate text-start text-gray-700 dark:text-gray-200;
     }
 
@@ -61,12 +61,12 @@
     &.fi-color-custom {
         @apply hover:bg-custom-50 focus-visible:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus-visible:bg-custom-400/10;
 
-        & > .fi-dropdown-list-item-label {
+        & .fi-dropdown-list-item-label {
             @apply text-custom-600 dark:text-custom-400;
         }
     }
 
-    & > .fi-badge {
+    & .fi-badge {
         @apply min-w-[theme(spacing.5)] px-1.5 py-0.5 tracking-tight;
     }
 }

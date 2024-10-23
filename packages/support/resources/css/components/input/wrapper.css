@@ -23,7 +23,7 @@
         @apply ring-danger-600 dark:ring-danger-500;
     }
 
-    & > .fi-input-wrp-prefix {
+    & .fi-input-wrp-prefix {
         @apply hidden items-center gap-x-3 ps-3;
 
         &.fi-input-wrp-prefix-has-content {
@@ -43,7 +43,7 @@
         }
     }
 
-    & > .fi-input-wrp-content-ctn {
+    & .fi-input-wrp-content-ctn {
         @apply min-w-0 flex-1;
 
         &.fi-input-wrp-content-ctn-ps {
@@ -51,7 +51,7 @@
         }
     }
 
-    & > .fi-input-wrp-suffix {
+    & .fi-input-wrp-suffix {
         @apply flex items-center gap-x-3 pe-3;
 
         &.fi-inline {
