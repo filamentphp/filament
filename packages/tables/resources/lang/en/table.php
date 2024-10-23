@@ -10,6 +10,10 @@ return [
 
     'columns' => [
 
+        'actions' => [
+            'label' => 'Action|Actions',
+        ],
+
         'text' => [
 
             'actions' => [
@@ -98,8 +102,6 @@ return [
         'toggle_columns' => [
             'label' => 'Toggle columns',
         ],
-
-        'label' => 'action|actions',
 
     ],
 
