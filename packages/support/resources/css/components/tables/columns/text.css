@@ -32,7 +32,7 @@
             /* A list of badges without line breaks need to remain on the same line, not wrap */
             @apply flex gap-x-1.5;
 
-            &:is(ul.fi-wrapped),
+            &.fi-wrapped,
             &:is(.fi-wrapped > ul) {
                 /* When wrap is enabled, some badges can remain on the same line as others and some should wrap */
                 @apply flex-wrap gap-y-1;
@@ -42,7 +42,7 @@
 
     &ul.fi-ta-text-has-badges,
     &.fi-ta-text-has-badges > ul {
-        &:is(ul.fi-ta-text-has-line-breaks),
+        &.fi-ta-text-has-line-breaks,
         &:is(.fi-ta-text-has-line-breaks > ul) {
             /* Add vertical gap between badges in a list with line breaks */
             @apply flex flex-col gap-y-1;
@@ -53,7 +53,7 @@
             /* A list of badges without line breaks need to remain on the same line, not wrap */
             @apply flex gap-x-1.5;
 
-            &:is(ul.fi-wrapped),
+            &.fi-wrapped,
             &:is(.fi-wrapped > ul) {
                 /* When wrap is enabled, some badges can remain on the same line as others and some should wrap */
                 @apply flex-wrap gap-y-1;
@@ -110,6 +110,8 @@
 }
 
 .fi-ta-text-item {
+    @apply text-gray-950 dark:text-white;
+
     &:not(.fi-bulleted li.fi-ta-text-item) {
         /* Line clamping sets the `display` property of the list item to `-webkit-box` instead of `list-item`, which hides the bullet point. */
         @apply line-clamp-[--line-clamp,none];
@@ -207,24 +209,11 @@
         }
     }
 
-    &:not(.fi-color-custom) {
-        @apply text-gray-950 dark:text-white;
-
-        & > .fi-icon {
-            @apply text-gray-400 dark:text-gray-500;
-        }
-    }
-
     & > .fi-icon {
-        @apply size-5 shrink-0;
+        @apply size-5 shrink-0 text-gray-400 dark:text-gray-500;
 
         &.fi-color-custom {
             @apply text-custom-500;
-        }
-
-        &:not(.fi-color-custom > .fi-icon):not(.fi-color-custom),
-        &.fi-color-gray {
-            @apply text-gray-400 dark:text-gray-500;
         }
     }
 

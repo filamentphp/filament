@@ -98,12 +98,14 @@
         @apply justify-between;
     }
 
-    & .fi-ta-image-limited-remaining-text {
-        @apply flex items-center justify-center text-sm font-medium text-gray-500 dark:text-gray-400;
-
-        &:is(.fi-stacked .fi-ta-image-limited-remaining-text) {
+    &.fi-stacked {
+        & .fi-ta-image-limited-remaining-text {
             @apply rounded-full bg-gray-100 dark:bg-gray-800;
         }
+    }
+
+    & .fi-ta-image-limited-remaining-text {
+        @apply flex items-center justify-center text-sm font-medium text-gray-500 dark:text-gray-400;
 
         &.fi-size-xs {
             @apply text-xs;
