@@ -99,7 +99,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function dateTooltip(?string $format = null, ?string $timezone = null): static
+    public function dateTooltip(string | Closure | null $format = null, ?string $timezone = null): static
     {
         $format ??= Table::$defaultDateDisplayFormat;
 
@@ -110,13 +110,13 @@ trait CanFormatState
 
             return Carbon::parse($state)
                 ->setTimezone($timezone ?? $column->getTimezone())
-                ->translatedFormat($format);
+                ->translatedFormat($column->evaluate($format));
         });
 
         return $this;
     }
 
-    public function dateTimeTooltip(?string $format = null, ?string $timezone = null): static
+    public function dateTimeTooltip(string | Closure | null $format = null, ?string $timezone = null): static
     {
         $format ??= Table::$defaultDateTimeDisplayFormat;
 
@@ -125,7 +125,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function timeTooltip(?string $format = null, ?string $timezone = null): static
+    public function timeTooltip(string | Closure | null $format = null, ?string $timezone = null): static
     {
         $format ??= Table::$defaultTimeDisplayFormat;
 
