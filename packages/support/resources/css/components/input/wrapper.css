@@ -43,7 +43,8 @@
         }
     }
 
-    & .fi-input-wrp-content-ctn {
+    & .fi-input-wrp-content-ctn,
+    &:not(:has(.fi-input-wrp-content-ctn)) > * {
         @apply min-w-0 flex-1;
 
         &.fi-input-wrp-content-ctn-ps {
@@ -57,7 +58,7 @@
         &.fi-inline {
             @apply ps-2;
 
-            &.fi-input-wrp-prefix-has-label {
+            &.fi-input-wrp-suffix-has-label {
                 @apply ps-1;
             }
         }
