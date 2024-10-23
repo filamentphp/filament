@@ -52,7 +52,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function date(?string $format = null, ?string $timezone = null): static
+    public function date(string | Closure | null $format = null, ?string $timezone = null): static
     {
         $this->isDate = true;
 
@@ -65,13 +65,13 @@ trait CanFormatState
 
             return Carbon::parse($state)
                 ->setTimezone($timezone ?? $component->getTimezone())
-                ->translatedFormat($format);
+                ->translatedFormat($component->evaluate($format));
         });
 
         return $this;
     }
 
-    public function dateTime(?string $format = null, ?string $timezone = null): static
+    public function dateTime(string | Closure | null $format = null, ?string $timezone = null): static
     {
         $this->isDateTime = true;
 
@@ -212,7 +212,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function time(?string $format = null, ?string $timezone = null): static
+    public function time(string | Closure | null $format = null, ?string $timezone = null): static
     {
         $this->isTime = true;
 
