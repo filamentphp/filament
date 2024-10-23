@@ -125,6 +125,8 @@
                         $lineClamp = $getLineClamp($state);
                         $size = $getSize($state);
                         $weight = $getWeight($state);
+                        $itemTooltip = $getItemTooltip($state);
+                        $hasItemTooltip = filled($itemTooltip);
 
                         $iconClasses = \Illuminate\Support\Arr::toCssClasses([
                             'fi-ta-text-item-icon h-5 w-5',
@@ -182,11 +184,18 @@
                                 :color="$color"
                                 :icon="$icon"
                                 :icon-position="$iconPosition"
+                                :tooltip="$itemTooltip"
                             >
                                 {{ $formattedState }}
                             </x-filament::badge>
                         @else
                             <div
+                                @if ($hasItemTooltip)
+                                    x-tooltip="{
+                                        content: @js($itemTooltip),
+                                        theme: $store.theme,
+                                    }"
+                                @endif
                                 @class([
                                     'fi-ta-text-item inline-flex items-center gap-1.5',
                                     'group/item' => $url,
