@@ -1,3 +1,8 @@
+@php
+    use Illuminate\View\ComponentAttributeBag;
+    use function Filament\Support\generate_icon_html;
+@endphp
+
 @props([
     'breadcrumbs' => [],
 ])
@@ -12,24 +17,15 @@
         @foreach ($breadcrumbs as $url => $label)
             <li class="fi-breadcrumbs-item flex items-center gap-x-2">
                 @if (! $loop->first)
-                    <x-filament::icon
-                        alias="breadcrumbs.separator"
-                        icon="heroicon-m-chevron-right"
-                        @class([
-                            $iconClasses,
-                            'rtl:hidden',
-                        ])
-                    />
+                    {{ generate_icon_html('heroicon-m-chevron-right', alias: 'breadcrumbs.separator', attributes: (new ComponentAttributeBag())->class([
+                        $iconClasses,
+                        'rtl:hidden',
+                    ])) }}
 
-                    <x-filament::icon
-                        {{-- @deprecated Use `breadcrubs.separator.rtl` instead of `breadcrumbs.separator` for RTL. --}}
-                        :alias="['breadcrumbs.separator.rtl', 'breadcrumbs.separator']"
-                        icon="heroicon-m-chevron-left"
-                        @class([
-                            $iconClasses,
-                            'ltr:hidden',
-                        ])
-                    />
+                    {{ generate_icon_html('heroicon-m-chevron-left', alias: 'breadcrubs.separator.rtl', attributes: (new ComponentAttributeBag())->class([
+                        $iconClasses,
+                        'ltr:hidden',
+                    ])) }}
                 @endif
 
                 @if (is_int($url))
