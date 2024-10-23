@@ -1,6 +1,90 @@
 .fi-modal {
     @apply inline-block;
 
+    &.fi-modal-slide-over,
+    &.fi-width-screen {
+        & .fi-modal-window {
+            @apply h-dvh;
+        }
+
+        & .fi-modal-content {
+            @apply flex-1;
+        }
+    }
+
+    &.fi-modal-slide-over {
+        & .fi-modal-window {
+            @apply ms-auto overflow-y-auto;
+
+            &.fi-transition-enter-start,
+            &.fi-transition-leave-end {
+                @apply translate-x-full rtl:-translate-x-full;
+            }
+
+            &.fi-transition-enter-end,
+            &.fi-transition-leave-start {
+                @apply translate-x-0;
+            }
+        }
+
+        & .fi-modal-close-btn {
+            @apply end-6 top-6;
+        }
+    }
+
+    &:not(.fi-modal-slide-over) {
+        &:not(.fi-width-screen) {
+            & .fi-modal-header {
+                @apply overflow-y-auto;
+            }
+
+            & .fi-modal-footer {
+                &.fi-sticky {
+                    @apply rounded-b-xl;
+                }
+            }
+        }
+
+        & .fi-modal-window {
+            &.fi-transition-enter-start,
+            &.fi-transition-leave-end {
+                @apply scale-95 opacity-0;
+            }
+
+            &.fi-transition-enter-end,
+            &.fi-transition-leave-start {
+                @apply scale-100 opacity-100;
+            }
+        }
+
+        & .fi-modal-close-btn {
+            @apply end-4 top-4;
+        }
+    }
+
+    &.fi-align-start {
+        & .fi-modal-window-has-icon {
+            &:not(.fi-modal-window-has-sticky-header) {
+                & .fi-modal-content {
+                    @apply pe-6 ps-[5.25rem];
+                }
+
+                & .fi-modal-footer {
+                    &:not(.fi-align-center) {
+                        @apply pe-6 ps-[5.25rem];
+                    }
+                }
+            }
+        }
+    }
+
+    &:not(.fi-align-start) {
+        & .fi-modal-content,
+        & .fi-modal-footer {
+            @apply px-6;
+        }
+    }
+
     & .fi-modal-trigger {
         @apply flex cursor-pointer;
     }
@@ -19,21 +103,6 @@
 
     & .fi-modal-header {
         @apply flex px-6 pt-6;
-
-        &:not(.fi-modal-slide-over .fi-modal-header):not(
-                .fi-width-screen .fi-modal-header
-            ) {
-            @apply overflow-y-auto;
-        }
-
-        &:is(.fi-modal-window.fi-align-start .fi-modal-header),
-        &:is(.fi-modal-window.fi-align-left .fi-modal-header) {
-            @apply gap-x-5;
-        }
-
-        &:is(.fi-modal-window.fi-align-center .fi-modal-header) {
-            @apply flex-col text-center;
-        }
 
         &.fi-vertical-align-center {
             @apply items-center;
@@ -58,23 +127,6 @@
 
     & .fi-modal-content {
         @apply flex flex-col gap-y-4 py-6;
-
-        &:is(.fi-modal-slide-over .fi-modal-content),
-        &:is(.fi-width-screen .fi-modal-content) {
-            @apply flex-1;
-        }
-
-        &:is(.fi-modal-window-has-icon .fi-modal-content):is(
-                .fi-modal.fi-align-start .fi-modal-content
-            ):not(.fi-modal-window-has-sticky-header .fi-modal-content) {
-            @apply pe-6 ps-[5.25rem];
-        }
-
-        &:not(.fi-modal-window-has-icon .fi-modal-content),
-        &:not(.fi-modal.fi-align-start .fi-modal-content),
-        &:is(.fi-modal-window-has-sticky-header .fi-modal-content) {
-            @apply px-6;
-        }
     }
 
     &:not(.fi-modal-slide-over):not(.fi-width-screen) {
@@ -96,9 +148,29 @@
     & .fi-modal-window {
         @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
-        &:is(.fi-modal-slide-over .fi-modal-window),
-        &:is(.fi-width-screen .fi-modal-window) {
-            @apply h-dvh;
+        &.fi-align-start,
+        &.fi-align-left {
+            & .fi-modal-header {
+                @apply gap-x-5;
+            }
+
+            & .fi-modal-icon-wrp {
+                @apply p-2;
+            }
+        }
+
+        &.fi-align-center {
+            & .fi-modal-header {
+                @apply flex-col text-center;
+            }
+
+            & .fi-modal-icon-wrp-ctn {
+                @apply mb-5 flex items-center justify-center;
+            }
+
+            & .fi-modal-icon-wrp {
+                @apply p-3;
+            }
         }
 
         &.fi-hidden {
@@ -198,43 +270,25 @@
             @apply duration-300;
         }
 
-        &:is(.fi-modal-slide-over .fi-modal-window) {
-            @apply ms-auto overflow-y-auto;
-
-            &.fi-transition-enter-start,
-            &.fi-transition-leave-end {
-                @apply translate-x-full rtl:-translate-x-full;
-            }
-
-            &.fi-transition-enter-end,
-            &.fi-transition-leave-start {
-                @apply translate-x-0;
+        &:not(.fi-modal-window-has-content) {
+            & .fi-modal-footer {
+                &:not(.fi-sticky) {
+                    @apply mt-6;
+                }
             }
         }
 
-        &:not(.fi-modal-slide-over .fi-modal-window) {
-            &.fi-transition-enter-start,
-            &.fi-transition-leave-end {
-                @apply scale-95 opacity-0;
-            }
-
-            &.fi-transition-enter-end,
-            &.fi-transition-leave-start {
-                @apply scale-100 opacity-100;
+        &:not(.fi-modal-window-has-icon),
+        &.fi-modal-window-has-sticky-header {
+            & .fi-modal-content,
+            & .fi-modal-footer {
+                @apply px-6;
             }
         }
     }
 
     & .fi-modal-close-btn {
         @apply absolute;
-
-        &:is(.fi-modal-slide-over .fi-modal-close-btn) {
-            @apply end-6 top-6;
-        }
-
-        &:not(.fi-modal-slide-over .fi-modal-close-btn) {
-            @apply end-4 top-4;
-        }
     }
 
     & .fi-modal-footer {
@@ -242,39 +296,14 @@
 
         &.fi-sticky {
             @apply sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900;
-
-            &:not(.fi-modal-slide-over .fi-modal-footer):not(
-                    .fi-width-screen .fi-modal-footer
-                ) {
-                @apply rounded-b-xl;
-            }
         }
 
         &:not(.fi-sticky) {
             @apply pb-6;
-
-            &:not(.fi-modal-window-has-content .fi-modal-footer) {
-                @apply mt-6;
-            }
         }
 
         &:is(.fi-modal-slide-over .fi-modal-footer) {
             @apply mt-auto;
-        }
-
-        &:is(.fi-modal-window-has-icon .fi-modal-content):is(
-                .fi-modal.fi-align-start .fi-modal-content
-            ):not(.fi-align-center):not(
-                .fi-modal-window-has-sticky-header .fi-modal-content
-            ) {
-            @apply pe-6 ps-[5.25rem];
-        }
-
-        &:not(.fi-modal-window-has-icon .fi-modal-content),
-        &:not(.fi-modal.fi-align-start .fi-modal-content),
-        &.fi-align-center,
-        &:is(.fi-modal-window-has-sticky-header .fi-modal-content) {
-            @apply px-6;
         }
 
         & .fi-modal-footer-actions {
@@ -289,6 +318,8 @@
         }
 
         &.fi-align-center {
+            @apply px-6;
+
             & .fi-modal-footer-actions {
                 @apply flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))];
             }
@@ -302,41 +333,18 @@
         }
     }
 
-    & .fi-modal-icon-wrp-ctn {
-        &:is(.fi-modal-window.fi-align-center .fi-modal-icon-wrp-ctn) {
-            @apply mb-5 flex items-center justify-center;
+    & .fi-modal-icon-wrp {
+        @apply rounded-full bg-gray-100 dark:bg-gray-500/20;
+
+        & > .fi-icon {
+            @apply size-6 text-gray-500 dark:text-gray-400;
         }
 
-        & > .fi-modal-icon-wrp {
-            @apply rounded-full;
+        &.fi-color-custom {
+            @apply bg-custom-100 dark:bg-custom-500/20;
 
             & > .fi-icon {
-                @apply size-6;
-            }
-
-            &.fi-color-custom {
-                @apply bg-custom-100 dark:bg-custom-500/20;
-
-                & > .fi-icon {
-                    @apply text-custom-600 dark:text-custom-400;
-                }
-            }
-
-            &:not(.fi-color-custom) {
-                @apply bg-gray-100 dark:bg-gray-500/20;
-
-                & > .fi-icon {
-                    @apply text-gray-500 dark:text-gray-400;
-                }
-            }
-
-            &:is(.fi-modal-window.fi-align-start .fi-modal-icon-wrp),
-            &:is(.fi-modal-window.fi-align-left .fi-modal-icon-wrp) {
-                @apply p-2;
-            }
-
-            &:is(.fi-modal-window.fi-align-center .fi-modal-icon-wrp) {
-                @apply p-3;
+                @apply text-custom-600 dark:text-custom-400;
             }
         }
     }

@@ -1,5 +1,5 @@
 .fi-toggle {
-    @apply relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent outline-none transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:opacity-70;
+    @apply relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 outline-none transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:opacity-70 dark:bg-gray-700;
 
     &:disabled {
         @apply pointer-events-none opacity-70;
@@ -7,10 +7,10 @@
 
     &.fi-color-custom {
         @apply bg-custom-600;
-    }
 
-    &:not(.fi-color-custom) {
-        @apply bg-gray-200 dark:bg-gray-700;
+        & .fi-icon {
+            @apply text-custom-600;
+        }
     }
 
     & > :first-child {
@@ -18,19 +18,11 @@
 
         & > * {
             @apply absolute inset-0 flex h-full w-full items-center justify-center transition-opacity;
-
-            & > .fi-icon {
-                @apply size-3;
-
-                &:is(.fi-color-custom .fi-icon) {
-                    @apply text-custom-600;
-                }
-
-                &:not(.fi-color-custom .fi-icon) {
-                    @apply text-gray-400 dark:text-gray-700;
-                }
-            }
         }
+    }
+
+    & .fi-icon {
+        @apply size-3 text-gray-400 dark:text-gray-700;
     }
 
     &.fi-toggle-on {

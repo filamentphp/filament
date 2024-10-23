@@ -8,7 +8,6 @@ import modal from './components/modal.js'
 
 import '../css/components/badge.css'
 import '../css/components/button.css'
-import '../css/components/button-group.css'
 import '../css/components/dropdown/header.css'
 import '../css/components/dropdown/index.css'
 import '../css/components/dropdown/list/index.css'

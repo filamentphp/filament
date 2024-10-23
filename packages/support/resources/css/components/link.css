@@ -1,5 +1,5 @@
 .fi-link {
-    @apply relative inline-flex items-center justify-center gap-1.5 outline-none hover:underline focus-visible:underline;
+    @apply relative inline-flex items-center justify-center gap-1.5 text-gray-700 outline-none hover:underline focus-visible:underline dark:text-gray-200;
 
     &.fi-disabled,
     &[disabled] {
@@ -7,7 +7,15 @@
     }
 
     & > .fi-icon {
-        @apply size-5 font-normal;
+        @apply size-5 font-normal text-gray-400 dark:text-gray-500;
+
+        &.fi-size-sm {
+            @apply size-4;
+        }
+
+        &.fi-size-lg {
+            @apply size-6;
+        }
     }
 
     &.fi-size-xs {
@@ -76,25 +84,7 @@
         }
     }
 
-    &:not(.fi-color-custom) {
-        @apply text-gray-700 dark:text-gray-200;
-
-        & > .fi-icon {
-            @apply text-gray-400 dark:text-gray-500;
-        }
-    }
-
-    & > .fi-icon {
-        &.fi-size-sm {
-            @apply size-4;
-        }
-
-        &.fi-size-lg {
-            @apply size-6;
-        }
-    }
-
-    & > .fi-link-badge-ctn {
+    & .fi-link-badge-ctn {
         @apply absolute start-full top-0 z-[1] w-max -translate-x-1/4 -translate-y-3/4 rounded-md bg-white font-normal hover:no-underline focus-visible:no-underline dark:bg-gray-900 rtl:translate-x-1/4;
     }
 }

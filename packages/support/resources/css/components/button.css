@@ -122,35 +122,39 @@
     }
 }
 
-.fi-btn-group > .fi-btn {
-    @apply flex-1 rounded-none;
+.fi-btn-group {
+    @apply grid grid-flow-col rounded-lg shadow-sm ring-1 ring-gray-950/10 dark:ring-white/20;
 
-    &:nth-child(1 of .fi-btn) {
-        @apply rounded-s-lg;
-    }
+    & > .fi-btn {
+        @apply flex-1 rounded-none;
 
-    &:nth-last-child(1 of .fi-btn) {
-        @apply rounded-e-lg;
-    }
+        &:nth-child(1 of .fi-btn) {
+            @apply rounded-s-lg;
+        }
 
-    &:not(:nth-child(1 of .fi-btn)) {
-        @apply shadow-[-1px_0_0_0_theme(colors.gray.200)];
-    }
+        &:nth-last-child(1 of .fi-btn) {
+            @apply rounded-e-lg;
+        }
 
-    &:not(:nth-last-child(1 of .fi-btn)) {
-        @apply me-px dark:shadow-[-1px_0_0_0_theme(colors.white/20%)];
-    }
+        &:not(:nth-child(1 of .fi-btn)) {
+            @apply shadow-[-1px_0_0_0_theme(colors.gray.200)];
+        }
 
-    &.fi-processing:enabled {
-        @apply cursor-wait opacity-70;
-    }
+        &:not(:nth-last-child(1 of .fi-btn)) {
+            @apply me-px dark:shadow-[-1px_0_0_0_theme(colors.white/20%)];
+        }
 
-    &:not(.fi-outlined) {
-        @apply shadow-none;
-    }
+        &.fi-processing:enabled {
+            @apply cursor-wait opacity-70;
+        }
 
-    &:not(.fi-color-custom),
-    &label {
-        @apply ring-0;
+        &:not(.fi-outlined) {
+            @apply shadow-none;
+        }
+
+        &:not(.fi-color-custom),
+        &label {
+            @apply ring-0;
+        }
     }
 }

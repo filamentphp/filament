@@ -12,14 +12,10 @@
             @apply flex items-center justify-end gap-x-1.5;
 
             & > .fi-icon {
-                @apply size-6;
+                @apply size-6 text-gray-400 dark:text-gray-500;
 
                 &.fi-color-custom {
                     @apply text-custom-500 dark:text-custom-400;
-                }
-
-                &:not(.fi-color-custom) {
-                    @apply text-gray-400 dark:text-gray-500;
                 }
             }
         }
