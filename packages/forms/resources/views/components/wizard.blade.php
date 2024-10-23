@@ -281,11 +281,13 @@
         <span
             x-cloak
             @if (! $nextAction->isDisabled())
-                x-on:click="$wire.dispatchFormEvent(
-                    'wizard::nextStep',
-                    '{{ $statePath }}',
-                    getStepIndex(step),
-                )"
+                x-on:click="
+                    $wire.dispatchFormEvent(
+                        'wizard::nextStep',
+                        '{{ $statePath }}',
+                        getStepIndex(step),
+                    )
+                "
             @endif
             x-show="! isLastStep()"
         >
