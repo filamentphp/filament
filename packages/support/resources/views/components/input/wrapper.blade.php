@@ -111,16 +111,12 @@
             }}
 
             @if ($hasLoadingIndicator)
-                <x-filament::loading-indicator
-                    :attributes="
-                        \Filament\Support\prepare_inherited_attributes(
-                            new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
-                                'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
-                            ])
-                        )->class([$getIconClasses()])
-                    "
-                />
+                {{
+                    \Filament\Support\generate_loading_indicator_html((new \Illuminate\View\ComponentAttributeBag([
+                        'wire:loading.delay.' . config('filament.livewire_loading_delay', 'default') => $hasPrefix,
+                        'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
+                    ]))->class([$getIconClasses()]))
+                }}
             @endif
 
             @if (filled($prefix))

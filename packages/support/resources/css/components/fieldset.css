@@ -1,0 +1,13 @@
+.fi-fieldset {
+    @apply rounded-xl border border-gray-200 p-6 dark:border-white/10;
+
+    & > legend {
+        @apply -ms-2 px-2 text-sm font-medium leading-6 text-gray-950 dark:text-white;
+    }
+
+    &.fi-fieldset-label-hidden {
+        & > legend {
+            @apply sr-only;
+        }
+    }
+}
