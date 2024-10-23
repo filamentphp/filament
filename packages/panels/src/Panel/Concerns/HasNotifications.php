@@ -12,10 +12,10 @@ trait HasNotifications
 
     protected string | Closure | null $databaseNotificationsPolling = '30s';
 
-    public function databaseNotifications(bool | Closure $condition = true, bool | Closure $lazy = true): static
+    public function databaseNotifications(bool | Closure $condition = true, bool | Closure $isLazy = true): static
     {
         $this->hasDatabaseNotifications = $condition;
-        $this->hasLazyLoadedDatabaseNotifications = $lazy;
+        $this->hasLazyLoadedDatabaseNotifications = $isLazy;
 
         return $this;
     }
