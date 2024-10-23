@@ -2,6 +2,7 @@
 
 namespace Filament\Actions;
 
+use Closure;
 use Filament\Actions\Concerns\HasId;
 use Filament\Support\Components\Contracts\HasEmbeddedView;
 use Filament\Support\Contracts\HasLabel as LabelInterface;

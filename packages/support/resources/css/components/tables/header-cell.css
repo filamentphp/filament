@@ -11,23 +11,67 @@
 
     &.fi-align-center {
         @apply text-center;
+
+        & .fi-ta-header-cell-sort-btn {
+            @apply justify-center;
+        }
     }
 
     &.fi-align-end {
         @apply text-end;
+
+        & .fi-ta-header-cell-sort-btn {
+            @apply justify-end;
+        }
     }
 
     &.fi-align-left {
         @apply text-left;
+
+        & .fi-ta-header-cell-sort-btn {
+            @apply justify-start rtl:flex-row-reverse;
+        }
     }
 
     &.fi-align-right {
         @apply text-right;
+
+        & .fi-ta-header-cell-sort-btn {
+            @apply justify-end rtl:flex-row-reverse;
+        }
     }
 
     &.fi-align-justify,
     &.fi-align-between {
         @apply text-justify;
+
+        & .fi-ta-header-cell-sort-btn {
+            @apply justify-between;
+        }
+    }
+
+    &.fi-ta-header-cell-sorted {
+        & .fi-icon {
+            @apply text-gray-950 dark:text-white;
+        }
+    }
+
+    &:not(.fi-ta-header-cell-sorted) {
+        & .fi-icon {
+            @apply text-gray-400 dark:text-gray-500;
+        }
+
+        & .fi-ta-header-cell-sort-btn:hover {
+            & .fi-icon {
+                @apply text-gray-500 dark:text-gray-400;
+            }
+        }
+
+        & .fi-ta-header-cell-sort-btn:focus-visible {
+            & .fi-icon {
+                @apply text-gray-500 dark:text-gray-400;
+            }
+        }
     }
 
     &.sm\:fi-hidden {
@@ -78,53 +122,12 @@
         @apply whitespace-nowrap;
     }
 
-    & > .fi-ta-header-cell-sort-btn {
-        @apply flex w-full items-center gap-x-1;
+    & .fi-ta-header-cell-sort-btn {
+        @apply flex w-full items-center justify-start gap-x-1;
+    }
 
-        &:is(.fi-align-start .fi-ta-header-cell-sort-btn) {
-            @apply justify-start;
-        }
-
-        &:is(.fi-align-center .fi-ta-header-cell-sort-btn) {
-            @apply justify-center;
-        }
-
-        &:is(.fi-align-end .fi-ta-header-cell-sort-btn) {
-            @apply justify-end;
-        }
-
-        &:is(.fi-align-left .fi-ta-header-cell-sort-btn) {
-            @apply justify-start rtl:flex-row-reverse;
-        }
-
-        &:is(.fi-align-right .fi-ta-header-cell-sort-btn) {
-            @apply justify-end rtl:flex-row-reverse;
-        }
-
-        &:is(.fi-align-justify .fi-ta-header-cell-sort-btn),
-        &:is(.fi-align-between .fi-ta-header-cell-sort-btn) {
-            @apply justify-between;
-        }
-
-        & > .fi-icon {
-            @apply size-5 shrink-0 transition duration-75;
-
-            &:is(.fi-ta-header-cell-sorted .fi-icon) {
-                @apply text-gray-950 dark:text-white;
-            }
-
-            &:not(.fi-ta-header-cell-sorted .fi-icon) {
-                @apply text-gray-400 dark:text-gray-500;
-
-                &:is(.fi-ta-header-cell-sort-btn:hover .fi-icon) {
-                    @apply text-gray-500 dark:text-gray-400;
-                }
-
-                &:is(.fi-ta-header-cell-sort-btn:focus-visible .fi-icon) {
-                    @apply text-gray-500 dark:text-gray-400;
-                }
-            }
-        }
+    & .fi-icon {
+        @apply size-5 shrink-0 transition duration-75;
     }
 }
 

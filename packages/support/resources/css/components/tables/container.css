@@ -7,84 +7,83 @@
 
     & .fi-ta-header-ctn {
         @apply divide-y divide-gray-200 dark:divide-white/10;
+    }
 
-        & .fi-ta-header {
-            @apply flex flex-col gap-3 p-4 sm:px-6;
+    & .fi-ta-header {
+        @apply flex flex-col gap-3 p-4 sm:px-6;
 
-            &.fi-ta-header-adaptive-actions-position {
-                @apply sm:flex-row sm:items-center;
+        &.fi-ta-header-adaptive-actions-position {
+            @apply sm:flex-row sm:items-center;
 
-                & .fi-ta-actions {
-                    @apply sm:ms-auto;
-                }
+            & .fi-ta-actions {
+                @apply sm:ms-auto;
+            }
 
-                &:not(
-                        :has(.fi-ta-header-heading),
-                        :has(.fi-ta-header-description)
-                    ) {
+            &:not(:has(.fi-ta-header-heading)) {
+                &:not(:has(.fi-ta-header-description)) {
                     & .fi-ta-actions {
                         @apply ms-auto;
                     }
                 }
             }
+        }
 
-            & .fi-ta-header-heading {
-                @apply text-base font-semibold leading-6 text-gray-950 dark:text-white;
+        & .fi-ta-header-heading {
+            @apply text-base font-semibold leading-6 text-gray-950 dark:text-white;
+        }
+
+        & .fi-ta-header-description {
+            @apply mt-1 text-sm text-gray-600 dark:text-gray-400;
+        }
+    }
+
+    & .fi-ta-header-toolbar {
+        @apply flex items-center justify-between gap-x-4 px-4 py-3 sm:px-6;
+
+        & > * {
+            @apply flex items-center gap-x-4;
+        }
+
+        & > :nth-child(1) {
+            @apply shrink-0;
+        }
+
+        & > :nth-child(2) {
+            @apply ms-auto;
+        }
+
+        & .fi-ta-grouping-settings {
+            & .fi-dropdown {
+                &.sm\:fi-hidden {
+                    @apply sm:hidden;
+                }
+
+                & .fi-ta-grouping-settings-fields {
+                    @apply grid gap-y-6 p-6;
+
+                    & label {
+                        @apply grid gap-y-2 text-sm font-medium leading-6 text-gray-950 dark:text-white;
+                    }
+                }
             }
 
-            & .fi-ta-header-description {
-                @apply mt-1 text-sm text-gray-600 dark:text-gray-400;
+            & > .fi-ta-grouping-settings-fields {
+                @apply hidden items-center gap-x-3 sm:flex;
             }
         }
 
-        & .fi-ta-header-toolbar {
-            @apply flex items-center justify-between gap-x-4 px-4 py-3 sm:px-6;
-
-            & > * {
-                @apply flex items-center gap-x-4;
+        & .fi-ta-filters-dropdown {
+            & .fi-ta-filters {
+                @apply p-6;
             }
+        }
 
-            & > :nth-child(1) {
-                @apply shrink-0;
-            }
+        & .fi-ta-col-toggle {
+            & .fi-ta-col-toggle-form-ctn {
+                @apply grid gap-y-4 p-6;
 
-            & > :nth-child(2) {
-                @apply ms-auto;
-            }
-
-            & .fi-ta-grouping-settings {
-                & .fi-dropdown {
-                    &.sm\:fi-hidden {
-                        @apply sm:hidden;
-                    }
-
-                    & .fi-ta-grouping-settings-fields {
-                        @apply grid gap-y-6 p-6;
-
-                        & label {
-                            @apply grid gap-y-2 text-sm font-medium leading-6 text-gray-950 dark:text-white;
-                        }
-                    }
-                }
-
-                & > .fi-ta-grouping-settings-fields {
-                    @apply hidden items-center gap-x-3 sm:flex;
-                }
-            }
-
-            & .fi-ta-filters-dropdown {
-                & .fi-ta-filters {
-                    @apply p-6;
-                }
-            }
-
-            & .fi-ta-col-toggle {
-                & .fi-ta-col-toggle-form-ctn {
-                    @apply grid gap-y-4 p-6;
-
-                    & .fi-ta-col-toggle-heading {
-                        @apply text-base font-semibold leading-6 text-gray-950 dark:text-white;
-                    }
+                & .fi-ta-col-toggle-heading {
+                    @apply text-base font-semibold leading-6 text-gray-950 dark:text-white;
                 }
             }
         }
@@ -117,15 +116,15 @@
             @apply ms-auto;
         }
 
-        &.fi-open:has(.fi-ta-filters-apply-action-ctn) {
-            & .fi-ta-filters-trigger-action-ctn {
-                @apply -mt-7;
-            }
-        }
-
-        &.fi-open:not(:has(.fi-ta-filters-apply-action-ctn)) {
+        &.fi-open {
             & .fi-ta-filters-trigger-action-ctn {
                 @apply mt-3;
+            }
+
+            &:has(.fi-ta-filters-apply-action-ctn) {
+                & .fi-ta-filters-trigger-action-ctn {
+                    @apply -mt-7;
+                }
             }
         }
     }
