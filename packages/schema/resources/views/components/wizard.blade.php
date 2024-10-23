@@ -1,6 +1,8 @@
 @php
     $isContained = $isContained();
     $key = $getKey();
+    $previousAction = $getAction('previous');
+    $nextAction = $getAction('next');
 @endphp
 
 <div
@@ -263,8 +265,14 @@
             'mt-6' => ! $isContained,
         ])
     >
-        <span x-cloak x-on:click="previousStep" x-show="! isFirstStep()">
-            {{ $getAction('previous') }}
+        <span
+            x-cloak
+            @if (! $previousAction->isDisabled())
+                x-on:click="previousStep"
+            @endif
+            x-show="! isFirstStep()"
+        >
+            {{ $previousAction }}
         </span>
 
         <span x-show="isFirstStep()">
@@ -273,14 +281,16 @@
 
         <span
             x-cloak
-            x-on:click="
-                $wire.callSchemaComponentMethod(@js($key), 'nextStep', {
-                    currentStepIndex: getStepIndex(step),
-                })
-            "
+            @if (! $nextAction->isDisabled())
+                x-on:click="
+                    $wire.callSchemaComponentMethod(@js($key), 'nextStep', {
+                        currentStepIndex: getStepIndex(step),
+                    })
+                "
+            @endif
             x-show="! isLastStep()"
         >
-            {{ $getAction('next') }}
+            {{ $nextAction }}
         </span>
 
         <span x-show="isLastStep()">

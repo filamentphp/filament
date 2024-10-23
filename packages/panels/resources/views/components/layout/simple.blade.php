@@ -17,7 +17,9 @@
                 class="absolute end-0 top-0 flex h-16 items-center gap-x-4 pe-4 md:pe-6 lg:pe-8"
             >
                 @if (filament()->hasDatabaseNotifications())
-                    @livewire(Filament\Livewire\DatabaseNotifications::class)
+                    @livewire(Filament\Livewire\DatabaseNotifications::class, [
+                        'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
+                    ])
                 @endif
 
                 @livewire(Filament\Livewire\SimpleUserMenu::class)

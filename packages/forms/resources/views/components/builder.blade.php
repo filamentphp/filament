@@ -228,10 +228,10 @@
                             x-show="! isCollapsed"
                             @class([
                                 'fi-fo-builder-item-content relative border-t border-gray-100 dark:border-white/10',
-                                'p-4' => ! $hasBlockPreviews,
+                                'p-4' => ! ($hasBlockPreviews && $item->getParentComponent()->hasPreview()),
                             ])
                         >
-                            @if ($hasBlockPreviews)
+                            @if ($hasBlockPreviews && $item->getParentComponent()->hasPreview())
                                 <div
                                     @class([
                                         'fi-fo-builder-item-preview',

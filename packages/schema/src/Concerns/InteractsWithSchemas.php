@@ -115,7 +115,7 @@ trait InteractsWithSchemas
     {
         $statePath = (string) str($statePath)->before('.');
 
-        $this->oldSchemaState[$statePath] = data_get($this, $statePath);
+        $this->oldSchemaState[$statePath] ??= data_get($this, $statePath);
     }
 
     public function updatedInteractsWithSchemas(string $statePath): void

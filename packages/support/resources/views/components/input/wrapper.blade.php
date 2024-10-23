@@ -70,7 +70,7 @@
     @endif
     {{
         $attributes
-            ->except(['wire:target'])
+            ->except(['wire:target', 'tabindex'])
             ->class([
                 'fi-input-wrp',
                 'fi-disabled' => (! $hasAlpineClasses) && $disabled,
