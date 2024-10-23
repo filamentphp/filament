@@ -27,11 +27,9 @@
         ])
     >
         @if (filled($icon))
-            <x-filament::icon
-                :alias="$iconAlias"
-                :icon="$icon"
-                class="fi-pagination-item-icon size-5 text-gray-400 transition duration-75 group-hover/btn:text-gray-500 dark:text-gray-500 dark:group-hover/btn:text-gray-400"
-            />
+            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, attributes: (new \Illuminate\View\ComponentAttributeBag())->class([
+                'fi-pagination-item-icon size-5 text-gray-400 transition duration-75 group-hover/btn:text-gray-500 dark:text-gray-500 dark:group-hover/btn:text-gray-400',
+            ])) }}
         @endif
 
         @if (filled($label))

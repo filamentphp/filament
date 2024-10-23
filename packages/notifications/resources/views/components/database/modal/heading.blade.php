@@ -2,7 +2,7 @@
     'unreadNotificationsCount',
 ])
 
-<x-filament::modal.heading>
+<h2 class="fi-modal-heading">
     <span class="relative">
         {{ __('filament-notifications::database.modal.heading') }}
 
@@ -15,4 +15,4 @@
             </x-filament::badge>
         @endif
     </span>
-</x-filament::modal.heading>
+</h2>

@@ -4,6 +4,7 @@ import { md5 } from 'js-md5'
 import Sortable from './sortable'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
 import dropdown from './components/dropdown.js'
+import modal from './components/modal.js'
 
 import '../css/components/badge.css'
 import '../css/components/button.css'
@@ -22,6 +23,7 @@ import '../css/components/input/wrapper.css'
 import '../css/components/link.css'
 import '../css/components/loading-indicator.css'
 import '../css/components/loading-section.css'
+import '../css/components/modal.css'
 import '../css/components/pagination.css'
 import '../css/components/tables/actions.css'
 import '../css/components/tables/cell.css'
@@ -59,6 +61,7 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(Sortable)
     window.Alpine.plugin(Tooltip)
     window.Alpine.data('filamentDropdown', dropdown)
+    window.Alpine.data('filamentModal', modal)
 })
 
 document.addEventListener('livewire:init', () => {
