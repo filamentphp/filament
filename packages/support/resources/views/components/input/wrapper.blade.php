@@ -131,25 +131,21 @@
         </div>
     @endif
 
-    @if ($hasPrefix || $hasLoadingIndicator || $hasSuffix)
-        <div
-            @if ($hasLoadingIndicator && (! $hasPrefix))
-                @if ($inlinePrefix)
-                    wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="ps-3"
-                @endif
-
-                wire:target="{{ $loadingIndicatorTarget }}"
+    <div
+        @if ($hasLoadingIndicator && (! $hasPrefix))
+            @if ($inlinePrefix)
+                wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="ps-3"
             @endif
-            @class([
-                'fi-input-wrp-content-ctn',
-                'fi-input-wrp-content-ctn-ps' => $hasLoadingIndicator && (! $hasPrefix) && $inlinePrefix,
-            ])
-        >
-            {{ $slot }}
-        </div>
-    @else
+
+            wire:target="{{ $loadingIndicatorTarget }}"
+        @endif
+        @class([
+            'fi-input-wrp-content-ctn',
+            'fi-input-wrp-content-ctn-ps' => $hasLoadingIndicator && (! $hasPrefix) && $inlinePrefix,
+        ])
+    >
         {{ $slot }}
-    @endif
+    </div>
 
     @if ($hasSuffix)
         <div
