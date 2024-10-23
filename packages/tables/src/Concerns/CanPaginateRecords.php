@@ -88,8 +88,9 @@ trait CanPaginateRecords
     public function getTablePerPageSessionKey(): string
     {
         $table = class_basename($this::class);
+        $id = method_exists($this, 'getOwnerRecord') ? $this->getOwnerRecord()->id : '';
 
-        return "tables.{$table}_per_page";
+        return "tables.{$table}_per_page.{$id}";
     }
 
     /**
