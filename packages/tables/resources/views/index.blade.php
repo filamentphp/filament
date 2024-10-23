@@ -796,7 +796,7 @@
                                 @else
                                     <th
                                         aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
-                                        class="w-1"
+                                        class="fi-ta-actions-header-cell w-1"
                                     ></th>
                                 @endif
                             @endif
@@ -834,7 +834,7 @@
                                 @else
                                     <th
                                         aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
-                                        class="w-1"
+                                        class="fi-ta-actions-header-cell w-1"
                                     ></th>
                                 @endif
                             @endif
@@ -880,7 +880,7 @@
                                 @else
                                     <th
                                         aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
-                                        class="w-1"
+                                        class="fi-ta-actions-header-cell w-1"
                                     ></th>
                                 @endif
                             @endif
@@ -920,7 +920,7 @@
                                 @else
                                     <th
                                         aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
-                                        class="w-1"
+                                        class="fi-ta-actions-header-cell w-1"
                                     ></th>
                                 @endif
                             @endif
