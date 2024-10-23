@@ -386,6 +386,8 @@ public function getFileDisk(): string
 }
 ```
 
+Export files that are created are the developer's responsibility to delete if they wish. Filament does not delete these files in case the exports need to be downloaded again at a later date.
+
 ### Configuring the export file names
 
 By default, exported files will have a name generated based on the ID and type of the export. You can also use the `fileName()` method on the action to customize the file name:

@@ -99,6 +99,10 @@ class TestsActions
                 return $this;
             }
 
+            if (store($this->instance())->has('redirect')) {
+                return $this;
+            }
+
             /** @phpstan-ignore-next-line */
             $this->setActionData($data);
 

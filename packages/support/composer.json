@@ -15,7 +15,7 @@
         "illuminate/contracts": "^10.45|^11.0",
         "illuminate/support": "^10.45|^11.0",
         "illuminate/view": "^10.45|^11.0",
-        "kirschbaum-development/eloquent-power-joins": "^3.0",
+        "kirschbaum-development/eloquent-power-joins": "^3.0|^4.0",
         "livewire/livewire": "^3.4.10",
         "ryangjchandler/blade-capture-directive": "^0.2|^0.3|^1.0",
         "spatie/color": "^1.5",

@@ -7,6 +7,7 @@ class Field extends Component implements Contracts\HasHintActions, Contracts\Has
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeMarkedAsRequired;
     use Concerns\CanBeValidated;
+    use Concerns\CanDisableGrammarly;
     use Concerns\HasExtraFieldWrapperAttributes;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
