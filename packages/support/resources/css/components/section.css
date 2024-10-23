@@ -70,7 +70,7 @@
     }
 
     & .fi-section-footer {
-        @apply border-t border-gray-200 dark:border-white/10 px-6 py-4;
+        @apply border-t border-gray-200 px-6 py-4 dark:border-white/10;
     }
 
     & .fi-section-header {
@@ -78,7 +78,7 @@
     }
 
     & .fi-section-header-icon {
-        @apply self-start size-6;
+        @apply size-6 self-start;
 
         &.fi-color-custom {
             @apply text-custom-500 dark:text-custom-400;
@@ -89,11 +89,11 @@
         }
 
         &.fi-size-sm {
-            @apply size-4 mt-1;
+            @apply mt-1 size-4;
         }
 
         &.fi-size-md {
-            @apply size-5 mt-0.5;
+            @apply mt-0.5 size-5;
         }
     }
 
@@ -106,7 +106,7 @@
     }
 
     & .fi-section-footer {
-        @apply border-t border-gray-200 dark:border-white/10 px-6 py-4;
+        @apply border-t border-gray-200 px-6 py-4 dark:border-white/10;
     }
 
     & .fi-section-header-heading {

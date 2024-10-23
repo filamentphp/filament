@@ -58,23 +58,25 @@
             @endif
             class="fi-section-header"
         >
-            {{ \Filament\Support\generate_icon_html($icon, attributes: (new \Illuminate\View\ComponentAttributeBag())
-                ->class([
-                    'fi-section-header-icon',
-                    match ($iconColor) {
-                        'gray' => null,
-                        default => 'fi-color-custom',
-                    },
-                    is_string($iconColor) ? "fi-color-{$iconColor}" : null,
-                    ($iconSize instanceof IconSize) ? "fi-size-{$iconSize->value}" : (is_string($iconSize) ? $iconSize : null),
-                ])
-                ->style([
-                    \Filament\Support\get_color_css_variables(
-                        $iconColor,
-                        shades: [400, 500],
-                        alias: 'section.header.icon',
-                    ) => $iconColor !== 'gray',
-                ])) }}
+            {{
+                \Filament\Support\generate_icon_html($icon, attributes: (new \Illuminate\View\ComponentAttributeBag)
+                    ->class([
+                        'fi-section-header-icon',
+                        match ($iconColor) {
+                            'gray' => null,
+                            default => 'fi-color-custom',
+                        },
+                        is_string($iconColor) ? "fi-color-{$iconColor}" : null,
+                        ($iconSize instanceof IconSize) ? "fi-size-{$iconSize->value}" : (is_string($iconSize) ? $iconSize : null),
+                    ])
+                    ->style([
+                        \Filament\Support\get_color_css_variables(
+                            $iconColor,
+                            shades: [400, 500],
+                            alias: 'section.header.icon',
+                        ) => $iconColor !== 'gray',
+                    ]))
+            }}
 
             @if ($hasHeading || $hasDescription)
                 <div class="fi-section-header-text-ctn">

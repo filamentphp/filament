@@ -2,7 +2,7 @@
     @apply flex w-full gap-2 p-3 text-sm;
 
     & .fi-icon {
-        @apply size-5;
+        @apply size-5 text-gray-400 dark:text-gray-500;
 
         &.fi-size-sm {
             @apply size-4;
@@ -14,7 +14,7 @@
     }
 
     & span {
-        @apply flex-1 truncate text-start;
+        @apply flex-1 truncate text-start text-gray-700 dark:text-gray-200;
     }
 
     &.fi-color-custom {
@@ -24,16 +24,6 @@
 
         & span {
             @apply text-custom-600 dark:text-custom-400;
-        }
-    }
-
-    &:not(.fi-color-custom) {
-        & .fi-icon {
-            @apply text-gray-400 dark:text-gray-500;
-        }
-
-        & span {
-            @apply text-gray-700 dark:text-gray-200;
         }
     }
 }

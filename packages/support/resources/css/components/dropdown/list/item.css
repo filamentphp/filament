@@ -1,5 +1,5 @@
 .fi-dropdown-list-item {
-    @apply flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm outline-none transition-colors duration-75 disabled:pointer-events-none disabled:opacity-70;
+    @apply flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm outline-none transition-colors duration-75 hover:bg-gray-50 focus-visible:bg-gray-50 disabled:pointer-events-none disabled:opacity-70 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
 
     &.fi-disabled,
     &[disabled] {
@@ -15,7 +15,7 @@
     }
 
     & > .fi-dropdown-list-item-label {
-        @apply flex-1 truncate text-start;
+        @apply flex-1 truncate text-start text-gray-700 dark:text-gray-200;
     }
 
     &.fi-size-xs {
@@ -43,6 +43,8 @@
     }
 
     & > .fi-icon {
+        @apply text-gray-400 dark:text-gray-500;
+
         &.fi-size-sm {
             @apply size-4;
         }
@@ -54,10 +56,6 @@
         &.fi-color-custom {
             @apply text-custom-500 dark:text-custom-400;
         }
-
-        &:not(.fi-color-custom) {
-            @apply text-gray-400 dark:text-gray-500;
-        }
     }
 
     &.fi-color-custom {
@@ -65,14 +63,6 @@
 
         & > .fi-dropdown-list-item-label {
             @apply text-custom-600 dark:text-custom-400;
-        }
-    }
-
-    &:not(.fi-color-custom) {
-        @apply hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5;
-
-        & > .fi-dropdown-list-item-label {
-            @apply text-gray-700 dark:text-gray-200;
         }
     }
 

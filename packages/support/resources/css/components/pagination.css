@@ -53,11 +53,17 @@
                 & .fi-pagination-item-label {
                     @apply px-1.5 text-sm font-semibold text-gray-700 dark:text-gray-200;
 
-                    &:is(.fi-pagination-item.fi-disabled .fi-pagination-item-label) {
+                    &:is(
+                            .fi-pagination-item.fi-disabled
+                                .fi-pagination-item-label
+                        ) {
                         @apply text-gray-500 dark:text-gray-400;
                     }
 
-                    &:is(.fi-pagination-item.fi-active .fi-pagination-item-label) {
+                    &:is(
+                            .fi-pagination-item.fi-active
+                                .fi-pagination-item-label
+                        ) {
                         @apply text-primary-600 dark:text-primary-400;
                     }
                 }
