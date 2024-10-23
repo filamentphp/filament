@@ -222,10 +222,7 @@ SpatieMediaLibraryImageColumn::make('avatar')
 
 ### Filtering media
 
-It's possible to target a column component to only display a certain subset of media in a collection. To do that, you
-can filter the media collection using the `filterMediaUsing()` method. This method accepts a function that receives the
-`$media` collection and manipulates it. You can use
-any [collection method](https://laravel.com/docs/collections#available-methods) to filter it.
+It's possible to target the column to only display a subset of media in a collection. To do that, you can filter the media collection using the `filterMediaUsing()` method. This method accepts a function that receives the `$media` collection and manipulates it. You can use any [collection method](https://laravel.com/docs/collections#available-methods) to filter it.
 
 For example, you could scope the column to only display media that has certain custom properties:
 
@@ -237,7 +234,7 @@ SpatieMediaLibraryImageColumn::make('images')
     ->filterMediaUsing(
         fn (Collection $media): Collection => $media->where(
             'custom_properties.gallery_id',
-            12345
+            12345,
         ),
     )
 ```
@@ -289,10 +286,7 @@ SpatieMediaLibraryImageEntry::make('avatar')
 
 ### Filtering media
 
-It's possible to target an infolist component to only display a certain subset of media in a collection. To do that, you
-can filter the media collection using the `filterMediaUsing()` method. This method accepts a function that receives the
-`$media` collection and manipulates it. You can use
-any [collection method](https://laravel.com/docs/collections#available-methods) to filter it.
+It's possible to target the entry to only display a subset of media in a collection. To do that, you can filter the media collection using the `filterMediaUsing()` method. This method accepts a function that receives the `$media` collection and manipulates it. You can use any [collection method](https://laravel.com/docs/collections#available-methods) to filter it.
 
 For example, you could scope the entry to only display media that has certain custom properties:
 
@@ -304,7 +298,7 @@ SpatieMediaLibraryImageEntry::make('images')
     ->filterMediaUsing(
         fn (Collection $media): Collection => $media->where(
             'custom_properties.gallery_id',
-            12345
+            12345,
         ),
     )
 ```
