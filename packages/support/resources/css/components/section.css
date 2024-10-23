@@ -7,84 +7,106 @@
         @apply grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3;
     }
 
-    & .fi-section-header {
-        @apply flex items-center gap-3;
-
-        &:is(.fi-section.fi-collapsible .fi-section-header) {
+    &.fi-collapsible {
+        & .fi-section-header {
             @apply cursor-pointer;
         }
+    }
 
-        &:not(.fi-section.fi-aside .fi-section-header) {
+    &.fi-collapsed {
+        & .fi-section-collapse-btn {
+            @apply rotate-180;
+        }
+
+        & .fi-section-content-ctn {
+            @apply invisible absolute h-0 overflow-hidden border-none;
+        }
+    }
+
+    &.fi-aside {
+        & .fi-section-content-ctn {
+            @apply rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:col-span-2;
+        }
+    }
+
+    &:not(.fi-aside) {
+        & .fi-section-header {
             @apply px-6 py-4;
+        }
+    }
 
-            &:is(.fi-section.fi-compact .fi-section-header) {
+    &.fi-compact {
+        &:not(.fi-aside) {
+            & .fi-section-header {
                 @apply px-4 py-2.5;
             }
         }
 
-        & .fi-section-header-icon {
-            @apply self-start size-6;
-
-            &.fi-color-custom {
-                @apply text-custom-500 dark:text-custom-400;
-            }
-
-            &:not(.fi-color-custom) {
-                @apply text-gray-400 dark:text-gray-500;
-            }
-
-            &.fi-size-sm {
-                @apply size-4 mt-1;
-            }
-
-            &.fi-size-md {
-                @apply size-5 mt-0.5;
-            }
+        & .fi-section-content {
+            @apply p-4;
         }
 
-        & .fi-section-header-text-ctn {
-            @apply grid flex-1 gap-y-1;
+        &.fi-section-footer {
+            @apply px-4 py-2.5;
         }
+    }
 
-        & .fi-section-collapse-btn {
-            &:is(.fi-section.fi-collapsed .fi-section-collapse-btn) {
-                @apply rotate-180;
+    &.fi-section-has-header {
+        &:not(.fi-aside) {
+            & .fi-section-content-ctn {
+                @apply border-t border-gray-200 dark:border-white/10;
             }
         }
     }
 
-    & .fi-section-content-ctn {
-        &:is(.fi-section.fi-collapsed .fi-section-content-ctn) {
-            @apply invisible absolute h-0 overflow-hidden border-none;
-        }
-
-        &:is(.fi-section-has-header .fi-section-content-ctn):not(.fi-section.fi-aside .fi-section-content-ctn) {
-            @apply border-t border-gray-200 dark:border-white/10;
-        }
-
-        &:is(.fi-section.fi-aside .fi-section-content-ctn) {
-            @apply rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:col-span-2;
-        }
-
-        &:is(.fi-section-has-content-before .fi-section-content-ctn) {
+    &.fi-section-has-content-before {
+        & .fi-section-content-ctn {
             @apply md:order-first;
         }
+    }
 
-        & .fi-section-content {
-            @apply p-6;
+    & .fi-section-content {
+        @apply p-6;
+    }
 
-            &:is(.fi-section.fi-compact .fi-section-content) {
-                @apply p-4;
-            }
+    & .fi-section-footer {
+        @apply border-t border-gray-200 dark:border-white/10 px-6 py-4;
+    }
+
+    & .fi-section-header {
+        @apply flex items-center gap-3;
+    }
+
+    & .fi-section-header-icon {
+        @apply self-start size-6;
+
+        &.fi-color-custom {
+            @apply text-custom-500 dark:text-custom-400;
         }
 
-        & .fi-section-footer {
-            @apply border-t border-gray-200 dark:border-white/10 px-6 py-4;
-
-            &:is(.fi-section.fi-compact .fi-section-footer) {
-                @apply px-4 py-2.5;
-            }
+        &:not(.fi-color-custom) {
+            @apply text-gray-400 dark:text-gray-500;
         }
+
+        &.fi-size-sm {
+            @apply size-4 mt-1;
+        }
+
+        &.fi-size-md {
+            @apply size-5 mt-0.5;
+        }
+    }
+
+    & .fi-section-header-text-ctn {
+        @apply grid flex-1 gap-y-1;
+    }
+
+    & .fi-section-content {
+        @apply p-6;
+    }
+
+    & .fi-section-footer {
+        @apply border-t border-gray-200 dark:border-white/10 px-6 py-4;
     }
 
     & .fi-section-header-heading {
