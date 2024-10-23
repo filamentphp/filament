@@ -12,6 +12,7 @@
     use Illuminate\View\ComponentAttributeBag;
 
     $actions = $getActions();
+    $flatActionsCount = count($getFlatActions());
     $actionsAlignment = $getActionsAlignment();
     $actionsPosition = $getActionsPosition();
     $actionsColumnLabel = $getActionsColumnLabel();
@@ -1117,7 +1118,8 @@
                                         </th>
                                     @else
                                         <th
-                                            class="fi-ta-empty-header-cell"
+                                            aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                            class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                         ></th>
                                     @endif
                                 @endif
@@ -1157,7 +1159,8 @@
                                         </th>
                                     @else
                                         <th
-                                            class="fi-ta-empty-header-cell"
+                                            aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                            class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                         ></th>
                                     @endif
                                 @endif
@@ -1222,7 +1225,8 @@
                                         </th>
                                     @else
                                         <th
-                                            class="fi-ta-empty-header-cell"
+                                            aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                            class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                         ></th>
                                     @endif
                                 @endif
@@ -1264,7 +1268,8 @@
                                         </th>
                                     @else
                                         <th
-                                            class="fi-ta-empty-header-cell"
+                                            aria-label="{{ trans_choice('filament-tables::table.columns.actions.label', $flatActionsCount) }}"
+                                            class="fi-ta-actions-header-cell fi-ta-empty-header-cell"
                                         ></th>
                                     @endif
                                 @endif
