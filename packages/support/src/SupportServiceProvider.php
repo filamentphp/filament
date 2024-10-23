@@ -127,7 +127,7 @@ class SupportServiceProvider extends PackageServiceProvider
                     return "<fg=red;options=bold>PUBLISHED:</> {$publishedViewPaths->join(', ')}";
                 },
                 'Blade Icons' => function (): string {
-                    return file_exists(app()->bootstrapPath('cache/blade-icons.php'))
+                    return File::exists(app()->bootstrapPath('cache/blade-icons.php'))
                         ? '<fg=green;options=bold>CACHED</>'
                         : '<fg=yellow;options=bold>NOT CACHED</>';
                 },
