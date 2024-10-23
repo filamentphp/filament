@@ -138,7 +138,7 @@ class SupportServiceProvider extends PackageServiceProvider
 
                     $path = app()->bootstrapPath('cache/filament/panels');
 
-                    return File::isDirectory($path) && !File::isEmptyDirectory($path)
+                    return File::isDirectory($path) && ! File::isEmptyDirectory($path)
                         ? '<fg=green;options=bold>CACHED</>'
                         : '<fg=yellow;options=bold>NOT CACHED</>';
                 },

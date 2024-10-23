@@ -15,7 +15,7 @@ class AboutCommand extends Command
     public function handle(): void
     {
         $this->call('about', [
-            '--only' => 'filament'
+            '--only' => 'filament',
         ]);
     }
 }
