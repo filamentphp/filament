@@ -1,3 +1,71 @@
+.fi-pagination {
+    @apply grid grid-cols-[1fr_auto_1fr] items-center gap-x-3;
+
+    & .fi-pagination-previous-btn {
+        @apply justify-self-start;
+    }
+
+    & .fi-pagination-overview {
+        @apply text-sm font-medium text-gray-700 dark:text-gray-200;
+    }
+
+    & .fi-pagination-records-per-page-select-ctn {
+        @apply col-start-2 justify-self-center;
+    }
+
+    & .fi-pagination-next-btn {
+        @apply col-start-3 justify-self-end;
+    }
+
+    & .fi-pagination-items {
+        @apply justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20;
+
+        & .fi-pagination-item {
+            @apply border-x-[0.5px] border-gray-200 first:border-s-0 last:border-e-0 dark:border-white/10;
+
+            & .fi-pagination-item-btn {
+                @apply relative flex overflow-hidden p-2 outline-none transition duration-75;
+
+                &:first-of-type {
+                    @apply rounded-s-lg;
+                }
+
+                &:last-of-type {
+                    @apply rounded-e-lg;
+                }
+
+                &:not(:disabled) {
+                    @apply hover:bg-gray-50 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-primary-600 dark:hover:bg-white/5 dark:focus-visible:ring-primary-500;
+                }
+
+                &:is(.fi-pagination-item.fi-active .fi-pagination-item-btn) {
+                    @apply bg-gray-50 dark:bg-white/5;
+                }
+
+                & .fi-icon {
+                    @apply size-5 text-gray-400 transition duration-75 dark:text-gray-500;
+
+                    &:is(.fi-pagination-item-btn:hover .fi-icon) {
+                        @apply text-gray-500 dark:text-gray-400;
+                    }
+                }
+
+                & .fi-pagination-item-label {
+                    @apply px-1.5 text-sm font-semibold text-gray-700 dark:text-gray-200;
+
+                    &:is(.fi-pagination-item.fi-disabled .fi-pagination-item-label) {
+                        @apply text-gray-500 dark:text-gray-400;
+                    }
+
+                    &:is(.fi-pagination-item.fi-active .fi-pagination-item-label) {
+                        @apply text-primary-600 dark:text-primary-400;
+                    }
+                }
+            }
+        }
+    }
+}
+
 .fi-pagination-overview {
     display: none;
 }
