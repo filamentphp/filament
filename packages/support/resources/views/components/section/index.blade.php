@@ -43,10 +43,11 @@
     {{
         $attributes->class([
             'fi-section',
-            match ($aside) {
-                true => 'fi-aside grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3',
-                false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
-            },
+            'fi-section-has-content-before' => filled($contentBefore),
+            'fi-section-has-header' => $hasHeader,
+            'fi-aside' => $aside,
+            'fi-compact' => $compact,
+            'fi-collapsible' => $collapsible,
         ])
     }}
 >
@@ -55,71 +56,53 @@
             @if ($collapsible)
                 x-on:click="isCollapsed = ! isCollapsed"
             @endif
-            @class([
-                'fi-section-header flex flex-col gap-3',
-                'cursor-pointer' => $collapsible,
-                match ($compact) {
-                    true => 'px-4 py-2.5',
-                    false => 'px-6 py-4',
-                } => ! $aside,
-            ])
+            class="fi-section-header"
         >
-            <div class="flex items-center gap-3">
-                @if ($hasIcon)
-                    <x-filament::icon
-                        :icon="$icon"
-                        @class([
-                            'fi-section-header-icon self-start',
-                            match ($iconColor) {
-                                'gray' => 'text-gray-400 dark:text-gray-500',
-                                default => 'fi-color-custom text-custom-500 dark:text-custom-400',
-                            },
-                            is_string($iconColor) ? "fi-color-{$iconColor}" : null,
-                            match ($iconSize) {
-                                IconSize::Small, 'sm' => 'size-4 mt-1',
-                                IconSize::Medium, 'md' => 'size-5 mt-0.5',
-                                IconSize::Large, 'lg' => 'size-6',
-                                default => $iconSize,
-                            },
-                        ])
-                        @style([
-                            \Filament\Support\get_color_css_variables(
-                                $iconColor,
-                                shades: [400, 500],
-                                alias: 'section.header.icon',
-                            ) => $iconColor !== 'gray',
-                        ])
-                    />
-                @endif
+            {{ \Filament\Support\generate_icon_html($icon, attributes: (new \Illuminate\View\ComponentAttributeBag())
+                ->class([
+                    'fi-section-header-icon',
+                    match ($iconColor) {
+                        'gray' => null,
+                        default => 'fi-color-custom',
+                    },
+                    is_string($iconColor) ? "fi-color-{$iconColor}" : null,
+                    ($iconSize instanceof IconSize) ? "fi-size-{$iconSize->value}" : (is_string($iconSize) ? $iconSize : null),
+                ])
+                ->style([
+                    \Filament\Support\get_color_css_variables(
+                        $iconColor,
+                        shades: [400, 500],
+                        alias: 'section.header.icon',
+                    ) => $iconColor !== 'gray',
+                ])) }}
 
-                @if ($hasHeading || $hasDescription)
-                    <div class="grid flex-1 gap-y-1">
-                        @if ($hasHeading)
-                            <x-filament::section.heading>
-                                {{ $heading }}
-                            </x-filament::section.heading>
-                        @endif
+            @if ($hasHeading || $hasDescription)
+                <div class="fi-section-header-text-ctn">
+                    @if ($hasHeading)
+                        <h3 class="fi-section-header-heading">
+                            {{ $heading }}
+                        </h3>
+                    @endif
 
-                        @if ($hasDescription)
-                            <x-filament::section.description>
-                                {{ $description }}
-                            </x-filament::section.description>
-                        @endif
-                    </div>
-                @endif
+                    @if ($hasDescription)
+                        <p class="fi-section-header-description">
+                            {{ $description }}
+                        </p>
+                    @endif
+                </div>
+            @endif
 
-                {{ $afterHeader }}
+            {{ $afterHeader }}
 
-                @if ($collapsible)
-                    <x-filament::icon-button
-                        color="gray"
-                        icon="heroicon-m-chevron-down"
-                        icon-alias="section.collapse-button"
-                        x-on:click.stop="isCollapsed = ! isCollapsed"
-                        x-bind:class="{ 'rotate-180': ! isCollapsed }"
-                    />
-                @endif
-            </div>
+            @if ($collapsible)
+                <x-filament::icon-button
+                    color="gray"
+                    icon="heroicon-m-chevron-down"
+                    icon-alias="section.collapse-button"
+                    x-on:click.stop="isCollapsed = ! isCollapsed"
+                    class="fi-section-collapse-btn"
+                />
+            @endif
         </header>
     @endif
 
@@ -129,37 +112,15 @@
             @if ($collapsed || $persistCollapsed)
                 x-cloak
             @endif
-            x-bind:class="{
-                'invisible absolute h-0 overflow-hidden border-none': isCollapsed,
-            }"
         @endif
-        @class([
-            'fi-section-content-ctn',
-            'border-t border-gray-200 dark:border-white/10' => $hasHeader && (! $aside),
-            'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 md:col-span-2' => $aside,
-            'md:order-first' => $contentBefore,
-        ])
+        class="fi-section-content-ctn"
     >
-        <div
-            @class([
-                'fi-section-content',
-                match ($compact) {
-                    true => 'p-4',
-                    false => 'p-6',
-                },
-            ])
-        >
+        <div class="fi-section-content">
             {{ $slot }}
         </div>
 
         @if (! is_slot_empty($footer))
-            <footer
-                @class([
-                    'fi-section-footer border-t border-gray-200 dark:border-white/10',
-                    'px-6 py-4' => ! $compact,
-                    'px-4 py-2.5' => $compact,
-                ])
-            >
+            <footer class="fi-section-footer">
                 {{ $footer }}
             </footer>
         @endif
