@@ -15,7 +15,14 @@ trait HasNotifications
     public function databaseNotifications(bool | Closure $condition = true, bool | Closure $isLazy = true): static
     {
         $this->hasDatabaseNotifications = $condition;
-        $this->hasLazyLoadedDatabaseNotifications = $isLazy;
+        $this->lazyLoadedDatabaseNotifications($isLazy);
+
+        return $this;
+    }
+
+    public function lazyLoadedDatabaseNotifications(bool | Closure $condition = true): static
+    {
+        $this->hasLazyLoadedDatabaseNotifications = $condition;
 
         return $this;
     }
