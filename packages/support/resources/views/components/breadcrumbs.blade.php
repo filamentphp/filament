@@ -1,5 +1,6 @@
 @php
     use Illuminate\View\ComponentAttributeBag;
+
     use function Filament\Support\generate_icon_html;
 @endphp
 
@@ -17,15 +18,19 @@
         @foreach ($breadcrumbs as $url => $label)
             <li class="fi-breadcrumbs-item flex items-center gap-x-2">
                 @if (! $loop->first)
-                    {{ generate_icon_html('heroicon-m-chevron-right', alias: 'breadcrumbs.separator', attributes: (new ComponentAttributeBag())->class([
-                        $iconClasses,
-                        'rtl:hidden',
-                    ])) }}
+                    {{
+                        generate_icon_html('heroicon-m-chevron-right', alias: 'breadcrumbs.separator', attributes: (new ComponentAttributeBag)->class([
+                            $iconClasses,
+                            'rtl:hidden',
+                        ]))
+                    }}
 
-                    {{ generate_icon_html('heroicon-m-chevron-left', alias: 'breadcrubs.separator.rtl', attributes: (new ComponentAttributeBag())->class([
-                        $iconClasses,
-                        'ltr:hidden',
-                    ])) }}
+                    {{
+                        generate_icon_html('heroicon-m-chevron-left', alias: 'breadcrubs.separator.rtl', attributes: (new ComponentAttributeBag)->class([
+                            $iconClasses,
+                            'ltr:hidden',
+                        ]))
+                    }}
                 @endif
 
                 @if (is_int($url))

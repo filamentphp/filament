@@ -63,12 +63,12 @@
     id="{{ $id }}"
     role="dialog"
     x-data="filamentModal({
-        id: @js($id),
-    })"
+                id: @js($id),
+            })"
     @if ($id)
         x-on:{{ $closeEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) close()"
-    x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) closeQuietly()"
-    x-on:{{ $openEventName }}.window="if (($event.detail.id === @js($id)) && (! isOpen)) open()"
+        x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) closeQuietly()"
+        x-on:{{ $openEventName }}.window="if (($event.detail.id === @js($id)) && (! isOpen)) open()"
     @endif
     x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     x-bind:class="{
@@ -190,7 +190,7 @@
                                                 ) => $iconColor !== 'gray',
                                             ])
                                         >
-                                            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag())->class(['fi-modal-icon'])) }}
+                                            {{ \Filament\Support\generate_icon_html($icon, $iconAlias, (new \Illuminate\View\ComponentAttributeBag)->class(['fi-modal-icon'])) }}
                                         </div>
                                     </div>
                                 @endif

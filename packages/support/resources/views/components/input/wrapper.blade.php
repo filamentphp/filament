@@ -100,13 +100,15 @@
                 </div>
             @endif
 
-            {{ \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new \Illuminate\View\ComponentAttributeBag())
-                ->merge([
-                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ], escape: false)
-                ->class([$getIconClasses($prefixIconColor)])
-                ->style([$getIconStyles($prefixIconColor)])) }}
+            {{
+                \Filament\Support\generate_icon_html($prefixIcon, $prefixIconAlias, (new \Illuminate\View\ComponentAttributeBag)
+                    ->merge([
+                        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                    ], escape: false)
+                    ->class([$getIconClasses($prefixIconColor)])
+                    ->style([$getIconStyles($prefixIconColor)]))
+            }}
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
@@ -135,6 +137,7 @@
                 @if ($inlinePrefix)
                     wire:loading.delay.{{ config('filament.livewire_loading_delay', 'default') }}.class.remove="ps-3"
                 @endif
+
                 wire:target="{{ $loadingIndicatorTarget }}"
             @endif
             @class([
@@ -162,13 +165,15 @@
                 </span>
             @endif
 
-            {{ \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new \Illuminate\View\ComponentAttributeBag())
-                ->merge([
-                    'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ], escape: false)
-                ->class([$getIconClasses($suffixIconColor)])
-                ->style([$getIconStyles($suffixIconColor)])) }}
+            {{
+                \Filament\Support\generate_icon_html($suffixIcon, $suffixIconAlias, (new \Illuminate\View\ComponentAttributeBag)
+                    ->merge([
+                        'wire:loading.remove.delay.' . config('filament.livewire_loading_delay', 'default') => $hasLoadingIndicator,
+                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                    ], escape: false)
+                    ->class([$getIconClasses($suffixIconColor)])
+                    ->style([$getIconStyles($suffixIconColor)]))
+            }}
 
             @if (count($suffixActions))
                 <div class="fi-input-wrp-actions">
