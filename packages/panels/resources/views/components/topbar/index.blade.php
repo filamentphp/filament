@@ -165,7 +165,9 @@
 
             @if (filament()->auth()->check())
                 @if (filament()->hasDatabaseNotifications())
-                    @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
+                    @livewire(Filament\Livewire\DatabaseNotifications::class, [
+                        'lazy' => filament()->hasLazyLoadedDatabaseNotifications(),
+                    ])
                 @endif
 
                 <x-filament-panels::user-menu />

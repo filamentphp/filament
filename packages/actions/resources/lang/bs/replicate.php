@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'Duplicirati',
+        'label' => 'Duplicirajte',
 
         'modal' => [
 

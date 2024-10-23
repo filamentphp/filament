@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'Vista',
+        'label' => 'Ver',
 
         'modal' => [
 

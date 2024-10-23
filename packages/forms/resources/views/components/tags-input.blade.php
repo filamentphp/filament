@@ -6,7 +6,7 @@
     $id = $getId();
     $isDisabled = $isDisabled();
     $isPrefixInline = $isPrefixInline();
-    $isReorderable = $isReorderable();
+    $isReorderable = (! $isDisabled) && $isReorderable();
     $isSuffixInline = $isSuffixInline();
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();

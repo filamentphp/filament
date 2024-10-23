@@ -1,6 +1,8 @@
 @php
     $isContained = $isContained();
     $statePath = $getStatePath();
+    $previousAction = $getAction('previous');
+    $nextAction = $getAction('next');
 @endphp
 
 <div
@@ -262,8 +264,14 @@
             'mt-6' => ! $isContained,
         ])
     >
-        <span x-cloak x-on:click="previousStep" x-show="! isFirstStep()">
-            {{ $getAction('previous') }}
+        <span
+            x-cloak
+            @if (! $previousAction->isDisabled())
+                x-on:click="previousStep"
+            @endif
+            x-show="! isFirstStep()"
+        >
+            {{ $previousAction }}
         </span>
 
         <span x-show="isFirstStep()">
@@ -272,16 +280,18 @@
 
         <span
             x-cloak
-            x-on:click="
-                $wire.dispatchFormEvent(
-                    'wizard::nextStep',
-                    '{{ $statePath }}',
-                    getStepIndex(step),
-                )
-            "
+            @if (! $nextAction->isDisabled())
+                x-on:click="
+                    $wire.dispatchFormEvent(
+                        'wizard::nextStep',
+                        '{{ $statePath }}',
+                        getStepIndex(step),
+                    )
+                "
+            @endif
             x-show="! isLastStep()"
         >
-            {{ $getAction('next') }}
+            {{ $nextAction }}
         </span>
 
         <span x-show="isLastStep()">

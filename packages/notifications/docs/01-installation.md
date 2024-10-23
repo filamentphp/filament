@@ -71,6 +71,7 @@ Add Tailwind's CSS layers to your `resources/css/app.css`:
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@tailwind variants;
 ```
 
 Create a `postcss.config.js` file in the root of your project and register Tailwind CSS, PostCSS Nesting and Autoprefixer as plugins:

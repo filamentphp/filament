@@ -487,6 +487,25 @@ test('hidden components are excluded from state dehydration except if they are m
 
     expect($container)
         ->dehydrateState()->not()->toBe([]);
+
+    $container = ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component)
+                ->id('parent')
+                ->hidden()
+                ->dehydratedWhenHidden()
+                ->childComponents([
+                    (new Component)
+                        ->id('child')
+                        ->statePath(Str::random())
+                        ->default(Str::random()),
+                ]),
+        ])
+        ->fill();
+
+    expect($container)
+        ->dehydrateState()->not()->toBe([]);
 });
 
 test('disabled components are excluded from state dehydration', function () {

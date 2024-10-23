@@ -171,6 +171,7 @@ trait CanExportRecords
             );
 
             $export->file_disk = $action->getFileDisk() ?? $exporter->getFileDisk();
+            // Temporary save to obtain the sequence number of the export file.
             $export->save();
 
             $export->file_name = $action->getFileName($export) ?? $exporter->getFileName($export);

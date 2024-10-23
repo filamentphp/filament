@@ -9,12 +9,9 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Kirschbaum\PowerJoins\JoinsHelper;
-use Kirschbaum\PowerJoins\PowerJoins;
 
 class RelationshipJoiner
 {
-    use PowerJoins;
-
     public function leftJoinRelationship(Builder $query, string $relationship): Builder
     {
         if (str($relationship)->contains('.')) {

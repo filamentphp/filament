@@ -536,7 +536,7 @@ trait CanBeValidated
         return $this;
     }
 
-    public function distinct(): static
+    public function distinct(bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component, mixed $state) {
             return function (string $attribute, mixed $value, Closure $fail) use ($component, $state) {
@@ -612,7 +612,7 @@ trait CanBeValidated
 
                 $fail(__($validationMessages['distinct'] ?? 'validation.distinct', ['attribute' => $component->getValidationAttribute()]));
             };
-        });
+        }, $condition);
 
         return $this;
     }
