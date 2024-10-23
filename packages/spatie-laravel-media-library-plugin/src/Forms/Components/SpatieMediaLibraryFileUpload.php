@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasMediaFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use League\Flysystem\UnableToCheckFileExistence;
@@ -15,6 +16,8 @@ use Throwable;
 
 class SpatieMediaLibraryFileUpload extends FileUpload
 {
+    use HasMediaFilter;
+
     protected string | Closure | null $collection = null;
 
     protected string | Closure | null $conversion = null;
@@ -44,8 +47,6 @@ class SpatieMediaLibraryFileUpload extends FileUpload
      * @var array<string, mixed> | Closure | null
      */
     protected array | Closure | null $properties = null;
-
-    protected ?Closure $filterMediaUsing = null;
 
     protected function setUp(): void
     {
@@ -236,13 +237,6 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
-    public function filterMediaUsing(?Closure $callback): static
-    {
-        $this->filterMediaUsing = $callback;
-
-        return $this;
-    }
-
     public function responsiveImages(bool | Closure $condition = true): static
     {
         $this->hasResponsiveImages = $condition;
@@ -328,18 +322,6 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     public function getProperties(): array
     {
         return $this->evaluate($this->properties) ?? [];
-    }
-
-    public function filterMedia(Collection $media): Collection
-    {
-        return $this->evaluate($this->filterMediaUsing, [
-            'media' => $media,
-        ]) ?? $media;
-    }
-
-    public function hasMediaFilter(): bool
-    {
-        return $this->filterMediaUsing instanceof Closure;
     }
 
     public function hasResponsiveImages(): bool

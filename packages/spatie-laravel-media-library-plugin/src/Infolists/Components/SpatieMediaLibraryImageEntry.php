@@ -4,14 +4,18 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\SpatieLaravelMediaLibraryPlugin\Collections\AllMediaCollections;
+use Filament\Support\Concerns\HasMediaFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
 class SpatieMediaLibraryImageEntry extends ImageEntry
 {
+    use HasMediaFilter;
+
     protected string | AllMediaCollections | Closure | null $collection = null;
 
     protected string | Closure | null $conversion = null;
@@ -146,6 +150,10 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
                     ->when(
                         ! $collection instanceof AllMediaCollections,
                         fn (MediaCollection $mediaCollection) => $mediaCollection->filter(fn (Media $media): bool => $media->getAttributeValue('collection_name') === $collection),
+                    )
+                    ->when(
+                        $this->hasMediaFilter(),
+                        fn (Collection $media) => $this->filterMedia($media)
                     )
                     ->sortBy('order_column')
                     ->pluck('uuid')
