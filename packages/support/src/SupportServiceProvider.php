@@ -3,10 +3,12 @@
 namespace Filament\Support;
 
 use Composer\InstalledVersions;
+use Filament\Commands\CacheComponentsCommand;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\ColorManager;
+use Filament\Support\Commands\AboutCommand as FilamentAboutCommand;
 use Filament\Support\Commands\Aliases\MakeIssueCommand as MakeIssueCommandAlias;
 use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
@@ -23,6 +25,7 @@ use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Laravel\Octane\Events\RequestReceived;
@@ -41,6 +44,7 @@ class SupportServiceProvider extends PackageServiceProvider
             ->hasCommands([
                 AssetsCommand::class,
                 CheckTranslationsCommand::class,
+                FilamentAboutCommand::class,
                 InstallCommand::class,
                 MakeIssueCommand::class,
                 MakeIssueCommandAlias::class,
@@ -51,49 +55,6 @@ class SupportServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
-    }
-
-    public function packageRegistered(): void
-    {
-        $this->app->scoped(
-            AssetManager::class,
-            fn () => new AssetManager,
-        );
-
-        $this->app->scoped(
-            ScopedComponentManager::class,
-            fn () => $this->app->make(ComponentManager::class)->clone(),
-        );
-        $this->app->booted(fn () => ComponentManager::resolveScoped());
-        class_exists(RequestReceived::class) && Event::listen(RequestReceived::class, fn () => ComponentManager::resolveScoped());
-
-        $this->app->scoped(
-            ColorManager::class,
-            fn () => new ColorManager,
-        );
-
-        $this->app->scoped(
-            IconManager::class,
-            fn () => new IconManager,
-        );
-
-        $this->app->scoped(
-            ViewManager::class,
-            fn () => new ViewManager,
-        );
-
-        $this->app->scoped(
-            HtmlSanitizerInterface::class,
-            fn (): HtmlSanitizer => new HtmlSanitizer(
-                (new HtmlSanitizerConfig)
-                    ->allowSafeElements()
-                    ->allowRelativeLinks()
-                    ->allowRelativeMedias()
-                    ->allowAttribute('class', allowedElements: '*')
-                    ->allowAttribute('style', allowedElements: '*')
-                    ->withMaxInputLength(500000),
-            ),
-        );
     }
 
     public function packageBooted(): void
@@ -165,6 +126,22 @@ class SupportServiceProvider extends PackageServiceProvider
 
                     return "<fg=red;options=bold>PUBLISHED:</> {$publishedViewPaths->join(', ')}";
                 },
+                'Blade Icons' => function (): string {
+                    return File::exists(app()->bootstrapPath('cache/blade-icons.php'))
+                        ? '<fg=green;options=bold>CACHED</>'
+                        : '<fg=yellow;options=bold>NOT CACHED</>';
+                },
+                'Panel Components' => function (): string {
+                    if (! class_exists(CacheComponentsCommand::class)) {
+                        return '<options=bold>NOT AVAILABLE</>';
+                    }
+
+                    $path = app()->bootstrapPath('cache/filament/panels');
+
+                    return File::isDirectory($path) && ! File::isEmptyDirectory($path)
+                        ? '<fg=green;options=bold>CACHED</>'
+                        : '<fg=yellow;options=bold>NOT CACHED</>';
+                },
             ]);
         }
 
@@ -173,5 +150,48 @@ class SupportServiceProvider extends PackageServiceProvider
                 $this->package->basePath('/../config/filament.php') => config_path('filament.php'),
             ], 'filament-config');
         }
+    }
+
+    public function packageRegistered(): void
+    {
+        $this->app->scoped(
+            AssetManager::class,
+            fn () => new AssetManager,
+        );
+
+        $this->app->scoped(
+            ScopedComponentManager::class,
+            fn () => $this->app->make(ComponentManager::class)->clone(),
+        );
+        $this->app->booted(fn () => ComponentManager::resolveScoped());
+        class_exists(RequestReceived::class) && Event::listen(RequestReceived::class, fn () => ComponentManager::resolveScoped());
+
+        $this->app->scoped(
+            ColorManager::class,
+            fn () => new ColorManager,
+        );
+
+        $this->app->scoped(
+            IconManager::class,
+            fn () => new IconManager,
+        );
+
+        $this->app->scoped(
+            ViewManager::class,
+            fn () => new ViewManager,
+        );
+
+        $this->app->scoped(
+            HtmlSanitizerInterface::class,
+            fn (): HtmlSanitizer => new HtmlSanitizer(
+                (new HtmlSanitizerConfig)
+                    ->allowSafeElements()
+                    ->allowRelativeLinks()
+                    ->allowRelativeMedias()
+                    ->allowAttribute('class', allowedElements: '*')
+                    ->allowAttribute('style', allowedElements: '*')
+                    ->withMaxInputLength(500000),
+            ),
+        );
     }
 }
