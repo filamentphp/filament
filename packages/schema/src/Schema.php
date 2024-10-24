@@ -39,11 +39,17 @@ class Schema extends ViewComponent
 
     public static string $defaultDateDisplayFormat = 'M j, Y';
 
+    public static string $defaultIsoDateDisplayFormat = 'L';
+
     public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';
+
+    public static string $defaultIsoDateTimeDisplayFormat = 'LLL';
 
     public static ?string $defaultNumberLocale = null;
 
     public static string $defaultTimeDisplayFormat = 'H:i:s';
+
+    public static string $defaultIsoTimeDisplayFormat = 'LT';
 
     final public function __construct(Component & HasSchemas $livewire)
     {
