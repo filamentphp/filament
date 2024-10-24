@@ -10,7 +10,7 @@ class AboutCommand extends Command
 {
     protected $signature = 'filament:about';
 
-    protected $description = 'Display basic information about your Filament app';
+    protected $description = 'Display basic information about Filament packages that are installed';
 
     public function handle(): void
     {
