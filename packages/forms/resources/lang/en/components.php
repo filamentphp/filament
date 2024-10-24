@@ -398,6 +398,8 @@ return [
             'strike' => 'Strikethrough',
             'underline' => 'Underline',
             'undo' => 'Undo',
+            'sub' => 'Subscript',
+            'sup' => 'Superscript',
         ],
 
     ],

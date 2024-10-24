@@ -48,6 +48,10 @@ Trix.LineBreakInsertion.prototype.shouldInsertBlockBreak = function () {
     }
 }
 
+Trix.config.textAttributes.sub = { tagName: 'sub', inheritable: true }
+
+Trix.config.textAttributes.sup = { tagName: 'sup', inheritable: true }
+
 export default function richEditorFormComponent({ state }) {
     return {
         state,
