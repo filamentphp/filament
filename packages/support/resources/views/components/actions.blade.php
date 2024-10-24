@@ -40,7 +40,7 @@
             $attributes->class([
                 'fi-ac',
                 'fi-width-full' => $fullWidth,
-                ($alignment instanceof Alignment) ? "fi-align-{$alignment->vaue}" : (is_string($alignment) ? $alignment : null) => ! $fullWidth,
+                ($alignment instanceof Alignment) ? "fi-align-{$alignment->value}" : (is_string($alignment) ? $alignment : null) => ! $fullWidth,
             ])
         }}
     >
