@@ -3,10 +3,12 @@
 namespace Filament\Support;
 
 use Composer\InstalledVersions;
+use Filament\Commands\CacheComponentsCommand;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\ColorManager;
+use Filament\Support\Commands\AboutCommand as FilamentAboutCommand;
 use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
@@ -25,6 +27,7 @@ use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Illuminate\View\ComponentAttributeBag;
@@ -47,6 +50,7 @@ class SupportServiceProvider extends PackageServiceProvider
             ->hasCommands([
                 AssetsCommand::class,
                 CheckTranslationsCommand::class,
+                FilamentAboutCommand::class,
                 InstallCommand::class,
                 MakeIssueCommand::class,
                 OptimizeClearCommand::class,
@@ -271,6 +275,22 @@ class SupportServiceProvider extends PackageServiceProvider
                     }
 
                     return "<fg=red;options=bold>PUBLISHED:</> {$publishedViewPaths->join(', ')}";
+                },
+                'Blade Icons' => function (): string {
+                    return File::exists(app()->bootstrapPath('cache/blade-icons.php'))
+                        ? '<fg=green;options=bold>CACHED</>'
+                        : '<fg=yellow;options=bold>NOT CACHED</>';
+                },
+                'Panel Components' => function (): string {
+                    if (! class_exists(CacheComponentsCommand::class)) {
+                        return '<options=bold>NOT AVAILABLE</>';
+                    }
+
+                    $path = app()->bootstrapPath('cache/filament/panels');
+
+                    return File::isDirectory($path) && ! File::isEmptyDirectory($path)
+                        ? '<fg=green;options=bold>CACHED</>'
+                        : '<fg=yellow;options=bold>NOT CACHED</>';
                 },
             ]);
         }
