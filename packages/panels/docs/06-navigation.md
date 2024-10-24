@@ -299,6 +299,8 @@ public static function shouldRegisterNavigation(): bool
 
 Please note that these methods do not control direct access to the resource or page. They only control whether the resource or page will show up in the navigation. If you want to also control access, then you should use [resource authorization](resources/getting-started#authorization) or [page authorization](pages#authorization).
 
+> The `shouldRegisterNavigation` method is called whether or not there is a currently authenticated user. If you are checking user permissions in this method you should always make sure to check if there is also a currently authenticated user. I.e `auth()->check() && auth()->user()->can('viewAny', Blog::class)`
+
 ## Using top navigation
 
 By default, Filament will use a sidebar navigation. You may use a top navigation instead by using the [configuration](configuration):

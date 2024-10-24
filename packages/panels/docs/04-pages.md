@@ -25,9 +25,11 @@ You can prevent pages from appearing in the menu by overriding the `canAccess()`
 ```php
 public static function canAccess(): bool
 {
-    return auth()->user()->canManageSettings();
+    return auth()->check() && auth()->user()->canManageSettings();
 }
 ```
+
+> The canAccess method is called whether or not there is a currently authenticated user. If you are checking user permissions in this method you should always make sure to check if there is also a currently authenticated user. I.e `auth()->check() && auth()->user()->can('viewAny', Blog::class)`
 
 ## Adding actions to pages
 

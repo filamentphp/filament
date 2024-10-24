@@ -10,8 +10,6 @@ class LogoutResponse implements Responsable
 {
     public function toResponse($request): RedirectResponse
     {
-        return redirect()->to(
-            Filament::hasLogin() ? Filament::getLoginUrl() : Filament::getUrl(),
-        );
+        return redirect(Filament::getUrl());
     }
 }
