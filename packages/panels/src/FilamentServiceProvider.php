@@ -96,6 +96,13 @@ class FilamentServiceProvider extends PackageServiceProvider
                     $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
                 ], 'filament-stubs');
             }
+
+            if (method_exists($this, 'optimizes')) {
+                $this->optimizes(
+                    optimize: 'filament:optimize', /** @phpstan-ignore-line */
+                    clear: 'filament:optimize-clear', /** @phpstan-ignore-line */
+                );
+            }
         }
     }
 
