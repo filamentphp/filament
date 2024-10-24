@@ -1,5 +1,5 @@
 .fi-avatar {
-    @apply object-cover object-center rounded-md size-8;
+    @apply size-8 rounded-md object-cover object-center;
 
     &.fi-circular {
         @apply rounded-full;
