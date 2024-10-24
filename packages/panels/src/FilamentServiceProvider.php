@@ -99,8 +99,8 @@ class FilamentServiceProvider extends PackageServiceProvider
 
             if (method_exists($this, 'optimizes')) {
                 $this->optimizes(
-                    optimize: 'filament:optimize',
-                    clear: 'filament:optimize-clear',
+                    optimize: 'filament:optimize', /** @phpstan-ignore-line */
+                    clear: 'filament:optimize-clear', /** @phpstan-ignore-line */
                 );
             }
         }
