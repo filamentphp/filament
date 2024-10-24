@@ -131,7 +131,7 @@ class SupportServiceProvider extends PackageServiceProvider
                         ? '<fg=green;options=bold>CACHED</>'
                         : '<fg=yellow;options=bold>NOT CACHED</>';
                 },
-                'Form Components' => function (): string {
+                'Panel Components' => function (): string {
                     if (! class_exists(CacheComponentsCommand::class)) {
                         return '<options=bold>NOT AVAILABLE</>';
                     }
