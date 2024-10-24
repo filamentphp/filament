@@ -13,7 +13,7 @@ class AssetsCommand extends Command
 {
     use CanManipulateFiles;
 
-    protected $description = 'Set up Filament assets.';
+    protected $description = 'Set up Filament assets';
 
     protected $signature = 'filament:assets';
 
