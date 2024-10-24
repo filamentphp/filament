@@ -78,6 +78,10 @@ class PrepareCsvExport implements ShouldQueue
             $query->reorder($qualifiedKeyName);
 
             foreach ($originalOrders as $order) {
+                if (blank($order['column'] ?? null) || blank($order['direction'] ?? null)) {
+                    continue;
+                }
+
                 $query->orderBy($order['column'], $order['direction']);
             }
 
