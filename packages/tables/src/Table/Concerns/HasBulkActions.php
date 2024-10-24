@@ -6,6 +6,7 @@ use Closure;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Enums\BulkActionsPosition;
 use Filament\Tables\Enums\RecordCheckboxPosition;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +29,8 @@ trait HasBulkActions
     protected ?Closure $checkIfRecordIsSelectableUsing = null;
 
     protected bool | Closure | null $selectsCurrentPageOnly = false;
+
+    protected BulkActionsPosition | Closure | null $bulkActionsPosition = null;
 
     protected RecordCheckboxPosition | Closure | null $recordCheckboxPosition = null;
 
@@ -211,6 +214,18 @@ trait HasBulkActions
     public function checksIfRecordIsSelectable(): bool
     {
         return $this->checkIfRecordIsSelectableUsing !== null;
+    }
+
+    public function bulkActionsPosition(BulkActionsPosition | Closure | null $position = null): static
+    {
+        $this->bulkActionsPosition = $position;
+
+        return $this;
+    }
+
+    public function getBulkActionsPosition(): BulkActionsPosition
+    {
+        return $this->evaluate($this->bulkActionsPosition) ?? BulkActionsPosition::AboveTable;
     }
 
     public function recordCheckboxPosition(RecordCheckboxPosition | Closure | null $position = null): static

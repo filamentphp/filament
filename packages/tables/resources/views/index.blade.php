@@ -5,6 +5,7 @@
     use Filament\Tables\Columns\Column;
     use Filament\Tables\Columns\ColumnGroup;
     use Filament\Tables\Enums\ActionsPosition;
+    use Filament\Tables\Enums\BulkActionsPosition;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\RecordCheckboxPosition;
     use Illuminate\Support\Str;
@@ -37,6 +38,9 @@
         $getBulkActions(),
         fn (\Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
+    $bulkActionsPosition = $getBulkActionsPosition();
+    $hasBulkActionsAboveTable = $bulkActionsPosition->isAboveTable();
+    $hasBulkActionsBelowTable = $bulkActionsPosition->isBelowTable();
     $groups = $getGroups();
     $description = $getDescription();
     $isGroupsOnly = $isGroupsOnly() && $group;
@@ -194,7 +198,7 @@
 
                     {{ \Filament\Support\Facades\FilamentView::renderHook(\Filament\Tables\View\TablesRenderHook::TOOLBAR_REORDER_TRIGGER_AFTER, scopes: static::class) }}
 
-                    @if ((! $isReordering) && count($bulkActions))
+                    @if ($hasBulkActionsAboveTable && (! $isReordering) && count($bulkActions))
                         <x-filament-tables::actions
                             :actions="$bulkActions"
                             x-cloak="x-cloak"
@@ -1262,6 +1266,36 @@
                 </tr>
             @endif
         </div>
+
+        @if ($hasBulkActionsBelowTable && (! $isReordering) && count($bulkActions))
+            <div
+                x-cloak
+                x-show="selectedRecords.length"
+                class="fi-ta-footer-bulk-actions-wrapper relative divide-y divide-gray-200 overflow-x-auto dark:divide-white/10"
+            >
+                <div class="fi-ta-footer-bulk-actions-selections">
+                    @if ($isSelectionEnabled && $isLoaded)
+                        <x-filament-tables::selection.indicator
+                            :all-selectable-records-count="$allSelectableRecordsCount"
+                            :colspan="$columnsCount"
+                            :page="$page"
+                            :select-current-page-only="$selectsCurrentPageOnly"
+                            x-bind:hidden="! selectedRecords.length"
+                            x-show="selectedRecords.length"
+                        />
+                    @endif
+                </div>
+
+                <div
+                    class="fi-ta-footer-bulk-actions flex items-center px-4 py-3 sm:px-6"
+                >
+                    <x-filament-tables::actions
+                        :actions="$bulkActions"
+                        x-show="selectedRecords.length"
+                    />
+                </div>
+            </div>
+        @endif
 
         @if ((($records instanceof \Illuminate\Contracts\Pagination\Paginator) || ($records instanceof \Illuminate\Contracts\Pagination\CursorPaginator)) &&
              ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
