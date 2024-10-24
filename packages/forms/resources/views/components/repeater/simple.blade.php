@@ -118,7 +118,7 @@
         @endif
 
         @if ($isAddable && $addAction->isVisible())
-            <div 
+            <div
                 @class([
                     'flex',
                     match ($getAddActionAlignment()) {
