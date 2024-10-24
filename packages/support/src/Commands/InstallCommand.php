@@ -20,7 +20,7 @@ class InstallCommand extends Command
 
     protected $signature = 'filament:install {--scaffold} {--actions} {--forms} {--infolists} {--notifications} {--panels} {--tables} {--widgets} {--F|force}';
 
-    protected $description = 'Install Filament.';
+    protected $description = 'Install Filament';
 
     public function __invoke(): int
     {
