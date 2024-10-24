@@ -7,13 +7,10 @@
     {{
         $attributes
             ->class([
-                'fi-avatar object-cover object-center',
-                'rounded-md' => ! $circular,
-                'fi-circular rounded-full' => $circular,
+                'fi-avatar',
+                'fi-circular' => $circular,
                 match ($size) {
-                    'sm' => 'size-6',
-                    'md' => 'size-8',
-                    'lg' => 'size-10',
+                    'sm', 'md', 'lg' => "fi-size-{$size}",
                     default => $size,
                 },
             ])

@@ -6,6 +6,8 @@ import Tooltip from '@ryangjchandler/alpine-tooltip'
 import dropdown from './components/dropdown.js'
 import modal from './components/modal.js'
 
+import '../css/components/actions.css'
+import '../css/components/avatar.css'
 import '../css/components/badge.css'
 import '../css/components/breadcrumbs.css'
 import '../css/components/button.css'
