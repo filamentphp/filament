@@ -109,10 +109,12 @@ class FilamentServiceProvider extends PackageServiceProvider
                 ], 'filament-stubs');
             }
 
-            $this->optimizes(
-                optimize: 'filament:optimize',
-                clear: 'filament:optimize-clear',
-            );
+            if (method_exists($this, 'optimize')) {
+                $this->optimizes(
+                    optimize: 'filament:optimize',
+                    clear: 'filament:optimize-clear',
+                );
+            }
         }
     }
 }
