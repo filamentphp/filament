@@ -188,7 +188,7 @@ if (! function_exists('Filament\Support\generate_icon_html')) {
                 HTML);
         }
 
-        return svg($icon, $attributes->get('class'), $attributes->except('class')->getAttributes());
+        return svg($icon, $attributes->get('class'), array_filter($attributes->except('class')->getAttributes()));
     }
 }
 
