@@ -97,6 +97,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `panels::widgets.account.logout-button` - Button in the account widget to log out
 - `panels::widgets.filament-info.open-documentation-button` - Button to open the documentation from the Filament info widget
 - `panels::widgets.filament-info.open-github-button` - Button to open GitHub from the Filament info widget
+- `panels::widgets.empty-state` - Empty state icon for chart widgets
 
 ### Form Builder icon aliases
 
