@@ -15,7 +15,7 @@
                     <x-filament::input.wrapper
                         inline-prefix
                         wire:target="filter"
-                        class="w-max sm:-my-2"
+                        class="fi-wi-chart-filter"
                     >
                         <x-filament::input.select
                             inline-prefix
@@ -35,12 +35,13 @@
                         placement="bottom-end"
                         shift
                         width="xs"
+                        class="fi-wi-chart-filter"
                     >
                         <x-slot name="trigger">
                             {{ $this->getFiltersTriggerAction() }}
                         </x-slot>
 
-                        <div class="p-6">
+                        <div class="fi-wi-chart-filter-content">
                             {{ $this->getFiltersSchema() }}
                         </div>
                     </x-filament::dropdown>
@@ -84,12 +85,7 @@
 
                 <span
                     x-ref="backgroundColorElement"
-                    @class([
-                        match ($color) {
-                            'gray' => 'text-gray-100 dark:text-gray-800',
-                            default => 'text-custom-50 dark:text-custom-400/10',
-                        },
-                    ])
+                    class="fi-wi-chart-bg-color"
                     @style([
                         \Filament\Support\get_color_css_variables(
                             $color,
@@ -101,12 +97,7 @@
 
                 <span
                     x-ref="borderColorElement"
-                    @class([
-                        match ($color) {
-                            'gray' => 'text-gray-400',
-                            default => 'text-custom-500 dark:text-custom-400',
-                        },
-                    ])
+                    class="fi-wi-chart-border-color"
                     @style([
                         \Filament\Support\get_color_css_variables(
                             $color,
@@ -118,12 +109,12 @@
 
                 <span
                     x-ref="gridColorElement"
-                    class="text-gray-200 dark:text-gray-800"
+                    class="fi-wi-chart-grid-color"
                 ></span>
 
                 <span
                     x-ref="textColorElement"
-                    class="text-gray-500 dark:text-gray-400"
+                    class="fi-wi-chart-text-color"
                 ></span>
             </div>
         </div>

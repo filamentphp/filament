@@ -12,7 +12,7 @@
     }
 @endphp
 
-<div {{ $attributes->grid($columns)->class(['fi-wi gap-6']) }}>
+<div {{ $attributes->grid($columns)->class(['fi-wi']) }}>
     @php
         $normalizeWidgetClass = function (string | Filament\Widgets\WidgetConfiguration $widget): string {
             if ($widget instanceof \Filament\Widgets\WidgetConfiguration) {
