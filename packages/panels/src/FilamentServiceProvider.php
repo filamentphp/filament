@@ -97,7 +97,7 @@ class FilamentServiceProvider extends PackageServiceProvider
                 ], 'filament-stubs');
             }
 
-            if (method_exists($this, 'optimize')) {
+            if (method_exists($this, 'optimizes')) {
                 $this->optimizes(
                     optimize: 'filament:optimize',
                     clear: 'filament:optimize-clear',
