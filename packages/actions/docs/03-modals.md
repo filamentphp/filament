@@ -642,6 +642,20 @@ use Filament\Support\View\Components\Modal;
 Modal::closedByEscaping(false);
 ```
 
+## Hooks for when action modal is closed
+
+You may want to execute some code before or after the modal is closed.
+
+```php
+Action::make('updateAuthor')
+    ->beforeClose(function () {
+        // Do something before the modal is closed.
+    })
+    ->afterClose(function () {
+        // Do something after the modal is closed.
+    })
+```
+
 ## Hiding the modal close button
 
 By default, modals have a close button in the top right corner. If you wish to hide the close button, you can use the `modalCloseButton(false)` method:
