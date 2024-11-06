@@ -10,7 +10,7 @@ Entry classes can be found in the `Filament\Infolists\Components` namespace. You
 ```php
 use Filament\Infolists\Infolist;
 
-public function infolist(Infolist $infolist): Infolist
+public static function infolist(Infolist $infolist): Infolist
 {
     return $infolist
         ->schema([
