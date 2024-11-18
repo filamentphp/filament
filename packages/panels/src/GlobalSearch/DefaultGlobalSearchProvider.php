@@ -3,6 +3,7 @@
 namespace Filament\GlobalSearch;
 
 use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Collection;
 
 class DefaultGlobalSearchProvider implements Contracts\GlobalSearchProvider
 {
@@ -15,7 +16,7 @@ class DefaultGlobalSearchProvider implements Contracts\GlobalSearchProvider
                 continue;
             }
 
-            $resourceResults = $resource::getGlobalSearchResults($query);
+            $resourceResults = ($query) ? $resource::getGlobalSearchResults($query) : Collection::make();
 
             if (! $resourceResults->count()) {
                 continue;
