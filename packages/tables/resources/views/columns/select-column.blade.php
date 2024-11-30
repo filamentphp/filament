@@ -62,7 +62,7 @@
     />
 
     <x-filament::input.wrapper
-        :alpine-disabled="'isLoading || ' . \Illuminate\Support\Js::from($isDisabled)"
+        :alpine-disabled="'isLoading'"
         alpine-valid="error === undefined"
         x-tooltip="
             error === undefined
