@@ -53,11 +53,13 @@
         @if ($sortable)
             <x-filament::icon
                 :alias="$activelySorted && $sortDirection === 'asc' ? 'tables::header-cell.sort-asc-button' : 'tables::header-cell.sort-desc-button'"
-                :icon="match (true) {
+                :icon="
+                    match (true) {
                         $activelySorted && $sortDirection === 'asc' => 'heroicon-m-chevron-up',
-                        $activelySorted && $sortDirection === 'desc' =>  'heroicon-m-chevron-down',
-                        !$activelySorted => 'heroicon-m-chevron-up-down'
-                }"
+                        $activelySorted && $sortDirection === 'desc' => 'heroicon-m-chevron-down',
+                        ! $activelySorted => 'heroicon-m-chevron-up-down'
+                    }
+                "
                 @class([
                     'fi-ta-header-cell-sort-icon h-5 w-5 shrink-0 transition duration-75',
                     'text-gray-950 dark:text-white' => $activelySorted,
