@@ -16,6 +16,8 @@
                     inline-prefix
                     wire:target="filter"
                     class="w-max sm:-my-2"
+                    x-show="!isCollapsed"
+                    @click.stop=""
                 >
                     <x-filament::input.select
                         inline-prefix
