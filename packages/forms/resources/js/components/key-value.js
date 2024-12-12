@@ -81,6 +81,7 @@ export default function keyValueFormComponent({ state }) {
             let rows = []
 
             for (let [key, value] of Object.entries(this.state ?? {})) {
+                key = String(key).replace(/\./g, '\.')
                 rows.push({
                     key,
                     value,
