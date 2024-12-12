@@ -55,12 +55,13 @@ export default function keyValueFormComponent({ state }) {
 
             this.updateState()
         },
-
+        escapeString: function (string) {
+            return String(string).replace(/\./g, '\.');
+        },
         reorderRows: function (event) {
             const rows = Alpine.raw(this.rows)
 
             this.rows = []
-
             const reorderedRow = rows.splice(event.oldIndex, 1)[0]
             rows.splice(event.newIndex, 0, reorderedRow)
 
@@ -81,7 +82,8 @@ export default function keyValueFormComponent({ state }) {
             let rows = []
 
             for (let [key, value] of Object.entries(this.state ?? {})) {
-                key = String(key).replace(/\./g, '\.')
+                key = this.escapeString(key)
+                value = this.escapeString(value)
                 rows.push({
                     key,
                     value,
@@ -99,8 +101,9 @@ export default function keyValueFormComponent({ state }) {
                     return
                 }
 
-                state[row.key] = row.value
+                state[this.escapeString(row.key)] = this.escapeString(row.value)
             })
+
 
             // This is a hack to prevent the component from updating rows again
             // after a state update, which would otherwise be done by the `state`
@@ -110,6 +113,6 @@ export default function keyValueFormComponent({ state }) {
             this.shouldUpdateRows = false
 
             this.state = state
-        },
+        }
     }
 }
