@@ -101,8 +101,6 @@
                 })"
         wire:ignore
         x-ignore
-        @mouseover="pond.allowPaste = true"
-        @mouseleave="pond.allowPaste = false"
         {{
             $attributes
                 ->merge([
