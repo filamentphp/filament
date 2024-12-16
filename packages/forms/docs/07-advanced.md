@@ -143,6 +143,16 @@ function (Get $get) {
 }
 ```
 
+By default `$get` uses relative paths, you can use the second parameter `isAbsolute` to provide the absolute path of the field. This path is not "absolute" from the current form, it is absolute for the entire Livewire component. You will need to prefix the whichever state path you're trying to access (usually `data.` or `mountedActionData.` 
+```php
+use Filament\Forms\Get;
+
+function (Get $get, true) {
+    $email = $get('data.email'); // Store the value of the `email` field in the `$email` variable.
+    //...
+}
+```
+
 ### Injecting a function to set the state of another field
 
 In a similar way to `$get`, you may also set the value of another field from within a callback, using a `$set` parameter:
