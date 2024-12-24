@@ -1,5 +1,6 @@
 @props([
     'contained' => false,
+    'vertical' => false,
     'label' => null,
 ])
 
