@@ -44,6 +44,7 @@ trait CanGenerateForms
             $componentData['type'] = match (true) {
                 $type['name'] === 'boolean' => Forms\Components\Toggle::class,
                 $type['name'] === 'date' => Forms\Components\DatePicker::class,
+                $type['name'] === 'time' => Forms\Components\TimePicker::class,
                 in_array($type['name'], ['datetime', 'timestamp']) => Forms\Components\DateTimePicker::class,
                 $type['name'] === 'text' => Forms\Components\Textarea::class,
                 $columnName === 'image', str($columnName)->startsWith('image_'), str($columnName)->contains('_image_'), str($columnName)->endsWith('_image') => Forms\Components\FileUpload::class,
