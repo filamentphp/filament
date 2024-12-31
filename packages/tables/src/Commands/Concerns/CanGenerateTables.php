@@ -92,6 +92,13 @@ trait CanGenerateTables
                 }
 
                 if (in_array($type['name'], [
+                    'time',
+                ])) {
+                    $columnData['time'] = [];
+                    $columnData['sortable'] = [];
+                }
+
+                if (in_array($type['name'], [
                     'datetime',
                     'timestamp',
                 ])) {
