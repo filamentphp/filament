@@ -30,7 +30,7 @@ use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Validation\ValidationException;
-use League\Csv\ByteSequence;
+use League\Csv\Bom;
 use League\Csv\CharsetConverter;
 use League\Csv\Info;
 use League\Csv\Reader as CsvReader;
@@ -374,7 +374,7 @@ class ImportAction extends Action
                     $csv->insertAll($exampleRows);
 
                     return response()->streamDownload(function () use ($csv) {
-                        $csv->setOutputBOM(ByteSequence::BOM_UTF8);
+                        $csv->setOutputBOM(Bom::Utf8);
 
                         echo $csv->toString();
                     }, __('filament-actions::import.example_csv.file_name', ['importer' => (string) str($this->getImporter())->classBasename()->kebab()]), [

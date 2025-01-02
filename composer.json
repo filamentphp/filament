@@ -14,7 +14,7 @@
         "filament/support": "*",
         "larastan/larastan": "^2.2",
         "laravel/pint": "^1.0",
-        "league/csv": "^9.14",
+        "league/csv": "^9.16",
         "league/flysystem-aws-s3-v3": "^3.0",
         "nunomaduro/termwind": "^1.0|^2.0",
         "openspout/openspout": "^4.23",
