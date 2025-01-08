@@ -2,10 +2,15 @@
 
 namespace Filament\Forms\Components\Actions;
 
+use Filament\Forms\Components\Concerns;
 use Filament\Forms\Components\Component;
 
 class ActionContainer extends Component
 {
+    use Concerns\CanBeHidden {
+        isHidden as baseIsHidden;
+    }
+
     protected string $view = 'filament-forms::components.actions.action-container';
 
     protected Action $action;
@@ -31,6 +36,6 @@ class ActionContainer extends Component
 
     public function isHidden(): bool
     {
-        return $this->action->isHidden();
+        return $this->baseIsHidden() || $this->action->isHidden();
     }
 }
