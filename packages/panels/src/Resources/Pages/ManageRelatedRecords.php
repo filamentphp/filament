@@ -68,7 +68,7 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     {
         return static::$navigationIcon
             ?? FilamentIcon::resolve('panels::resources.pages.manage-related-records.navigation-item')
-            ?? 'heroicon-o-rectangle-stack';
+            ?? null;
     }
 
     public function mount(int | string $record): void
