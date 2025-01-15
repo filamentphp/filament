@@ -11,6 +11,8 @@ trait HasRecordUrl
 
     protected string | Closure | null $recordUrl = null;
 
+    protected bool $hasRecordUrlBeenSet = false;
+
     public function openRecordUrlInNewTab(bool | Closure $condition = true): static
     {
         $this->shouldOpenRecordUrlInNewTab = $condition;
@@ -22,8 +24,14 @@ trait HasRecordUrl
     {
         $this->openRecordUrlInNewTab($shouldOpenInNewTab);
         $this->recordUrl = $url;
+        $this->hasRecordUrlBeenSet = true;
 
         return $this;
+    }
+
+    public function hasRecordUrlBeenSet(): bool
+    {
+        return $this->hasRecordUrlBeenSet;
     }
 
     public function getRecordUrl(Model $record): ?string

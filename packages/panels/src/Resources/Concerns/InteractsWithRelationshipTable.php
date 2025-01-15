@@ -54,11 +54,14 @@ trait InteractsWithRelationshipTable
 
     protected function makeTable(): Table
     {
-        return $this->makeBaseTable()
+        $table = $this->makeBaseTable()
             ->relationship(fn (): Relation | Builder => $this->getRelationship())
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
-            ->queryStringIdentifier(Str::lcfirst(class_basename(static::class)))
-            ->recordAction(function (Model $record, Table $table): ?string {
+            ->queryStringIdentifier(Str::lcfirst(class_basename(static::class)));
+
+        // Only set recordAction and recordUrl if they haven't been explicitly set
+        if (! $table->hasRecordActionBeenSet()) {
+            $table->recordAction(function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
 
@@ -80,8 +83,11 @@ trait InteractsWithRelationshipTable
                 }
 
                 return null;
-            })
-            ->recordUrl(function (Model $record, Table $table): ?string {
+            });
+        }
+
+        if (! $table->hasRecordUrlBeenSet()) {
+            $table->recordUrl(function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
 
@@ -105,7 +111,9 @@ trait InteractsWithRelationshipTable
                 }
 
                 return null;
-            })
-            ->authorizeReorder(fn (): bool => $this->canReorder());
+            });
+        }
+
+        return $table->authorizeReorder(fn (): bool => $this->canReorder());
     }
 }

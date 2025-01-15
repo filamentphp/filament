@@ -10,11 +10,19 @@ trait HasRecordAction
 {
     protected string | Closure | null $recordAction = null;
 
+    protected bool $hasRecordActionBeenSet = false;
+
     public function recordAction(string | Closure | null $action): static
     {
         $this->recordAction = $action;
+        $this->hasRecordActionBeenSet = true;
 
         return $this;
+    }
+
+    public function hasRecordActionBeenSet(): bool
+    {
+        return $this->hasRecordActionBeenSet;
     }
 
     public function getRecordAction(Model $record): ?string

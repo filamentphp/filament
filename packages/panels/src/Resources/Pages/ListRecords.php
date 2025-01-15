@@ -239,12 +239,15 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function makeTable(): Table
     {
-        return $this->makeBaseTable()
+        $table = $this->makeBaseTable()
             ->query(fn (): Builder => $this->getTableQuery())
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
-            ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
-            ->recordAction(function (Model $record, Table $table): ?string {
+            ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel());
+
+        // Only set recordAction and recordUrl if they haven't been explicitly set
+        if (! $table->hasRecordActionBeenSet()) {
+            $table->recordAction(function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
 
@@ -270,9 +273,13 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                 }
 
                 return null;
-            })
-            ->recordTitle(fn (Model $record): string => static::getResource()::getRecordTitle($record))
-            ->recordUrl($this->getTableRecordUrlUsing() ?? function (Model $record, Table $table): ?string {
+            });
+        }
+
+        $table->recordTitle(fn (Model $record): string => static::getResource()::getRecordTitle($record));
+
+        if (! $table->hasRecordUrlBeenSet()) {
+            $table->recordUrl($this->getTableRecordUrlUsing() ?? function (Model $record, Table $table): ?string {
                 foreach (['view', 'edit'] as $action) {
                     $action = $table->getAction($action);
 
@@ -314,8 +321,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                 }
 
                 return null;
-            })
-            ->authorizeReorder(static::getResource()::canReorder());
+            });
+        }
+
+        return $table->authorizeReorder(static::getResource()::canReorder());
     }
 
     /**
