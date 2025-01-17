@@ -3,45 +3,46 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Actions\Action;
-use Filament\Actions\ImportAction;
-use Filament\Actions\Imports\Events\ImportCompleted;
-use Filament\Actions\Imports\Events\ImportStarted;
-use Filament\Actions\Imports\ImportColumn;
-use Filament\Actions\Imports\Importer;
-use Filament\Actions\Imports\Jobs\ImportCsv;
-use Filament\Actions\Imports\Models\Import;
+use Exception;
 use Filament\Forms;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-use Filament\Notifications\Actions\Action as NotificationAction;
-use Filament\Notifications\Notification;
-use Filament\Support\ChunkIterator;
-use Filament\Support\Facades\FilamentIcon;
-use Filament\Tables\Actions\Action as TableAction;
-use Filament\Tables\Actions\ImportAction as ImportTableAction;
-use Illuminate\Bus\PendingBatch;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Filesystem\AwsS3V3Adapter;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Number;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\File;
-use Illuminate\Validation\ValidationException;
 use League\Csv\Bom;
-use League\Csv\CharsetConverter;
 use League\Csv\Info;
-use League\Csv\Reader as CsvReader;
-use League\Csv\Statement;
 use League\Csv\Writer;
-use Livewire\Component;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use SplTempFileObject;
+use Livewire\Component;
+use League\Csv\Statement;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
+use Filament\Actions\Action;
+use Illuminate\Support\Number;
+use Illuminate\Bus\PendingBatch;
+use League\Csv\CharsetConverter;
+use Filament\Actions\ImportAction;
+use Filament\Support\ChunkIterator;
+use Illuminate\Support\Facades\Bus;
+use League\Csv\Reader as CsvReader;
+use Filament\Forms\Components\Select;
+use Illuminate\Validation\Rules\File;
+use Filament\Actions\Imports\Importer;
+use Filament\Forms\Components\Fieldset;
+use Illuminate\Support\Facades\Storage;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\FileUpload;
+use Illuminate\Filesystem\AwsS3V3Adapter;
+use Filament\Actions\Imports\ImportColumn;
+use Filament\Support\Facades\FilamentIcon;
+use Illuminate\Contracts\Support\Htmlable;
+use Filament\Actions\Imports\Models\Import;
+use Filament\Actions\Imports\Jobs\ImportCsv;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Validation\ValidationException;
+use Filament\Actions\Imports\Events\ImportStarted;
+use Filament\Tables\Actions\Action as TableAction;
+use Filament\Actions\Imports\Events\ImportCompleted;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Filament\Tables\Actions\ImportAction as ImportTableAction;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Filament\Notifications\Actions\Action as NotificationAction;
 
 trait CanImportRecords
 {
@@ -402,21 +403,48 @@ trait CanImportRecords
 
         $filePath = $file->getRealPath();
 
-        if (config("filesystems.disks.{$fileDisk}.driver") !== 's3') {
-            $resource = fopen($filePath, mode: 'r');
-        } else {
-            /** @var AwsS3V3Adapter $s3Adapter */
-            $s3Adapter = Storage::disk($fileDisk)->getAdapter();
+		if (config("filesystems.disks.{$fileDisk}.driver") === 's3') {
+			/** @var AwsS3V3Adapter $s3Adapter */
+			$s3Adapter = Storage::disk($fileDisk)->getAdapter();
 
-            invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
-            $fileS3Path = (string) str('s3://' . config("filesystems.disks.{$fileDisk}.bucket") . '/' . $filePath)->replace('\\', '/');
+			invade($s3Adapter)->client->registerStreamWrapper(); /** @phpstan-ignore-line */
+			$fileS3Path = (string) str('s3://' . config("filesystems.disks.{$fileDisk}.bucket") . '/' . $filePath)->replace('\\', '/');
 
-            $resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
-                's3' => [
-                    'seekable' => true,
-                ],
-            ]));
-        }
+			$resource = fopen($fileS3Path, mode: 'r', context: stream_context_create([
+				's3' => [
+					'seekable' => true,
+				],
+			]));
+		} else if (config("filesystems.disks.{$fileDisk}.driver") == 'gcs') {
+			$gcsClient = Storage::disk($fileDisk)->getClient();
+
+			// Register the stream wrapper
+			$gcsClient->registerStreamWrapper();
+
+			// Construct the full gs:// path
+			$fileGcsPath = (string) str('gs://' . config("filesystems.disks.{$fileDisk}.bucket") . '/' . $filePath)->replace('\\', '/');
+
+			// Open the source stream and create a temporary file for seekable access
+			if (!$sourceStream = fopen($fileGcsPath, 'r')) {
+				throw new Exception("Unable to open file: {$fileGcsPath}");
+			}
+
+			// Create a temporary file for seekable access
+			if (!$tempStream = tmpfile()) {
+				fclose($sourceStream);
+				throw new Exception("Unable to create a temporary file.");
+			}
+
+			// Copy contents to the temporary file and rewind
+			stream_copy_to_stream($sourceStream, $tempStream);
+			fclose($sourceStream);
+			rewind($tempStream);
+
+			// Set the resource to the temporary stream
+			$resource = $tempStream;
+		} else {
+			$resource = fopen($filePath, mode: 'r');
+		}
 
         $inputEncoding = $this->detectCsvEncoding($resource);
         $outputEncoding = 'UTF-8';
