@@ -22,6 +22,8 @@ class FileUpload extends BaseFileUpload
      */
     protected string $view = 'filament-forms::components.file-upload';
 
+    protected int | Closure | null $maxParallelUploads = null;
+
     protected string | Closure | null $imageCropAspectRatio = null;
 
     protected string | Closure | null $imagePreviewHeight = null;
@@ -226,6 +228,18 @@ class FileUpload extends BaseFileUpload
         $this->uploadProgressIndicatorPosition = $position;
 
         return $this;
+    }
+
+    public function maxParallelUploads(int | Closure | null $count): static
+    {
+        $this->maxParallelUploads = $count;
+
+        return $this;
+    }
+
+    public function getMaxParallelUploads(): ?int
+    {
+        return $this->evaluate($this->maxParallelUploads);
     }
 
     public function getImageCropAspectRatio(): ?string
