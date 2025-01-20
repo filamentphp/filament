@@ -146,6 +146,10 @@ trait CanExportRecords
 
             $user = auth()->user();
 
+            if (function_exists('filament')) {
+                $user = auth(filament()->getAuthGuard())->user();
+            }
+
             if ($action->hasColumnMapping()) {
                 $columnMap = collect($data['columnMap'])
                     ->dot()

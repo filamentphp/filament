@@ -214,6 +214,10 @@ trait CanImportRecords
 
             $user = auth()->user();
 
+            if (function_exists('filament')) {
+                $user = auth(filament()->getAuthGuard())->user();
+            }
+
             $import = app(Import::class);
             $import->user()->associate($user);
             $import->file_name = $csvFile->getClientOriginalName();
