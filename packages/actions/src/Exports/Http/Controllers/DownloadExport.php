@@ -17,7 +17,13 @@ class DownloadExport
         if (filled(Gate::getPolicyFor($export::class))) {
             authorize('view', $export);
         } else {
-            abort_unless($export->user()->is(auth()->user()), 403);
+            $user = auth()->user();
+
+            if (function_exists('filament')) {
+                $user = auth(filament()->getAuthGuard())->user();
+            }
+
+            abort_unless($export->user()->is($user), 403);
         }
 
         $format = ExportFormat::tryFrom($request->query('format'));
