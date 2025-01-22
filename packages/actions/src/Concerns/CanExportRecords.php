@@ -144,7 +144,7 @@ trait CanExportRecords
                 return;
             }
 
-            $user = auth()->user();
+            $user = auth(Export::getAuthGuard())->user();
 
             if ($action->hasColumnMapping()) {
                 $columnMap = collect($data['columnMap'])

@@ -52,18 +52,18 @@ trait CanImportRecords
 
     protected ?string $job = null;
 
-    protected int | Closure $chunkSize = 100;
+    protected int|Closure $chunkSize = 100;
 
-    protected int | Closure | null $maxRows = null;
+    protected int|Closure|null $maxRows = null;
 
-    protected int | Closure | null $headerOffset = null;
+    protected int|Closure|null $headerOffset = null;
 
-    protected string | Closure | null $csvDelimiter = null;
+    protected string|Closure|null $csvDelimiter = null;
 
     /**
      * @var array<string, mixed> | Closure
      */
-    protected array | Closure $options = [];
+    protected array|Closure $options = [];
 
     /**
      * @var array<string | array<mixed> | Closure>
@@ -74,24 +74,24 @@ trait CanImportRecords
     {
         parent::setUp();
 
-        $this->label(fn (ImportAction | ImportTableAction $action): string => __('filament-actions::import.label', ['label' => $action->getPluralModelLabel()]));
+        $this->label(fn(ImportAction|ImportTableAction $action): string => __('filament-actions::import.label', ['label' => $action->getPluralModelLabel()]));
 
-        $this->modalHeading(fn (ImportAction | ImportTableAction $action): string => __('filament-actions::import.modal.heading', ['label' => $action->getPluralModelLabel()]));
+        $this->modalHeading(fn(ImportAction|ImportTableAction $action): string => __('filament-actions::import.modal.heading', ['label' => $action->getPluralModelLabel()]));
 
-        $this->modalDescription(fn (ImportAction | ImportTableAction $action): Htmlable => $action->getModalAction('downloadExample'));
+        $this->modalDescription(fn(ImportAction|ImportTableAction $action): Htmlable => $action->getModalAction('downloadExample'));
 
         $this->modalSubmitActionLabel(__('filament-actions::import.modal.actions.import.label'));
 
         $this->groupedIcon(FilamentIcon::resolve('actions::import-action.grouped') ?? 'heroicon-m-arrow-up-tray');
 
-        $this->form(fn (ImportAction | ImportTableAction $action): array => array_merge([
+        $this->form(fn(ImportAction|ImportTableAction $action): array => array_merge([
             FileUpload::make('file')
                 ->label(__('filament-actions::import.modal.form.file.label'))
                 ->placeholder(__('filament-actions::import.modal.form.file.placeholder'))
                 ->acceptedFileTypes(['text/csv', 'text/x-csv', 'application/csv', 'application/x-csv', 'text/comma-separated-values', 'text/x-comma-separated-values', 'text/plain', 'application/vnd.ms-excel'])
                 ->rules($action->getFileValidationRules())
                 ->afterStateUpdated(function (FileUpload $component, Component $livewire, Forms\Set $set, ?TemporaryUploadedFile $state) use ($action) {
-                    if (! $state instanceof TemporaryUploadedFile) {
+                    if (!$state instanceof TemporaryUploadedFile) {
                         return;
                     }
 
@@ -105,7 +105,7 @@ trait CanImportRecords
 
                     $csvStream = $this->getUploadedFileStream($state);
 
-                    if (! $csvStream) {
+                    if (!$csvStream) {
                         return;
                     }
 
@@ -127,12 +127,12 @@ trait CanImportRecords
 
                     $set('columnMap', array_reduce($action->getImporter()::getColumns(), function (array $carry, ImportColumn $column) use ($lowercaseCsvColumnKeys, $lowercaseCsvColumnValues) {
                         $carry[$column->getName()] = $lowercaseCsvColumnKeys[
-                        Arr::first(
-                            array_intersect(
-                                $lowercaseCsvColumnValues,
-                                $column->getGuesses(),
-                            ),
-                        )
+                            Arr::first(
+                                array_intersect(
+                                    $lowercaseCsvColumnValues,
+                                    $column->getGuesses(),
+                                ),
+                            )
                         ] ?? null;
 
                         return $carry;
@@ -148,13 +148,13 @@ trait CanImportRecords
                 ->schema(function (Forms\Get $get) use ($action): array {
                     $csvFile = Arr::first((array) ($get('file') ?? []));
 
-                    if (! $csvFile instanceof TemporaryUploadedFile) {
+                    if (!$csvFile instanceof TemporaryUploadedFile) {
                         return [];
                     }
 
                     $csvStream = $this->getUploadedFileStream($csvFile);
 
-                    if (! $csvStream) {
+                    if (!$csvStream) {
                         return [];
                     }
 
@@ -170,21 +170,21 @@ trait CanImportRecords
                     $csvColumnOptions = array_combine($csvColumns, $csvColumns);
 
                     return array_map(
-                        fn (ImportColumn $column): Select => $column->getSelect()->options($csvColumnOptions),
+                        fn(ImportColumn $column): Select => $column->getSelect()->options($csvColumnOptions),
                         $action->getImporter()::getColumns(),
                     );
                 })
                 ->statePath('columnMap')
-                ->visible(fn (Forms\Get $get): bool => Arr::first((array) ($get('file') ?? [])) instanceof TemporaryUploadedFile),
+                ->visible(fn(Forms\Get $get): bool => Arr::first((array) ($get('file') ?? [])) instanceof TemporaryUploadedFile),
         ], $action->getImporter()::getOptionsFormComponents()));
 
-        $this->action(function (ImportAction | ImportTableAction $action, array $data) {
+        $this->action(function (ImportAction|ImportTableAction $action, array $data) {
             /** @var TemporaryUploadedFile $csvFile */
             $csvFile = $data['file'];
 
             $csvStream = $this->getUploadedFileStream($csvFile);
 
-            if (! $csvStream) {
+            if (!$csvStream) {
                 return;
             }
 
@@ -212,7 +212,7 @@ trait CanImportRecords
                 return;
             }
 
-            $user = auth()->user();
+            $user = auth(Import::getAuthGuard())->user();
 
             $import = app(Import::class);
             $import->user()->associate($user);
@@ -239,7 +239,7 @@ trait CanImportRecords
             $import->unsetRelation('user');
 
             $importJobs = collect($importChunks)
-                ->map(fn (array $importChunk): object => app($job, [
+                ->map(fn(array $importChunk): object => app($job, [
                     'import' => $import,
                     'rows' => base64_encode(serialize($importChunk)),
                     'columnMap' => $data['columnMap'],
@@ -259,22 +259,22 @@ trait CanImportRecords
                 ->allowFailures()
                 ->when(
                     filled($jobQueue = $importer->getJobQueue()),
-                    fn (PendingBatch $batch) => $batch->onQueue($jobQueue),
+                    fn(PendingBatch $batch) => $batch->onQueue($jobQueue),
                 )
                 ->when(
                     filled($jobConnection = $importer->getJobConnection()),
-                    fn (PendingBatch $batch) => $batch->onConnection($jobConnection),
+                    fn(PendingBatch $batch) => $batch->onConnection($jobConnection),
                 )
                 ->when(
                     filled($jobBatchName = $importer->getJobBatchName()),
-                    fn (PendingBatch $batch) => $batch->name($jobBatchName),
+                    fn(PendingBatch $batch) => $batch->name($jobBatchName),
                 )
                 ->finally(function () use ($columnMap, $import, $jobConnection, $options) {
                     $import->touch('completed_at');
 
                     event(new ImportCompleted($import, $columnMap, $options));
 
-                    if (! $import->user instanceof Authenticatable) {
+                    if (!$import->user instanceof Authenticatable) {
                         return;
                     }
 
@@ -284,20 +284,20 @@ trait CanImportRecords
                         ->title($import->importer::getCompletedNotificationTitle($import))
                         ->body($import->importer::getCompletedNotificationBody($import))
                         ->when(
-                            ! $failedRowsCount,
-                            fn (Notification $notification) => $notification->success(),
+                            !$failedRowsCount,
+                            fn(Notification $notification) => $notification->success(),
                         )
                         ->when(
                             $failedRowsCount && ($failedRowsCount < $import->total_rows),
-                            fn (Notification $notification) => $notification->warning(),
+                            fn(Notification $notification) => $notification->warning(),
                         )
                         ->when(
                             $failedRowsCount === $import->total_rows,
-                            fn (Notification $notification) => $notification->danger(),
+                            fn(Notification $notification) => $notification->danger(),
                         )
                         ->when(
                             $failedRowsCount,
-                            fn (Notification $notification) => $notification->actions([
+                            fn(Notification $notification) => $notification->actions([
                                 NotificationAction::make('downloadFailedRowsCsv')
                                     ->label(trans_choice('filament-actions::import.notifications.completed.actions.download_failed_rows_csv.label', $failedRowsCount, [
                                         'count' => Number::format($failedRowsCount),
@@ -309,11 +309,11 @@ trait CanImportRecords
                         )
                         ->when(
                             ($jobConnection === 'sync') ||
-                                (blank($jobConnection) && (config('queue.default') === 'sync')),
-                            fn (Notification $notification) => $notification
+                            (blank($jobConnection) && (config('queue.default') === 'sync')),
+                            fn(Notification $notification) => $notification
                                 ->persistent()
                                 ->send(),
-                            fn (Notification $notification) => $notification->sendToDatabase($import->user, isEventDispatched: true),
+                            fn(Notification $notification) => $notification->sendToDatabase($import->user, isEventDispatched: true),
                         );
                 })
                 ->dispatch();
@@ -334,9 +334,9 @@ trait CanImportRecords
 
         $this->registerModalActions([
             (match (true) {
-                $this instanceof TableAction => TableAction::class,
-                default => Action::class,
-            })::make('downloadExample')
+            $this instanceof TableAction => TableAction::class,
+            default => Action::class,
+        })::make('downloadExample')
                 ->label(__('filament-actions::import.modal.actions.download_example.label'))
                 ->link()
                 ->action(function (): StreamedResponse {
@@ -350,18 +350,18 @@ trait CanImportRecords
                     }
 
                     $csv->insertOne(array_map(
-                        fn (ImportColumn $column): string => $column->getExampleHeader(),
+                        fn(ImportColumn $column): string => $column->getExampleHeader(),
                         $columns,
                     ));
 
                     $columnExamples = array_map(
-                        fn (ImportColumn $column): array => $column->getExamples(),
+                        fn(ImportColumn $column): array => $column->getExamples(),
                         $columns,
                     );
 
                     $exampleRowsCount = array_reduce(
                         $columnExamples,
-                        fn (int $count, array $exampleData): int => max($count, count($exampleData)),
+                        fn(int $count, array $exampleData): int => max($count, count($exampleData)),
                         initial: 0,
                     );
 
@@ -389,7 +389,7 @@ trait CanImportRecords
 
         $this->successNotificationTitle(__('filament-actions::import.notifications.started.title'));
 
-        $this->model(fn (ImportAction | ImportTableAction $action): string => $action->getImporter()::getModel());
+        $this->model(fn(ImportAction|ImportTableAction $action): string => $action->getImporter()::getModel());
     }
 
     /**
@@ -454,7 +454,7 @@ trait CanImportRecords
         ];
 
         foreach ($encodings as $encoding) {
-            if (! mb_check_encoding($fileHeader, $encoding)) {
+            if (!mb_check_encoding($fileHeader, $encoding)) {
                 continue;
             }
 
@@ -489,28 +489,28 @@ trait CanImportRecords
         return $this;
     }
 
-    public function chunkSize(int | Closure $size): static
+    public function chunkSize(int|Closure $size): static
     {
         $this->chunkSize = $size;
 
         return $this;
     }
 
-    public function maxRows(int | Closure | null $rows): static
+    public function maxRows(int|Closure|null $rows): static
     {
         $this->maxRows = $rows;
 
         return $this;
     }
 
-    public function headerOffset(int | Closure | null $offset): static
+    public function headerOffset(int|Closure|null $offset): static
     {
         $this->headerOffset = $offset;
 
         return $this;
     }
 
-    public function csvDelimiter(string | Closure | null $delimiter): static
+    public function csvDelimiter(string|Closure|null $delimiter): static
     {
         $this->csvDelimiter = $delimiter;
 
@@ -555,7 +555,7 @@ trait CanImportRecords
 
     protected function guessCsvDelimiter(?CsvReader $reader = null): ?string
     {
-        if (! $reader) {
+        if (!$reader) {
             return null;
         }
 
@@ -567,7 +567,7 @@ trait CanImportRecords
     /**
      * @param  array<string, mixed> | Closure  $options
      */
-    public function options(array | Closure $options): static
+    public function options(array|Closure $options): static
     {
         $this->options = $options;
 
@@ -585,7 +585,7 @@ trait CanImportRecords
     /**
      * @param  string | array<mixed> | Closure  $rules
      */
-    public function fileRules(string | array | Closure $rules): static
+    public function fileRules(string|array|Closure $rules): static
     {
         $this->fileValidationRules = [
             ...$this->fileValidationRules,
@@ -606,7 +606,7 @@ trait CanImportRecords
                 function (string $attribute, mixed $value, Closure $fail) {
                     $csvStream = $this->getUploadedFileStream($value);
 
-                    if (! $csvStream) {
+                    if (!$csvStream) {
                         return;
                     }
 
@@ -634,7 +634,7 @@ trait CanImportRecords
                         return;
                     }
 
-                    $filledDuplicateCsvColumns = array_filter($duplicateCsvColumns, fn ($value): bool => filled($value));
+                    $filledDuplicateCsvColumns = array_filter($duplicateCsvColumns, fn($value): bool => filled($value));
 
                     $fail(trans_choice('filament-actions::import.modal.form.file.rules.duplicate_columns', count($filledDuplicateCsvColumns), [
                         'columns' => implode(', ', $filledDuplicateCsvColumns),
