@@ -39,7 +39,7 @@ class Import extends Model
 
     protected static bool $hasPolymorphicUserRelationship = false;
 
-    protected static string|null $authGuard = null;
+    protected static ?string $authGuard = null;
 
     public function failedRows(): HasMany
     {
@@ -59,7 +59,7 @@ class Import extends Model
             return $this->belongsTo($authenticatable::class);
         }
 
-        if (!class_exists(User::class)) {
+        if (! class_exists(User::class)) {
             throw new Exception('No [App\\Models\\User] model found. Please bind an authenticatable model to the [Illuminate\\Contracts\\Auth\\Authenticatable] interface in a service provider\'s [register()] method.');
         }
 
@@ -97,7 +97,7 @@ class Import extends Model
         return static::$hasPolymorphicUserRelationship;
     }
 
-    public static function useAuthGuard(string $authGuard = null): void
+    public static function useAuthGuard(?string $authGuard = null): void
     {
         static::$authGuard = $authGuard;
     }
