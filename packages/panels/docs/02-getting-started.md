@@ -133,6 +133,11 @@ Use the following artisan command to create a new Filament resource for the `Pat
 ```bash
 php artisan make:filament-resource Patient
 ```
+Or if you want to generate all the resources at once, you can use the following command:
+```bash
+php artisan make:filament-resource-multi
+```
+it will ask you to select which model's resource need to be generated and then it will ask you to select options.
 
 This will create several files in the `app/Filament/Resources` directory:
 

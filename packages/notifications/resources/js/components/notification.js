@@ -89,7 +89,8 @@ export default (Alpine) => {
                     // Calling `el.getBoundingClientRect()` from outside `requestAnimationFrame()` can
                     // occasionally cause the page to scroll to the top.
                     requestAnimationFrame(() => {
-                        const getTop = () => this.$el.getBoundingClientRect().top
+                        const getTop = () =>
+                            this.$el.getBoundingClientRect().top
                         const oldTop = getTop()
 
                         respond(() => {
@@ -105,7 +106,7 @@ export default (Alpine) => {
                                                 oldTop - getTop()
                                             }px)`,
                                         },
-                                        {transform: 'translateY(0px)'},
+                                        { transform: 'translateY(0px)' },
                                     ],
                                     {
                                         duration: this.transitionDuration,
