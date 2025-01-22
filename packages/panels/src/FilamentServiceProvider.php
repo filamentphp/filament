@@ -114,6 +114,7 @@ class FilamentServiceProvider extends PackageServiceProvider
             Commands\MakeResourceCommand::class,
             Commands\MakeThemeCommand::class,
             Commands\MakeUserCommand::class,
+            Commands\MakeResourceMultiCommand::class,
         ];
 
         $aliases = [];
