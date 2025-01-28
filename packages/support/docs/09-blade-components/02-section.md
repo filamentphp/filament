@@ -127,12 +127,13 @@ You can make the content of a section collapsible by using the `collapsible` att
 
 ### Making a section collapsed by default
 
-You can make a section collapsed by default by using the `collapsed` attribute:
+You can make a section collapsed by default by using the `collapsed` attribute, ensuring you also add an `id` attribute:
 
 ```blade
 <x-filament::section
     collapsible
     collapsed
+    id="user-details"
 >
     <x-slot name="heading">
         User details
