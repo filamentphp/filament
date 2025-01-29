@@ -256,7 +256,7 @@
         @endforeach
     </ol>
 
-    @foreach ($getChildComponentContainer()->getComponents() as $step)
+    @foreach ($getChildComponentContainer()->getComponents(true) as $step)
         {{ $step }}
     @endforeach
 
