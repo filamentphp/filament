@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 class GlobalSearchResults
 {
     protected Collection $categories;
+
     protected Collection $sorting;
 
     final public function __construct()
@@ -22,9 +23,7 @@ class GlobalSearchResults
     }
 
     /**
-     * @param string $name
-     * @param array<GlobalSearchResult> | Arrayable $results
-     * @param int|null $sort
+     * @param  array<GlobalSearchResult> | Arrayable  $results
      * @return GlobalSearchResults
      */
     public function category(string $name, array | Arrayable $results = [], ?int $sort = null): static
@@ -38,8 +37,10 @@ class GlobalSearchResults
     public function getCategories(): Collection
     {
         $index = 0;
-        return $this->categories->sortBy(function($value, $key) use (&$index) {
+
+        return $this->categories->sortBy(function ($value, $key) use (&$index) {
             $index++;
+
             return $this->sorting->get($key) ?? $index + 100000;
         });
     }
