@@ -113,6 +113,8 @@ abstract class Resource
 
     protected static int $globalSearchResultsLimit = 50;
 
+    protected static ?int $globalSearchSort = null;
+
     protected static bool $shouldCheckPolicyExistence = true;
 
     protected static bool $shouldSkipAuthorization = false;
@@ -441,6 +443,11 @@ abstract class Resource
     public static function getGlobalSearchResultsLimit(): int
     {
         return static::$globalSearchResultsLimit;
+    }
+
+    public static function getGlobalSearchSort(): ?int
+    {
+        return static::$globalSearchSort;
     }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void {}
