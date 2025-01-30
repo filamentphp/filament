@@ -124,6 +124,14 @@ By default, global search will return up to 50 results per resource. You can cus
 protected static int $globalSearchResultsLimit = 20;
 ```
 
+## Customizing the global search sort order
+
+By default, global search will return the sort order based on the order Resources are loaded. You can customize this on the resource label by overriding the `$globalSearchSort` property:
+
+```php
+protected static ?int $globalSearchSort = 20;
+```
+
 ## Disabling global search
 
 As [explained above](#title), global search is automatically enabled once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
