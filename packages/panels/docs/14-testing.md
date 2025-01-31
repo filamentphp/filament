@@ -21,6 +21,13 @@ protected function setUp(): void
 }
 ```
 
+### Setting Up Pest for Livewire Testing
+Before using the livewire helper in your Pest tests, you need to install the Pest Livewire plugin. Run the following command:
+```
+composer require pestphp/pest-plugin-livewire --dev
+```
+This will enable the livewire helper function, allowing you to test Livewire components seamlessly.
+
 ### Testing multiple panels
 
 If you have multiple panels and you would like to test a non-default panel, you will need to tell Filament which panel you are testing. This can be done in the `setUp()` method of the test case, or you can do it at the start of a particular test. Filament usually does this in a middleware when you access the panel through a request, so if you're not making a request in your test like when testing a Livewire component, you need to set the current panel manually:
