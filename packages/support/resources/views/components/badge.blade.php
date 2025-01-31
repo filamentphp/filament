@@ -23,6 +23,7 @@
     'target' => null,
     'tooltip' => null,
     'type' => 'button',
+    'textSize' => null,
 ])
 
 @php
@@ -162,7 +163,7 @@
     @endif
 
     <span class="grid">
-        <span class="truncate">
+        <span @class(["truncate", $textSize])>
             {{ $slot }}
         </span>
     </span>

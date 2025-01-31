@@ -192,6 +192,13 @@
                                 :color="$color"
                                 :icon="$icon"
                                 :icon-position="$iconPosition"
+                                :text-size="match ($size) {
+                                            TextColumnSize::ExtraSmall, 'xs', null => 'text-xs',
+                                            TextColumnSize::Small, 'sm' => 'text-sm',
+                                            TextColumnSize::Medium, 'base', 'md' => 'text-base',
+                                            TextColumnSize::Large, 'lg' => 'text-lg',
+                                            default => $size,
+                                        },"
                             >
                                 {{ $formattedState }}
                             </x-filament::badge>
