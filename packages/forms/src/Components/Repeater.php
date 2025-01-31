@@ -32,6 +32,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
     protected string | Closure | null $addActionLabel = null;
 
+    /**
+     * @var string | array<string> | Closure | null
+     */
     protected string | array | Closure | null $addActionKeyBindings = null;
 
     protected string | Closure | null $addBetweenActionLabel = null;
@@ -635,6 +638,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         return $this;
     }
 
+    /**
+     * @param  string | array<string> | Closure | null  $bindings
+     */
     public function addActionKeyBindings(string | array | Closure | null $bindings): static
     {
         $this->addActionKeyBindings = $bindings;
@@ -830,9 +836,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         ]);
     }
 
-    public function getAddActionKeyBindings(): array
+    /**
+     * @return array<string> | null
+     */
+    public function getAddActionKeyBindings(): ?array
     {
-        return $this->evaluate($this->addActionKeyBindings) ?? [];
+        $keyBindings = Arr::wrap($this->evaluate($this->addActionKeyBindings));
+        
+        return count($keyBindings) ? $keyBindings : null;
     }
 
     public function isReorderable(): bool
