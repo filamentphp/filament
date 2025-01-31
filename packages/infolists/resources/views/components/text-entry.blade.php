@@ -213,7 +213,7 @@
                                             @class([
                                                 'group-hover/item:underline group-focus-visible/item:underline' => $url,
                                                 $proseClasses => $isProse || $isMarkdown,
-                                                'line-clamp-[--line-clamp]' => $lineClamp,
+                                                'line-clamp-(--line-clamp)' => $lineClamp,
                                                 match ($size) {
                                                     TextEntrySize::ExtraSmall, 'xs' => 'text-xs',
                                                     TextEntrySize::Small, 'sm', null => 'text-sm leading-6',

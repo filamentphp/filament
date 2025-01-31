@@ -220,7 +220,7 @@
                                         'fi-ta-text-item-label',
                                         'group-hover/item:underline group-focus-visible/item:underline' => $url,
                                         'whitespace-normal' => $canWrap,
-                                        'line-clamp-[--line-clamp]' => $lineClamp,
+                                        'line-clamp-(--line-clamp)' => $lineClamp,
                                         match ($size) {
                                             TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
                                             TextColumnSize::Small, 'sm', null => 'text-sm leading-6',

@@ -103,7 +103,7 @@ select:not(.choices) {
 }
 
 .choices__button {
-    @apply border-0 bg-transparent bg-center bg-no-repeat indent-[-9999px] outline-none;
+    @apply border-0 bg-transparent bg-center bg-no-repeat indent-(-9999px) outline-none;
 }
 
 .choices[data-type*='select-one'] .choices__button {
