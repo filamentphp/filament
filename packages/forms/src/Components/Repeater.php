@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
