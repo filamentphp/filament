@@ -32,6 +32,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
 
     protected string | Closure | null $addActionLabel = null;
 
+    protected string | array | Closure | null $addActionKeyBindings = null;
+
     protected string | Closure | null $addBetweenActionLabel = null;
 
     protected bool | Closure $isAddable = true;
@@ -166,6 +168,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
     {
         $action = Action::make($this->getAddActionName())
             ->label(fn (Repeater $component) => $component->getAddActionLabel())
+            ->keyBindings(fn (Repeater $component) => $component->getAddActionKeyBindings())
             ->color('gray')
             ->action(function (Repeater $component): void {
                 $newUuid = $component->generateUuid();
@@ -632,6 +635,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         return $this;
     }
 
+    public function addActionKeyBindings(string | array | Closure | null $bindings): static
+    {
+        $this->addActionKeyBindings = $bindings;
+
+        return $this;
+    }
+
     /**
      * @deprecated Use `addActionLabel()` instead.
      */
@@ -818,6 +828,11 @@ class Repeater extends Field implements Contracts\CanConcealComponents, Contract
         return $this->evaluate($this->addActionLabel) ?? __('filament-forms::components.repeater.actions.add.label', [
             'label' => Str::lcfirst($this->getLabel()),
         ]);
+    }
+
+    public function getAddActionKeyBindings(): array
+    {
+        return $this->evaluate($this->addActionKeyBindings) ?? [];
     }
 
     public function isReorderable(): bool
