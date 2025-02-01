@@ -89,8 +89,8 @@
         @apply flex cursor-pointer;
     }
 
-    & .fi-modal-close-overlay {
-        @apply fixed inset-0 z-40 bg-gray-950/50 dark:bg-gray-950/75;
+    & dialog::backdrop {
+        @apply bg-gray-950/50 dark:bg-gray-950/75;
     }
 
     & .fi-modal-overlay {
