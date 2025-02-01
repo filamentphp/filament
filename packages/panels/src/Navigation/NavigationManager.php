@@ -46,24 +46,27 @@ class NavigationManager
             return $this->panel->buildNavigation();
         }
 
-        if (! $this->isNavigationMounted) {
+        if (!$this->isNavigationMounted) {
             $this->mountNavigation();
         }
 
-        $groups = collect($this->getNavigationGroups());
+        $groups = collect($this->getNavigationGroups())
+            ->sortBy(fn(NavigationGroup $group) => $group->getOrder() ?? PHP_INT_MAX); // Sort groups by their order
 
         return collect($this->getNavigationItems())
             ->filter(fn (NavigationItem $item): bool => $item->isVisible())
-            ->sortBy(fn (NavigationItem $item): int => $item->getSort())
-            ->groupBy(fn (NavigationItem $item): string => $item->getGroup() ?? '')
+            ->sortBy(fn(NavigationItem $item) => $item->getSort())
+            ->groupBy(fn(NavigationItem $item) => $item->getGroup() ?? '')
             ->map(function (Collection $items, string $groupIndex) use ($groups): NavigationGroup {
-                $parentItems = $items->groupBy(fn (NavigationItem $item): string => $item->getParentItem() ?? '');
+
+                $parentItems = $items->groupBy(fn(NavigationItem $item) => $item->getParentItem() ?? '');
 
                 $items = $parentItems->get('')
-                    ->keyBy(fn (NavigationItem $item): string => $item->getLabel());
+                    ->keyBy(fn(NavigationItem $item) => $item->getLabel())
+                    ->sortBy(fn(NavigationItem $item) => $item->getSort() ?? PHP_INT_MAX); // Sort items by their order
 
                 $parentItems->except([''])->each(function (Collection $parentItemItems, string $parentItemLabel) use ($items) {
-                    if (! $items->has($parentItemLabel)) {
+                    if (!$items->has($parentItemLabel)) {
                         return;
                     }
 
@@ -75,56 +78,29 @@ class NavigationManager
                 }
 
                 $registeredGroup = $groups
-                    ->first(function (NavigationGroup | string $registeredGroup, string | int $registeredGroupIndex) use ($groupIndex) {
-                        if ($registeredGroupIndex === $groupIndex) {
+                    ->first(function (NavigationGroup|string $registeredGroup) use ($groupIndex) {
+                        if ($registeredGroup instanceof NavigationGroup && $registeredGroup->getLabel() === $groupIndex) {
                             return true;
                         }
-
-                        if ($registeredGroup === $groupIndex) {
-                            return true;
-                        }
-
-                        if (! $registeredGroup instanceof NavigationGroup) {
-                            return false;
-                        }
-
-                        return $registeredGroup->getLabel() === $groupIndex;
+                        return false;
                     });
 
                 if ($registeredGroup instanceof NavigationGroup) {
                     return $registeredGroup->items($items);
                 }
 
-                return NavigationGroup::make($registeredGroup ?? $groupIndex)
-                    ->items($items);
+                return NavigationGroup::make($groupIndex)->items($items);
             })
-            ->sortBy(function (NavigationGroup $group, ?string $groupIndex): int {
+            ->sortBy(function (NavigationGroup $group) {
+
                 if (blank($group->getLabel())) {
                     return -1;
                 }
+                return $group->getOrder() ?? PHP_INT_MAX;
 
-                $registeredGroups = $this->getNavigationGroups();
 
-                $groupsToSearch = $registeredGroups;
-
-                if (Arr::first($registeredGroups) instanceof NavigationGroup) {
-                    $groupsToSearch = [
-                        ...array_keys($registeredGroups),
-                        ...array_map(fn (NavigationGroup $registeredGroup): string => $registeredGroup->getLabel(), array_values($registeredGroups)),
-                    ];
-                }
-
-                $sort = array_search(
-                    $groupIndex,
-                    $groupsToSearch,
-                );
-
-                if ($sort === false) {
-                    return count($registeredGroups);
-                }
-
-                return $sort;
             })
+            ->values()
             ->all();
     }
 

@@ -25,6 +25,7 @@ class NavigationGroup extends Component
     protected array | Arrayable $items = [];
 
     protected string | Closure | null $label = null;
+    protected int|Closure|null $order = null; // NEW ORDER PROPERTY
 
     final public function __construct(string | Closure | null $label = null)
     {
@@ -118,5 +119,16 @@ class NavigationGroup extends Component
         }
 
         return false;
+    }
+
+    public function order(int|Closure|null $order = null): static
+    {
+        $this->order = $order;
+        return $this;
+    }
+
+    public function getOrder(): ?int
+    {
+        return $this->evaluate($this->order);
     }
 }
