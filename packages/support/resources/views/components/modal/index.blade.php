@@ -94,6 +94,7 @@
     <dialog
         x-ref="dialog"
         wire:ignore.self
+        x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     >
         <div
             @class([
