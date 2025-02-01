@@ -25,7 +25,7 @@ class NavigationGroup extends Component
     protected array | Arrayable $items = [];
 
     protected string | Closure | null $label = null;
-    protected int|Closure|null $order = null; // NEW ORDER PROPERTY
+    protected int|Closure|null $order = null;
 
     final public function __construct(string | Closure | null $label = null)
     {
