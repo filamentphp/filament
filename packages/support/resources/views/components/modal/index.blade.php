@@ -91,14 +91,12 @@
         </div>
     @endif
 
-    <div
-        x-cloak
-        x-show="isOpen"
-        x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
+    <dialog
+        x-ref="dialog"
+        wire:ignore.self
     >
         <div
             aria-hidden="true"
-            x-show="isOpen"
             x-transition.duration.300ms.opacity
             class="fi-modal-close-overlay"
         ></div>
@@ -122,17 +120,9 @@
                 {{ $attributes->class(['fi-modal-window-ctn']) }}
             >
                 <div
-                    x-data="{ isShown: false }"
-                    x-init="
-                        $nextTick(() => {
-                            isShown = isOpen
-                            $watch('isOpen', () => (isShown = isOpen))
-                        })
-                    "
                     @if ($closeByEscaping)
                         x-on:keydown.window.escape="{{ $closeEventHandler }}"
                     @endif
-                    x-show="isShown"
                     x-transition:enter="fi-transition-enter"
                     x-transition:leave="fi-transition-leave"
                     @if ($width !== Width::Screen)
@@ -239,5 +229,5 @@
                 </div>
             </div>
         </div>
-    </div>
+    </dialog>
 </div>

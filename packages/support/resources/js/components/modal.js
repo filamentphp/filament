@@ -3,6 +3,12 @@ export default ({ id }) => ({
 
     livewire: null,
 
+    init: function () {
+        this.$watch('isOpen', () => {
+            this.isOpen ? this.$refs.dialog.showModal() : this.$refs.dialog.close()
+        })
+    },
+
     close: function () {
         this.closeQuietly()
 
