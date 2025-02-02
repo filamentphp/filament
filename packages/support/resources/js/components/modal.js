@@ -8,7 +8,7 @@ export default ({ id }) => ({
     init: function () {
         this.$watch('isOpen', () => {
             if (this.isOpen) {
-                this.$refs.dialog.showModal()
+                this.$root?.showModal()
 
                 this.isModalWindowVisible = true
 
@@ -18,7 +18,7 @@ export default ({ id }) => ({
             this.isModalWindowVisible = false
 
             setTimeout(
-                () => this.$refs.dialog?.close(),
+                () => this.$root?.close(),
                 this.$refs.window ? ((parseFloat(window.getComputedStyle(this.$refs.window).transitionDuration)) * 1000) : 0,
             )
         })
@@ -27,8 +27,11 @@ export default ({ id }) => ({
     close: function () {
         this.closeQuietly()
 
-        this.$refs.modalContainer.dispatchEvent(
-            new CustomEvent('modal-closed', { id }),
+        setTimeout(
+            () => this.$refs.windowContainer?.dispatchEvent(
+                new CustomEvent('modal-closed', { id }),
+            ),
+            this.$refs.window ? ((parseFloat(window.getComputedStyle(this.$refs.window).transitionDuration)) * 1000) : 0,
         )
     },
 

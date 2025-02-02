@@ -80,7 +80,6 @@
     @endif
     x-on:cancel.prevent {{-- Prevents the dialog from closing when the escape key is pressed, we do that ourselves to properly transition it. --}}
     id="{{ $id }}"
-    x-ref="dialog"
     wire:ignore.self
     x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     x-bind:class="{
@@ -92,10 +91,10 @@
         aria-labelledby="{{ "{$id}.heading" }}"
     @endif
     @class([
-            'fi-modal',
-            'fi-modal-slide-over' => $slideOver,
-            'fi-width-screen' => $width === Width::Screen,
-        ])
+        'fi-modal',
+        'fi-modal-slide-over' => $slideOver,
+        'fi-width-screen' => $width === Width::Screen,
+    ])
 >
     <div
         aria-hidden="true"
@@ -105,6 +104,7 @@
     ></div>
 
     <div
+        x-ref="windowContainer"
         @if ($closeByClickingAway)
             {{-- Ensure that the click element is not triggered from a user selecting text inside an input. --}}
             x-on:click.self="
