@@ -1,6 +1,4 @@
 .fi-modal {
-    @apply inline-block;
-
     &.fi-modal-slide-over,
     &.fi-width-screen {
         & .fi-modal-window {
@@ -83,10 +81,6 @@
         & .fi-modal-footer {
             @apply px-6;
         }
-    }
-
-    & .fi-modal-trigger {
-        @apply flex cursor-pointer;
     }
 
     & .fi-modal-close-overlay {
