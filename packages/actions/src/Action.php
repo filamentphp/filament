@@ -393,8 +393,12 @@ class Action extends ViewComponent implements Arrayable
         return 'callMountedAction';
     }
 
-    protected function getJavaScriptClickHandler(): string
+    protected function getJavaScriptClickHandler(): ?string
     {
+        if ($this->shouldClose()) {
+            return null;
+        }
+
         $argumentsParameter = '';
 
         if (count($arguments = $this->getArguments())) {

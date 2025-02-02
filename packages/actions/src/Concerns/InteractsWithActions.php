@@ -103,8 +103,6 @@ trait InteractsWithActions
             return null;
         }
 
-        $this->syncActionModals();
-
         if (($actionComponent = $action->getSchemaComponent()) instanceof ExposesStateToActionData) {
             foreach ($actionComponent->getChildComponentContainers() as $actionComponentChildComponentContainer) {
                 $actionComponentChildComponentContainer->validate();
@@ -148,6 +146,8 @@ trait InteractsWithActions
         if (! $this->mountedActionShouldOpenModal(mountedAction: $action)) {
             return $this->callMountedAction();
         }
+
+        $this->syncActionModals();
 
         $this->resetErrorBag();
 

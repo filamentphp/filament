@@ -1,7 +1,7 @@
 export default ({ id }) => ({
     isOpen: false,
 
-    isModalWindowVisible: false,
+    isWindowVisible: false,
 
     livewire: null,
 
@@ -10,12 +10,12 @@ export default ({ id }) => ({
             if (this.isOpen) {
                 this.$root?.showModal()
 
-                this.isModalWindowVisible = true
+                this.isWindowVisible = true
 
                 return;
             }
 
-            this.isModalWindowVisible = false
+            this.isWindowVisible = false
 
             setTimeout(
                 () => this.$root?.close(),
@@ -26,6 +26,10 @@ export default ({ id }) => ({
 
     close: function () {
         this.closeQuietly()
+
+        this.$refs.windowContainer?.dispatchEvent(
+            new CustomEvent('modal-closing', { id }),
+        )
 
         setTimeout(
             () => this.$refs.windowContainer?.dispatchEvent(

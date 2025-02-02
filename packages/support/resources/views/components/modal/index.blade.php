@@ -98,7 +98,7 @@
 >
     <div
         aria-hidden="true"
-        x-show="isModalWindowVisible"
+        x-show="isWindowVisible"
         x-transition.duration.300ms.opacity
         class="fi-modal-close-overlay"
     ></div>
@@ -119,7 +119,7 @@
         ]) }}
     >
         <div
-            x-show="isModalWindowVisible"
+            x-show="isWindowVisible"
             x-ref="window"
             @if ($closeByEscaping)
                 x-on:keydown.window.escape="{{ $closeEventHandler }}"
