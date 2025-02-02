@@ -97,6 +97,13 @@
         x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
     >
         <div
+            aria-hidden="true"
+            x-show="isModalWindowVisible"
+            x-transition.duration.300ms.opacity
+            class="fi-modal-close-overlay"
+        ></div>
+
+        <div
             @class([
                 'fi-modal-overlay',
                 'fi-clickable' => $closeByClickingAway,
