@@ -32,7 +32,7 @@
 
     &:not(.fi-modal-slide-over) {
         &:not(.fi-width-screen) {
-            & .fi-modal-overlay {
+            & .fi-modal-window-ctn {
                 @apply overflow-y-auto;
             }
 
@@ -91,14 +91,6 @@
         @apply hidden;
     }
 
-    & .fi-modal-overlay {
-        @apply fixed inset-0 z-40;
-
-        &.fi-clickable {
-            @apply cursor-pointer;
-        }
-    }
-
     & .fi-modal-header {
         @apply flex px-6 pt-6;
 
@@ -120,7 +112,11 @@
     }
 
     & .fi-modal-window-ctn {
-        @apply relative grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr];
+        @apply fixed inset-0 z-40 grid min-h-full grid-rows-[1fr_auto_1fr] justify-items-center sm:grid-rows-[1fr_auto_3fr];
+
+        &.fi-clickable {
+            @apply cursor-pointer;
+        }
     }
 
     & .fi-modal-content {
