@@ -67,8 +67,8 @@
 
 <dialog
     x-data="filamentModal({
-        id: @js($id),
-    })"
+                id: @js($id),
+            })"
     @if ($id)
         x-on:{{ $closeEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) close()"
         x-on:{{ $closeQuietlyEventName }}.window="if (($event.detail.id === @js($id)) && isOpen) closeQuietly()"
@@ -78,7 +78,8 @@
         x-on:{{ $closeQuietlyEventName }}.stop="if (isOpen) closeQuietly()"
         x-on:{{ $openEventName }}.stop="if (! isOpen) open()"
     @endif
-    x-on:cancel.prevent {{-- Prevents the dialog from closing when the escape key is pressed, we do that ourselves to properly transition it. --}}
+    {{-- Prevents the dialog from closing when the escape key is pressed, we do that ourselves to properly transition it. --}}
+    x-on:cancel.prevent
     id="{{ $id }}"
     wire:ignore.self
     x-trap.noscroll{{ $autofocus ? '' : '.noautofocus' }}="isOpen"
@@ -90,11 +91,13 @@
     @elseif ($heading)
         aria-labelledby="{{ "{$id}.heading" }}"
     @endif
-    @class([
-        'fi-modal',
-        'fi-modal-slide-over' => $slideOver,
-        'fi-width-screen' => $width === Width::Screen,
-    ])
+    {{
+        $attributes->class([
+            'fi-modal',
+            'fi-modal-slide-over' => $slideOver,
+            'fi-width-screen' => $width === Width::Screen,
+        ])
+    }}
 >
     <div
         aria-hidden="true"
@@ -113,10 +116,10 @@
                     {{ $closeEventHandler }}
             "
         @endif
-        {{ $attributes->class([
+        @class([
             'fi-modal-window-ctn',
             'fi-clickable' => $closeByClickingAway,
-        ]) }}
+        ])
     >
         <div
             x-show="isWindowVisible"

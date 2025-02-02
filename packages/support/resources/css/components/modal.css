@@ -140,7 +140,7 @@
     }
 
     & .fi-modal-window {
-        @apply pointer-events-auto duration-300 relative row-start-2 flex w-full cursor-default flex-col bg-white ring-1 shadow-xl ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white ring-1 shadow-xl ring-gray-950/5 duration-300 dark:bg-gray-900 dark:ring-white/10;
 
         &.fi-align-start,
         &.fi-align-left {

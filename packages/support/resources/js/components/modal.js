@@ -15,14 +15,19 @@ export default ({ id }) => ({
 
                     this.isWindowVisible = true
 
-                    return;
+                    return
                 }
 
                 this.isWindowVisible = false
 
                 setTimeout(
                     () => this.$root?.close(),
-                    this.$refs.window ? ((parseFloat(window.getComputedStyle(this.$refs.window).transitionDuration)) * 1000) : 0,
+                    this.$refs.window
+                        ? parseFloat(
+                              window.getComputedStyle(this.$refs.window)
+                                  .transitionDuration,
+                          ) * 1000
+                        : 0,
                 )
             })
         })
@@ -32,10 +37,16 @@ export default ({ id }) => ({
         this.closeQuietly()
 
         setTimeout(
-            () => this.$refs.windowContainer?.dispatchEvent(
-                new CustomEvent('modal-closed', { id }),
-            ),
-            this.$refs.window ? ((parseFloat(window.getComputedStyle(this.$refs.window).transitionDuration)) * 1000) : 0,
+            () =>
+                this.$root.dispatchEvent(
+                    new CustomEvent('modal-closed', { id }),
+                ),
+            this.$refs.window
+                ? parseFloat(
+                      window.getComputedStyle(this.$refs.window)
+                          .transitionDuration,
+                  ) * 1000
+                : 0,
         )
     },
 
