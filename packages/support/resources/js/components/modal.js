@@ -1,11 +1,26 @@
 export default ({ id }) => ({
     isOpen: false,
 
+    isModalWindowVisible: false,
+
     livewire: null,
 
     init: function () {
         this.$watch('isOpen', () => {
-            this.isOpen ? this.$refs.dialog.showModal() : this.$refs.dialog.close()
+            if (this.isOpen) {
+                this.$refs.dialog.showModal()
+
+                this.isModalWindowVisible = true
+
+                return;
+            }
+
+            this.isModalWindowVisible = false
+
+            setTimeout(
+                () => this.$refs.dialog?.close(),
+                this.$refs.window ? ((parseFloat(window.getComputedStyle(this.$refs.window).transitionDuration)) * 1000) : 0,
+            )
         })
     },
 

@@ -90,7 +90,21 @@
     }
 
     & dialog::backdrop {
-        @apply bg-gray-950/50 dark:bg-gray-950/75;
+        @apply bg-gray-950/50 dark:bg-gray-950/75 opacity-0;
+        transition:
+            display 1s allow-discrete,
+            overlay 1s allow-discrete,
+            opacity 1s;
+    }
+
+    & dialog[open]::backdrop {
+        @apply opacity-100;
+    }
+
+    @starting-style {
+        & dialog[open]::backdrop {
+            @apply opacity-0;
+        }
     }
 
     & .fi-modal-overlay {
@@ -146,7 +160,7 @@
     }
 
     & .fi-modal-window {
-        @apply pointer-events-auto relative row-start-2 flex w-full cursor-default flex-col bg-white ring-1 shadow-xl ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+        @apply pointer-events-auto duration-300 relative row-start-2 flex w-full cursor-default flex-col bg-white ring-1 shadow-xl ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
 
         &.fi-align-start,
         &.fi-align-left {
@@ -263,11 +277,6 @@
 
         &.fi-width-screen {
             @apply fixed inset-0;
-        }
-
-        &.fi-transition-enter,
-        &.fi-transition-leave {
-            @apply duration-300;
         }
 
         &:not(.fi-modal-window-has-content) {

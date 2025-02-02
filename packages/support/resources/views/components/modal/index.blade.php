@@ -115,11 +115,11 @@
                 {{ $attributes->class(['fi-modal-window-ctn']) }}
             >
                 <div
+                    x-show="isModalWindowVisible"
+                    x-ref="window"
                     @if ($closeByEscaping)
                         x-on:keydown.window.escape="{{ $closeEventHandler }}"
                     @endif
-                    x-transition:enter="fi-transition-enter"
-                    x-transition:leave="fi-transition-leave"
                     @if ($width !== Width::Screen)
                         x-transition:enter-start="fi-transition-enter-start"
                         x-transition:enter-end="fi-transition-enter-end"
