@@ -6,30 +6,30 @@ export default ({ id }) => ({
     livewire: null,
 
     init: function () {
-        this.$watch('isOpen', () => {
-            if (this.isOpen) {
-                this.$root?.showModal()
+        this.$nextTick(() => {
+            this.isWindowVisible = this.isOpen
 
-                this.isWindowVisible = true
+            this.$watch('isOpen', () => {
+                if (this.isOpen) {
+                    this.$root?.showModal()
 
-                return;
-            }
+                    this.isWindowVisible = true
 
-            this.isWindowVisible = false
+                    return;
+                }
 
-            setTimeout(
-                () => this.$root?.close(),
-                this.$refs.window ? ((parseFloat(window.getComputedStyle(this.$refs.window).transitionDuration)) * 1000) : 0,
-            )
+                this.isWindowVisible = false
+
+                setTimeout(
+                    () => this.$root?.close(),
+                    this.$refs.window ? ((parseFloat(window.getComputedStyle(this.$refs.window).transitionDuration)) * 1000) : 0,
+                )
+            })
         })
     },
 
     close: function () {
         this.closeQuietly()
-
-        this.$refs.windowContainer?.dispatchEvent(
-            new CustomEvent('modal-closing', { id }),
-        )
 
         setTimeout(
             () => this.$refs.windowContainer?.dispatchEvent(
