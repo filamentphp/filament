@@ -86,4 +86,14 @@ return [
 
     'livewire_loading_delay' => 'default',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Default Table Pagination
+    |--------------------------------------------------------------------------
+    |
+    | This sets the default table pagination.
+    |
+    */
+
+    'default_pagination' => [5, 10, 25, 50, 'all'],
 ];

@@ -88,7 +88,8 @@ trait CanPaginateRecords
      */
     public function getPaginationPageOptions(): array
     {
-        return $this->evaluate($this->paginationPageOptions) ?? [5, 10, 25, 50, 'all'];
+        return $this->evaluate($this->paginationPageOptions) ??
+            config('filament.default_pagination', [5, 10, 25, 50, 'all']);
     }
 
     public function isPaginated(): bool
