@@ -23,7 +23,7 @@ Page classes are all full-page [Livewire](https://livewire.laravel.com) componen
 You can prevent pages from appearing in the menu by overriding the `canAccess()` method in your Page class. This is useful if you want to control which users can see the page in the navigation, and also which users can visit the page directly:
 
 ```php
-public static function canAccess(): bool
+public static function canAccess(array $parameters = []): bool
 {
     return auth()->user()->canManageSettings();
 }
