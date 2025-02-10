@@ -137,13 +137,20 @@ class DatabaseNotifications extends Component
 
     public function getNotification(DatabaseNotification $notification): Notification
     {
+        $date = $notification->getAttributeValue('created_at');
+
         return Notification::fromDatabase($notification)
-            ->date($this->formatNotificationDate($notification->getAttributeValue('created_at')));
+            ->date($this->formatNotificationDate($date), $this->formatExactNotificationDate($date));
     }
 
     protected function formatNotificationDate(CarbonInterface $date): string
     {
         return $date->diffForHumans();
+    }
+
+    protected function formatExactNotificationDate(CarbonInterface $date): string
+    {
+        return $date->toString();
     }
 
     public static function trigger(?string $trigger): void

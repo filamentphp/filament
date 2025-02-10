@@ -10,6 +10,7 @@
     $title = $getTitle();
     $hasTitle = filled($title);
     $date = $getDate();
+    $exactDate = $getExactDate();
     $hasDate = filled($date);
     $body = $getBody();
     $hasBody = filled($body);
@@ -90,7 +91,10 @@
             @endif
 
             @if ($hasDate)
-                <x-filament-notifications::date @class(['mt-1' => $hasTitle])>
+                <x-filament-notifications::date
+                    @class(['mt-1' => $hasTitle])
+                    title="{{ $exactDate }}"
+                >
                     {{ $date }}
                 </x-filament-notifications::date>
             @endif

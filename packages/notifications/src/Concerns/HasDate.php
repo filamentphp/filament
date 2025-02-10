@@ -8,9 +8,12 @@ trait HasDate
 {
     protected string | Closure | null $date = null;
 
-    public function date(string | Closure | null $date): static
+    protected string | Closure | null $exactDate = null;
+
+    public function date(string | Closure | null $date, ?string $exactDate = null): static
     {
         $this->date = $date;
+        $this->exactDate = $exactDate;
 
         return $this;
     }
@@ -18,5 +21,10 @@ trait HasDate
     public function getDate(): ?string
     {
         return $this->evaluate($this->date);
+    }
+
+    public function getExactDate(): ?string
+    {
+        return $this->evaluate($this->exactDate);
     }
 }
