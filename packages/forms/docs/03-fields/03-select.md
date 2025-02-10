@@ -63,19 +63,21 @@ Select::make('author_id')
 
 ### Returning custom search results
 
-If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` and `getOptionLabelUsing()` methods instead of `options()`.
+If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` method instead of `options()`.
 
 The `getSearchResultsUsing()` method accepts a callback that returns search results in `$key => $value` format. The current user's search is available as `$search`, and you should use that to filter your results.
 
-The `getOptionLabelUsing()` method accepts a callback that transforms the selected option `$value` into a label. This is used when the form is first loaded when the user has not made a search yet. Otherwise, the label used to display the currently selected option would not be available.
-
-Both `getSearchResultsUsing()` and `getOptionLabelUsing()` must be used on the select if you want to provide custom search results:
+To customize the label of each option, you can use the `mapWithKeys()` method on the options collection. 
 
 ```php
 Select::make('author_id')
     ->searchable()
-    ->getSearchResultsUsing(fn (string $search): array => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
-    ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
+    ->getSearchResultsUsing(fn (string $search): array =>
+        User::where('name', 'like', "%{$search}%")
+            ->limit(50)
+            ->mapWithKeys(fn (User $user) => [$user->id => $user->name.': '.$user->email])
+            ->toArray()
+    ),
 ```
 
 ## Multi-select
