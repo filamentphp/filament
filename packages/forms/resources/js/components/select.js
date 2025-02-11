@@ -193,7 +193,7 @@ export default function selectFormComponent({
         },
 
         setChoices: function (choices) {
-            this.select.setChoices(choices, 'value', 'label', true)
+            this.select.setChoices(choices.filter((item) => Object.keys(item).length > 0), 'value', 'label', true)
         },
 
         getChoices: async function (config = {}) {
