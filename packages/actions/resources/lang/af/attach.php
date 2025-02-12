@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Assosiaat',
+        'label' => 'Heg aan',
 
         'modal' => [
 
-            'heading' => 'Geassosieerde :label',
+            'heading' => 'Heg :label aan',
 
             'fields' => [
 
@@ -20,12 +20,12 @@ return [
 
             'actions' => [
 
-                'associate' => [
-                    'label' => 'Assosiaat',
+                'attach' => [
+                    'label' => 'Heg aan',
                 ],
 
-                'associate_another' => [
-                    'label' => 'Assosieer en assosieer \'n ander',
+                'attach_another' => [
+                    'label' => 'Heg en heg nog een aan',
                 ],
 
             ],
@@ -34,8 +34,8 @@ return [
 
         'notifications' => [
 
-            'associated' => [
-                'title' => 'Geassosieerde',
+            'attached' => [
+                'title' => 'Aangeheg',
             ],
 
         ],

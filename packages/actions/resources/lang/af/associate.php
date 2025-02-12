@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Assosiaat',
+        'label' => 'Associate',
 
         'modal' => [
 
-            'heading' => 'Geassosieerde :label',
+            'heading' => 'Associate :label',
 
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Rekord',
+                    'label' => 'Record',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Assosiaat',
+                    'label' => 'Associate',
                 ],
 
                 'associate_another' => [
-                    'label' => 'Assosieer en assosieer \'n ander',
+                    'label' => 'Associate & associate another',
                 ],
 
             ],
@@ -35,7 +35,7 @@ return [
         'notifications' => [
 
             'associated' => [
-                'title' => 'Geassosieerde',
+                'title' => 'Associated',
             ],
 
         ],
