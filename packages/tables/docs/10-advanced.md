@@ -311,7 +311,7 @@ protected function applySearchToTableQuery(Builder $query): Builder
     $this->applyColumnSearchesToTableQuery($query);
     
     if (filled($search = $this->getTableSearch())) {
-        $query->whereIn('id', Post::search($search)->keys());
+        $query->whereIn('id', Post::search($search)->query(fn ($qs) => $qs->select('id'))->keys());
     }
 
     return $query;
