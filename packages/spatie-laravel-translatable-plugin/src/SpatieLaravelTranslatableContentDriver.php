@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 use function Filament\Support\generate_search_column_expression;
+use function Filament\Support\generate_search_term_expression;
 
 class SpatieLaravelTranslatableContentDriver implements TranslatableContentDriver
 {
@@ -118,10 +119,12 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             default => "json_extract({$column}, \"$.{$this->activeLocale}\")",
         };
 
+        $search = generate_search_term_expression($search, $isCaseInsensitivityForced, $databaseConnection);
+
         return $query->{$whereClause}(
             generate_search_column_expression($column, $isCaseInsensitivityForced, $databaseConnection),
             'like',
-            (string) str($search)->wrap('%'),
+            str($search)->wrap('%')->toString(),
         );
     }
 }
