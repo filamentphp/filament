@@ -216,7 +216,8 @@ trait CanImportRecords
 
             $import = app(Import::class);
             $import->user()->associate($user);
-            $import->file_name = $csvFile->getClientOriginalName();
+            // $import->file_name = $csvFile->getClientOriginalName(); //ORIGINAL
+            $import->file_name = now()->format('Ymd_His') . '_' . Str::uuid() . '_' . $csvFile->getClientOriginalName(); // 🔥 Change file_name to be unique.
             $import->file_path = $csvFile->getRealPath();
             $import->importer = $action->getImporter();
             $import->total_rows = $totalRows;
